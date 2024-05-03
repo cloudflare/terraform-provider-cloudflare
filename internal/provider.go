@@ -9,33 +9,56 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_application"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_identity_provider"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_key"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/account_member"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/cloudforce_one_request"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/cloudforce_one_request_priority"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/address_map"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/argo_smart_routing"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/argo_tiered_caching"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/bot_management"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/byo_ip_prefix"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/certificate_pack"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/custom_hostname"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/custom_hostname_fallback_origin"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/device_posture_integration"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/device_posture_rule"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/email_routing_address"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/email_routing_catch_all"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/email_routing_rule"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/firewall_waf_override"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/intel_indicator_feed"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/hostname_tls_setting"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/keyless_certificate"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/logpush_job"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_network_monitoring_rule"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_transit_site"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/magic_transit_site_acl"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/mtls_certificate"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/notification_policy"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/notification_policy_webhooks"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/page_shield_policy"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/observatory_scheduled_test"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/record"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/regional_tiered_cache"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/ruleset"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_acl"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_peer"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/secondary_dns_tsig"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/spectrum_application"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/teams_account"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/teams_list"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/teams_location"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/teams_proxy_endpoint"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/tiered_cache"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/total_tls"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/tunnel"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/tunnel_config"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/turnstile_widget"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/url_normalization_settings"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room_event"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/web3_hostname_ipfs_universal_path_content_list_entry"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/zero_trust_access_bookmark"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room_setting"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/web3_hostname"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/worker_cron_trigger"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/worker_domain"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/workers_kv"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone_cache_reserve"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone_cache_variants"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone_dnssec"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone_hold"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone_lockdown"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -128,35 +151,58 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		account_member.NewResource,
+		zone.NewResource,
+		zone_hold.NewResource,
+		zone_cache_reserve.NewResource,
+		tiered_cache.NewResource,
+		zone_cache_variants.NewResource,
+		regional_tiered_cache.NewResource,
+		certificate_pack.NewResource,
+		total_tls.NewResource,
+		argo_smart_routing.NewResource,
+		argo_tiered_caching.NewResource,
+		custom_hostname.NewResource,
+		custom_hostname_fallback_origin.NewResource,
 		record.NewResource,
+		zone_dnssec.NewResource,
 		email_routing_rule.NewResource,
+		email_routing_catch_all.NewResource,
+		email_routing_address.NewResource,
 		zone_lockdown.NewResource,
-		firewall_waf_override.NewResource,
+		keyless_certificate.NewResource,
 		logpush_job.NewResource,
-		secondary_dns_acl.NewResource,
-		secondary_dns_peer.NewResource,
-		secondary_dns_tsig.NewResource,
 		waiting_room.NewResource,
 		waiting_room_event.NewResource,
-		web3_hostname_ipfs_universal_path_content_list_entry.NewResource,
-		page_shield_policy.NewResource,
+		waiting_room_setting.NewResource,
+		web3_hostname.NewResource,
+		worker_cron_trigger.NewResource,
+		worker_domain.NewResource,
+		workers_kv.NewResource,
 		ruleset.NewResource,
+		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
-		intel_indicator_feed.NewResource,
-		magic_transit_site.NewResource,
-		magic_transit_site_acl.NewResource,
-		magic_network_monitoring_rule.NewResource,
+		address_map.NewResource,
+		byo_ip_prefix.NewResource,
+		mtls_certificate.NewResource,
 		notification_policy_webhooks.NewResource,
 		notification_policy.NewResource,
 		device_posture_rule.NewResource,
+		device_posture_integration.NewResource,
 		access_identity_provider.NewResource,
 		access_application.NewResource,
 		access_mutual_tls_certificate.NewResource,
-		zero_trust_access_bookmark.NewResource,
+		access_mutual_tls_hostname_settings.NewResource,
+		access_key.NewResource,
+		tunnel.NewResource,
+		tunnel_config.NewResource,
+		teams_account.NewResource,
 		teams_list.NewResource,
 		teams_location.NewResource,
-		cloudforce_one_request.NewResource,
-		cloudforce_one_request_priority.NewResource,
+		teams_proxy_endpoint.NewResource,
+		turnstile_widget.NewResource,
+		bot_management.NewResource,
+		observatory_scheduled_test.NewResource,
+		hostname_tls_setting.NewResource,
 	}
 }
 
