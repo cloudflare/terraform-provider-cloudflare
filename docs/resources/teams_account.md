@@ -163,6 +163,10 @@ Optional:
 
 - `id` (String) ID of custom certificate.
 
+Read-Only:
+
+- `updated_at` (String)
+
 
 <a id="nestedblock--extended_email_matching"></a>
 ### Nested Schema for `extended_email_matching`

@@ -29,6 +29,13 @@ func resourceCloudflareRateLimit() *schema.Resource {
 			be used to limit the traffic you receive zone-wide, or matching more
 			specific types of requests/responses.
 		`),
+		DeprecationMessage: heredoc.Doc(fmt.Sprintf(`
+			%s resource is in a deprecation phase that will
+			last for 14 months (July 1st, 2024). During this time period, this
+			resource is still fully supported but you are strongly advised
+			to move to the %s resource. For more information, see
+			https://developers.cloudflare.com/waf/reference/migration-guides/old-rate-limiting-deprecation/#relevant-changes-for-terraform-users.
+		`, "`cloudflare_rate_limit`", "`cloudflare_ruleset`")),
 	}
 }
 
