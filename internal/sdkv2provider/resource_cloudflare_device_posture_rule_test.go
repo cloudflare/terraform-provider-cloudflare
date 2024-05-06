@@ -79,6 +79,41 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDevicePostureRuleConfigOsVersionExtra(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "os_version"),
+					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
+					resource.TestCheckResourceAttr(name, "input.0.version", "10.0.1"),
+					resource.TestCheckResourceAttr(name, "input.0.operator", "=="),
+					resource.TestCheckResourceAttr(name, "input.0.os_version_extra", "(a)"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -288,6 +323,27 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	input {
 		version = "10.0.1"
 		operator = "=="
+	}
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareDevicePostureRuleConfigOsVersionExtra(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_device_posture_rule" "%[1]s" {
+	account_id                = "%[2]s"
+	name                      = "%[1]s"
+	type                      = "os_version"
+	description               = "My description"
+	schedule                  = "24h"
+	expiration                = "24h"
+	match {
+		platform = "mac"
+	}
+	input {
+		version = "10.0.1"
+		operator = "=="
+		os_version_extra = "(a)"
 	}
 }
 `, rnd, accountID)

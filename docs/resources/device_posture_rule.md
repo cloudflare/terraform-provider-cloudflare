@@ -92,6 +92,7 @@ Optional:
 - `total_score` (Number) The total score from Tanium.
 - `version` (String) The operating system semantic version.
 - `version_operator` (String) The version comparison operator for crowdstrike. Available values: `>`, `>=`, `<`, `<=`, `==`.
+- `os_version_extra` (String) Extra operating system version details following the semantic version value.
 
 
 <a id="nestedblock--match"></a>
