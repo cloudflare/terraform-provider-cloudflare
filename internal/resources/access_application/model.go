@@ -17,7 +17,7 @@ type AccessApplicationModel struct {
 	Domain                   types.String                       `tfsdk:"domain" json:"domain"`
 	Type                     types.String                       `tfsdk:"type" json:"type"`
 	AllowAuthenticateViaWARP types.Bool                         `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp"`
-	AllowedIdps              types.String                       `tfsdk:"allowed_idps" json:"allowed_idps"`
+	AllowedIdPs              types.String                       `tfsdk:"allowed_idps" json:"allowed_idps"`
 	AppLauncherVisible       types.Bool                         `tfsdk:"app_launcher_visible" json:"app_launcher_visible"`
 	AutoRedirectToIdentity   types.Bool                         `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
 	CORSHeaders              *AccessApplicationCORSHeadersModel `tfsdk:"cors_headers" json:"cors_headers"`
