@@ -9,18 +9,13 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_application"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_identity_provider"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_key"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/account_member"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/address_map"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/argo_smart_routing"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/argo_tiered_caching"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/bot_management"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/byo_ip_prefix"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/certificate_pack"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/custom_hostname"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/custom_hostname_fallback_origin"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/device_posture_integration"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/device_posture_rule"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/email_routing_address"
@@ -41,10 +36,8 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/teams_list"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/teams_location"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/teams_proxy_endpoint"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/tiered_cache"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/total_tls"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/tunnel"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/tunnel_config"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/turnstile_widget"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/url_normalization_settings"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/waiting_room"
@@ -53,7 +46,6 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/web3_hostname"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/worker_cron_trigger"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/worker_domain"
-	"github.com/cloudflare/cloudflare-terraform/internal/resources/workers_kv"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone_cache_reserve"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/zone_cache_variants"
@@ -154,15 +146,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone.NewResource,
 		zone_hold.NewResource,
 		zone_cache_reserve.NewResource,
-		tiered_cache.NewResource,
 		zone_cache_variants.NewResource,
 		regional_tiered_cache.NewResource,
 		certificate_pack.NewResource,
 		total_tls.NewResource,
-		argo_smart_routing.NewResource,
-		argo_tiered_caching.NewResource,
 		custom_hostname.NewResource,
-		custom_hostname_fallback_origin.NewResource,
 		record.NewResource,
 		zone_dnssec.NewResource,
 		email_routing_rule.NewResource,
@@ -177,7 +165,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		web3_hostname.NewResource,
 		worker_cron_trigger.NewResource,
 		worker_domain.NewResource,
-		workers_kv.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
 		spectrum_application.NewResource,
@@ -191,10 +178,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		access_identity_provider.NewResource,
 		access_application.NewResource,
 		access_mutual_tls_certificate.NewResource,
-		access_mutual_tls_hostname_settings.NewResource,
-		access_key.NewResource,
 		tunnel.NewResource,
-		tunnel_config.NewResource,
 		teams_account.NewResource,
 		teams_list.NewResource,
 		teams_location.NewResource,
