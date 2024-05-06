@@ -4,6 +4,10 @@ NOTES:
 
 * resource/cloudflare_rate_limit: This resource is being deprecated in favor of the cloudflare_rulesets resource ([#3279](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3279))
 
+BUG FIXES:
+
+* resource/cloudflare_turnstile: Fix error handling corrupting state ([#3284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3284))
+
 ## 4.31.0 (May 1st, 2024)
 
 ENHANCEMENTS:
