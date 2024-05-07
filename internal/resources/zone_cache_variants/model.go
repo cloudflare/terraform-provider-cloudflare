@@ -17,12 +17,12 @@ type ZoneCacheVariantsModel struct {
 }
 
 type ZoneCacheVariantsValueModel struct {
-	Avif *[]types.String `tfsdk:"avif" json:"avif"`
+	AVIF *[]types.String `tfsdk:"avif" json:"avif"`
 	BMP  *[]types.String `tfsdk:"bmp" json:"bmp"`
 	GIF  *[]types.String `tfsdk:"gif" json:"gif"`
 	JP2  *[]types.String `tfsdk:"jp2" json:"jp2"`
 	JPEG *[]types.String `tfsdk:"jpeg" json:"jpeg"`
-	Jpg  *[]types.String `tfsdk:"jpg" json:"jpg"`
+	JPG  *[]types.String `tfsdk:"jpg" json:"jpg"`
 	JPG2 *[]types.String `tfsdk:"jpg2" json:"jpg2"`
 	PNG  *[]types.String `tfsdk:"png" json:"png"`
 	TIF  *[]types.String `tfsdk:"tif" json:"tif"`
