@@ -87,6 +87,11 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	if value, ok := d.GetOk("tags"); ok {
 		newAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		newAccessApplication.SCIMConfig = convertSCIMConfigSchemaToStruct(d)
+	}
+
 	if appType == "app_launcher" {
 		newAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
 			LogoURL:               d.Get("app_launcher_logo_url").(string),
@@ -212,6 +217,12 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
 	}
 
+	scimConfig := convertScimConfigStructToSchema(accessApplication.SCIMConfig)
+
+	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Application SCIM configuration: %w", scimConfigErr))
+	}
+
 	return nil
 }
 
@@ -276,6 +287,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	if value, ok := d.GetOk("tags"); ok {
 		updatedAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		updatedAccessApplication.SCIMConfig = convertSCIMConfigSchemaToStruct(d)
+	}
+
 	if appType == "app_launcher" {
 		updatedAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
 			LogoURL:               d.Get("app_launcher_logo_url").(string),
