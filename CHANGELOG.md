@@ -13,6 +13,10 @@ BUG FIXES:
 
 * resource/cloudflare_turnstile: Fix error handling corrupting state ([#3284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3284))
 
+DEPENDENCIES:
+
+* provider: bump golang.org/x/net from 0.24.0 to 0.25.0 ([#3290](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3290))
+
 ## 4.31.0 (May 1st, 2024)
 
 ENHANCEMENTS:
