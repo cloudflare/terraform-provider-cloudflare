@@ -340,7 +340,7 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				ContentType:             flatteners.String(ruleResponse.ActionParameters.ContentType),
 				DisableApps:             flatteners.Bool(ruleResponse.ActionParameters.DisableApps),
 				DisableRailgun:          flatteners.Bool(ruleResponse.ActionParameters.DisableRailgun),
-				DisableRum:              flatteners.Bool(ruleResponse.ActionParameters.DisableRum),
+				DisableRUM:              flatteners.Bool(ruleResponse.ActionParameters.DisableRUM),
 				DisableZaraz:            flatteners.Bool(ruleResponse.ActionParameters.DisableZaraz),
 				Fonts:                   flatteners.Bool(ruleResponse.ActionParameters.Fonts),
 				EmailObfuscation:        flatteners.Bool(ruleResponse.ActionParameters.EmailObfuscation),
@@ -882,8 +882,8 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 			rr.ActionParameters.DisableRailgun = cfv1.BoolPtr(ap.DisableRailgun.ValueBool())
 		}
 
-		if !ap.DisableRum.IsNull() {
-			rr.ActionParameters.DisableRum = cloudflare.BoolPtr(ap.DisableRum.ValueBool())
+		if !ap.DisableRUM.IsNull() {
+			rr.ActionParameters.DisableRUM = cloudflare.BoolPtr(ap.DisableRUM.ValueBool())
 		}
 
 		if !ap.DisableZaraz.IsNull() {

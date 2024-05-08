@@ -42,7 +42,7 @@ type ActionParametersModel struct {
 	CookieFields             types.Set                                    `tfsdk:"cookie_fields"`
 	DisableApps              types.Bool                                   `tfsdk:"disable_apps"`
 	DisableRailgun           types.Bool                                   `tfsdk:"disable_railgun"`
-	DisableRum               types.Bool                                   `tfsdk:"disable_rum"`
+	DisableRUM               types.Bool                                   `tfsdk:"disable_rum"`
 	DisableZaraz             types.Bool                                   `tfsdk:"disable_zaraz"`
 	EdgeTTL                  []*ActionParameterEdgeTTLModel               `tfsdk:"edge_ttl"`
 	Fonts                    types.Bool                                   `tfsdk:"fonts"`
