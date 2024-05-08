@@ -895,7 +895,6 @@ func convertScimConfigAuthenticationSchemaToStruct(d *schema.ResourceData) *clou
 			auth.Value = base
 			break
 		}
-
 	}
 
 	return auth
