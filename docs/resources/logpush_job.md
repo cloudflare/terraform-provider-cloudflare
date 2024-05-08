@@ -74,9 +74,7 @@ data "aws_s3_bucket_object" "challenge_file" {
 }
 
 resource "cloudflare_logpush_job" "example_job" {
-  depends_on = [
-    cloudflare_logpush_ownership_challenge.ownership_challenge, data.aws_s3_bucket_object.challenge_file
-  ]
+  depends_on          = [cloudflare_logpush_ownership_challenge.ownership_challenge]
   enabled             = true
   zone_id             = "0da42c8d2132a9ddaf714f9e7c920711"
   name                = "My-logpush-job"
