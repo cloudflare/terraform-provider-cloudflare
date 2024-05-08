@@ -6,6 +6,7 @@ NOTES:
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: add support for SCIM provisioning configuration ([#3291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3291))
 * resource/cloudflare_access_group: Add the option for email_list to be used in require, include and exclude fields ([#3247](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3247))
 * resource/cloudflare_device_posture_rules: added support for os_version_extra ([#3281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3281))
 
