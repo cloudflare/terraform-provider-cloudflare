@@ -81,6 +81,7 @@ resource "cloudflare_access_application" "staging_app" {
 - `tags` (Set of String) The itags associated with the application.
 - `type` (String) The application type. Available values: `app_launcher`, `bookmark`, `biso`, `dash_sso`, `saas`, `self_hosted`, `ssh`, `vnc`, `warp`. Defaults to `self_hosted`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
+- `scim_config` (Block List, Max: 1) Configuration for provisioning to the Access Application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedblock--scim_config))
 
 ### Read-Only
 
@@ -170,6 +171,74 @@ Optional:
 Required:
 
 - `name` (String) The name of the attribute as provided by the IDP.
+
+<a id="nestedblock--scim_config"></a>
+### Nested Schema for `scim_config`
+
+Required:
+
+- `idp_uid` (String) The ID of the Access IDP to be used as the source for SCIM resources to provision to this application.
+- `remote_uri` (String) The base URI for the application's SCIM-compatible API.
+
+Optional:
+
+- `enabled` (Boolean) Whether SCIM provisioning is turned on for this application.
+- `deactivate_on_delete` (Boolean) If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.
+- `authentication` (Block List, Max: 1) Configuration for authenticating with the application's SCIM API. Allowed configurations are [HTTP Basic](#nestedblock--scim_config--authentication_http_basic), [OAuth Bearer Token](#nestedblock--scim_config--authentication_oauth_bearer_token), and [OAuth 2](#nestedblock--scim_config--authentication_oauth2).
+- `mappings` (Block List) A list of filters and transformations to apply to SCIM resources before provisioning them to the application. See [below for nested schema](#nestedblock--scim_config--mapping).
+
+<a id="nestedblock--scim_config--authentication_http_basic"></a>
+### Nested Schema for `scim_config.authentication` using HTTP Basic authentication
+
+Required:
+
+- `scheme` (String) The authentication scheme to use. For HTTP Basic authentication, this value should be `httpbasic`
+- `user` (String) The username used to authenticate with the remote SCIM service.
+- `password` (String) The password used to authenticate with the remote SCIM service.
+
+<a id="nestedblock--scim_config--authentication_oauth_bearer_token"></a>
+### Nested Schema for `scim_config.authentication` using OAuth Bearer Token authentication
+
+Required:
+
+- `scheme` (String) The authentication scheme to use. For OAuth Bearer Token authentication, this value should be `oauthbearertoken`
+- `token` (String) The token used to authenticate with the remote SCIM service.
+
+<a id="nestedblock--scim_config--authentication_oauth2"></a>
+### Nested Schema for `scim_config.authentication` using OAuth 2 authentication
+
+Required:
+
+- `scheme` (String) The authentication scheme to use. For OAuth 2 authentication, this value should be `oauth2`
+- `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.
+- `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
+- `authorization_url` (String) URL used to generate the auth code used during token generation.
+- `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.
+
+Optional:
+
+- `scopes` (Set of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
+
+<a id="nestedblock--scim_config--mapping"></a>
+### Nested Schema for `scim_config.mappings`
+
+Required:
+
+- `schema` (String) Which SCIM resource type this mapping applies to.
+
+Optional:
+- `enabled` (Boolean) Whether this mapping is enabled.
+- `filter` (String) A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.
+- `transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.
+- `operations` (Block List, Max: 1) Whether this mapping applies to creates, updates, or deletes. See [below for nested schema](#nestedblock--scim_config--mapping--operations)
+
+<a id="nestedblock--scim_config--mapping--operations"></a>
+### Nested Schema for `scim_config.mappings.operations`
+
+Optional:
+- `create` (Boolean) Whether the mapping applies to create (POST) operations.
+- `update` (Boolean) Whether the mapping applies to update (PATCH/PUT) operations.
+- `delete` (Boolean) Whether the mapping applies to DELETE operations.
 
 ## Import
 
