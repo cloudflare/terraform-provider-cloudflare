@@ -60,6 +60,17 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringInSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"}, false),
 			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"})),
 		},
+		"policies": {
+			Type: schema.TypeList,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Optional: true,
+			Description: "The policies associated with the application, in ascending order of precedence." +
+				" When omitted, the application policies are not be updated." +
+				" Warning: Do not use this field while you still have this application ID referenced as `application_id`" +
+				" in an `cloudflare_access_policy` resource, as it can result in an inconsistent state.",
+		},
 		"session_duration": {
 			Type:     schema.TypeString,
 			Optional: true,

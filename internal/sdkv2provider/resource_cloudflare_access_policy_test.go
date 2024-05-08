@@ -823,6 +823,29 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessPolicy_Reusable(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_policy." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessPolicyReusableConfig(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "include.0.email.0", "a@example.com"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAccessPolicyHasApprovalGroups(n string, accessIdentifier *cloudflare.ResourceContainer) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -1056,4 +1079,17 @@ func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string)
     }
 
   `, resourceID, zone, accountID)
+}
+
+func testAccessPolicyReusableConfig(resourceID, accountID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_access_policy" "%[1]s" {
+      name           = "%[1]s"
+      account_id     = "%[2]s"
+      decision       = "allow"
+      include {
+        email = ["a@example.com"]
+      }
+    }
+  `, resourceID, accountID)
 }
