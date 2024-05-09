@@ -10,6 +10,7 @@ DEPENDENCIES:
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.11 to 1.27.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
 * provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.11 to 1.17.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.53.1 to 1.53.2 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.15.0 to 0.16.0 ([#3296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3296))
 
 ## 4.32.0 (May 8th, 2024)
 
