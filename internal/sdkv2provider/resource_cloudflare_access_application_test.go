@@ -951,6 +951,31 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "domain", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "policies.#", "2"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
@@ -1568,7 +1593,7 @@ resource "cloudflare_access_application" "%[1]s" {
   domain                    = "%[1]s.%[3]s"
   type                      = "self_hosted"
   session_duration          = "24h"
- 	tags             = [cloudflare_access_tag.%[1]s.id]
+  tags                      = [cloudflare_access_tag.%[1]s.id]
 }
 `, rnd, zoneID, domain, accountID)
 }
@@ -1983,4 +2008,37 @@ resource "cloudflare_access_application" "%[1]s" {
   }
 }
 `, rnd, accountID, domain)
+}
+
+func testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain string, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_policy" "%[1]s_p1" {
+  account_id     			= "%[3]s"
+  name                      = "%[1]s"
+  decision			  		= "allow"	
+  include {
+    email = ["a@example.com"]
+  }
+}
+
+resource "cloudflare_access_policy" "%[1]s_p2" {
+  account_id     			= "%[3]s"
+  name                      = "%[1]s"
+  decision			  		= "non_identity"	
+  include {
+    ip = ["127.0.0.1/32"]
+  }
+}
+
+resource "cloudflare_access_application" "%[1]s" {
+  account_id     			= "%[3]s"
+  name                      = "%[1]s"
+  domain                    = "%[1]s.%[2]s"
+  type                      = "self_hosted"
+  policies                  = [
+	cloudflare_access_policy.%[1]s_p1.id,
+	cloudflare_access_policy.%[1]s_p2.id
+  ]
+}
+`, rnd, domain, accountID)
 }

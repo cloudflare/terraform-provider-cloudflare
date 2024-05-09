@@ -110,6 +110,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		}
 	}
 
+	if policies, ok := d.GetOk("policies"); ok {
+		newAccessApplication.Policies = expandInterfaceToStringList(policies)
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
 
 	identifier, err := initIdentifier(d)
@@ -223,6 +227,14 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		return diag.FromErr(fmt.Errorf("error setting Access Application SCIM configuration: %w", scimConfigErr))
 	}
 
+	if _, ok := d.GetOk("policies"); ok {
+		policyIDs := make([]string, len(accessApplication.Policies))
+		for i := range accessApplication.Policies {
+			policyIDs[i] = accessApplication.Policies[i].ID
+		}
+		d.Set("policies", policyIDs)
+	}
+
 	return nil
 }
 
@@ -269,6 +281,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 
 	if value, ok := d.GetOk("self_hosted_domains"); ok {
 		updatedAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
+	}
+
+	if value, ok := d.GetOk("policies"); ok {
+		policies := expandInterfaceToStringList(value)
+		updatedAccessApplication.Policies = &policies
 	}
 
 	if _, ok := d.GetOk("cors_headers"); ok {
