@@ -37,7 +37,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.12
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.12
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.53.2
-	github.com/cloudflare/cloudflare-go/v2 v2.1.0
+	github.com/cloudflare/cloudflare-go/v2 v2.2.0
 	github.com/google/go-cmp v0.6.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-framework v1.8.0
