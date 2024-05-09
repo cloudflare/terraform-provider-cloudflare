@@ -5,6 +5,12 @@ ENHANCEMENTS:
 * resource/cloudflare_access_application: added support for 'policies' argument ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
 * resource/cloudflare_access_policy: added support for reusable policies ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
 
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.11 to 1.27.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.11 to 1.17.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.53.1 to 1.53.2 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+
 ## 4.32.0 (May 8th, 2024)
 
 NOTES:
