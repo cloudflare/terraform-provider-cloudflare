@@ -1,5 +1,10 @@
 ## 4.33.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: added support for 'policies' argument ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
+* resource/cloudflare_access_policy: added support for reusable policies ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
+
 ## 4.32.0 (May 8th, 2024)
 
 NOTES:
