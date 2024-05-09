@@ -146,6 +146,22 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
+			"policies": schema.ListNestedAttribute{
+				Description: "The policies that will apply to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The ID of the Access policy.",
+							Optional:    true,
+						},
+						"precedence": schema.Int64Attribute{
+							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
+							Optional:    true,
+						},
+					},
+				},
+			},
 			"same_site_cookie_attribute": schema.StringAttribute{
 				Description: "Sets the SameSite cookie setting, which provides increased security against CSRF attacks.",
 				Optional:    true,
@@ -265,6 +281,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 					"updated_at": schema.StringAttribute{
 						Computed: true,
 					},
+					"allow_pkce_without_client_secret": schema.BoolAttribute{
+						Description: "If client secret should be required on the token endpoint when authorization_code_with_pkce grant is used.",
+						Optional:    true,
+					},
 					"app_launcher_url": schema.StringAttribute{
 						Description: "The URL where this applications tile redirects users",
 						Optional:    true,
@@ -315,7 +335,7 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 						Description: "The OIDC flows supported by this application",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("authorization_code", "authorization_code_with_pkce"),
+							stringvalidator.OneOfCaseInsensitive("authorization_code", "authorization_code_with_pkce", "refresh_tokens"),
 						},
 					},
 					"group_filter_regex": schema.StringAttribute{
@@ -326,8 +346,17 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 						Description: "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
 						Optional:    true,
 					},
+					"refresh_token_options": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"lifetime": schema.StringAttribute{
+								Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
+								Optional:    true,
+							},
+						},
+					},
 					"scopes": schema.StringAttribute{
-						Description: "Define the user information shared with access",
+						Description: "Define the user information shared with access, \"offline_access\" scope will be automatically enabled if refresh tokens are enabled",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("openid", "groups", "email", "profile"),

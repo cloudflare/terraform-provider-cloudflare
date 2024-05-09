@@ -31,6 +31,7 @@ type AccessApplicationModel struct {
 	Name                     types.String                       `tfsdk:"name" json:"name"`
 	OptionsPreflightBypass   types.Bool                         `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass"`
 	PathCookieAttribute      types.Bool                         `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute"`
+	Policies                 *[]*AccessApplicationPoliciesModel `tfsdk:"policies" json:"policies"`
 	SameSiteCookieAttribute  types.String                       `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute"`
 	SelfHostedDomains        types.String                       `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
 	ServiceAuth401Redirect   types.Bool                         `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect"`
@@ -51,28 +52,35 @@ type AccessApplicationCORSHeadersModel struct {
 	MaxAge           types.Float64 `tfsdk:"max_age" json:"max_age"`
 }
 
+type AccessApplicationPoliciesModel struct {
+	ID         types.String `tfsdk:"id" json:"id"`
+	Precedence types.Int64  `tfsdk:"precedence" json:"precedence"`
+}
+
 type AccessApplicationSaaSAppModel struct {
-	AuthType                      types.String                                   `tfsdk:"auth_type" json:"auth_type"`
-	ConsumerServiceURL            types.String                                   `tfsdk:"consumer_service_url" json:"consumer_service_url"`
-	CreatedAt                     types.String                                   `tfsdk:"created_at" json:"created_at,computed"`
-	CustomAttributes              *AccessApplicationSaaSAppCustomAttributesModel `tfsdk:"custom_attributes" json:"custom_attributes"`
-	DefaultRelayState             types.String                                   `tfsdk:"default_relay_state" json:"default_relay_state"`
-	IdPEntityID                   types.String                                   `tfsdk:"idp_entity_id" json:"idp_entity_id"`
-	NameIDFormat                  types.String                                   `tfsdk:"name_id_format" json:"name_id_format"`
-	NameIDTransformJsonata        types.String                                   `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata"`
-	PublicKey                     types.String                                   `tfsdk:"public_key" json:"public_key"`
-	SAMLAttributeTransformJsonata types.String                                   `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata"`
-	SPEntityID                    types.String                                   `tfsdk:"sp_entity_id" json:"sp_entity_id"`
-	SSOEndpoint                   types.String                                   `tfsdk:"sso_endpoint" json:"sso_endpoint"`
-	UpdatedAt                     types.String                                   `tfsdk:"updated_at" json:"updated_at,computed"`
-	AppLauncherURL                types.String                                   `tfsdk:"app_launcher_url" json:"app_launcher_url"`
-	ClientID                      types.String                                   `tfsdk:"client_id" json:"client_id"`
-	ClientSecret                  types.String                                   `tfsdk:"client_secret" json:"client_secret"`
-	CustomClaims                  *AccessApplicationSaaSAppCustomClaimsModel     `tfsdk:"custom_claims" json:"custom_claims"`
-	GrantTypes                    types.String                                   `tfsdk:"grant_types" json:"grant_types"`
-	GroupFilterRegex              types.String                                   `tfsdk:"group_filter_regex" json:"group_filter_regex"`
-	RedirectURIs                  types.String                                   `tfsdk:"redirect_uris" json:"redirect_uris"`
-	Scopes                        types.String                                   `tfsdk:"scopes" json:"scopes"`
+	AuthType                      types.String                                      `tfsdk:"auth_type" json:"auth_type"`
+	ConsumerServiceURL            types.String                                      `tfsdk:"consumer_service_url" json:"consumer_service_url"`
+	CreatedAt                     types.String                                      `tfsdk:"created_at" json:"created_at,computed"`
+	CustomAttributes              *AccessApplicationSaaSAppCustomAttributesModel    `tfsdk:"custom_attributes" json:"custom_attributes"`
+	DefaultRelayState             types.String                                      `tfsdk:"default_relay_state" json:"default_relay_state"`
+	IdPEntityID                   types.String                                      `tfsdk:"idp_entity_id" json:"idp_entity_id"`
+	NameIDFormat                  types.String                                      `tfsdk:"name_id_format" json:"name_id_format"`
+	NameIDTransformJsonata        types.String                                      `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata"`
+	PublicKey                     types.String                                      `tfsdk:"public_key" json:"public_key"`
+	SAMLAttributeTransformJsonata types.String                                      `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata"`
+	SPEntityID                    types.String                                      `tfsdk:"sp_entity_id" json:"sp_entity_id"`
+	SSOEndpoint                   types.String                                      `tfsdk:"sso_endpoint" json:"sso_endpoint"`
+	UpdatedAt                     types.String                                      `tfsdk:"updated_at" json:"updated_at,computed"`
+	AllowPkceWithoutClientSecret  types.Bool                                        `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret"`
+	AppLauncherURL                types.String                                      `tfsdk:"app_launcher_url" json:"app_launcher_url"`
+	ClientID                      types.String                                      `tfsdk:"client_id" json:"client_id"`
+	ClientSecret                  types.String                                      `tfsdk:"client_secret" json:"client_secret"`
+	CustomClaims                  *AccessApplicationSaaSAppCustomClaimsModel        `tfsdk:"custom_claims" json:"custom_claims"`
+	GrantTypes                    types.String                                      `tfsdk:"grant_types" json:"grant_types"`
+	GroupFilterRegex              types.String                                      `tfsdk:"group_filter_regex" json:"group_filter_regex"`
+	RedirectURIs                  types.String                                      `tfsdk:"redirect_uris" json:"redirect_uris"`
+	RefreshTokenOptions           *AccessApplicationSaaSAppRefreshTokenOptionsModel `tfsdk:"refresh_token_options" json:"refresh_token_options"`
+	Scopes                        types.String                                      `tfsdk:"scopes" json:"scopes"`
 }
 
 type AccessApplicationSaaSAppCustomAttributesModel struct {
@@ -98,4 +106,8 @@ type AccessApplicationSaaSAppCustomClaimsModel struct {
 
 type AccessApplicationSaaSAppCustomClaimsSourceModel struct {
 	Name types.String `tfsdk:"name" json:"name"`
+}
+
+type AccessApplicationSaaSAppRefreshTokenOptionsModel struct {
+	Lifetime types.String `tfsdk:"lifetime" json:"lifetime"`
 }
