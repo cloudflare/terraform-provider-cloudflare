@@ -71,7 +71,7 @@ type AccessApplicationSaaSAppModel struct {
 	SPEntityID                    types.String                                      `tfsdk:"sp_entity_id" json:"sp_entity_id"`
 	SSOEndpoint                   types.String                                      `tfsdk:"sso_endpoint" json:"sso_endpoint"`
 	UpdatedAt                     types.String                                      `tfsdk:"updated_at" json:"updated_at,computed"`
-	AllowPkceWithoutClientSecret  types.Bool                                        `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret"`
+	AllowPKCEWithoutClientSecret  types.Bool                                        `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret"`
 	AppLauncherURL                types.String                                      `tfsdk:"app_launcher_url" json:"app_launcher_url"`
 	ClientID                      types.String                                      `tfsdk:"client_id" json:"client_id"`
 	ClientSecret                  types.String                                      `tfsdk:"client_secret" json:"client_secret"`
