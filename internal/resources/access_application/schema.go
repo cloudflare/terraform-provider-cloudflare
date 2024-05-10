@@ -152,8 +152,8 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The ID of the Access policy.",
-							Optional:    true,
+							Description: "UUID",
+							Computed:    true,
 						},
 						"precedence": schema.Int64Attribute{
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
@@ -165,6 +165,115 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 			"same_site_cookie_attribute": schema.StringAttribute{
 				Description: "Sets the SameSite cookie setting, which provides increased security against CSRF attacks.",
 				Optional:    true,
+			},
+			"scim_config": schema.SingleNestedAttribute{
+				Description: "Configuration for provisioning to this application via SCIM. This is currently in closed beta.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"idp_uid": schema.StringAttribute{
+						Description: "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
+						Required:    true,
+					},
+					"remote_uri": schema.StringAttribute{
+						Description: "The base URI for the application's SCIM-compatible API.",
+						Required:    true,
+					},
+					"authentication": schema.SingleNestedAttribute{
+						Description: "Attributes for configuring HTTP Basic authentication scheme for SCIM provisioning to an application.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"password": schema.StringAttribute{
+								Description: "Password used to authenticate with the remote SCIM service.",
+								Optional:    true,
+							},
+							"scheme": schema.StringAttribute{
+								Description: "The authentication scheme to use when making SCIM requests to this application.",
+								Required:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("httpbasic", "oauthbearertoken", "oauth2"),
+								},
+							},
+							"user": schema.StringAttribute{
+								Description: "User name used to authenticate with the remote SCIM service.",
+								Optional:    true,
+							},
+							"token": schema.StringAttribute{
+								Description: "Token used to authenticate with the remote SCIM service.",
+								Optional:    true,
+							},
+							"authorization_url": schema.StringAttribute{
+								Description: "URL used to generate the auth code used during token generation.",
+								Optional:    true,
+							},
+							"client_id": schema.StringAttribute{
+								Description: "Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.",
+								Optional:    true,
+							},
+							"client_secret": schema.StringAttribute{
+								Description: "Secret used to authenticate when generating a token for authenticating with the remove SCIM service.",
+								Optional:    true,
+							},
+							"token_url": schema.StringAttribute{
+								Description: "URL used to generate the token used to authenticate with the remote SCIM service.",
+								Optional:    true,
+							},
+							"scopes": schema.StringAttribute{
+								Description: "The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.",
+								Optional:    true,
+							},
+						},
+					},
+					"deactivate_on_delete": schema.BoolAttribute{
+						Description: "If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.",
+						Optional:    true,
+					},
+					"enabled": schema.BoolAttribute{
+						Description: "Whether SCIM provisioning is turned on for this application.",
+						Optional:    true,
+					},
+					"mappings": schema.ListNestedAttribute{
+						Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
+						Optional:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"schema": schema.StringAttribute{
+									Description: "Which SCIM resource type this mapping applies to.",
+									Required:    true,
+								},
+								"enabled": schema.BoolAttribute{
+									Description: "Whether or not this mapping is enabled.",
+									Optional:    true,
+								},
+								"filter": schema.StringAttribute{
+									Description: "A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.",
+									Optional:    true,
+								},
+								"operations": schema.SingleNestedAttribute{
+									Description: "Whether or not this mapping applies to creates, updates, or deletes.",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+										"create": schema.BoolAttribute{
+											Description: "Whether or not this mapping applies to create (POST) operations.",
+											Optional:    true,
+										},
+										"delete": schema.BoolAttribute{
+											Description: "Whether or not this mapping applies to DELETE operations.",
+											Optional:    true,
+										},
+										"update": schema.BoolAttribute{
+											Description: "Whether or not this mapping applies to update (PATCH/PUT) operations.",
+											Optional:    true,
+										},
+									},
+								},
+								"transform_jsonata": schema.StringAttribute{
+									Description: "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
+									Optional:    true,
+								},
+							},
+						},
+					},
+				},
 			},
 			"self_hosted_domains": schema.StringAttribute{
 				Description: "List of domains that Access will secure.",
@@ -304,11 +413,6 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 								Description: "The name of the claim.",
 								Optional:    true,
 							},
-							"name_by_idp": schema.MapAttribute{
-								Description: "A mapping from IdP ID to claim name.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
 							"required": schema.BoolAttribute{
 								Description: "If the claim is required when building an OIDC token.",
 								Optional:    true,
@@ -326,6 +430,11 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 									"name": schema.StringAttribute{
 										Description: "The name of the IdP claim.",
 										Optional:    true,
+									},
+									"name_by_idp": schema.MapAttribute{
+										Description: "A mapping from IdP ID to claim name.",
+										Optional:    true,
+										ElementType: types.StringType,
 									},
 								},
 							},
