@@ -1,0 +1,3 @@
+```release-note:new-data-source
+Add support for logpush cloudchamber_logs
+```
