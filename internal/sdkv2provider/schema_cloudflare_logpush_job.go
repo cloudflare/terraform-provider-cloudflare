@@ -29,6 +29,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"zero_trust_network_sessions",
 		"magic_ids_detections",
 		"page_shield_events",
+		"cloudchamber_logs",
 	}
 	frequencyAllowedValues := []string{"high", "low"}
 	outputTypeAllowedValues := []string{"ndjson", "csv"}
