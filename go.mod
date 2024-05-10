@@ -34,8 +34,8 @@ require (
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/aws/aws-sdk-go-v2 v1.26.1
-	github.com/aws/aws-sdk-go-v2/config v1.27.12
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.12
+	github.com/aws/aws-sdk-go-v2/config v1.27.13
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.13
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.53.2
 	github.com/cloudflare/cloudflare-go/v2 v2.2.0
 	github.com/google/go-cmp v0.6.0
@@ -62,7 +62,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.20.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.23.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.24.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.28.7 // indirect
 	github.com/aws/smithy-go v1.20.2 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
