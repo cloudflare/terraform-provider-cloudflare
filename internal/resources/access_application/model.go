@@ -33,6 +33,7 @@ type AccessApplicationModel struct {
 	PathCookieAttribute      types.Bool                         `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute"`
 	Policies                 *[]*AccessApplicationPoliciesModel `tfsdk:"policies" json:"policies"`
 	SameSiteCookieAttribute  types.String                       `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute"`
+	ScimConfig               *AccessApplicationScimConfigModel  `tfsdk:"scim_config" json:"scim_config"`
 	SelfHostedDomains        types.String                       `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
 	ServiceAuth401Redirect   types.Bool                         `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect"`
 	SessionDuration          types.String                       `tfsdk:"session_duration" json:"session_duration"`
@@ -53,8 +54,43 @@ type AccessApplicationCORSHeadersModel struct {
 }
 
 type AccessApplicationPoliciesModel struct {
-	ID         types.String `tfsdk:"id" json:"id"`
+	ID         types.String `tfsdk:"id" json:"id,computed"`
 	Precedence types.Int64  `tfsdk:"precedence" json:"precedence"`
+}
+
+type AccessApplicationScimConfigModel struct {
+	IdPUID             types.String                                    `tfsdk:"idp_uid" json:"idp_uid"`
+	RemoteURI          types.String                                    `tfsdk:"remote_uri" json:"remote_uri"`
+	Authentication     *AccessApplicationScimConfigAuthenticationModel `tfsdk:"authentication" json:"authentication"`
+	DeactivateOnDelete types.Bool                                      `tfsdk:"deactivate_on_delete" json:"deactivate_on_delete"`
+	Enabled            types.Bool                                      `tfsdk:"enabled" json:"enabled"`
+	Mappings           *[]*AccessApplicationScimConfigMappingsModel    `tfsdk:"mappings" json:"mappings"`
+}
+
+type AccessApplicationScimConfigAuthenticationModel struct {
+	Password         types.String `tfsdk:"password" json:"password"`
+	Scheme           types.String `tfsdk:"scheme" json:"scheme"`
+	User             types.String `tfsdk:"user" json:"user"`
+	Token            types.String `tfsdk:"token" json:"token"`
+	AuthorizationURL types.String `tfsdk:"authorization_url" json:"authorization_url"`
+	ClientID         types.String `tfsdk:"client_id" json:"client_id"`
+	ClientSecret     types.String `tfsdk:"client_secret" json:"client_secret"`
+	TokenURL         types.String `tfsdk:"token_url" json:"token_url"`
+	Scopes           types.String `tfsdk:"scopes" json:"scopes"`
+}
+
+type AccessApplicationScimConfigMappingsModel struct {
+	Schema           types.String                                        `tfsdk:"schema" json:"schema"`
+	Enabled          types.Bool                                          `tfsdk:"enabled" json:"enabled"`
+	Filter           types.String                                        `tfsdk:"filter" json:"filter"`
+	Operations       *AccessApplicationScimConfigMappingsOperationsModel `tfsdk:"operations" json:"operations"`
+	TransformJsonata types.String                                        `tfsdk:"transform_jsonata" json:"transform_jsonata"`
+}
+
+type AccessApplicationScimConfigMappingsOperationsModel struct {
+	Create types.Bool `tfsdk:"create" json:"create"`
+	Delete types.Bool `tfsdk:"delete" json:"delete"`
+	Update types.Bool `tfsdk:"update" json:"update"`
 }
 
 type AccessApplicationSaaSAppModel struct {
@@ -97,15 +133,15 @@ type AccessApplicationSaaSAppCustomAttributesSourceModel struct {
 }
 
 type AccessApplicationSaaSAppCustomClaimsModel struct {
-	Name      types.String                                     `tfsdk:"name" json:"name"`
-	NameByIdP map[string]types.String                          `tfsdk:"name_by_idp" json:"name_by_idp"`
-	Required  types.Bool                                       `tfsdk:"required" json:"required"`
-	Scope     types.String                                     `tfsdk:"scope" json:"scope"`
-	Source    *AccessApplicationSaaSAppCustomClaimsSourceModel `tfsdk:"source" json:"source"`
+	Name     types.String                                     `tfsdk:"name" json:"name"`
+	Required types.Bool                                       `tfsdk:"required" json:"required"`
+	Scope    types.String                                     `tfsdk:"scope" json:"scope"`
+	Source   *AccessApplicationSaaSAppCustomClaimsSourceModel `tfsdk:"source" json:"source"`
 }
 
 type AccessApplicationSaaSAppCustomClaimsSourceModel struct {
-	Name types.String `tfsdk:"name" json:"name"`
+	Name      types.String            `tfsdk:"name" json:"name"`
+	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp"`
 }
 
 type AccessApplicationSaaSAppRefreshTokenOptionsModel struct {
