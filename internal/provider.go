@@ -28,6 +28,7 @@ import (
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/notification_policy"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/notification_policy_webhooks"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/observatory_scheduled_test"
+	"github.com/cloudflare/cloudflare-terraform/internal/resources/r2_bucket"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/record"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/regional_tiered_cache"
 	"github.com/cloudflare/cloudflare-terraform/internal/resources/ruleset"
@@ -173,6 +174,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		mtls_certificate.NewResource,
 		notification_policy_webhooks.NewResource,
 		notification_policy.NewResource,
+		r2_bucket.NewResource,
 		device_posture_rule.NewResource,
 		device_posture_integration.NewResource,
 		access_identity_provider.NewResource,
