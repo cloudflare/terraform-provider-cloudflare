@@ -8,11 +8,14 @@ ENHANCEMENTS:
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.11 to 1.27.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.12 to 1.27.13 ([#3301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3301))
 * provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.11 to 1.17.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.12 to 1.17.13 ([#3301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3301))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.53.1 to 1.53.2 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
 * provider: bump bflad/action-milestone-comment from 1 to 2 ([#3299](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3299))
 * provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.1.0 to 2.2.0 ([#3298](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3298))
 * provider: bump github.com/hashicorp/terraform-plugin-mux from 0.15.0 to 0.16.0 ([#3296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3296))
+* provider: bump goreleaser/goreleaser-action from 5.0.0 to 5.1.0 ([#3302](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3302))
 
 ## 4.32.0 (May 8th, 2024)
 
