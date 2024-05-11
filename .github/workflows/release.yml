@@ -22,7 +22,7 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5.0.0
+        uses: goreleaser/goreleaser-action@v5.1.0
         with:
           version: latest
           args: release --rm-dist
