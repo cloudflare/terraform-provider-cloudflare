@@ -1,4 +1,4 @@
-module github.com/cloudflare/cloudflare-terraform
+module github.com/stainless-sdks/cloudflare-terraform
 
 go 1.19
 
