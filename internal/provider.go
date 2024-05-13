@@ -15,6 +15,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_application"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_identity_provider"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_service_token"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/account_member"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/address_map"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/bot_management"
@@ -175,6 +176,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		access_identity_provider.NewResource,
 		access_application.NewResource,
 		access_mutual_tls_certificate.NewResource,
+		access_service_token.NewResource,
 		tunnel.NewResource,
 		teams_account.NewResource,
 		teams_list.NewResource,
