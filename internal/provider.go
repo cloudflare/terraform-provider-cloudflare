@@ -19,14 +19,12 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/address_map"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/bot_management"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/byo_ip_prefix"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/certificate_pack"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/custom_hostname"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_posture_integration"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_posture_rule"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_address"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_catch_all"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_rule"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/hostname_tls_setting"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/keyless_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/logpush_job"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/mtls_certificate"
@@ -37,7 +35,6 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/record"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/regional_tiered_cache"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/ruleset"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/spectrum_application"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_account"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_list"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_location"
@@ -149,7 +146,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_cache_reserve.NewResource,
 		zone_cache_variants.NewResource,
 		regional_tiered_cache.NewResource,
-		certificate_pack.NewResource,
 		total_tls.NewResource,
 		custom_hostname.NewResource,
 		record.NewResource,
@@ -168,7 +164,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		worker_domain.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
-		spectrum_application.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
 		mtls_certificate.NewResource,
@@ -188,7 +183,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		turnstile_widget.NewResource,
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
-		hostname_tls_setting.NewResource,
 	}
 }
 
