@@ -7,8 +7,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/cloudflare/cloudflare-terraform/internal"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/stainless-sdks/cloudflare-terraform/internal"
 )
 
 var (
@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/cloudflare/cloudflare-terraform",
+		Address: "registry.terraform.io/stainless-sdks/cloudflare-terraform",
 		Debug:   debug,
 	}
 
