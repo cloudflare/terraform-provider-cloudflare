@@ -5,6 +5,10 @@ ENHANCEMENTS:
 * resource/cloudflare_access_application: added support for 'policies' argument ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
 * resource/cloudflare_access_policy: added support for reusable policies ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
 
+BUG FIXES:
+
+* resource/cloudflare_list_item: retry list ID fetch operations for the identifiers ([#3303](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3303))
+
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.11 to 1.27.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
