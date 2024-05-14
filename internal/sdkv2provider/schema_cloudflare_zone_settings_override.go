@@ -536,4 +536,20 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Optional:     true,
 		Computed:     true,
 	},
+
+	"nel": {
+		Type:     schema.TypeList,
+		Optional: true,
+		Computed: true,
+		MinItems: 1,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"enabled": {
+					Type:     schema.TypeBool,
+					Required: true,
+				},
+			},
+		},
+	},
 }

@@ -35,6 +35,7 @@ var fetchAsSingleSetting = []string{
 	"early_hints",
 	"origin_max_http_version",
 	"fonts",
+	"nel",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -186,7 +187,7 @@ func flattenZoneSettings(ctx context.Context, d *schema.ResourceData, settings [
 			continue
 		}
 
-		if s.ID == "minify" || s.ID == "mobile_redirect" {
+		if s.ID == "minify" || s.ID == "mobile_redirect" || s.ID == "nel" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})}
 		} else if s.ID == "security_header" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
@@ -354,7 +355,7 @@ func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settin
 				zoneSettingValue = settingValue
 			}
 		}
-	case "minify", "mobile_redirect":
+	case "minify", "mobile_redirect", "nel":
 		{
 			listValue := settingValue.([]interface{})
 			if len(listValue) > 0 && listValue != nil {
