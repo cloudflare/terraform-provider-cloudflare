@@ -1,0 +1,4 @@
+```release-note:new-resource
+cloudflare_risk_behavior
+```
+
