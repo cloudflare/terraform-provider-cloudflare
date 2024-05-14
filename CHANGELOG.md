@@ -4,6 +4,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_access_application: added support for 'policies' argument ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
 * resource/cloudflare_access_policy: added support for reusable policies ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
+* resource/cloudflare_zone_settings_override: add support for NEL ([#3305](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3305))
 
 BUG FIXES:
 
