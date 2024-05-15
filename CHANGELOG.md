@@ -1,5 +1,9 @@
 ## 4.34.0 (Unreleased)
 
+DEPENDENCIES:
+
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.53.2 to 1.54.0 in the aws group ([#3308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3308))
+
 ## 4.33.0 (May 15th, 2024)
 
 ENHANCEMENTS:
