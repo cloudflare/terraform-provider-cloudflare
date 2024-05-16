@@ -93,39 +93,39 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 }
 
 func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessServiceTokenModel
+	// var data *AccessServiceTokenModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	// resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	// if resp.Diagnostics.HasError() {
+	// 	return
+	// }
 
-	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
-		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
+	// res := new(http.Response)
+	// env := AccessServiceTokenResultEnvelope{*data}
+	// _, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
+	// 	ctx,
+	// 	data.ID.ValueString(),
+	// 	zero_trust.AccessServiceTokenGetParams{
+	// 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	// 		ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
+	// 	},
+	// 	option.WithResponseBodyInto(&res),
+	// 	option.WithMiddleware(logging.Middleware(ctx)),
+	// )
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	// 	return
+	// }
+	// bytes, _ := io.ReadAll(res.Body)
+	// err = apijson.Unmarshal(bytes, &env)
+	// if err != nil {
+	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	// 	return
+	// }
+	// data = &env.Result
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
