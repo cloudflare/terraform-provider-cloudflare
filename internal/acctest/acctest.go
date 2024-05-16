@@ -1,0 +1,85 @@
+package acctest
+
+import (
+	"os"
+	"testing"
+
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	cfv2 "github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/stainless-sdks/cloudflare-terraform/internal"
+)
+
+var (
+	// Integration test account ID.
+	testAccCloudflareAccountID string = "f037e56e89293a057740de681ac9abbe"
+
+	// Integration test account zone ID.
+	testAccCloudflareZoneID string = "0da42c8d2132a9ddaf714f9e7c920711"
+	// Integration test account zone name.
+	testAccCloudflareZoneName string = "terraform.cfapi.net"
+
+	// Integration test account alternate zone ID.
+	testAccCloudflareAltZoneID string = "b72110c08e3382597095c29ba7e661ea"
+	// Integration test account alternate zone name.
+	testAccCloudflareAltZoneName string = "terraform2.cfapi.net"
+)
+
+var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
+	"cloudflare": func() (tfprotov6.ProviderServer, error) {
+		return providerserver.NewProtocol6(internal.NewProvider("dev")())(), nil
+	},
+}
+
+func TestAccPreCheck(t *testing.T) {
+	// You can add code here to run prior to any test case execution, for example assertions
+	// about the appropriate environment variables being set are common to see in a pre-check
+	// function.
+}
+
+func TestAccPreCheck_Zone(t *testing.T) {
+	// You can add code here to run prior to any test case execution, for example assertions
+	// about the appropriate environment variables being set are common to see in a pre-check
+	// function.
+}
+
+func TestAccPreCheck_Account(t *testing.T) {
+	// You can add code here to run prior to any test case execution, for example assertions
+	// about the appropriate environment variables being set are common to see in a pre-check
+	// function.
+}
+
+func TestAccSkipForDefaultZone(t *testing.T, reason string) {
+	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
+		t.Skipf("Skipping acceptance test for default zone (%s). %s", testAccCloudflareZoneID, reason)
+	}
+}
+
+func TestAccSkipForDefaultAccount(t *testing.T, reason string) {
+	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
+		t.Skipf("Skipping acceptance test for default account (%s). %s", testAccCloudflareAccountID, reason)
+	}
+}
+
+// SharedV1Client returns a common Cloudflare V1 client setup needed for the
+// sweeper functions.
+func SharedV1Client() (*cfv1.API, error) {
+	client, err := cfv1.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
+
+	if err != nil {
+		return client, err
+	}
+
+	return client, nil
+}
+
+// SharedV2Client returns a common Cloudflare V2 client setup needed for the
+// sweeper functions.
+func SharedV2Client() *cfv2.Client {
+	return cfv2.NewClient(
+		option.WithAPIKey("CLOUDFLARE_API_KEY"),
+		option.WithAPIEmail("CLOUDFLARE_EMAIL"),
+	)
+}
