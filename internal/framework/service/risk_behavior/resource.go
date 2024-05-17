@@ -102,7 +102,6 @@ func (r *RiskBehaviorResource) Read(ctx context.Context, req resource.ReadReques
 }
 
 func ConvertBehaviorsTtoC(b []RiskBehaviorBehaviorModel) (map[string]cloudflare.Behavior, error) {
-
 	behaviorsMap := map[string]cloudflare.Behavior{}
 	for _, b := range b {
 		riskLevel, err := cloudflare.RiskLevelFromString(b.RiskLevel.ValueString())
@@ -124,7 +123,6 @@ func ConvertBehaviorsTtoC(b []RiskBehaviorBehaviorModel) (map[string]cloudflare.
 }
 
 func ConvertBehaviorsCtoT(b map[string]cloudflare.Behavior) []RiskBehaviorBehaviorModel {
-
 	behaviorsSet := []RiskBehaviorBehaviorModel{}
 
 	for k, b := range b {
