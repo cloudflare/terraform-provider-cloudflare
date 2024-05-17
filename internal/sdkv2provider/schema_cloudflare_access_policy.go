@@ -12,23 +12,26 @@ import (
 func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"application_id": {
-			Type:        schema.TypeString,
-			Required:    true,
+			Type:         schema.TypeString,
+			Optional:     true,
+			ForceNew:     true,
+			RequiredWith: []string{"precedence"},
+			Deprecated: "This field is deprecated. Policies can now be standalone and reusable by multiple applications." +
+				"Please use `cloudflare_access_application.policies` to associate policies with applications.",
 			Description: "The ID of the application the policy is associated with.",
 		},
 		consts.AccountIDSchemaKey: {
-			Description:   consts.AccountIDSchemaDescription,
-			Type:          schema.TypeString,
-			Optional:      true,
-			Computed:      true,
-			ConflictsWith: []string{consts.ZoneIDSchemaKey},
+			Description:  consts.AccountIDSchemaDescription,
+			Type:         schema.TypeString,
+			Optional:     true,
+			ForceNew:     true,
+			ExactlyOneOf: []string{consts.AccountIDSchemaKey, consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
-			Description:   consts.ZoneIDSchemaDescription,
-			Type:          schema.TypeString,
-			Optional:      true,
-			Computed:      true,
-			ConflictsWith: []string{consts.AccountIDSchemaKey},
+			Description: consts.ZoneIDSchemaDescription,
+			Type:        schema.TypeString,
+			Optional:    true,
+			ForceNew:    true,
 		},
 		"name": {
 			Type:        schema.TypeString,
@@ -36,8 +39,12 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Description: "Friendly name of the Access Policy.",
 		},
 		"precedence": {
-			Type:        schema.TypeInt,
-			Required:    true,
+			Type:         schema.TypeInt,
+			Optional:     true,
+			RequiredWith: []string{"application_id"},
+			Deprecated: "This field is deprecated. Access policies can now be reusable by multiple applications." +
+				" Please use `cloudflare_access_application.policies` to link policies to an application with" +
+				" ascending order of precedence.",
 			Description: "The unique precedence for policies on a single application.",
 		},
 		"decision": {

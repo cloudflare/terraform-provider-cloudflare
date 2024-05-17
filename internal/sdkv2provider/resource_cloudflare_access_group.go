@@ -41,7 +41,6 @@ func resourceCloudflareAccessGroupRead(ctx context.Context, d *schema.ResourceDa
 	}
 
 	accessGroup, err := client.GetAccessGroup(ctx, identifier, d.Id())
-
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
@@ -344,6 +343,10 @@ func BuildAccessGroupCondition(options map[string]interface{}) []interface{} {
 					group = append(group, cloudflare.AccessGroupEmailDomain{EmailDomain: struct {
 						Domain string `json:"domain"`
 					}{Domain: value.(string)}})
+				case "email_list":
+					group = append(group, cloudflare.AccessGroupEmailList{EmailList: struct {
+						ID string `json:"id"`
+					}{ID: value.(string)}})
 				case "ip":
 					group = append(group, cloudflare.AccessGroupIP{IP: struct {
 						IP string `json:"ip"`
@@ -399,6 +402,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	certificate := false
 	emails := []string{}
 	emailDomains := []string{}
+	emailLists := []string{}
 	ips := []string{}
 	ipList := []string{}
 	serviceTokens := []string{}
@@ -440,6 +444,10 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 			case "email_domain":
 				for _, domain := range groupValue.(map[string]interface{}) {
 					emailDomains = append(emailDomains, domain.(string))
+				}
+			case "email_list":
+				for _, list := range groupValue.(map[string]interface{}) {
+					emailLists = append(emailLists, list.(string))
 				}
 			case "ip":
 				for _, ip := range groupValue.(map[string]interface{}) {
@@ -563,6 +571,10 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 
 	if len(emailDomains) > 0 {
 		groupMap["email_domain"] = emailDomains
+	}
+
+	if len(emailLists) > 0 {
+		groupMap["email_list"] = emailLists
 	}
 
 	if len(ips) > 0 {

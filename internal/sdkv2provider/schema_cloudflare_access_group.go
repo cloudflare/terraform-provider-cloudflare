@@ -61,6 +61,13 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 				Type: schema.TypeString,
 			},
 		},
+		"email_list": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"ip": {
 			Type:        schema.TypeList,
 			Description: "An IPv4 or IPv6 CIDR block.",

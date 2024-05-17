@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
@@ -290,16 +291,33 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 	if err != nil {
 		return cfv1.ListItem{}, fmt.Errorf("failed to create list item: %w", err)
 	}
-	// this is extremely inefficient however, it's the only option as the list
-	// service uses a polling model and does not expose the ID.
-	searchTerm := getSearchTerm(data)
-	items, err := client.V1.ListListItems(ctx, accountIdentifier, cfv1.ListListItemsParams{
-		ID:     listID,
-		Search: searchTerm,
-	})
+
+	// terraform-plugin-framework doesn't have a built in retryable HTTP client (yet)
+	// so we use a simple loop with a break when we get the data we expect here.
+	var items []cfv1.ListItem
+	attempts := 0
+
+	for attempts < 5 {
+		attempts += 1
+
+		// this is extremely inefficient however, it's the only option as the list
+		// service uses a polling model and does not expose the ID.
+		searchTerm := getSearchTerm(data)
+		items, err = client.V1.ListListItems(ctx, accountIdentifier, cfv1.ListListItemsParams{
+			ID:     listID,
+			Search: searchTerm,
+		})
+
+		if len(items) == 1 {
+			break
+		}
+
+		time.Sleep(time.Duration(attempts) * time.Second)
+	}
 
 	if len(items) != 1 {
-		return cfv1.ListItem{}, fmt.Errorf("failed to match exactly one list item: %w", err)
+		return cfv1.ListItem{}, errors.New("failed to match exactly one list item")
 	}
+
 	return items[0], nil
 }

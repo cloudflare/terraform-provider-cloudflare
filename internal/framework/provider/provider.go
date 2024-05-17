@@ -24,6 +24,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
@@ -357,6 +358,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		hyperdrive_config.NewResource,
 		list_item.NewResource,
 		r2_bucket.NewResource,
+		risk_behavior.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
 		access_mutual_tls_hostname_settings.NewResource,

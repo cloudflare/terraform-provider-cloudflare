@@ -73,6 +73,7 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 		})
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating challenge widget", err.Error())
+		return
 	}
 
 	data = buildChallengeModelFromWidget(
@@ -96,6 +97,7 @@ func (r *TurnstileWidgetResource) Read(ctx context.Context, req resource.ReadReq
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading challenge widget", err.Error())
+		return
 	}
 
 	data = buildChallengeModelFromWidget(
@@ -129,6 +131,7 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading challenge widget", err.Error())
+		return
 	}
 
 	data = buildChallengeModelFromWidget(
@@ -151,6 +154,7 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 	err := r.client.V1.DeleteTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Error deleting challenge widget", err.Error())
+		return
 	}
 }
 
@@ -158,6 +162,7 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 	idParts := strings.Split(req.ID, "/")
 	if len(idParts) != 2 {
 		resp.Diagnostics.AddError("Error importing challenge widget", "Invalid ID specified. Please specify the ID as \"accounts_id/sitekey\"")
+		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("account_id"), idParts[0])...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)

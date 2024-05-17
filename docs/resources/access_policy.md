@@ -13,11 +13,13 @@ Provides a Cloudflare Access Policy resource. Access Policies are
 used in conjunction with Access Applications to restrict access to
 a particular resource.
 
-~> It's required that an `account_id` or `zone_id` is provided and in
-   most cases using either is fine. However, if you're using a scoped
-   access token, you must provide the argument that matches the token's
-   scope. For example, an access token that is scoped to the "example.com"
-   zone needs to use the `zone_id` argument.
+~> It's required that an `account_id` or `zone_id` is provided and in most cases using either is fine.
+   However, if you're using a scoped access token, you must provide the argument that matches the token's
+   scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
+   If 'application_id' is omitted, the policy created can be reused by multiple access applications.
+   Any access_application resource can reference reusable policies through its `policies` argument.
+   To destroy a reusable policy and remove it from all applications' policies lists on the same apply, preemptively set the
+   lifecycle option `create_before_destroy` to true on the 'access_policy' resource.
 
 ## Example Usage
 
@@ -62,24 +64,24 @@ resource "cloudflare_access_policy" "test_policy" {
 
 ### Required
 
-- `application_id` (String) The ID of the application the policy is associated with.
 - `decision` (String) Defines the action Access will take if the policy matches the user. Available values: `allow`, `deny`, `non_identity`, `bypass`.
 - `include` (Block List, Min: 1) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--include))
 - `name` (String) Friendly name of the Access Policy.
-- `precedence` (Number) The unique precedence for policies on a single application.
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`.
+- `account_id` (String) The account identifier to target for the resource. Must provide only one of `account_id`, `zone_id`. **Modifying this attribute will force creation of a new resource.**
+- `application_id` (String, Deprecated) The ID of the application the policy is associated with. Required when using `precedence`. **Modifying this attribute will force creation of a new resource.**
 - `approval_group` (Block List) (see [below for nested schema](#nestedblock--approval_group))
 - `approval_required` (Boolean)
 - `exclude` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--exclude))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy.
+- `precedence` (Number, Deprecated) The unique precedence for policies on a single application. Required when using `application_id`.
 - `purpose_justification_prompt` (String) The prompt to display to the user for a justification for accessing the resource. Required when using `purpose_justification_required`.
 - `purpose_justification_required` (Boolean) Whether to prompt the user for a justification for accessing the resource.
 - `require` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--require))
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`.
-- `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
+- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 
@@ -100,6 +102,7 @@ Optional:
 - `device_posture` (List of String)
 - `email` (List of String)
 - `email_domain` (List of String)
+- `email_list` (List of String)
 - `everyone` (Boolean)
 - `external_evaluation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--include--external_evaluation))
 - `geo` (List of String)
@@ -208,6 +211,7 @@ Optional:
 - `device_posture` (List of String)
 - `email` (List of String)
 - `email_domain` (List of String)
+- `email_list` (List of String)
 - `everyone` (Boolean)
 - `external_evaluation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--exclude--external_evaluation))
 - `geo` (List of String)
@@ -303,6 +307,7 @@ Optional:
 - `device_posture` (List of String)
 - `email` (List of String)
 - `email_domain` (List of String)
+- `email_list` (List of String)
 - `everyone` (Boolean)
 - `external_evaluation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--require--external_evaluation))
 - `geo` (List of String)

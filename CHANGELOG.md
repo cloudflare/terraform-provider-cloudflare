@@ -1,8 +1,63 @@
-## 4.32.0 (Unreleased)
+## 4.34.0 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** `cloudflare_risk_behavior` ([#3307](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3307))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.13 to 1.27.14 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.13 to 1.17.14 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.0 to 1.54.1 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.26.1 to 1.26.2 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.53.2 to 1.54.0 in the aws group ([#3308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3308))
+
+## 4.33.0 (May 15th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: added support for 'policies' argument ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
+* resource/cloudflare_access_policy: added support for reusable policies ([#3288](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3288))
+* resource/cloudflare_zone_settings_override: add support for NEL ([#3305](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3305))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: retry list ID fetch operations for the identifiers ([#3303](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3303))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.11 to 1.27.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.12 to 1.27.13 ([#3301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3301))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.11 to 1.17.12 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.12 to 1.17.13 ([#3301](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3301))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.53.1 to 1.53.2 ([#3295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3295))
+* provider: bump bflad/action-milestone-comment from 1 to 2 ([#3299](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3299))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.1.0 to 2.2.0 ([#3298](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3298))
+* provider: bump github.com/hashicorp/terraform-plugin-mux from 0.15.0 to 0.16.0 ([#3296](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3296))
+* provider: bump goreleaser/goreleaser-action from 5.0.0 to 5.1.0 ([#3302](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3302))
+
+## 4.32.0 (May 8th, 2024)
 
 NOTES:
 
 * resource/cloudflare_rate_limit: This resource is being deprecated in favor of the cloudflare_rulesets resource ([#3279](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3279))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: add support for SCIM provisioning configuration ([#3291](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3291))
+* resource/cloudflare_access_group: Add the option for email_list to be used in require, include and exclude fields ([#3247](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3247))
+* resource/cloudflare_device_posture_rules: added support for os_version_extra ([#3281](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3281))
+
+BUG FIXES:
+
+* resource/cloudflare_turnstile: Fix error handling corrupting state ([#3284](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3284))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.94.0 to 0.95.0 ([#3294](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3294))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.22.2 to 0.23.0 ([#3289](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3289))
+* provider: bump golang.org/x/net from 0.24.0 to 0.25.0 ([#3290](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3290))
+* provider: bump golangci/golangci-lint-action from 5 to 6 ([#3293](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3293))
 
 ## 4.31.0 (May 1st, 2024)
 

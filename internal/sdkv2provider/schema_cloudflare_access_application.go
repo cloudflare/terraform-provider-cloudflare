@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -58,6 +59,17 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Default:      "self_hosted",
 			ValidateFunc: validation.StringInSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"}, false),
 			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"})),
+		},
+		"policies": {
+			Type: schema.TypeList,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Optional: true,
+			Description: "The policies associated with the application, in ascending order of precedence." +
+				" When omitted, the application policies are not be updated." +
+				" Warning: Do not use this field while you still have this application ID referenced as `application_id`" +
+				" in an `cloudflare_access_policy` resource, as it can result in an inconsistent state.",
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
@@ -464,6 +476,176 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Default:     false,
 			Description: "Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.",
 		},
+		"scim_config": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "Configuration for provisioning to this application via SCIM. This is currently in closed beta.",
+			MaxItems:    1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"enabled": {
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Whether SCIM provisioning is turned on for this application.",
+					},
+					"remote_uri": {
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "The base URI for the application's SCIM-compatible API.",
+					},
+					"idp_uid": {
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
+					},
+					"deactivate_on_delete": {
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.",
+					},
+					"authentication": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "Attributes for configuring HTTP Basic, OAuth Bearer token, or OAuth 2 authentication schemes for SCIM provisioning to an application.",
+						MaxItems:    1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								// Common Attributes
+								"scheme": {
+									Type:         schema.TypeString,
+									Required:     true,
+									ValidateFunc: validation.StringInSlice([]string{"httpbasic", "oauthbearertoken", "oauth2"}, false),
+									Description:  "The authentication scheme to use when making SCIM requests to this application.",
+								},
+								// HTTP Basic Authentication Attributes
+								"user": {
+									Type:          schema.TypeString,
+									Optional:      true,
+									RequiredWith:  []string{"scim_config.0.authentication.0.password"},
+									ConflictsWith: []string{"scim_config.0.authentication.0.token", "scim_config.0.authentication.0.client_id", "scim_config.0.authentication.0.client_secret", "scim_config.0.authentication.0.authorization_url", "scim_config.0.authentication.0.token_url", "scim_config.0.authentication.0.scopes"},
+									Description:   "User name used to authenticate with the remote SCIM service.",
+								},
+								"password": {
+									Type:          schema.TypeString,
+									Optional:      true,
+									RequiredWith:  []string{"scim_config.0.authentication.0.user"},
+									ConflictsWith: []string{"scim_config.0.authentication.0.token", "scim_config.0.authentication.0.client_id", "scim_config.0.authentication.0.client_secret", "scim_config.0.authentication.0.authorization_url", "scim_config.0.authentication.0.token_url", "scim_config.0.authentication.0.scopes"},
+									StateFunc: func(val interface{}) string {
+										return CONCEALED_STRING
+									},
+								},
+								// OAuth Bearer Token Authentication Attributes
+								"token": {
+									Type:          schema.TypeString,
+									Optional:      true,
+									Description:   "Token used to authenticate with the remote SCIM service.",
+									ConflictsWith: []string{"scim_config.0.authentication.0.user", "scim_config.0.authentication.0.password", "scim_config.0.authentication.0.client_id", "scim_config.0.authentication.0.client_secret", "scim_config.0.authentication.0.authorization_url", "scim_config.0.authentication.0.token_url", "scim_config.0.authentication.0.scopes"},
+									StateFunc: func(val interface{}) string {
+										return CONCEALED_STRING
+									},
+								},
+								// OAuth 2 Authentication Attributes
+								"client_id": {
+									Type:          schema.TypeString,
+									Optional:      true,
+									Description:   "Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.",
+									RequiredWith:  []string{"scim_config.0.authentication.0.client_secret", "scim_config.0.authentication.0.authorization_url", "scim_config.0.authentication.0.token_url"},
+									ConflictsWith: []string{"scim_config.0.authentication.0.user", "scim_config.0.authentication.0.password", "scim_config.0.authentication.0.token"},
+								},
+								"client_secret": {
+									Type:          schema.TypeString,
+									Optional:      true,
+									Description:   "Secret used to authenticate when generating a token for authenticating with the remove SCIM service.",
+									RequiredWith:  []string{"scim_config.0.authentication.0.client_id", "scim_config.0.authentication.0.authorization_url", "scim_config.0.authentication.0.token_url"},
+									ConflictsWith: []string{"scim_config.0.authentication.0.user", "scim_config.0.authentication.0.password", "scim_config.0.authentication.0.token"},
+									StateFunc: func(val interface{}) string {
+										return CONCEALED_STRING
+									},
+								},
+								"authorization_url": {
+									Type:          schema.TypeString,
+									Optional:      true,
+									Description:   "URL used to generate the auth code used during token generation.",
+									RequiredWith:  []string{"scim_config.0.authentication.0.client_secret", "scim_config.0.authentication.0.client_id", "scim_config.0.authentication.0.token_url"},
+									ConflictsWith: []string{"scim_config.0.authentication.0.user", "scim_config.0.authentication.0.password", "scim_config.0.authentication.0.token"},
+								},
+								"token_url": {
+									Type:          schema.TypeString,
+									Optional:      true,
+									Description:   "URL used to generate the token used to authenticate with the remote SCIM service.",
+									RequiredWith:  []string{"scim_config.0.authentication.0.client_secret", "scim_config.0.authentication.0.authorization_url", "scim_config.0.authentication.0.client_id"},
+									ConflictsWith: []string{"scim_config.0.authentication.0.user", "scim_config.0.authentication.0.password", "scim_config.0.authentication.0.token"},
+								},
+								"scopes": {
+									Type:          schema.TypeSet,
+									Description:   "The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.",
+									Optional:      true,
+									ConflictsWith: []string{"scim_config.0.authentication.0.user", "scim_config.0.authentication.0.password", "scim_config.0.authentication.0.token"},
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+								},
+							},
+						},
+					},
+					"mappings": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"schema": {
+									Type:         schema.TypeString,
+									Required:     true,
+									Description:  "Which SCIM resource type this mapping applies to.",
+									ValidateFunc: validation.StringMatch(regexp.MustCompile(`urn:.*`), "schema must begin with \"urn:\""),
+								},
+								"enabled": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "Whether or not this mapping is enabled.",
+								},
+								"filter": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.",
+								},
+								"transform_jsonata": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
+								},
+								"operations": {
+									Type:        schema.TypeList,
+									Optional:    true,
+									Description: "Whether or not this mapping applies to creates, updates, or deletes.",
+									MaxItems:    1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"create": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Whether or not this mapping applies to create (POST) operations.",
+											},
+											"update": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Whether or not this mapping applies to update (PATCH/PUT) operations.",
+											},
+											"delete": {
+												Type:        schema.TypeBool,
+												Optional:    true,
+												Description: "Whether or not this mapping applies to DELETE operations.",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -621,6 +803,114 @@ func convertFooterLinksSchemaToStruct(d *schema.ResourceData) []cloudflare.Acces
 	return footerLinks
 }
 
+func convertSCIMConfigSchemaToStruct(d *schema.ResourceData) *cloudflare.AccessApplicationSCIMConfig {
+	scimConfig := new(cloudflare.AccessApplicationSCIMConfig)
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		scimConfig.Enabled = cloudflare.BoolPtr(d.Get("scim_config.0.enabled").(bool))
+		scimConfig.RemoteURI = d.Get("scim_config.0.remote_uri").(string)
+		scimConfig.IdPUID = d.Get("scim_config.0.idp_uid").(string)
+		scimConfig.DeactivateOnDelete = cloudflare.BoolPtr(d.Get("scim_config.0.deactivate_on_delete").(bool))
+
+		if _, ok := d.GetOk("scim_config.0.authentication"); ok {
+			scimConfig.Authentication = convertScimConfigAuthenticationSchemaToStruct(d)
+		}
+
+		mappings := d.Get("scim_config.0.mappings").([]interface{})
+
+		for _, mapping := range mappings {
+			mappingMap := mapping.(map[string]interface{})
+			scimConfig.Mappings = append(scimConfig.Mappings, convertScimConfigMappingsSchemaToStruct(mappingMap))
+		}
+	}
+
+	return scimConfig
+}
+
+func convertScimConfigMappingsSchemaToStruct(mappingData map[string]interface{}) *cloudflare.AccessApplicationScimMapping {
+	mapping := new(cloudflare.AccessApplicationScimMapping)
+
+	if mappingSchema, ok := mappingData["schema"]; ok {
+		mapping.Schema = mappingSchema.(string)
+	}
+
+	if enabled, ok := mappingData["enabled"]; ok {
+		mapping.Enabled = cloudflare.BoolPtr(enabled.(bool))
+	}
+
+	if filter, ok := mappingData["filter"]; ok {
+		mapping.Filter = filter.(string)
+	}
+
+	if transformJsonata, ok := mappingData["transform_jsonata"]; ok {
+		mapping.TransformJsonata = transformJsonata.(string)
+	}
+
+	if operations, ok := mappingData["operations"]; ok {
+		ops := new(cloudflare.AccessApplicationScimMappingOperations)
+
+		operationsArr := operations.([]interface{})
+
+		if len(operationsArr) != 0 {
+			operationsData := operationsArr[0].(map[string]interface{})
+
+			if create, ok := operationsData["create"]; ok {
+				ops.Create = cloudflare.BoolPtr(create.(bool))
+			}
+
+			if update, ok := operationsData["update"]; ok {
+				ops.Update = cloudflare.BoolPtr(update.(bool))
+			}
+
+			if del, ok := operationsData["delete"]; ok {
+				ops.Delete = cloudflare.BoolPtr(del.(bool))
+			}
+		}
+
+		mapping.Operations = ops
+	}
+
+	return mapping
+}
+
+func convertScimConfigAuthenticationSchemaToStruct(d *schema.ResourceData) *cloudflare.AccessApplicationScimAuthenticationJson {
+	auth := new(cloudflare.AccessApplicationScimAuthenticationJson)
+
+	if _, ok := d.GetOk("scim_config.0.authentication"); ok {
+		scheme := cloudflare.AccessApplicationScimAuthenticationScheme(d.Get("scim_config.0.authentication.0.scheme").(string))
+		switch scheme {
+		case cloudflare.AccessApplicationScimAuthenticationSchemeHttpBasic:
+			base := &cloudflare.AccessApplicationScimAuthenticationHttpBasic{
+				User:     d.Get("scim_config.0.authentication.0.user").(string),
+				Password: d.Get("scim_config.0.authentication.0.password").(string),
+			}
+			base.Scheme = scheme
+			auth.Value = base
+			break
+		case cloudflare.AccessApplicationScimAuthenticationSchemeOauthBearerToken:
+			base := &cloudflare.AccessApplicationScimAuthenticationOauthBearerToken{
+				Token: d.Get("scim_config.0.authentication.0.token").(string),
+			}
+			base.Scheme = scheme
+			auth.Value = base
+			break
+		case cloudflare.AccessApplicationScimAuthenticationSchemeOauth2:
+			base := &cloudflare.AccessApplicationScimAuthenticationOauth2{
+				ClientID:         d.Get("scim_config.0.authentication.0.client_id").(string),
+				ClientSecret:     d.Get("scim_config.0.authentication.0.client_secret").(string),
+				AuthorizationURL: d.Get("scim_config.0.authentication.0.authorization_url").(string),
+				TokenURL:         d.Get("scim_config.0.authentication.0.token_url").(string),
+				Scopes:           expandInterfaceToStringList(d.Get("scim_config.0.authentication.0.scopes").(*schema.Set).List()),
+			}
+			base.Scheme = scheme
+			auth.Value = base
+			break
+		}
+	}
+
+	return auth
+}
+
 func convertLandingPageDesignStructToSchema(d *schema.ResourceData, design *cloudflare.AccessLandingPageDesign) []interface{} {
 	if _, ok := d.GetOk("landing_page_design"); !ok {
 		return []interface{}{}
@@ -724,4 +1014,75 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 
 		return []interface{}{m}
 	}
+}
+
+func convertScimConfigStructToSchema(scimConfig *cloudflare.AccessApplicationSCIMConfig) []interface{} {
+	if scimConfig == nil {
+		return []interface{}{}
+	}
+
+	config := map[string]interface{}{
+		"enabled":              scimConfig.Enabled,
+		"remote_uri":           scimConfig.RemoteURI,
+		"idp_uid":              scimConfig.IdPUID,
+		"deactivate_on_delete": cloudflare.Bool(scimConfig.DeactivateOnDelete),
+		"authentication":       convertScimConfigAuthenticationStructToSchema(scimConfig.Authentication),
+		"mappings":             convertScimConfigMappingsStructsToSchema(scimConfig.Mappings),
+	}
+
+	return []interface{}{config}
+}
+
+func convertScimConfigAuthenticationStructToSchema(scimAuth *cloudflare.AccessApplicationScimAuthenticationJson) []interface{} {
+	if scimAuth == nil || scimAuth.Value == nil {
+		return []interface{}{}
+	}
+
+	auth := map[string]interface{}{}
+	switch t := scimAuth.Value.(type) {
+	case *cloudflare.AccessApplicationScimAuthenticationHttpBasic:
+		auth["scheme"] = t.Scheme
+		auth["user"] = t.User
+		auth["password"] = t.Password
+
+	case *cloudflare.AccessApplicationScimAuthenticationOauthBearerToken:
+		auth["scheme"] = t.Scheme
+		auth["token"] = t.Token
+	case *cloudflare.AccessApplicationScimAuthenticationOauth2:
+		auth["scheme"] = t.Scheme
+		auth["client_id"] = t.ClientID
+		auth["client_secret"] = t.ClientSecret
+		auth["authorization_url"] = t.AuthorizationURL
+		auth["token_url"] = t.TokenURL
+		auth["scopes"] = t.Scopes
+	}
+
+	return []interface{}{auth}
+}
+
+func convertScimConfigMappingsStructsToSchema(mappingsData []*cloudflare.AccessApplicationScimMapping) []interface{} {
+	mappings := []interface{}{}
+
+	for _, mapping := range mappingsData {
+		newMapping := map[string]interface{}{
+			"schema":            mapping.Schema,
+			"enabled":           mapping.Enabled,
+			"filter":            mapping.Filter,
+			"transform_jsonata": mapping.TransformJsonata,
+		}
+
+		if mapping.Operations != nil {
+			newMapping["operations"] = []interface{}{
+				map[string]interface{}{
+					"create": cloudflare.Bool(mapping.Operations.Create),
+					"update": cloudflare.Bool(mapping.Operations.Update),
+					"delete": cloudflare.Bool(mapping.Operations.Delete),
+				},
+			}
+		}
+
+		mappings = append(mappings, newMapping)
+	}
+
+	return mappings
 }

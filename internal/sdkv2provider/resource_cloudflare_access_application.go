@@ -87,6 +87,11 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	if value, ok := d.GetOk("tags"); ok {
 		newAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		newAccessApplication.SCIMConfig = convertSCIMConfigSchemaToStruct(d)
+	}
+
 	if appType == "app_launcher" {
 		newAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
 			LogoURL:               d.Get("app_launcher_logo_url").(string),
@@ -103,6 +108,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 			footerLinks := convertFooterLinksSchemaToStruct(d)
 			newAccessApplication.AccessAppLauncherCustomization.FooterLinks = footerLinks
 		}
+	}
+
+	if policies, ok := d.GetOk("policies"); ok {
+		newAccessApplication.Policies = expandInterfaceToStringList(policies)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
@@ -212,6 +221,20 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
 	}
 
+	scimConfig := convertScimConfigStructToSchema(accessApplication.SCIMConfig)
+
+	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Application SCIM configuration: %w", scimConfigErr))
+	}
+
+	if _, ok := d.GetOk("policies"); ok {
+		policyIDs := make([]string, len(accessApplication.Policies))
+		for i := range accessApplication.Policies {
+			policyIDs[i] = accessApplication.Policies[i].ID
+		}
+		d.Set("policies", policyIDs)
+	}
+
 	return nil
 }
 
@@ -260,6 +283,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		updatedAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
+	if value, ok := d.GetOk("policies"); ok {
+		policies := expandInterfaceToStringList(value)
+		updatedAccessApplication.Policies = &policies
+	}
+
 	if _, ok := d.GetOk("cors_headers"); ok {
 		CORSConfig, err := convertCORSSchemaToStruct(d)
 		if err != nil {
@@ -276,6 +304,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	if value, ok := d.GetOk("tags"); ok {
 		updatedAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		updatedAccessApplication.SCIMConfig = convertSCIMConfigSchemaToStruct(d)
+	}
+
 	if appType == "app_launcher" {
 		updatedAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
 			LogoURL:               d.Get("app_launcher_logo_url").(string),

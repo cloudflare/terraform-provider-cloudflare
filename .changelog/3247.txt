@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_group: Add the option for email_list to be used in require, include and exclude fields
+```

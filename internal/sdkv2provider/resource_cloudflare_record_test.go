@@ -210,7 +210,7 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("_xmpp-client._tcp.%s", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("_xmpp-client._tcp.%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "value", "0	5222	talk.l.google.com"),
+					resource.TestCheckResourceAttr(resourceName, "value", "0 5222 talk.l.google.com"),
 					resource.TestCheckResourceAttr(resourceName, "proxiable", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.priority", "5"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.weight", "0"),

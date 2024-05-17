@@ -107,6 +107,7 @@ Optional:
 - `minify` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--minify))
 - `mirage` (String)
 - `mobile_redirect` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--mobile_redirect))
+- `nel` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--nel))
 - `opportunistic_encryption` (String)
 - `opportunistic_onion` (String)
 - `orange_to_orange` (String)
@@ -153,6 +154,14 @@ Required:
 - `mobile_subdomain` (String)
 - `status` (String)
 - `strip_uri` (Boolean)
+
+
+<a id="nestedblock--settings--nel"></a>
+### Nested Schema for `settings.nel`
+
+Required:
+
+- `enabled` (Boolean)
 
 
 <a id="nestedblock--settings--security_header"></a>
@@ -202,6 +211,7 @@ Read-Only:
 - `minify` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--minify))
 - `mirage` (String)
 - `mobile_redirect` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--mobile_redirect))
+- `nel` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--nel))
 - `opportunistic_encryption` (String)
 - `opportunistic_onion` (String)
 - `orange_to_orange` (String)
@@ -248,6 +258,14 @@ Read-Only:
 - `mobile_subdomain` (String)
 - `status` (String)
 - `strip_uri` (Boolean)
+
+
+<a id="nestedobjatt--initial_settings--nel"></a>
+### Nested Schema for `initial_settings.nel`
+
+Read-Only:
+
+- `enabled` (Boolean)
 
 
 <a id="nestedobjatt--initial_settings--security_header"></a>

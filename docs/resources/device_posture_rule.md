@@ -30,6 +30,7 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
     operator           = "<"
     os_distro_name     = "ubuntu"
     os_distro_revision = "1.0.0"
+    os_version_extra   = "(a)"
   }
 }
 ```
@@ -80,6 +81,7 @@ Optional:
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
 - `os_distro_name` (String) The operating system excluding version information.
 - `os_distro_revision` (String) The operating system version excluding OS name information or release name.
+- `os_version_extra` (String) Extra version value following the operating system semantic version.
 - `overall` (String) Overall ZTA score from Crowdstrike. Value must be between 1 and 100.
 - `path` (String) The path to the file.
 - `require_all` (Boolean) True if all drives must be encrypted.

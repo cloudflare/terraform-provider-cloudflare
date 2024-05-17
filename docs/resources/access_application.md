@@ -72,8 +72,10 @@ resource "cloudflare_access_application" "staging_app" {
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
 - `name` (String) Friendly name of the Access Application.
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set. Defaults to `false`.
+- `policies` (List of String) The policies associated with the application, in ascending order of precedence. When omitted, the application policies are not be updated. Warning: Do not use this field while you still have this application ID referenced as `application_id` in an `cloudflare_access_policy` resource, as it can result in an inconsistent state.
 - `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
+- `scim_config` (Block List, Max: 1) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedblock--scim_config))
 - `self_hosted_domains` (Set of String) List of domains that access will secure. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`.
 - `service_auth_401_redirect` (Boolean) Option to return a 401 status code in service authentication rules on failed requests. Defaults to `false`.
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`. Defaults to `24h`.
@@ -170,6 +172,66 @@ Optional:
 Required:
 
 - `name` (String) The name of the attribute as provided by the IDP.
+
+
+
+
+<a id="nestedblock--scim_config"></a>
+### Nested Schema for `scim_config`
+
+Required:
+
+- `idp_uid` (String) The UID of the IdP to use as the source for SCIM resources to provision to this application.
+- `remote_uri` (String) The base URI for the application's SCIM-compatible API.
+
+Optional:
+
+- `authentication` (Block List, Max: 1) Attributes for configuring HTTP Basic, OAuth Bearer token, or OAuth 2 authentication schemes for SCIM provisioning to an application. (see [below for nested schema](#nestedblock--scim_config--authentication))
+- `deactivate_on_delete` (Boolean) If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.
+- `enabled` (Boolean) Whether SCIM provisioning is turned on for this application.
+- `mappings` (Block List) A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned. (see [below for nested schema](#nestedblock--scim_config--mappings))
+
+<a id="nestedblock--scim_config--authentication"></a>
+### Nested Schema for `scim_config.authentication`
+
+Required:
+
+- `scheme` (String) The authentication scheme to use when making SCIM requests to this application.
+
+Optional:
+
+- `authorization_url` (String) URL used to generate the auth code used during token generation. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service. Required when using `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `password` (String) Required when using `scim_config.0.authentication.0.user`. Conflicts with `scim_config.0.authentication.0.token`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
+- `scopes` (Set of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `token` (String) Token used to authenticate with the remote SCIM service. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
+- `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.client_id`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `user` (String) User name used to authenticate with the remote SCIM service. Required when using `scim_config.0.authentication.0.password`. Conflicts with `scim_config.0.authentication.0.token`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
+
+
+<a id="nestedblock--scim_config--mappings"></a>
+### Nested Schema for `scim_config.mappings`
+
+Required:
+
+- `schema` (String) Which SCIM resource type this mapping applies to.
+
+Optional:
+
+- `enabled` (Boolean) Whether or not this mapping is enabled.
+- `filter` (String) A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.
+- `operations` (Block List, Max: 1) Whether or not this mapping applies to creates, updates, or deletes. (see [below for nested schema](#nestedblock--scim_config--mappings--operations))
+- `transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.
+
+<a id="nestedblock--scim_config--mappings--operations"></a>
+### Nested Schema for `scim_config.mappings.operations`
+
+Optional:
+
+- `create` (Boolean) Whether or not this mapping applies to create (POST) operations.
+- `delete` (Boolean) Whether or not this mapping applies to DELETE operations.
+- `update` (Boolean) Whether or not this mapping applies to update (PATCH/PUT) operations.
 
 ## Import
 
