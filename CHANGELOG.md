@@ -11,6 +11,7 @@ DEPENDENCIES:
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.0 to 1.54.1 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
 * provider: bump `github.com/aws/aws-sdk-go-v2` from 1.26.1 to 1.26.2 ([#3310](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3310))
 * provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.53.2 to 1.54.0 in the aws group ([#3308](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3308))
+* provider: bump github.com/hashicorp/terraform-plugin-sdk/v2 from 2.33.0 to 2.34.0 ([#3316](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3316))
 
 ## 4.33.0 (May 15th, 2024)
 
