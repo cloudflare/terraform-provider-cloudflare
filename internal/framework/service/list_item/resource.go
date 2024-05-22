@@ -312,6 +312,7 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 			break
 		}
 
+		//lintignore:R018
 		time.Sleep(time.Duration(attempts) * time.Second)
 	}
 
