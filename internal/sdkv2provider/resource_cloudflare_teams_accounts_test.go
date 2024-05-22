@@ -61,6 +61,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "proxy.0.tcp", "true"),
 					resource.TestCheckResourceAttr(name, "proxy.0.udp", "false"),
 					resource.TestCheckResourceAttr(name, "proxy.0.root_ca", "true"),
+					resource.TestCheckResourceAttr(name, "proxy.0.virtual_ip", "true"),
 					resource.TestCheckResourceAttr(name, "payload_log.0.public_key", "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="),
 					resource.TestCheckResourceAttr(name, "ssh_session_log.0.public_key", "testvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="),
 					resource.TestCheckResourceAttr(name, "non_identity_browser_isolation_enabled", "false"),
@@ -109,6 +110,7 @@ resource "cloudflare_teams_account" "%[1]s" {
     tcp = true
     udp = false
 	root_ca = true
+	virtual_ip = true
   }
   logging {
     redact_pii = true

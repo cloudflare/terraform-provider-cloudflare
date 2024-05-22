@@ -242,6 +242,11 @@ var proxySchema = map[string]*schema.Schema{
 		Required:    true,
 		Description: "Whether root ca is enabled account wide for ZT clients.",
 	},
+	"virtual_ip": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether virtual ip (CGNAT) is enabled account wide and will override existing local interface IP for ZT clients.",
+	},
 }
 
 var loggingSchema = map[string]*schema.Schema{

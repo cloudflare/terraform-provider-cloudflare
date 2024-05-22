@@ -33,6 +33,7 @@ resource "cloudflare_teams_account" "example" {
     tcp     = true
     udp     = true
     root_ca = true
+    virtual_ip = false
   }
 
   url_browser_isolation_enabled = true
