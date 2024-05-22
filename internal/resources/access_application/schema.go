@@ -444,12 +444,25 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 						Description: "The OIDC flows supported by this application",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("authorization_code", "authorization_code_with_pkce", "refresh_tokens"),
+							stringvalidator.OneOfCaseInsensitive("authorization_code", "authorization_code_with_pkce", "refresh_tokens", "hybrid", "implicit"),
 						},
 					},
 					"group_filter_regex": schema.StringAttribute{
 						Description: "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
 						Optional:    true,
+					},
+					"hybrid_and_implicit_options": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"return_access_token_from_authorization_endpoint": schema.BoolAttribute{
+								Description: "If an Access Token should be returned from the OIDC Authorization endpoint",
+								Optional:    true,
+							},
+							"return_id_token_from_authorization_endpoint": schema.BoolAttribute{
+								Description: "If an ID Token should be returned from the OIDC Authorization endpoint",
+								Optional:    true,
+							},
+						},
 					},
 					"redirect_uris": schema.StringAttribute{
 						Description: "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
