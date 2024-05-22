@@ -10,13 +10,6 @@ import (
 )
 
 func TestAccCloudflareWorkerRoute_Import(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	var route cloudflare.WorkerRoute
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

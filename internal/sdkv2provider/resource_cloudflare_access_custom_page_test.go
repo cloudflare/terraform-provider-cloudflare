@@ -9,10 +9,6 @@ import (
 )
 
 func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -36,10 +32,6 @@ func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 }
 
 func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

@@ -53,12 +53,6 @@ func testSweepCloudflareList(r string) error {
 }
 
 func TestAccCloudflareList_Exists(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -85,12 +79,6 @@ func TestAccCloudflareList_Exists(t *testing.T) {
 }
 
 func TestAccCloudflareList_UpdateDescription(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -134,12 +122,6 @@ func TestAccCloudflareList_UpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareList_Update(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rndIP := generateRandomResourceName()
 	rndRedirect := generateRandomResourceName()
 	rndASN := generateRandomResourceName()
@@ -279,12 +261,6 @@ func TestAccCloudflareList_Update(t *testing.T) {
 }
 
 func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -306,12 +282,6 @@ func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
 }
 
 func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -352,12 +322,6 @@ func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
 
 func TestAccCloudflareList_Import(t *testing.T) {
 	t.Skip("Pending investigation into item.0.value.0.asn being imported incorrectly")
-
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)

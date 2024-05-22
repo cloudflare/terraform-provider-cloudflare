@@ -3,7 +3,6 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -14,13 +13,6 @@ import (
 )
 
 func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
@@ -47,13 +39,6 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
@@ -91,13 +76,6 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 }
 
 func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 

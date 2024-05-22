@@ -9,10 +9,6 @@ import (
 )
 
 func TestAccCloudflareAccessTag_Basic(t *testing.T) {
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_access_tag.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

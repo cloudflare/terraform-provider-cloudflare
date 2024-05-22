@@ -14,11 +14,6 @@ import (
 )
 
 func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd
@@ -44,11 +39,6 @@ func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 }
 
 func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd

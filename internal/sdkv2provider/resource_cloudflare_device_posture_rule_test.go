@@ -3,7 +3,6 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -13,13 +12,6 @@ import (
 )
 
 func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -46,13 +38,6 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -80,13 +65,6 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -115,13 +93,6 @@ func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -150,13 +121,6 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -183,13 +147,6 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -218,13 +175,6 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 }
 
 func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
@@ -253,13 +203,6 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) 
 }
 
 func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 

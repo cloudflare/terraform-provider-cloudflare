@@ -9,11 +9,6 @@ import (
 )
 
 func TestAccAPIToken_Basic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	resourceID := "cloudflare_api_token." + rnd
@@ -40,11 +35,6 @@ func TestAccAPIToken_Basic(t *testing.T) {
 }
 
 func TestAccAPIToken_AllowDeny(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -68,11 +58,6 @@ func TestAccAPIToken_AllowDeny(t *testing.T) {
 }
 
 func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_api_token." + rnd
@@ -109,11 +94,6 @@ func testAccCloudflareAPITokenWithoutCondition(resourceName, rnd, permissionID s
 }
 
 func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_api_token." + rnd
@@ -156,11 +136,6 @@ func testAccCloudflareAPITokenWithIndividualCondition(rnd string, permissionID s
 }
 
 func TestAccAPIToken_SetAllCondition(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_api_token." + rnd
@@ -238,11 +213,6 @@ func testAPITokenConfigAllowDeny(resourceID, permissionID, zoneID string, allowA
 }
 
 func TestAccAPIToken_TokenTTL(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// endpoint does not yet support the API tokens without an explicit scope.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	rnd := generateRandomResourceName()
 	name := "cloudflare_api_token." + rnd

@@ -3,7 +3,6 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"os"
 	"regexp"
 	"testing"
 
@@ -14,16 +13,6 @@ import (
 )
 
 func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		defer func(apiToken string) {
-			os.Setenv("CLOUDFLARE_API_TOKEN", apiToken)
-		}(os.Getenv("CLOUDFLARE_API_TOKEN"))
-		os.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd, defaultRnd := generateRandomResourceName(), generateRandomResourceName()
 	name, defaultName := fmt.Sprintf("cloudflare_device_settings_policy.%s", rnd), fmt.Sprintf("cloudflare_device_settings_policy.%s", defaultRnd)
 	precedence := uint64(10)

@@ -2,7 +2,6 @@ package sdkv2provider
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 	"testing"
 
@@ -11,13 +10,6 @@ import (
 )
 
 func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_split_tunnel.%s", rnd)
 
@@ -52,13 +44,6 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 }
 
 func TestAccCloudflareSplitTunnel_ConflictingTunnelProperties(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
@@ -133,13 +118,6 @@ resource "cloudflare_split_tunnel" "%[1]s" {
 }
 
 func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_split_tunnel.%s", rnd)
 
@@ -163,13 +141,6 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 }
 
 func TestAccCloudflareSplitTunnel_IncludeTunnelOrdering(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
