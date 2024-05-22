@@ -1,3 +1,3 @@
 ```release-note:enhancement
-resource/resource_cloudflare_teams_account: add support for 'virtual_ip'
+resource/cloudflare_teams_account: add support for 'virtual_ip'
 ```
