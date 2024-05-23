@@ -11,7 +11,7 @@ type EmailRoutingAddressResultEnvelope struct {
 }
 
 type EmailRoutingAddressModel struct {
-	ID                types.String `tfsdk:"id" json:"id,computed"`
+	ID                types.String `tfsdk:"id" json:"id"`
 	AccountIdentifier types.String `tfsdk:"account_identifier" path:"account_identifier"`
 	Email             types.String `tfsdk:"email" json:"email"`
 }

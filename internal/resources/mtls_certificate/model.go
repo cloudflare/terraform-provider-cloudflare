@@ -11,7 +11,7 @@ type MTLSCertificateResultEnvelope struct {
 }
 
 type MTLSCertificateModel struct {
-	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ID           types.String `tfsdk:"id" json:"id"`
 	AccountID    types.String `tfsdk:"account_id" path:"account_id"`
 	CA           types.Bool   `tfsdk:"ca" json:"ca"`
 	Certificates types.String `tfsdk:"certificates" json:"certificates"`

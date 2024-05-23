@@ -16,7 +16,7 @@ func (r EmailRoutingAddressResource) Schema(ctx context.Context, req resource.Sc
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Destination address identifier.",
-				Computed:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_identifier": schema.StringAttribute{

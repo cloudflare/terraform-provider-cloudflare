@@ -11,7 +11,7 @@ type ZoneCacheVariantsResultEnvelope struct {
 }
 
 type ZoneCacheVariantsModel struct {
-	ID     types.String                 `tfsdk:"id" json:"id,computed"`
+	ID     types.String                 `tfsdk:"id" json:"id"`
 	ZoneID types.String                 `tfsdk:"zone_id" path:"zone_id"`
 	Value  *ZoneCacheVariantsValueModel `tfsdk:"value" json:"value"`
 }
