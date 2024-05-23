@@ -40,6 +40,8 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_list"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_location"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_proxy_endpoint"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/tiered_cache"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/tiered_caching"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/total_tls"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/tunnel"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/turnstile_widget"
@@ -145,9 +147,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone.NewResource,
 		zone_hold.NewResource,
 		zone_cache_reserve.NewResource,
+		tiered_cache.NewResource,
 		zone_cache_variants.NewResource,
 		regional_tiered_cache.NewResource,
 		total_tls.NewResource,
+		tiered_caching.NewResource,
 		custom_hostname.NewResource,
 		record.NewResource,
 		zone_dnssec.NewResource,
