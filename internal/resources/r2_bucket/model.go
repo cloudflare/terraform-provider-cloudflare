@@ -11,7 +11,7 @@ type R2BucketResultEnvelope struct {
 }
 
 type R2BucketModel struct {
-	Name         types.String `tfsdk:"name" json:"name,computed"`
 	AccountID    types.String `tfsdk:"account_id" path:"account_id"`
+	Name         types.String `tfsdk:"name" json:"name"`
 	LocationHint types.String `tfsdk:"locationhint" json:"locationHint"`
 }

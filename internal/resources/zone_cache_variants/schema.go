@@ -19,7 +19,7 @@ func (r ZoneCacheVariantsResource) Schema(ctx context.Context, req resource.Sche
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "ID of the zone setting.",
-				Computed:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("variants"),
 				},

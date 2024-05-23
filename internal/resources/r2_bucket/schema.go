@@ -16,14 +16,14 @@ import (
 func (r R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"name": schema.StringAttribute{
-				Description:   "Name of the bucket",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
 			"account_id": schema.StringAttribute{
 				Description: "Account ID",
 				Required:    true,
+			},
+			"name": schema.StringAttribute{
+				Description:   "Name of the bucket",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"locationhint": schema.StringAttribute{
 				Description: "Location of the bucket",
