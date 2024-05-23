@@ -17,7 +17,8 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			ForceNew:     true,
 			RequiredWith: []string{"precedence"},
 			Deprecated: "This field is deprecated. Policies can now be standalone and reusable by multiple applications." +
-				"Please use `cloudflare_access_application.policies` to associate policies with applications.",
+				"Please use `cloudflare_access_application.policies` to associate reusable access policies with access" +
+				" applications.",
 			Description: "The ID of the application the policy is associated with.",
 		},
 		consts.AccountIDSchemaKey: {
