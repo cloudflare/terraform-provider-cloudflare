@@ -8,6 +8,7 @@ ENHANCEMENTS:
 
 * resource/cloudflare_access_application: improve validation logic for zone level reusable policies ([#3325](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3325))
 * resource/cloudflare_access_group: improve validation logic for zone level reusable policies ([#3325](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3325))
+* resource/cloudflare_ruleset: add support for `fonts` and `disable_rum` action parameters ([#3261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3261))
 
 DEPENDENCIES:
 
