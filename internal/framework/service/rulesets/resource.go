@@ -883,7 +883,7 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 		}
 
 		if !ap.DisableRUM.IsNull() {
-			rr.ActionParameters.DisableRUM = cloudflare.BoolPtr(ap.DisableRUM.ValueBool())
+			rr.ActionParameters.DisableRUM = cfv1.BoolPtr(ap.DisableRUM.ValueBool())
 		}
 
 		if !ap.DisableZaraz.IsNull() {
@@ -891,7 +891,7 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 		}
 
 		if !ap.Fonts.IsNull() {
-			rr.ActionParameters.Fonts = cloudflare.BoolPtr(ap.Fonts.ValueBool())
+			rr.ActionParameters.Fonts = cfv1.BoolPtr(ap.Fonts.ValueBool())
 		}
 
 		if !ap.EmailObfuscation.IsNull() {
