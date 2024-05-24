@@ -335,7 +335,7 @@ func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) 
 		"tcp":        deviceSettings.GatewayProxyEnabled,
 		"udp":        deviceSettings.GatewayProxyUDPEnabled,
 		"root_ca":    deviceSettings.RootCertificateInstallationEnabled,
-		"virtual_ip": deviceSettings.UseZtVirtualIP,
+		"virtual_ip": deviceSettings.UseZTVirtualIP,
 	}}
 }
 
@@ -450,7 +450,7 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 		GatewayProxyEnabled:                deviceSettings["tcp"].(bool),
 		GatewayProxyUDPEnabled:             deviceSettings["udp"].(bool),
 		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
-		UseZtVirtualIP:                     deviceSettings["virtual_ip"].(bool),
+		UseZTVirtualIP:                     deviceSettings["virtual_ip"].(bool),
 	}
 }
 func flattenSSHSessionLogSettings(logSettings *cloudflare.AuditSSHSettings) []interface{} {
