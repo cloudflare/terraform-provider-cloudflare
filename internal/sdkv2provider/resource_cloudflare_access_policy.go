@@ -138,6 +138,15 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
 	}
 
+	identifier, err := initIdentifier(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	if newAccessPolicy.ApplicationID == "" && identifier.Type != cloudflare.AccountType {
+		return diag.FromErr(fmt.Errorf("application_id is required for non-account level Access Policies"))
+	}
+
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
 		if value != nil {
@@ -178,11 +187,6 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Policy from struct: %+v", newAccessPolicy))
-
-	identifier, err := initIdentifier(d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
 
 	accessPolicy, err := client.CreateAccessPolicy(ctx, identifier, newAccessPolicy)
 	if err != nil {
