@@ -72,7 +72,7 @@ resource "cloudflare_access_application" "staging_app" {
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
 - `name` (String) Friendly name of the Access Application.
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set. Defaults to `false`.
-- `policies` (List of String) The policies associated with the application, in ascending order of precedence. When omitted, the application policies are not be updated. Warning: Do not use this field while you still have this application ID referenced as `application_id` in an `cloudflare_access_policy` resource, as it can result in an inconsistent state.
+- `policies` (List of String) The policies associated with the application, in ascending order of precedence. When omitted, the application policies are not be updated. Warning: Do not use this field while you still have this application ID referenced as `application_id` in any `cloudflare_access_policy` resource, as it can result in an inconsistent state.
 - `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
 - `scim_config` (Block List, Max: 1) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedblock--scim_config))

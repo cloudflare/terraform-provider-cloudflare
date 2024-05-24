@@ -17,9 +17,9 @@ a particular resource.
    However, if you're using a scoped access token, you must provide the argument that matches the token's
    scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
    If 'application_id' is omitted, the policy created can be reused by multiple access applications.
-   Any access_application resource can reference reusable policies through its `policies` argument.
+   Any cloudflare_access_application resource can reference reusable policies through its `policies` argument.
    To destroy a reusable policy and remove it from all applications' policies lists on the same apply, preemptively set the
-   lifecycle option `create_before_destroy` to true on the 'access_policy' resource.
+   lifecycle option `create_before_destroy` to true on the 'cloudflare_access_policy' resource.
 
 ## Example Usage
 
@@ -104,7 +104,7 @@ Optional:
 - `email_domain` (List of String)
 - `email_list` (List of String)
 - `everyone` (Boolean)
-- `external_evaluation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--include--external_evaluation))
+- `external_evaluation` (Block List) (see [below for nested schema](#nestedblock--include--external_evaluation))
 - `geo` (List of String)
 - `github` (Block List) (see [below for nested schema](#nestedblock--include--github))
 - `group` (List of String)
@@ -213,7 +213,7 @@ Optional:
 - `email_domain` (List of String)
 - `email_list` (List of String)
 - `everyone` (Boolean)
-- `external_evaluation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--exclude--external_evaluation))
+- `external_evaluation` (Block List) (see [below for nested schema](#nestedblock--exclude--external_evaluation))
 - `geo` (List of String)
 - `github` (Block List) (see [below for nested schema](#nestedblock--exclude--github))
 - `group` (List of String)
@@ -309,7 +309,7 @@ Optional:
 - `email_domain` (List of String)
 - `email_list` (List of String)
 - `everyone` (Boolean)
-- `external_evaluation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--require--external_evaluation))
+- `external_evaluation` (Block List) (see [below for nested schema](#nestedblock--require--external_evaluation))
 - `geo` (List of String)
 - `github` (Block List) (see [below for nested schema](#nestedblock--require--github))
 - `group` (List of String)

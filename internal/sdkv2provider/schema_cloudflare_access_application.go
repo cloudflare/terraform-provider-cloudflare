@@ -69,7 +69,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Description: "The policies associated with the application, in ascending order of precedence." +
 				" When omitted, the application policies are not be updated." +
 				" Warning: Do not use this field while you still have this application ID referenced as `application_id`" +
-				" in an `cloudflare_access_policy` resource, as it can result in an inconsistent state.",
+				" in any `cloudflare_access_policy` resource, as it can result in an inconsistent state.",
 		},
 		"session_duration": {
 			Type:     schema.TypeString,
@@ -222,6 +222,69 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
 					},
+					"allow_pkce_without_client_secret": {
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "Allow PKCE flow without a client secret",
+					},
+					"refresh_token_options": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "Refresh token grant options",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"lifetime": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
+								},
+							},
+						},
+					},
+					"custom_claim": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "Custom claim mapped from IDPs.",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"name": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "The name of the attribute as provided to the SaaS app.",
+								},
+								"scope": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "The scope of the claim.",
+								},
+								"required": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "True if the attribute must be always present.",
+								},
+								"source": {
+									Type:     schema.TypeList,
+									Required: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"name": {
+												Type:        schema.TypeString,
+												Required:    true,
+												Description: "The name of the attribute as provided by the IDP.",
+											},
+											"name_by_idp": {
+												Type:        schema.TypeMap,
+												Optional:    true,
+												Description: "A mapping from IdP ID to claim name.",
+												Elem:        &schema.Schema{Type: schema.TypeString},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 
 					// SAML options
 					"sp_entity_id": {
@@ -276,6 +339,12 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 												Type:        schema.TypeString,
 												Required:    true,
 												Description: "The name of the attribute as provided by the IDP.",
+											},
+											"name_by_idp": {
+												Type:        schema.TypeMap,
+												Optional:    true,
+												Description: "A mapping from IdP ID to claim name.",
+												Elem:        &schema.Schema{Type: schema.TypeString},
 											},
 										},
 									},
@@ -726,6 +795,14 @@ func convertCORSStructToSchema(d *schema.ResourceData, headers *cloudflare.Acces
 	return []interface{}{m}
 }
 
+func convertNameByIDP(source map[string]interface{}) map[string]string {
+	nameByIDP := make(map[string]string)
+	for k, v := range source {
+		nameByIDP[k] = v.(string)
+	}
+	return nameByIDP
+}
+
 func convertSAMLAttributeSchemaToStruct(data map[string]interface{}) cloudflare.SAMLAttributeConfig {
 	var cfg cloudflare.SAMLAttributeConfig
 	cfg.Name, _ = data["name"].(string)
@@ -737,6 +814,25 @@ func convertSAMLAttributeSchemaToStruct(data map[string]interface{}) cloudflare.
 		sourceMap, ok := sourcesSlice[0].(map[string]interface{})
 		if ok {
 			cfg.Source.Name, _ = sourceMap["name"].(string)
+			nameByIDPInterface, _ := sourceMap["name_by_idp"].(map[string]interface{})
+			cfg.Source.NameByIDP = convertNameByIDP(nameByIDPInterface)
+		}
+	}
+	return cfg
+}
+
+func convertOIDCClaimSchemaToStruct(data map[string]interface{}) cloudflare.OIDCClaimConfig {
+	var cfg cloudflare.OIDCClaimConfig
+	cfg.Name, _ = data["name"].(string)
+	cfg.Scope, _ = data["scope"].(string)
+	cfg.Required = cloudflare.BoolPtr(data["required"].(bool))
+	sourcesSlice, _ := data["source"].([]interface{})
+	if len(sourcesSlice) != 0 {
+		sourceMap, ok := sourcesSlice[0].(map[string]interface{})
+		if ok {
+			cfg.Source.Name, _ = sourceMap["name"].(string)
+			nameByIDPInterface, _ := sourceMap["name_by_idp"].(map[string]interface{})
+			cfg.Source.NameByIDP = convertNameByIDP(nameByIDPInterface)
 		}
 	}
 
@@ -758,6 +854,18 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 			SaasConfig.GrantTypes = expandInterfaceToStringList(d.Get("saas_app.0.grant_types").(*schema.Set).List())
 			SaasConfig.Scopes = expandInterfaceToStringList(d.Get("saas_app.0.scopes").(*schema.Set).List())
 			SaasConfig.GroupFilterRegex = d.Get("saas_app.0.group_filter_regex").(string)
+			SaasConfig.AllowPKCEWithoutClientSecret = cloudflare.BoolPtr(d.Get("saas_app.0.allow_pkce_without_client_secret").(bool))
+			if _, ok := d.GetOk("saas_app.0.refresh_token_options"); ok {
+				SaasConfig.RefreshTokenOptions = &cloudflare.RefreshTokenOptions{
+					Lifetime: d.Get("saas_app.0.refresh_token_options.0.lifetime").(string),
+				}
+			}
+
+			customClaims, _ := d.Get("saas_app.0.custom_claim").([]interface{})
+			for _, customClaims := range customClaims {
+				claimsAsMap := customClaims.(map[string]interface{})
+				SaasConfig.CustomClaims = append(SaasConfig.CustomClaims, convertOIDCClaimSchemaToStruct(claimsAsMap))
+			}
 		} else {
 			SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
 			SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
@@ -911,6 +1019,14 @@ func convertScimConfigAuthenticationSchemaToStruct(d *schema.ResourceData) *clou
 	return auth
 }
 
+func convertRefreshTokenOptionsStructToSchema(options *cloudflare.RefreshTokenOptions) []interface{} {
+	if options == nil {
+		return []interface{}{}
+	}
+
+	return []interface{}{map[string]interface{}{"lifetime": options.Lifetime}}
+}
+
 func convertLandingPageDesignStructToSchema(d *schema.ResourceData, design *cloudflare.AccessLandingPageDesign) []interface{} {
 	if _, ok := d.GetOk("landing_page_design"); !ok {
 		return []interface{}{}
@@ -966,8 +1082,26 @@ func convertSAMLAttributeStructToSchema(attr cloudflare.SAMLAttributeConfig) map
 		m["friendly_name"] = attr.FriendlyName
 	}
 	if attr.Source.Name != "" {
-		m["source"] = []interface{}{map[string]interface{}{"name": attr.Source.Name}}
+		m["source"] = []interface{}{map[string]interface{}{"name": attr.Source.Name, "name_by_idp": attr.Source.NameByIDP}}
 	}
+	return m
+}
+
+func convertOIDCClaimStructToSchema(attr cloudflare.OIDCClaimConfig) map[string]interface{} {
+	m := make(map[string]interface{})
+	if attr.Name != "" {
+		m["name"] = attr.Name
+	}
+	if attr.Scope != "" {
+		m["scope"] = attr.Scope
+	}
+	if attr.Required != nil && *attr.Required {
+		m["required"] = true
+	}
+	if attr.Source.Name != "" {
+		m["source"] = []interface{}{map[string]interface{}{"name": attr.Source.Name, "name_by_idp": attr.Source.NameByIDP}}
+	}
+
 	return m
 }
 
@@ -977,15 +1111,29 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 	}
 	if app.AuthType == "oidc" {
 		m := map[string]interface{}{
-			"auth_type":          app.AuthType,
-			"client_id":          app.ClientID,
-			"redirect_uris":      app.RedirectURIs,
-			"grant_types":        app.GrantTypes,
-			"scopes":             app.Scopes,
-			"public_key":         app.PublicKey,
-			"group_filter_regex": app.GroupFilterRegex,
-			"app_launcher_url":   app.AppLauncherURL,
+			"auth_type":                        app.AuthType,
+			"client_id":                        app.ClientID,
+			"redirect_uris":                    app.RedirectURIs,
+			"grant_types":                      app.GrantTypes,
+			"scopes":                           app.Scopes,
+			"public_key":                       app.PublicKey,
+			"group_filter_regex":               app.GroupFilterRegex,
+			"app_launcher_url":                 app.AppLauncherURL,
+			"allow_pkce_without_client_secret": app.AllowPKCEWithoutClientSecret,
 		}
+
+		if app.RefreshTokenOptions != nil {
+			m["refresh_token_options"] = convertRefreshTokenOptionsStructToSchema(app.RefreshTokenOptions)
+		}
+
+		var customClaims []interface{}
+		for _, claim := range app.CustomClaims {
+			customClaims = append(customClaims, convertOIDCClaimStructToSchema(claim))
+		}
+		if len(customClaims) != 0 {
+			m["custom_claim"] = customClaims
+		}
+
 		// client secret is only returned on create, if it is present in the state, preserve it
 		if client_secret, ok := d.GetOk("saas_app.0.client_secret"); ok {
 			m["client_secret"] = client_secret.(string)

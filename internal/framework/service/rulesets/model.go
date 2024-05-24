@@ -42,8 +42,10 @@ type ActionParametersModel struct {
 	CookieFields             types.Set                                    `tfsdk:"cookie_fields"`
 	DisableApps              types.Bool                                   `tfsdk:"disable_apps"`
 	DisableRailgun           types.Bool                                   `tfsdk:"disable_railgun"`
+	DisableRUM               types.Bool                                   `tfsdk:"disable_rum"`
 	DisableZaraz             types.Bool                                   `tfsdk:"disable_zaraz"`
 	EdgeTTL                  []*ActionParameterEdgeTTLModel               `tfsdk:"edge_ttl"`
+	Fonts                    types.Bool                                   `tfsdk:"fonts"`
 	EmailObfuscation         types.Bool                                   `tfsdk:"email_obfuscation"`
 	FromList                 []*ActionParameterFromListModel              `tfsdk:"from_list"`
 	FromValue                []*ActionParameterFromValueModel             `tfsdk:"from_value"`

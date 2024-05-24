@@ -2160,6 +2160,8 @@ func TestAccCloudflareRuleset_Config(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.ssl", "off"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sxg", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.hotlink_protection", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_rum", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.fonts", "true"),
 				),
 			},
 		},
@@ -4465,6 +4467,8 @@ func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) str
 		bic = true
 		disable_apps = true
 		disable_zaraz = true
+		disable_rum = true
+		fonts = true
 		disable_railgun = true
 		email_obfuscation = true
 		mirage = true

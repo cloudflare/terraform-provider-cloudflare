@@ -495,9 +495,11 @@ Optional:
 - `cookie_fields` (Set of String) List of cookie values to include as part of custom fields logging.
 - `disable_apps` (Boolean) Turn off all active Cloudflare Apps.
 - `disable_railgun` (Boolean) Turn off railgun feature of the Cloudflare Speed app.
+- `disable_rum` (Boolean) Turn off RUM feature.
 - `disable_zaraz` (Boolean) Turn off zaraz feature.
 - `edge_ttl` (Block List) List of edge TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--edge_ttl))
 - `email_obfuscation` (Boolean) Turn on or off the Cloudflare Email Obfuscation feature of the Cloudflare Scrape Shield app.
+- `fonts` (Boolean) Toggle fonts.
 - `from_list` (Block List) Use a list to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_list))
 - `from_value` (Block List) Use a value to lookup information for the action. (see [below for nested schema](#nestedblock--rules--action_parameters--from_value))
 - `headers` (Block List) List of HTTP header modifications to perform in the ruleset rule. Note: Headers are order dependent and must be provided sorted alphabetically ascending based on the `name` value. (see [below for nested schema](#nestedblock--rules--action_parameters--headers))
