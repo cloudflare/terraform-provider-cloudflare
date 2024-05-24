@@ -1032,6 +1032,10 @@ func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string)
 		  udp = false
 		  root_ca = true
 		}
+		connectivity {
+		  icmp = false
+		  warp_to_warp = false
+		}
 		logging {
 		  redact_pii = true
 		  settings_by_rule_type {

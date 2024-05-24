@@ -128,6 +128,15 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(fmt.Errorf("error parsing teams account device settings: %w", err))
 	}
 
+	connectivitySettings, err := client.TeamsAccountConnectivityConfiguration(ctx, accountID)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("error finding Teams Account connectivity settings %q: %w", d.Id(), err))
+	}
+
+	if err := d.Set("connectivity", flattenTeamsAccountConnectivitySettings(&connectivitySettings)); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing teams account connectivity settings: %w", err))
+	}
+
 	sshSessionLogSettings, _, err := client.GetAuditSSHSettings(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.GetAuditSSHSettingsParams{})
 	if err == nil {
 		if err := d.Set("ssh_session_log", flattenSSHSessionLogSettings(&sshSessionLogSettings)); err != nil {
@@ -166,6 +175,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	customCertificateConfig := inflateCustomCertificateConfig(d.Get("custom_certificate"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
 	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
+	connectivityConfig := inflateConnectivitySettings(d.Get("connectivity"))
 	payloadLogSettings := inflatePayloadLogSettings(d.Get("payload_log"))
 	sshSessionLogSettings := inflateSSHSessionLogSettings(d.Get("ssh_session_log"))
 	updatedTeamsAccount := cloudflare.TeamsConfiguration{
@@ -217,6 +227,12 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	if deviceConfig != nil {
 		if _, err := client.TeamsAccountDeviceUpdateConfiguration(ctx, accountID, *deviceConfig); err != nil {
 			return diag.FromErr(fmt.Errorf("error updating Teams Account proxy settings for account %q: %w", accountID, err))
+		}
+	}
+
+	if connectivityConfig != nil {
+		if _, err := client.TeamsAccountConnectivityUpdateConfiguration(ctx, accountID, *connectivityConfig); err != nil {
+			return diag.FromErr(fmt.Errorf("error updating Teams Account connectivity settings for account %q: %w", accountID, err))
 		}
 	}
 
@@ -338,6 +354,13 @@ func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) 
 	}}
 }
 
+func flattenTeamsAccountConnectivitySettings(connectivitySettings *cloudflare.TeamsConnectivitySettings) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"icmp":         connectivitySettings.ICMPProxyEnabled,
+		"warp_to_warp": connectivitySettings.OfframpWarpEnabled,
+	}}
+}
+
 func inflateAntivirusConfig(antivirus interface{}) *cloudflare.TeamsAntivirus {
 	avList := antivirus.([]interface{})
 
@@ -451,6 +474,25 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
 	}
 }
+
+func inflateConnectivitySettings(connectivity interface{}) *cloudflare.TeamsConnectivitySettings {
+	connectivityList := connectivity.([]interface{})
+
+	if len(connectivityList) != 1 {
+		return nil
+	}
+
+	connectivitySettings, ok := connectivityList[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	return &cloudflare.TeamsConnectivitySettings{
+		ICMPProxyEnabled:   cloudflare.BoolPtr(connectivitySettings["icmp"].(bool)),
+		OfframpWarpEnabled: cloudflare.BoolPtr(connectivitySettings["warp_to_warp"].(bool)),
+	}
+}
+
 func flattenSSHSessionLogSettings(logSettings *cloudflare.AuditSSHSettings) []interface{} {
 	return []interface{}{map[string]interface{}{
 		"public_key": logSettings.PublicKey,
