@@ -473,7 +473,7 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 		GatewayProxyEnabled:                deviceSettings["tcp"].(bool),
 		GatewayProxyUDPEnabled:             deviceSettings["udp"].(bool),
 		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
-		UseZTVirtualIP:                     deviceSettings["virtual_ip"].(bool),
+		UseZTVirtualIP:                     cloudflare.BoolPtr(deviceSettings["virtual_ip"].(bool)),
 	}
 }
 
