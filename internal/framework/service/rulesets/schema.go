@@ -197,6 +197,14 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Optional:            true,
 										MarkdownDescription: "Turn off zaraz feature.",
 									},
+									"disable_rum": schema.BoolAttribute{
+										Optional:            true,
+										MarkdownDescription: "Turn off RUM feature.",
+									},
+									"fonts": schema.BoolAttribute{
+										Optional:            true,
+										MarkdownDescription: "Toggle fonts.",
+									},
 									"email_obfuscation": schema.BoolAttribute{
 										Optional:            true,
 										MarkdownDescription: "Turn on or off the Cloudflare Email Obfuscation feature of the Cloudflare Scrape Shield app.",
