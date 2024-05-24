@@ -551,6 +551,13 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.3", "profile"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.app_launcher_url", "https://saas-app.example/sso/login"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.group_filter_regex", ".*"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.allow_pkce_without_client_secret", "false"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.refresh_token_options.0.lifetime", "1h"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.#", "1"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.name", "rank"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.scope", "profile"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.required", "true"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.source.0.name", "rank"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.client_secret"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.public_key"),
 				),
@@ -583,6 +590,14 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.3", "profile"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.app_launcher_url", "https://saas-app.example/sso/login"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.group_filter_regex", ".*"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.allow_pkce_without_client_secret", "false"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.refresh_token_options.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.refresh_token_options.0.lifetime", "1h"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.name", "rank"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.scope", "profile"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.required", "true"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.source.0.name", "rank"),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -1094,6 +1109,18 @@ resource "cloudflare_access_application" "%[1]s" {
 	scopes = ["openid", "email", "profile", "groups"]
 	app_launcher_url = "https://saas-app.example/sso/login"
 	group_filter_regex = ".*"
+	allow_pkce_without_client_secret = false
+	refresh_token_options {
+		lifetime = "1h"
+	}
+	custom_claim {
+		name = "rank"
+		required = true
+		scope = "profile"
+		source {
+			name = "rank"
+		}
+	}
   }
   auto_redirect_to_identity = false
 }
