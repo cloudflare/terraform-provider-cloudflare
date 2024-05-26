@@ -20,6 +20,8 @@ a particular resource.
    Any cloudflare_access_application resource can reference reusable policies through its `policies` argument.
    To destroy a reusable policy and remove it from all applications' policies lists on the same apply, preemptively set the
    lifecycle option `create_before_destroy` to true on the 'cloudflare_access_policy' resource.
+   Keep in mind that standalone/reusable policies are only supported with `account_id`, not `zone_id`.
+
 
 ## Example Usage
 

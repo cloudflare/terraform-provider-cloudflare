@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_access_policy: add additional info on the usage of standalone/reusable policies doc
+```
