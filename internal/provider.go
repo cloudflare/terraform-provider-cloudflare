@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_application"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_custom_page"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_identity_provider"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_service_token"
@@ -21,11 +22,14 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/bot_management"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/byo_ip_prefix"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/custom_hostname"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_dex_test"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_managed_networks"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_posture_integration"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_posture_rule"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_address"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_catch_all"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_rule"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/hyperdrive_config"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/keyless_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/logpush_job"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/mtls_certificate"
@@ -50,6 +54,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/waiting_room_event"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/waiting_room_setting"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/web3_hostname"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/web_analytics_site"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/worker_cron_trigger"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/worker_domain"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/zone"
@@ -175,18 +180,23 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		notification_policy_webhooks.NewResource,
 		notification_policy.NewResource,
 		r2_bucket.NewResource,
+		device_dex_test.NewResource,
+		device_managed_networks.NewResource,
 		device_posture_rule.NewResource,
 		device_posture_integration.NewResource,
 		access_identity_provider.NewResource,
 		access_application.NewResource,
 		access_mutual_tls_certificate.NewResource,
 		access_service_token.NewResource,
+		access_custom_page.NewResource,
 		tunnel.NewResource,
 		teams_account.NewResource,
 		teams_list.NewResource,
 		teams_location.NewResource,
 		teams_proxy_endpoint.NewResource,
 		turnstile_widget.NewResource,
+		hyperdrive_config.NewResource,
+		web_analytics_site.NewResource,
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
 	}
