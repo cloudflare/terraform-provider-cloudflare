@@ -16,6 +16,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_custom_page"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_identity_provider"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_organization"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_service_token"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/account_member"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/address_map"
@@ -33,6 +34,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/keyless_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/logpull_retention"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/logpush_job"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/managed_headers"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/mtls_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/notification_policy"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/notification_policy_webhooks"
@@ -174,6 +176,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		web3_hostname.NewResource,
 		worker_cron_trigger.NewResource,
 		worker_domain.NewResource,
+		managed_headers.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
 		address_map.NewResource,
@@ -187,6 +190,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		device_posture_rule.NewResource,
 		device_posture_integration.NewResource,
 		access_identity_provider.NewResource,
+		access_organization.NewResource,
 		access_application.NewResource,
 		access_mutual_tls_certificate.NewResource,
 		access_service_token.NewResource,
