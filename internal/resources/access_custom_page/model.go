@@ -11,8 +11,8 @@ type AccessCustomPageResultEnvelope struct {
 }
 
 type AccessCustomPageModel struct {
+	UID        types.String `tfsdk:"uid" json:"uid,computed"`
 	Identifier types.String `tfsdk:"identifier" path:"identifier"`
-	UUID       types.String `tfsdk:"uuid" path:"uuid"`
 	CustomHTML types.String `tfsdk:"custom_html" json:"custom_html"`
 	Name       types.String `tfsdk:"name" json:"name"`
 	Type       types.String `tfsdk:"type" json:"type"`
