@@ -357,7 +357,7 @@ func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) 
 func flattenTeamsAccountConnectivitySettings(connectivitySettings *cloudflare.TeamsConnectivitySettings) []interface{} {
 	return []interface{}{map[string]interface{}{
 		"icmp":         connectivitySettings.ICMPProxyEnabled,
-		"warp_to_warp": connectivitySettings.OfframpWarpEnabled,
+		"warp_to_warp": connectivitySettings.OfframpWARPEnabled,
 	}}
 }
 
@@ -489,7 +489,7 @@ func inflateConnectivitySettings(connectivity interface{}) *cloudflare.TeamsConn
 
 	return &cloudflare.TeamsConnectivitySettings{
 		ICMPProxyEnabled:   cloudflare.BoolPtr(connectivitySettings["icmp"].(bool)),
-		OfframpWarpEnabled: cloudflare.BoolPtr(connectivitySettings["warp_to_warp"].(bool)),
+		OfframpWARPEnabled: cloudflare.BoolPtr(connectivitySettings["warp_to_warp"].(bool)),
 	}
 }
 
