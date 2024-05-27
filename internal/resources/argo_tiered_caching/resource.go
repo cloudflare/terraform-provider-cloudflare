@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package tiered_caching
+package argo_tiered_caching
 
 import (
 	"context"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &TieredCachingResource{}
+var _ resource.Resource = &ArgoTieredCachingResource{}
 
 func NewResource() resource.Resource {
-	return &TieredCachingResource{}
+	return &ArgoTieredCachingResource{}
 }
 
-// TieredCachingResource defines the resource implementation.
-type TieredCachingResource struct {
+// ArgoTieredCachingResource defines the resource implementation.
+type ArgoTieredCachingResource struct {
 	client *cloudflare.Client
 }
 
-func (r *TieredCachingResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_tiered_caching"
+func (r *ArgoTieredCachingResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_argo_tiered_caching"
 }
 
-func (r *TieredCachingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *ArgoTieredCachingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *TieredCachingResource) Configure(ctx context.Context, req resource.Conf
 	r.client = client
 }
 
-func (r *TieredCachingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *TieredCachingModel
+func (r *ArgoTieredCachingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *ArgoTieredCachingModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,7 +66,7 @@ func (r *TieredCachingResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	res := new(http.Response)
-	env := TieredCachingResultEnvelope{*data}
+	env := ArgoTieredCachingResultEnvelope{*data}
 	_, err = r.client.Argo.TieredCaching.Edit(
 		ctx,
 		argo.TieredCachingEditParams{
@@ -91,8 +91,8 @@ func (r *TieredCachingResource) Create(ctx context.Context, req resource.CreateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TieredCachingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *TieredCachingModel
+func (r *ArgoTieredCachingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ArgoTieredCachingModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -101,7 +101,7 @@ func (r *TieredCachingResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	res := new(http.Response)
-	env := TieredCachingResultEnvelope{*data}
+	env := ArgoTieredCachingResultEnvelope{*data}
 	_, err := r.client.Argo.TieredCaching.Get(
 		ctx,
 		argo.TieredCachingGetParams{
@@ -125,8 +125,8 @@ func (r *TieredCachingResource) Read(ctx context.Context, req resource.ReadReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TieredCachingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *TieredCachingModel
+func (r *ArgoTieredCachingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *ArgoTieredCachingModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -140,7 +140,7 @@ func (r *TieredCachingResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	res := new(http.Response)
-	env := TieredCachingResultEnvelope{*data}
+	env := ArgoTieredCachingResultEnvelope{*data}
 	_, err = r.client.Argo.TieredCaching.Edit(
 		ctx,
 		argo.TieredCachingEditParams{
@@ -165,6 +165,6 @@ func (r *TieredCachingResource) Update(ctx context.Context, req resource.UpdateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TieredCachingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *ArgoTieredCachingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// TODO: implement not supported warning
 }
