@@ -67,11 +67,10 @@ func (r *AccessCustomPageResource) Create(ctx context.Context, req resource.Crea
 	}
 	res := new(http.Response)
 	env := AccessCustomPageResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.CustomPages.Update(
+	_, err = r.client.ZeroTrust.Access.CustomPages.New(
 		ctx,
 		data.Identifier.ValueString(),
-		data.UUID.ValueString(),
-		zero_trust.AccessCustomPageUpdateParams{},
+		zero_trust.AccessCustomPageNewParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -105,7 +104,7 @@ func (r *AccessCustomPageResource) Read(ctx context.Context, req resource.ReadRe
 	_, err := r.client.ZeroTrust.Access.CustomPages.Get(
 		ctx,
 		data.Identifier.ValueString(),
-		data.UUID.ValueString(),
+		data.UID.ValueString(),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -143,7 +142,7 @@ func (r *AccessCustomPageResource) Update(ctx context.Context, req resource.Upda
 	_, err = r.client.ZeroTrust.Access.CustomPages.Update(
 		ctx,
 		data.Identifier.ValueString(),
-		data.UUID.ValueString(),
+		data.UID.ValueString(),
 		zero_trust.AccessCustomPageUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -176,7 +175,7 @@ func (r *AccessCustomPageResource) Delete(ctx context.Context, req resource.Dele
 	_, err := r.client.ZeroTrust.Access.CustomPages.Delete(
 		ctx,
 		data.Identifier.ValueString(),
-		data.UUID.ValueString(),
+		data.UID.ValueString(),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
