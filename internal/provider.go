@@ -31,6 +31,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_rule"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/hyperdrive_config"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/keyless_certificate"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/logpull_retention"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/logpush_job"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/mtls_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/notification_policy"
@@ -166,6 +167,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zone_lockdown.NewResource,
 		keyless_certificate.NewResource,
 		logpush_job.NewResource,
+		logpull_retention.NewResource,
 		waiting_room.NewResource,
 		waiting_room_event.NewResource,
 		waiting_room_setting.NewResource,
