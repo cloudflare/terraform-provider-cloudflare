@@ -167,6 +167,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Optional:     true,
 						ValidateFunc: validation.StringInSlice([]string{"oidc", "saml"}, false),
 						Description:  "",
+						ForceNew:     true,
 					},
 					"public_key": {
 						Type:        schema.TypeString,

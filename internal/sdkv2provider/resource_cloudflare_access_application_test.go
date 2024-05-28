@@ -1027,6 +1027,32 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 	})
 }
 
+func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "saas_app.auth_type", "saml"),
+				),
+			},
+			{Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "saas_app.auth_type", "oidc"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_application" "%[1]s" {
