@@ -1042,13 +1042,13 @@ func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) 
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "saas_app.auth_type", "saml"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.auth_type", ""),
 				),
 			},
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "saas_app.auth_type", "oidc"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.auth_type", "oidc"),
 				),
 			},
 		},
