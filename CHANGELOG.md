@@ -1,4 +1,6 @@
-## 4.34.0 (Unreleased)
+## 4.35.0 (Unreleased)
+
+## 4.34.0 (May 29th, 2024)
 
 FEATURES:
 
