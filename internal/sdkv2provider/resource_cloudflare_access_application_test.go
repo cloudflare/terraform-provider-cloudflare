@@ -1039,12 +1039,14 @@ func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) 
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
-			{Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "saas_app.auth_type", "saml"),
 				),
 			},
-			{Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
+			{
+				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "saas_app.auth_type", "oidc"),
 				),
@@ -1670,7 +1672,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -1722,7 +1724,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -1762,7 +1764,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -1813,7 +1815,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -1868,7 +1870,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -1922,7 +1924,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -1980,7 +1982,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -2030,7 +2032,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 		user_deprovision         = true
 	}
 }
-	
+
 resource "cloudflare_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
@@ -2068,7 +2070,7 @@ func testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain st
 resource "cloudflare_access_policy" "%[1]s_p1" {
   account_id     			= "%[3]s"
   name                      = "%[1]s"
-  decision			  		= "allow"	
+  decision			  		= "allow"
   include {
     email = ["a@example.com"]
   }
@@ -2077,7 +2079,7 @@ resource "cloudflare_access_policy" "%[1]s_p1" {
 resource "cloudflare_access_policy" "%[1]s_p2" {
   account_id     			= "%[3]s"
   name                      = "%[1]s"
-  decision			  		= "non_identity"	
+  decision			  		= "non_identity"
   include {
     ip = ["127.0.0.1/32"]
   }
