@@ -130,16 +130,19 @@ Optional:
 
 Optional:
 
+- `allow_pkce_without_client_secret` (Boolean) Allow PKCE flow without a client secret.
 - `app_launcher_url` (String) The URL where this applications tile redirects users.
-- `auth_type` (String)
+- `auth_type` (String) **Modifying this attribute will force creation of a new resource.**
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
 - `custom_attribute` (Block List) Custom attribute mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_attribute))
+- `custom_claim` (Block List) Custom claim mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_claim))
 - `default_relay_state` (String) The relay state used if not provided by the identity provider.
 - `grant_types` (Set of String) The OIDC flows supported by this application.
 - `group_filter_regex` (String) A regex to filter Cloudflare groups returned in ID token and userinfo endpoint.
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application.
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
 - `redirect_uris` (Set of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens.
+- `refresh_token_options` (Block List) Refresh token grant options. (see [below for nested schema](#nestedblock--saas_app--refresh_token_options))
 - `saml_attribute_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.
 - `scopes` (Set of String) Define the user information shared with access.
 - `sp_entity_id` (String) A globally unique name for an identity or service provider.
@@ -173,6 +176,44 @@ Required:
 
 - `name` (String) The name of the attribute as provided by the IDP.
 
+Optional:
+
+- `name_by_idp` (Map of String) A mapping from IdP ID to claim name.
+
+
+
+<a id="nestedblock--saas_app--custom_claim"></a>
+### Nested Schema for `saas_app.custom_claim`
+
+Required:
+
+- `source` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--saas_app--custom_claim--source))
+
+Optional:
+
+- `name` (String) The name of the attribute as provided to the SaaS app.
+- `required` (Boolean) True if the attribute must be always present.
+- `scope` (String) The scope of the claim.
+
+<a id="nestedblock--saas_app--custom_claim--source"></a>
+### Nested Schema for `saas_app.custom_claim.source`
+
+Required:
+
+- `name` (String) The name of the attribute as provided by the IDP.
+
+Optional:
+
+- `name_by_idp` (Map of String) A mapping from IdP ID to claim name.
+
+
+
+<a id="nestedblock--saas_app--refresh_token_options"></a>
+### Nested Schema for `saas_app.refresh_token_options`
+
+Optional:
+
+- `lifetime` (String) How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.
 
 
 
