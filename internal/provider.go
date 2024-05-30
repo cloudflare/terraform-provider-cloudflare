@@ -26,6 +26,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/bot_management"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/byo_ip_prefix"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/custom_hostname"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/d1_database"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_dex_test"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_managed_networks"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_posture_integration"
@@ -62,6 +63,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/web_analytics_site"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/worker_cron_trigger"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/worker_domain"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/workers_for_platforms_namespace"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/zone"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/zone_cache_reserve"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/zone_cache_variants"
@@ -188,7 +190,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		mtls_certificate.NewResource,
 		notification_policy_webhooks.NewResource,
 		notification_policy.NewResource,
+		d1_database.NewResource,
 		r2_bucket.NewResource,
+		workers_for_platforms_namespace.NewResource,
 		device_dex_test.NewResource,
 		device_managed_networks.NewResource,
 		device_posture_rule.NewResource,
