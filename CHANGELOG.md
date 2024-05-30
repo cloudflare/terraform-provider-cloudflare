@@ -1,5 +1,9 @@
 ## 4.35.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/cloudflare_access_application: force recreation if SaaS app `auth_type` is changed ([#3332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3332))
+
 ## 4.34.0 (May 29th, 2024)
 
 FEATURES:
