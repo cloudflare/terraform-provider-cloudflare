@@ -1,5 +1,9 @@
 ## 4.35.0 (Unreleased)
 
+ENHANCEMENTS:
+
+* resource/cloudflare_load_balancer_pool: Add support for virtual_network_id ([#3333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3333))
+
 BUG FIXES:
 
 * resource/cloudflare_access_application: force recreation if SaaS app `auth_type` is changed ([#3332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3332))
