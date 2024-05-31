@@ -312,6 +312,13 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 			break
 		}
 
+		for _, item := range items {
+			if item.Redirect.SourceUrl == searchTerm {
+				items = []cfv1.ListItem{item}
+				break
+			}
+		}
+
 		//lintignore:R018
 		time.Sleep(time.Duration(attempts) * time.Second)
 	}

@@ -370,3 +370,66 @@ func testAccCheckCloudflareHostnameRedirectItem(ID, name, comment, accountID str
 	}
   } `, ID, name, comment, accountID)
 }
+
+func TestAccCloudflareListItem_RedirectWithOverlappingSourceURL(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)
+	secondResource := fmt.Sprintf("cloudflare_list_item.%s_2", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Account(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstResource, "redirect.#", "1"),
+					resource.TestCheckResourceAttr(firstResource, "redirect.0.source_url", "www.site1.com/"),
+					resource.TestCheckResourceAttr(firstResource, "redirect.0.target_url", "https://example.com"),
+					resource.TestCheckResourceAttr(firstResource, "redirect.0.status_code", "301"),
+
+					resource.TestCheckResourceAttr(secondResource, "redirect.#", "1"),
+					resource.TestCheckResourceAttr(secondResource, "redirect.0.source_url", "www.site1.com/test"),
+					resource.TestCheckResourceAttr(secondResource, "redirect.0.target_url", "https://cloudflare.com"),
+					resource.TestCheckResourceAttr(secondResource, "redirect.0.status_code", "301"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "redirect"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_1" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	redirect {
+		source_url = "www.site1.com/"
+		target_url = "https://example.com"
+		status_code = 301
+	}
+  }
+
+  resource "cloudflare_list_item" "%[1]s_2" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	redirect {
+		source_url = "www.site1.com/test"
+		target_url = "https://cloudflare.com"
+		status_code = 301
+	}
+  }
+  `, ID, name, comment, accountID)
+}
