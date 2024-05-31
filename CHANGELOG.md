@@ -7,6 +7,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/cloudflare_access_application: force recreation if SaaS app `auth_type` is changed ([#3332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3332))
+* resource/cloudflare_list_item: handle overlapping redirect `source_url` ([#3335](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3335))
 * resource/cloudflare_logpush_job: Mirror API defaults for record_delimiter to include newline ([#3334](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3334))
 
 ## 4.34.0 (May 29th, 2024)
