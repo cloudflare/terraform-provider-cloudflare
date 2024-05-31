@@ -54,7 +54,7 @@ type AccessApplicationCORSHeadersModel struct {
 }
 
 type AccessApplicationPoliciesModel struct {
-	ID         types.String `tfsdk:"id" json:"id,computed"`
+	ID         types.String `tfsdk:"id" json:"id"`
 	Precedence types.Int64  `tfsdk:"precedence" json:"precedence"`
 }
 

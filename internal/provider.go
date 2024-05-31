@@ -13,7 +13,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_application"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_custom_page"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_identity_provider"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_organization"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_service_token"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_tag"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/account_member"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/address_map"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield_operation_schema_validation_settings"
@@ -193,8 +198,13 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		device_managed_networks.NewResource,
 		device_posture_rule.NewResource,
 		device_posture_integration.NewResource,
+		access_identity_provider.NewResource,
 		access_organization.NewResource,
 		access_application.NewResource,
+		access_mutual_tls_certificate.NewResource,
+		access_service_token.NewResource,
+		access_custom_page.NewResource,
+		access_tag.NewResource,
 		tunnel.NewResource,
 		teams_account.NewResource,
 		teams_list.NewResource,
