@@ -295,11 +295,7 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 	// terraform-plugin-framework doesn't have a built in retryable HTTP client (yet)
 	// so we use a simple loop with a break when we get the data we expect here.
 	var items []cfv1.ListItem
-	attempts := 0
-
-	for attempts < 5 {
-		attempts += 1
-
+	for attempts := 1; attempts < 5 && len(items) != 1; attempts++ {
 		// this is extremely inefficient however, it's the only option as the list
 		// service uses a polling model and does not expose the ID.
 		searchTerm := getSearchTerm(data)
@@ -307,7 +303,6 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 			ID:     listID,
 			Search: searchTerm,
 		})
-
 		if len(items) == 1 {
 			break
 		}
@@ -317,6 +312,9 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 				items = []cfv1.ListItem{item}
 				break
 			}
+		}
+		if len(items) == 1 {
+			break
 		}
 
 		//lintignore:R018
