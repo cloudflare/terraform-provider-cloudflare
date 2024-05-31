@@ -51,7 +51,6 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_account"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_list"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_location"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_proxy_endpoint"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/tiered_cache"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/total_tls"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/tunnel"
@@ -209,7 +208,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		teams_account.NewResource,
 		teams_list.NewResource,
 		teams_location.NewResource,
-		teams_proxy_endpoint.NewResource,
 		turnstile_widget.NewResource,
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,
