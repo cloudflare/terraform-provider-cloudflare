@@ -1,0 +1,3 @@
+```release-note:new-guide
+resource/cloudflare-access-application: updated example to reflect new way of adding policies
+```
