@@ -37,6 +37,7 @@ resource "cloudflare_zone" "example" {
 - `paused` (Boolean) Whether this zone is paused (traffic bypasses Cloudflare). Defaults to `false`.
 - `plan` (String) The name of the commercial plan to apply to the zone. Available values: `free`, `lite`, `pro`, `pro_plus`, `business`, `enterprise`, `partners_free`, `partners_pro`, `partners_business`, `partners_enterprise`.
 - `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is typically a partner-hosted zone or a CNAME setup. Available values: `full`, `partial`, `secondary`. Defaults to `full`.
+- `vanity_name_servers` (List of String) List of Vanity Nameservers (if set).
 
 ### Read-Only
 
@@ -44,7 +45,6 @@ resource "cloudflare_zone" "example" {
 - `meta` (Map of Boolean)
 - `name_servers` (List of String) Cloudflare-assigned name servers. This is only populated for zones that use Cloudflare DNS.
 - `status` (String) Status of the zone. Available values: `active`, `pending`, `initializing`, `moved`, `deleted`, `deactivated`.
-- `vanity_name_servers` (List of String) List of Vanity Nameservers (if set).
 - `verification_key` (String) Contains the TXT record value to validate domain ownership. This is only populated for zones of type `partial`.
 
 ## Import
