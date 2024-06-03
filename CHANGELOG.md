@@ -1,5 +1,9 @@
 ## 4.35.0 (Unreleased)
 
+FEATURES:
+
+* **New Guide:** `resource/cloudflare-access-application: updated example to reflect new way of adding policies` ([#3338](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3338))
+
 ENHANCEMENTS:
 
 * resource/cloudflare_load_balancer_pool: Add support for virtual_network_id ([#3333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3333))
