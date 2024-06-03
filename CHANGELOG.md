@@ -3,6 +3,7 @@
 ENHANCEMENTS:
 
 * resource/cloudflare_load_balancer_pool: Add support for virtual_network_id ([#3333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3333))
+* resource/resource_cloudflare_zone: add support for 'vanity_name_servers' ([#3315](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3315))
 
 BUG FIXES:
 
