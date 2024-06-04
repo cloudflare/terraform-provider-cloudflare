@@ -35,6 +35,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_address"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_catch_all"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_rule"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/healthcheck"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/hyperdrive_config"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/keyless_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/logpull_retention"
@@ -171,6 +172,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		email_routing_catch_all.NewResource,
 		email_routing_address.NewResource,
 		zone_lockdown.NewResource,
+		healthcheck.NewResource,
 		keyless_certificate.NewResource,
 		logpush_job.NewResource,
 		logpull_retention.NewResource,
