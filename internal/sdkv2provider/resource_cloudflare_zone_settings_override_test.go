@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
 
@@ -249,4 +250,33 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 	}
   }
 }`, rnd, zoneID)
+}
+
+func TestCloudflareZoneSettingsOverrideStateUpgradeV0(t *testing.T) {
+	v0 := map[string]interface{}{
+		"settings": []map[string]interface{}{{
+			"mobile_redirect": map[string]interface{}{
+				"mobile_subdomain": "",
+				"status":           "",
+				"strip_uri":        true,
+			},
+		}},
+		"initial_settings": []map[string]interface{}{{
+			"mobile_redirect": map[string]interface{}{
+				"mobile_subdomain": "",
+				"status":           "",
+				"strip_uri":        true,
+			},
+		}},
+	}
+
+	expectedV1 := map[string]interface{}{
+		"settings":         []map[string]interface{}{},
+		"initial_settings": []map[string]interface{}{},
+	}
+
+	actualV1, err := resourceCloudflareZoneSettingsOverrideStateUpgradeV1(context.Background(), v0, nil)
+	require.NoError(t, err)
+
+	require.Equal(t, expectedV1, actualV1)
 }
