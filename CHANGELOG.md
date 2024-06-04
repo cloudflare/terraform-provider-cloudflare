@@ -15,6 +15,13 @@ BUG FIXES:
 * resource/cloudflare_list_item: handle overlapping redirect `source_url` ([#3335](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3335))
 * resource/cloudflare_logpush_job: Mirror API defaults for record_delimiter to include newline ([#3334](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3334))
 
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.16 to 1.27.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.16 to 1.17.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.3 to 1.54.4 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.0 to 1.27.1 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+
 ## 4.34.0 (May 29th, 2024)
 
 FEATURES:
