@@ -388,10 +388,10 @@ var tests = map[string]struct {
 	"tfsdk_int_boolean_coerce": {"true", types.BoolValue(true)},
 	"tfsdk_float_1.54":         {"1.54", types.Float64Value(1.54)},
 	"tfsdk_float_1.89":         {"1.89", types.Float64Value(1.89)},
-	"tfsdk_array_ptr":          {"[\"hi\", null]", &[]types.String{types.StringValue("hi"), types.StringNull()}},
+	"tfsdk_array_ptr":          {"[\"hi\",null]", &[]types.String{types.StringValue("hi"), types.StringNull()}},
 
 	"embedded_tfsdk_struct": {
-		`{"bool_value":true,"optional_array":["hi", "there"],"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"string_value":"string_value"}`,
+		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
 		TfsdkStructs{
 			BoolValue:     types.BoolValue(true),
 			StringValue:   types.StringValue("string_value"),
@@ -401,15 +401,6 @@ var tests = map[string]struct {
 				EmbeddedString: types.StringValue("embedded_string_value"),
 				EmbeddedInt:    types.Int64Value(17),
 			},
-		},
-	},
-
-	"embedded_tfsdk_struct_nil": {
-		`{}`,
-		TfsdkStructs{
-			BoolValue:   types.BoolNull(),
-			StringValue: types.StringNull(),
-			FloatValue:  types.Float64Null(),
 		},
 	},
 }
@@ -426,6 +417,15 @@ var decode_only_tests = map[string]struct {
 			ID:      types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
 		}},
 	},
+
+	"embedded_tfsdk_struct_nil": {
+		`{}`,
+		TfsdkStructs{
+			BoolValue:   types.BoolNull(),
+			StringValue: types.StringNull(),
+			FloatValue:  types.Float64Null(),
+		},
+	},
 }
 
 var encode_only_tests = map[string]struct {
@@ -439,6 +439,15 @@ var encode_only_tests = map[string]struct {
 			Content: types.StringValue("http://example.com/example.html\t20"),
 			ID:      types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
 		}},
+	},
+
+	"embedded_tfsdk_struct_nil": {
+		`{"bool_value":null,"float_value":null,"string_value":null}`,
+		TfsdkStructs{
+			BoolValue:   types.BoolNull(),
+			StringValue: types.StringNull(),
+			FloatValue:  types.Float64Null(),
+		},
 	},
 }
 

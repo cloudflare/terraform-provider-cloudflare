@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [[ -n "$1" ]]; then
+  LOCAL_GO="$1"
+  shift
+else
+  LOCAL_GO=../cloudflare-go
+fi
+
+echo "==> Linking with local directory"
+go mod edit -replace github.com/cloudflare/cloudflare-go/v2="$LOCAL_GO"
