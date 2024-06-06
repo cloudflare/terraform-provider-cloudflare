@@ -85,7 +85,7 @@ resource "cloudflare_tunnel_config" "example_config" {
 
 Required:
 
-- `ingress_rule` (Block List, Min: 1) Each incoming request received by cloudflared causes cloudflared to send a request to a local service. This section configures the rules that determine which requests are sent to which local services. [Read more](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/local/local-management/ingress/). (see [below for nested schema](#nestedblock--config--ingress_rule))
+- `ingress_rule` (Block List, Min: 1) Each incoming request received by cloudflared causes cloudflared to send a request to a local service. This section configures the rules that determine which requests are sent to which local services. Last rule must match all requests, e.g `service = "http_status:503"`. [Read more](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/local/local-management/ingress/). (see [below for nested schema](#nestedblock--config--ingress_rule))
 
 Optional:
 

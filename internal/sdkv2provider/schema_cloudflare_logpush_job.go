@@ -175,7 +175,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 					"record_suffix": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Default:     "}",
+						Default:     "}\n",
 						Description: "String to be appended after each record",
 					},
 					"record_template": {

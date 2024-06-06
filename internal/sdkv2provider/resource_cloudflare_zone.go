@@ -150,6 +150,15 @@ func resourceCloudflareZoneCreate(ctx context.Context, d *schema.ResourceData, m
 		}
 	}
 
+	vNS := []string{}
+	if vanityNS, ok := d.GetOk("vanity_name_servers"); ok {
+		vNS = expandInterfaceToStringList(vanityNS.([]interface{}))
+		_, err := client.ZoneSetVanityNS(ctx, zone.ID, vNS)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("error setting vanity_name_servers on zone ID %q: %w", zone.ID, err))
+		}
+	}
+
 	return resourceCloudflareZoneRead(ctx, d, meta)
 }
 
@@ -218,6 +227,15 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("error setting type for on zone ID %q: %w", zoneID, err))
+		}
+	}
+
+	vNS := []string{}
+	if vanityNS, ok := d.GetOkExists("vanity_name_servers"); ok && d.HasChange("vanity_name_servers") {
+		vNS = expandInterfaceToStringList(vanityNS.([]interface{}))
+		_, err := client.ZoneSetVanityNS(ctx, zone.ID, vNS)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("error setting vanity_name_servers on zone ID %q: %w", zone.ID, err))
 		}
 	}
 
