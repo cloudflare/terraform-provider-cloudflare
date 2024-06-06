@@ -1,4 +1,33 @@
-## 4.34.0 (Unreleased)
+## 4.35.0 (Unreleased)
+
+FEATURES:
+
+* **New Guide:** `resource/cloudflare-access-application: updated example to reflect new way of adding policies` ([#3338](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3338))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_load_balancer_pool: Add support for virtual_network_id ([#3333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3333))
+* resource/resource_cloudflare_zone: add support for 'vanity_name_servers' ([#3315](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3315))
+
+BUG FIXES:
+
+* resource/cloudflare_access_application: force recreation if SaaS app `auth_type` is changed ([#3332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3332))
+* resource/cloudflare_list_item: handle overlapping redirect `source_url` ([#3335](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3335))
+* resource/cloudflare_logpush_job: Mirror API defaults for record_delimiter to include newline ([#3334](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3334))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.16 to 1.27.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.16 to 1.17.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.3 to 1.54.4 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.0 to 1.27.1 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.54.4 to 1.55.0 in the aws group ([#3346](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3346))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.96.0 to 0.97.0 ([#3347](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3347))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.8.0 to 1.9.0 ([#3341](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3341))
+* provider: bump golang.org/x/net from 0.25.0 to 0.26.0 ([#3342](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3342))
+* provider: bump goreleaser/goreleaser-action from 5.1.0 to 6.0.0 ([#3345](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3345))
+
+## 4.34.0 (May 29th, 2024)
 
 FEATURES:
 

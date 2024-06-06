@@ -147,7 +147,8 @@ Optional:
 - `output_type` (String) Specifies the output type. Available values: `ndjson`, `csv`. Defaults to `ndjson`.
 - `record_delimiter` (String) String to be inserted in-between the records as separator.
 - `record_prefix` (String) String to be prepended before each record. Defaults to `{`.
-- `record_suffix` (String) String to be appended after each record. Defaults to `}`.
+- `record_suffix` (String) String to be appended after each record. Defaults to `}
+`.
 - `record_template` (String) String to use as template for each record instead of the default comma-separated list.
 - `sample_rate` (Number) Specifies the sampling rate. Defaults to `1`.
 - `timestamp_format` (String) Specifies the format for timestamps. Available values: `unixnano`, `unix`, `rfc3339`. Defaults to `unixnano`.

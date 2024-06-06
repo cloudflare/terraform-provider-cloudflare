@@ -83,6 +83,7 @@ Read-Only:
 - `enabled` (Boolean)
 - `header` (Set of Object) (see [below for nested schema](#nestedobjatt--pools--origins--header))
 - `name` (String)
+- `virtual_network_id` (String)
 - `weight` (Number)
 
 <a id="nestedobjatt--pools--origins--header"></a>

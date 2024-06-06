@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/resource_cloudflare_zone: add support for 'vanity_name_servers'
+```
