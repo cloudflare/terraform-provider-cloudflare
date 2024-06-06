@@ -1031,6 +1031,7 @@ func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string)
 		  tcp = true
 		  udp = false
 		  root_ca = true
+		  virtual_ip = false
 		}
 		logging {
 		  redact_pii = true
