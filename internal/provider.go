@@ -19,7 +19,6 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_organization"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_service_token"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_tag"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/account_member"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/address_map"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield_operation_schema_validation_settings"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield_schema_validation_settings"
@@ -156,7 +155,6 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		account_member.NewResource,
 		zone.NewResource,
 		zone_hold.NewResource,
 		zone_cache_reserve.NewResource,
