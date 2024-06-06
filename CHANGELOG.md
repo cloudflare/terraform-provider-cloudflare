@@ -21,6 +21,7 @@ DEPENDENCIES:
 * provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.16 to 1.17.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.3 to 1.54.4 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
 * provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.0 to 1.27.1 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump goreleaser/goreleaser-action from 5.1.0 to 6.0.0 ([#3345](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3345))
 
 ## 4.34.0 (May 29th, 2024)
 
