@@ -245,7 +245,7 @@ var proxySchema = map[string]*schema.Schema{
 	"virtual_ip": {
 		Type:        schema.TypeBool,
 		Required:    true,
-		Description: "Whether virtual ip (CGNAT) is enabled account wide and will override existing local interface IP for ZT clients.",
+		Description: "Whether virtual IP (CGNAT) is enabled account wide and will override existing local interface IP for ZT clients.",
 	},
 }
 
