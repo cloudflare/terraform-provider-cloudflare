@@ -17,7 +17,7 @@ type AccessIdentityProviderModel struct {
 	Config     *AccessIdentityProviderConfigModel     `tfsdk:"config" json:"config"`
 	Name       types.String                           `tfsdk:"name" json:"name"`
 	Type       types.String                           `tfsdk:"type" json:"type"`
-	ScimConfig *AccessIdentityProviderScimConfigModel `tfsdk:"scim_config" json:"scim_config"`
+	SCIMConfig *AccessIdentityProviderSCIMConfigModel `tfsdk:"scim_config" json:"scim_config"`
 }
 
 type AccessIdentityProviderConfigModel struct {
@@ -31,7 +31,7 @@ type AccessIdentityProviderConfigModel struct {
 	SupportGroups            types.Bool      `tfsdk:"support_groups" json:"support_groups"`
 }
 
-type AccessIdentityProviderScimConfigModel struct {
+type AccessIdentityProviderSCIMConfigModel struct {
 	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled"`
 	GroupMemberDeprovision types.Bool   `tfsdk:"group_member_deprovision" json:"group_member_deprovision"`
 	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision"`
