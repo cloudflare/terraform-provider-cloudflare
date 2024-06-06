@@ -30,9 +30,9 @@ resource "cloudflare_teams_account" "example" {
   }
 
   proxy {
-    tcp     = true
-    udp     = true
-    root_ca = true
+    tcp        = true
+    udp        = true
+    root_ca    = true
     virtual_ip = false
   }
 
