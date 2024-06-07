@@ -152,8 +152,8 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "UUID",
-							Computed:    true,
+							Description: "The UUID of the policy",
+							Optional:    true,
 						},
 						"precedence": schema.Int64Attribute{
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
@@ -376,7 +376,7 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 						Optional:    true,
 					},
 					"saml_attribute_transform_jsonata": schema.StringAttribute{
-						Description: "A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate.  The output of this expression must be a JSON object.\n",
+						Description: "A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.\n",
 						Optional:    true,
 					},
 					"sp_entity_id": schema.StringAttribute{

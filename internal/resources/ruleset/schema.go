@@ -70,7 +70,7 @@ func (r RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 							Description: "The action to perform when the rule matches.",
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("block", "challenge", "compress_response", "execute", "js_challenge", "log", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_config", "skip", "set_cache_settings", "log_custom_field"),
+								stringvalidator.OneOfCaseInsensitive("block", "challenge", "compress_response", "execute", "js_challenge", "log", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_config", "skip", "set_cache_settings", "log_custom_field", "ddos_dynamic", "force_connection_close"),
 							},
 						},
 						"action_parameters": schema.SingleNestedAttribute{

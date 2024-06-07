@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package access_service_token
+package access_tag
 
 import (
 	"context"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &AccessServiceTokenResource{}
+var _ resource.Resource = &AccessTagResource{}
 
 func NewResource() resource.Resource {
-	return &AccessServiceTokenResource{}
+	return &AccessTagResource{}
 }
 
-// AccessServiceTokenResource defines the resource implementation.
-type AccessServiceTokenResource struct {
+// AccessTagResource defines the resource implementation.
+type AccessTagResource struct {
 	client *cloudflare.Client
 }
 
-func (r *AccessServiceTokenResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_access_service_token"
+func (r *AccessTagResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_access_tag"
 }
 
-func (r *AccessServiceTokenResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AccessTagResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *AccessServiceTokenResource) Configure(ctx context.Context, req resource
 	r.client = client
 }
 
-func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessTagResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *AccessTagModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,12 +66,11 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.ServiceTokens.New(
+	env := AccessTagResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Tags.New(
 		ctx,
-		zero_trust.AccessServiceTokenNewParams{
+		zero_trust.AccessTagNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -92,8 +91,8 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessTagResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *AccessTagModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -102,13 +101,12 @@ func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
+	env := AccessTagResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Access.Tags.Get(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenGetParams{
+		data.Name.ValueString(),
+		zero_trust.AccessTagGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -128,8 +126,8 @@ func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.Read
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessTagResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *AccessTagModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -143,13 +141,12 @@ func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.ServiceTokens.Update(
+	env := AccessTagResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Tags.Update(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenUpdateParams{
+		data.Name.ValueString(),
+		zero_trust.AccessTagUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -170,8 +167,8 @@ func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.Up
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessTagResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *AccessTagModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -179,12 +176,11 @@ func (r *AccessServiceTokenResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Access.ServiceTokens.Delete(
+	_, err := r.client.ZeroTrust.Access.Tags.Delete(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenDeleteParams{
+		data.Name.ValueString(),
+		zero_trust.AccessTagDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -26,14 +26,14 @@ func (r R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"locationhint": schema.StringAttribute{
+			"location_hint": schema.StringAttribute{
 				Description: "Location of the bucket",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("apac", "eeur", "enam", "weur", "wnam"),
 				},
 			},
-			"storageclass": schema.StringAttribute{
+			"storage_class": schema.StringAttribute{
 				Description: "Storage class for newly uploaded objects, unless specified otherwise.",
 				Computed:    true,
 				Optional:    true,

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package teams_proxy_endpoint
+package regional_hostname
 
 import (
 	"context"
@@ -9,30 +9,30 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/apijson"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/logging"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &TeamsProxyEndpointResource{}
+var _ resource.Resource = &RegionalHostnameResource{}
 
 func NewResource() resource.Resource {
-	return &TeamsProxyEndpointResource{}
+	return &RegionalHostnameResource{}
 }
 
-// TeamsProxyEndpointResource defines the resource implementation.
-type TeamsProxyEndpointResource struct {
+// RegionalHostnameResource defines the resource implementation.
+type RegionalHostnameResource struct {
 	client *cloudflare.Client
 }
 
-func (r *TeamsProxyEndpointResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_teams_proxy_endpoint"
+func (r *RegionalHostnameResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_regional_hostname"
 }
 
-func (r *TeamsProxyEndpointResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *RegionalHostnameResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *TeamsProxyEndpointResource) Configure(ctx context.Context, req resource
 	r.client = client
 }
 
-func (r *TeamsProxyEndpointResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *TeamsProxyEndpointModel
+func (r *RegionalHostnameResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *RegionalHostnameModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,11 +66,11 @@ func (r *TeamsProxyEndpointResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := TeamsProxyEndpointResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Gateway.ProxyEndpoints.New(
+	env := RegionalHostnameResultEnvelope{*data}
+	_, err = r.client.Addressing.RegionalHostnames.New(
 		ctx,
-		zero_trust.GatewayProxyEndpointNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		addressing.RegionalHostnameNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -91,8 +91,8 @@ func (r *TeamsProxyEndpointResource) Create(ctx context.Context, req resource.Cr
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TeamsProxyEndpointResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *TeamsProxyEndpointModel
+func (r *RegionalHostnameResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *RegionalHostnameModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -101,12 +101,12 @@ func (r *TeamsProxyEndpointResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := TeamsProxyEndpointResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Gateway.ProxyEndpoints.Get(
+	env := RegionalHostnameResultEnvelope{*data}
+	_, err := r.client.Addressing.RegionalHostnames.Get(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.GatewayProxyEndpointGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		data.Hostname.ValueString(),
+		addressing.RegionalHostnameGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -126,8 +126,8 @@ func (r *TeamsProxyEndpointResource) Read(ctx context.Context, req resource.Read
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TeamsProxyEndpointResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *TeamsProxyEndpointModel
+func (r *RegionalHostnameResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *RegionalHostnameModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -141,12 +141,12 @@ func (r *TeamsProxyEndpointResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := TeamsProxyEndpointResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Gateway.ProxyEndpoints.Edit(
+	env := RegionalHostnameResultEnvelope{*data}
+	_, err = r.client.Addressing.RegionalHostnames.Edit(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.GatewayProxyEndpointEditParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		data.Hostname.ValueString(),
+		addressing.RegionalHostnameEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -167,8 +167,8 @@ func (r *TeamsProxyEndpointResource) Update(ctx context.Context, req resource.Up
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TeamsProxyEndpointResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *TeamsProxyEndpointModel
+func (r *RegionalHostnameResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *RegionalHostnameModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -176,11 +176,11 @@ func (r *TeamsProxyEndpointResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Gateway.ProxyEndpoints.Delete(
+	_, err := r.client.Addressing.RegionalHostnames.Delete(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.GatewayProxyEndpointDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		data.Hostname.ValueString(),
+		addressing.RegionalHostnameDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

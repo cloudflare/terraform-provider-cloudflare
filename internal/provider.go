@@ -13,6 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_application"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_custom_page"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_identity_provider"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_organization"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_service_token"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_tag"
@@ -43,12 +46,12 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/observatory_scheduled_test"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/r2_bucket"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/record"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/regional_hostname"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/regional_tiered_cache"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/ruleset"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_account"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_list"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_location"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_proxy_endpoint"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/tiered_cache"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/total_tls"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/tunnel"
@@ -183,6 +186,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		managed_headers.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
+		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
 		mtls_certificate.NewResource,
@@ -195,13 +199,17 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		device_managed_networks.NewResource,
 		device_posture_rule.NewResource,
 		device_posture_integration.NewResource,
+		access_identity_provider.NewResource,
 		access_organization.NewResource,
 		access_application.NewResource,
+		access_mutual_tls_certificate.NewResource,
+		access_service_token.NewResource,
+		access_custom_page.NewResource,
+		access_tag.NewResource,
 		tunnel.NewResource,
 		teams_account.NewResource,
 		teams_list.NewResource,
 		teams_location.NewResource,
-		teams_proxy_endpoint.NewResource,
 		turnstile_widget.NewResource,
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,

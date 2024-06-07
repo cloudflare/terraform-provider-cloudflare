@@ -33,7 +33,7 @@ type AccessApplicationModel struct {
 	PathCookieAttribute      types.Bool                         `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute"`
 	Policies                 *[]*AccessApplicationPoliciesModel `tfsdk:"policies" json:"policies"`
 	SameSiteCookieAttribute  types.String                       `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute"`
-	ScimConfig               *AccessApplicationScimConfigModel  `tfsdk:"scim_config" json:"scim_config"`
+	SCIMConfig               *AccessApplicationSCIMConfigModel  `tfsdk:"scim_config" json:"scim_config"`
 	SelfHostedDomains        types.String                       `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
 	ServiceAuth401Redirect   types.Bool                         `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect"`
 	SessionDuration          types.String                       `tfsdk:"session_duration" json:"session_duration"`
@@ -54,20 +54,20 @@ type AccessApplicationCORSHeadersModel struct {
 }
 
 type AccessApplicationPoliciesModel struct {
-	ID         types.String `tfsdk:"id" json:"id,computed"`
+	ID         types.String `tfsdk:"id" json:"id"`
 	Precedence types.Int64  `tfsdk:"precedence" json:"precedence"`
 }
 
-type AccessApplicationScimConfigModel struct {
+type AccessApplicationSCIMConfigModel struct {
 	IdPUID             types.String                                    `tfsdk:"idp_uid" json:"idp_uid"`
 	RemoteURI          types.String                                    `tfsdk:"remote_uri" json:"remote_uri"`
-	Authentication     *AccessApplicationScimConfigAuthenticationModel `tfsdk:"authentication" json:"authentication"`
+	Authentication     *AccessApplicationSCIMConfigAuthenticationModel `tfsdk:"authentication" json:"authentication"`
 	DeactivateOnDelete types.Bool                                      `tfsdk:"deactivate_on_delete" json:"deactivate_on_delete"`
 	Enabled            types.Bool                                      `tfsdk:"enabled" json:"enabled"`
-	Mappings           *[]*AccessApplicationScimConfigMappingsModel    `tfsdk:"mappings" json:"mappings"`
+	Mappings           *[]*AccessApplicationSCIMConfigMappingsModel    `tfsdk:"mappings" json:"mappings"`
 }
 
-type AccessApplicationScimConfigAuthenticationModel struct {
+type AccessApplicationSCIMConfigAuthenticationModel struct {
 	Password         types.String `tfsdk:"password" json:"password"`
 	Scheme           types.String `tfsdk:"scheme" json:"scheme"`
 	User             types.String `tfsdk:"user" json:"user"`
@@ -79,15 +79,15 @@ type AccessApplicationScimConfigAuthenticationModel struct {
 	Scopes           types.String `tfsdk:"scopes" json:"scopes"`
 }
 
-type AccessApplicationScimConfigMappingsModel struct {
+type AccessApplicationSCIMConfigMappingsModel struct {
 	Schema           types.String                                        `tfsdk:"schema" json:"schema"`
 	Enabled          types.Bool                                          `tfsdk:"enabled" json:"enabled"`
 	Filter           types.String                                        `tfsdk:"filter" json:"filter"`
-	Operations       *AccessApplicationScimConfigMappingsOperationsModel `tfsdk:"operations" json:"operations"`
+	Operations       *AccessApplicationSCIMConfigMappingsOperationsModel `tfsdk:"operations" json:"operations"`
 	TransformJsonata types.String                                        `tfsdk:"transform_jsonata" json:"transform_jsonata"`
 }
 
-type AccessApplicationScimConfigMappingsOperationsModel struct {
+type AccessApplicationSCIMConfigMappingsOperationsModel struct {
 	Create types.Bool `tfsdk:"create" json:"create"`
 	Delete types.Bool `tfsdk:"delete" json:"delete"`
 	Update types.Bool `tfsdk:"update" json:"update"`

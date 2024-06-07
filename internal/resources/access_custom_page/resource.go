@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package access_service_token
+package access_custom_page
 
 import (
 	"context"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &AccessServiceTokenResource{}
+var _ resource.Resource = &AccessCustomPageResource{}
 
 func NewResource() resource.Resource {
-	return &AccessServiceTokenResource{}
+	return &AccessCustomPageResource{}
 }
 
-// AccessServiceTokenResource defines the resource implementation.
-type AccessServiceTokenResource struct {
+// AccessCustomPageResource defines the resource implementation.
+type AccessCustomPageResource struct {
 	client *cloudflare.Client
 }
 
-func (r *AccessServiceTokenResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_access_service_token"
+func (r *AccessCustomPageResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_access_custom_page"
 }
 
-func (r *AccessServiceTokenResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AccessCustomPageResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *AccessServiceTokenResource) Configure(ctx context.Context, req resource
 	r.client = client
 }
 
-func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessCustomPageResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *AccessCustomPageModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,12 +66,11 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.ServiceTokens.New(
+	env := AccessCustomPageResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.CustomPages.New(
 		ctx,
-		zero_trust.AccessServiceTokenNewParams{
+		zero_trust.AccessCustomPageNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -92,8 +91,8 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessCustomPageResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *AccessCustomPageModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -102,13 +101,12 @@ func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
+	env := AccessCustomPageResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Access.CustomPages.Get(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenGetParams{
+		data.UID.ValueString(),
+		zero_trust.AccessCustomPageGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -128,8 +126,8 @@ func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.Read
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessCustomPageResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *AccessCustomPageModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -143,13 +141,12 @@ func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.ServiceTokens.Update(
+	env := AccessCustomPageResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.CustomPages.Update(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenUpdateParams{
+		data.UID.ValueString(),
+		zero_trust.AccessCustomPageUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -170,8 +167,8 @@ func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.Up
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessCustomPageResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *AccessCustomPageModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -179,12 +176,11 @@ func (r *AccessServiceTokenResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Access.ServiceTokens.Delete(
+	_, err := r.client.ZeroTrust.Access.CustomPages.Delete(
 		ctx,
-		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenDeleteParams{
+		data.UID.ValueString(),
+		zero_trust.AccessCustomPageDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

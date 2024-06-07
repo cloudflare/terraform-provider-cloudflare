@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package access_service_token
+package access_mutual_tls_certificate
 
 import (
 	"context"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &AccessServiceTokenResource{}
+var _ resource.Resource = &AccessMutualTLSCertificateResource{}
 
 func NewResource() resource.Resource {
-	return &AccessServiceTokenResource{}
+	return &AccessMutualTLSCertificateResource{}
 }
 
-// AccessServiceTokenResource defines the resource implementation.
-type AccessServiceTokenResource struct {
+// AccessMutualTLSCertificateResource defines the resource implementation.
+type AccessMutualTLSCertificateResource struct {
 	client *cloudflare.Client
 }
 
-func (r *AccessServiceTokenResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_access_service_token"
+func (r *AccessMutualTLSCertificateResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_access_mutual_tls_certificate"
 }
 
-func (r *AccessServiceTokenResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AccessMutualTLSCertificateResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *AccessServiceTokenResource) Configure(ctx context.Context, req resource
 	r.client = client
 }
 
-func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessMutualTLSCertificateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *AccessMutualTLSCertificateModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,10 +66,10 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.ServiceTokens.New(
+	env := AccessMutualTLSCertificateResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Certificates.New(
 		ctx,
-		zero_trust.AccessServiceTokenNewParams{
+		zero_trust.AccessCertificateNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -92,8 +92,8 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessMutualTLSCertificateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *AccessMutualTLSCertificateModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -102,11 +102,11 @@ func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
+	env := AccessMutualTLSCertificateResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenGetParams{
+		zero_trust.AccessCertificateGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -128,8 +128,8 @@ func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.Read
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessMutualTLSCertificateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *AccessMutualTLSCertificateModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -143,11 +143,11 @@ func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := AccessServiceTokenResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.ServiceTokens.Update(
+	env := AccessMutualTLSCertificateResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Certificates.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenUpdateParams{
+		zero_trust.AccessCertificateUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -170,8 +170,8 @@ func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.Up
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessServiceTokenResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *AccessServiceTokenModel
+func (r *AccessMutualTLSCertificateResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *AccessMutualTLSCertificateModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -179,10 +179,10 @@ func (r *AccessServiceTokenResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	_, err := r.client.ZeroTrust.Access.ServiceTokens.Delete(
+	_, err := r.client.ZeroTrust.Access.Certificates.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenDeleteParams{
+		zero_trust.AccessCertificateDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		},

@@ -36,8 +36,8 @@ type DevicePostureRuleInputModel struct {
 	OSDistroRevision types.String  `tfsdk:"os_distro_revision" json:"os_distro_revision"`
 	OSVersionExtra   types.String  `tfsdk:"os_version_extra" json:"os_version_extra"`
 	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled"`
-	CheckDisks       types.String  `tfsdk:"checkdisks" json:"checkDisks"`
-	RequireAll       types.Bool    `tfsdk:"requireall" json:"requireAll"`
+	CheckDisks       types.String  `tfsdk:"check_disks" json:"checkDisks"`
+	RequireAll       types.Bool    `tfsdk:"require_all" json:"requireAll"`
 	CertificateID    types.String  `tfsdk:"certificate_id" json:"certificate_id"`
 	Cn               types.String  `tfsdk:"cn" json:"cn"`
 	ComplianceStatus types.String  `tfsdk:"compliance_status" json:"compliance_status"`
@@ -47,12 +47,12 @@ type DevicePostureRuleInputModel struct {
 	Overall          types.String  `tfsdk:"overall" json:"overall"`
 	SensorConfig     types.String  `tfsdk:"sensor_config" json:"sensor_config"`
 	State            types.String  `tfsdk:"state" json:"state"`
-	VersionOperator  types.String  `tfsdk:"versionoperator" json:"versionOperator"`
-	CountOperator    types.String  `tfsdk:"countoperator" json:"countOperator"`
+	VersionOperator  types.String  `tfsdk:"version_operator" json:"versionOperator"`
+	CountOperator    types.String  `tfsdk:"count_operator" json:"countOperator"`
 	IssueCount       types.String  `tfsdk:"issue_count" json:"issue_count"`
 	EidLastSeen      types.String  `tfsdk:"eid_last_seen" json:"eid_last_seen"`
 	RiskLevel        types.String  `tfsdk:"risk_level" json:"risk_level"`
-	ScoreOperator    types.String  `tfsdk:"scoreoperator" json:"scoreOperator"`
+	ScoreOperator    types.String  `tfsdk:"score_operator" json:"scoreOperator"`
 	TotalScore       types.Float64 `tfsdk:"total_score" json:"total_score"`
 	ActiveThreats    types.Float64 `tfsdk:"active_threats" json:"active_threats"`
 	Infected         types.Bool    `tfsdk:"infected" json:"infected"`
