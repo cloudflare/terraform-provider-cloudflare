@@ -198,7 +198,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		return func(value reflect.Value) (json []byte, err error) {
 			var tfValue = value.Interface().(basetypes.StringValue)
 			if tfValue.IsNull() {
-				return []byte("null"), nil
+				return nil, nil
 			} else if tfValue.IsUnknown() {
 				return nil, nil
 			} else {
@@ -211,7 +211,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		return func(value reflect.Value) (json []byte, err error) {
 			var tfValue = value.Interface().(basetypes.Int64Value)
 			if tfValue.IsNull() {
-				return []byte("null"), nil
+				return nil, nil
 			} else if tfValue.IsUnknown() {
 				return nil, nil
 			} else {
@@ -224,7 +224,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		return func(value reflect.Value) (json []byte, err error) {
 			var tfValue = value.Interface().(basetypes.NumberValue)
 			if tfValue.IsNull() {
-				return []byte("null"), nil
+				return nil, nil
 			} else if tfValue.IsUnknown() {
 				return nil, nil
 			} else {
@@ -237,7 +237,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		return func(value reflect.Value) (json []byte, err error) {
 			var tfValue = value.Interface().(basetypes.Float64Value)
 			if tfValue.IsNull() {
-				return []byte("null"), nil
+				return nil, nil
 			} else if tfValue.IsUnknown() {
 				return nil, nil
 			} else {
@@ -250,7 +250,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 		return func(value reflect.Value) (json []byte, err error) {
 			var tfValue = value.Interface().(basetypes.BoolValue)
 			if tfValue.IsNull() {
-				return []byte("null"), nil
+				return nil, nil
 			} else if tfValue.IsUnknown() {
 				return nil, nil
 			} else {
