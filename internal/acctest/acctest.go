@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/stainless-sdks/cloudflare-terraform/internal"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 var (
@@ -33,30 +34,127 @@ var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 	},
 }
 
-func TestAccPreCheck(t *testing.T) {
-	// You can add code here to run prior to any test case execution, for example assertions
-	// about the appropriate environment variables being set are common to see in a pre-check
-	// function.
+func TestAccPreCheck_Credentials(t *testing.T) {
+	apiKey := os.Getenv(consts.APIKeyEnvVarKey)
+	apiToken := os.Getenv(consts.APITokenEnvVarKey)
+	userServiceKey := os.Getenv(consts.APIUserServiceKeyEnvVarKey)
+
+	if apiToken == "" && apiKey == "" && userServiceKey == "" {
+		t.Fatal("valid credentials are required for this acceptance test.")
+	}
 }
 
-func TestAccPreCheck_Zone(t *testing.T) {
-	// You can add code here to run prior to any test case execution, for example assertions
-	// about the appropriate environment variables being set are common to see in a pre-check
-	// function.
+// Test helper method checking `CLOUDFLARE_ZONE_ID` is present.
+func TestAccPreCheck_ZoneID(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_ZONE_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_ZONE_ID must be set for this acceptance test.")
+	}
 }
 
-func TestAccPreCheck_Account(t *testing.T) {
-	// You can add code here to run prior to any test case execution, for example assertions
-	// about the appropriate environment variables being set are common to see in a pre-check
-	// function.
+// Test helper method checking `CLOUDFLARE_ACCOUNT_ID` is present.
+func TestAccPreCheck_AccountID(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_ACCOUNT_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_ACCOUNT_ID must be set for this acceptance test.")
+	}
 }
 
+// Test helper method checking `CLOUDFLARE_DOMAIN` is present.
+func TestAccPreCheck_Domain(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_DOMAIN"); v == "" {
+		t.Fatal("CLOUDFLARE_DOMAIN must be set for acceptance tests. The domain is used to create and destroy record against.")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_ALT_DOMAIN` is present.
+func TestAccPreCheck_AlternateDomain(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_ALT_DOMAIN"); v == "" {
+		t.Fatal("CLOUDFLARE_ALT_DOMAIN must be set for this acceptance test.")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_ALT_ZONE_ID` is present.
+func TestAccPreCheck_AlternateZoneID(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_ALT_ZONE_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_ALT_ZONE_ID must be set for this acceptance test.")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_EMAIL` is present.
+func TestAccPreCheck_Email(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_EMAIL"); v == "" {
+		t.Fatal("CLOUDFLARE_EMAIL must be set for acceptance tests")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_API_KEY` is present.
+func TestAccPreCheck_APIKey(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_API_KEY"); v == "" {
+		t.Fatal("CLOUDFLARE_API_KEY must be set for acceptance tests")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_API_TOKEN` is present.
+func TestAccPreCheck_APIToken(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_API_TOKEN"); v == "" {
+		t.Fatal("CLOUDFLARE_API_TOKEN must be set for acceptance tests")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN` is present.
+func TestAccPreCheck_LogpushToken(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN"); v == "" {
+		t.Fatal("CLOUDFLARE_LOGPUSH_OWNERSHIP_TOKEN must be set for this acceptance test.")
+	}
+}
+
+// Test helper method checking the Workspace One environment variables are present.
+func TestAccPreCheck_WorkspaceOne(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID must be set for this acceptance test.")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET must be set for this acceptance test.")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_API_URL"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_API_URL must be set for this acceptance test.")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL"); v == "" {
+		t.Fatal("CLOUDFLARE_WORKSPACE_ONE_AUTH_URL must be set for this acceptance test.")
+	}
+}
+
+// Test helper method checking the required environment variables for Cloudflare Pages
+// are present.
+func TestAccPreCheck_Pages(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_PAGES_OWNER"); v == "" {
+		t.Fatal("CLOUDFLARE_PAGES_OWNER must be set for this acceptance test.")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_PAGES_REPO"); v == "" {
+		t.Fatal("CLOUDFLARE_PAGES_REPO must be set for this acceptance test.")
+	}
+}
+
+// Test helper method checking `CLOUDFLARE_BYO_IP_PREFIX_ID` is present.
+func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID"); v == "" {
+		t.Skip("Skipping acceptance test as CLOUDFLARE_BYO_IP_PREFIX_ID is not set")
+	}
+}
+
+// TestAccSkipForDefaultZone is used for skipping over tests that are not run by
+// default on usual acceptance test suite account.
 func TestAccSkipForDefaultZone(t *testing.T, reason string) {
 	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
 		t.Skipf("Skipping acceptance test for default zone (%s). %s", testAccCloudflareZoneID, reason)
 	}
 }
 
+// TestAccSkipForDefaultAccount is used for skipping over tests that are not run by
+// default on usual acceptance test suite account.
 func TestAccSkipForDefaultAccount(t *testing.T, reason string) {
 	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
 		t.Skipf("Skipping acceptance test for default account (%s). %s", testAccCloudflareAccountID, reason)
