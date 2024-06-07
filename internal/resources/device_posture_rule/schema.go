@@ -105,11 +105,11 @@ func (r DevicePostureRuleResource) Schema(ctx context.Context, req resource.Sche
 						Description: "Enabled",
 						Optional:    true,
 					},
-					"checkdisks": schema.StringAttribute{
+					"check_disks": schema.StringAttribute{
 						Description: "List of volume names to be checked for encryption.",
 						Optional:    true,
 					},
-					"requireall": schema.BoolAttribute{
+					"require_all": schema.BoolAttribute{
 						Description: "Whether to check all disks for encryption.",
 						Optional:    true,
 					},
@@ -155,14 +155,14 @@ func (r DevicePostureRuleResource) Schema(ctx context.Context, req resource.Sche
 							stringvalidator.OneOfCaseInsensitive("online", "offline", "unknown"),
 						},
 					},
-					"versionoperator": schema.StringAttribute{
+					"version_operator": schema.StringAttribute{
 						Description: "Version Operator",
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
 						},
 					},
-					"countoperator": schema.StringAttribute{
+					"count_operator": schema.StringAttribute{
 						Description: "Count Operator",
 						Optional:    true,
 						Validators: []validator.String{
@@ -184,7 +184,7 @@ func (r DevicePostureRuleResource) Schema(ctx context.Context, req resource.Sche
 							stringvalidator.OneOfCaseInsensitive("low", "medium", "high", "critical"),
 						},
 					},
-					"scoreoperator": schema.StringAttribute{
+					"score_operator": schema.StringAttribute{
 						Description: "Score Operator",
 						Optional:    true,
 						Validators: []validator.String{
