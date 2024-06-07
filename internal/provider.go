@@ -46,6 +46,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/observatory_scheduled_test"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/r2_bucket"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/record"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/regional_hostname"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/regional_tiered_cache"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/ruleset"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/teams_account"
@@ -185,6 +186,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		managed_headers.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
+		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
 		mtls_certificate.NewResource,
