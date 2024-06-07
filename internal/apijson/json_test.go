@@ -374,10 +374,10 @@ var tests = map[string]struct {
 		},
 	},
 
-	"tfsdk_null_string": {"null", types.StringNull()},
-	"tfsdk_null_int":    {"null", types.Int64Null()},
-	"tfsdk_null_float":  {"null", types.Float64Null()},
-	"tfsdk_null_bool":   {"null", types.BoolNull()},
+	"tfsdk_null_string": {"", types.StringNull()},
+	"tfsdk_null_int":    {"", types.Int64Null()},
+	"tfsdk_null_float":  {"", types.Float64Null()},
+	"tfsdk_null_bool":   {"", types.BoolNull()},
 
 	"tfsdk_string":             {`"hey"`, types.StringValue("hey")},
 	"tfsdk_true":               {"true", types.BoolValue(true)},
@@ -442,7 +442,7 @@ var encode_only_tests = map[string]struct {
 	},
 
 	"embedded_tfsdk_struct_nil": {
-		`{"bool_value":null,"float_value":null,"string_value":null}`,
+		`{}`,
 		TfsdkStructs{
 			BoolValue:   types.BoolNull(),
 			StringValue: types.StringNull(),

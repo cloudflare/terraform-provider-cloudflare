@@ -24,10 +24,10 @@ func TestFieldMarshal(t *testing.T) {
 		value    interface{}
 		expected string
 	}{
-		"null_string":  {types.StringNull(), "null"},
-		"null_int64":   {types.Int64Null(), "null"},
-		"null_float64": {types.Float64Null(), "null"},
-		"null_bool":    {types.BoolNull(), "null"},
+		"null_string":  {types.StringNull(), ""},
+		"null_int64":   {types.Int64Null(), ""},
+		"null_float64": {types.Float64Null(), ""},
+		"null_bool":    {types.BoolNull(), ""},
 		"null_struct":  {nil, ""},
 
 		"string": {types.StringValue("mystring"), `"mystring"`},
@@ -41,7 +41,7 @@ func TestFieldMarshal(t *testing.T) {
 				B: types.Int64Value(12),
 				C: &Struct{A: types.StringValue("nice"), C: types.BoolValue(false)},
 			},
-			`{"a":"hello","b":12,"c":{"a":"nice","b":null,"c":false},"f":null}`,
+			`{"a":"hello","b":12,"c":{"a":"nice","c":false}}`,
 		},
 	}
 
