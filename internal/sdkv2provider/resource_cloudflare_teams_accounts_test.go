@@ -61,8 +61,6 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "proxy.0.tcp", "true"),
 					resource.TestCheckResourceAttr(name, "proxy.0.udp", "false"),
 					resource.TestCheckResourceAttr(name, "proxy.0.root_ca", "true"),
-					resource.TestCheckResourceAttr(name, "connectivity.0.icmp", "false"),
-					resource.TestCheckResourceAttr(name, "connectivity.0.warp_to_warp", "false"),
 					resource.TestCheckResourceAttr(name, "proxy.0.virtual_ip", "true"),
 					resource.TestCheckResourceAttr(name, "connectivity.0.icmp", "false"),
 					resource.TestCheckResourceAttr(name, "connectivity.0.warp_to_warp", "false"),
