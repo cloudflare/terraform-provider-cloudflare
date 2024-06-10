@@ -390,6 +390,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 					"updated_at": schema.StringAttribute{
 						Computed: true,
 					},
+					"access_token_lifetime": schema.StringAttribute{
+						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",
+						Optional:    true,
+					},
 					"allow_pkce_without_client_secret": schema.BoolAttribute{
 						Description: "If client secret should be required on the token endpoint when authorization_code_with_pkce grant is used.",
 						Optional:    true,
