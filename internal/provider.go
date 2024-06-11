@@ -17,7 +17,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_custom_page"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_group"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_identity_provider"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_key"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_keys_configuration"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_mutual_tls_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_mutual_tls_hostname_settings"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_organization"
@@ -348,7 +348,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		access_mutual_tls_hostname_settings.NewResource,
 		access_group.NewResource,
 		access_service_token.NewResource,
-		access_key.NewResource,
+		access_keys_configuration.NewResource,
 		access_custom_page.NewResource,
 		access_tag.NewResource,
 		tunnel.NewResource,
