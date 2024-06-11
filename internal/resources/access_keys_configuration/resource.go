@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package access_key
+package access_keys_configuration
 
 import (
 	"context"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &AccessKeyResource{}
+var _ resource.Resource = &AccessKeysConfigurationResource{}
 
 func NewResource() resource.Resource {
-	return &AccessKeyResource{}
+	return &AccessKeysConfigurationResource{}
 }
 
-// AccessKeyResource defines the resource implementation.
-type AccessKeyResource struct {
+// AccessKeysConfigurationResource defines the resource implementation.
+type AccessKeysConfigurationResource struct {
 	client *cloudflare.Client
 }
 
-func (r *AccessKeyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_access_key"
+func (r *AccessKeysConfigurationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_access_keys_configuration"
 }
 
-func (r *AccessKeyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *AccessKeysConfigurationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *AccessKeyResource) Configure(ctx context.Context, req resource.Configur
 	r.client = client
 }
 
-func (r *AccessKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *AccessKeyModel
+func (r *AccessKeysConfigurationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *AccessKeysConfigurationModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,7 +66,7 @@ func (r *AccessKeyResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	res := new(http.Response)
-	env := AccessKeyResultEnvelope{*data}
+	env := AccessKeysConfigurationResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Keys.Update(
 		ctx,
 		zero_trust.AccessKeyUpdateParams{
@@ -91,8 +91,8 @@ func (r *AccessKeyResource) Create(ctx context.Context, req resource.CreateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessKeyModel
+func (r *AccessKeysConfigurationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *AccessKeysConfigurationModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -101,7 +101,7 @@ func (r *AccessKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	res := new(http.Response)
-	env := AccessKeyResultEnvelope{*data}
+	env := AccessKeysConfigurationResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Access.Keys.Get(
 		ctx,
 		zero_trust.AccessKeyGetParams{
@@ -125,8 +125,8 @@ func (r *AccessKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *AccessKeyModel
+func (r *AccessKeysConfigurationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *AccessKeysConfigurationModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -140,7 +140,7 @@ func (r *AccessKeyResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	res := new(http.Response)
-	env := AccessKeyResultEnvelope{*data}
+	env := AccessKeysConfigurationResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Access.Keys.Update(
 		ctx,
 		zero_trust.AccessKeyUpdateParams{
@@ -165,6 +165,6 @@ func (r *AccessKeyResource) Update(ctx context.Context, req resource.UpdateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *AccessKeysConfigurationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// TODO: implement not supported warning
 }
