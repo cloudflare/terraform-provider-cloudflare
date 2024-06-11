@@ -542,8 +542,9 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.auth_type", "oidc"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.#", "1"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.0", "https://saas-app.example/sso/oauth2/callback"),
-					resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.#", "1"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.#", "2"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.0", "authorization_code"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.1", "hybrid"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.#", "4"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.0", "email"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.1", "groups"),
@@ -558,6 +559,9 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.scope", "profile"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.required", "true"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.source.0.name", "rank"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.hybrid_and_implicit_options.#", "1"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.hybrid_and_implicit_options.0.return_access_token_from_authorization_endpoint", "true"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.hybrid_and_implicit_options.0.return_id_token_from_authorization_endpoint", "true"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.client_secret"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.0.public_key"),
 				),
@@ -581,8 +585,9 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(name, "saas_app.0.auth_type", "oidc"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.#", "1"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.redirect_uris.0", "https://saas-app.example/sso/oauth2/callback"),
-		resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.#", "2"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.0", "authorization_code"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.grant_types.1", "hybrid"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.#", "4"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.0", "email"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.1", "groups"),
@@ -598,6 +603,9 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.scope", "profile"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.required", "true"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.0.source.0.name", "rank"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.hybrid_and_implicit_options.#", "1"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.hybrid_and_implicit_options.0.return_access_token_from_authorization_endpoint", "true"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.hybrid_and_implicit_options.0.return_id_token_from_authorization_endpoint", "true"),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -1133,7 +1141,7 @@ resource "cloudflare_access_application" "%[1]s" {
   saas_app {
 	auth_type = "oidc"
 	redirect_uris = ["https://saas-app.example/sso/oauth2/callback"]
-	grant_types = ["authorization_code"]
+	grant_types = ["authorization_code", "hybrid"]
 	scopes = ["openid", "email", "profile", "groups"]
 	app_launcher_url = "https://saas-app.example/sso/login"
 	group_filter_regex = ".*"
@@ -1148,6 +1156,11 @@ resource "cloudflare_access_application" "%[1]s" {
 		source {
 			name = "rank"
 		}
+	}
+	
+	hybrid_and_implicit_options {
+		return_id_token_from_authorization_endpoint = true
+		return_access_token_from_authorization_endpoint = true
 	}
   }
   auto_redirect_to_identity = false
