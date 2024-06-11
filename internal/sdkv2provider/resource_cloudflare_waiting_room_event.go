@@ -193,7 +193,7 @@ func resourceCloudflareWaitingRoomEventImport(ctx context.Context, d *schema.Res
 	if len(idAttr) == 3 {
 		zoneID = idAttr[0]
 		waitingRoomID = idAttr[1]
-		waitingRoomEventID = idAttr[3]
+		waitingRoomEventID = idAttr[2]
 	} else {
 		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"zoneID/waitingRoomID/eventID\" for import", d.Id())
 	}
