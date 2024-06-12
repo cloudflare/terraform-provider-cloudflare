@@ -31,6 +31,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield_operation"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield_operation_schema_validation_settings"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield_schema"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_shield_schema_validation_settings"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/api_token"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/argo_smart_routing"
@@ -312,6 +313,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
+		api_shield_schema.NewResource,
 		managed_headers.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
