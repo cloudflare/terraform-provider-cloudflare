@@ -1,9 +1,5 @@
 ## 4.35.0 (Unreleased)
 
-FEATURES:
-
-* **New Guide:** `resource/cloudflare-access-application: updated example to reflect new way of adding policies` ([#3338](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3338))
-
 ENHANCEMENTS:
 
 * resource/cloudflare_access_application: Add Hybrid and Implicit flow support to OIDC SaaS Apps ([#3324](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3324))
