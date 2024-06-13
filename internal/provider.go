@@ -50,6 +50,8 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_posture_integration"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_posture_rule"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/device_settings_policy"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/dlp_custom_profile"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/dlp_predefined_profile"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_address"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_catch_all"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/email_routing_rule"
@@ -355,6 +357,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		access_tag.NewResource,
 		tunnel.NewResource,
 		tunnel_config.NewResource,
+		dlp_custom_profile.NewResource,
+		dlp_predefined_profile.NewResource,
 		teams_account.NewResource,
 		teams_list.NewResource,
 		teams_location.NewResource,
