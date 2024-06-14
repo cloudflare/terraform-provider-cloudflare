@@ -111,8 +111,8 @@ resource "cloudflare_teams_account" "%[1]s" {
   proxy {
     tcp = true
     udp = false
-	root_ca = true
-	virtual_ip = true
+    root_ca = true
+    virtual_ip = true
   }
   connectivity {
     icmp = false

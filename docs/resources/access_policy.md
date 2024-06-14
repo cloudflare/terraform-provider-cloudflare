@@ -68,7 +68,7 @@ resource "cloudflare_access_policy" "test_policy" {
 
 ### Optional
 
-- `account_id` (String) The account identifier to target for the resource. Must provide only one of `account_id`, `zone_id`. **Modifying this attribute will force creation of a new resource.**
+- `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`. **Modifying this attribute will force creation of a new resource.**
 - `application_id` (String, Deprecated) The ID of the application the policy is associated with. Required when using `precedence`. **Modifying this attribute will force creation of a new resource.**
 - `approval_group` (Block List) (see [below for nested schema](#nestedblock--approval_group))
 - `approval_required` (Boolean)
@@ -79,7 +79,7 @@ resource "cloudflare_access_policy" "test_policy" {
 - `purpose_justification_required` (Boolean) Whether to prompt the user for a justification for accessing the resource.
 - `require` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--require))
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`.
-- `zone_id` (String) The zone identifier to target for the resource. **Modifying this attribute will force creation of a new resource.**
+- `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`. **Modifying this attribute will force creation of a new resource.**
 
 ### Read-Only
 

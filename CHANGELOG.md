@@ -1,11 +1,10 @@
-## 4.35.0 (Unreleased)
+## 4.36.0 (Unreleased)
 
-FEATURES:
-
-* **New Guide:** `resource/cloudflare-access-application: updated example to reflect new way of adding policies` ([#3338](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3338))
+## 4.35.0 (June 12th, 2024)
 
 ENHANCEMENTS:
 
+* resource/cloudflare_access_application: Add Hybrid and Implicit flow support to OIDC SaaS Apps ([#3324](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3324))
 * resource/cloudflare_access_organization: Fix 'name' being optional ([#3343](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3343))
 * resource/cloudflare_load_balancer_pool: Add support for virtual_network_id ([#3333](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3333))
 * resource/cloudflare_teams_account: add support for 'virtual_ip' ([#3321](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3321))
@@ -13,16 +12,22 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
+* resource/cloudflare_access_application: Fix bug requiring explicit account_id or zone_id ([#3352](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3352))
 * resource/cloudflare_access_application: force recreation if SaaS app `auth_type` is changed ([#3332](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3332))
 * resource/cloudflare_list_item: handle overlapping redirect `source_url` ([#3335](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3335))
 * resource/cloudflare_logpush_job: Mirror API defaults for record_delimiter to include newline ([#3334](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3334))
+* resource/cloudflare_waiting_room_event: fix panic when trying to import a resource ([#3351](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3351))
 
 DEPENDENCIES:
 
 * provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.16 to 1.27.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.17 to 1.27.18 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
 * provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.16 to 1.17.17 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.17 to 1.17.18 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
 * provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.54.3 to 1.54.4 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.0 to 1.55.1 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
 * provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.0 to 1.27.1 ([#3339](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3339))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.1 to 1.27.2 ([#3350](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3350))
 * provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.54.4 to 1.55.0 in the aws group ([#3346](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3346))
 * provider: bump github.com/cloudflare/cloudflare-go from 0.96.0 to 0.97.0 ([#3347](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3347))
 * provider: bump github.com/hashicorp/terraform-plugin-framework from 1.8.0 to 1.9.0 ([#3341](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3341))

@@ -286,6 +286,26 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 							},
 						},
 					},
+					"hybrid_and_implicit_options": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "Hybrid and Implicit Flow options",
+						MaxItems:    1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"return_access_token_from_authorization_endpoint": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "If true, the authorization endpoint will return an access token",
+								},
+								"return_id_token_from_authorization_endpoint": {
+									Type:        schema.TypeBool,
+									Optional:    true,
+									Description: "If true, the authorization endpoint will return an id token",
+								},
+							},
+						},
+					},
 
 					// SAML options
 					"sp_entity_id": {
@@ -867,6 +887,13 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 				claimsAsMap := customClaims.(map[string]interface{})
 				SaasConfig.CustomClaims = append(SaasConfig.CustomClaims, convertOIDCClaimSchemaToStruct(claimsAsMap))
 			}
+
+			if _, ok := d.GetOk("saas_app.0.hybrid_and_implicit_options"); ok {
+				SaasConfig.HybridAndImplicitOptions = &cloudflare.AccessApplicationHybridAndImplicitOptions{
+					ReturnAccessTokenFromAuthorizationEndpoint: cloudflare.BoolPtr(d.Get("saas_app.0.hybrid_and_implicit_options.0.return_access_token_from_authorization_endpoint").(bool)),
+					ReturnIDTokenFromAuthorizationEndpoint:     cloudflare.BoolPtr(d.Get("saas_app.0.hybrid_and_implicit_options.0.return_id_token_from_authorization_endpoint").(bool)),
+				}
+			}
 		} else {
 			SaasConfig.SPEntityID = d.Get("saas_app.0.sp_entity_id").(string)
 			SaasConfig.ConsumerServiceUrl = d.Get("saas_app.0.consumer_service_url").(string)
@@ -1106,6 +1133,18 @@ func convertOIDCClaimStructToSchema(attr cloudflare.OIDCClaimConfig) map[string]
 	return m
 }
 
+func convertHybridAndImplicitOptionsStructToSchema(hybridAndImplicitOptions *cloudflare.AccessApplicationHybridAndImplicitOptions) []interface{} {
+	if hybridAndImplicitOptions == nil {
+		return []interface{}{}
+	}
+
+	m := map[string]interface{}{
+		"return_access_token_from_authorization_endpoint": hybridAndImplicitOptions.ReturnAccessTokenFromAuthorizationEndpoint,
+		"return_id_token_from_authorization_endpoint":     hybridAndImplicitOptions.ReturnIDTokenFromAuthorizationEndpoint,
+	}
+	return []interface{}{m}
+}
+
 func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasApplication) []interface{} {
 	if app == nil {
 		return []interface{}{}
@@ -1133,6 +1172,10 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 		}
 		if len(customClaims) != 0 {
 			m["custom_claim"] = customClaims
+		}
+
+		if app.HybridAndImplicitOptions != nil {
+			m["hybrid_and_implicit_options"] = convertHybridAndImplicitOptionsStructToSchema(app.HybridAndImplicitOptions)
 		}
 
 		// client secret is only returned on create, if it is present in the state, preserve it

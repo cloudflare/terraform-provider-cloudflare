@@ -147,6 +147,7 @@ Optional:
 - `default_relay_state` (String) The relay state used if not provided by the identity provider.
 - `grant_types` (Set of String) The OIDC flows supported by this application.
 - `group_filter_regex` (String) A regex to filter Cloudflare groups returned in ID token and userinfo endpoint.
+- `hybrid_and_implicit_options` (Block List, Max: 1) Hybrid and Implicit Flow options. (see [below for nested schema](#nestedblock--saas_app--hybrid_and_implicit_options))
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application.
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
 - `redirect_uris` (Set of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens.
@@ -214,6 +215,15 @@ Optional:
 
 - `name_by_idp` (Map of String) A mapping from IdP ID to claim name.
 
+
+
+<a id="nestedblock--saas_app--hybrid_and_implicit_options"></a>
+### Nested Schema for `saas_app.hybrid_and_implicit_options`
+
+Optional:
+
+- `return_access_token_from_authorization_endpoint` (Boolean) If true, the authorization endpoint will return an access token.
+- `return_id_token_from_authorization_endpoint` (Boolean) If true, the authorization endpoint will return an id token.
 
 
 <a id="nestedblock--saas_app--refresh_token_options"></a>
