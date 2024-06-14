@@ -47,6 +47,10 @@ func (r APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest
 										Description: "Identifier of the group.",
 										Computed:    true,
 									},
+									"meta": schema.StringAttribute{
+										Description: "Attributes associated to the permission group.",
+										Optional:    true,
+									},
 									"name": schema.StringAttribute{
 										Description: "Name of the group.",
 										Computed:    true,

@@ -28,6 +28,7 @@ type APITokenPoliciesModel struct {
 
 type APITokenPoliciesPermissionGroupsModel struct {
 	ID   types.String `tfsdk:"id" json:"id,computed"`
+	Meta types.String `tfsdk:"meta" json:"meta"`
 	Name types.String `tfsdk:"name" json:"name,computed"`
 }
 

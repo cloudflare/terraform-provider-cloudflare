@@ -21,7 +21,7 @@ type AddressMapModel struct {
 
 type AddressMapMembershipsModel struct {
 	CanDelete  types.Bool   `tfsdk:"can_delete" json:"can_delete,computed"`
-	CreatedAt  types.String `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt  types.String `tfsdk:"created_at" json:"created_at"`
 	Identifier types.String `tfsdk:"identifier" json:"identifier"`
 	Kind       types.String `tfsdk:"kind" json:"kind"`
 }

@@ -66,6 +66,7 @@ func (r *AccountMemberResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	res := new(http.Response)
+	env := AccountMemberResultEnvelope{*data}
 	_, err = r.client.Accounts.Members.New(
 		ctx,
 		accounts.MemberNewParams{
@@ -80,11 +81,12 @@ func (r *AccountMemberResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -99,9 +101,10 @@ func (r *AccountMemberResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	res := new(http.Response)
+	env := AccountMemberResultEnvelope{*data}
 	_, err := r.client.Accounts.Members.Get(
 		ctx,
-		data.MemberID.ValueString(),
+		data.ID.ValueString(),
 		accounts.MemberGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -113,11 +116,12 @@ func (r *AccountMemberResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -137,9 +141,10 @@ func (r *AccountMemberResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	res := new(http.Response)
+	env := AccountMemberResultEnvelope{*data}
 	_, err = r.client.Accounts.Members.Update(
 		ctx,
-		data.MemberID.ValueString(),
+		data.ID.ValueString(),
 		accounts.MemberUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -152,11 +157,12 @@ func (r *AccountMemberResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -172,7 +178,7 @@ func (r *AccountMemberResource) Delete(ctx context.Context, req resource.DeleteR
 
 	_, err := r.client.Accounts.Members.Delete(
 		ctx,
-		data.MemberID.ValueString(),
+		data.ID.ValueString(),
 		accounts.MemberDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

@@ -8,37 +8,81 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r AccountMemberResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Required: true,
+			"id": schema.StringAttribute{
+				Description:   "Membership identifier tag.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"member_id": schema.StringAttribute{
-				Description: "Membership identifier tag.",
-				Optional:    true,
+			"account_id": schema.StringAttribute{
+				Description: "Account identifier tag.",
+				Required:    true,
 			},
 			"email": schema.StringAttribute{
 				Description: "The contact email address of the user.",
 				Required:    true,
 			},
-			"roles": schema.ListAttribute{
+			"roles": schema.StringAttribute{
 				Description: "Array of roles associated with this member.",
-				Required:    true,
-				ElementType: types.StringType,
+				Optional:    true,
 			},
 			"status": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
 				},
 				Default: stringdefault.StaticString("pending"),
+			},
+			"policies": schema.ListNestedAttribute{
+				Description: "Array of policies associated with this member.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Policy identifier.",
+							Computed:    true,
+						},
+						"access": schema.StringAttribute{
+							Description: "Allow or deny operations against the resources.",
+							Required:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
+							},
+						},
+						"permission_groups": schema.ListNestedAttribute{
+							Description: "A set of permission groups that are specified to the policy.",
+							Required:    true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"id": schema.StringAttribute{
+										Description: "Identifier of the group.",
+										Required:    true,
+									},
+								},
+							},
+						},
+						"resource_groups": schema.ListNestedAttribute{
+							Description: "A list of resource groups that the policy applies to.",
+							Required:    true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"id": schema.StringAttribute{
+										Description: "Identifier of the group.",
+										Required:    true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
