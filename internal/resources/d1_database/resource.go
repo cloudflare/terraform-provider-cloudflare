@@ -87,6 +87,7 @@ func (r *D1DatabaseResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	data = &env.Result
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *D1DatabaseResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 	data = &env.Result
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -162,6 +164,7 @@ func (r *D1DatabaseResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	data = &env.Result
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -187,6 +190,7 @@ func (r *D1DatabaseResource) Delete(ctx context.Context, req resource.DeleteRequ
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

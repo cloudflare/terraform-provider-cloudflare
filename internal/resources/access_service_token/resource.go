@@ -67,12 +67,17 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 	}
 	res := new(http.Response)
 	env := AccessServiceTokenResultEnvelope{*data}
+	params := zero_trust.AccessServiceTokenNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.ServiceTokens.New(
 		ctx,
-		zero_trust.AccessServiceTokenNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -93,39 +98,44 @@ func (r *AccessServiceTokenResource) Create(ctx context.Context, req resource.Cr
 }
 
 func (r *AccessServiceTokenResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	// var data *AccessServiceTokenModel
+	var data *AccessServiceTokenModel
 
-	// resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
-	// if resp.Diagnostics.HasError() {
-	// 	return
-	// }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
-	// res := new(http.Response)
-	// env := AccessServiceTokenResultEnvelope{*data}
-	// _, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
-	// 	ctx,
-	// 	data.ID.ValueString(),
-	// 	zero_trust.AccessServiceTokenGetParams{
-	// 		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	// 		ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-	// 	},
-	// 	option.WithResponseBodyInto(&res),
-	// 	option.WithMiddleware(logging.Middleware(ctx)),
-	// )
-	// if err != nil {
-	// 	resp.Diagnostics.AddError("failed to make http request", err.Error())
-	// 	return
-	// }
-	// bytes, _ := io.ReadAll(res.Body)
-	// err = apijson.Unmarshal(bytes, &env)
-	// if err != nil {
-	// 	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-	// 	return
-	// }
-	// data = &env.Result
+	res := new(http.Response)
+	env := AccessServiceTokenResultEnvelope{*data}
+	params := zero_trust.AccessServiceTokenGetParams{}
 
-	// resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
+	_, err := r.client.ZeroTrust.Access.ServiceTokens.Get(
+		ctx,
+		data.ID.ValueString(),
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -144,13 +154,18 @@ func (r *AccessServiceTokenResource) Update(ctx context.Context, req resource.Up
 	}
 	res := new(http.Response)
 	env := AccessServiceTokenResultEnvelope{*data}
+	params := zero_trust.AccessServiceTokenUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.ServiceTokens.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -179,13 +194,18 @@ func (r *AccessServiceTokenResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
+	params := zero_trust.AccessServiceTokenDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.ServiceTokens.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessServiceTokenDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

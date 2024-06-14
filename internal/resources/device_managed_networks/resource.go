@@ -87,6 +87,7 @@ func (r *DeviceManagedNetworksResource) Create(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+	data.ID = data.NetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *DeviceManagedNetworksResource) Read(ctx context.Context, req resource.R
 		return
 	}
 	data = &env.Result
+	data.ID = data.NetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,6 +165,7 @@ func (r *DeviceManagedNetworksResource) Update(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+	data.ID = data.NetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,6 +191,7 @@ func (r *DeviceManagedNetworksResource) Delete(ctx context.Context, req resource
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.NetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

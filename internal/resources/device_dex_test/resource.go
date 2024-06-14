@@ -87,6 +87,7 @@ func (r *DeviceDEXTestResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *DeviceDEXTestResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,6 +165,7 @@ func (r *DeviceDEXTestResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,6 +191,7 @@ func (r *DeviceDEXTestResource) Delete(ctx context.Context, req resource.DeleteR
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

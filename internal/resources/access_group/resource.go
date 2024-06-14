@@ -67,12 +67,17 @@ func (r *AccessGroupResource) Create(ctx context.Context, req resource.CreateReq
 	}
 	res := new(http.Response)
 	env := AccessGroupResultEnvelope{*data}
+	params := zero_trust.AccessGroupNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Groups.New(
 		ctx,
-		zero_trust.AccessGroupNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -103,13 +108,18 @@ func (r *AccessGroupResource) Read(ctx context.Context, req resource.ReadRequest
 
 	res := new(http.Response)
 	env := AccessGroupResultEnvelope{*data}
+	params := zero_trust.AccessGroupGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Groups.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessGroupGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -144,13 +154,18 @@ func (r *AccessGroupResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 	res := new(http.Response)
 	env := AccessGroupResultEnvelope{*data}
+	params := zero_trust.AccessGroupUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Groups.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessGroupUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -179,13 +194,18 @@ func (r *AccessGroupResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
+	params := zero_trust.AccessGroupDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Groups.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessGroupDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

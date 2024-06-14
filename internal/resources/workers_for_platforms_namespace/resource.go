@@ -87,6 +87,7 @@ func (r *WorkersForPlatformsNamespaceResource) Create(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+	data.ID = data.NamespaceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *WorkersForPlatformsNamespaceResource) Read(ctx context.Context, req res
 		return
 	}
 	data = &env.Result
+	data.ID = data.NamespaceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -162,6 +164,7 @@ func (r *WorkersForPlatformsNamespaceResource) Update(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+	data.ID = data.NamespaceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -187,6 +190,7 @@ func (r *WorkersForPlatformsNamespaceResource) Delete(ctx context.Context, req r
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.NamespaceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

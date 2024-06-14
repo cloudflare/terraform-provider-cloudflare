@@ -67,12 +67,17 @@ func (r *AccessMutualTLSCertificateResource) Create(ctx context.Context, req res
 	}
 	res := new(http.Response)
 	env := AccessMutualTLSCertificateResultEnvelope{*data}
+	params := zero_trust.AccessCertificateNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Certificates.New(
 		ctx,
-		zero_trust.AccessCertificateNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -103,13 +108,18 @@ func (r *AccessMutualTLSCertificateResource) Read(ctx context.Context, req resou
 
 	res := new(http.Response)
 	env := AccessMutualTLSCertificateResultEnvelope{*data}
+	params := zero_trust.AccessCertificateGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessCertificateGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -144,13 +154,18 @@ func (r *AccessMutualTLSCertificateResource) Update(ctx context.Context, req res
 	}
 	res := new(http.Response)
 	env := AccessMutualTLSCertificateResultEnvelope{*data}
+	params := zero_trust.AccessCertificateUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Certificates.Update(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessCertificateUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -179,13 +194,18 @@ func (r *AccessMutualTLSCertificateResource) Delete(ctx context.Context, req res
 		return
 	}
 
+	params := zero_trust.AccessCertificateDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Certificates.Delete(
 		ctx,
 		data.ID.ValueString(),
-		zero_trust.AccessCertificateDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

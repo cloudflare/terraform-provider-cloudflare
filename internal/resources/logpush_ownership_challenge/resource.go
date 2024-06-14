@@ -67,12 +67,17 @@ func (r *LogpushOwnershipChallengeResource) Create(ctx context.Context, req reso
 	}
 	res := new(http.Response)
 	env := LogpushOwnershipChallengeResultEnvelope{*data}
+	params := logpush.OwnershipNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.Logpush.Ownership.New(
 		ctx,
-		logpush.OwnershipNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -112,12 +117,17 @@ func (r *LogpushOwnershipChallengeResource) Update(ctx context.Context, req reso
 	}
 	res := new(http.Response)
 	env := LogpushOwnershipChallengeResultEnvelope{*data}
+	params := logpush.OwnershipNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.Logpush.Ownership.New(
 		ctx,
-		logpush.OwnershipNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

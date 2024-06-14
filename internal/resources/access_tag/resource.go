@@ -87,6 +87,7 @@ func (r *AccessTagResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *AccessTagResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,6 +165,7 @@ func (r *AccessTagResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,6 +191,7 @@ func (r *AccessTagResource) Delete(ctx context.Context, req resource.DeleteReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

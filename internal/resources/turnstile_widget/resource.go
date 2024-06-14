@@ -87,6 +87,7 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 	data = &env.Result
+	data.ID = data.Sitekey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *TurnstileWidgetResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.Sitekey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,6 +165,7 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 	data = &env.Result
+	data.ID = data.Sitekey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,6 +191,7 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Sitekey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
