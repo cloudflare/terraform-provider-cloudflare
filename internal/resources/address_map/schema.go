@@ -51,7 +51,7 @@ func (r AddressMapResource) Schema(ctx context.Context, req resource.SchemaReque
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Optional: true,
 						},
 						"identifier": schema.StringAttribute{
 							Description: "The identifier for the membership (eg. a zone or account tag).",
