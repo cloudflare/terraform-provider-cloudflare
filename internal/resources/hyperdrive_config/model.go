@@ -11,6 +11,7 @@ type HyperdriveConfigResultEnvelope struct {
 }
 
 type HyperdriveConfigModel struct {
+	ID        types.String                  `tfsdk:"id" json:"-,computed"`
 	AccountID types.String                  `tfsdk:"account_id" path:"account_id"`
 	Name      types.String                  `tfsdk:"name" json:"name"`
 	Origin    *HyperdriveConfigOriginModel  `tfsdk:"origin" json:"origin"`

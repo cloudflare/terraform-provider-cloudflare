@@ -16,6 +16,10 @@ import (
 func (r DeviceManagedNetworksResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "API UUID.",
+				Computed:    true,
+			},
 			"network_id": schema.StringAttribute{
 				Description:   "API UUID.",
 				Computed:      true,

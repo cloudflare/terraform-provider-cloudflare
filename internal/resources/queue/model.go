@@ -11,6 +11,7 @@ type QueueResultEnvelope struct {
 }
 
 type QueueModel struct {
+	ID        types.String `tfsdk:"id" json:"-,computed"`
 	QueueID   types.String `tfsdk:"queue_id" json:"queue_id,computed"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id"`
 }

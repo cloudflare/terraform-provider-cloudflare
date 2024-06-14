@@ -11,6 +11,7 @@ type D1DatabaseResultEnvelope struct {
 }
 
 type D1DatabaseModel struct {
+	ID        types.String `tfsdk:"id" json:"-,computed"`
 	UUID      types.String `tfsdk:"uuid" json:"uuid"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id"`
 	Name      types.String `tfsdk:"name" json:"name"`

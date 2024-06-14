@@ -67,12 +67,17 @@ func (r *LogpushJobResource) Create(ctx context.Context, req resource.CreateRequ
 	}
 	res := new(http.Response)
 	env := LogpushJobResultEnvelope{*data}
+	params := logpush.JobNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.Logpush.Jobs.New(
 		ctx,
-		logpush.JobNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -103,13 +108,18 @@ func (r *LogpushJobResource) Read(ctx context.Context, req resource.ReadRequest,
 
 	res := new(http.Response)
 	env := LogpushJobResultEnvelope{*data}
+	params := logpush.JobGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Logpush.Jobs.Get(
 		ctx,
 		data.ID.ValueInt64(),
-		logpush.JobGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -144,13 +154,18 @@ func (r *LogpushJobResource) Update(ctx context.Context, req resource.UpdateRequ
 	}
 	res := new(http.Response)
 	env := LogpushJobResultEnvelope{*data}
+	params := logpush.JobUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.Logpush.Jobs.Update(
 		ctx,
 		data.ID.ValueInt64(),
-		logpush.JobUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -179,13 +194,18 @@ func (r *LogpushJobResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
+	params := logpush.JobDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Logpush.Jobs.Delete(
 		ctx,
 		data.ID.ValueInt64(),
-		logpush.JobDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

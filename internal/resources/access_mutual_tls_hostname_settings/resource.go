@@ -67,12 +67,17 @@ func (r *AccessMutualTLSHostnameSettingsResource) Create(ctx context.Context, re
 	}
 	res := new(http.Response)
 	env := AccessMutualTLSHostnameSettingsResultEnvelope{*data}
+	params := zero_trust.AccessCertificateSettingUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Certificates.Settings.Update(
 		ctx,
-		zero_trust.AccessCertificateSettingUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -103,12 +108,17 @@ func (r *AccessMutualTLSHostnameSettingsResource) Read(ctx context.Context, req 
 
 	res := new(http.Response)
 	env := AccessMutualTLSHostnameSettingsResultEnvelope{*data}
+	params := zero_trust.AccessCertificateSettingGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Certificates.Settings.Get(
 		ctx,
-		zero_trust.AccessCertificateSettingGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -143,12 +153,17 @@ func (r *AccessMutualTLSHostnameSettingsResource) Update(ctx context.Context, re
 	}
 	res := new(http.Response)
 	env := AccessMutualTLSHostnameSettingsResultEnvelope{*data}
+	params := zero_trust.AccessCertificateSettingUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Certificates.Settings.Update(
 		ctx,
-		zero_trust.AccessCertificateSettingUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

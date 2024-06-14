@@ -87,6 +87,7 @@ func (r *QueueResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 	data = &env.Result
+	data.ID = data.QueueID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *QueueResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 	data = &env.Result
+	data.ID = data.QueueID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,6 +165,7 @@ func (r *QueueResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 	data = &env.Result
+	data.ID = data.QueueID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,6 +191,7 @@ func (r *QueueResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.QueueID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

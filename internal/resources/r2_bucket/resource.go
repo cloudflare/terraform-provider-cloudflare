@@ -87,6 +87,7 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -162,6 +164,7 @@ func (r *R2BucketResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -187,6 +190,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

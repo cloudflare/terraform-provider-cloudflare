@@ -11,6 +11,7 @@ type AccessOrganizationResultEnvelope struct {
 }
 
 type AccessOrganizationModel struct {
+	ID                             types.String                        `tfsdk:"id" json:"-,computed"`
 	AccountID                      types.String                        `tfsdk:"account_id" path:"account_id"`
 	ZoneID                         types.String                        `tfsdk:"zone_id" path:"zone_id"`
 	AuthDomain                     types.String                        `tfsdk:"auth_domain" json:"auth_domain"`

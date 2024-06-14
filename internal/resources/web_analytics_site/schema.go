@@ -14,6 +14,10 @@ import (
 func (r WebAnalyticsSiteResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The Web Analytics site identifier.",
+				Computed:    true,
+			},
 			"site_tag": schema.StringAttribute{
 				Description:   "The Web Analytics site identifier.",
 				Computed:      true,

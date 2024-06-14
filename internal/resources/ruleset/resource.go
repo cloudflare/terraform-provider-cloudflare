@@ -67,12 +67,17 @@ func (r *RulesetResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 	res := new(http.Response)
 	env := RulesetResultEnvelope{*data}
+	params := rulesets.RulesetNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.Rulesets.New(
 		ctx,
-		rulesets.RulesetNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -103,13 +108,18 @@ func (r *RulesetResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 	res := new(http.Response)
 	env := RulesetResultEnvelope{*data}
+	params := rulesets.RulesetGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.Rulesets.Get(
 		ctx,
 		data.ID.ValueString(),
-		rulesets.RulesetGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -144,13 +154,18 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 	res := new(http.Response)
 	env := RulesetResultEnvelope{*data}
+	params := rulesets.RulesetUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.Rulesets.Update(
 		ctx,
 		data.ID.ValueString(),
-		rulesets.RulesetUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -179,13 +194,18 @@ func (r *RulesetResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
+	params := rulesets.RulesetDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	err := r.client.Rulesets.Delete(
 		ctx,
 		data.ID.ValueString(),
-		rulesets.RulesetDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

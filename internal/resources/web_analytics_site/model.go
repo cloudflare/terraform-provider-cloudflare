@@ -11,6 +11,7 @@ type WebAnalyticsSiteResultEnvelope struct {
 }
 
 type WebAnalyticsSiteModel struct {
+	ID          types.String `tfsdk:"id" json:"-,computed"`
 	SiteTag     types.String `tfsdk:"site_tag" json:"site_tag,computed"`
 	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
 	AutoInstall types.Bool   `tfsdk:"auto_install" json:"auto_install"`

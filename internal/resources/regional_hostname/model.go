@@ -11,6 +11,7 @@ type RegionalHostnameResultEnvelope struct {
 }
 
 type RegionalHostnameModel struct {
+	ID        types.String `tfsdk:"id" json:"-,computed"`
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 	Hostname  types.String `tfsdk:"hostname" json:"hostname"`
 	RegionKey types.String `tfsdk:"region_key" json:"region_key"`

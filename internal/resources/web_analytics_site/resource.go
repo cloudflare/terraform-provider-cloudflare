@@ -87,6 +87,7 @@ func (r *WebAnalyticsSiteResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	data = &env.Result
+	data.ID = data.SiteTag
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,6 +123,7 @@ func (r *WebAnalyticsSiteResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.SiteTag
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,6 +165,7 @@ func (r *WebAnalyticsSiteResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 	data = &env.Result
+	data.ID = data.SiteTag
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,6 +191,7 @@ func (r *WebAnalyticsSiteResource) Delete(ctx context.Context, req resource.Dele
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.SiteTag
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

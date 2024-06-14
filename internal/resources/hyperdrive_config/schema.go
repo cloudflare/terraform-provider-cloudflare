@@ -17,6 +17,9 @@ import (
 func (r HyperdriveConfigResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,

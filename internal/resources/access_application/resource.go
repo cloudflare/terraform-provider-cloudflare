@@ -68,12 +68,17 @@ func (r *AccessApplicationResource) Create(ctx context.Context, req resource.Cre
 	}
 	res := new(http.Response)
 	env := AccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Applications.New(
 		ctx,
-		zero_trust.AccessApplicationNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -104,13 +109,18 @@ func (r *AccessApplicationResource) Read(ctx context.Context, req resource.ReadR
 
 	res := new(http.Response)
 	env := AccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Applications.Get(
 		ctx,
 		shared.UnionString(data.ID.ValueString()),
-		zero_trust.AccessApplicationGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -145,13 +155,18 @@ func (r *AccessApplicationResource) Update(ctx context.Context, req resource.Upd
 	}
 	res := new(http.Response)
 	env := AccessApplicationResultEnvelope{*data}
+	params := zero_trust.AccessApplicationUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Applications.Update(
 		ctx,
 		shared.UnionString(data.ID.ValueString()),
-		zero_trust.AccessApplicationUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -180,13 +195,18 @@ func (r *AccessApplicationResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
+	params := zero_trust.AccessApplicationDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Applications.Delete(
 		ctx,
 		shared.UnionString(data.ID.ValueString()),
-		zero_trust.AccessApplicationDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

@@ -67,12 +67,17 @@ func (r *AccessOrganizationResource) Create(ctx context.Context, req resource.Cr
 	}
 	res := new(http.Response)
 	env := AccessOrganizationResultEnvelope{*data}
+	params := zero_trust.OrganizationNewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Organizations.New(
 		ctx,
-		zero_trust.OrganizationNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -88,6 +93,7 @@ func (r *AccessOrganizationResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -103,12 +109,17 @@ func (r *AccessOrganizationResource) Read(ctx context.Context, req resource.Read
 
 	res := new(http.Response)
 	env := AccessOrganizationResultEnvelope{*data}
+	params := zero_trust.OrganizationListParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Organizations.List(
 		ctx,
-		zero_trust.OrganizationListParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -123,6 +134,7 @@ func (r *AccessOrganizationResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -143,12 +155,17 @@ func (r *AccessOrganizationResource) Update(ctx context.Context, req resource.Up
 	}
 	res := new(http.Response)
 	env := AccessOrganizationResultEnvelope{*data}
+	params := zero_trust.OrganizationUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Organizations.Update(
 		ctx,
-		zero_trust.OrganizationUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -164,6 +181,7 @@ func (r *AccessOrganizationResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

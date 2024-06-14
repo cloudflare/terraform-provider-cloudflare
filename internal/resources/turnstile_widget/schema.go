@@ -18,6 +18,10 @@ import (
 func (r TurnstileWidgetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Widget item identifier tag.",
+				Computed:    true,
+			},
 			"sitekey": schema.StringAttribute{
 				Description:   "Widget item identifier tag.",
 				Computed:      true,

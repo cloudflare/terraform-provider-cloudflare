@@ -67,13 +67,18 @@ func (r *AccessCACertificateResource) Create(ctx context.Context, req resource.C
 	}
 	res := new(http.Response)
 	env := AccessCACertificateResultEnvelope{*data}
+	params := zero_trust.AccessApplicationCANewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Applications.CAs.New(
 		ctx,
 		data.AppID.ValueString(),
-		zero_trust.AccessApplicationCANewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -104,13 +109,18 @@ func (r *AccessCACertificateResource) Read(ctx context.Context, req resource.Rea
 
 	res := new(http.Response)
 	env := AccessCACertificateResultEnvelope{*data}
+	params := zero_trust.AccessApplicationCAGetParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Applications.CAs.Get(
 		ctx,
 		data.AppID.ValueString(),
-		zero_trust.AccessApplicationCAGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -145,13 +155,18 @@ func (r *AccessCACertificateResource) Update(ctx context.Context, req resource.U
 	}
 	res := new(http.Response)
 	env := AccessCACertificateResultEnvelope{*data}
+	params := zero_trust.AccessApplicationCANewParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err = r.client.ZeroTrust.Access.Applications.CAs.New(
 		ctx,
 		data.AppID.ValueString(),
-		zero_trust.AccessApplicationCANewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -180,13 +195,18 @@ func (r *AccessCACertificateResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
+	params := zero_trust.AccessApplicationCADeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
 	_, err := r.client.ZeroTrust.Access.Applications.CAs.Delete(
 		ctx,
 		data.AppID.ValueString(),
-		zero_trust.AccessApplicationCADeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-			ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
