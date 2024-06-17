@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+
+tfplugindocs generate -rendered-provider-name "Cloudflare" -provider-name="cloudflare"
