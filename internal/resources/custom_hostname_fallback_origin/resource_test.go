@@ -1,4 +1,4 @@
-package sdkv2provider
+package custom_hostname_fallback_origin_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package access_keys_configuration_test
 
 import (
 	"fmt"

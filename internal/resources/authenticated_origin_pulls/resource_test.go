@@ -1,4 +1,4 @@
-package sdkv2provider
+package authenticated_origin_pulls_test
 
 import (
 	"fmt"

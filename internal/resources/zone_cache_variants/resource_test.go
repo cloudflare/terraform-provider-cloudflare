@@ -1,4 +1,4 @@
-package sdkv2provider
+package zone_cache_variants_test
 
 import (
 	"context"

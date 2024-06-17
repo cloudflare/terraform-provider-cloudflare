@@ -1,4 +1,4 @@
-package sdkv2provider
+package ipsec_tunnel_test
 
 import (
 	"context"

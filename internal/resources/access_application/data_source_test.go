@@ -1,4 +1,4 @@
-package sdkv2provider
+package access_application_test
 
 import (
 	"fmt"

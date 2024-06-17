@@ -1,4 +1,4 @@
-package sdkv2provider
+package device_posture_integration_test
 
 import (
 	"context"

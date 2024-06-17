@@ -1,4 +1,4 @@
-package sdkv2provider
+package logpush_ownership_challenge_test
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package record_test
 
 import (
 	"context"

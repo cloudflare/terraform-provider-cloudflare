@@ -1,4 +1,4 @@
-package sdkv2provider
+package teams_proxy_endpoint_test
 
 import (
 	"context"

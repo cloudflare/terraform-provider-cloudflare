@@ -1,4 +1,4 @@
-package sdkv2provider
+package access_custom_page_test
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package list_test
 
 import (
 	"context"

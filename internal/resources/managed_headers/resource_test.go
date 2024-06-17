@@ -1,4 +1,4 @@
-package sdkv2provider
+package managed_headers_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package device_managed_networks_test
 
 import (
 	"fmt"

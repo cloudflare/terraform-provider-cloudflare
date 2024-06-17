@@ -1,4 +1,4 @@
-package sdkv2provider
+package origin_ca_certificate_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package notification_policy_test
 
 import (
 	"fmt"

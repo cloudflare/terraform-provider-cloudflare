@@ -1,4 +1,4 @@
-package sdkv2provider
+package api_shield_operation_test
 
 import (
 	"context"

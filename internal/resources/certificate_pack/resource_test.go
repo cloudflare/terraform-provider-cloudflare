@@ -1,4 +1,4 @@
-package sdkv2provider
+package certificate_pack_test
 
 import (
 	"context"

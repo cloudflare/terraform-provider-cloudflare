@@ -1,4 +1,4 @@
-package sdkv2provider
+package device_dex_test_test
 
 import (
 	"fmt"

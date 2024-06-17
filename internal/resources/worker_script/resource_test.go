@@ -1,4 +1,4 @@
-package sdkv2provider
+package worker_script_test
 
 import (
 	"context"

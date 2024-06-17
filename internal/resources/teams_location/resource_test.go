@@ -1,4 +1,4 @@
-package sdkv2provider
+package teams_location_test
 
 import (
 	"context"

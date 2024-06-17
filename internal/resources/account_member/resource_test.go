@@ -1,4 +1,4 @@
-package sdkv2provider
+package account_member_test
 
 import (
 	"fmt"

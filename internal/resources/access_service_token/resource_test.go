@@ -1,4 +1,4 @@
-package sdkv2provider
+package access_service_token_test
 
 import (
 	"context"

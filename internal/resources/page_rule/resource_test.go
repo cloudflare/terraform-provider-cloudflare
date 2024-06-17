@@ -1,4 +1,4 @@
-package sdkv2provider
+package page_rule_test
 
 import (
 	"context"

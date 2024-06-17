@@ -1,4 +1,4 @@
-package sdkv2provider
+package pages_project_test
 
 import (
 	"fmt"

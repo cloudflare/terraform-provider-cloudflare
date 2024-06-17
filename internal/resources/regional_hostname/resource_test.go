@@ -1,4 +1,4 @@
-package sdkv2provider
+package regional_hostname_test
 
 import (
 	"fmt"
