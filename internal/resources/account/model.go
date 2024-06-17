@@ -17,6 +17,7 @@ type AccountModel struct {
 }
 
 type AccountSettingsModel struct {
+	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email"`
 	DefaultNameservers          types.String `tfsdk:"default_nameservers" json:"default_nameservers"`
 	EnforceTwofactor            types.Bool   `tfsdk:"enforce_twofactor" json:"enforce_twofactor"`
 	UseAccountCustomNSByDefault types.Bool   `tfsdk:"use_account_custom_ns_by_default" json:"use_account_custom_ns_by_default"`
