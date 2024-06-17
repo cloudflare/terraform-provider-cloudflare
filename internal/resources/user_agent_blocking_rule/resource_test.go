@@ -1,4 +1,4 @@
-package sdkv2provider
+package user_agent_blocking_rule_test
 
 import (
 	"context"

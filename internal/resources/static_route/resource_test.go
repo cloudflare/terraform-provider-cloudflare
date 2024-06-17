@@ -1,4 +1,4 @@
-package sdkv2provider
+package static_route_test
 
 import (
 	"context"

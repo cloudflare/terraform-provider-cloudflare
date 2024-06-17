@@ -1,4 +1,4 @@
-package sdkv2provider
+package hostname_tls_setting_test
 
 import (
 	"context"

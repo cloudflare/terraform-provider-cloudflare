@@ -1,4 +1,4 @@
-package sdkv2provider
+package load_balancer_pool_test
 
 import (
 	"fmt"

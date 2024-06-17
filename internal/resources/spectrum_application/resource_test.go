@@ -1,4 +1,4 @@
-package sdkv2provider
+package spectrum_application_test
 
 import (
 	"context"

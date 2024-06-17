@@ -1,4 +1,4 @@
-package sdkv2provider
+package healthcheck_test
 
 import (
 	"context"

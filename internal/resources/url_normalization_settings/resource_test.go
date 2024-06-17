@@ -1,4 +1,4 @@
-package sdkv2provider
+package url_normalization_settings_test
 
 import (
 	"context"

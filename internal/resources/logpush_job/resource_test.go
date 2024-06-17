@@ -1,4 +1,4 @@
-package sdkv2provider
+package logpush_job_test
 
 import (
 	"encoding/json"

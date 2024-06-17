@@ -1,4 +1,4 @@
-package sdkv2provider
+package bot_management_test
 
 import (
 	"fmt"

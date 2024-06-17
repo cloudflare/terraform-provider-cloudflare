@@ -1,4 +1,4 @@
-package sdkv2provider
+package worker_cron_trigger_test
 
 import (
 	"fmt"

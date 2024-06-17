@@ -1,4 +1,4 @@
-package sdkv2provider
+package total_tls_test
 
 import (
 	"fmt"

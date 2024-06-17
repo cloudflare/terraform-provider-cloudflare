@@ -1,4 +1,4 @@
-package sdkv2provider
+package queue_test
 
 import (
 	"context"

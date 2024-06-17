@@ -1,4 +1,4 @@
-package sdkv2provider
+package regional_tiered_cache_test
 
 import (
 	"fmt"

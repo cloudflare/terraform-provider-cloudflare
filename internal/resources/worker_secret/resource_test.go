@@ -1,4 +1,4 @@
-package sdkv2provider
+package worker_secret_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package web_analytics_site_test
 
 import (
 	"context"

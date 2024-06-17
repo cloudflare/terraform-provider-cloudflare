@@ -1,4 +1,4 @@
-package sdkv2provider
+package rate_limit_test
 
 import (
 	"context"

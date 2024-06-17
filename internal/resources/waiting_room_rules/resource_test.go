@@ -1,4 +1,4 @@
-package sdkv2provider
+package waiting_room_rules_test
 
 import (
 	"context"

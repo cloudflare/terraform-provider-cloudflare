@@ -1,4 +1,4 @@
-package sdkv2provider
+package logpull_retention_test
 
 import (
 	"fmt"

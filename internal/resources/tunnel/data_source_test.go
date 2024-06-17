@@ -1,4 +1,4 @@
-package sdkv2provider
+package tunnel_test
 
 import (
 	"fmt"

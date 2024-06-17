@@ -1,4 +1,4 @@
-package sdkv2provider
+package web3_hostname_test
 
 import (
 	"context"

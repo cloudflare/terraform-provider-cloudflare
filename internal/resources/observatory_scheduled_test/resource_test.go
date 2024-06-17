@@ -1,4 +1,4 @@
-package sdkv2provider
+package observatory_scheduled_test_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package api_shield_schema_validation_settings_test
 
 import (
 	"context"

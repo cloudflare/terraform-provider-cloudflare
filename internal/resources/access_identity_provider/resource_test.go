@@ -1,4 +1,4 @@
-package sdkv2provider
+package access_identity_provider_test
 
 import (
 	"context"

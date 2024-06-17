@@ -1,4 +1,4 @@
-package sdkv2provider
+package web_analytics_rule_test
 
 import (
 	"context"

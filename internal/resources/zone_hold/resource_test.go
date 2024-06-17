@@ -1,4 +1,4 @@
-package sdkv2provider
+package zone_hold_test
 
 import (
 	"fmt"

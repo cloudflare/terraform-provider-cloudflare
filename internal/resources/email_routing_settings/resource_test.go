@@ -1,4 +1,4 @@
-package sdkv2provider
+package email_routing_settings_test
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package sdkv2provider
+package byo_ip_prefix_test
 
 import (
 	"fmt"

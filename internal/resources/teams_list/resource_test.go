@@ -1,4 +1,4 @@
-package sdkv2provider
+package teams_list_test
 
 import (
 	"context"

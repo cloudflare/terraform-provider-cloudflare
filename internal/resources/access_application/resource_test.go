@@ -1,4 +1,4 @@
-package sdkv2provider
+package access_application_test
 
 import (
 	"context"
@@ -1157,7 +1157,7 @@ resource "cloudflare_access_application" "%[1]s" {
 			name = "rank"
 		}
 	}
-	
+
 	hybrid_and_implicit_options {
 		return_id_token_from_authorization_endpoint = true
 		return_access_token_from_authorization_endpoint = true
