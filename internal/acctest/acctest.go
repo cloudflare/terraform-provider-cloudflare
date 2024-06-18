@@ -34,6 +34,9 @@ var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 	},
 }
 
+func TestAccPreCheck(t *testing.T) {
+}
+
 func TestAccPreCheck_Credentials(t *testing.T) {
 	apiKey := os.Getenv(consts.APIKeyEnvVarKey)
 	apiToken := os.Getenv(consts.APITokenEnvVarKey)
