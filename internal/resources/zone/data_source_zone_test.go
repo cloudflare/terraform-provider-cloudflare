@@ -6,12 +6,14 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareZone_PreventZoneIdAndNameConflicts(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -35,7 +37,7 @@ data "cloudflare_zone" "%[1]s" {
 
 func TestAccCloudflareZone_NameLookup(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zone.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

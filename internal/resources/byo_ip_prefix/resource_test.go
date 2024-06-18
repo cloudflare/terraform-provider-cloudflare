@@ -6,13 +6,15 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 	t.Parallel()
 	prefixID := os.Getenv("CLOUDFLARE_BYO_IP_PREFIX_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_byo_ip_prefix.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

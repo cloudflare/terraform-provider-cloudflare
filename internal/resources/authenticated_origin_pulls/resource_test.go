@@ -6,13 +6,15 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
 	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility..")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -35,7 +37,7 @@ func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
 	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -57,7 +59,7 @@ func TestAccCloudflareAuthenticatedOriginPullsPerHostname(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

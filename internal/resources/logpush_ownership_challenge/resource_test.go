@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareLogpushOwnershipChallenge(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_logpush_ownership_challenge." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

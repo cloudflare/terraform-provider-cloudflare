@@ -9,7 +9,9 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -45,7 +47,7 @@ func testSweepCloudflareFirewallRuleSweeper(r string) error {
 }
 
 func TestAccFirewallRuleSimple(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_firewall_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -89,7 +91,7 @@ func testFirewallRuleConfig(resourceID, zoneID, paused, description, expression,
 }
 
 func TestAccFirewallRuleBypass(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_firewall_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -136,7 +138,7 @@ func testFirewallRuleBypassConfig(resourceID, zoneID, paused, description, expre
 }
 
 func TestAccFirewallRuleWithUnicodeAndHTMLEntity(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_firewall_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")

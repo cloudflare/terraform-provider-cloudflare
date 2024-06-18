@@ -11,7 +11,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -75,7 +77,7 @@ var (
 )
 
 func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -121,7 +123,7 @@ func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -182,10 +184,10 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
-	rnd2 := generateRandomResourceName()
+	rnd2 := utils.GenerateRandomResourceName()
 	emailListName := fmt.Sprintf("cloudflare_teams_list.%s", rnd2)
 
 	resource.Test(t, resource.TestCase{
@@ -213,7 +215,7 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -240,7 +242,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_Require(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -267,7 +269,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -298,7 +300,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	githubOrg := "Terraform-Cloudflare-Provider-Test-Org"
 	team := "test-team-1"
@@ -327,9 +329,9 @@ func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	ctxID := generateRandomResourceName()
+	ctxID := utils.GenerateRandomResourceName()
 	ctxACID := "c1"
 
 	resource.Test(t, resource.TestCase{
@@ -357,7 +359,7 @@ func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 	var before, after cloudflare.AccessGroup
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -389,7 +391,7 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	var initialID string
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -425,7 +427,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.T) {
 	var before, after cloudflare.AccessGroup
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

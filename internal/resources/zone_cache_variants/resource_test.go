@@ -8,7 +8,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -35,7 +37,7 @@ func testSweepCloudflareZoneCacheVariants(r string) error {
 
 func TestAccCloudflareZoneCacheVariants_OneExt(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zone_cache_variants.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -68,7 +70,7 @@ func TestAccCloudflareZoneCacheVariants_OneExt(t *testing.T) {
 
 func TestAccCloudflareZoneCacheVariants_AllExt(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zone_cache_variants.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

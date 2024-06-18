@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareTunneVirtualNetwork_MatchName(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

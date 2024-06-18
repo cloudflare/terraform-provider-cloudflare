@@ -7,10 +7,12 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareTunnel_MatchName(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -44,7 +46,7 @@ data "cloudflare_tunnel" "%[2]s" {
 }
 
 func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

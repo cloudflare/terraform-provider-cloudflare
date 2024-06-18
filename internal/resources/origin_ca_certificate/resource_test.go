@@ -17,12 +17,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 	var cert cloudflare.OriginCACertificate
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_origin_ca_certificate." + rnd
 
 	csr, err := generateCSR(zoneName)

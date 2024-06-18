@@ -5,10 +5,12 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -34,7 +36,7 @@ func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 }
 
 func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -60,7 +62,7 @@ func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
 }
 
 func TestAccCloudflareDeviceDexTest_HTTP(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

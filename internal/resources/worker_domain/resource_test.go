@@ -9,6 +9,8 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 const (
@@ -19,7 +21,7 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	var domain cloudflare.WorkersDomain
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_worker_domain." + rnd
 	hostname := rnd + "." + zoneName
 

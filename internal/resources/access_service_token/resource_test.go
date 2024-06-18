@@ -10,7 +10,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
@@ -21,7 +23,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
@@ -95,7 +97,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 // 		os.Setenv("CLOUDFLARE_API_TOKEN", "")
 // 	}
 
-// 	rnd := generateRandomResourceName()
+// 	rnd := utils.GenerateRandomResourceName()
 // 	var initialState terraform.ResourceState
 
 // 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
@@ -173,7 +175,7 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
@@ -227,7 +229,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 

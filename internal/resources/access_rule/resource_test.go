@@ -6,11 +6,13 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessRule_AccountASN(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_rule." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -44,7 +46,7 @@ func TestAccCloudflareAccessRule_AccountASN(t *testing.T) {
 }
 
 func TestAccCloudflareAccessRule_ZoneASN(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_rule." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -78,7 +80,7 @@ func TestAccCloudflareAccessRule_ZoneASN(t *testing.T) {
 }
 
 func TestAccCloudflareAccessRule_IPRange(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_rule." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -112,7 +114,7 @@ func TestAccCloudflareAccessRule_IPRange(t *testing.T) {
 }
 
 func TestAccCloudflareAccessRule_IPv6(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_rule." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

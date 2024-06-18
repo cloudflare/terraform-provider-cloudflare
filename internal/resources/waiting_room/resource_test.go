@@ -10,7 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -48,7 +50,7 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_waiting_room.%s", rnd)
 	waitingRoomName := fmt.Sprintf("waiting_room_%s", rnd)
 

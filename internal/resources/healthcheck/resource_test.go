@@ -9,6 +9,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -22,7 +24,7 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 	var healthcheck cloudflare.Healthcheck
 
@@ -52,7 +54,7 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 	var healthcheck cloudflare.Healthcheck
 	var initialID string
@@ -97,7 +99,7 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 	var healthcheck cloudflare.Healthcheck
 
@@ -122,7 +124,7 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 func TestAccCloudflareHealthcheckMissingRequired(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

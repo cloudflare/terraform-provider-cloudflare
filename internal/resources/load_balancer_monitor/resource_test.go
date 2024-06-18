@@ -14,7 +14,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -58,7 +60,7 @@ func testSweepCloudflareLoadBalancerMonitors(r string) error {
 func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 	testStartTime := time.Now().UTC()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
 	name := "cloudflare_load_balancer_monitor." + rnd
 
@@ -86,7 +88,7 @@ func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 
 func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_monitor." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -118,7 +120,7 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 
 func TestAccCloudflareLoadBalancerMonitor_EmptyExpectedBody(t *testing.T) {
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
@@ -166,7 +168,7 @@ func TestAccCloudflareLoadBalancerMonitor_TcpFullySpecified(t *testing.T) {
 
 func TestAccCloudflareLoadBalancerMonitor_PremiumTypes(t *testing.T) {
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
@@ -225,7 +227,7 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 	var initialId string
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_monitor." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -263,7 +265,7 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T) {
 	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
 	var initialId string
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_monitor." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -301,7 +303,7 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

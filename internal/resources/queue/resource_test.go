@@ -10,7 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -48,7 +50,7 @@ func TestAccCloudflareQueue_Basic(t *testing.T) {
 	t.Parallel()
 	var queue cloudflare.Queue
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_queue." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

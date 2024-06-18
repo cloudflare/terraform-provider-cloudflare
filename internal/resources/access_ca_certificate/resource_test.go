@@ -11,12 +11,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_ca_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -43,7 +44,7 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_ca_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

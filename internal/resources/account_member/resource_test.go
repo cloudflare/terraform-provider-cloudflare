@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccountMember_Basic(t *testing.T) {
@@ -18,7 +20,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_account_member." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
@@ -51,7 +53,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_account_member." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{

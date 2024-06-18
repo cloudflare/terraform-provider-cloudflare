@@ -6,13 +6,15 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareRegionalTieredCache_Basic(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_regional_tiered_cache.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

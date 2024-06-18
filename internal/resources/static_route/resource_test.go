@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -15,7 +17,7 @@ import (
 func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -69,7 +71,7 @@ func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTr
 func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -100,7 +102,7 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

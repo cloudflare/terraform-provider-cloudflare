@@ -9,7 +9,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareUserAgentBlockingRule_Basic(t *testing.T) {
@@ -21,7 +23,7 @@ func TestAccCloudflareUserAgentBlockingRule_Basic(t *testing.T) {
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_user_agent_blocking_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

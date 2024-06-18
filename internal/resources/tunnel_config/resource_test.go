@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
@@ -129,7 +130,7 @@ resource "cloudflare_tunnel_config" "%[1]s" {
 }
 
 func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
@@ -199,7 +200,7 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 }
 
 func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
@@ -229,7 +230,7 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 }
 
 func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)

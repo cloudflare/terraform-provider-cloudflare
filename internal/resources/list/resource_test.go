@@ -12,6 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -59,7 +61,7 @@ func TestAccCloudflareList_Exists(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -91,7 +93,7 @@ func TestAccCloudflareList_UpdateDescription(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -140,10 +142,10 @@ func TestAccCloudflareList_Update(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rndIP := generateRandomResourceName()
-	rndRedirect := generateRandomResourceName()
-	rndASN := generateRandomResourceName()
-	rndHostname := generateRandomResourceName()
+	rndIP := utils.GenerateRandomResourceName()
+	rndRedirect := utils.GenerateRandomResourceName()
+	rndASN := utils.GenerateRandomResourceName()
+	rndHostname := utils.GenerateRandomResourceName()
 
 	nameIP := fmt.Sprintf("cloudflare_list.%s", rndIP)
 	nameRedirect := fmt.Sprintf("cloudflare_list.%s", rndRedirect)
@@ -285,7 +287,7 @@ func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -312,7 +314,7 @@ func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -359,7 +361,7 @@ func TestAccCloudflareList_Import(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

@@ -14,7 +14,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -63,7 +65,7 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 	testStartTime := time.Now().UTC()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -99,7 +101,7 @@ func TestAccCloudflareRecord_CaseInsensitive(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -132,7 +134,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -158,7 +160,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -196,7 +198,7 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 	var record cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -230,7 +232,7 @@ func TestAccCloudflareRecord_CAA(t *testing.T) {
 	var record cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -265,7 +267,7 @@ func TestAccCloudflareRecord_Proxied(t *testing.T) {
 	var record cloudflare.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -292,7 +294,7 @@ func TestAccCloudflareRecord_Updated(t *testing.T) {
 	var record cloudflare.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-update"
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -324,7 +326,7 @@ func TestAccCloudflareRecord_typeForceNewRecord(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-type-force-new"
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -354,7 +356,7 @@ func TestAccCloudflareRecord_hostnameForceNewRecord(t *testing.T) {
 	var afterCreate, afterUpdate cloudflare.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-hostname-force-new"
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -383,7 +385,7 @@ func TestAccCloudflareRecord_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var afterCreate, afterRecreate cloudflare.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -415,7 +417,7 @@ func TestAccCloudflareRecord_TtlValidation(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-ttl-validation"
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -434,7 +436,7 @@ func TestAccCloudflareRecord_ExplicitProxiedFalse(t *testing.T) {
 	t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_record." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -471,7 +473,7 @@ func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
 	t.Parallel()
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_record." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -495,7 +497,7 @@ func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-ttl-validation"
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -520,7 +522,7 @@ func TestAccCloudflareRecord_TtlValidationUpdate(t *testing.T) {
 func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -543,7 +545,7 @@ func TestAccCloudflareRecord_HTTPS(t *testing.T) {
 func TestAccCloudflareRecord_SVCB(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -566,7 +568,7 @@ func TestAccCloudflareRecord_SVCB(t *testing.T) {
 func TestAccCloudflareRecord_MXNull(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -591,7 +593,7 @@ func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
 
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -620,7 +622,7 @@ func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
 func TestAccCloudflareRecord_ClearTags(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

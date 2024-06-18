@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareZone_Basic(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -32,7 +34,7 @@ func TestAccCloudflareZone_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareZone_BasicWithJumpStartEnabled(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -56,7 +58,7 @@ func TestAccCloudflareZone_BasicWithJumpStartEnabled(t *testing.T) {
 }
 
 func TestAccCloudflareZone_WithPlan(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -79,7 +81,7 @@ func TestAccCloudflareZone_WithPlan(t *testing.T) {
 }
 
 func TestAccCloudflareZone_PartialSetup(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -101,7 +103,7 @@ func TestAccCloudflareZone_PartialSetup(t *testing.T) {
 }
 
 func TestAccCloudflareZone_FullSetup(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -124,7 +126,7 @@ func TestAccCloudflareZone_FullSetup(t *testing.T) {
 }
 
 func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -147,7 +149,7 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 }
 
 func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -170,7 +172,7 @@ func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 }
 
 func TestAccZonePerformsUnicodeComparison(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -204,7 +206,7 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 }
 
 func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -227,7 +229,7 @@ func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 }
 
 func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -252,7 +254,7 @@ func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
 }
 
 func TestAccCloudflareZone_Secondary(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -276,7 +278,7 @@ func TestAccCloudflareZone_Secondary(t *testing.T) {
 }
 
 func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -322,7 +324,7 @@ func testZoneConfigWithPlan(resourceID, zoneName, paused, jumpStart, plan, accou
 }
 
 func TestAccCloudflareZone_SetType(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resource.Test(t, resource.TestCase{

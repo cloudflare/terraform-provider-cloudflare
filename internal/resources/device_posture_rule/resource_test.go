@@ -9,7 +9,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
@@ -20,7 +22,7 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -53,7 +55,7 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -87,7 +89,7 @@ func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -122,7 +124,7 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -157,7 +159,7 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -190,7 +192,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -225,7 +227,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) 
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -260,7 +262,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

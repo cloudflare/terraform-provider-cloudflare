@@ -8,10 +8,12 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareRulesetsProviderDataSource_PreventZoneIdAndAccountIdConflicts(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -34,7 +36,7 @@ data "cloudflare_rulesets" "%[1]s" {
 }
 
 func TestAccCloudflareRulesetsProviderDataSource_RequireOneOfZoneAccountID(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -55,7 +57,7 @@ data "cloudflare_rulesets" "%[1]s" {
 }
 
 func TestAccCloudflareRulesetsProviderDataSource_FetchOWASPRulesetByName(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := fmt.Sprintf("data.cloudflare_rulesets.%s", rnd)
 
@@ -87,7 +89,7 @@ data "cloudflare_rulesets" "%[1]s" {
 }
 
 func TestAccCloudflareRulesetsProviderDataSource_FetchOWASPRulesetByID(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	name := fmt.Sprintf("data.cloudflare_rulesets.%s", rnd)
 

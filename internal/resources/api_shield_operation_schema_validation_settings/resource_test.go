@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAPIShieldOperationSchemaValidationSettings_Create(t *testing.T) {
@@ -16,7 +18,7 @@ func TestAccCloudflareAPIShieldOperationSchemaValidationSettings_Create(t *testi
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation_schema_validation_settings." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

@@ -13,7 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -65,7 +67,7 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -102,7 +104,7 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -129,7 +131,7 @@ func TestAccCloudflareSpectrumApplication_OriginPortRange(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -159,7 +161,7 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 	var initialID string
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -218,7 +220,7 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -241,7 +243,7 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -276,7 +278,7 @@ func TestAccCloudflareSpectrumApplication_BasicSSH(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -299,7 +301,7 @@ func TestAccCloudflareSpectrumApplication_BasicRDP(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -322,7 +324,7 @@ func TestAccCloudflareSpectrumApplication_BasicMinecraft(t *testing.T) {
 	var spectrumApp cloudflare.SpectrumApplication
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{

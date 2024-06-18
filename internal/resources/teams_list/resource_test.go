@@ -11,7 +11,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareTeamsList_Basic(t *testing.T) {
@@ -22,7 +24,7 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_teams_list.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -55,7 +57,7 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_teams_list.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -87,7 +89,7 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

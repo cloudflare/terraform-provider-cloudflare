@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -48,7 +48,7 @@ func testAccCheckCloudflareAccessApplicationAccountName(accountID, name, domain 
 }
 
 func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -85,7 +85,7 @@ func testAccCheckCloudflareAccessApplicationAccountDomain(accountID, name, domai
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -122,7 +122,7 @@ func testAccCheckCloudflareAccessApplicationZoneName(zoneID, name, domain string
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

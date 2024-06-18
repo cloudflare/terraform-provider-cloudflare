@@ -12,7 +12,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -60,7 +62,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -113,7 +115,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -139,7 +141,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -175,7 +177,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -208,7 +210,7 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -239,7 +241,7 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
@@ -275,7 +277,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
@@ -314,7 +316,7 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_Creation(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(

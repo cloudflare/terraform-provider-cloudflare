@@ -9,14 +9,16 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareWebAnalyticsSite_Create(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_web_analytics_site.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

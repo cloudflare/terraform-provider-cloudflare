@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_regional_hostname." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resource.Test(t, resource.TestCase{

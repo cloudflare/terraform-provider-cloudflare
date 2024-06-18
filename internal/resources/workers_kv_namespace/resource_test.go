@@ -9,13 +9,15 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	t.Parallel()
 	var namespace cloudflare.WorkersKVNamespace
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv_namespace." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

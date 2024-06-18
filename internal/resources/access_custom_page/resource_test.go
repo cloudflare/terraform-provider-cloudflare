@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
@@ -14,7 +15,7 @@ func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -41,7 +42,7 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

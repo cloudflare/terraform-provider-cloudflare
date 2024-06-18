@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *testing.T) {
@@ -16,7 +18,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -52,7 +54,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

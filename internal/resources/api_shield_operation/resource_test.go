@@ -10,7 +10,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
@@ -20,7 +22,7 @@ func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -50,7 +52,7 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")

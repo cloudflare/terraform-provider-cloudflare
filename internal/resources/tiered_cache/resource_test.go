@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func testTieredCacheConfig(rnd, zoneID, cacheType string) string {
@@ -19,7 +21,7 @@ resource "cloudflare_tiered_cache" "%[1]s" {
 }
 
 func TestAccCloudflareTieredCache_Smart(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tiered_cache." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -39,7 +41,7 @@ func TestAccCloudflareTieredCache_Smart(t *testing.T) {
 }
 
 func TestAccCloudflareTieredCache_Generic(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tiered_cache." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

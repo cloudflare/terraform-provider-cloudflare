@@ -12,7 +12,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -54,7 +56,7 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 }
 
 func TestAccCloudflareTunnelVirtualNetwork_Exists(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel_virtual_network.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -109,7 +111,7 @@ func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwor
 }
 
 func TestAccCloudflareTunnelVirtualNetwork_UpdateComment(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel_virtual_network.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

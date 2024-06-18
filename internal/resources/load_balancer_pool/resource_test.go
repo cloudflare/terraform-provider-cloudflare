@@ -14,6 +14,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -59,7 +61,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	t.Parallel()
 	testStartTime := time.Now().UTC()
 	var loadBalancerPool cloudflare.LoadBalancerPool
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -89,7 +91,7 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 	t.Parallel()
 	testStartTime := time.Now().UTC()
 	var loadBalancerPool cloudflare.LoadBalancerPool
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -123,7 +125,7 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastConnections(t *testing
 	t.Parallel()
 	testStartTime := time.Now().UTC()
 	var loadBalancerPool cloudflare.LoadBalancerPool
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -166,10 +168,10 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 	var loadBalancerPool cloudflare.LoadBalancerPool
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	vnetResID := generateRandomResourceName()
-	tunnelResID := generateRandomResourceName()
-	tunnelRouteResID := generateRandomResourceName()
-	poolResID := generateRandomResourceName()
+	vnetResID := utils.GenerateRandomResourceName()
+	tunnelResID := utils.GenerateRandomResourceName()
+	tunnelRouteResID := utils.GenerateRandomResourceName()
+	poolResID := utils.GenerateRandomResourceName()
 
 	vnetName := "cloudflare_tunnel_virtual_network." + vnetResID
 	poolName := "cloudflare_load_balancer_pool." + poolResID
@@ -201,7 +203,7 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	headerValue := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -257,7 +259,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
 	var initialId string
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 

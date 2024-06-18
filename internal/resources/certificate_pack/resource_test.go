@@ -9,7 +9,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -47,7 +49,7 @@ func testSweepCloudflareCertificatePack(r string) error {
 }
 
 func TestAccCertificatePack_AdvancedLetsEncrypt(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -90,7 +92,7 @@ resource "cloudflare_certificate_pack" "%[3]s" {
 }
 
 func TestAccCertificatePack_WaitForActive(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_certificate_pack." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")

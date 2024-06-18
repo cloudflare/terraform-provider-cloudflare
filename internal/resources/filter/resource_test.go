@@ -9,7 +9,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -45,7 +47,7 @@ func testSweepCloudflareFilterSweeper(r string) error {
 }
 
 func TestAccFilterSimple(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -92,7 +94,7 @@ EOF
 `
 
 func TestAccFilterWhitespace(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -108,7 +110,7 @@ func TestAccFilterWhitespace(t *testing.T) {
 }
 
 func TestAccFilterHTMLEntity(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

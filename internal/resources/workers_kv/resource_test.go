@@ -9,15 +9,17 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	t.Parallel()
 	var kvPair cloudflare.WorkersKVPair
-	name := generateRandomResourceName()
-	key := generateRandomResourceName()
-	value := generateRandomResourceName()
+	name := utils.GenerateRandomResourceName()
+	key := utils.GenerateRandomResourceName()
+	value := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv." + name
 
 	resource.Test(t, resource.TestCase{
@@ -44,9 +46,9 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 	t.Parallel()
 	var kvPair cloudflare.WorkersKVPair
-	name := generateRandomResourceName()
-	key := generateRandomResourceName()
-	value := generateRandomResourceName()
+	name := utils.GenerateRandomResourceName()
+	key := utils.GenerateRandomResourceName()
+	value := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv." + name
 
 	resource.Test(t, resource.TestCase{
@@ -83,9 +85,9 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 	t.Parallel()
 	var kvPair cloudflare.WorkersKVPair
-	name := generateRandomResourceName()
-	key := generateRandomResourceName()
-	value := generateRandomResourceName()
+	name := utils.GenerateRandomResourceName()
+	key := utils.GenerateRandomResourceName()
+	value := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_workers_kv." + name
 

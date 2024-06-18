@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func testEmailRoutingSettingsConfig(resourceID, zoneID string, enabled bool) string {
@@ -19,7 +21,7 @@ func testEmailRoutingSettingsConfig(resourceID, zoneID string, enabled bool) str
 }
 
 func TestAccTestEmailRoutingSettings(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_email_routing_settings." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

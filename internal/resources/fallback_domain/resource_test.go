@@ -10,7 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
@@ -21,7 +23,7 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -54,7 +56,7 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -98,7 +100,7 @@ func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

@@ -11,7 +11,9 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareRateLimit_Basic(t *testing.T) {
@@ -19,7 +21,7 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -55,7 +57,7 @@ func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -91,7 +93,7 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 	var rateLimit cloudflare.RateLimit
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -136,7 +138,7 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 	var initialRateLimitId string
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -178,7 +180,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 	var initialRateLimitId string
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -215,7 +217,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -233,7 +235,7 @@ func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

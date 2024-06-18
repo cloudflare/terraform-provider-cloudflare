@@ -10,13 +10,15 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
 	var customSSL cloudflare.ZoneCustomSSL
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -99,7 +101,7 @@ func testAccCheckCloudflareCustomSSLExists(n string, customSSL *cloudflare.ZoneC
 func TestAccCloudflareCustomSSL_WithEmptyGeoRestrictions(t *testing.T) {
 	var customSSL cloudflare.ZoneCustomSSL
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

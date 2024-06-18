@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
@@ -63,7 +64,7 @@ func TestAccCloudflareCustomHostname_Basic(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -90,7 +91,7 @@ func TestAccCloudflareCustomHostname_WithCertificate(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 
 	expiry := time.Now().Add(time.Hour * 1)
@@ -139,7 +140,7 @@ func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -180,7 +181,7 @@ func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -230,7 +231,7 @@ func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -269,7 +270,7 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -361,7 +362,7 @@ func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -387,7 +388,7 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 	altZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	altDomain := os.Getenv("CLOUDFLARE_ALT_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -424,7 +425,7 @@ func TestAccCloudflareCustomHostname_Import(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 
 	resource.Test(t, resource.TestCase{
@@ -497,7 +498,7 @@ func TestAccCloudflareCustomHostname_WithCustomMetadata(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

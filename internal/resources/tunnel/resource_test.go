@@ -10,7 +10,9 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
@@ -21,7 +23,7 @@ func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 	}
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -60,7 +62,7 @@ func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
 	}
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
@@ -101,7 +103,7 @@ func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
 	}
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
 
 	resource.Test(t, resource.TestCase{

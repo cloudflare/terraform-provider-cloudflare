@@ -11,7 +11,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -61,7 +63,7 @@ func TestAccCloudflareHostnameTLSSetting_Basic(t *testing.T) {
 	var htlss cloudflare.HostnameTLSSetting
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_hostname_tls_setting." + rnd
 
 	resource.Test(t, resource.TestCase{

@@ -14,7 +14,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -69,7 +71,7 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -95,7 +97,7 @@ func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -120,7 +122,7 @@ func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -146,7 +148,7 @@ func TestAccCloudflarePageRule_ForwardingAndOthers(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -174,7 +176,7 @@ func TestAccCloudflarePageRule_DisableZaraz(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -200,7 +202,7 @@ func TestAccCloudflarePageRule_Updated(t *testing.T) {
 	var before, after cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -233,7 +235,7 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 	var initialID string
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -269,7 +271,7 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 	var before, after cloudflare.PageRule
 	oldZoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	newZoneID := os.Getenv("CLOUDFLARE_ALT_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	oldTarget := fmt.Sprintf("%s.%s", rnd, os.Getenv("CLOUDFLARE_DOMAIN"))
 	newTarget := fmt.Sprintf("%s.%s", rnd, os.Getenv("CLOUDFLARE_ALT_DOMAIN"))
@@ -305,7 +307,7 @@ func TestAccCloudflarePageRule_MinifyAction(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -407,7 +409,7 @@ func TestCacheKeyFieldsNilValue(t *testing.T) {
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -426,7 +428,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T)
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -445,7 +447,7 @@ func TestAccCloudflarePageRule_CreatesBrowserCacheTTLThatRespectsExistingHeaders
 func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLToSameValue(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -468,7 +470,7 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLToSameValue(t *testing.T) {
 func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -490,7 +492,7 @@ func TestAccCloudflarePageRule_UpdatesBrowserCacheTTLThatRespectsExistingHeaders
 func TestAccCloudflarePageRule_DeletesBrowserCacheTTLThatRespectsExistingHeaders(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -512,7 +514,7 @@ func TestAccCloudflarePageRule_EdgeCacheTTLNotClobbered(t *testing.T) {
 	var before, after cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -543,7 +545,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsBasic(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -572,7 +574,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIgnoreQueryStringOrdering(t *testin
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
@@ -601,7 +603,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsExcludeAllQueryString(t *testing.T)
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
@@ -630,7 +632,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsInvalidExcludeAllQueryString(t *tes
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
@@ -659,7 +661,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsExcludeMultipleValuesQueryString(t 
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
@@ -688,7 +690,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsNoQueryStringValuesDefined(t *testi
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -715,7 +717,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIncludeAllQueryStringValues(t *test
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -743,7 +745,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsInvalidIncludeAllQueryStringValues(
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
@@ -771,7 +773,7 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIncludeMultipleValuesQueryString(t 
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
@@ -800,7 +802,7 @@ func TestAccCloudflarePageRule_EmptyCookie(t *testing.T) {
 	var pageRule cloudflare.PageRule
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	pageRuleTarget := fmt.Sprintf("%s.%s", rnd, domain)
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
@@ -834,7 +836,7 @@ func TestAccCloudflarePageRule_CacheTTLByStatus(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_page_rule." + rnd
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 

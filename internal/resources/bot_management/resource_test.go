@@ -8,11 +8,13 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -51,7 +53,7 @@ func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 }
 
 func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_bot_management." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

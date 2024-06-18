@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessTag_Basic(t *testing.T) {
@@ -13,7 +15,7 @@ func TestAccCloudflareAccessTag_Basic(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_access_tag.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

@@ -14,6 +14,8 @@ import (
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 const (
@@ -33,7 +35,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	t.Parallel()
 
 	var script cloudflare.WorkerScript
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -78,7 +80,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 	t.Parallel()
 
 	var script cloudflare.WorkerScript
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
 	r2AccesKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
