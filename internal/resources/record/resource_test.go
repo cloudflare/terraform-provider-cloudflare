@@ -593,6 +593,7 @@ func TestAccCloudflareRecord_DNSKEY(t *testing.T) {
 
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_record.%s", rnd)
 

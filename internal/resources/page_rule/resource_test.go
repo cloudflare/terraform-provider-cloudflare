@@ -19,6 +19,10 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
+var (
+	domain = os.Getenv("CLOUDFLARE_DOMAIN")
+)
+
 func init() {
 	resource.AddTestSweepers("cloudflare_page_rule", &resource.Sweeper{
 		Name: "cloudflare_page_rule",

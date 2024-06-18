@@ -24,6 +24,7 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_integration.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	clientID := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID")
 	clientSecret := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_SECRET")

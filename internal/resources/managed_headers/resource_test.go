@@ -29,8 +29,8 @@ func testSweepCloudflareManagedHeaders(r string) error {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
-	zone := os.Getenv("CLOUDFLARE_ZONE_ID")
-	if zone == "" {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 

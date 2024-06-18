@@ -49,7 +49,7 @@ func TestAccCloudflareZone_NameLookup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZonesDataSourceID(name),
 					resource.TestCheckResourceAttr(name, "name", "terraform.cfapi.net"),
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, testAccCloudflareZoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, acctest.TestAccCloudflareZoneID),
 					resource.TestCheckResourceAttr(name, "status", "active"),
 				),
 			},

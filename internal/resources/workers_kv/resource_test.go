@@ -22,6 +22,7 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	key := utils.GenerateRandomResourceName()
 	value := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv." + name
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -51,6 +52,7 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 	key := utils.GenerateRandomResourceName()
 	value := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv." + name
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

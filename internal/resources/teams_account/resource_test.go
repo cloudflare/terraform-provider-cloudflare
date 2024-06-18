@@ -21,6 +21,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_teams_account.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -104,7 +105,7 @@ resource "cloudflare_teams_account" "%[1]s" {
     fail_closed = true
 	notification_settings {
 		enabled = true
-		message = "msg" 
+		message = "msg"
 		support_url = "https://hello.com/"
 	}
   }

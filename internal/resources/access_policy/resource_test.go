@@ -77,6 +77,7 @@ func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	updatedName := fmt.Sprintf("%s-updated", rnd)
 
 	resource.Test(t, resource.TestCase{

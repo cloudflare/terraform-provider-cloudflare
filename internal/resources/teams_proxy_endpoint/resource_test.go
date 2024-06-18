@@ -25,6 +25,7 @@ func TestAccCloudflareTeamsProxyEndpoint_Basic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_teams_proxy_endpoint.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

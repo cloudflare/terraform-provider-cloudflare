@@ -187,6 +187,8 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, nam
 }
 
 func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terraform.State) error {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))

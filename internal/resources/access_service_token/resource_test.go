@@ -16,6 +16,11 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
+var (
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	zoneID    = os.Getenv("CLOUDFLARE_ZONE_ID")
+)
+
 func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// Service Tokens endpoint does not yet support the API tokens and it

@@ -24,7 +24,7 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 	name := utils.GenerateRandomResourceName()
 	secretText := utils.GenerateRandomResourceName()
 	workerSecretTestScriptName = utils.GenerateRandomResourceName()
-	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -35,13 +35,13 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 		CheckDestroy:             testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountId),
+				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountId),
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
 				),
 			},
 			{
-				Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountId),
+				Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
 				ResourceName:            "cloudflare_worker_secret." + name,
 				ImportStateId:           fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, name),
 				ImportState:             true,

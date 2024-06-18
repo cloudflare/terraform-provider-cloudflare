@@ -71,6 +71,7 @@ func testSweepCloudflareAccessGroups(r string) error {
 }
 
 var (
+	zoneID      = os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID   = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	email       = "test@example.com"
 	accessGroup cloudflare.AccessGroup

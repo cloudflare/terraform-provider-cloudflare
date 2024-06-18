@@ -10,6 +10,20 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
+const (
+	planIDFree       = "free"
+	planIDLite       = "lite"
+	planIDPro        = "pro"
+	planIDProPlus    = "pro_plus"
+	planIDBusiness   = "business"
+	planIDEnterprise = "enterprise"
+
+	planIDPartnerFree       = "partners_free"
+	planIDPartnerPro        = "partners_pro"
+	planIDPartnerBusiness   = "partners_business"
+	planIDPartnerEnterprise = "partners_enterprise"
+)
+
 func TestAccCloudflareZone_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd

@@ -17,7 +17,7 @@ import (
 )
 
 func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
@@ -80,7 +80,7 @@ func testAccCheckCloudflareIPsecTunnelExists(n string, tunnel *cloudflare.MagicT
 }
 
 func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
@@ -112,7 +112,7 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)

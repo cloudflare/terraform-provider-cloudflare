@@ -85,6 +85,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 	name := "cloudflare_worker_script." + rnd
 	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
 	r2AccesKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -116,6 +117,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 // mix V5 and V6 protocol resources without circular dependencies. In an ideal
 // world, this would all be handled by the inbuilt resource.
 func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
 	accessKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
 

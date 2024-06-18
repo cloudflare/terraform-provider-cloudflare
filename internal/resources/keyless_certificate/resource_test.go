@@ -19,6 +19,7 @@ import (
 
 func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_keyless_certificate.%s", rnd)
 
@@ -42,6 +43,7 @@ func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
 }
 
 func testAccCheckCloudflareKeylessCertificateDestroy(s *terraform.State) error {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))

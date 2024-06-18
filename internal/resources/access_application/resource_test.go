@@ -73,8 +73,9 @@ func testSweepCloudflareAccessApplications(r string) error {
 }
 
 var (
-	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain = os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID    = os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain    = os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )
 
 func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {

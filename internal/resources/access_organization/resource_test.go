@@ -2,6 +2,7 @@ package access_organization_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -14,6 +15,7 @@ import (
 func TestAccCloudflareAccessOrganization(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_organization.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -54,6 +56,7 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error {
 	state := instanceStates[0]
 	attrs := state.Attributes
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	stateChecks := []struct {
 		field         string

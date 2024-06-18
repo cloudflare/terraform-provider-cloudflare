@@ -16,6 +16,10 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
+var (
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+)
+
 func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -26,6 +30,7 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,

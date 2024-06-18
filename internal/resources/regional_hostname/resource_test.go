@@ -10,10 +10,15 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
+var (
+	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
+)
+
 func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_regional_hostname." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

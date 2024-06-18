@@ -18,6 +18,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+var (
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+)
+
 func init() {
 	resource.AddTestSweepers("cloudflare_zones", &resource.Sweeper{
 		Name: "cloudflare_zones",

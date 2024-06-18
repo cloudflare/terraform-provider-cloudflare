@@ -14,6 +14,10 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
+var (
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+)
+
 func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in

@@ -113,6 +113,7 @@ func TestAccFilterHTMLEntity(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_filter." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	filter := `(http.host eq \"` + domain + `\")`
 
