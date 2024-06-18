@@ -15,17 +15,17 @@ import (
 
 var (
 	// Integration test account ID.
-	testAccCloudflareAccountID string = "f037e56e89293a057740de681ac9abbe"
+	TestAccCloudflareAccountID string = "f037e56e89293a057740de681ac9abbe"
 
 	// Integration test account zone ID.
-	testAccCloudflareZoneID string = "0da42c8d2132a9ddaf714f9e7c920711"
+	TestAccCloudflareZoneID string = "0da42c8d2132a9ddaf714f9e7c920711"
 	// Integration test account zone name.
-	testAccCloudflareZoneName string = "terraform.cfapi.net"
+	TestAccCloudflareZoneName string = "terraform.cfapi.net"
 
 	// Integration test account alternate zone ID.
-	testAccCloudflareAltZoneID string = "b72110c08e3382597095c29ba7e661ea"
+	TestAccCloudflareAltZoneID string = "b72110c08e3382597095c29ba7e661ea"
 	// Integration test account alternate zone name.
-	testAccCloudflareAltZoneName string = "terraform2.cfapi.net"
+	TestAccCloudflareAltZoneName string = "terraform2.cfapi.net"
 )
 
 var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
@@ -151,16 +151,16 @@ func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
 // TestAccSkipForDefaultZone is used for skipping over tests that are not run by
 // default on usual acceptance test suite account.
 func TestAccSkipForDefaultZone(t *testing.T, reason string) {
-	if os.Getenv("CLOUDFLARE_ZONE_ID") == testAccCloudflareZoneID {
-		t.Skipf("Skipping acceptance test for default zone (%s). %s", testAccCloudflareZoneID, reason)
+	if os.Getenv("CLOUDFLARE_ZONE_ID") == TestAccCloudflareZoneID {
+		t.Skipf("Skipping acceptance test for default zone (%s). %s", TestAccCloudflareZoneID, reason)
 	}
 }
 
 // TestAccSkipForDefaultAccount is used for skipping over tests that are not run by
 // default on usual acceptance test suite account.
 func TestAccSkipForDefaultAccount(t *testing.T, reason string) {
-	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == testAccCloudflareAccountID {
-		t.Skipf("Skipping acceptance test for default account (%s). %s", testAccCloudflareAccountID, reason)
+	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == TestAccCloudflareAccountID {
+		t.Skipf("Skipping acceptance test for default account (%s). %s", TestAccCloudflareAccountID, reason)
 	}
 }
 
