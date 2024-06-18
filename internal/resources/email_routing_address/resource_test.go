@@ -19,7 +19,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_address", &resource.Sweeper{
 		Name: "cloudflare_email_routing_address",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {

@@ -26,7 +26,7 @@ func testSweepCloudflareWaitingRoom(r string) error {
 	ctx := context.Background()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}

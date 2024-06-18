@@ -282,7 +282,7 @@ func testAccCheckCloudflareListItemExists(n string, name string, listItem *cfv1.
 			return fmt.Errorf("no List ID is set")
 		}
 
-		client, err := acctest.SharedV1Client()
+		client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if err != nil {
 			return fmt.Errorf("error establishing client: %w", err)
 		}

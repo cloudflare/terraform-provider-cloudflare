@@ -21,7 +21,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_rule", &resource.Sweeper{
 		Name: "cloudflare_email_routing_rule",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 			if err != nil {

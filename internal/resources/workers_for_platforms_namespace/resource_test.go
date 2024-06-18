@@ -21,7 +21,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_workers_for_platforms_namespace", &resource.Sweeper{
 		Name: "cloudflare_workers_for_platforms_namespace",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
@@ -153,7 +153,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client, err := acctest.SharedV1Client()
+		client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if err != nil {
 			return fmt.Errorf("error establishing client: %w", err)
 		}

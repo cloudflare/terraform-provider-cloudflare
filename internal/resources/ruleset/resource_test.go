@@ -22,7 +22,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_ruleset", &resource.Sweeper{
 		Name: "cloudflare_ruleset",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 

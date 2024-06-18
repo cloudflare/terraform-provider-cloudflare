@@ -25,7 +25,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_r2_bucket", &resource.Sweeper{
 		Name: "cloudflare_r2_bucket",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")

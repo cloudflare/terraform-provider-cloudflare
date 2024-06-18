@@ -20,7 +20,7 @@ func init() {
 		F: func(region string) error {
 			ctx := context.Background()
 
-			client, clientErr := acctest.SharedV1Client()
+			client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			if clientErr != nil {
 				return fmt.Errorf("Failed to create Cloudflare client: %w", clientErr)
 			}
@@ -81,7 +81,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.State) error {
-	client, err := acctest.SharedV1Client()
+	client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if err != nil {
 		return fmt.Errorf("Failed to create Cloudflare client: %w", err)
 	}

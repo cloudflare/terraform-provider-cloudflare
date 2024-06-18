@@ -20,7 +20,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_turnstile_widget", &resource.Sweeper{
 		Name: "cloudflare_turnstile_widget",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {

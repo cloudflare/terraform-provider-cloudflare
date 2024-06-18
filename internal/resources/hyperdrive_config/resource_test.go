@@ -21,7 +21,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_hyperdrive_config", &resource.Sweeper{
 		Name: "cloudflare_hyperdrive_config",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			ctx := context.Background()
