@@ -5,16 +5,16 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareZone_PreventZoneIdAndNameConflicts(t *testing.T) {
 	t.Parallel()
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareZoneConfigConflictingFields(rnd),
@@ -39,8 +39,8 @@ func TestAccCloudflareZone_NameLookup(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_zone.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZoneConfigBasic(rnd),

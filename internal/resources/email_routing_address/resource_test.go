@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 )
 
 func TestMain(m *testing.M) {

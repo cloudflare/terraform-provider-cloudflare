@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -74,9 +74,9 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
@@ -100,9 +100,9 @@ func TestAccCloudflarePageRule_FullySpecified(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigFullySpecified(zoneID, target, rnd),
@@ -125,9 +125,9 @@ func TestAccCloudflarePageRule_ForwardingOnly(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigForwardingOnly(zoneID, target, rnd, rnd+"."+domain),
@@ -151,9 +151,9 @@ func TestAccCloudflarePageRule_ForwardingAndOthers(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd),
@@ -179,9 +179,9 @@ func TestAccCloudflarePageRule_DisableZaraz(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigDisableZaraz(zoneID, target, rnd),
@@ -205,9 +205,9 @@ func TestAccCloudflarePageRule_Updated(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
@@ -238,9 +238,9 @@ func TestAccCloudflarePageRule_CreateAfterManualDestroy(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
@@ -280,7 +280,7 @@ func TestAccCloudflarePageRule_UpdatingZoneForcesNewResource(t *testing.T) {
 			testAccPreCheckAltDomain(t)
 			testAccPreCheckAltZoneID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigBasic(oldZoneID, oldTarget, rnd),
@@ -310,9 +310,9 @@ func TestAccCloudflarePageRule_MinifyAction(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigMinify(zoneID, target, rnd),
@@ -517,9 +517,9 @@ func TestAccCloudflarePageRule_EdgeCacheTTLNotClobbered(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target, rnd),
@@ -548,9 +548,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsBasic(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target, rnd),
@@ -577,9 +577,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIgnoreQueryStringOrdering(t *testin
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsWithUnorderedEntries(zoneID, rnd, pageRuleTarget),
@@ -606,9 +606,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsExcludeAllQueryString(t *testing.T)
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIgnoreAllQueryString(zoneID, rnd, pageRuleTarget),
@@ -635,9 +635,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsInvalidExcludeAllQueryString(t *tes
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIgnoreAllQueryString(zoneID, rnd, pageRuleTarget),
@@ -664,9 +664,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsExcludeMultipleValuesQueryString(t 
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsExcludeMultipleValuesQueryString(zoneID, rnd, pageRuleTarget),
@@ -693,9 +693,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsNoQueryStringValuesDefined(t *testi
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsNoQueryStringValuesDefined(zoneID, target, rnd),
@@ -720,9 +720,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIncludeAllQueryStringValues(t *test
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeAllQueryStringValues(zoneID, target, rnd),
@@ -748,9 +748,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsInvalidIncludeAllQueryStringValues(
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIncludeAllQueryStringValues(zoneID, target, rnd),
@@ -776,9 +776,9 @@ func TestAccCloudflarePageRule_CacheKeyFieldsIncludeMultipleValuesQueryString(t 
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeMultipleValuesQueryString(zoneID, rnd, pageRuleTarget),
@@ -805,9 +805,9 @@ func TestAccCloudflarePageRule_EmptyCookie(t *testing.T) {
 	resourceName := fmt.Sprintf("cloudflare_page_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleEmtpyCookie(zoneID, rnd, pageRuleTarget),
@@ -839,9 +839,9 @@ func TestAccCloudflarePageRule_CacheTTLByStatus(t *testing.T) {
 	target := fmt.Sprintf("%s.%s", rnd, domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd),
@@ -1406,10 +1406,10 @@ func buildPageRuleConfig(rnd, zoneID, actions, target string) string {
 
 func testAccRunResourceTestSteps(t *testing.T, testSteps []resource.TestStep) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflarePageRuleDestroy,
-		Steps:             testSteps,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflarePageRuleDestroy,
+		Steps:                    testSteps,
 	})
 }
 

@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareWaitingRoomRules_Create(t *testing.T) {
@@ -24,8 +24,8 @@ func TestAccCloudflareWaitingRoomRules_Create(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWaitingRoomRulesDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWaitingRoomRulesDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareWaitingRoomRules(rnd, zoneID, domain, waitingRoomName),

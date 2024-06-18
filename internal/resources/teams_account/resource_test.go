@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
@@ -24,7 +24,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),

@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareWebAnalyticsRule_Create(t *testing.T) {
@@ -20,9 +20,9 @@ func TestAccCloudflareWebAnalyticsRule_Create(t *testing.T) {
 	ruleName := fmt.Sprintf("cloudflare_web_analytics_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWebAnalyticsRuleDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWebAnalyticsRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareWebAnalyticsRule(rnd, accountID, zoneID),

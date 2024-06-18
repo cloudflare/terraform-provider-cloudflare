@@ -35,8 +35,8 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareOriginCACertificateDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareOriginCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareOriginCACertificateConfigBasic(rnd, zoneName, csr),

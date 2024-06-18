@@ -10,10 +10,10 @@ import (
 	"os"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -69,9 +69,9 @@ func TestAccCloudflareSpectrumApplication_Basic(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareSpectrumApplicationDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
@@ -106,9 +106,9 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareSpectrumApplicationDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneID, domain, rnd),
@@ -133,9 +133,9 @@ func TestAccCloudflareSpectrumApplication_OriginPortRange(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareSpectrumApplicationDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, domain, rnd),
@@ -163,9 +163,9 @@ func TestAccCloudflareSpectrumApplication_Update(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareSpectrumApplicationDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareSpectrumApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, domain, rnd),
@@ -222,8 +222,8 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigEdgeIPConnectivity(zoneID, domain, rnd),
@@ -245,8 +245,8 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, domain, rnd, `"172.65.64.13", "172.65.64.49"`),
@@ -280,8 +280,8 @@ func TestAccCloudflareSpectrumApplication_BasicSSH(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigBasicTypes(zoneID, domain, rnd, "ssh", 22),
@@ -303,8 +303,8 @@ func TestAccCloudflareSpectrumApplication_BasicRDP(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigBasicTypes(zoneID, domain, rnd, "rdp", 3389),
@@ -326,8 +326,8 @@ func TestAccCloudflareSpectrumApplication_BasicMinecraft(t *testing.T) {
 	name := "cloudflare_spectrum_application." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareSpectrumApplicationConfigBasicTypes(zoneID, domain, rnd, "minecraft", 25565),

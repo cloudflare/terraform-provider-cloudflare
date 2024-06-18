@@ -15,8 +15,8 @@ func TestAccCloudflareRecordDataSource(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareRecordDataSourceConfig(rnd, zoneID, domain),
@@ -41,8 +41,8 @@ func TestAccCloudflareRecordDataSourceTXT(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareRecordDataSourceConfigTXT(rnd, zoneID, domain),
@@ -67,8 +67,8 @@ func TestAccCloudflareRecordDataSourceMX(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareRecordDataSourceConfigMX(rnd, zoneID, domain),

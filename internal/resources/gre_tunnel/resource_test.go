@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareGRETunnelExists(t *testing.T) {
@@ -23,8 +23,8 @@ func TestAccCloudflareGRETunnelExists(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),
@@ -79,8 +79,8 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),
@@ -110,8 +110,8 @@ func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),

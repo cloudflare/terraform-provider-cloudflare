@@ -21,7 +21,7 @@ func TestAccCloudflareAccessTag_Basic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessTag(rnd, zoneID),

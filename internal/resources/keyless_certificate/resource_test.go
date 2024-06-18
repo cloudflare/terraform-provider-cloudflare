@@ -9,11 +9,11 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
@@ -22,9 +22,9 @@ func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_keyless_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareKeylessCertificateDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareKeylessCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareKeylessCertificate(rnd, zoneID, domain),

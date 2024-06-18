@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -53,8 +53,8 @@ func TestAccCertificatePack_AdvancedLetsEncrypt(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCertificatePackAdvancedLetsEncryptConfig(zoneID, domain, "advanced", rnd),
@@ -96,8 +96,8 @@ func TestAccCertificatePack_WaitForActive(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCertificatePackAdvancedWaitForActiveConfig(zoneID, domain, "advanced", rnd),

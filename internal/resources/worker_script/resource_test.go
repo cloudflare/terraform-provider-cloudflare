@@ -43,8 +43,8 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			testAccPreCheckAccount(t)
 			testAccCheckCloudflareWorkerScriptCreateBucket(t, rnd)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd, accountID),
@@ -89,8 +89,8 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 			testAccPreCheckAccount(t)
 			testAccCheckCloudflareWorkerScriptCreateBucket(t, rnd)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWorkerScriptDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerScriptDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccesKeyID, r2AccesKeySecret),

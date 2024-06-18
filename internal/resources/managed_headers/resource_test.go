@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -72,8 +72,8 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_managed_headers." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareManagedHeaders(rnd, zoneID),

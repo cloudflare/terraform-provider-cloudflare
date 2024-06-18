@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAPIShieldOperationSchemaValidationSettings_Create(t *testing.T) {
@@ -23,8 +23,8 @@ func TestAccCloudflareAPIShieldOperationSchemaValidationSettings_Create(t *testi
 	block := "block"
 	none := "none"
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPIShieldOperationSchemaValidationSettingsMitigation(rnd, zoneID, &block),

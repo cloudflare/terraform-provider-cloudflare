@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareRateLimit_Basic(t *testing.T) {
@@ -23,9 +23,9 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigBasic(zoneID, rnd),
@@ -59,9 +59,9 @@ func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitChallengeConfigBasic(zoneID, rnd),
@@ -95,9 +95,9 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigFullySpecified(zoneID, rnd, zoneName),
@@ -140,9 +140,9 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd, domain),
@@ -182,9 +182,9 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd, domain),
@@ -218,9 +218,9 @@ func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareRateLimitConfigWithoutTimeout(zoneID, rnd),
@@ -236,9 +236,9 @@ func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zoneID, rnd),

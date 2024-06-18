@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareDeviceManagedNetworks(t *testing.T) {
@@ -16,7 +16,7 @@ func TestAccCloudflareDeviceManagedNetworks(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDeviceManagedNetworks(accountID, rnd),

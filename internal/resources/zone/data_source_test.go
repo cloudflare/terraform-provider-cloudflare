@@ -68,8 +68,8 @@ func TestAccCloudflareZonesMatchName(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesConfigMatchName(rnd),
@@ -90,8 +90,8 @@ func TestAccCloudflareZonesMatchPaused(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesConfigMatchPaused(rnd),
@@ -111,8 +111,8 @@ func TestAccCloudflareZonesMatchRegexFilter(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesConfigMatchRegex(rnd),
@@ -132,8 +132,8 @@ func TestAccCloudflareZonesMatchFuzzyLookup(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesMatchFuzzyLookup(rnd),

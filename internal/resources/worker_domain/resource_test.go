@@ -28,8 +28,8 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWorkerDomainDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerDomainDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerDomainAttach(rnd, accountID, hostname, zoneID),

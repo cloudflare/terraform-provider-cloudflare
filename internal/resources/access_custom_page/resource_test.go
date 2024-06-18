@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 )
 
 func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
@@ -21,7 +22,7 @@ func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, zoneID, "identity_denied", "<html><body><h1>Access Denied</h1></body></html>"),
@@ -48,7 +49,7 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, zoneID, "forbidden", "<html><body><h1>Forbidden</h1></body></html>"),

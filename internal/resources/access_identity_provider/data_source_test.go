@@ -6,15 +6,15 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAccessIdentityProviderDataSource_PreventZoneIdAndAccountIdConflicts(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testCloudflareAccessIdentityProviderDataSourceConfigConflictingFields(rnd),
@@ -37,8 +37,8 @@ data "cloudflare_access_identity_provider" "%[1]s" {
 func TestAccCloudflareAccessIdentityProviderDataSource_PreventNoInputSpecify(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testCloudflareAccessIdentityProviderDataSourceNoInput(rnd),
@@ -65,7 +65,7 @@ func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareAccessIdentityProviderDataSource_NotFound(accountID, rnd),
@@ -104,7 +104,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderDataSourceGitHub(accountID, rnd),

@@ -139,7 +139,7 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testTunnelConfig(rnd, zoneID, tunnelSecret),
@@ -209,7 +209,7 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testTunnelConfigShort(rnd, zoneID, tunnelSecret),
@@ -239,7 +239,7 @@ func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testTunnelConfigNilPointer(rnd, zoneID, tunnelSecret),

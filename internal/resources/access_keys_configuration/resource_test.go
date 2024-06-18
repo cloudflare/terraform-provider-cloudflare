@@ -24,7 +24,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessKeysConfigurationWithKeyRotationIntervalDays(rnd, accountID, 60),
@@ -60,7 +60,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessKeysConfigurationWithoutKeyRotationIntervalDays(rnd, accountID),

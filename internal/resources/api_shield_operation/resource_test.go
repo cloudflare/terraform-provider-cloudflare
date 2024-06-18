@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
@@ -26,9 +26,9 @@ func TestAccCloudflareAPIShieldOperation_Create(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckAPIShieldOperationDelete,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckAPIShieldOperationDelete,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: domain, Endpoint: "/example/path"}),
@@ -56,9 +56,9 @@ func TestAccCloudflareAPIShieldOperation_ForceNew(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckAPIShieldOperationDelete,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckAPIShieldOperationDelete,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPIShieldOperation(rnd, zoneID, cloudflare.APIShieldBasicOperation{Method: "GET", Host: domain, Endpoint: "/example/path"}),

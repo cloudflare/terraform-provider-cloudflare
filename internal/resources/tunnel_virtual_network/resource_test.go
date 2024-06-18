@@ -9,10 +9,10 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -65,7 +65,7 @@ func TestAccCloudflareTunnelVirtualNetwork_Exists(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd, accountID, rnd, false),
@@ -120,7 +120,7 @@ func TestAccCloudflareTunnelVirtualNetwork_UpdateComment(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTunnelVirtualNetworkSimple(rnd, rnd, accountID, rnd, false),

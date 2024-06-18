@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAccessRule_AccountASN(t *testing.T) {
@@ -15,8 +15,8 @@ func TestAccCloudflareAccessRule_AccountASN(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessRuleAccountConfig(accountID, "challenge", "this is notes", "asn", "AS112", rnd),
@@ -49,8 +49,8 @@ func TestAccCloudflareAccessRule_ZoneASN(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessRuleZoneConfig(zoneID, "challenge", "this is notes", "asn", "AS112", rnd),
@@ -83,8 +83,8 @@ func TestAccCloudflareAccessRule_IPRange(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessRuleAccountConfig(accountID, "challenge", "this is notes", "ip_range", "104.16.0.0/24", rnd),
@@ -117,8 +117,8 @@ func TestAccCloudflareAccessRule_IPv6(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessRuleAccountConfig(accountID, "block", "this is notes", "ip6", "2001:0db8::", rnd),

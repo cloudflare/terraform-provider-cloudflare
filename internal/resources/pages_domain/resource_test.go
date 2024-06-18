@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func testPagesDomainConfig(resourceID, accountID, projectName, domain string) string {
@@ -36,7 +36,7 @@ func TestAccTestPagesDomain(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesDomainConfig(rnd, accountID, rnd, rnd+"."+domain),

@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -67,7 +67,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, cloudflare.AccountIdentifier(accountID)),
@@ -90,7 +90,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOneTimePin(rnd, cloudflare.ZoneIdentifier(zoneID)),
@@ -120,7 +120,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
@@ -146,7 +146,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
@@ -182,7 +182,7 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderSAML(accountID, rnd),
@@ -215,7 +215,7 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
@@ -255,7 +255,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
@@ -297,7 +297,7 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
@@ -336,7 +336,7 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureADNoSCIM(accountID, rnd),

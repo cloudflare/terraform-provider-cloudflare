@@ -20,8 +20,8 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd, permissionID),
@@ -51,8 +51,8 @@ func TestAccAPIToken_AllowDeny(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAPITokenConfigAllowDeny(rnd, permissionID, zoneID, false),
@@ -79,8 +79,8 @@ func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPITokenWithoutCondition(rnd, rnd, permissionID),
@@ -120,8 +120,8 @@ func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPITokenWithIndividualCondition(rnd, permissionID),
@@ -167,8 +167,8 @@ func TestAccAPIToken_SetAllCondition(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPITokenWithAllCondition(rnd, permissionID),
@@ -249,8 +249,8 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPITokenWithTTL(rnd, permissionID),

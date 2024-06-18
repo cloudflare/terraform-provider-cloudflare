@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func testPagesProjectSource(resourceID, accountID, projectName, repoOwner, repoName string) string {
@@ -157,7 +157,7 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckPages(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectSource(rnd, accountID, rnd, pagesOwner, pagesRepo),
@@ -198,7 +198,7 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckPages(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectBuildConfig(rnd, accountID),
@@ -228,7 +228,7 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckPages(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectDeploymentConfig(rnd, accountID, rnd),
@@ -314,7 +314,7 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectDirectUpload(rnd, accountID),

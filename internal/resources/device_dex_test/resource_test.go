@@ -15,7 +15,7 @@ func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd),
@@ -41,7 +41,7 @@ func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDeviceDexTestsTracerouteIpv4(accountID, rnd),
@@ -67,7 +67,7 @@ func TestAccCloudflareDeviceDexTest_HTTP(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDeviceDexTestsHttp(accountID, rnd),

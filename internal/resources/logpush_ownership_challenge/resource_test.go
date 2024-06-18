@@ -16,8 +16,8 @@ func TestAccCloudflareLogpushOwnershipChallenge(t *testing.T) {
 	destinationConf := `gs://cf-terraform-provider-acct-test/ownership_challenges`
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareLogpushOwnershipChallengeConfig(rnd, zoneID, destinationConf),

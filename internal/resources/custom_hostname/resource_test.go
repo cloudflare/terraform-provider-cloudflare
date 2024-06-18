@@ -9,12 +9,12 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -66,8 +66,8 @@ func TestAccCloudflareCustomHostname_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
@@ -100,8 +100,8 @@ func TestAccCloudflareCustomHostname_WithCertificate(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameWithCertificate(zoneID, rnd, domain, cert, key),
@@ -142,8 +142,8 @@ func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameWaitForActive(zoneID, rnd, domain),
@@ -183,8 +183,8 @@ func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameWithCustomOriginServer(zoneID, rnd, domain),
@@ -233,8 +233,8 @@ func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameWithHTTPValidation(zoneID, rnd, domain),
@@ -272,8 +272,8 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameWithCustomSSLSettings(zoneID, rnd, domain),
@@ -364,8 +364,8 @@ func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain),
@@ -396,7 +396,7 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 			testAccPreCheckAltZoneID(t)
 			testAccPreCheckAltDomain(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
@@ -428,8 +428,8 @@ func TestAccCloudflareCustomHostname_Import(t *testing.T) {
 	resourceName := "cloudflare_custom_hostname." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
@@ -500,8 +500,8 @@ func TestAccCloudflareCustomHostname_WithCustomMetadata(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameWithCustomMetadata(zoneID, rnd, domain),

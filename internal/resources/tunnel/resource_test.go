@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
@@ -28,8 +28,8 @@ func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareTunnelBasic(accID, rnd),
@@ -67,8 +67,8 @@ func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareTunnelManaged(accID, rnd),
@@ -108,8 +108,8 @@ func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareTunnelUnmanaged(accID, rnd),

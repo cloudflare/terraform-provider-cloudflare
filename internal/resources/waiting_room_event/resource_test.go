@@ -8,9 +8,9 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
@@ -26,9 +26,9 @@ func TestAccCloudflareWaitingRoomEvent_Create(t *testing.T) {
 	eventEndTime := eventStartTime.Add(5 * time.Minute).UTC()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWaitingRoomEventDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWaitingRoomEventDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareWaitingRoomEvent(rnd, waitingRoomEventName, zoneID, waitingRoomID, eventStartTime, eventEndTime, domain, waitingRoomName),

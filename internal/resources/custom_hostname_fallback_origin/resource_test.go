@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
@@ -25,9 +25,9 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),
@@ -72,9 +72,9 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 	rndUpdate := rnd + "-updated"
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, rnd, domain),

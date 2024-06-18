@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
@@ -25,8 +25,8 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
@@ -54,8 +54,8 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
@@ -94,8 +94,8 @@ func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),

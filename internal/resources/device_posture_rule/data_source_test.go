@@ -16,8 +16,8 @@ func TestAccCloudflareDevicePostureRules_DataSource(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_device_posture_rules.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRulesConfig(rnd, accountID),

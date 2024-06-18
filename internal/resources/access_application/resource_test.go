@@ -9,11 +9,12 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -83,8 +84,8 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
@@ -114,8 +115,8 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
@@ -145,8 +146,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
@@ -186,8 +187,8 @@ func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
@@ -243,8 +244,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigInvalidMappingSchema(t *te
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigInvalidMappingSchema(rnd, accountID, domain),
@@ -261,8 +262,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasicMissingRequired(t
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigHttpBasicMissingRequired(rnd, accountID, domain),
@@ -281,8 +282,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain),
@@ -321,8 +322,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain),
@@ -364,8 +365,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2MissingRequired(t *t
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigOAuth2MissingRequired(rnd, accountID, domain),
@@ -382,8 +383,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigAuthenticationInvalid(t *t
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigAuthenticationInvalid(rnd, accountID, domain),
@@ -401,8 +402,8 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain),
@@ -432,8 +433,8 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
@@ -502,7 +503,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
@@ -528,8 +529,8 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
@@ -613,7 +614,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
@@ -639,8 +640,8 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain),
@@ -666,8 +667,8 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain),
@@ -692,8 +693,8 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
@@ -720,8 +721,8 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain, accountID),
@@ -748,8 +749,8 @@ func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) 
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2),
@@ -769,8 +770,8 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain),
@@ -795,8 +796,8 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain),
@@ -821,8 +822,8 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain),
@@ -847,8 +848,8 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain),
@@ -873,8 +874,8 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain),
@@ -899,8 +900,8 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain),
@@ -926,8 +927,8 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, cloudflare.AccountIdentifier(accountID)),
@@ -956,8 +957,8 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
@@ -983,8 +984,8 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain, accountID),
@@ -1008,8 +1009,8 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{Config: testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
@@ -1044,8 +1045,8 @@ func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) 
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
@@ -1431,7 +1432,7 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessApplicationWithZoneID(rnd, zone, zoneID),
@@ -1461,7 +1462,7 @@ func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithMissingCORSMethods(rnd, zone, zoneID),
@@ -1481,7 +1482,7 @@ func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithMissingCORSOrigins(rnd, zone, zoneID),
@@ -1501,7 +1502,7 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithInvalidSessionDuration(rnd, zone, zoneID),
@@ -1521,7 +1522,7 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOr
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(rnd, zone, zoneID),
@@ -1541,7 +1542,7 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildc
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(rnd, zone, zoneID),

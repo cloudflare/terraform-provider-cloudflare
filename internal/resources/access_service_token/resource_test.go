@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
@@ -26,8 +26,8 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
@@ -55,8 +55,8 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID)),
@@ -104,7 +104,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 
 // 	resource.Test(t, resource.TestCase{
 // 		PreCheck:  func() { testAccPreCheck(t) },
-// 		ProviderFactories: providerFactories,
+// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 // 		Steps: []resource.TestStep{
 // 			{
 // 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID), expirationTime),
@@ -182,8 +182,8 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.AccountIdentifier(accountID)),
@@ -200,9 +200,9 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfig(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID)),
@@ -236,8 +236,8 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName, resourceName, cloudflare.AccountIdentifier(accountID), "forever"),
@@ -265,9 +265,9 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessServiceTokenDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName, resourceName, cloudflare.ZoneIdentifier(zoneID), "forever"),

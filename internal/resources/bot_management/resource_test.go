@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
@@ -26,8 +26,8 @@ func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareBotManagementSBFM(rnd, zoneID, sbfmConfig),
@@ -62,8 +62,8 @@ func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareBotManagementEntSubscription(rnd, zoneID, bmEntConfig),

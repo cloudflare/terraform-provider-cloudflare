@@ -13,8 +13,8 @@ import (
 func TestAccCloudflareRulesetsProviderDataSource_PreventZoneIdAndAccountIdConflicts(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testCloudflareRulesetsProviderDataSourceConfigConflictingFields(rnd),
@@ -36,8 +36,8 @@ data "cloudflare_rulesets" "%[1]s" {
 func TestAccCloudflareRulesetsProviderDataSource_RequireOneOfZoneAccountID(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testCloudflareRulesetsProviderDataSourceRequireOneOfZoneAccountID(rnd),
@@ -60,8 +60,8 @@ func TestAccCloudflareRulesetsProviderDataSource_FetchOWASPRulesetByName(t *test
 	name := fmt.Sprintf("data.cloudflare_rulesets.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareRulesetsProviderDataSourceFetchOWASPRulesetByName(rnd, zoneID),
@@ -92,8 +92,8 @@ func TestAccCloudflareRulesetsProviderDataSource_FetchOWASPRulesetByID(t *testin
 	name := fmt.Sprintf("data.cloudflare_rulesets.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareRulesetsProviderDataSourceFetchOWASPRulesetByID(rnd, zoneID),

@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
@@ -19,9 +19,9 @@ func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareCustomSSLDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomSSLCertBasic(zoneID, rnd),
@@ -102,9 +102,9 @@ func TestAccCloudflareCustomSSL_WithEmptyGeoRestrictions(t *testing.T) {
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareCustomSSLDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareCustomSSLWithEmptyGeoRestrictions(zoneID, rnd),

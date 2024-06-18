@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -39,8 +39,8 @@ func TestAccCloudflareZoneCacheVariants_OneExt(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zone_cache_variants.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZoneCacheVariants_OneExt(zoneID, rnd),
@@ -72,8 +72,8 @@ func TestAccCloudflareZoneCacheVariants_AllExt(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zone_cache_variants.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZoneCacheVariants_AllExt(zoneID, rnd),

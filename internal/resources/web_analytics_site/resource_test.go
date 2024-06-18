@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareWebAnalyticsSite_Create(t *testing.T) {
@@ -20,9 +20,9 @@ func TestAccCloudflareWebAnalyticsSite_Create(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_web_analytics_site.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWebAnalyticsSiteDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWebAnalyticsSiteDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareWebAnalyticsSite(rnd, accountID, domain),

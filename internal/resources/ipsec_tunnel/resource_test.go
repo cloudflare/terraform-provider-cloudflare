@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
@@ -24,8 +24,8 @@ func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPsecTunnelSimple(rnd, rnd, accountID, psk),
@@ -84,8 +84,8 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPsecTunnelSimple(rnd, rnd, accountID, psk),
@@ -117,8 +117,8 @@ func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPsecTunnelSimple(rnd, rnd, accountID, psk),

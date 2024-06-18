@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareTeamsProxyEndpoint_Basic(t *testing.T) {
@@ -28,8 +28,8 @@ func TestAccCloudflareTeamsProxyEndpoint_Basic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTeamsProxyEndpointDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsProxyEndpointDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsProxyEndpointConfigBasic(rnd, accountID),

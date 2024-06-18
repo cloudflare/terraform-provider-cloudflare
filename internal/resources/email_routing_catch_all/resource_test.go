@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func testEmailRoutingRuleCatchAllConfig(resourceID, zoneID string, enabled bool) string {
@@ -34,8 +34,8 @@ func TestAccCloudflareEmailRoutingCatchAll(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testEmailRoutingRuleCatchAllConfig(rnd, zoneID, true),

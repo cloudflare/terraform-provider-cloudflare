@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAddressMap(t *testing.T) {
@@ -23,7 +23,7 @@ func TestAccCloudflareAddressMap(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: generateCloudflareAddressMapConfig(rnd, accountID, nil, nil, false, nil, nil),

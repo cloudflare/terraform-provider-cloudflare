@@ -14,8 +14,8 @@ func TestAccCloudflareZone_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfig(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", accountID),
@@ -37,8 +37,8 @@ func TestAccCloudflareZone_BasicWithJumpStartEnabled(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfig(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "true", accountID),
@@ -61,8 +61,8 @@ func TestAccCloudflareZone_WithPlan(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithPlan(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID),
@@ -84,8 +84,8 @@ func TestAccCloudflareZone_PartialSetup(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, "foo.net", "true", "false", "free", accountID, "partial"),
@@ -106,8 +106,8 @@ func TestAccCloudflareZone_FullSetup(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID, "full"),
@@ -129,8 +129,8 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfig(rnd, "żółw.cfapi.net", "true", "false", accountID),
@@ -152,8 +152,8 @@ func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", "true", "false", accountID),
@@ -175,8 +175,8 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfig(rnd, "żółw.cfapi.net", "true", "false", accountID),
@@ -209,8 +209,8 @@ func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "false", "false", "enterprise", accountID, "full"),
@@ -233,8 +233,8 @@ func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "false", "false", "enterprise", accountID, "full"),
@@ -258,8 +258,8 @@ func TestAccCloudflareZone_Secondary(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "secondary"),
@@ -282,8 +282,8 @@ func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "secondary"),
@@ -326,8 +326,8 @@ func TestAccCloudflareZone_SetType(t *testing.T) {
 	name := "cloudflare_zone." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "full"),

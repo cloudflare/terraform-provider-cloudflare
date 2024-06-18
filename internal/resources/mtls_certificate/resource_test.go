@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func init() {
@@ -62,8 +62,8 @@ func TestAccCloudflareMTLSCertificate(t *testing.T) {
 			testAccPreCheckWithoutZoneID(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareMTLSCertificateDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareMTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareMTLSCertificateConfig(accountID, rnd),

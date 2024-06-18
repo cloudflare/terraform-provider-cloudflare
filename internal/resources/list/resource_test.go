@@ -70,7 +70,7 @@ func TestAccCloudflareList_Exists(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
@@ -103,7 +103,7 @@ func TestAccCloudflareList_UpdateDescription(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
@@ -160,7 +160,7 @@ func TestAccCloudflareList_Update(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rndIP, rndIP, rndIP, accountID, "ip"),
@@ -293,7 +293,7 @@ func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareListIPListOrdered(rnd, rnd, rnd, accountID),
@@ -323,7 +323,7 @@ func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
@@ -370,7 +370,7 @@ func TestAccCloudflareList_Import(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareListBasicIP(rnd, rnd, rnd, accountID),

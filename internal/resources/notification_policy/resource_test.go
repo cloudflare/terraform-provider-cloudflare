@@ -29,7 +29,7 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicy(rnd, accountID),
@@ -112,7 +112,7 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWithFiltersAttribute(rnd, accountID),
@@ -152,7 +152,7 @@ func TestAccCloudflareNotificationPolicy_WithSelectorsAttribute(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWithSelectors(rnd, accountID, zoneID),
@@ -270,7 +270,7 @@ func TestAccCloudflareNotificationPolicy_RemappingAffectedComponents(t *testing.
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWithComponents(rnd, accountID, zoneID),

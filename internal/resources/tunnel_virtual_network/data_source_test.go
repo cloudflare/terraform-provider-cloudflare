@@ -12,8 +12,8 @@ func TestAccCloudflareTunneVirtualNetwork_MatchName(t *testing.T) {
 	rnd := generateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareTunnelVirtualNetworkMatchName(rnd),

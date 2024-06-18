@@ -26,7 +26,7 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWebhooks(rnd, accountID),

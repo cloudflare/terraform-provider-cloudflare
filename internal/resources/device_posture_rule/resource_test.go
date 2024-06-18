@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
@@ -27,8 +27,8 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID),
@@ -60,8 +60,8 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigOsVersion(rnd, accountID),
@@ -94,8 +94,8 @@ func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigOsVersionExtra(rnd, accountID),
@@ -129,8 +129,8 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigLinuxDistro(rnd, accountID),
@@ -164,8 +164,8 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigDomainJoined(rnd, accountID),
@@ -197,8 +197,8 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigFirewall(rnd, accountID),
@@ -232,8 +232,8 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) 
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryptionRequireAll(rnd, accountID),
@@ -267,8 +267,8 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareDevicePostureRuleConfigDiskEncryptionCheckDisks(rnd, accountID),

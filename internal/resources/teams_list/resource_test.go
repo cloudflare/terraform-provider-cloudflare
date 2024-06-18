@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareTeamsList_Basic(t *testing.T) {
@@ -29,8 +29,8 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsListDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsListConfigBasic(rnd, accountID),
@@ -62,8 +62,8 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsListDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID),
@@ -93,8 +93,8 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsListDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsListConfigBasic(rnd, accountID),

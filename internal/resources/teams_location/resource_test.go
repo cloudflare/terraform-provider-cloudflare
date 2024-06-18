@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
@@ -27,8 +27,8 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTeamsLocationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsLocationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsLocationConfigBasic(rnd, accountID),

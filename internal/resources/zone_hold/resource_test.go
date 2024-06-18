@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareZoneHold_Full(t *testing.T) {
@@ -17,8 +17,8 @@ func TestAccCloudflareZoneHold_Full(t *testing.T) {
 	currentTime := time.Now()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZoneHoldOnResourceConfig(zoneID, rnd),

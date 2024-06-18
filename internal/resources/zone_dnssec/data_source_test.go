@@ -6,9 +6,9 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareZoneDNSSEC(t *testing.T) {
@@ -17,8 +17,8 @@ func TestAccCloudflareZoneDNSSEC(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_zone_dnssec.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZoneDNSSECConfig(zoneID, rnd),

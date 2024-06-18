@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
@@ -31,7 +31,7 @@ func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyServiceTokenConfig(rnd, zone, accountID),
@@ -56,7 +56,7 @@ func TestAccCloudflareAccessPolicy_AnyServiceToken(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyAnyServiceTokenConfig(rnd, zone, accountID),
@@ -80,7 +80,7 @@ func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyWithZoneID(rnd, zone, zoneID),
@@ -210,7 +210,7 @@ func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyGroupConfig(rnd, zone, accountID),
@@ -267,7 +267,7 @@ func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyMTLSConfig(rnd, zone, accountID),
@@ -315,7 +315,7 @@ func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyCommonNameConfig(rnd, zone, accountID),
@@ -363,7 +363,7 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyEmailDomainConfig(rnd, zone, accountID),
@@ -413,7 +413,7 @@ func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyEmailsConfig(rnd, zone, accountID),
@@ -463,7 +463,7 @@ func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyEveryoneConfig(rnd, zone, accountID),
@@ -511,7 +511,7 @@ func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyIPsConfig(rnd, zone, accountID),
@@ -561,7 +561,7 @@ func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyAuthMethodConfig(rnd, zone, accountID),
@@ -609,7 +609,7 @@ func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyGeoConfig(rnd, zone, accountID),
@@ -659,7 +659,7 @@ func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyOktaConfig(rnd, zone, accountID),
@@ -712,7 +712,7 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyPurposeJustificationConfig(rnd, zone, accountID),
@@ -801,7 +801,7 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyApprovalGroupConfig(rnd, zone, accountID),
@@ -833,7 +833,7 @@ func TestAccCloudflareAccessPolicy_Reusable(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyReusableConfig(rnd, accountID),
@@ -931,7 +931,7 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyExternalEvalautionConfig(rnd, zone, accountID),
@@ -983,7 +983,7 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyIsolationRequiredConfig(rnd, zone, accountID),

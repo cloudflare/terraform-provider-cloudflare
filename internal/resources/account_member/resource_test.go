@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareAccountMember_Basic(t *testing.T) {
@@ -27,7 +27,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 			testAccPreCheckEmail(t)
 			testAccPreCheckApiKey(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccountMemberBasicConfig(rnd, fmt.Sprintf("%s@example.com", rnd), accountID),
@@ -60,7 +60,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 			testAccPreCheckEmail(t)
 			testAccPreCheckApiKey(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareAccountMemberDirectAdd(rnd, "millie@cloudflare.com", accountID),

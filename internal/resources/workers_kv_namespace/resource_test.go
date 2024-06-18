@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
@@ -20,9 +20,9 @@ func TestAccCloudflareWorkersKVNamespace_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersKVNamespaceDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareWorkersKVNamespaceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVNamespace(rnd, accountID),

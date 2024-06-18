@@ -21,7 +21,7 @@ func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 			testAccPreCheckAccount(t)
 			testAccPreCheckBYOIPPrefix(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareBYOIPPrefixConfig(prefixID, "BYOIP Prefix Description old", rnd),

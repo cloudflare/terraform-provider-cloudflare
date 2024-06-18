@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 func TestAccCloudflareTeamsRule_Basic(t *testing.T) {
@@ -28,8 +28,8 @@ func TestAccCloudflareTeamsRule_Basic(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTeamsRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsRuleConfigBasic(rnd, accountID),
@@ -100,8 +100,8 @@ func TestAccCloudflareTeamsRule_NoSettings(t *testing.T) {
 			testAccPreCheck(t)
 			testAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTeamsRuleDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTeamsRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsRuleConfigBasic(rnd, accountID),

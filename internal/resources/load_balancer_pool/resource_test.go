@@ -64,9 +64,9 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
@@ -94,9 +94,9 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastOutstandingRequests(rnd, accountID),
@@ -128,9 +128,9 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastConnections(t *testing
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastConnections(rnd, accountID),
@@ -175,9 +175,9 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 	poolName := "cloudflare_load_balancer_pool." + poolResID
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigVirtualNetworkID(accountID, vnetResID, tunnelResID, tunnelRouteResID, poolResID),
@@ -207,9 +207,9 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(rnd, headerValue, accountID),
@@ -262,9 +262,9 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareLoadBalancerPoolConfigBasic(rnd, accountID),
