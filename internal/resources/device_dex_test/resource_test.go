@@ -22,7 +22,7 @@ func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 			{
 				Config: testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "interval", "0h30m0s"),
@@ -48,7 +48,7 @@ func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
 			{
 				Config: testAccCloudflareDeviceDexTestsTracerouteIpv4(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "interval", "0h30m0s"),
@@ -74,7 +74,7 @@ func TestAccCloudflareDeviceDexTest_HTTP(t *testing.T) {
 			{
 				Config: testAccCloudflareDeviceDexTestsHttp(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", rnd),
 					resource.TestCheckResourceAttr(name, "interval", "0h30m0s"),

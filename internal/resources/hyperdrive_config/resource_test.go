@@ -83,7 +83,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
@@ -133,7 +133,7 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
