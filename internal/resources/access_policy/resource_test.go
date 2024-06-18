@@ -31,7 +31,7 @@ func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -56,7 +56,7 @@ func TestAccCloudflareAccessPolicy_AnyServiceToken(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -210,7 +210,7 @@ func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -267,7 +267,7 @@ func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -315,7 +315,7 @@ func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -363,7 +363,7 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -413,7 +413,7 @@ func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -463,7 +463,7 @@ func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -511,7 +511,7 @@ func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -561,7 +561,7 @@ func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -609,7 +609,7 @@ func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -659,7 +659,7 @@ func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -712,7 +712,7 @@ func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -801,7 +801,7 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -833,7 +833,7 @@ func TestAccCloudflareAccessPolicy_Reusable(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -931,7 +931,7 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -983,7 +983,7 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

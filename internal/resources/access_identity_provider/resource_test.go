@@ -67,7 +67,7 @@ func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -120,7 +120,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -146,7 +146,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuthWithUpdate(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -182,7 +182,7 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -215,7 +215,7 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -255,7 +255,7 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -297,7 +297,7 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Config_Secret(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -336,7 +336,7 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

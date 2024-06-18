@@ -26,7 +26,7 @@ func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -86,7 +86,7 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -119,7 +119,7 @@ func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheckAccount(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

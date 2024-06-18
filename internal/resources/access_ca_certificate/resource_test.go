@@ -23,7 +23,7 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessCACertificateDestroy,
@@ -50,7 +50,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessCACertificateDestroy,

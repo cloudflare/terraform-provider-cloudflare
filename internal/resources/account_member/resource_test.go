@@ -25,7 +25,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 			testAccPreCheckEmail(t)
 			testAccPreCheckApiKey(t)
 		},
@@ -58,7 +58,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 			testAccPreCheckEmail(t)
 			testAccPreCheckApiKey(t)
 		},
