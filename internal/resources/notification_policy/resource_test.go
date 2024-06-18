@@ -6,7 +6,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"

@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
