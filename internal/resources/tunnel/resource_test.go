@@ -8,9 +8,12 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
@@ -21,15 +24,15 @@ func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 	}
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareTunnelBasic(accID, rnd),
@@ -60,15 +63,15 @@ func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
 	}
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareTunnelManaged(accID, rnd),
@@ -101,15 +104,15 @@ func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
 	}
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareTunnelDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareTunnelDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareTunnelUnmanaged(accID, rnd),
@@ -142,7 +145,10 @@ func testAccCheckCloudflareTunnelDestroy(s *terraform.State) error {
 
 		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 		tunnelID := rs.Primary.ID
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		tunnel, err := client.GetTunnel(context.Background(), cloudflare.AccountIdentifier(accountID), tunnelID)
 
 		if err != nil {

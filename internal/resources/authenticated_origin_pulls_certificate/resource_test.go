@@ -7,10 +7,12 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -22,9 +24,9 @@ func init() {
 
 func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 	ctx := context.Background()
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -69,20 +71,20 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
-	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	var perZoneAOP cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls_certificate.%s", rnd)
 	aopType := "per-zone"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
@@ -97,20 +99,20 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.T) {
-	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	var perZoneAOP cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls_certificate.%s", rnd)
 	aopType := "per-hostname"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, rnd, aopType),
@@ -133,7 +135,10 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n st
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -155,7 +160,10 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -179,7 +187,12 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, nam
 }
 
 func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Primary.Attributes["type"] == "per-zone" {
 			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)

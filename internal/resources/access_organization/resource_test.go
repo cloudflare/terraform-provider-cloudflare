@@ -2,22 +2,26 @@ package access_organization_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessOrganization(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_organization.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID),
@@ -52,6 +56,7 @@ func TestAccCloudflareAccessOrganization(t *testing.T) {
 func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error {
 	state := instanceStates[0]
 	attrs := state.Attributes
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	stateChecks := []struct {
 		field         string

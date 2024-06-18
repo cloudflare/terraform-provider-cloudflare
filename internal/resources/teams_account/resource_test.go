@@ -5,8 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
@@ -17,14 +19,15 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_teams_account.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),
@@ -102,7 +105,7 @@ resource "cloudflare_teams_account" "%[1]s" {
     fail_closed = true
 	notification_settings {
 		enabled = true
-		message = "msg" 
+		message = "msg"
 		support_url = "https://hello.com/"
 	}
   }

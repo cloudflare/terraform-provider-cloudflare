@@ -5,8 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAPIShieldOperationSchemaValidationSettings_Create(t *testing.T) {
@@ -16,15 +18,15 @@ func TestAccCloudflareAPIShieldOperationSchemaValidationSettings_Create(t *testi
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceID := "cloudflare_api_shield_operation_schema_validation_settings." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	block := "block"
 	none := "none"
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPIShieldOperationSchemaValidationSettingsMitigation(rnd, zoneID, &block),

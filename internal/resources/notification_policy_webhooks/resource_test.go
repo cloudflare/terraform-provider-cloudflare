@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
@@ -16,7 +18,7 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy_webhooks." + rnd
 	webhooksDestination := "https://example.com"
 	updatedWebhooksName := "my updated webhooks destination for notifications"
@@ -24,9 +26,9 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWebhooks(rnd, accountID),

@@ -5,16 +5,18 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareZone_PreventZoneIdAndNameConflicts(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareZoneConfigConflictingFields(rnd),
@@ -35,19 +37,19 @@ data "cloudflare_zone" "%[1]s" {
 
 func TestAccCloudflareZone_NameLookup(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zone.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZoneConfigBasic(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareZonesDataSourceID(name),
 					resource.TestCheckResourceAttr(name, "name", "terraform.cfapi.net"),
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, testAccCloudflareZoneID),
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, acctest.TestAccCloudflareZoneID),
 					resource.TestCheckResourceAttr(name, "status", "active"),
 				),
 			},

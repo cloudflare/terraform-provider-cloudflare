@@ -6,25 +6,28 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareGRETunnelExists(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit.")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),
@@ -57,7 +60,10 @@ func testAccCheckCloudflareGRETunnelExists(n string, tunnel *cloudflare.MagicTra
 			return fmt.Errorf("No GRE tunnel is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundGRETunnel, err := client.GetMagicTransitGRETunnel(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -70,17 +76,17 @@ func testAccCheckCloudflareGRETunnelExists(n string, tunnel *cloudflare.MagicTra
 }
 
 func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),
@@ -101,17 +107,17 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareGRETunnelSimple(rnd, rnd, rnd, accountID),

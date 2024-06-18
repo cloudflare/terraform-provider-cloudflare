@@ -7,10 +7,12 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -22,13 +24,13 @@ func init() {
 
 func testSweepCloudflareManagedHeaders(r string) error {
 	ctx := context.Background()
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
 
-	zone := os.Getenv("CLOUDFLARE_ZONE_ID")
-	if zone == "" {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	if zoneID == "" {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
@@ -68,12 +70,12 @@ func testSweepCloudflareManagedHeaders(r string) error {
 func TestAccCloudflareManagedHeaders(t *testing.T) {
 	t.Parallel()
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_managed_headers." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareManagedHeaders(rnd, zoneID),

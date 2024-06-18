@@ -7,10 +7,11 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestMain(m *testing.M) {
@@ -21,7 +22,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_hyperdrive_config", &resource.Sweeper{
 		Name: "cloudflare_hyperdrive_config",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			ctx := context.Background()
@@ -83,7 +84,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
@@ -133,7 +134,7 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),

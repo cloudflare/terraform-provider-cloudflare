@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestMain(m *testing.M) {
@@ -20,7 +20,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_d1_database", &resource.Sweeper{
 		Name: "cloudflare_d1_database",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {

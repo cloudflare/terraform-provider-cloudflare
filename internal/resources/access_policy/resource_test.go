@@ -8,9 +8,12 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
@@ -21,17 +24,17 @@ func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyServiceTokenConfig(rnd, zone, accountID),
@@ -46,17 +49,17 @@ func TestAccCloudflareAccessPolicy_ServiceToken(t *testing.T) {
 }
 
 func TestAccCloudflareAccessPolicy_AnyServiceToken(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyAnyServiceTokenConfig(rnd, zone, accountID),
@@ -71,16 +74,17 @@ func TestAccCloudflareAccessPolicy_AnyServiceToken(t *testing.T) {
 }
 
 func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	updatedName := fmt.Sprintf("%s-updated", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyWithZoneID(rnd, zone, zoneID),
@@ -200,17 +204,17 @@ func testAccessPolicyWithZoneIDUpdated(resourceID, zone, zoneID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyGroupConfig(rnd, zone, accountID),
@@ -257,17 +261,17 @@ func testAccessPolicyGroupConfig(resourceID, zone, accountID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyMTLSConfig(rnd, zone, accountID),
@@ -305,17 +309,17 @@ func testAccessPolicyMTLSConfig(resourceID, zone, accountID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyCommonNameConfig(rnd, zone, accountID),
@@ -353,17 +357,17 @@ func testAccessPolicyCommonNameConfig(resourceID, zone, accountID string) string
 }
 
 func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyEmailDomainConfig(rnd, zone, accountID),
@@ -403,17 +407,17 @@ func testAccessPolicyEmailDomainConfig(resourceID, zone, accountID string) strin
 }
 
 func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyEmailsConfig(rnd, zone, accountID),
@@ -453,17 +457,17 @@ func testAccessPolicyEmailsConfig(resourceID, zone, accountID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyEveryoneConfig(rnd, zone, accountID),
@@ -501,17 +505,17 @@ func testAccessPolicyEveryoneConfig(resourceID, zone, accountID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyIPsConfig(rnd, zone, accountID),
@@ -551,17 +555,17 @@ func testAccessPolicyIPsConfig(resourceID, zone, accountID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyAuthMethodConfig(rnd, zone, accountID),
@@ -599,17 +603,17 @@ func testAccessPolicyAuthMethodConfig(resourceID, zone, accountID string) string
 }
 
 func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyGeoConfig(rnd, zone, accountID),
@@ -649,17 +653,17 @@ func testAccessPolicyGeoConfig(resourceID, zone, accountID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyOktaConfig(rnd, zone, accountID),
@@ -702,17 +706,17 @@ func testAccessPolicyOktaConfig(resourceID, zone, accountID string) string {
 }
 
 func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyPurposeJustificationConfig(rnd, zone, accountID),
@@ -738,7 +742,10 @@ func testAccCheckCloudflareAccessPolicyHasPJ(n string, accessIdentifier *cloudfl
 			return fmt.Errorf("No AccessPolicy ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		var foundAccessPolicy cloudflare.AccessPolicy
 		var err error
 
@@ -791,17 +798,17 @@ func testAccessPolicyPurposeJustificationConfig(resourceID, zone, accountID stri
 }
 
 func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyApprovalGroupConfig(rnd, zone, accountID),
@@ -824,16 +831,16 @@ func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
 }
 
 func TestAccCloudflareAccessPolicy_Reusable(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyReusableConfig(rnd, accountID),
@@ -857,7 +864,10 @@ func testAccCheckCloudflareAccessPolicyHasApprovalGroups(n string, accessIdentif
 			return fmt.Errorf("No AccessPolicy ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		var foundAccessPolicy cloudflare.AccessPolicy
 		var err error
 
@@ -921,17 +931,17 @@ func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) str
 }
 
 func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyExternalEvalautionConfig(rnd, zone, accountID),
@@ -973,17 +983,17 @@ func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string
 }
 
 func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessPolicyIsolationRequiredConfig(rnd, zone, accountID),

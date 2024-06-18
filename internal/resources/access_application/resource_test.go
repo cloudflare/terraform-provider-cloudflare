@@ -9,11 +9,13 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -26,7 +28,7 @@ func init() {
 func testSweepCloudflareAccessApplications(r string) error {
 	ctx := context.Background()
 
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
@@ -71,20 +73,21 @@ func testSweepCloudflareAccessApplications(r string) error {
 }
 
 var (
-	zoneID = os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain = os.Getenv("CLOUDFLARE_DOMAIN")
+	zoneID    = os.Getenv("CLOUDFLARE_ZONE_ID")
+	domain    = os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )
 
 func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.ZoneIdentifier(zoneID)),
@@ -106,16 +109,16 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigBasic(rnd, domain, cloudflare.AccountIdentifier(accountID)),
@@ -137,16 +140,16 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
@@ -178,16 +181,16 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain),
@@ -237,14 +240,14 @@ func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigInvalidMappingSchema(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigInvalidMappingSchema(rnd, accountID, domain),
@@ -255,14 +258,14 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigInvalidMappingSchema(t *te
 }
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasicMissingRequired(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigHttpBasicMissingRequired(rnd, accountID, domain),
@@ -273,16 +276,16 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasicMissingRequired(t
 }
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain),
@@ -313,16 +316,16 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 }
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain),
@@ -358,14 +361,14 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2MissingRequired(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigOAuth2MissingRequired(rnd, accountID, domain),
@@ -376,14 +379,14 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2MissingRequired(t *t
 }
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigAuthenticationInvalid(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCloudflareAccessApplicationSCIMConfigAuthenticationInvalid(rnd, accountID, domain),
@@ -394,15 +397,15 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigAuthenticationInvalid(t *t
 }
 
 func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain),
@@ -424,16 +427,16 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
@@ -471,7 +474,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_application." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
@@ -499,10 +502,10 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
@@ -520,16 +523,16 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
@@ -573,7 +576,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_application." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
@@ -610,10 +613,10 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
@@ -632,15 +635,15 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain),
@@ -659,15 +662,15 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 }
 
 func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain),
@@ -685,15 +688,15 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain),
@@ -713,15 +716,15 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain, accountID),
@@ -740,16 +743,16 @@ func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) {
-	rnd := generateRandomResourceName()
-	idp1 := generateRandomResourceName()
-	idp2 := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
+	idp1 := utils.GenerateRandomResourceName()
+	idp2 := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2),
@@ -762,15 +765,15 @@ func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) 
 }
 
 func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain),
@@ -788,15 +791,15 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 }
 
 func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain),
@@ -814,15 +817,15 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 }
 
 func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain),
@@ -840,15 +843,15 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 }
 
 func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain),
@@ -866,15 +869,15 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain),
@@ -892,15 +895,15 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain),
@@ -918,16 +921,16 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd, domain, cloudflare.AccountIdentifier(accountID)),
@@ -948,16 +951,16 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain, accountID),
@@ -975,16 +978,16 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain, accountID),
@@ -1000,16 +1003,16 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{Config: testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
@@ -1036,16 +1039,16 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 }
 
 func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
@@ -1392,7 +1395,10 @@ resource "cloudflare_access_application" "%[1]s" {
 }
 
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_access_application" {
@@ -1420,7 +1426,7 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 }
 
 func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_access_application." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1428,10 +1434,10 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessApplicationWithZoneID(rnd, zone, zoneID),
@@ -1452,16 +1458,16 @@ func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithMissingCORSMethods(rnd, zone, zoneID),
@@ -1472,16 +1478,16 @@ func TestAccCloudflareAccessApplicationWithMissingCORSMethods(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithMissingCORSOrigins(rnd, zone, zoneID),
@@ -1492,16 +1498,16 @@ func TestAccCloudflareAccessApplicationWithMissingCORSOrigins(t *testing.T) {
 }
 
 func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationWithInvalidSessionDuration(rnd, zone, zoneID),
@@ -1512,16 +1518,16 @@ func TestAccCloudflareAccessApplicationWithInvalidSessionDuration(t *testing.T) 
 }
 
 func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOrigins(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(rnd, zone, zoneID),
@@ -1532,16 +1538,16 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingAllOr
 }
 
 func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildcardOrigins(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(rnd, zone, zoneID),

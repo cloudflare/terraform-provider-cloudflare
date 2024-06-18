@@ -7,8 +7,11 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 const scriptContentForSecret = `addEventListener('fetch', event => {event.respondWith(new Response('test 1'))});`
@@ -18,27 +21,27 @@ var workerSecretTestScriptName string
 func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 	t.Parallel()
 
-	name := generateRandomResourceName()
-	secretText := generateRandomResourceName()
-	workerSecretTestScriptName = generateRandomResourceName()
-	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	name := utils.GenerateRandomResourceName()
+	secretText := utils.GenerateRandomResourceName()
+	workerSecretTestScriptName = utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWorkerSecretDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerSecretDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountId),
+				Config: testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountId),
+					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
 				),
 			},
 			{
-				Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountId),
+				Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
 				ResourceName:            "cloudflare_worker_secret." + name,
 				ImportStateId:           fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, name),
 				ImportState:             true,
@@ -60,7 +63,10 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		params := cloudflare.ListWorkersSecretsParams{
 			ScriptName: rs.Primary.Attributes["script_name"],
 		}
@@ -93,7 +99,10 @@ func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name 
 
 func testAccCheckCloudflareWorkerSecretExists(scriptName string, name string, accountId string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		params := cloudflare.ListWorkersSecretsParams{
 			ScriptName: scriptName,
 		}

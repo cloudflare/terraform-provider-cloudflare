@@ -7,8 +7,11 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 const (
@@ -19,17 +22,18 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	var domain cloudflare.WorkersDomain
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_worker_domain." + rnd
 	hostname := rnd + "." + zoneName
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareWorkerDomainDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareWorkerDomainDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkerDomainAttach(rnd, accountID, hostname, zoneID),
@@ -57,7 +61,10 @@ func getDomainFromApi(accountID, domainID string) (cloudflare.WorkersDomain, err
 		return cloudflare.WorkersDomain{}, fmt.Errorf("domainID is required to get a domain")
 	}
 
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 	domain, err := client.GetWorkersDomain(context.Background(), cloudflare.AccountIdentifier(accountID), domainID)
 	if err != nil {
 		fmt.Print(err.Error())
@@ -119,7 +126,10 @@ func testAccCheckCloudflareWorkerDomainDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		r, _ := client.GetWorkersDomain(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 
 		if r.ID != "" {

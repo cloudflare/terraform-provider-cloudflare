@@ -7,10 +7,12 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -22,9 +24,9 @@ func init() {
 
 func testSweepCloudflareMTLSCertificates(r string) error {
 	ctx := context.Background()
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 	}
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -54,16 +56,16 @@ func testSweepCloudflareMTLSCertificates(r string) error {
 func TestAccCloudflareMTLSCertificate(t *testing.T) {
 	var mtlsCert cloudflare.MTLSCertificate
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_mtls_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckWithoutZoneID(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_Credentials(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareMTLSCertificateDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareMTLSCertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareMTLSCertificateConfig(accountID, rnd),
@@ -85,7 +87,10 @@ func testAccCheckCloudflareMTLSCertificateExists(name string, mtlsCert *cloudfla
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 		accountIDrc := cloudflare.AccountIdentifier(accountID)
 		foundMTLSCert, err := client.GetMTLSCertificate(context.Background(), accountIDrc, rs.Primary.ID)
@@ -112,7 +117,10 @@ func testAccCheckCloudflareMTLSCertificateConfig(accountID, rnd string) string {
 }
 
 func testAccCheckCloudflareMTLSCertificateDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 	for _, rs := range s.RootModule().Resources {
 		accountID := rs.Primary.Attributes[consts.AccountIDSchemaKey]
 		accountIDrc := cloudflare.AccountIdentifier(accountID)

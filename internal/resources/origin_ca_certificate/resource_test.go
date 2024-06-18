@@ -14,15 +14,18 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 	var cert cloudflare.OriginCACertificate
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_origin_ca_certificate." + rnd
 
 	csr, err := generateCSR(zoneName)
@@ -33,10 +36,10 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareOriginCACertificateDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareOriginCACertificateDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareOriginCACertificateConfigBasic(rnd, zoneName, csr),
@@ -104,7 +107,10 @@ func TestCalculateRequestedValidityFromCertificate(t *testing.T) {
 }
 
 func testAccCheckCloudflareOriginCACertificateDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_origin_ca_certificate" {
@@ -131,7 +137,10 @@ func testAccCheckCloudflareOriginCACertificateExists(name string, cert *cloudfla
 			return fmt.Errorf("No Origin CA Certificate ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundOriginCACertificate, err := client.GetOriginCACertificate(context.Background(), rs.Primary.ID)
 		if err != nil {
 			return err

@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestMain(m *testing.M) {
@@ -21,7 +21,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_workers_for_platforms_namespace", &resource.Sweeper{
 		Name: "cloudflare_workers_for_platforms_namespace",
 		F: func(region string) error {
-			client, err := acctest.SharedV1Client()
+			client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
@@ -153,7 +153,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client, err := acctest.SharedV1Client()
+		client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 		if err != nil {
 			return fmt.Errorf("error establishing client: %w", err)
 		}

@@ -5,11 +5,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
-func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
+func testTunnelConfig(resourceID, accountID, tunnelSecret, domain string) string {
 	return fmt.Sprintf(`
 		resource "cloudflare_tunnel" "%[1]s" {
 		  account_id = "%[2]s"
@@ -129,20 +130,21 @@ resource "cloudflare_tunnel_config" "%[1]s" {
 }
 
 func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
+	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testTunnelConfig(rnd, zoneID, tunnelSecret),
+				Config: testTunnelConfig(rnd, zoneID, tunnelSecret, domain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "config.0.warp_routing.0.enabled", "true"),
 					resource.TestCheckResourceAttr(name, "config.0.origin_request.0.connect_timeout", "1m0s"),
@@ -199,17 +201,17 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 }
 
 func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
+	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testTunnelConfigShort(rnd, zoneID, tunnelSecret),
@@ -229,17 +231,17 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 }
 
 func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_tunnel_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
+	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testTunnelConfigNilPointer(rnd, zoneID, tunnelSecret),

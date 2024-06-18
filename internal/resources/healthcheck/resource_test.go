@@ -8,7 +8,10 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -22,13 +25,13 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 	var healthcheck cloudflare.Healthcheck
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd, rnd),
@@ -52,14 +55,14 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 	var healthcheck cloudflare.Healthcheck
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd, rnd),
@@ -97,13 +100,13 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_healthcheck.%s", rnd)
 	var healthcheck cloudflare.Healthcheck
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareHealthcheckHTTP(zoneID, rnd),
@@ -122,11 +125,11 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 func TestAccCloudflareHealthcheckMissingRequired(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckHealthcheckConfigMissingRequired(zoneID, rnd),
@@ -147,7 +150,10 @@ func testAccCheckCloudflareHealthcheckExists(n string, zoneID string, load *clou
 			return fmt.Errorf("No Healthcheck ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundHealthcheck, err := client.Healthcheck(context.Background(), zoneID, rs.Primary.ID)
 		if err != nil {
 			return err

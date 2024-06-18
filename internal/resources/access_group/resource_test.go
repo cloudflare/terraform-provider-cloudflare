@@ -8,10 +8,12 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -24,7 +26,7 @@ func init() {
 func testSweepCloudflareAccessGroups(r string) error {
 	ctx := context.Background()
 
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
@@ -69,22 +71,23 @@ func testSweepCloudflareAccessGroups(r string) error {
 }
 
 var (
+	zoneID      = os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID   = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	email       = "test@example.com"
 	accessGroup cloudflare.AccessGroup
 )
 
 func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
@@ -121,15 +124,15 @@ func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.ZoneIdentifier(zoneID)),
@@ -182,18 +185,18 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
-	rnd2 := generateRandomResourceName()
+	rnd2 := utils.GenerateRandomResourceName()
 	emailListName := fmt.Sprintf("cloudflare_teams_list.%s", rnd2)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigEmailList(rnd, rnd2, cloudflare.AccountIdentifier(accountID)),
@@ -213,16 +216,16 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigExclude(rnd, accountID, email),
@@ -240,16 +243,16 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_Require(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigRequire(rnd, accountID, email),
@@ -267,16 +270,16 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccessGroupConfigFullConfig(rnd, accountID, email),
@@ -298,18 +301,18 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 	githubOrg := "Terraform-Cloudflare-Provider-Test-Org"
 	team := "test-team-1"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team),
@@ -327,18 +330,18 @@ func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 }
 
 func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
-	ctxID := generateRandomResourceName()
+	ctxID := utils.GenerateRandomResourceName()
 	ctxACID := "c1"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupWithIDPAuthContext(accountID, rnd, ctxID, ctxACID),
@@ -357,16 +360,16 @@ func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 	var before, after cloudflare.AccessGroup
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
@@ -389,16 +392,16 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	var initialID string
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasic(rnd, email, cloudflare.AccountIdentifier(accountID)),
@@ -425,16 +428,16 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.T) {
 	var before, after cloudflare.AccessGroup
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAccessGroupConfigBasicWithCommonName(rnd, cloudflare.AccountIdentifier(accountID)),
@@ -674,7 +677,10 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudfl
 			return fmt.Errorf("No AccessGroup ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		var foundAccessGroup cloudflare.AccessGroup
 		var err error
 
@@ -701,7 +707,10 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudfl
 }
 
 func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_access_group" {
@@ -738,7 +747,10 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialID = rs.Primary.ID
 		err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err != nil {

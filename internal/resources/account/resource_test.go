@@ -5,21 +5,23 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAccount_Basic(t *testing.T) {
-	skipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
 
 	t.Parallel()
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_account.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAccountName(rnd, fmt.Sprintf("%s_old", rnd)),
@@ -54,16 +56,16 @@ func testAccCheckCloudflareAccountName(rnd, name string) string {
 }
 
 func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
-	skipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_account.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// The POST endpoint ignores the settings on the create so we
 			// need to first create and then update for 2FA enforcement.

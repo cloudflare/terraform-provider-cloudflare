@@ -5,8 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func testPagesProjectSource(resourceID, accountID, projectName, repoOwner, repoName string) string {
@@ -144,9 +146,9 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	pagesOwner := os.Getenv("CLOUDFLARE_PAGES_OWNER")
@@ -154,10 +156,10 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckPages(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Pages(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectSource(rnd, accountID, rnd, pagesOwner, pagesRepo),
@@ -187,18 +189,18 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckPages(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Pages(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectBuildConfig(rnd, accountID),
@@ -218,17 +220,17 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckPages(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Pages(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectDeploymentConfig(rnd, accountID, rnd),
@@ -304,17 +306,17 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
-	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesProjectDirectUpload(rnd, accountID),

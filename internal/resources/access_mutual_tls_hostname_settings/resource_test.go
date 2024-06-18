@@ -7,11 +7,11 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func init() {
@@ -20,7 +20,7 @@ func init() {
 		F: func(region string) error {
 			ctx := context.Background()
 
-			client, clientErr := acctest.SharedV1Client()
+			client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 			if clientErr != nil {
 				return fmt.Errorf("Failed to create Cloudflare client: %w", clientErr)
 			}
@@ -62,7 +62,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_Account(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy,
@@ -81,7 +81,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.State) error {
-	client, err := acctest.SharedV1Client()
+	client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if err != nil {
 		return fmt.Errorf("Failed to create Cloudflare client: %w", err)
 	}

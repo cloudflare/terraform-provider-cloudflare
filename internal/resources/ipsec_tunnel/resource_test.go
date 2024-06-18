@@ -6,17 +6,20 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	psk := "asdf1234"
@@ -24,8 +27,8 @@ func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPsecTunnelSimple(rnd, rnd, accountID, psk),
@@ -61,7 +64,10 @@ func testAccCheckCloudflareIPsecTunnelExists(n string, tunnel *cloudflare.MagicT
 			return fmt.Errorf("No IPsec tunnel is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundIPsecTunnel, err := client.GetMagicTransitIPsecTunnel(context.Background(), rs.Primary.Attributes[consts.AccountIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -74,9 +80,9 @@ func testAccCheckCloudflareIPsecTunnelExists(n string, tunnel *cloudflare.MagicT
 }
 
 func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	psk := "asdf1234"
@@ -84,8 +90,8 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPsecTunnelSimple(rnd, rnd, accountID, psk),
@@ -106,9 +112,9 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
-	skipMagicTransitTestForNonConfiguredDefaultZone(t)
+	acctest.TestAccSkipForDefaultZone(t, "Not configured for Magic Transit")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	psk := "asdf1234"
@@ -117,8 +123,8 @@ func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
 	var Tunnel cloudflare.MagicTransitIPsecTunnel
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheckAccount(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck_AccountID(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareIPsecTunnelSimple(rnd, rnd, accountID, psk),

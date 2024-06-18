@@ -6,7 +6,9 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -19,7 +21,7 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	updatedPolicyName := "updated test SSL policy from terraform provider"
 	updatedPolicyDesc := "updated description"
@@ -27,9 +29,9 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicy(rnd, accountID),
@@ -102,7 +104,7 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	updatedPolicyName := "updated workers usage notification"
 	updatedPolicyDesc := "updated description"
@@ -110,9 +112,9 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWithFiltersAttribute(rnd, accountID),
@@ -143,16 +145,16 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 }
 
 func TestAccCloudflareNotificationPolicy_WithSelectorsAttribute(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWithSelectors(rnd, accountID, zoneID),
@@ -261,16 +263,16 @@ func testCheckCloudflareNotificationPolicyWithSelectors(name, accountID, zoneID 
 }
 
 func TestAccCloudflareNotificationPolicy_RemappingAffectedComponents(t *testing.T) {
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_notification_policy." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCheckCloudflareNotificationPolicyWithComponents(rnd, accountID, zoneID),

@@ -7,26 +7,30 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 	t.Parallel()
 	var kvPair cloudflare.WorkersKVPair
-	name := generateRandomResourceName()
-	key := generateRandomResourceName()
-	value := generateRandomResourceName()
+	name := utils.GenerateRandomResourceName()
+	key := utils.GenerateRandomResourceName()
+	value := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv." + name
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
@@ -44,18 +48,19 @@ func TestAccCloudflareWorkersKV_Basic(t *testing.T) {
 func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 	t.Parallel()
 	var kvPair cloudflare.WorkersKVPair
-	name := generateRandomResourceName()
-	key := generateRandomResourceName()
-	value := generateRandomResourceName()
+	name := utils.GenerateRandomResourceName()
+	key := utils.GenerateRandomResourceName()
+	value := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_workers_kv." + name
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
@@ -83,19 +88,19 @@ func TestAccCloudflareWorkersKV_NameForcesRecreation(t *testing.T) {
 func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 	t.Parallel()
 	var kvPair cloudflare.WorkersKVPair
-	name := generateRandomResourceName()
-	key := generateRandomResourceName()
-	value := generateRandomResourceName()
+	name := utils.GenerateRandomResourceName()
+	key := utils.GenerateRandomResourceName()
+	value := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_workers_kv." + name
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
 		},
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCloudflareWorkersKVDestroy,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCloudflareWorkersKVDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareWorkersKVWithAccount(name, key, value, accountID),
@@ -110,7 +115,10 @@ func TestAccCloudflareWorkersKV_WithAccountID(t *testing.T) {
 }
 
 func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_workers_kv" {
@@ -154,7 +162,10 @@ resource "cloudflare_workers_kv" "%[1]s" {
 
 func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVPair) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != "cloudflare_workers_kv" {

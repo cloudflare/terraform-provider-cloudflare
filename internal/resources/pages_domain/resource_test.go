@@ -5,8 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func testPagesDomainConfig(resourceID, accountID, projectName, domain string) string {
@@ -27,16 +29,16 @@ func testPagesDomainConfig(resourceID, accountID, projectName, domain string) st
 func TestAccTestPagesDomain(t *testing.T) {
 	t.Skip("Skipping Pages acceptance tests pending investigation into automating the setup and teardown")
 
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_domain." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testPagesDomainConfig(rnd, accountID, rnd, rnd+"."+domain),

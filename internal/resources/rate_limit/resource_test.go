@@ -9,9 +9,12 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareRateLimit_Basic(t *testing.T) {
@@ -19,13 +22,13 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigBasic(zoneID, rnd),
@@ -55,13 +58,13 @@ func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 	t.Parallel()
 	var rateLimit cloudflare.RateLimit
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitChallengeConfigBasic(zoneID, rnd),
@@ -91,13 +94,13 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 	var rateLimit cloudflare.RateLimit
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigFullySpecified(zoneID, rnd, zoneName),
@@ -136,13 +139,13 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 	var initialRateLimitId string
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd, domain),
@@ -178,13 +181,13 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 	var initialRateLimitId string
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareRateLimitConfigMatchingUrl(zoneID, rnd, domain),
@@ -215,12 +218,12 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareRateLimitConfigWithoutTimeout(zoneID, rnd),
@@ -233,12 +236,12 @@ func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 	t.Parallel()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccCheckCloudflareRateLimitDestroy,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareRateLimitChallengeConfigWithTimeout(zoneID, rnd),
@@ -249,7 +252,10 @@ func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 }
 
 func testAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_rate_limit" {
@@ -276,7 +282,10 @@ func testAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateL
 			return fmt.Errorf("No Rate Limit ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundRateLimit, err := client.RateLimit(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -321,7 +330,10 @@ func testAccCheckCloudflareRateLimitIDIsValid(n, expectedZoneID string) resource
 
 func testAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit, initialRateLimitId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialRateLimitId = rateLimit.ID
 		err := client.DeleteRateLimit(context.Background(), s.RootModule().Resources[name].Primary.Attributes[consts.ZoneIDSchemaKey], rateLimit.ID)
 		if err != nil {

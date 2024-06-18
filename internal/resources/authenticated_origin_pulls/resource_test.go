@@ -6,20 +6,22 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
-	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility..")
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility..")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsGlobalConfig(zoneID, rnd),
@@ -32,15 +34,15 @@ func TestAccCloudflareAuthenticatedOriginPullsGlobal(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
-	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsPerZoneConfig(zoneID, rnd, "per-zone"),
@@ -53,16 +55,16 @@ func TestAccCloudflareAuthenticatedOriginPullsPerZone(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsPerHostname(t *testing.T) {
-	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	hostname := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_authenticated_origin_pulls.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareAuthenticatedOriginPullsConfig(zoneID, rnd, "per-hostname", hostname),

@@ -12,8 +12,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+)
+
+var (
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )
 
 func init() {
@@ -25,7 +31,7 @@ func init() {
 
 func testSweepCloudflareZones(r string) error {
 	ctx := context.Background()
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
@@ -64,12 +70,12 @@ func testSweepCloudflareZones(r string) error {
 
 func TestAccCloudflareZonesMatchName(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesConfigMatchName(rnd),
@@ -86,12 +92,12 @@ func TestAccCloudflareZonesMatchName(t *testing.T) {
 
 func TestAccCloudflareZonesMatchPaused(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesConfigMatchPaused(rnd),
@@ -107,12 +113,12 @@ func TestAccCloudflareZonesMatchPaused(t *testing.T) {
 
 func TestAccCloudflareZonesMatchRegexFilter(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesConfigMatchRegex(rnd),
@@ -128,12 +134,12 @@ func TestAccCloudflareZonesMatchRegexFilter(t *testing.T) {
 
 func TestAccCloudflareZonesMatchFuzzyLookup(t *testing.T) {
 	t.Parallel()
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_zones.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareZonesMatchFuzzyLookup(rnd),
