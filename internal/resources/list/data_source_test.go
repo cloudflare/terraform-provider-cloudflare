@@ -18,7 +18,7 @@ func TestAccCloudflareListsDataSource(t *testing.T) {
 	name := "data.cloudflare_lists." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

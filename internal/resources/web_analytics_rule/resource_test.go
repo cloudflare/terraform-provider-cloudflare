@@ -22,7 +22,7 @@ func TestAccCloudflareWebAnalyticsRule_Create(t *testing.T) {
 	ruleName := fmt.Sprintf("cloudflare_web_analytics_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareWebAnalyticsRuleDestroy,
 		Steps: []resource.TestStep{

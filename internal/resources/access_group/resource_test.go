@@ -82,7 +82,7 @@ func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -128,7 +128,7 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
@@ -192,7 +192,7 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessGroupDestroy,
@@ -220,7 +220,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -247,7 +247,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -274,7 +274,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -307,7 +307,7 @@ func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -336,7 +336,7 @@ func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -364,7 +364,7 @@ func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -396,7 +396,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -432,7 +432,7 @@ func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

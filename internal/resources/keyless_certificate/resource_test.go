@@ -23,7 +23,7 @@ func TestAccCloudflareKeylessSSL_Basic(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_keyless_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareKeylessCertificateDestroy,
 		Steps: []resource.TestStep{

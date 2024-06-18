@@ -18,7 +18,7 @@ func TestAccCloudflareRegionalTieredCache_Basic(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_regional_tiered_cache.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

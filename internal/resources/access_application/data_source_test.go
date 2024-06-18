@@ -6,6 +6,7 @@ import (
 
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -14,7 +15,7 @@ func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -51,7 +52,7 @@ func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -88,7 +89,7 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -125,7 +126,7 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "data.cloudflare_access_application." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

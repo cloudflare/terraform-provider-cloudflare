@@ -66,7 +66,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
@@ -96,7 +96,7 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
@@ -130,7 +130,7 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastConnections(t *testing
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
@@ -177,7 +177,7 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 	poolName := "cloudflare_load_balancer_pool." + poolResID
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
@@ -209,7 +209,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{
@@ -264,7 +264,7 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerPoolDestroy,
 		Steps: []resource.TestStep{

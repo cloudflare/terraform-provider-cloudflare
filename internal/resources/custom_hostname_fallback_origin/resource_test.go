@@ -27,7 +27,7 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{
@@ -74,7 +74,7 @@ func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
 	rndUpdate := rnd + "-updated"
 	resourceName := "cloudflare_custom_hostname_fallback_origin." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareCustomHostnameFallbackOriginDestroy,
 		Steps: []resource.TestStep{

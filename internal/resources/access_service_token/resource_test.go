@@ -28,7 +28,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -57,7 +57,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -105,7 +105,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 // 	expirationTime := 365
 
 // 	resource.Test(t, resource.TestCase{
-// 		PreCheck:  func() { testAccPreCheck(t) },
+// 		PreCheck:  func() { acctest.TestAccPreCheck(t) },
 // 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 // 		Steps: []resource.TestStep{
 // 			{
@@ -181,7 +181,7 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -202,7 +202,7 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{
@@ -235,7 +235,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -267,7 +267,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 	})
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareAccessServiceTokenDestroy,
 		Steps: []resource.TestStep{

@@ -18,7 +18,7 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -44,7 +44,7 @@ func TestAccCloudflareZoneLockdown_OnlyRequired(t *testing.T) {
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -66,7 +66,7 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

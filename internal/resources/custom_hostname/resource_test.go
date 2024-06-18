@@ -67,7 +67,7 @@ func TestAccCloudflareCustomHostname_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -101,7 +101,7 @@ func TestAccCloudflareCustomHostname_WithCertificate(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -143,7 +143,7 @@ func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -184,7 +184,7 @@ func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -234,7 +234,7 @@ func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -273,7 +273,7 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -365,7 +365,7 @@ func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -393,7 +393,7 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAltZoneID(t)
 			testAccPreCheckAltDomain(t)
 		},
@@ -429,7 +429,7 @@ func TestAccCloudflareCustomHostname_Import(t *testing.T) {
 	resourceName := "cloudflare_custom_hostname." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -501,7 +501,7 @@ func TestAccCloudflareCustomHostname_WithCustomMetadata(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_hostname." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

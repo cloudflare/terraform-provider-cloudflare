@@ -29,7 +29,7 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 	var healthcheck cloudflare.Healthcheck
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,7 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -104,7 +104,7 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 	var healthcheck cloudflare.Healthcheck
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -127,7 +127,7 @@ func TestAccCloudflareHealthcheckMissingRequired(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

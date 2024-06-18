@@ -22,7 +22,7 @@ func TestAccCloudflareObservatoryScheduledTest_Create(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_observatory_scheduled_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareWaitingRoomDestroy,
 		Steps: []resource.TestStep{

@@ -41,7 +41,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 			testAccCheckCloudflareWorkerScriptCreateBucket(t, rnd)
 		},
@@ -87,7 +87,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccPreCheckAccount(t)
 			testAccCheckCloudflareWorkerScriptCreateBucket(t, rnd)
 		},

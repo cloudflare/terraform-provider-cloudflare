@@ -71,7 +71,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -105,7 +105,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -142,7 +142,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinityIPCookie(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -177,7 +177,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -217,7 +217,7 @@ func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -249,7 +249,7 @@ func TestAccCloudflareLoadBalancer_LocationStrategy(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -282,7 +282,7 @@ func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -333,7 +333,7 @@ func TestAccCloudflareLoadBalancer_GeoBalancedUpdate(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -380,7 +380,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -412,7 +412,7 @@ func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -441,7 +441,7 @@ func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -474,7 +474,7 @@ func TestAccCloudflareLoadBalancer_LeastConnectionsBalanced(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -507,7 +507,7 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -551,7 +551,7 @@ func TestAccCloudflareLoadBalancer_DuplicatePool(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -573,7 +573,7 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{
@@ -615,7 +615,7 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 	name := "cloudflare_load_balancer." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
 		Steps: []resource.TestStep{

@@ -22,7 +22,7 @@ func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_url_normalization_settings.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

@@ -22,7 +22,7 @@ func TestAccAPIToken_Basic(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -53,7 +53,7 @@ func TestAccAPIToken_AllowDeny(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -81,7 +81,7 @@ func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -122,7 +122,7 @@ func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -169,7 +169,7 @@ func TestAccAPIToken_SetAllCondition(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -251,7 +251,7 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 	permissionID := "82e64a83756745bbbb1c9c2701bf816b" // DNS read
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

@@ -21,7 +21,7 @@ func TestAccCloudflareCustomSSL_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
 		Steps: []resource.TestStep{
@@ -104,7 +104,7 @@ func TestAccCloudflareCustomSSL_WithEmptyGeoRestrictions(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := "cloudflare_custom_ssl." + rnd
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareCustomSSLDestroy,
 		Steps: []resource.TestStep{

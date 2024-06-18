@@ -18,7 +18,7 @@ func TestAccDataCloudflareZoneCacheReserve_Basic(t *testing.T) {
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
+			acctest.TestAccPreCheck(t)
 			testAccCloudflareZoneCacheReserveUpdate(t, zoneID, true)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

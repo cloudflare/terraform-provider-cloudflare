@@ -15,7 +15,7 @@ func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
 	name := "cloudflare_regional_hostname." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

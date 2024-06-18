@@ -16,7 +16,7 @@ func TestAccCloudflareAccounts(t *testing.T) {
 	name := fmt.Sprintf("data.cloudflare_accounts.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{

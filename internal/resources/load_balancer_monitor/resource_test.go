@@ -65,7 +65,7 @@ func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 	name := "cloudflare_load_balancer_monitor." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
@@ -94,7 +94,7 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
@@ -125,7 +125,7 @@ func TestAccCloudflareLoadBalancerMonitor_EmptyExpectedBody(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
@@ -148,7 +148,7 @@ func TestAccCloudflareLoadBalancerMonitor_TcpFullySpecified(t *testing.T) {
 	name := "cloudflare_load_balancer_monitor.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
@@ -173,7 +173,7 @@ func TestAccCloudflareLoadBalancerMonitor_PremiumTypes(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
@@ -211,7 +211,7 @@ func TestAccCloudflareLoadBalancerMonitor_PremiumTypes(t *testing.T) {
 func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -231,7 +231,7 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 	name := "cloudflare_load_balancer_monitor." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
@@ -270,7 +270,7 @@ func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{
@@ -307,7 +307,7 @@ func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *tes
 	name := fmt.Sprintf("cloudflare_load_balancer_monitor.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
 		Steps: []resource.TestStep{

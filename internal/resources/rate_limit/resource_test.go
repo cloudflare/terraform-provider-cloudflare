@@ -25,7 +25,7 @@ func TestAccCloudflareRateLimit_Basic(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
@@ -61,7 +61,7 @@ func TestAccCloudflareRateLimitChallenge_Basic(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
@@ -97,7 +97,7 @@ func TestAccCloudflareRateLimit_FullySpecified(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
@@ -142,7 +142,7 @@ func TestAccCloudflareRateLimit_Update(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
@@ -184,7 +184,7 @@ func TestAccCloudflareRateLimit_CreateAfterManualDestroy(t *testing.T) {
 	name := "cloudflare_rate_limit." + rnd
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
@@ -220,7 +220,7 @@ func TestAccCloudflareRateLimit_WithoutTimeout(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
@@ -238,7 +238,7 @@ func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckCloudflareRateLimitDestroy,
 		Steps: []resource.TestStep{
