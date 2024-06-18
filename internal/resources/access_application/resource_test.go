@@ -1394,7 +1394,10 @@ resource "cloudflare_access_application" "%[1]s" {
 }
 
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_access_application" {

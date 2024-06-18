@@ -646,7 +646,10 @@ func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
 }
 
 func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_load_balancer" {
@@ -673,7 +676,10 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 			return fmt.Errorf("No Load Balancer ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundLoadBalancer, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
@@ -736,7 +742,10 @@ func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.
 func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.LoadBalancer, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialId = loadBalancer.ID
 		err := client.DeleteLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {

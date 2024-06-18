@@ -94,7 +94,10 @@ func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwor
 			return errors.New("No Tunnel Virtual Network is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.TunnelVirtualNetworksListParams{
 			IsDeleted: cloudflare.BoolPtr(false),
 			ID:        rs.Primary.ID,

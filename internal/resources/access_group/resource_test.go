@@ -676,7 +676,10 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudfl
 			return fmt.Errorf("No AccessGroup ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		var foundAccessGroup cloudflare.AccessGroup
 		var err error
 
@@ -703,7 +706,10 @@ func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudfl
 }
 
 func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_access_group" {
@@ -740,7 +746,10 @@ func testAccManuallyDeleteAccessGroup(name string, initialID *string) resource.T
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialID = rs.Primary.ID
 		err := client.DeleteAccessGroup(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), rs.Primary.ID)
 		if err != nil {

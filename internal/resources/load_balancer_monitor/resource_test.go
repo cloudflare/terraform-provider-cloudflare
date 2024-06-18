@@ -332,7 +332,10 @@ func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *tes
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_load_balancer_monitor" {
@@ -359,7 +362,10 @@ func testAccCheckCloudflareLoadBalancerMonitorExists(n string, load *cloudflare.
 			return fmt.Errorf("No Load Balancer Monitor ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundLoadBalancerMonitor, err := client.GetLoadBalancerMonitor(context.Background(), cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID")), rs.Primary.ID)
 		if err != nil {
 			return err
@@ -398,7 +404,10 @@ func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonito
 
 func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialId = loadBalancerMonitor.ID
 		err := client.DeleteLoadBalancerMonitor(context.Background(), cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID")), loadBalancerMonitor.ID)
 		if err != nil {

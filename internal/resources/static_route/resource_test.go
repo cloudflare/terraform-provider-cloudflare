@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
@@ -56,7 +57,10 @@ func testAccCheckCloudflareStaticRouteExists(n string, route *cloudflare.MagicTr
 			return fmt.Errorf("No static route is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundStaticRoute, err := client.GetMagicTransitStaticRoute(context.Background(), accountID, rs.Primary.ID)
 		if err != nil {
 			return err

@@ -685,7 +685,10 @@ func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) 
 }
 
 func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_record" {
@@ -703,7 +706,10 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 
 func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		err := client.DeleteDNSRecord(context.Background(), cloudflare.ZoneIdentifier(record.ZoneID), record.ID)
 		if err != nil {
 			return err
@@ -768,7 +774,10 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 			return fmt.Errorf("No Record ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundRecord, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err

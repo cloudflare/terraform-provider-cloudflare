@@ -482,7 +482,10 @@ func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.
 			return fmt.Errorf("No List ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundList, err := client.GetList(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 		if err != nil {
 			return err

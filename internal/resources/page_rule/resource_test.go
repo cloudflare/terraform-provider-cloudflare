@@ -874,7 +874,10 @@ func testAccCheckCloudflarePageRuleIDUnchanged(before, after *cloudflare.PageRul
 }
 
 func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_page_rule" {
@@ -963,7 +966,10 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 			return fmt.Errorf("No PageRule ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -986,7 +992,10 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialID = rs.Primary.ID
 		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {

@@ -27,7 +27,7 @@ func testSweepCloudflareHostnameTLSSettings(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -102,7 +102,10 @@ func testAccCheckCloudflareHostnameTLSSettingExists(name string, htlss *cloudfla
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
 		zoneIDrc := cloudflare.ZoneIdentifier(zoneID)
 		params := cloudflare.ListHostnameTLSSettingsParams{
@@ -128,7 +131,10 @@ func testAccCheckCloudflareHostnameTLSSettingDestroy(s *terraform.State) error {
 	// sleep in order to allow htlss to enter active state before being deleted
 	// lintignore: R018
 	time.Sleep(time.Second)
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 	for _, rs := range s.RootModule().Resources {
 		zoneID := rs.Primary.Attributes[consts.ZoneIDSchemaKey]
 		zoneIDrc := cloudflare.ZoneIdentifier(zoneID)

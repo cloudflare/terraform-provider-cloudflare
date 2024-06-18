@@ -95,7 +95,10 @@ func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.Tunn
 			return errors.New("No Tunnel route is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundTunnelRoute, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.TunnelRoutesListParams{
 			IsDeleted:     cloudflare.BoolPtr(false),
 			NetworkSubset: rs.Primary.ID,

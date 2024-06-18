@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
@@ -251,7 +252,10 @@ func TestAccCloudflareRateLimit_ChallengeWithTimeout(t *testing.T) {
 }
 
 func testAccCheckCloudflareRateLimitDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_rate_limit" {
@@ -278,7 +282,10 @@ func testAccCheckCloudflareRateLimitExists(n string, rateLimit *cloudflare.RateL
 			return fmt.Errorf("No Rate Limit ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundRateLimit, err := client.RateLimit(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -323,7 +330,10 @@ func testAccCheckCloudflareRateLimitIDIsValid(n, expectedZoneID string) resource
 
 func testAccManuallyDeleteRateLimit(name string, rateLimit *cloudflare.RateLimit, initialRateLimitId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialRateLimitId = rateLimit.ID
 		err := client.DeleteRateLimit(context.Background(), s.RootModule().Resources[name].Primary.Attributes[consts.ZoneIDSchemaKey], rateLimit.ID)
 		if err != nil {

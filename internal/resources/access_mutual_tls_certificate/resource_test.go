@@ -147,7 +147,10 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_access_mutual_tls_certificate" {

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
@@ -59,7 +60,10 @@ func getDomainFromApi(accountID, domainID string) (cloudflare.WorkersDomain, err
 		return cloudflare.WorkersDomain{}, fmt.Errorf("domainID is required to get a domain")
 	}
 
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 	domain, err := client.GetWorkersDomain(context.Background(), cloudflare.AccountIdentifier(accountID), domainID)
 	if err != nil {
 		fmt.Print(err.Error())
@@ -121,7 +125,10 @@ func testAccCheckCloudflareWorkerDomainDestroy(s *terraform.State) error {
 			continue
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		r, _ := client.GetWorkersDomain(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 
 		if r.ID != "" {

@@ -26,7 +26,7 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
-		tflog.Error(ctx, fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 	}
 
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -135,7 +135,10 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerZoneExists(n st
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundPerZoneAOPCert, err := client.GetPerZoneAuthenticatedOriginPullsCertificateDetails(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -157,7 +160,10 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificatePerHostnameExists(
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No cert ID is set")
 		}
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundPerHostnameAOPCert, err := client.GetPerHostnameAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)
 		if err != nil {
 			return err
@@ -181,7 +187,10 @@ func testAccCheckCloudflareAuthenticatedOriginPullsCertificateConfig(zoneID, nam
 }
 
 func testAccCheckCloudflareAuthenticatedOriginPullsCertificateDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Primary.Attributes["type"] == "per-zone" {
 			_, err := client.DeletePerZoneAuthenticatedOriginPullsCertificate(context.Background(), rs.Primary.Attributes[consts.ZoneIDSchemaKey], rs.Primary.ID)

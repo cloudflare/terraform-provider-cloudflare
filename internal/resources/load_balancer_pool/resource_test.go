@@ -293,7 +293,10 @@ func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 }
 
 func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_load_balancer_pool" {
@@ -320,7 +323,10 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 			return fmt.Errorf("No Load Balancer ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundLoadBalancerPool, err := client.GetLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
 		if err != nil {
 			return err
@@ -395,7 +401,10 @@ func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *clo
 
 func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudflare.LoadBalancerPool, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		*initialId = loadBalancerPool.ID
 		err := client.DeleteLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID")), loadBalancerPool.ID)
 		if err != nil {

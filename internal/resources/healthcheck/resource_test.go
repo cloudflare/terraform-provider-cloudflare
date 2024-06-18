@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
@@ -149,7 +150,10 @@ func testAccCheckCloudflareHealthcheckExists(n string, zoneID string, load *clou
 			return fmt.Errorf("No Healthcheck ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 		foundHealthcheck, err := client.Healthcheck(context.Background(), zoneID, rs.Primary.ID)
 		if err != nil {
 			return err

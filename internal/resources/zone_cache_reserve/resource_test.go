@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
@@ -48,7 +49,10 @@ func TestAccCloudflareZoneCacheReserve_Basic(t *testing.T) {
 
 func testAccCheckCloudflareZoneCacheReserveValuesUpdated(zoneID string, enable bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 
 		params := cloudflare.GetCacheReserveParams{}
 		output, err := client.GetCacheReserve(context.Background(), cloudflare.ZoneIdentifier(zoneID), params)
@@ -72,7 +76,10 @@ func testAccCheckCloudflareZoneCacheReserveValuesUpdated(zoneID string, enable b
 
 func testAccCheckCloudflareZoneCacheReserveDestroy(zoneID string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := testAccProvider.Meta().(*cloudflare.API)
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
 
 		params := cloudflare.GetCacheReserveParams{}
 		output, err := client.GetCacheReserve(context.Background(), cloudflare.ZoneIdentifier(zoneID), params)
@@ -91,7 +98,10 @@ func testAccCheckCloudflareZoneCacheReserveDestroy(zoneID string) resource.TestC
 }
 
 func testAccCloudflareZoneCacheReserveUpdate(t *testing.T, zoneID string, enable bool) {
-	client := testAccProvider.Meta().(*cloudflare.API)
+	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+	if clientErr != nil {
+		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+	}
 
 	params := cloudflare.UpdateCacheReserveParams{
 		Value: cacheReserveDisabled,
