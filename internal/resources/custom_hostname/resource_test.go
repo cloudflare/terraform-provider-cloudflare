@@ -394,8 +394,8 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccPreCheckAltZoneID(t)
-			testAccPreCheckAltDomain(t)
+			acctest.TestAccPreCheck_AlternateZoneID(t)
+			acctest.TestAccPreCheck_AlternateDomain(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

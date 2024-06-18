@@ -26,8 +26,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
-			testAccPreCheckEmail(t)
-			testAccPreCheckApiKey(t)
+			acctest.TestAccPreCheck_Credentials(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -59,8 +58,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck_AccountID(t)
-			testAccPreCheckEmail(t)
-			testAccPreCheckApiKey(t)
+			acctest.TestAccPreCheck_Credentials(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

@@ -21,7 +21,7 @@ func TestAccCloudflareBYOIPPrefix(t *testing.T) {
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 			acctest.TestAccPreCheck_AccountID(t)
-			testAccPreCheckBYOIPPrefix(t)
+			acctest.TestAccPreCheck_BYOIPPrefix(t)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
