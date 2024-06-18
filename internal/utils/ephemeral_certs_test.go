@@ -1,14 +1,15 @@
-package utils
+package utils_test
 
 import (
 	"testing"
 	"time"
 
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateEphemeralCertAndKey(t *testing.T) {
-	cert, key, err := GenerateEphemeralCertAndKey([]string{"example.com"}, time.Now().Add(time.Hour*1))
+	cert, key, err := utils.GenerateEphemeralCertAndKey([]string{"example.com"}, time.Now().Add(time.Hour*1))
 
 	assert.NotEqual(t, "", cert)
 	assert.NotEqual(t, "", key)
