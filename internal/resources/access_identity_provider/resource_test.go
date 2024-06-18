@@ -206,7 +206,7 @@ func TestAccCloudflareAccessIdentityProvider_SAML(t *testing.T) {
 }
 
 func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating Azure IDP.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating Azure IDP.")
 
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

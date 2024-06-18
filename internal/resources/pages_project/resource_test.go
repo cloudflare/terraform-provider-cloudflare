@@ -146,7 +146,7 @@ func testPagesProjectDirectUpload(resourceID, accountID string) string {
 }
 
 func TestAccCloudflarePagesProject_Basic(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
@@ -189,7 +189,7 @@ func TestAccCloudflarePagesProject_Basic(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
@@ -220,7 +220,7 @@ func TestAccCloudflarePagesProject_BuildConfig(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd
@@ -306,7 +306,7 @@ func TestAccCloudflarePagesProject_DeploymentConfig(t *testing.T) {
 }
 
 func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
-	skipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending investigation into automating the setup and teardown.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_pages_project." + rnd

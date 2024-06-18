@@ -12,7 +12,7 @@ import (
 )
 
 func TestAccCloudflareAccountMember_Basic(t *testing.T) {
-	skipForDefaultAccount(t, "Account is using domain scoped roles and cannot be used for legacy permissions.")
+	acctest.TestAccSkipForDefaultAccount(t, "Account is using domain scoped roles and cannot be used for legacy permissions.")
 
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.
@@ -45,7 +45,7 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
-	skipForDefaultAccount(t, "Account is using domain scoped roles and cannot be used for legacy permissions.")
+	acctest.TestAccSkipForDefaultAccount(t, "Account is using domain scoped roles and cannot be used for legacy permissions.")
 
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.

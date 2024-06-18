@@ -71,7 +71,7 @@ func testSweepCloudflareAuthenticatdOriginPullsCertificates(r string) error {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
-	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	var perZoneAOP cloudflare.PerZoneAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -99,7 +99,7 @@ func TestAccCloudflareAuthenticatedOriginPullsCertificatePerZone(t *testing.T) {
 }
 
 func TestAccCloudflareAuthenticatedOriginPullsCertificatePerHostname(t *testing.T) {
-	skipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
+	acctest.TestAccSkipForDefaultZone(t, "Pending investigation into correct test setup for reproducibility.")
 
 	var perZoneAOP cloudflare.PerHostnameAuthenticatedOriginPullsCertificateDetails
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")

@@ -13,7 +13,7 @@ import (
 )
 
 func TestAccCloudflareAddressMap(t *testing.T) {
-	skipForDefaultAccount(t, "Pending permission fixes for IP delegation.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending permission fixes for IP delegation.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_address_map.%s", rnd)

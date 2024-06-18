@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccCloudflareAccount_Basic(t *testing.T) {
-	skipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
 
 	t.Parallel()
 
@@ -56,7 +56,7 @@ func testAccCheckCloudflareAccountName(rnd, name string) string {
 }
 
 func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
-	skipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
+	acctest.TestAccSkipForDefaultAccount(t, "Pending PT-792 to address underlying issue.")
 
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_account.%s", rnd)
