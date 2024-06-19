@@ -42,20 +42,13 @@ func resourceCloudflareZoneSettingsOverrideStateUpgradeV1(
 		return nil, fmt.Errorf("%s: state is nil", errMsg)
 	}
 
-	upgrade := func(state map[string]interface{}, name string) (map[string]interface{}, error) {
+	upgrade := func(state map[string]interface{}, name string) map[string]interface{} {
 		delete(state[name].([]interface{})[0].(map[string]interface{}), "mobile_redirect")
-		return state, nil
+		return state
 	}
 
-	state, err := upgrade(rawState, "settings")
-	if err != nil {
-		return nil, err
-	}
-
-	state, err = upgrade(state, "initial_settings")
-	if err != nil {
-		return nil, err
-	}
+	state := upgrade(rawState, "settings")
+	state = upgrade(state, "initial_settings")
 
 	return state, nil
 }
