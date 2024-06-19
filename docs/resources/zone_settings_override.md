@@ -33,7 +33,7 @@ feature support by plan.
 
 ```terraform
 resource "cloudflare_zone_settings_override" "test" {
-  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
+  zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   settings {
     brotli                   = "on"
     challenge_ttl            = 2700
