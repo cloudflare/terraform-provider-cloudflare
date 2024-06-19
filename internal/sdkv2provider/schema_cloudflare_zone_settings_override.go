@@ -202,6 +202,35 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		},
 	},
 
+	"mobile_redirect": {
+		Type:       schema.TypeList, // on/off
+		Optional:   true,
+		Computed:   true,
+		MinItems:   1,
+		MaxItems:   1,
+		Deprecated: "Mobile redirects has been deprecated and disabled in favour of [Single Redirects](https://developers.cloudflare.com/rules/url-forwarding/single-redirects/) and are no longer configurable using the API. Refer to [Perform mobile redirects](https://developers.cloudflare.com/rules/url-forwarding/single-redirects/examples/#perform-mobile-redirects) for examples of performing mobile redirects with Single Redirects.",
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				// which parameters are mandatory is not specified
+				"mobile_subdomain": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+
+				"strip_uri": {
+					Type:     schema.TypeBool,
+					Required: true,
+				},
+
+				"status": {
+					Type:         schema.TypeString,
+					ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+					Required:     true,
+				},
+			},
+		},
+	},
+
 	"mirage": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
@@ -671,11 +700,12 @@ var resourceCloudflareZoneSettingsSchemaV0 = map[string]*schema.Schema{
 	},
 
 	"mobile_redirect": {
-		Type:     schema.TypeList, // on/off
-		Optional: true,
-		Computed: true,
-		MinItems: 1,
-		MaxItems: 1,
+		Type:       schema.TypeList, // on/off
+		Optional:   true,
+		Computed:   true,
+		MinItems:   1,
+		MaxItems:   1,
+		Deprecated: "Mobile redirects has been deprecated and disabled in favour of [Single Redirects](https://developers.cloudflare.com/rules/url-forwarding/single-redirects/) and are no longer configurable using the API. Refer to [Perform mobile redirects](https://developers.cloudflare.com/rules/url-forwarding/single-redirects/examples/#perform-mobile-redirects) for examples of performing mobile redirects with Single Redirects.",
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				// which parameters are mandatory is not specified

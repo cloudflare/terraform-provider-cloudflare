@@ -3,9 +3,10 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"reflect"
 
@@ -254,25 +255,31 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 
 func TestCloudflareZoneSettingsOverrideStateUpgradeV0(t *testing.T) {
 	v0 := map[string]interface{}{
-		"settings": []map[string]interface{}{{
+		"settings": []interface{}{map[string]interface{}{
 			"mobile_redirect": map[string]interface{}{
 				"mobile_subdomain": "",
 				"status":           "",
 				"strip_uri":        true,
 			},
+			"other_thing": "foo",
 		}},
-		"initial_settings": []map[string]interface{}{{
+		"initial_settings": []interface{}{map[string]interface{}{
 			"mobile_redirect": map[string]interface{}{
 				"mobile_subdomain": "",
 				"status":           "",
 				"strip_uri":        true,
 			},
+			"other_thing": "foo",
 		}},
 	}
 
 	expectedV1 := map[string]interface{}{
-		"settings":         []map[string]interface{}{},
-		"initial_settings": []map[string]interface{}{},
+		"settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
 	}
 
 	actualV1, err := resourceCloudflareZoneSettingsOverrideStateUpgradeV1(context.Background(), v0, nil)

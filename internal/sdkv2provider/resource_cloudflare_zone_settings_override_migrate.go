@@ -43,23 +43,7 @@ func resourceCloudflareZoneSettingsOverrideStateUpgradeV1(
 	}
 
 	upgrade := func(state map[string]interface{}, name string) (map[string]interface{}, error) {
-		settings, ok := state[name].([]map[string]interface{})
-		if !ok {
-			return nil, fmt.Errorf("%s: field %q is not an array of objects", errMsg, name)
-		}
-
-		if len(settings) == 0 {
-			return nil, fmt.Errorf("%s: field %q is an empty array", errMsg, name)
-		}
-
-		delete(settings[0], "mobile_redirect")
-
-		if len(settings[0]) == 0 {
-			state[name] = []map[string]interface{}{}
-		} else {
-			state[name] = settings
-		}
-
+		delete(state[name].([]interface{})[0].(map[string]interface{}), "mobile_redirect")
 		return state, nil
 	}
 
