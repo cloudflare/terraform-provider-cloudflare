@@ -1,5 +1,5 @@
 resource "cloudflare_zone_settings_override" "test" {
-  zone_id = d41d8cd98f00b204e9800998ecf8427e
+  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   settings {
     brotli                   = "on"
     challenge_ttl            = 2700

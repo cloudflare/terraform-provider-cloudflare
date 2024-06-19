@@ -33,7 +33,7 @@ feature support by plan.
 
 ```terraform
 resource "cloudflare_zone_settings_override" "test" {
-  zone_id = d41d8cd98f00b204e9800998ecf8427e
+  zone_id = "d41d8cd98f00b204e9800998ecf8427e"
   settings {
     brotli                   = "on"
     challenge_ttl            = 2700
@@ -106,6 +106,7 @@ Optional:
 - `min_tls_version` (String)
 - `minify` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--minify))
 - `mirage` (String)
+- `mobile_redirect` (Block List, Max: 1, Deprecated) (see [below for nested schema](#nestedblock--settings--mobile_redirect))
 - `nel` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--nel))
 - `opportunistic_encryption` (String)
 - `opportunistic_onion` (String)
@@ -143,6 +144,16 @@ Required:
 - `css` (String)
 - `html` (String)
 - `js` (String)
+
+
+<a id="nestedblock--settings--mobile_redirect"></a>
+### Nested Schema for `settings.mobile_redirect`
+
+Required:
+
+- `mobile_subdomain` (String)
+- `status` (String)
+- `strip_uri` (Boolean)
 
 
 <a id="nestedblock--settings--nel"></a>
@@ -199,6 +210,7 @@ Read-Only:
 - `min_tls_version` (String)
 - `minify` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--minify))
 - `mirage` (String)
+- `mobile_redirect` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--mobile_redirect))
 - `nel` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--nel))
 - `opportunistic_encryption` (String)
 - `opportunistic_onion` (String)
@@ -236,6 +248,16 @@ Read-Only:
 - `css` (String)
 - `html` (String)
 - `js` (String)
+
+
+<a id="nestedobjatt--initial_settings--mobile_redirect"></a>
+### Nested Schema for `initial_settings.mobile_redirect`
+
+Read-Only:
+
+- `mobile_subdomain` (String)
+- `status` (String)
+- `strip_uri` (Boolean)
 
 
 <a id="nestedobjatt--initial_settings--nel"></a>
