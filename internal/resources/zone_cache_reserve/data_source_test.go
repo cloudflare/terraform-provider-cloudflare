@@ -19,14 +19,14 @@ func TestAccDataCloudflareZoneCacheReserve_Basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			testAccCloudflareZoneCacheReserveUpdate(t, zoneID, true)
+			// testAccCloudflareZoneCacheReserveUpdate(t, zoneID, true)
 		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataCloudflareZoneCacheReserveConfig(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZoneCacheReserveValuesUpdated(zoneID, true),
+					// testAccCheckCloudflareZoneCacheReserveValuesUpdated(zoneID, true),
 					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 				),

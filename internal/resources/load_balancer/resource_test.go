@@ -22,6 +22,10 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
+var (
+	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+)
+
 func init() {
 	resource.AddTestSweepers("cloudflare_load_balancer", &resource.Sweeper{
 		Name: "cloudflare_load_balancer",
@@ -1063,4 +1067,19 @@ resource "cloudflare_load_balancer" "%[3]s" {
     }
   }
 }`, zoneID, zone, id)
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_load_balancer_pool" "%[1]s" {
+  account_id = "%[2]s"
+  name = "my-tf-pool-basic-%[1]s"
+  latitude = 12.3
+  longitude = 55
+  origins {
+    name = "example-1"
+    address = "192.0.2.1"
+    enabled = true
+  }
+}`, id, accountID)
 }

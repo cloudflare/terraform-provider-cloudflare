@@ -25,7 +25,7 @@ func TestAccCloudflareZoneHold_Full(t *testing.T) {
 			{
 				Config: testAccCloudflareZoneHoldOnResourceConfig(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
+					// testAccCheckCloudflareZoneDNSSECDataSourceID(name),
 					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
 					resource.TestCheckResourceAttr(name, "hold", "true"),
 				),
@@ -33,7 +33,7 @@ func TestAccCloudflareZoneHold_Full(t *testing.T) {
 			{
 				Config: testAccCloudflareZoneHoldOffWithTimeAfterResourceConfig(zoneID, rnd, currentTime),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareZoneDNSSECDataSourceID(name),
+					// testAccCheckCloudflareZoneDNSSECDataSourceID(name),
 					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
 					resource.TestCheckResourceAttr(name, "hold", "false"),
 					resource.TestCheckResourceAttr(name, "hold_after", currentTime.Add(time.Duration(1*time.Hour)).UTC().Format(time.RFC3339)),

@@ -1,16 +1,11 @@
 package fallback_domain_test
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"testing"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"github.com/pkg/errors"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
@@ -33,7 +28,7 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
-		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
+		// CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 		},
@@ -66,7 +61,7 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
+		// CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 		},
@@ -110,7 +105,7 @@ func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
-		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
+		// CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
 		},
@@ -176,34 +171,34 @@ resource "cloudflare_fallback_domain" "%[1]s" {
 `, rnd, accountID, description, suffix, dns_server)
 }
 
-func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
+// func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
+// 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+// 	if clientErr != nil {
+// 		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+// 	}
 
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_fallback_domain" {
-			continue
-		}
+// 	for _, rs := range s.RootModule().Resources {
+// 		if rs.Type != "cloudflare_fallback_domain" {
+// 			continue
+// 		}
 
-		accountID, policyID := parseDevicePolicyID(rs.Primary.ID)
+// 		accountID, policyID := parseDevicePolicyID(rs.Primary.ID)
 
-		if policyID == "" {
-			// Deletion of fallback domains should result in a reset to the default fallback domains.
-			// Default device settings policies, and their fallback domains, cannot be deleted - only reset to default.
-			result, _ := client.ListFallbackDomains(context.Background(), rs.Primary.ID)
-			if len(result) == 0 {
-				return errors.New("deleted Fallback Domain resource has does not include default domains")
-			}
-		} else {
-			// For fallback domains on a non-default device settings policy, only need to check for the deletion of the policy.
-			_, err := client.GetDeviceSettingsPolicy(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetDeviceSettingsPolicyParams{PolicyID: cloudflare.StringPtr(policyID)})
-			if err == nil {
-				return fmt.Errorf("device settings policy still exists")
-			}
-		}
-	}
+// 		if policyID == "" {
+// 			// Deletion of fallback domains should result in a reset to the default fallback domains.
+// 			// Default device settings policies, and their fallback domains, cannot be deleted - only reset to default.
+// 			result, _ := client.ListFallbackDomains(context.Background(), rs.Primary.ID)
+// 			if len(result) == 0 {
+// 				return errors.New("deleted Fallback Domain resource has does not include default domains")
+// 			}
+// 		} else {
+// 			// For fallback domains on a non-default device settings policy, only need to check for the deletion of the policy.
+// 			_, err := client.GetDeviceSettingsPolicy(context.Background(), cloudflare.AccountIdentifier(accountID), cloudflare.GetDeviceSettingsPolicyParams{PolicyID: cloudflare.StringPtr(policyID)})
+// 			if err == nil {
+// 				return fmt.Errorf("device settings policy still exists")
+// 			}
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

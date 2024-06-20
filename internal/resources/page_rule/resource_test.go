@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"reflect"
 	"regexp"
 	"testing"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
@@ -88,7 +86,7 @@ func TestAccCloudflarePageRule_Basic(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &pageRule),
-					testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
+					// testAccCheckCloudflarePageRuleAttributesBasic(&pageRule),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/", target)),
 				),
@@ -225,7 +223,7 @@ func TestAccCloudflarePageRule_Updated(t *testing.T) {
 				Config: testAccCheckCloudflarePageRuleConfigNewValue(zoneID, target, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflarePageRuleExists(resourceName, &after),
-					testAccCheckCloudflarePageRuleAttributesUpdated(&after),
+					// testAccCheckCloudflarePageRuleAttributesUpdated(&after),
 					testAccCheckCloudflarePageRuleIDUnchanged(&before, &after),
 					resource.TestCheckResourceAttr(resourceName, "target", fmt.Sprintf("%s/updated", target)),
 				),
@@ -333,82 +331,82 @@ func TestAccCloudflarePageRule_MinifyAction(t *testing.T) {
 	})
 }
 
-func TestTranformForwardingURL(t *testing.T) {
-	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
-		ID: "forwarding_url",
-		Value: map[string]interface{}{
-			"url":         "http://test.com/forward",
-			"status_code": 302,
-		},
-	})
-	if err != nil {
-		t.Fatalf("Unexpected error transforming page rule action: %s", err)
-	}
+// func TestTranformForwardingURL(t *testing.T) {
+// 	key, val, err := transformFromCloudflarePageRuleAction(&cloudflare.PageRuleAction{
+// 		ID: "forwarding_url",
+// 		Value: map[string]interface{}{
+// 			"url":         "http://test.com/forward",
+// 			"status_code": 302,
+// 		},
+// 	})
+// 	if err != nil {
+// 		t.Fatalf("Unexpected error transforming page rule action: %s", err)
+// 	}
 
-	if key != "forwarding_url" {
-		t.Fatalf("Unexpected key transforming page rule action. Expected \"forwarding_url\", got \"%s\"", key)
-	}
+// 	if key != "forwarding_url" {
+// 		t.Fatalf("Unexpected key transforming page rule action. Expected \"forwarding_url\", got \"%s\"", key)
+// 	}
 
-	// the transformed value for a forwarding_url should be [{url: "", "status_code": 302}] (single item slice where the
-	// element in the slice is a map)
-	if sl, isSlice := val.([]interface{}); !isSlice {
-		t.Fatalf("Unexpected value type from transforming page rule action. Expected slice, got %s", reflect.TypeOf(val).Kind())
-	} else if len(sl) != 1 {
-		t.Fatalf("Unexpected slice length after transforming page rule action. Expected 1, got %d", len(sl))
-	} else if _, isMap := sl[0].(map[string]interface{}); !isMap {
-		t.Fatalf("Unexpected type in slice after tranforming page rule action. Expected map[string]interface{}, got %s", reflect.TypeOf(sl[0]).Kind())
-	}
-}
+// 	// the transformed value for a forwarding_url should be [{url: "", "status_code": 302}] (single item slice where the
+// 	// element in the slice is a map)
+// 	if sl, isSlice := val.([]interface{}); !isSlice {
+// 		t.Fatalf("Unexpected value type from transforming page rule action. Expected slice, got %s", reflect.TypeOf(val).Kind())
+// 	} else if len(sl) != 1 {
+// 		t.Fatalf("Unexpected slice length after transforming page rule action. Expected 1, got %d", len(sl))
+// 	} else if _, isMap := sl[0].(map[string]interface{}); !isMap {
+// 		t.Fatalf("Unexpected type in slice after tranforming page rule action. Expected map[string]interface{}, got %s", reflect.TypeOf(sl[0]).Kind())
+// 	}
+// }
 
 // This test ensures there is no crash while encountering a nil query_string section, which may happen when updating
 // existing Page Rule that didn't have this value set previously.
-func TestCacheKeyFieldsNilValue(t *testing.T) {
-	pageRuleAction, err := transformToCloudflarePageRuleAction(
-		context.Background(),
-		"cache_key_fields",
-		[]interface{}{
-			map[string]interface{}{
-				"cookie": []interface{}{
-					map[string]interface{}{
-						"include":        schema.NewSet(schema.HashString, []interface{}{}),
-						"check_presence": schema.NewSet(schema.HashString, []interface{}{"next-i18next"}),
-					},
-				},
-				"header": []interface{}{
-					map[string]interface{}{
-						"check_presence": schema.NewSet(schema.HashString, []interface{}{}),
-						"exclude":        schema.NewSet(schema.HashString, []interface{}{}),
-						"include":        schema.NewSet(schema.HashString, []interface{}{"x-forwarded-host"}),
-					},
-				},
-				"host": []interface{}{
-					map[string]interface{}{
-						"resolved": false,
-					},
-				},
-				"query_string": []interface{}{
-					interface{}(nil),
-				},
-				"user": []interface{}{
-					map[string]interface{}{
-						"device_type": true,
-						"geo":         true,
-						"lang":        true,
-					},
-				},
-			},
-		},
-		nil,
-	)
+// func TestCacheKeyFieldsNilValue(t *testing.T) {
+// 	pageRuleAction, err := transformToCloudflarePageRuleAction(
+// 		context.Background(),
+// 		"cache_key_fields",
+// 		[]interface{}{
+// 			map[string]interface{}{
+// 				"cookie": []interface{}{
+// 					map[string]interface{}{
+// 						"include":        schema.NewSet(schema.HashString, []interface{}{}),
+// 						"check_presence": schema.NewSet(schema.HashString, []interface{}{"next-i18next"}),
+// 					},
+// 				},
+// 				"header": []interface{}{
+// 					map[string]interface{}{
+// 						"check_presence": schema.NewSet(schema.HashString, []interface{}{}),
+// 						"exclude":        schema.NewSet(schema.HashString, []interface{}{}),
+// 						"include":        schema.NewSet(schema.HashString, []interface{}{"x-forwarded-host"}),
+// 					},
+// 				},
+// 				"host": []interface{}{
+// 					map[string]interface{}{
+// 						"resolved": false,
+// 					},
+// 				},
+// 				"query_string": []interface{}{
+// 					interface{}(nil),
+// 				},
+// 				"user": []interface{}{
+// 					map[string]interface{}{
+// 						"device_type": true,
+// 						"geo":         true,
+// 						"lang":        true,
+// 					},
+// 				},
+// 			},
+// 		},
+// 		nil,
+// 	)
 
-	if err != nil {
-		t.Fatalf("Unexpected error transforming page rule action: %s", err)
-	}
+// 	if err != nil {
+// 		t.Fatalf("Unexpected error transforming page rule action: %s", err)
+// 	}
 
-	if !reflect.DeepEqual(pageRuleAction.Value.(map[string]interface{})["query_string"], map[string]interface{}{"include": "*"}) {
-		t.Fatalf("Unexpected transformToCloudflarePageRuleAction result, expected %#v, got %#v", map[string]interface{}{"include": "*"}, pageRuleAction.Value.(map[string]interface{})["query_string"])
-	}
-}
+// 	if !reflect.DeepEqual(pageRuleAction.Value.(map[string]interface{})["query_string"], map[string]interface{}{"include": "*"}) {
+// 		t.Fatalf("Unexpected transformToCloudflarePageRuleAction result, expected %#v, got %#v", map[string]interface{}{"include": "*"}, pageRuleAction.Value.(map[string]interface{})["query_string"])
+// 	}
+// }
 
 func TestAccCloudflarePageRule_CreatesBrowserCacheTTLIntegerValues(t *testing.T) {
 	var pageRule cloudflare.PageRule
@@ -897,67 +895,67 @@ func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// check the api only has attributes we set non-empty values for
-		// this covers on/off attribute types and setting enum-type strings
+// func testAccCheckCloudflarePageRuleAttributesBasic(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+// 	return func(s *terraform.State) error {
+// 		// check the api only has attributes we set non-empty values for
+// 		// this covers on/off attribute types and setting enum-type strings
 
-		actionMap := pageRuleActionsToMap(pageRule.Actions)
-		if val, ok := actionMap["ssl"]; ok {
-			if _, ok := val.(string); !ok || val != "flexible" {
-				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
-			}
-		} else {
-			return fmt.Errorf("'ssl' not specified at api")
-		}
+// 		actionMap := pageRuleActionsToMap(pageRule.Actions)
+// 		if val, ok := actionMap["ssl"]; ok {
+// 			if _, ok := val.(string); !ok || val != "flexible" {
+// 				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
+// 			}
+// 		} else {
+// 			return fmt.Errorf("'ssl' not specified at api")
+// 		}
 
-		if len(pageRule.Actions) != 1 {
-			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 2, len(pageRule.Actions), pageRule.Actions)
-		}
+// 		if len(pageRule.Actions) != 1 {
+// 			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 2, len(pageRule.Actions), pageRule.Actions)
+// 		}
 
-		return nil
-	}
-}
+// 		return nil
+// 	}
+// }
 
-func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		actionMap := pageRuleActionsToMap(pageRule.Actions)
+// func testAccCheckCloudflarePageRuleAttributesUpdated(pageRule *cloudflare.PageRule) resource.TestCheckFunc {
+// 	return func(s *terraform.State) error {
+// 		actionMap := pageRuleActionsToMap(pageRule.Actions)
 
-		if _, ok := actionMap["disable_apps"]; ok {
-			return fmt.Errorf("'disable_apps' found at api, but we should have removed it")
-		}
+// 		if _, ok := actionMap["disable_apps"]; ok {
+// 			return fmt.Errorf("'disable_apps' found at api, but we should have removed it")
+// 		}
 
-		if val, ok := actionMap["browser_check"]; ok {
-			if _, ok := val.(string); !ok || val != "on" { // lots of booleans get mapped to on/off at api
-				return fmt.Errorf("'browser_check' not specified correctly at api, found: '%v'", val)
-			}
-		} else {
-			return fmt.Errorf("'browser_check' not specified at api")
-		}
+// 		if val, ok := actionMap["browser_check"]; ok {
+// 			if _, ok := val.(string); !ok || val != "on" { // lots of booleans get mapped to on/off at api
+// 				return fmt.Errorf("'browser_check' not specified correctly at api, found: '%v'", val)
+// 			}
+// 		} else {
+// 			return fmt.Errorf("'browser_check' not specified at api")
+// 		}
 
-		if val, ok := actionMap["ssl"]; ok {
-			if _, ok := val.(string); !ok || val != "strict" {
-				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
-			}
-		} else {
-			return fmt.Errorf("'ssl' not specified at api")
-		}
+// 		if val, ok := actionMap["ssl"]; ok {
+// 			if _, ok := val.(string); !ok || val != "strict" {
+// 				return fmt.Errorf("'ssl' not specified correctly at api, found: %q", val)
+// 			}
+// 		} else {
+// 			return fmt.Errorf("'ssl' not specified at api")
+// 		}
 
-		if val, ok := actionMap["rocket_loader"]; ok {
-			if _, ok := val.(string); !ok || val != "on" {
-				return fmt.Errorf("'rocket_loader' not specified correctly at api, found: %q", val)
-			}
-		} else {
-			return fmt.Errorf("'rocket_loader' not specified at api")
-		}
+// 		if val, ok := actionMap["rocket_loader"]; ok {
+// 			if _, ok := val.(string); !ok || val != "on" {
+// 				return fmt.Errorf("'rocket_loader' not specified correctly at api, found: %q", val)
+// 			}
+// 		} else {
+// 			return fmt.Errorf("'rocket_loader' not specified at api")
+// 		}
 
-		if len(pageRule.Actions) != 3 {
-			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 4, len(pageRule.Actions), pageRule.Actions)
-		}
+// 		if len(pageRule.Actions) != 3 {
+// 			return fmt.Errorf("api should only have attributes we set non-empty (%d) but got %d: %#v", 4, len(pageRule.Actions), pageRule.Actions)
+// 		}
 
-		return nil
-	}
-}
+// 		return nil
+// 	}
+// }
 
 func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {

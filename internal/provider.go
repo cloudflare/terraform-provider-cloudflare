@@ -4,14 +4,20 @@ package internal
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_application"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_ca_certificate"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/access_custom_page"
@@ -125,6 +131,7 @@ import (
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/zone_dnssec"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/zone_hold"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/resources/zone_lockdown"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 var _ provider.Provider = &CloudflareProvider{}
@@ -246,9 +253,11 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	}
 
 	opts = append(opts, option.WithHeader("user-agent", userAgentParams.String()))
-	opts = append(opts, option.WithHeader("x-stainless-runtime-version", pluginVersion))
 	opts = append(opts, option.WithHeader("x-stainless-package-version", p.version))
 	opts = append(opts, option.WithHeader("x-stainless-runtime", framework))
+	if pluginVersion != nil {
+		opts = append(opts, option.WithHeader("x-stainless-runtime-version", *pluginVersion))
+	}
 
 	client := cloudflare.NewClient(
 		opts...,

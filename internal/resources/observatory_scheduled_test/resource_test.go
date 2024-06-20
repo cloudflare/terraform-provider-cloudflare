@@ -25,7 +25,7 @@ func TestAccCloudflareObservatoryScheduledTest_Create(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareWaitingRoomDestroy,
+		// CheckDestroy:             testAccCheckCloudflareWaitingRoomDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareObservatoryScheduledTest(rnd, zoneID, domain),

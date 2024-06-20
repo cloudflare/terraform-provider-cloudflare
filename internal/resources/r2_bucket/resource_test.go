@@ -106,7 +106,10 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 	resourceName := "cloudflare_r2_bucket." + rnd
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -114,7 +117,7 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "id", rnd),
-					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
+					resource.TestCheckResourceAttr(resourceName, "location_hint", "ENAM"),
 				),
 			},
 			{
@@ -133,7 +136,10 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 	resourceName := "cloudflare_r2_bucket." + rnd
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -160,6 +166,6 @@ func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
   resource "cloudflare_r2_bucket" "%[1]s" {
     account_id = "%[2]s"
     name       = "%[1]s"
-	location   = "ENAM"
+	location_hint   = "ENAM"
   }`, rnd, accountID)
 }
