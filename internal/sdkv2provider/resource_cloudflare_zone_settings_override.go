@@ -19,12 +19,20 @@ import (
 
 func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 	return &schema.Resource{
+		SchemaVersion: 1,
 		Schema:        resourceCloudflareZoneSettingsOverrideSchema(),
 		CreateContext: resourceCloudflareZoneSettingsOverrideCreate,
 		ReadContext:   resourceCloudflareZoneSettingsOverrideRead,
 		UpdateContext: resourceCloudflareZoneSettingsOverrideUpdate,
 		DeleteContext: resourceCloudflareZoneSettingsOverrideDelete,
 		Description:   "Provides a resource which customizes Cloudflare zone settings.",
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Version: 0,
+				Type:    resourceCloudflareZoneSettingsOverrideV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareZoneSettingsOverrideStateUpgradeV1,
+			},
+		},
 	}
 }
 
@@ -187,7 +195,7 @@ func flattenZoneSettings(ctx context.Context, d *schema.ResourceData, settings [
 			continue
 		}
 
-		if s.ID == "minify" || s.ID == "mobile_redirect" || s.ID == "nel" {
+		if s.ID == "minify" || s.ID == "nel" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})}
 		} else if s.ID == "security_header" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
@@ -355,7 +363,7 @@ func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settin
 				zoneSettingValue = settingValue
 			}
 		}
-	case "minify", "mobile_redirect", "nel":
+	case "minify", "nel":
 		{
 			listValue := settingValue.([]interface{})
 			if len(listValue) > 0 && listValue != nil {
