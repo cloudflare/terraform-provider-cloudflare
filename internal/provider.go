@@ -255,6 +255,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	opts = append(opts, option.WithHeader("user-agent", userAgentParams.String()))
 	opts = append(opts, option.WithHeader("x-stainless-package-version", p.version))
 	opts = append(opts, option.WithHeader("x-stainless-runtime", framework))
+	opts = append(opts, option.WithHeader("x-stainless-lang", "Terraform"))
 	if pluginVersion != nil {
 		opts = append(opts, option.WithHeader("x-stainless-runtime-version", *pluginVersion))
 	}
