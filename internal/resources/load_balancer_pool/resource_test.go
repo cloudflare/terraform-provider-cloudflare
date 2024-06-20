@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
+	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
@@ -315,6 +316,7 @@ func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cloudflare.LoadBalancerPool) resource.TestCheckFunc {
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -552,4 +554,34 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
   notification_email = "someone@example.com"
 }`, id, headerValue, accountID)
 	// TODO add field to config after creating monitor resource
+}
+
+func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwork *cloudflare.TunnelVirtualNetwork) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return fmt.Errorf("Not found: %s", name)
+		}
+
+		if rs.Primary.ID == "" {
+			return errors.New("No Tunnel Virtual Network is set")
+		}
+
+		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+		if clientErr != nil {
+			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+		}
+		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.TunnelVirtualNetworksListParams{
+			IsDeleted: cloudflare.BoolPtr(false),
+			ID:        rs.Primary.ID,
+		})
+
+		if err != nil {
+			return err
+		}
+
+		*virtualNetwork = foundTunnelVirtualNetworks[0]
+
+		return nil
+	}
 }

@@ -187,3 +187,11 @@ func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVP
 		return nil
 	}
 }
+
+func testAccCheckCloudflareWorkersKVNamespace(rName, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_workers_kv_namespace" "%[1]s" {
+	account_id = "%[2]s"
+	title = "%[1]s"
+}`, rName, accountID)
+}

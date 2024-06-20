@@ -6,11 +6,13 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
@@ -1040,4 +1042,15 @@ func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
 	   }
 	 }
 `, zoneID, name)
+}
+
+func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
+	newTrimmed := strings.TrimSuffix(new, ".")
+
+	// Ensure to distinguish values consists of dots only.
+	if newTrimmed == "" {
+		return old == new
+	}
+
+	return strings.TrimSuffix(old, ".") == newTrimmed
 }
