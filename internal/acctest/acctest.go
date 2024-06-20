@@ -35,6 +35,7 @@ var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 }
 
 func TestAccPreCheck(t *testing.T) {
+	TestAccPreCheck_Credentials(t)
 }
 
 func TestAccPreCheck_Credentials(t *testing.T) {
