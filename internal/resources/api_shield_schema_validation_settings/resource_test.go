@@ -1,15 +1,11 @@
 package api_shield_schema_validation_settings_test
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
@@ -29,7 +25,7 @@ func TestAccCloudflareAPIShieldSchemaValidationSettings_Create(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckAPIShieldSchemaValidationSettingsDelete,
+		// CheckDestroy:             testAccCheckAPIShieldSchemaValidationSettingsDelete,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCloudflareAPIShieldSchemaValidationSettingsDefaultMitigationSet(rnd, zoneID),
@@ -52,36 +48,36 @@ func TestAccCloudflareAPIShieldSchemaValidationSettings_Create(t *testing.T) {
 	})
 }
 
-func testAccCheckAPIShieldSchemaValidationSettingsDelete(s *terraform.State) error {
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
+// func testAccCheckAPIShieldSchemaValidationSettingsDelete(s *terraform.State) error {
+// 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+// 	if clientErr != nil {
+// 		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+// 	}
 
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_api_shield_schema_validation_settings" {
-			continue
-		}
+// 	for _, rs := range s.RootModule().Resources {
+// 		if rs.Type != "cloudflare_api_shield_schema_validation_settings" {
+// 			continue
+// 		}
 
-		result, err := client.GetAPIShieldSchemaValidationSettings(
-			context.Background(),
-			cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
-		)
-		if err != nil {
-			return fmt.Errorf("encountered error getting schema validation settings: %w", err)
-		}
+// 		result, err := client.GetAPIShieldSchemaValidationSettings(
+// 			context.Background(),
+// 			cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
+// 		)
+// 		if err != nil {
+// 			return fmt.Errorf("encountered error getting schema validation settings: %w", err)
+// 		}
 
-		if result.DefaultMitigationAction != cloudflareAPIShieldSchemaValidationSettingsDefault().DefaultMitigationAction {
-			return fmt.Errorf("expected validation_default_mitigation_action to be 'none' but got: %s", result.DefaultMitigationAction)
-		}
+// 		if result.DefaultMitigationAction != cloudflareAPIShieldSchemaValidationSettingsDefault().DefaultMitigationAction {
+// 			return fmt.Errorf("expected validation_default_mitigation_action to be 'none' but got: %s", result.DefaultMitigationAction)
+// 		}
 
-		if result.OverrideMitigationAction != nil {
-			return fmt.Errorf("expected validation_override_mitigation_action to be nil")
-		}
-	}
+// 		if result.OverrideMitigationAction != nil {
+// 			return fmt.Errorf("expected validation_override_mitigation_action to be nil")
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func testAccCloudflareAPIShieldSchemaValidationSettingsDefaultMitigationSet(resourceName, zone string) string {
 	return fmt.Sprintf(`

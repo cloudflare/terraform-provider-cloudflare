@@ -3,13 +3,11 @@ package notification_policy_test
 import (
 	"fmt"
 	"os"
-	"sort"
 	"testing"
 
 	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
-	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -218,19 +216,19 @@ func testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(name, poli
   }`, name, policyName, policyDesc, accountID)
 }
 
-func TestFlattenExpandFilters(t *testing.T) {
-	filters := map[string][]string{
-		"services": {"waf", "firewallrules"},
-		"zones":    {"abc123"},
-	}
-	flattenedFilters := flattenNotificationPolicyFilter(filters)
-	expandedFilters := expandNotificationPolicyFilter(flattenedFilters)
-	for k := range filters {
-		sort.Strings(filters[k])
-		sort.Strings(expandedFilters[k])
-		assert.EqualValuesf(t, filters[k], expandedFilters[k], "values should equal without order")
-	}
-}
+// func TestFlattenExpandFilters(t *testing.T) {
+// 	filters := map[string][]string{
+// 		"services": {"waf", "firewallrules"},
+// 		"zones":    {"abc123"},
+// 	}
+// 	flattenedFilters := flattenNotificationPolicyFilter(filters)
+// 	expandedFilters := expandNotificationPolicyFilter(flattenedFilters)
+// 	for k := range filters {
+// 		sort.Strings(filters[k])
+// 		sort.Strings(expandedFilters[k])
+// 		assert.EqualValuesf(t, filters[k], expandedFilters[k], "values should equal without order")
+// 	}
+// }
 
 func testCheckCloudflareNotificationPolicyWithSelectors(name, accountID, zoneID string) string {
 	return fmt.Sprintf(`

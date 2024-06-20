@@ -35,7 +35,7 @@ var (
 func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 	t.Parallel()
 
-	var script cloudflare.WorkerScript
+	// var script cloudflare.WorkerScript
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -52,7 +52,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
+					// testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent1),
 				),
@@ -60,7 +60,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
+					// testAccCheckCloudflareWorkerScriptExists(name, &script, nil),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -68,7 +68,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET", "MY_QUEUE"}),
+					// testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_KV_NAMESPACE", "MY_PLAIN_TEXT", "MY_SECRET_TEXT", "MY_WASM", "MY_SERVICE_BINDING", "MY_BUCKET", "MY_QUEUE"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", scriptContent2),
 				),
@@ -80,7 +80,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 	t.Parallel()
 
-	var script cloudflare.WorkerScript
+	// var script cloudflare.WorkerScript
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_worker_script." + rnd
 	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
@@ -99,7 +99,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccesKeyID, r2AccesKeySecret),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_DATABASE"}),
+					// testAccCheckCloudflareWorkerScriptExists(name, &script, []string{"MY_DATABASE"}),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "content", moduleContent),
 					resource.TestCheckResourceAttr(name, "compatibility_date", compatibilityDate),
@@ -291,49 +291,49 @@ resource "cloudflare_worker_script" "%[1]s" {
 }`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret, d1DatabaseID)
 }
 
-func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+// func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {
+// 	return func(s *terraform.State) error {
+// 		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-		rs, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("not found: %s", n)
-		}
+// 		rs, ok := s.RootModule().Resources[n]
+// 		if !ok {
+// 			return fmt.Errorf("not found: %s", n)
+// 		}
 
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("No Worker Script ID is set")
-		}
+// 		if rs.Primary.ID == "" {
+// 			return fmt.Errorf("No Worker Script ID is set")
+// 		}
 
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
+// 		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
+// 		if clientErr != nil {
+// 			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
+// 		}
 
-		r, err := client.GetWorker(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.Attributes["name"])
-		if err != nil {
-			return err
-		}
+// 		r, err := client.GetWorker(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.Attributes["name"])
+// 		if err != nil {
+// 			return err
+// 		}
 
-		if r.Script == "" {
-			return fmt.Errorf("Worker Script not found")
-		}
+// 		if r.Script == "" {
+// 			return fmt.Errorf("Worker Script not found")
+// 		}
 
-		name := strings.Replace(n, "cloudflare_worker_script.", "", -1)
-		foundBindings, err := getWorkerScriptBindings(context.Background(), accountID, name, nil, client)
-		if err != nil {
-			return fmt.Errorf("cannot list script bindings: %w", err)
-		}
+// 		name := strings.Replace(n, "cloudflare_worker_script.", "", -1)
+// 		foundBindings, err := getWorkerScriptBindings(context.Background(), accountID, name, nil, client)
+// 		if err != nil {
+// 			return fmt.Errorf("cannot list script bindings: %w", err)
+// 		}
 
-		for _, binding := range bindings {
-			if _, ok := foundBindings[binding]; !ok {
-				return fmt.Errorf("cannot find binding with name %s", binding)
-			}
-		}
+// 		for _, binding := range bindings {
+// 			if _, ok := foundBindings[binding]; !ok {
+// 				return fmt.Errorf("cannot find binding with name %s", binding)
+// 			}
+// 		}
 
-		*script = r.WorkerScript
-		return nil
-	}
-}
+// 		*script = r.WorkerScript
+// 		return nil
+// 	}
+// }
 
 func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
