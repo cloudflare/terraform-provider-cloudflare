@@ -312,6 +312,11 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 				items = []cfv1.ListItem{item}
 				break
 			}
+
+			if item.IP != nil && cfv1.String(item.IP) == searchTerm {
+				items = []cfv1.ListItem{item}
+				break
+			}
 		}
 		if len(items) == 1 {
 			break
