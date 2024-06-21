@@ -11,9 +11,9 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/kv"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/apijson"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/logging"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.

@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func testTunnelConfig(resourceID, accountID, tunnelSecret, domain string) string {
