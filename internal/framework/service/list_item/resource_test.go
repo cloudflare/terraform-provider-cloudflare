@@ -433,3 +433,49 @@ func testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(ID, name, co
   }
   `, ID, name, comment, accountID)
 }
+
+func TestAccCloudflareListItem_IPWithOverlappingPrefix(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)
+	secondResource := fmt.Sprintf("cloudflare_list_item.%s_2", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Account(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameIPWithOverlappingPrefix(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstResource, "ip", "192.0.2.10"),
+					resource.TestCheckResourceAttr(secondResource, "ip", "192.0.2.1"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareHostnameIPWithOverlappingPrefix(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "ip"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_1" {
+    account_id = "%[4]s"
+    list_id    = cloudflare_list.%[2]s.id
+    ip         = "192.0.2.10"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_2" {
+    account_id = "%[4]s"
+    list_id    = cloudflare_list.%[2]s.id
+    ip         = "192.0.2.1"
+  }
+  `, ID, name, comment, accountID)
+}
