@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package gre_tunnel
+package ipsec_tunnel
 
 import (
 	"context"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &GRETunnelResource{}
+var _ resource.Resource = &IPSECTunnelResource{}
 
 func NewResource() resource.Resource {
-	return &GRETunnelResource{}
+	return &IPSECTunnelResource{}
 }
 
-// GRETunnelResource defines the resource implementation.
-type GRETunnelResource struct {
+// IPSECTunnelResource defines the resource implementation.
+type IPSECTunnelResource struct {
 	client *cloudflare.Client
 }
 
-func (r *GRETunnelResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_gre_tunnel"
+func (r *IPSECTunnelResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_ipsec_tunnel"
 }
 
-func (r *GRETunnelResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *IPSECTunnelResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *GRETunnelResource) Configure(ctx context.Context, req resource.Configur
 	r.client = client
 }
 
-func (r *GRETunnelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *GRETunnelModel
+func (r *IPSECTunnelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *IPSECTunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,10 +66,10 @@ func (r *GRETunnelResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	res := new(http.Response)
-	env := GRETunnelResultEnvelope{*data}
-	_, err = r.client.MagicTransit.GRETunnels.New(
+	env := IPSECTunnelResultEnvelope{*data}
+	_, err = r.client.MagicTransit.IPSECTunnels.New(
 		ctx,
-		magic_transit.GRETunnelNewParams{
+		magic_transit.IPSECTunnelNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -91,8 +91,8 @@ func (r *GRETunnelResource) Create(ctx context.Context, req resource.CreateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *GRETunnelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *GRETunnelModel
+func (r *IPSECTunnelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *IPSECTunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -101,11 +101,11 @@ func (r *GRETunnelResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	res := new(http.Response)
-	env := GRETunnelResultEnvelope{*data}
-	_, err := r.client.MagicTransit.GRETunnels.Get(
+	env := IPSECTunnelResultEnvelope{*data}
+	_, err := r.client.MagicTransit.IPSECTunnels.Get(
 		ctx,
-		data.TunnelIdentifier.ValueString(),
-		magic_transit.GRETunnelGetParams{
+		data.IPSECTunnelID.ValueString(),
+		magic_transit.IPSECTunnelGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -126,8 +126,8 @@ func (r *GRETunnelResource) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *GRETunnelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *GRETunnelModel
+func (r *IPSECTunnelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *IPSECTunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -141,11 +141,11 @@ func (r *GRETunnelResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	res := new(http.Response)
-	env := GRETunnelResultEnvelope{*data}
-	_, err = r.client.MagicTransit.GRETunnels.Update(
+	env := IPSECTunnelResultEnvelope{*data}
+	_, err = r.client.MagicTransit.IPSECTunnels.Update(
 		ctx,
-		data.TunnelIdentifier.ValueString(),
-		magic_transit.GRETunnelUpdateParams{
+		data.IPSECTunnelID.ValueString(),
+		magic_transit.IPSECTunnelUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -167,8 +167,8 @@ func (r *GRETunnelResource) Update(ctx context.Context, req resource.UpdateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *GRETunnelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *GRETunnelModel
+func (r *IPSECTunnelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *IPSECTunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -176,10 +176,10 @@ func (r *GRETunnelResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	_, err := r.client.MagicTransit.GRETunnels.Delete(
+	_, err := r.client.MagicTransit.IPSECTunnels.Delete(
 		ctx,
-		data.TunnelIdentifier.ValueString(),
-		magic_transit.GRETunnelDeleteParams{
+		data.IPSECTunnelID.ValueString(),
+		magic_transit.IPSECTunnelDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),

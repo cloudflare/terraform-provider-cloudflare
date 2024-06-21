@@ -21,6 +21,7 @@ type TeamsAccountSettingsModel struct {
 	BlockPage             *TeamsAccountSettingsBlockPageModel             `tfsdk:"block_page" json:"block_page"`
 	BodyScanning          *TeamsAccountSettingsBodyScanningModel          `tfsdk:"body_scanning" json:"body_scanning"`
 	BrowserIsolation      *TeamsAccountSettingsBrowserIsolationModel      `tfsdk:"browser_isolation" json:"browser_isolation"`
+	Certificate           *TeamsAccountSettingsCertificateModel           `tfsdk:"certificate" json:"certificate"`
 	CustomCertificate     *TeamsAccountSettingsCustomCertificateModel     `tfsdk:"custom_certificate" json:"custom_certificate"`
 	ExtendedEmailMatching *TeamsAccountSettingsExtendedEmailMatchingModel `tfsdk:"extended_email_matching" json:"extended_email_matching"`
 	Fips                  *TeamsAccountSettingsFipsModel                  `tfsdk:"fips" json:"fips"`
@@ -64,6 +65,10 @@ type TeamsAccountSettingsBodyScanningModel struct {
 type TeamsAccountSettingsBrowserIsolationModel struct {
 	NonIdentityEnabled         types.Bool `tfsdk:"non_identity_enabled" json:"non_identity_enabled"`
 	URLBrowserIsolationEnabled types.Bool `tfsdk:"url_browser_isolation_enabled" json:"url_browser_isolation_enabled"`
+}
+
+type TeamsAccountSettingsCertificateModel struct {
+	ID types.String `tfsdk:"id" json:"id"`
 }
 
 type TeamsAccountSettingsCustomCertificateModel struct {

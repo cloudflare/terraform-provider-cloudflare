@@ -11,6 +11,6 @@ type StaticRouteResultEnvelope struct {
 }
 
 type StaticRouteModel struct {
-	AccountID       types.String `tfsdk:"account_id" path:"account_id"`
-	RouteIdentifier types.String `tfsdk:"route_identifier" path:"route_identifier"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	RouteID   types.String `tfsdk:"route_id" path:"route_id"`
 }

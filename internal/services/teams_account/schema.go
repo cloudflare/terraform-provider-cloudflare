@@ -131,8 +131,18 @@ func (r TeamsAccountResource) Schema(ctx context.Context, req resource.SchemaReq
 							},
 						},
 					},
+					"certificate": schema.SingleNestedAttribute{
+						Description: "Certificate settings for Gateway TLS interception. If not specified, the Cloudflare Root CA will be used.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"id": schema.StringAttribute{
+								Description: "UUID of certificate to be used for interception.",
+								Required:    true,
+							},
+						},
+					},
 					"custom_certificate": schema.SingleNestedAttribute{
-						Description: "Custom certificate settings for BYO-PKI.",
+						Description: "Custom certificate settings for BYO-PKI. (deprecated and replaced by `certificate`)",
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{

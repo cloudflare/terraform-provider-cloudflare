@@ -20,7 +20,7 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: "Identifier",
 				Required:    true,
 			},
-			"tunnel_identifier": schema.StringAttribute{
+			"ipsec_tunnel_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},

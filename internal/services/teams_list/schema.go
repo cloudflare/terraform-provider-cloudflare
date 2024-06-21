@@ -45,7 +45,11 @@ func (r TeamsListResource) Schema(ctx context.Context, req resource.SchemaReques
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Optional: true,
+						},
+						"description": schema.StringAttribute{
+							Description: "The description of the list item, if present",
+							Optional:    true,
 						},
 						"value": schema.StringAttribute{
 							Description: "The value of the item in a list.",

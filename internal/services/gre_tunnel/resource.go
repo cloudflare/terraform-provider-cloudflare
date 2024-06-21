@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package record
+package gre_tunnel
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/dns"
+	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &RecordResource{}
+var _ resource.Resource = &GRETunnelResource{}
 
 func NewResource() resource.Resource {
-	return &RecordResource{}
+	return &GRETunnelResource{}
 }
 
-// RecordResource defines the resource implementation.
-type RecordResource struct {
+// GRETunnelResource defines the resource implementation.
+type GRETunnelResource struct {
 	client *cloudflare.Client
 }
 
-func (r *RecordResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_record"
+func (r *GRETunnelResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_gre_tunnel"
 }
 
-func (r *RecordResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *GRETunnelResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *RecordResource) Configure(ctx context.Context, req resource.ConfigureRe
 	r.client = client
 }
 
-func (r *RecordResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *RecordModel
+func (r *GRETunnelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *GRETunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,11 +66,11 @@ func (r *RecordResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 	res := new(http.Response)
-	env := RecordResultEnvelope{*data}
-	_, err = r.client.DNS.Records.New(
+	env := GRETunnelResultEnvelope{*data}
+	_, err = r.client.MagicTransit.GRETunnels.New(
 		ctx,
-		dns.RecordNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		magic_transit.GRETunnelNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -91,8 +91,8 @@ func (r *RecordResource) Create(ctx context.Context, req resource.CreateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *RecordResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *RecordModel
+func (r *GRETunnelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *GRETunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -101,12 +101,12 @@ func (r *RecordResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	res := new(http.Response)
-	env := RecordResultEnvelope{*data}
-	_, err := r.client.DNS.Records.Get(
+	env := GRETunnelResultEnvelope{*data}
+	_, err := r.client.MagicTransit.GRETunnels.Get(
 		ctx,
-		data.ID.ValueString(),
-		dns.RecordGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		data.GRETunnelID.ValueString(),
+		magic_transit.GRETunnelGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -126,8 +126,8 @@ func (r *RecordResource) Read(ctx context.Context, req resource.ReadRequest, res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *RecordResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *RecordModel
+func (r *GRETunnelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *GRETunnelModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -141,12 +141,12 @@ func (r *RecordResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 	res := new(http.Response)
-	env := RecordResultEnvelope{*data}
-	_, err = r.client.DNS.Records.Update(
+	env := GRETunnelResultEnvelope{*data}
+	_, err = r.client.MagicTransit.GRETunnels.Update(
 		ctx,
-		data.ID.ValueString(),
-		dns.RecordUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		data.GRETunnelID.ValueString(),
+		magic_transit.GRETunnelUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -167,8 +167,8 @@ func (r *RecordResource) Update(ctx context.Context, req resource.UpdateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *RecordResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *RecordModel
+func (r *GRETunnelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *GRETunnelModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -176,11 +176,11 @@ func (r *RecordResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	_, err := r.client.DNS.Records.Delete(
+	_, err := r.client.MagicTransit.GRETunnels.Delete(
 		ctx,
-		data.ID.ValueString(),
-		dns.RecordDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		data.GRETunnelID.ValueString(),
+		magic_transit.GRETunnelDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

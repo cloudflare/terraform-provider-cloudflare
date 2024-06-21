@@ -12,7 +12,7 @@ type IPSECTunnelResultEnvelope struct {
 
 type IPSECTunnelModel struct {
 	AccountID          types.String                 `tfsdk:"account_id" path:"account_id"`
-	TunnelIdentifier   types.String                 `tfsdk:"tunnel_identifier" path:"tunnel_identifier"`
+	IPSECTunnelID      types.String                 `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id"`
 	CloudflareEndpoint types.String                 `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
 	InterfaceAddress   types.String                 `tfsdk:"interface_address" json:"interface_address"`
 	Name               types.String                 `tfsdk:"name" json:"name"`

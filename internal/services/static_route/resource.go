@@ -104,7 +104,7 @@ func (r *StaticRouteResource) Read(ctx context.Context, req resource.ReadRequest
 	env := StaticRouteResultEnvelope{*data}
 	_, err := r.client.MagicTransit.Routes.Get(
 		ctx,
-		data.RouteIdentifier.ValueString(),
+		data.RouteID.ValueString(),
 		magic_transit.RouteGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -144,7 +144,7 @@ func (r *StaticRouteResource) Update(ctx context.Context, req resource.UpdateReq
 	env := StaticRouteResultEnvelope{*data}
 	_, err = r.client.MagicTransit.Routes.Update(
 		ctx,
-		data.RouteIdentifier.ValueString(),
+		data.RouteID.ValueString(),
 		magic_transit.RouteUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -178,7 +178,7 @@ func (r *StaticRouteResource) Delete(ctx context.Context, req resource.DeleteReq
 
 	_, err := r.client.MagicTransit.Routes.Delete(
 		ctx,
-		data.RouteIdentifier.ValueString(),
+		data.RouteID.ValueString(),
 		magic_transit.RouteDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

@@ -11,6 +11,6 @@ type GRETunnelResultEnvelope struct {
 }
 
 type GRETunnelModel struct {
-	AccountID        types.String `tfsdk:"account_id" path:"account_id"`
-	TunnelIdentifier types.String `tfsdk:"tunnel_identifier" path:"tunnel_identifier"`
+	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
+	GRETunnelID types.String `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id"`
 }

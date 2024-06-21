@@ -11,17 +11,19 @@ type RecordResultEnvelope struct {
 }
 
 type RecordModel struct {
-	ID       types.String     `tfsdk:"id" json:"id,computed"`
-	ZoneID   types.String     `tfsdk:"zone_id" path:"zone_id"`
-	Content  types.String     `tfsdk:"content" json:"content"`
-	Name     types.String     `tfsdk:"name" json:"name"`
-	Type     types.String     `tfsdk:"type" json:"type"`
-	Comment  types.String     `tfsdk:"comment" json:"comment"`
-	Proxied  types.Bool       `tfsdk:"proxied" json:"proxied"`
-	Tags     types.String     `tfsdk:"tags" json:"tags"`
-	TTL      types.Float64    `tfsdk:"ttl" json:"ttl"`
-	Data     *RecordDataModel `tfsdk:"data" json:"data"`
-	Priority types.Float64    `tfsdk:"priority" json:"priority"`
+	PathZoneID types.String     `tfsdk:"path_zone_id" path:"path_zone_id"`
+	ZoneID     types.String     `tfsdk:"zone_id" path:"zone_id"`
+	Content    types.String     `tfsdk:"content" json:"content"`
+	Name       types.String     `tfsdk:"name" json:"name"`
+	Type       types.String     `tfsdk:"type" json:"type"`
+	ID         types.String     `tfsdk:"id" json:"id"`
+	Comment    types.String     `tfsdk:"comment" json:"comment"`
+	Proxied    types.Bool       `tfsdk:"proxied" json:"proxied"`
+	Tags       types.String     `tfsdk:"tags" json:"tags"`
+	TTL        types.Float64    `tfsdk:"ttl" json:"ttl"`
+	BodyZoneID types.String     `tfsdk:"body_zone_id" json:"body_zone_id"`
+	Data       *RecordDataModel `tfsdk:"data" json:"data"`
+	Priority   types.Float64    `tfsdk:"priority" json:"priority"`
 }
 
 type RecordDataModel struct {

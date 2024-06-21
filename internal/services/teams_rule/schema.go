@@ -88,23 +88,23 @@ func (r TeamsRuleResource) Schema(ctx context.Context, req resource.SchemaReques
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"dcp": schema.BoolAttribute{
-								Description: "Set to true to enable copy-pasting.",
+								Description: "Set to false to enable copy-pasting.",
 								Optional:    true,
 							},
 							"dd": schema.BoolAttribute{
-								Description: "Set to true to enable downloading.",
+								Description: "Set to false to enable downloading.",
 								Optional:    true,
 							},
 							"dk": schema.BoolAttribute{
-								Description: "Set to true to enable keyboard usage.",
+								Description: "Set to false to enable keyboard usage.",
 								Optional:    true,
 							},
 							"dp": schema.BoolAttribute{
-								Description: "Set to true to enable printing.",
+								Description: "Set to false to enable printing.",
 								Optional:    true,
 							},
 							"du": schema.BoolAttribute{
-								Description: "Set to true to enable uploading.",
+								Description: "Set to false to enable uploading.",
 								Optional:    true,
 							},
 						},
@@ -204,6 +204,10 @@ func (r TeamsRuleResource) Schema(ctx context.Context, req resource.SchemaReques
 								Optional:    true,
 							},
 						},
+					},
+					"ignore_cname_category_matches": schema.BoolAttribute{
+						Description: "Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.",
+						Optional:    true,
 					},
 					"insecure_disable_dnssec_validation": schema.BoolAttribute{
 						Description: "INSECURE - disable DNSSEC validation (for Allow actions).",

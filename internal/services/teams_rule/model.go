@@ -37,6 +37,7 @@ type TeamsRuleRuleSettingsModel struct {
 	CheckSession                    *TeamsRuleRuleSettingsCheckSessionModel         `tfsdk:"check_session" json:"check_session"`
 	DNSResolvers                    *TeamsRuleRuleSettingsDNSResolversModel         `tfsdk:"dns_resolvers" json:"dns_resolvers"`
 	Egress                          *TeamsRuleRuleSettingsEgressModel               `tfsdk:"egress" json:"egress"`
+	IgnoreCNAMECategoryMatches      types.Bool                                      `tfsdk:"ignore_cname_category_matches" json:"ignore_cname_category_matches"`
 	InsecureDisableDNSSECValidation types.Bool                                      `tfsdk:"insecure_disable_dnssec_validation" json:"insecure_disable_dnssec_validation"`
 	IPCategories                    types.Bool                                      `tfsdk:"ip_categories" json:"ip_categories"`
 	IPIndicatorFeeds                types.Bool                                      `tfsdk:"ip_indicator_feeds" json:"ip_indicator_feeds"`
@@ -54,11 +55,11 @@ type TeamsRuleRuleSettingsAuditSSHModel struct {
 }
 
 type TeamsRuleRuleSettingsBisoAdminControlsModel struct {
-	Dcp types.Bool `tfsdk:"dcp" json:"dcp"`
-	Dd  types.Bool `tfsdk:"dd" json:"dd"`
-	Dk  types.Bool `tfsdk:"dk" json:"dk"`
-	Dp  types.Bool `tfsdk:"dp" json:"dp"`
-	Du  types.Bool `tfsdk:"du" json:"du"`
+	DCP types.Bool `tfsdk:"dcp" json:"dcp"`
+	DD  types.Bool `tfsdk:"dd" json:"dd"`
+	DK  types.Bool `tfsdk:"dk" json:"dk"`
+	DP  types.Bool `tfsdk:"dp" json:"dp"`
+	DU  types.Bool `tfsdk:"du" json:"du"`
 }
 
 type TeamsRuleRuleSettingsCheckSessionModel struct {

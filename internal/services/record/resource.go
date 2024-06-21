@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package ipsec_tunnel
+package record
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
+	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -17,22 +17,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &IPSECTunnelResource{}
+var _ resource.Resource = &RecordResource{}
 
 func NewResource() resource.Resource {
-	return &IPSECTunnelResource{}
+	return &RecordResource{}
 }
 
-// IPSECTunnelResource defines the resource implementation.
-type IPSECTunnelResource struct {
+// RecordResource defines the resource implementation.
+type RecordResource struct {
 	client *cloudflare.Client
 }
 
-func (r *IPSECTunnelResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_ipsec_tunnel"
+func (r *RecordResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_record"
 }
 
-func (r *IPSECTunnelResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *RecordResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -51,8 +51,8 @@ func (r *IPSECTunnelResource) Configure(ctx context.Context, req resource.Config
 	r.client = client
 }
 
-func (r *IPSECTunnelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *IPSECTunnelModel
+func (r *RecordResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -66,11 +66,11 @@ func (r *IPSECTunnelResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	res := new(http.Response)
-	env := IPSECTunnelResultEnvelope{*data}
-	_, err = r.client.MagicTransit.IPSECTunnels.New(
+	env := RecordResultEnvelope{*data}
+	_, err = r.client.DNS.Records.New(
 		ctx,
-		magic_transit.IPSECTunnelNewParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		dns.RecordNewParams{
+			PathZoneID: cloudflare.F(data.PathZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -91,8 +91,8 @@ func (r *IPSECTunnelResource) Create(ctx context.Context, req resource.CreateReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *IPSECTunnelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *IPSECTunnelModel
+func (r *RecordResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -101,12 +101,12 @@ func (r *IPSECTunnelResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	res := new(http.Response)
-	env := IPSECTunnelResultEnvelope{*data}
-	_, err := r.client.MagicTransit.IPSECTunnels.Get(
+	env := RecordResultEnvelope{*data}
+	_, err := r.client.DNS.Records.Get(
 		ctx,
-		data.TunnelIdentifier.ValueString(),
-		magic_transit.IPSECTunnelGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		data.ID.ValueString(),
+		dns.RecordGetParams{
+			ZoneID: cloudflare.F(data.PathZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -126,8 +126,8 @@ func (r *IPSECTunnelResource) Read(ctx context.Context, req resource.ReadRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *IPSECTunnelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *IPSECTunnelModel
+func (r *RecordResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -141,12 +141,12 @@ func (r *IPSECTunnelResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	res := new(http.Response)
-	env := IPSECTunnelResultEnvelope{*data}
-	_, err = r.client.MagicTransit.IPSECTunnels.Update(
+	env := RecordResultEnvelope{*data}
+	_, err = r.client.DNS.Records.Update(
 		ctx,
-		data.TunnelIdentifier.ValueString(),
-		magic_transit.IPSECTunnelUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		data.ID.ValueString(),
+		dns.RecordUpdateParams{
+			PathZoneID: cloudflare.F(data.PathZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -167,8 +167,8 @@ func (r *IPSECTunnelResource) Update(ctx context.Context, req resource.UpdateReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *IPSECTunnelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *IPSECTunnelModel
+func (r *RecordResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *RecordModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -176,11 +176,11 @@ func (r *IPSECTunnelResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	_, err := r.client.MagicTransit.IPSECTunnels.Delete(
+	_, err := r.client.DNS.Records.Delete(
 		ctx,
-		data.TunnelIdentifier.ValueString(),
-		magic_transit.IPSECTunnelDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		data.ID.ValueString(),
+		dns.RecordDeleteParams{
+			ZoneID: cloudflare.F(data.PathZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

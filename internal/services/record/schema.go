@@ -17,14 +17,13 @@ import (
 func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "Identifier",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			"path_zone_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Required:    true,
+				Optional:    true,
 			},
 			"content": schema.StringAttribute{
 				Description: "A valid IPv4 address.",
@@ -41,6 +40,11 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					stringvalidator.OneOfCaseInsensitive("A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI"),
 				},
 			},
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"comment": schema.StringAttribute{
 				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
 				Optional:    true,
@@ -56,6 +60,10 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			"ttl": schema.Float64Attribute{
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
 				Computed:    true,
+				Optional:    true,
+			},
+			"body_zone_id": schema.StringAttribute{
+				Description: "Identifier",
 				Optional:    true,
 			},
 			"data": schema.SingleNestedAttribute{
