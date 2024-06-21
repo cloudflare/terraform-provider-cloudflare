@@ -7,10 +7,10 @@ import (
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	cfv2 "github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/stainless-sdks/cloudflare-terraform/internal"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
 )
 
 var (

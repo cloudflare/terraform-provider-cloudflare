@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/acctest"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/consts"
-	"github.com/stainless-sdks/cloudflare-terraform/internal/utils"
 )
 
 func TestAccCloudflareZoneHold_Full(t *testing.T) {
