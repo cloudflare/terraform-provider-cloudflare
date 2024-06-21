@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/stainless-sdks/cloudflare-terraform",
+		Address: "registry.terraform.io/cloudflare/terraform-provider-cloudflare",
 		Debug:   debug,
 	}
 
