@@ -38,13 +38,29 @@ resource "cloudflare_ruleset" "magic_transit_example" {
   }
 }
 
-# Zone-level WAF Managed Ruleset
+# Zone-level WAF Managed Ruleset with exceptions
 resource "cloudflare_ruleset" "zone_level_managed_waf" {
   zone_id     = "0da42c8d2132a9ddaf714f9e7c920711"
   name        = "managed WAF"
-  description = "managed WAF ruleset description"
+  description = "managed WAF ruleset with exceptions description"
   kind        = "zone"
   phase       = "http_request_firewall_managed"
+
+  rules {
+    action = "skip"
+    action_parameters {
+      rules = {
+        # Format: "<RULESET_ID>" = "<RULE_ID_1>,<RULE_ID_2>,..."
+        "efb7b8c949ac4650a09736fc376e9aee" = "5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760"
+      }
+    }
+    expression = "(cf.zone.name eq \"example.com\" and http.request.uri.query contains \"skip=rules\")"
+    description = "Skip WordPress and SQLi rules"
+    enabled     = true
+    logging {
+      enabled = true
+    }
+  }
 
   rules {
     action = "execute"
