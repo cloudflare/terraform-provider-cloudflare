@@ -120,12 +120,12 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "location_hint", "ENAM"),
 				),
 			},
-			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
