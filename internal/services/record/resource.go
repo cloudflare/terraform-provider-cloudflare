@@ -70,7 +70,7 @@ func (r *RecordResource) Create(ctx context.Context, req resource.CreateRequest,
 	_, err = r.client.DNS.Records.New(
 		ctx,
 		dns.RecordNewParams{
-			PathZoneID: cloudflare.F(data.PathZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -106,7 +106,7 @@ func (r *RecordResource) Read(ctx context.Context, req resource.ReadRequest, res
 		ctx,
 		data.ID.ValueString(),
 		dns.RecordGetParams{
-			ZoneID: cloudflare.F(data.PathZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -146,7 +146,7 @@ func (r *RecordResource) Update(ctx context.Context, req resource.UpdateRequest,
 		ctx,
 		data.ID.ValueString(),
 		dns.RecordUpdateParams{
-			PathZoneID: cloudflare.F(data.PathZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -180,7 +180,7 @@ func (r *RecordResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		ctx,
 		data.ID.ValueString(),
 		dns.RecordDeleteParams{
-			ZoneID: cloudflare.F(data.PathZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
