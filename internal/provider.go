@@ -10,7 +10,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/resources/access_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_custom_page"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_group"
