@@ -226,7 +226,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 					"access_token_lifetime": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The lifetime of the Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",
+						Description: "The lifetime of the Access Token after creation. Valid units are `m` and `h`. Must be greater than or equal to 1m and less than or equal to 24h.",
 					},
 					"allow_pkce_without_client_secret": {
 						Type:        schema.TypeBool,
@@ -242,7 +242,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 								"lifetime": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
+									Description: "How long a refresh token will be valid for after creation. Valid units are `m`, `h` and `d`. Must be longer than 1m.",
 								},
 							},
 						},
