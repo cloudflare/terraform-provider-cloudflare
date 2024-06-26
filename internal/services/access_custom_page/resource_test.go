@@ -44,7 +44,7 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -53,7 +53,7 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, zoneID, "forbidden", "<html><body><h1>Forbidden</h1></body></html>"),
+				Config: testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, accountID, "forbidden", "<html><body><h1>Forbidden</h1></body></html>"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "forbidden"),
@@ -64,13 +64,13 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, zoneID, pageType, markup string) string {
+func testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, accountID, pageType, markup string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_custom_page" "%[1]s" {
-	zone_id = "%[2]s"
+	account_id = "%[2]s"
 	name = "%[1]s"
 	type = "%[3]s"
 	custom_html = "%[4]s"
 }
-	`, rnd, zoneID, pageType, markup)
+	`, rnd, accountID, pageType, markup)
 }
