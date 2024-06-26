@@ -138,6 +138,7 @@ Optional:
 
 Optional:
 
+- `access_token_lifetime` (String) The lifetime of the Access Token after creation. Valid units are `m` and `h`. Must be greater than or equal to 1m and less than or equal to 24h.
 - `allow_pkce_without_client_secret` (Boolean) Allow PKCE flow without a client secret.
 - `app_launcher_url` (String) The URL where this applications tile redirects users.
 - `auth_type` (String) **Modifying this attribute will force creation of a new resource.**
@@ -231,7 +232,7 @@ Optional:
 
 Optional:
 
-- `lifetime` (String) How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.
+- `lifetime` (String) How long a refresh token will be valid for after creation. Valid units are `m`, `h` and `d`. Must be longer than 1m.
 
 
 

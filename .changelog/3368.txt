@@ -1,0 +1,7 @@
+```release-note:bug
+resource/cloudflare_list_item: implement exact match for IP values to prevent overlapping IP prefixes from not being found
+```
+
+```release-note:bug
+resource/cloudflare_list_item: fix crash when not using `type = "redirect"` due to attempting to compare `nil`
+```

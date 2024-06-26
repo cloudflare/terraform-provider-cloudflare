@@ -223,6 +223,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
 					},
+					"access_token_lifetime": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "The lifetime of the Access Token after creation. Valid units are `m` and `h`. Must be greater than or equal to 1m and less than or equal to 24h.",
+					},
 					"allow_pkce_without_client_secret": {
 						Type:        schema.TypeBool,
 						Optional:    true,
@@ -237,7 +242,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 								"lifetime": {
 									Type:        schema.TypeString,
 									Optional:    true,
-									Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
+									Description: "How long a refresh token will be valid for after creation. Valid units are `m`, `h` and `d`. Must be longer than 1m.",
 								},
 							},
 						},
@@ -875,6 +880,7 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 			SaasConfig.GrantTypes = expandInterfaceToStringList(d.Get("saas_app.0.grant_types").(*schema.Set).List())
 			SaasConfig.Scopes = expandInterfaceToStringList(d.Get("saas_app.0.scopes").(*schema.Set).List())
 			SaasConfig.GroupFilterRegex = d.Get("saas_app.0.group_filter_regex").(string)
+			SaasConfig.AccessTokenLifetime = d.Get("saas_app.0.access_token_lifetime").(string)
 			SaasConfig.AllowPKCEWithoutClientSecret = cloudflare.BoolPtr(d.Get("saas_app.0.allow_pkce_without_client_secret").(bool))
 			if _, ok := d.GetOk("saas_app.0.refresh_token_options"); ok {
 				SaasConfig.RefreshTokenOptions = &cloudflare.RefreshTokenOptions{
@@ -1158,6 +1164,7 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 			"scopes":                           app.Scopes,
 			"public_key":                       app.PublicKey,
 			"group_filter_regex":               app.GroupFilterRegex,
+			"access_token_lifetime":            app.AccessTokenLifetime,
 			"app_launcher_url":                 app.AppLauncherURL,
 			"allow_pkce_without_client_secret": app.AllowPKCEWithoutClientSecret,
 		}

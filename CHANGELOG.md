@@ -1,4 +1,37 @@
-## 4.36.0 (Unreleased)
+## 4.37.0 (Unreleased)
+
+## 4.36.0 (June 26th, 2024)
+
+NOTES:
+
+* resource/zone_settings_override: deprecate `mobile_redirect` setting and include state migration to remove from local state. You should immediately remove the configuration from the resource to prevent permadiffs. ([#3337](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3337))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Support configuring OIDC SaaS access token lifetime ([#3353](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3353))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: fix crash when not using `type = "redirect"` due to attempting to compare `nil` ([#3368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3368))
+* resource/cloudflare_list_item: implement exact match for IP values to prevent overlapping IP prefixes from not being found ([#3368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3368))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.18 to 1.27.19 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.19 to 1.27.20 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.20 to 1.27.21 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.18 to 1.17.19 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.19 to 1.17.20 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.20 to 1.17.21 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.1 to 1.55.2 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.2 to 1.56.0 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.56.0 to 1.56.1 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.2 to 1.28.0 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.28.0 to 1.29.0 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.29.0 to 1.30.0 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.97.0 to 0.98.0 ([#3365](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3365))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.2.0 to 2.3.0 ([#3363](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3363))
+* provider: bump github.com/hashicorp/go-retryablehttp from 0.7.4 to 0.7.7 in /tools ([#3395](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3395))
 
 ## 4.35.0 (June 12th, 2024)
 

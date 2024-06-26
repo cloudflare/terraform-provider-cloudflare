@@ -1,0 +1,3 @@
+```release-note:note
+resource/zone_settings_override: deprecate `mobile_redirect` setting and include state migration to remove from local state. You should immediately remove the configuration from the resource to prevent permadiffs.
+```
