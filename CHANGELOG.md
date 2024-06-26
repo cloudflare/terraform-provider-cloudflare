@@ -1,4 +1,6 @@
-## 4.36.0 (Unreleased)
+## 4.37.0 (Unreleased)
+
+## 4.36.0 (June 26th, 2024)
 
 NOTES:
 
