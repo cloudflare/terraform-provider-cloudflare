@@ -123,6 +123,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -275,6 +276,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		origin_ca_certificate.NewResource,
 		api_token.NewResource,
 		zone.NewResource,
+		zone_setting.NewResource,
 		zone_hold.NewResource,
 		load_balancer.NewResource,
 		load_balancer_monitor.NewResource,
