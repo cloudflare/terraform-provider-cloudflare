@@ -132,7 +132,15 @@ func (r *EmailRoutingAddressResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	dataBytes, err := apijson.Marshal(data)
+	var state *EmailRoutingAddressModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	dataBytes, err := apijson.MarshalForUpdate(data, state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
