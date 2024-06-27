@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare-access-application: fixes bug when updating self_hosted_domains
+```

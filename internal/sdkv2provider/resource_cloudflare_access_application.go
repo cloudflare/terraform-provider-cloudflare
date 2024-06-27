@@ -171,7 +171,13 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("name", accessApplication.Name)
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
-	d.Set("domain", accessApplication.Domain)
+	if _, domainWasSet := d.GetOk("domain"); domainWasSet {
+		// Only set the domain if it was set in the configuration, as apps can be created without a domain
+		// if they define a non-empty self_hosted_domains array
+		d.Set("domain", accessApplication.Domain)
+	} else {
+		d.Set("domain", nil)
+	}
 	d.Set("type", accessApplication.Type)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
