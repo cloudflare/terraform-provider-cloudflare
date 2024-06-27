@@ -36,6 +36,11 @@ resource "cloudflare_teams_account" "example" {
     virtual_ip = false
   }
 
+  connectivity {
+    icmp          = false
+    warp_to_warp  = false
+  }
+
   url_browser_isolation_enabled = true
 
   logging {

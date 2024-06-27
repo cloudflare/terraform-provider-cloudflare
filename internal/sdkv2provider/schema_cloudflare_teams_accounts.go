@@ -95,6 +95,15 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			},
 			Description: "Configuration block for specifying which protocols are proxied.",
 		},
+		"connectivity": {
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: connectivitySchema,
+			},
+			Description: "Configuration for Zero Trust Connectivity.",
+		},
 		"ssh_session_log": {
 			Type:     schema.TypeList,
 			MaxItems: 1,
@@ -246,6 +255,19 @@ var proxySchema = map[string]*schema.Schema{
 		Type:        schema.TypeBool,
 		Required:    true,
 		Description: "Whether virtual IP (CGNAT) is enabled account wide and will override existing local interface IP for ZT clients.",
+	},
+}
+
+var connectivitySchema = map[string]*schema.Schema{
+	"icmp": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether ICMP proxy is enabled for the account network.",
+	},
+	"warp_to_warp": {
+		Type:        schema.TypeBool,
+		Required:    true,
+		Description: "Whether WARP to WARP traffic is enabled account wide.",
 	},
 }
 
