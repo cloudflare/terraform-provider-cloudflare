@@ -491,3 +491,113 @@ func TestEncode(t *testing.T) {
 		})
 	}
 }
+
+var updateTests = map[string]struct {
+	state    interface{}
+	plan     interface{}
+	expected string
+}{
+	"true":           {true, true, "true"},
+	"terraform_true": {types.BoolValue(true), types.BoolValue(true), "true"},
+
+	"null to true":   {types.BoolNull(), types.BoolValue(true), "true"},
+	"false to true":  {types.BoolValue(false), types.BoolValue(true), "true"},
+	"unset bool":     {types.BoolValue(false), types.BoolNull(), "null"},
+	"omit null bool": {types.BoolNull(), types.BoolNull(), ""},
+
+	"string set":       {types.StringNull(), types.StringValue("two"), "\"two\""},
+	"string update":    {types.StringValue("one"), types.StringValue("two"), "\"two\""},
+	"unset string":     {types.StringValue("hey"), types.StringNull(), "null"},
+	"omit null string": {types.StringNull(), types.StringNull(), ""},
+
+	"int set":       {types.Int64Null(), types.Int64Value(42), "42"},
+	"int update":    {types.Int64Value(42), types.Int64Value(43), "43"},
+	"unset int":     {types.Int64Value(42), types.Int64Null(), "null"},
+	"omit null int": {types.Int64Null(), types.Int64Null(), ""},
+
+	"set struct fields": {
+		TfsdkStructs{},
+		TfsdkStructs{
+			BoolValue:     types.BoolValue(true),
+			StringValue:   types.StringValue("string_value"),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("embedded_string_value"),
+				EmbeddedInt:    types.Int64Value(17),
+			},
+		},
+		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
+	},
+
+	"update some struct fields": {
+		TfsdkStructs{
+			BoolValue:   types.BoolValue(true),
+			StringValue: types.StringValue("string_value"),
+			FloatValue:  types.Float64Value(3.14),
+		},
+		TfsdkStructs{
+			BoolValue:   types.BoolValue(false),
+			StringValue: types.StringValue("another_string"),
+			FloatValue:  types.Float64Value(1.14),
+		},
+		`{"bool_value":false,"float_value":1.14,"string_value":"another_string"}`,
+	},
+
+	"unset nested struct fields": {
+		TfsdkStructs{
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedInt: types.Int64Value(17),
+			},
+		},
+		TfsdkStructs{
+			OptionalArray: &[]types.String{types.StringValue("hi")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedInt: types.Int64Null(),
+			},
+		},
+		`{"data":{"embedded_int":null},"optional_array":["hi"]}`,
+	},
+
+	"unset struct fields": {
+		TfsdkStructs{
+			BoolValue:     types.BoolValue(true),
+			StringValue:   types.StringValue("string_value"),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			Data: &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("embedded_string_value"),
+				EmbeddedInt:    types.Int64Value(17),
+			},
+		},
+		TfsdkStructs{},
+		`{"bool_value":null,"data":null,"float_value":null,"optional_array":null,"string_value":null}`,
+	},
+
+	"set empty array": {
+		TfsdkStructs{
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+		},
+		TfsdkStructs{
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{},
+		},
+		`{"float_value":3.14,"optional_array":[]}`,
+	},
+}
+
+func TestEncodeForUpdate(t *testing.T) {
+	for name, test := range updateTests {
+		t.Run(name, func(t *testing.T) {
+			raw, err := MarshalForUpdate(test.plan, test.state)
+			if err != nil {
+				t.Fatalf("serialization of %v, %v failed with error %v", test.plan, test.state, err)
+			}
+			if string(raw) != test.expected {
+				t.Fatalf("expected %+#v, %+#v to serialize to \n%s\n but got \n%s\n", test.state, test.plan, test.expected, string(raw))
+			}
+		})
+	}
+}

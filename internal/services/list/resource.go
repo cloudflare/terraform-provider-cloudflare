@@ -135,7 +135,15 @@ func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	dataBytes, err := apijson.Marshal(data)
+	var state *ListModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	dataBytes, err := apijson.MarshalForUpdate(data, state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
