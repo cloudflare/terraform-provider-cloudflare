@@ -17,6 +17,7 @@ type PageRuleModel struct {
 	Targets    *[]*PageRuleTargetsModel `tfsdk:"targets" json:"targets"`
 	Priority   types.Int64              `tfsdk:"priority" json:"priority"`
 	Status     types.String             `tfsdk:"status" json:"status"`
+	ID         types.String             `tfsdk:"id" json:"id,computed"`
 }
 
 type PageRuleActionsModel struct {

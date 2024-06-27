@@ -5,10 +5,12 @@ package notification_policy_webhooks
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 func (r NotificationPolicyWebhooksResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -34,6 +36,55 @@ func (r NotificationPolicyWebhooksResource) Schema(ctx context.Context, req reso
 			"secret": schema.StringAttribute{
 				Description: "Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.",
 				Optional:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Description: "Timestamp of when the webhook destination was created.",
+				Computed:    true,
+			},
+			"last_failure": schema.StringAttribute{
+				Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",
+				Computed:    true,
+			},
+			"last_success": schema.StringAttribute{
+				Description: "Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.",
+				Computed:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "Type of webhook endpoint.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("slack", "generic", "gchat"),
+				},
+			},
+			"errors": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"code": schema.Int64Attribute{
+							Required: true,
+						},
+						"message": schema.StringAttribute{
+							Required: true,
+						},
+					},
+				},
+			},
+			"messages": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"code": schema.Int64Attribute{
+							Required: true,
+						},
+						"message": schema.StringAttribute{
+							Required: true,
+						},
+					},
+				},
+			},
+			"success": schema.BoolAttribute{
+				Description: "Whether the API call was successful",
+				Computed:    true,
 			},
 		},
 	}

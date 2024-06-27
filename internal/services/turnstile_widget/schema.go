@@ -70,6 +70,18 @@ func (r TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schema
 				},
 				Default: stringdefault.StaticString("world"),
 			},
+			"created_on": schema.StringAttribute{
+				Description: "When the widget was created.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the widget was modified.",
+				Computed:    true,
+			},
+			"secret": schema.StringAttribute{
+				Description: "Secret key for this widget.",
+				Computed:    true,
+			},
 		},
 	}
 }

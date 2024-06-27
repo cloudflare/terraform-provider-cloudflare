@@ -11,9 +11,17 @@ type ByoIPPrefixResultEnvelope struct {
 }
 
 type ByoIPPrefixModel struct {
-	ID            types.String `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String `tfsdk:"account_id" path:"account_id"`
-	ASN           types.Int64  `tfsdk:"asn" json:"asn"`
-	CIDR          types.String `tfsdk:"cidr" json:"cidr"`
-	LOADocumentID types.String `tfsdk:"loa_document_id" json:"loa_document_id"`
+	ID                   types.String `tfsdk:"id" json:"id,computed"`
+	AccountID            types.String `tfsdk:"account_id" path:"account_id"`
+	ASN                  types.Int64  `tfsdk:"asn" json:"asn"`
+	CIDR                 types.String `tfsdk:"cidr" json:"cidr"`
+	LOADocumentID        types.String `tfsdk:"loa_document_id" json:"loa_document_id"`
+	Advertised           types.Bool   `tfsdk:"advertised" json:"advertised,computed"`
+	AdvertisedModifiedAt types.String `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed"`
+	Approved             types.String `tfsdk:"approved" json:"approved,computed"`
+	CreatedAt            types.String `tfsdk:"created_at" json:"created_at,computed"`
+	Description          types.String `tfsdk:"description" json:"description,computed"`
+	ModifiedAt           types.String `tfsdk:"modified_at" json:"modified_at,computed"`
+	OnDemandEnabled      types.Bool   `tfsdk:"on_demand_enabled" json:"on_demand_enabled,computed"`
+	OnDemandLocked       types.Bool   `tfsdk:"on_demand_locked" json:"on_demand_locked,computed"`
 }

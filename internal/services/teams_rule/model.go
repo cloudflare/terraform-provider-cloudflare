@@ -24,6 +24,9 @@ type TeamsRuleModel struct {
 	RuleSettings  *TeamsRuleRuleSettingsModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *TeamsRuleScheduleModel     `tfsdk:"schedule" json:"schedule"`
 	Traffic       types.String                `tfsdk:"traffic" json:"traffic"`
+	CreatedAt     types.String                `tfsdk:"created_at" json:"created_at,computed"`
+	DeletedAt     types.String                `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	UpdatedAt     types.String                `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type TeamsRuleRuleSettingsModel struct {

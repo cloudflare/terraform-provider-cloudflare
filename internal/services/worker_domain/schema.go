@@ -38,6 +38,10 @@ func (r WorkerDomainResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: "Identifier of the zone.",
 				Required:    true,
 			},
+			"zone_name": schema.StringAttribute{
+				Description: "Name of the zone.",
+				Computed:    true,
+			},
 		},
 	}
 }

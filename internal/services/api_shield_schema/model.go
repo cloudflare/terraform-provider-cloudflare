@@ -17,4 +17,25 @@ type APIShieldSchemaModel struct {
 	Kind              types.String `tfsdk:"kind" json:"kind"`
 	Name              types.String `tfsdk:"name" json:"name"`
 	ValidationEnabled types.String `tfsdk:"validation_enabled" json:"validation_enabled"`
+	CreatedAt         types.String `tfsdk:"created_at" json:"created_at,computed"`
+	Source            types.String `tfsdk:"source" json:"source,computed"`
+}
+
+type APIShieldSchemaSchemaModel struct {
+	CreatedAt         types.String `tfsdk:"created_at" json:"created_at,computed"`
+	Kind              types.String `tfsdk:"kind" json:"kind"`
+	Name              types.String `tfsdk:"name" json:"name"`
+	SchemaID          types.String `tfsdk:"schema_id" json:"schema_id,computed"`
+	Source            types.String `tfsdk:"source" json:"source"`
+	ValidationEnabled types.Bool   `tfsdk:"validation_enabled" json:"validation_enabled"`
+}
+
+type APIShieldSchemaUploadDetailsModel struct {
+	Warnings *[]*APIShieldSchemaUploadDetailsWarningsModel `tfsdk:"warnings" json:"warnings"`
+}
+
+type APIShieldSchemaUploadDetailsWarningsModel struct {
+	Code      types.Int64     `tfsdk:"code" json:"code"`
+	Locations *[]types.String `tfsdk:"locations" json:"locations"`
+	Message   types.String    `tfsdk:"message" json:"message"`
 }

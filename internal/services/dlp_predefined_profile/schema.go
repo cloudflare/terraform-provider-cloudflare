@@ -5,11 +5,13 @@ package dlp_predefined_profile
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -73,6 +75,17 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 			"ocr_enabled": schema.BoolAttribute{
 				Description: "If true, scan images via OCR to determine if any text present matches filters.",
 				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the profile.",
+				Computed:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of the profile.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("predefined"),
+				},
 			},
 		},
 	}

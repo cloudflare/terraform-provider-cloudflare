@@ -19,6 +19,8 @@ type AccessGroupModel struct {
 	Exclude   *[]*AccessGroupExcludeModel `tfsdk:"exclude" json:"exclude"`
 	IsDefault types.Bool                  `tfsdk:"is_default" json:"is_default"`
 	Require   *[]*AccessGroupRequireModel `tfsdk:"require" json:"require"`
+	CreatedAt types.String                `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt types.String                `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessGroupIncludeModel struct {

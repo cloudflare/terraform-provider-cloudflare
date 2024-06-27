@@ -18,6 +18,7 @@ type EmailRoutingRuleModel struct {
 	Enabled        types.Bool                        `tfsdk:"enabled" json:"enabled"`
 	Name           types.String                      `tfsdk:"name" json:"name"`
 	Priority       types.Float64                     `tfsdk:"priority" json:"priority"`
+	Tag            types.String                      `tfsdk:"tag" json:"tag,computed"`
 }
 
 type EmailRoutingRuleActionsModel struct {

@@ -20,6 +20,7 @@ type ListItemModel struct {
 	Hostname          *ListItemHostnameModel `tfsdk:"hostname" json:"hostname"`
 	IP                types.String           `tfsdk:"ip" json:"ip"`
 	Redirect          *ListItemRedirectModel `tfsdk:"redirect" json:"redirect"`
+	OperationID       types.String           `tfsdk:"operation_id" json:"operation_id,computed"`
 }
 
 type ListItemHostnameModel struct {

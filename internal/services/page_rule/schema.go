@@ -108,6 +108,10 @@ func (r PageRuleResource) Schema(ctx context.Context, req resource.SchemaRequest
 				},
 				Default: stringdefault.StaticString("disabled"),
 			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 		},
 	}
 }

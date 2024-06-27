@@ -5,6 +5,7 @@ package total_tls
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -27,6 +28,13 @@ func (r TotalTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
+				},
+			},
+			"validity_days": schema.Int64Attribute{
+				Description: "The validity period in days for the certificates ordered via Total TLS.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.OneOf(90),
 				},
 			},
 		},

@@ -19,6 +19,11 @@ type PagesProjectModel struct {
 	LatestDeployment    *PagesProjectLatestDeploymentModel    `tfsdk:"latest_deployment" json:"latest_deployment"`
 	Name                types.String                          `tfsdk:"name" json:"name"`
 	ProductionBranch    types.String                          `tfsdk:"production_branch" json:"production_branch"`
+	ID                  types.String                          `tfsdk:"id" json:"id,computed"`
+	CreatedOn           types.String                          `tfsdk:"created_on" json:"created_on,computed"`
+	Domains             *[]types.String                       `tfsdk:"domains" json:"domains,computed"`
+	Source              types.String                          `tfsdk:"source" json:"source,computed"`
+	Subdomain           types.String                          `tfsdk:"subdomain" json:"subdomain,computed"`
 }
 
 type PagesProjectBuildConfigModel struct {

@@ -13,6 +13,8 @@ type TeamsAccountResultEnvelope struct {
 type TeamsAccountModel struct {
 	AccountID types.String               `tfsdk:"account_id" path:"account_id"`
 	Settings  *TeamsAccountSettingsModel `tfsdk:"settings" json:"settings"`
+	CreatedAt types.String               `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt types.String               `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type TeamsAccountSettingsModel struct {

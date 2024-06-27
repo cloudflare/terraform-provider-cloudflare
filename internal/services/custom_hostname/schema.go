@@ -128,6 +128,30 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 					},
 				},
 			},
+			"created_at": schema.StringAttribute{
+				Description: "This is the time the hostname was created.",
+				Computed:    true,
+			},
+			"custom_origin_server": schema.StringAttribute{
+				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
+				Computed:    true,
+			},
+			"custom_origin_sni": schema.StringAttribute{
+				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
+				Computed:    true,
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the hostname's activation.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
+				},
+			},
+			"verification_errors": schema.ListAttribute{
+				Description: "These are errors that were encountered while trying to activate a hostname.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
 		},
 	}
 }

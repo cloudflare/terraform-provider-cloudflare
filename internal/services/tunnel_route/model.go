@@ -16,4 +16,7 @@ type TunnelRouteModel struct {
 	Network          types.String `tfsdk:"network" json:"network"`
 	Comment          types.String `tfsdk:"comment" json:"comment"`
 	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id"`
+	CreatedAt        types.String `tfsdk:"created_at" json:"created_at,computed"`
+	DeletedAt        types.String `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	TunnelID         types.String `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
 }

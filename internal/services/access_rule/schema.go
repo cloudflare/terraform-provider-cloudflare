@@ -53,6 +53,10 @@ func (r AccessRuleResource) Schema(ctx context.Context, req resource.SchemaReque
 				Description: "An informative summary of the rule, typically used as a reminder or explanation.",
 				Optional:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 		},
 	}
 }

@@ -40,6 +40,23 @@ func (r Web3HostnameResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: "DNSLink value used if the target is ipfs.",
 				Optional:    true,
 			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The hostname that will point to the target gateway via CNAME.",
+				Computed:    true,
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the hostname's activation.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("active", "pending", "deleting", "error"),
+				},
+			},
 		},
 	}
 }

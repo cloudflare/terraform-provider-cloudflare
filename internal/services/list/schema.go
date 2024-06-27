@@ -37,6 +37,10 @@ func (r ListResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: "An informative summary of the list.",
 				Optional:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "The unique ID of the item in the List.",
+				Computed:    true,
+			},
 		},
 	}
 }

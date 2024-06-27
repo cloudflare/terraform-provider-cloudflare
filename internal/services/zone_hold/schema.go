@@ -16,6 +16,15 @@ func (r ZoneHoldResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Description: "Identifier",
 				Required:    true,
 			},
+			"hold": schema.BoolAttribute{
+				Computed: true,
+			},
+			"hold_after": schema.StringAttribute{
+				Computed: true,
+			},
+			"include_subdomains": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

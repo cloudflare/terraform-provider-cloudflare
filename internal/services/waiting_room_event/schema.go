@@ -85,6 +85,12 @@ func (r WaitingRoomEventResource) Schema(ctx context.Context, req resource.Schem
 				Description: "If set, the event will override the waiting room's `total_active_users` property while it is active. If null, the event will inherit it. This can only be set if the event's `new_users_per_minute` property is also set.",
 				Optional:    true,
 			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

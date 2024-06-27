@@ -31,6 +31,30 @@ func (r WorkersForPlatformsNamespaceResource) Schema(ctx context.Context, req re
 				Description: "The name of the dispatch namespace",
 				Optional:    true,
 			},
+			"created_by": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the script was created.",
+				Computed:    true,
+			},
+			"modified_by": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the script was last modified.",
+				Computed:    true,
+			},
+			"namespace_name": schema.StringAttribute{
+				Description: "Name of the Workers for Platforms dispatch namespace.",
+				Computed:    true,
+			},
+			"script_count": schema.Int64Attribute{
+				Description: "The current number of scripts in this Dispatch Namespace",
+				Computed:    true,
+			},
 		},
 	}
 }

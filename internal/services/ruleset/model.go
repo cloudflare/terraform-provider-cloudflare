@@ -19,6 +19,8 @@ type RulesetModel struct {
 	Phase       types.String          `tfsdk:"phase" json:"phase"`
 	Rules       *[]*RulesetRulesModel `tfsdk:"rules" json:"rules"`
 	Description types.String          `tfsdk:"description" json:"description"`
+	LastUpdated types.String          `tfsdk:"last_updated" json:"last_updated,computed"`
+	Version     types.String          `tfsdk:"version" json:"version,computed"`
 }
 
 type RulesetRulesModel struct {

@@ -14,4 +14,5 @@ type TotalTLSModel struct {
 	ZoneID               types.String `tfsdk:"zone_id" path:"zone_id"`
 	Enabled              types.Bool   `tfsdk:"enabled" json:"enabled"`
 	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority"`
+	ValidityDays         types.Int64  `tfsdk:"validity_days" json:"validity_days,computed"`
 }

@@ -225,6 +225,50 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: "Rollback message to be associated with this deployment. Only parsed when query param `\"rollback_to\"` is present.",
 				Optional:    true,
 			},
+			"created_on": schema.StringAttribute{
+				Description: "When the script was created.",
+				Computed:    true,
+			},
+			"etag": schema.StringAttribute{
+				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Computed:    true,
+			},
+			"logpush": schema.BoolAttribute{
+				Description: "Whether Logpush is turned on for the Worker.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the script was last modified.",
+				Computed:    true,
+			},
+			"placement_mode": schema.StringAttribute{
+				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
+				Computed:    true,
+			},
+			"tail_consumers": schema.ListNestedAttribute{
+				Description: "List of Workers that will consume logs from the attached Worker.",
+				Computed:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"service": schema.StringAttribute{
+							Description: "Name of Worker that is to be the consumer.",
+							Required:    true,
+						},
+						"environment": schema.StringAttribute{
+							Description: "Optional environment if the Worker utilizes one.",
+							Optional:    true,
+						},
+						"namespace": schema.StringAttribute{
+							Description: "Optional dispatch namespace the script belongs to.",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"usage_model": schema.StringAttribute{
+				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
+				Computed:    true,
+			},
 		},
 	}
 }

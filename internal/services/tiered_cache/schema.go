@@ -32,6 +32,14 @@ func (r TieredCacheResource) Schema(ctx context.Context, req resource.SchemaRequ
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
 				},
 			},
+			"editable": schema.BoolAttribute{
+				Description: "Whether the setting is editable",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "The time when the setting was last modified",
+				Computed:    true,
+			},
 		},
 	}
 }

@@ -16,4 +16,6 @@ type R2BucketModel struct {
 	Name         types.String `tfsdk:"name" json:"name"`
 	LocationHint types.String `tfsdk:"location_hint" json:"locationHint"`
 	StorageClass types.String `tfsdk:"storage_class" json:"storageClass"`
+	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`
+	Location     types.String `tfsdk:"location" json:"location,computed"`
 }

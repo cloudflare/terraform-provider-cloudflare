@@ -19,6 +19,11 @@ type KeylessCertificateModel struct {
 	BundleMethod types.String                   `tfsdk:"bundle_method" json:"bundle_method"`
 	Name         types.String                   `tfsdk:"name" json:"name"`
 	Tunnel       *KeylessCertificateTunnelModel `tfsdk:"tunnel" json:"tunnel"`
+	CreatedOn    types.String                   `tfsdk:"created_on" json:"created_on,computed"`
+	Enabled      types.Bool                     `tfsdk:"enabled" json:"enabled,computed"`
+	ModifiedOn   types.String                   `tfsdk:"modified_on" json:"modified_on,computed"`
+	Permissions  *[]types.String                `tfsdk:"permissions" json:"permissions,computed"`
+	Status       types.String                   `tfsdk:"status" json:"status,computed"`
 }
 
 type KeylessCertificateTunnelModel struct {

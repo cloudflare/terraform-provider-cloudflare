@@ -46,6 +46,10 @@ func (r OriginCACertificateResource) Schema(ctx context.Context, req resource.Sc
 				},
 				Default: float64default.StaticFloat64(5475),
 			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 		},
 	}
 }

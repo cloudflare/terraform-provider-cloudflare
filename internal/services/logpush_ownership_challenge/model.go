@@ -14,4 +14,7 @@ type LogpushOwnershipChallengeModel struct {
 	AccountID       types.String `tfsdk:"account_id" path:"account_id"`
 	ZoneID          types.String `tfsdk:"zone_id" path:"zone_id"`
 	DestinationConf types.String `tfsdk:"destination_conf" json:"destination_conf"`
+	Filename        types.String `tfsdk:"filename" json:"filename,computed"`
+	Message         types.String `tfsdk:"message" json:"message,computed"`
+	Valid           types.Bool   `tfsdk:"valid" json:"valid,computed"`
 }

@@ -138,6 +138,14 @@ func (r RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
 			},
+			"last_updated": schema.StringAttribute{
+				Description: "The timestamp of when the ruleset was last modified.",
+				Computed:    true,
+			},
+			"version": schema.StringAttribute{
+				Description: "The version of the ruleset.",
+				Computed:    true,
+			},
 		},
 	}
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -66,6 +67,30 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 						Description: "Cloudflare Tunnel Virtual Network ID",
 						Required:    true,
 					},
+				},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the Keyless SSL was created.",
+				Computed:    true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether or not the Keyless SSL is on or off.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the Keyless SSL was last modified.",
+				Computed:    true,
+			},
+			"permissions": schema.ListAttribute{
+				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the Keyless SSL.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("active", "deleted"),
 				},
 			},
 		},

@@ -17,6 +17,9 @@ type TeamsListModel struct {
 	Type        types.String            `tfsdk:"type" json:"type"`
 	Description types.String            `tfsdk:"description" json:"description"`
 	Items       *[]*TeamsListItemsModel `tfsdk:"items" json:"items"`
+	CreatedAt   types.String            `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt   types.String            `tfsdk:"updated_at" json:"updated_at,computed"`
+	Count       types.Float64           `tfsdk:"count" json:"count,computed"`
 }
 
 type TeamsListItemsModel struct {

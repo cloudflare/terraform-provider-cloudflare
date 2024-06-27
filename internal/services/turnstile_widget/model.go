@@ -21,4 +21,7 @@ type TurnstileWidgetModel struct {
 	ClearanceLevel types.String    `tfsdk:"clearance_level" json:"clearance_level"`
 	Offlabel       types.Bool      `tfsdk:"offlabel" json:"offlabel"`
 	Region         types.String    `tfsdk:"region" json:"region"`
+	CreatedOn      types.String    `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn     types.String    `tfsdk:"modified_on" json:"modified_on,computed"`
+	Secret         types.String    `tfsdk:"secret" json:"secret,computed"`
 }

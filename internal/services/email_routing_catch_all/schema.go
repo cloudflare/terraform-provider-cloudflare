@@ -71,6 +71,10 @@ func (r EmailRoutingCatchAllResource) Schema(ctx context.Context, req resource.S
 				Description: "Routing rule name.",
 				Optional:    true,
 			},
+			"tag": schema.StringAttribute{
+				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
+				Computed:    true,
+			},
 		},
 	}
 }
