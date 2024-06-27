@@ -24,6 +24,15 @@ func (r LogpushOwnershipChallengeResource) Schema(ctx context.Context, req resou
 				Description: "Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included.",
 				Required:    true,
 			},
+			"filename": schema.StringAttribute{
+				Computed: true,
+			},
+			"message": schema.StringAttribute{
+				Computed: true,
+			},
+			"valid": schema.BoolAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

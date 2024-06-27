@@ -35,6 +35,20 @@ func (r AccessServiceTokenResource) Schema(ctx context.Context, req resource.Sch
 				Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
 				Optional:    true,
 			},
+			"client_id": schema.StringAttribute{
+				Description: "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
+				Computed:    true,
+			},
+			"client_secret": schema.StringAttribute{
+				Description: "The Client Secret for the service token. Access will check for this value in the `CF-Access-Client-Secret` request header.",
+				Computed:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

@@ -26,6 +26,10 @@ type HealthcheckModel struct {
 	TCPConfig            *HealthcheckTCPConfigModel  `tfsdk:"tcp_config" json:"tcp_config"`
 	Timeout              types.Int64                 `tfsdk:"timeout" json:"timeout"`
 	Type                 types.String                `tfsdk:"type" json:"type"`
+	CreatedOn            types.String                `tfsdk:"created_on" json:"created_on,computed"`
+	FailureReason        types.String                `tfsdk:"failure_reason" json:"failure_reason,computed"`
+	ModifiedOn           types.String                `tfsdk:"modified_on" json:"modified_on,computed"`
+	Status               types.String                `tfsdk:"status" json:"status,computed"`
 }
 
 type HealthcheckHTTPConfigModel struct {

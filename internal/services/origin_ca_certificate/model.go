@@ -16,4 +16,5 @@ type OriginCACertificateModel struct {
 	Hostnames         *[]types.String `tfsdk:"hostnames" json:"hostnames"`
 	RequestType       types.String    `tfsdk:"request_type" json:"request_type"`
 	RequestedValidity types.Float64   `tfsdk:"requested_validity" json:"requested_validity"`
+	ID                types.String    `tfsdk:"id" json:"id,computed"`
 }

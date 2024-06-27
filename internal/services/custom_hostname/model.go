@@ -11,11 +11,16 @@ type CustomHostnameResultEnvelope struct {
 }
 
 type CustomHostnameModel struct {
-	ID             types.String                       `tfsdk:"id" json:"id,computed"`
-	ZoneID         types.String                       `tfsdk:"zone_id" path:"zone_id"`
-	Hostname       types.String                       `tfsdk:"hostname" json:"hostname"`
-	SSL            *CustomHostnameSSLModel            `tfsdk:"ssl" json:"ssl"`
-	CustomMetadata *CustomHostnameCustomMetadataModel `tfsdk:"custom_metadata" json:"custom_metadata"`
+	ID                 types.String                       `tfsdk:"id" json:"id,computed"`
+	ZoneID             types.String                       `tfsdk:"zone_id" path:"zone_id"`
+	Hostname           types.String                       `tfsdk:"hostname" json:"hostname"`
+	SSL                *CustomHostnameSSLModel            `tfsdk:"ssl" json:"ssl"`
+	CustomMetadata     *CustomHostnameCustomMetadataModel `tfsdk:"custom_metadata" json:"custom_metadata"`
+	CreatedAt          types.String                       `tfsdk:"created_at" json:"created_at,computed"`
+	CustomOriginServer types.String                       `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
+	CustomOriginSNI    types.String                       `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`
+	Status             types.String                       `tfsdk:"status" json:"status,computed"`
+	VerificationErrors *[]types.String                    `tfsdk:"verification_errors" json:"verification_errors,computed"`
 }
 
 type CustomHostnameSSLModel struct {
@@ -39,4 +44,15 @@ type CustomHostnameSSLSettingsModel struct {
 
 type CustomHostnameCustomMetadataModel struct {
 	Key types.String `tfsdk:"key" json:"key"`
+}
+
+type CustomHostnameOwnershipVerificationModel struct {
+	Name  types.String `tfsdk:"name" json:"name"`
+	Type  types.String `tfsdk:"type" json:"type"`
+	Value types.String `tfsdk:"value" json:"value"`
+}
+
+type CustomHostnameOwnershipVerificationHTTPModel struct {
+	HTTPBody types.String `tfsdk:"http_body" json:"http_body"`
+	HTTPURL  types.String `tfsdk:"http_url" json:"http_url"`
 }

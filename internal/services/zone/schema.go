@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -40,6 +41,45 @@ func (r ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("full", "partial", "secondary"),
 				},
+			},
+			"activated_on": schema.StringAttribute{
+				Description: "The last time proof of ownership was detected and the zone was made\nactive",
+				Computed:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the zone was created",
+				Computed:    true,
+			},
+			"development_mode": schema.Float64Attribute{
+				Description: "The interval (in seconds) from when development mode expires\n(positive integer) or last expired (negative integer) for the\ndomain. If development mode has never been enabled, this value is 0.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the zone was last modified",
+				Computed:    true,
+			},
+			"name_servers": schema.ListAttribute{
+				Description: "The name servers Cloudflare assigns to a zone",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"original_dnshost": schema.StringAttribute{
+				Description: "DNS host at the time of switching to Cloudflare",
+				Computed:    true,
+			},
+			"original_name_servers": schema.ListAttribute{
+				Description: "Original name servers before moving to Cloudflare",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"original_registrar": schema.StringAttribute{
+				Description: "Registrar for the domain at the time of switching to Cloudflare",
+				Computed:    true,
+			},
+			"vanity_name_servers": schema.ListAttribute{
+				Description: "An array of domains used for custom name servers. This is only available for Business and Enterprise plans.",
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 		},
 	}

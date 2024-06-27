@@ -13,4 +13,11 @@ type EmailRoutingSettingsResultEnvelope struct {
 type EmailRoutingSettingsModel struct {
 	ID             types.String `tfsdk:"id" json:"id"`
 	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
+	Created        types.String `tfsdk:"created" json:"created,computed"`
+	Enabled        types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	Modified       types.String `tfsdk:"modified" json:"modified,computed"`
+	Name           types.String `tfsdk:"name" json:"name,computed"`
+	SkipWizard     types.Bool   `tfsdk:"skip_wizard" json:"skip_wizard,computed"`
+	Status         types.String `tfsdk:"status" json:"status,computed"`
+	Tag            types.String `tfsdk:"tag" json:"tag,computed"`
 }

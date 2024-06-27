@@ -43,6 +43,12 @@ func (r WebAnalyticsRuleResource) Schema(ctx context.Context, req resource.Schem
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"created": schema.StringAttribute{
+				Computed: true,
+			},
+			"priority": schema.Float64Attribute{
+				Computed: true,
+			},
 		},
 	}
 }

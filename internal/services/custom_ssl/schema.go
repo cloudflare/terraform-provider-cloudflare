@@ -65,6 +65,10 @@ func (r CustomSSLResource) Schema(ctx context.Context, req resource.SchemaReques
 				},
 				Default: stringdefault.StaticString("legacy_custom"),
 			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 		},
 	}
 }

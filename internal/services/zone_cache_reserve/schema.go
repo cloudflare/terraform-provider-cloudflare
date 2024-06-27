@@ -38,6 +38,10 @@ func (r ZoneCacheReserveResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Default: stringdefault.StaticString("off"),
 			},
+			"modified_on": schema.StringAttribute{
+				Description: "last time this setting was modified.",
+				Computed:    true,
+			},
 		},
 	}
 }

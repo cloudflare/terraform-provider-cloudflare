@@ -39,6 +39,30 @@ func (r MTLSCertificateResource) Schema(ctx context.Context, req resource.Schema
 				Description: "The private key for the certificate",
 				Optional:    true,
 			},
+			"expires_on": schema.StringAttribute{
+				Description: "When the certificate expires.",
+				Computed:    true,
+			},
+			"issuer": schema.StringAttribute{
+				Description: "The certificate authority that issued the certificate.",
+				Computed:    true,
+			},
+			"serial_number": schema.StringAttribute{
+				Description: "The certificate serial number.",
+				Computed:    true,
+			},
+			"signature": schema.StringAttribute{
+				Description: "The type of hash used for the certificate.",
+				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Description: "This is the time the certificate was updated.",
+				Computed:    true,
+			},
+			"uploaded_on": schema.StringAttribute{
+				Description: "This is the time the certificate was uploaded.",
+				Computed:    true,
+			},
 		},
 	}
 }

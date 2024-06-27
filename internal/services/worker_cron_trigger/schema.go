@@ -20,6 +20,22 @@ func (r WorkerCronTriggerResource) Schema(ctx context.Context, req resource.Sche
 				Description: "Name of the script, used in URLs and route configuration.",
 				Required:    true,
 			},
+			"schedules": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"created_on": schema.StringAttribute{
+							Computed: true,
+						},
+						"cron": schema.StringAttribute{
+							Computed: true,
+						},
+						"modified_on": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }

@@ -15,4 +15,7 @@ type TeamsProxyEndpointModel struct {
 	AccountID types.String    `tfsdk:"account_id" path:"account_id"`
 	IPs       *[]types.String `tfsdk:"ips" json:"ips"`
 	Name      types.String    `tfsdk:"name" json:"name"`
+	CreatedAt types.String    `tfsdk:"created_at" json:"created_at,computed"`
+	Subdomain types.String    `tfsdk:"subdomain" json:"subdomain,computed"`
+	UpdatedAt types.String    `tfsdk:"updated_at" json:"updated_at,computed"`
 }

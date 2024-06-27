@@ -89,6 +89,10 @@ func (r EmailRoutingRuleResource) Schema(ctx context.Context, req resource.Schem
 				Optional:    true,
 				Default:     float64default.StaticFloat64(0),
 			},
+			"tag": schema.StringAttribute{
+				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
+				Computed:    true,
+			},
 		},
 	}
 }

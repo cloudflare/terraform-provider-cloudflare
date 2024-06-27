@@ -43,6 +43,13 @@ func (r APIShieldSchemaResource) Schema(ctx context.Context, req resource.Schema
 					stringvalidator.OneOfCaseInsensitive("true", "false"),
 				},
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"source": schema.StringAttribute{
+				Description: "Source of the schema",
+				Computed:    true,
+			},
 		},
 	}
 }

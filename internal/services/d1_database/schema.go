@@ -28,6 +28,20 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 			"name": schema.StringAttribute{
 				Required: true,
 			},
+			"created_at": schema.StringAttribute{
+				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
+				Computed:    true,
+			},
+			"version": schema.StringAttribute{
+				Computed: true,
+			},
+			"file_size": schema.Float64Attribute{
+				Description: "The D1 database's size, in bytes.",
+				Computed:    true,
+			},
+			"num_tables": schema.Float64Attribute{
+				Computed: true,
+			},
 		},
 	}
 }

@@ -165,6 +165,20 @@ func (r WaitingRoomResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"next_event_prequeue_start_time": schema.StringAttribute{
+				Description: "An ISO 8601 timestamp that marks when the next event will begin queueing.",
+				Computed:    true,
+			},
+			"next_event_start_time": schema.StringAttribute{
+				Description: "An ISO 8601 timestamp that marks when the next event will start.",
+				Computed:    true,
+			},
 		},
 	}
 }

@@ -204,6 +204,12 @@ func (r TeamsAccountResource) Schema(ctx context.Context, req resource.SchemaReq
 					},
 				},
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

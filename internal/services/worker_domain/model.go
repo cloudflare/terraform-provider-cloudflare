@@ -17,4 +17,5 @@ type WorkerDomainModel struct {
 	Hostname    types.String `tfsdk:"hostname" json:"hostname"`
 	Service     types.String `tfsdk:"service" json:"service"`
 	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id"`
+	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name,computed"`
 }

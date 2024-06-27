@@ -31,6 +31,16 @@ func (r TeamsProxyEndpointResource) Schema(ctx context.Context, req resource.Sch
 				Description: "The name of the proxy endpoint.",
 				Required:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"subdomain": schema.StringAttribute{
+				Description: "The subdomain to be used as the destination in the proxy client.",
+				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

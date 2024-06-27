@@ -398,6 +398,17 @@ func (r LoadBalancerResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 				Optional:    true,
 			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether to enable (the default) this load balancer.",
+				Computed:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

@@ -11,14 +11,19 @@ type NotificationPolicyResultEnvelope struct {
 }
 
 type NotificationPolicyModel struct {
-	ID          types.String                    `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                    `tfsdk:"account_id" path:"account_id"`
-	AlertType   types.String                    `tfsdk:"alert_type" json:"alert_type"`
-	Enabled     types.Bool                      `tfsdk:"enabled" json:"enabled"`
-	Mechanisms  map[string]*[]types.String      `tfsdk:"mechanisms" json:"mechanisms"`
-	Name        types.String                    `tfsdk:"name" json:"name"`
-	Description types.String                    `tfsdk:"description" json:"description"`
-	Filters     *NotificationPolicyFiltersModel `tfsdk:"filters" json:"filters"`
+	ID          types.String                        `tfsdk:"id" json:"id,computed"`
+	AccountID   types.String                        `tfsdk:"account_id" path:"account_id"`
+	AlertType   types.String                        `tfsdk:"alert_type" json:"alert_type"`
+	Enabled     types.Bool                          `tfsdk:"enabled" json:"enabled"`
+	Mechanisms  map[string]*[]types.String          `tfsdk:"mechanisms" json:"mechanisms"`
+	Name        types.String                        `tfsdk:"name" json:"name"`
+	Description types.String                        `tfsdk:"description" json:"description"`
+	Filters     *NotificationPolicyFiltersModel     `tfsdk:"filters" json:"filters"`
+	Created     types.String                        `tfsdk:"created" json:"created,computed"`
+	Modified    types.String                        `tfsdk:"modified" json:"modified,computed"`
+	Errors      *[]*NotificationPolicyErrorsModel   `tfsdk:"errors" json:"errors,computed"`
+	Messages    *[]*NotificationPolicyMessagesModel `tfsdk:"messages" json:"messages,computed"`
+	Success     types.Bool                          `tfsdk:"success" json:"success,computed"`
 }
 
 type NotificationPolicyFiltersModel struct {
@@ -62,4 +67,21 @@ type NotificationPolicyFiltersModel struct {
 	TunnelName                   *[]types.String `tfsdk:"tunnel_name" json:"tunnel_name"`
 	Where                        *[]types.String `tfsdk:"where" json:"where"`
 	Zones                        *[]types.String `tfsdk:"zones" json:"zones"`
+}
+
+type NotificationPolicyErrorsModel struct {
+	Code    types.Int64  `tfsdk:"code" json:"code"`
+	Message types.String `tfsdk:"message" json:"message"`
+}
+
+type NotificationPolicyMessagesModel struct {
+	Code    types.Int64  `tfsdk:"code" json:"code"`
+	Message types.String `tfsdk:"message" json:"message"`
+}
+
+type NotificationPolicyResultInfoModel struct {
+	Count      types.Float64 `tfsdk:"count" json:"count"`
+	Page       types.Float64 `tfsdk:"page" json:"page"`
+	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
+	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
 }

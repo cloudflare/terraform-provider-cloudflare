@@ -333,6 +333,16 @@ func (r TeamsRuleResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "The wirefilter expression used for traffic matching.",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"deleted_at": schema.StringAttribute{
+				Description: "Date of deletion, if any.",
+				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

@@ -35,6 +35,18 @@ func (r TunnelRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: "UUID of the virtual network.",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Description: "Timestamp of when the resource was created.",
+				Computed:    true,
+			},
+			"deleted_at": schema.StringAttribute{
+				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
+				Computed:    true,
+			},
+			"tunnel_id": schema.StringAttribute{
+				Description: "UUID of the tunnel.",
+				Computed:    true,
+			},
 		},
 	}
 }

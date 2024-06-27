@@ -90,6 +90,10 @@ func (r ZoneCacheVariantsResource) Schema(ctx context.Context, req resource.Sche
 					},
 				},
 			},
+			"modified_on": schema.StringAttribute{
+				Description: "last time this setting was modified.",
+				Computed:    true,
+			},
 		},
 	}
 }

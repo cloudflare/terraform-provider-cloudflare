@@ -16,4 +16,5 @@ type ListModel struct {
 	Kind        types.String `tfsdk:"kind" json:"kind"`
 	Name        types.String `tfsdk:"name" json:"name"`
 	Description types.String `tfsdk:"description" json:"description"`
+	ID          types.String `tfsdk:"id" json:"id,computed"`
 }

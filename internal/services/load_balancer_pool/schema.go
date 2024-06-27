@@ -201,6 +201,21 @@ func (r LoadBalancerPoolResource) Schema(ctx context.Context, req resource.Schem
 					},
 				},
 			},
+			"check_regions": schema.ListAttribute{
+				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"disabled_at": schema.StringAttribute{
+				Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

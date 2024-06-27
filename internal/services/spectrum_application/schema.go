@@ -133,6 +133,14 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 				},
 				Default: stringdefault.StaticString("direct"),
 			},
+			"created_on": schema.StringAttribute{
+				Description: "When the Application was created.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the Application was last modified.",
+				Computed:    true,
+			},
 		},
 	}
 }

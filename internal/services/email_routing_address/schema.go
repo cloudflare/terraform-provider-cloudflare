@@ -27,6 +27,22 @@ func (r EmailRoutingAddressResource) Schema(ctx context.Context, req resource.Sc
 				Description: "The contact email address of the user.",
 				Required:    true,
 			},
+			"created": schema.StringAttribute{
+				Description: "The date and time the destination address has been created.",
+				Computed:    true,
+			},
+			"modified": schema.StringAttribute{
+				Description: "The date and time the destination address was last modified.",
+				Computed:    true,
+			},
+			"tag": schema.StringAttribute{
+				Description: "Destination address tag. (Deprecated, replaced by destination address identifier)",
+				Computed:    true,
+			},
+			"verified": schema.StringAttribute{
+				Description: "The date and time the destination address has been verified. Null means not verified yet.",
+				Computed:    true,
+			},
 		},
 	}
 }

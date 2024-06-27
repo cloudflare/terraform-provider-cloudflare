@@ -16,4 +16,8 @@ type Web3HostnameModel struct {
 	Target         types.String `tfsdk:"target" json:"target"`
 	Description    types.String `tfsdk:"description" json:"description"`
 	Dnslink        types.String `tfsdk:"dnslink" json:"dnslink"`
+	CreatedOn      types.String `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn     types.String `tfsdk:"modified_on" json:"modified_on,computed"`
+	Name           types.String `tfsdk:"name" json:"name,computed"`
+	Status         types.String `tfsdk:"status" json:"status,computed"`
 }

@@ -17,6 +17,7 @@ type AccessRuleModel struct {
 	Configuration *AccessRuleConfigurationModel `tfsdk:"configuration" json:"configuration"`
 	Mode          types.String                  `tfsdk:"mode" json:"mode"`
 	Notes         types.String                  `tfsdk:"notes" json:"notes"`
+	ID            types.String                  `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessRuleConfigurationModel struct {

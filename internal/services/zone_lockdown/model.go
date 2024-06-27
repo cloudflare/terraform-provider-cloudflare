@@ -11,6 +11,16 @@ type ZoneLockdownResultEnvelope struct {
 }
 
 type ZoneLockdownModel struct {
-	ID             types.String `tfsdk:"id" json:"id,computed"`
-	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ID             types.String    `tfsdk:"id" json:"id,computed"`
+	ZoneIdentifier types.String    `tfsdk:"zone_identifier" path:"zone_identifier"`
+	CreatedOn      types.String    `tfsdk:"created_on" json:"created_on,computed"`
+	Description    types.String    `tfsdk:"description" json:"description,computed"`
+	ModifiedOn     types.String    `tfsdk:"modified_on" json:"modified_on,computed"`
+	Paused         types.Bool      `tfsdk:"paused" json:"paused,computed"`
+	URLs           *[]types.String `tfsdk:"urls" json:"urls,computed"`
+}
+
+type ZoneLockdownConfigurationsModel struct {
+	Target types.String `tfsdk:"target" json:"target"`
+	Value  types.String `tfsdk:"value" json:"value"`
 }

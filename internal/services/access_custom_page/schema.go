@@ -48,6 +48,12 @@ func (r AccessCustomPageResource) Schema(ctx context.Context, req resource.Schem
 				Description: "Number of apps the custom page is assigned to.",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

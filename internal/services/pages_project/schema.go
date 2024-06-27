@@ -717,6 +717,26 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: "Production branch of the project. Used to identify production deployments.",
 				Optional:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "Id of the project.",
+				Computed:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the project was created.",
+				Computed:    true,
+			},
+			"domains": schema.ListAttribute{
+				Description: "A list of associated custom domains for the project.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"source": schema.StringAttribute{
+				Computed: true,
+			},
+			"subdomain": schema.StringAttribute{
+				Description: "The Cloudflare subdomain associated with the project.",
+				Computed:    true,
+			},
 		},
 	}
 }

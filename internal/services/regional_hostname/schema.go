@@ -31,6 +31,40 @@ func (r RegionalHostnameResource) Schema(ctx context.Context, req resource.Schem
 				Description: "Identifying key for the region",
 				Required:    true,
 			},
+			"created_on": schema.StringAttribute{
+				Description: "When the regional hostname was created",
+				Computed:    true,
+			},
+			"errors": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"code": schema.Int64Attribute{
+							Required: true,
+						},
+						"message": schema.StringAttribute{
+							Required: true,
+						},
+					},
+				},
+			},
+			"messages": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"code": schema.Int64Attribute{
+							Required: true,
+						},
+						"message": schema.StringAttribute{
+							Required: true,
+						},
+					},
+				},
+			},
+			"success": schema.BoolAttribute{
+				Description: "Whether the API call was successful",
+				Computed:    true,
+			},
 		},
 	}
 }

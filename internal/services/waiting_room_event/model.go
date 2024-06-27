@@ -27,4 +27,6 @@ type WaitingRoomEventModel struct {
 	ShuffleAtEventStart   types.Bool   `tfsdk:"shuffle_at_event_start" json:"shuffle_at_event_start"`
 	Suspended             types.Bool   `tfsdk:"suspended" json:"suspended"`
 	TotalActiveUsers      types.Int64  `tfsdk:"total_active_users" json:"total_active_users"`
+	CreatedOn             types.String `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn            types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

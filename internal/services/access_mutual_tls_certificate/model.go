@@ -17,4 +17,8 @@ type AccessMutualTLSCertificateModel struct {
 	Certificate         types.String    `tfsdk:"certificate" json:"certificate"`
 	Name                types.String    `tfsdk:"name" json:"name"`
 	AssociatedHostnames *[]types.String `tfsdk:"associated_hostnames" json:"associated_hostnames"`
+	CreatedAt           types.String    `tfsdk:"created_at" json:"created_at,computed"`
+	ExpiresOn           types.String    `tfsdk:"expires_on" json:"expires_on,computed"`
+	Fingerprint         types.String    `tfsdk:"fingerprint" json:"fingerprint,computed"`
+	UpdatedAt           types.String    `tfsdk:"updated_at" json:"updated_at,computed"`
 }

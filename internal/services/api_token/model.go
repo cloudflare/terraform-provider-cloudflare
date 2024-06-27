@@ -17,6 +17,8 @@ type APITokenModel struct {
 	Condition *APITokenConditionModel   `tfsdk:"condition" json:"condition"`
 	ExpiresOn types.String              `tfsdk:"expires_on" json:"expires_on"`
 	NotBefore types.String              `tfsdk:"not_before" json:"not_before"`
+	Value     types.String              `tfsdk:"value" json:"value,computed"`
+	ID        types.String              `tfsdk:"id" json:"id,computed"`
 }
 
 type APITokenPoliciesModel struct {

@@ -19,6 +19,7 @@ type CustomSSLModel struct {
 	GeoRestrictions     *CustomSSLGeoRestrictionsModel `tfsdk:"geo_restrictions" json:"geo_restrictions"`
 	Policy              types.String                   `tfsdk:"policy" json:"policy"`
 	Type                types.String                   `tfsdk:"type" json:"type"`
+	ID                  types.String                   `tfsdk:"id" json:"id,computed"`
 }
 
 type CustomSSLGeoRestrictionsModel struct {
