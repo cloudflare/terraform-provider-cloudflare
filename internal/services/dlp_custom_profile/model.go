@@ -11,9 +11,18 @@ type DLPCustomProfileResultEnvelope struct {
 }
 
 type DLPCustomProfileModel struct {
-	AccountID types.String                      `tfsdk:"account_id" path:"account_id"`
-	ProfileID types.String                      `tfsdk:"profile_id" path:"profile_id"`
-	Profiles  *[]*DLPCustomProfileProfilesModel `tfsdk:"profiles" json:"profiles"`
+	AccountID         types.String                      `tfsdk:"account_id" path:"account_id"`
+	ProfileID         types.String                      `tfsdk:"profile_id" path:"profile_id"`
+	Profiles          *[]*DLPCustomProfileProfilesModel `tfsdk:"profiles" json:"profiles"`
+	ID                types.String                      `tfsdk:"id" json:"id,computed"`
+	AllowedMatchCount types.Float64                     `tfsdk:"allowed_match_count" json:"allowed_match_count,computed"`
+	CreatedAt         types.String                      `tfsdk:"created_at" json:"created_at,computed"`
+	Description       types.String                      `tfsdk:"description" json:"description,computed"`
+	Entries           *[]*DLPCustomProfileEntriesModel  `tfsdk:"entries" json:"entries,computed"`
+	Name              types.String                      `tfsdk:"name" json:"name,computed"`
+	OCREnabled        types.Bool                        `tfsdk:"ocr_enabled" json:"ocr_enabled,computed"`
+	Type              types.String                      `tfsdk:"type" json:"type,computed"`
+	UpdatedAt         types.String                      `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type DLPCustomProfileProfilesModel struct {
@@ -41,6 +50,30 @@ type DLPCustomProfileProfilesEntriesModel struct {
 }
 
 type DLPCustomProfileProfilesEntriesPatternModel struct {
+	Regex      types.String `tfsdk:"regex" json:"regex"`
+	Validation types.String `tfsdk:"validation" json:"validation"`
+}
+
+type DLPCustomProfileContextAwarenessModel struct {
+	Enabled types.Bool                                 `tfsdk:"enabled" json:"enabled"`
+	Skip    *DLPCustomProfileContextAwarenessSkipModel `tfsdk:"skip" json:"skip"`
+}
+
+type DLPCustomProfileContextAwarenessSkipModel struct {
+	Files types.Bool `tfsdk:"files" json:"files"`
+}
+
+type DLPCustomProfileEntriesModel struct {
+	ID        types.String                         `tfsdk:"id" json:"id,computed"`
+	CreatedAt types.String                         `tfsdk:"created_at" json:"created_at,computed"`
+	Enabled   types.Bool                           `tfsdk:"enabled" json:"enabled"`
+	Name      types.String                         `tfsdk:"name" json:"name"`
+	Pattern   *DLPCustomProfileEntriesPatternModel `tfsdk:"pattern" json:"pattern"`
+	ProfileID types.String                         `tfsdk:"profile_id" json:"profile_id"`
+	UpdatedAt types.String                         `tfsdk:"updated_at" json:"updated_at,computed"`
+}
+
+type DLPCustomProfileEntriesPatternModel struct {
 	Regex      types.String `tfsdk:"regex" json:"regex"`
 	Validation types.String `tfsdk:"validation" json:"validation"`
 }

@@ -23,6 +23,8 @@ type SpectrumApplicationModel struct {
 	ProxyProtocol    types.String                       `tfsdk:"proxy_protocol" json:"proxy_protocol"`
 	TLS              types.String                       `tfsdk:"tls" json:"tls"`
 	TrafficType      types.String                       `tfsdk:"traffic_type" json:"traffic_type"`
+	CreatedOn        types.String                       `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn       types.String                       `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type SpectrumApplicationDNSModel struct {

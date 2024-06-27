@@ -24,6 +24,8 @@ type AccessOrganizationModel struct {
 	UiReadOnlyToggleReason         types.String                        `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason"`
 	UserSeatExpirationInactiveTime types.String                        `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time"`
 	WARPAuthSessionDuration        types.String                        `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
+	CreatedAt                      types.String                        `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt                      types.String                        `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessOrganizationLoginDesignModel struct {
@@ -32,4 +34,9 @@ type AccessOrganizationLoginDesignModel struct {
 	HeaderText      types.String `tfsdk:"header_text" json:"header_text"`
 	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path"`
 	TextColor       types.String `tfsdk:"text_color" json:"text_color"`
+}
+
+type AccessOrganizationCustomPagesModel struct {
+	Forbidden      types.String `tfsdk:"forbidden" json:"forbidden"`
+	IdentityDenied types.String `tfsdk:"identity_denied" json:"identity_denied"`
 }

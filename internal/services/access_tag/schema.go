@@ -27,6 +27,16 @@ func (r AccessTagResource) Schema(ctx context.Context, req resource.SchemaReques
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
+			"app_count": schema.Int64Attribute{
+				Description: "The number of applications that have this tag",
+				Computed:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

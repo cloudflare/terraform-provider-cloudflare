@@ -18,6 +18,8 @@ type DLPPredefinedProfileModel struct {
 	ContextAwareness  *DLPPredefinedProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness"`
 	Entries           *[]*DLPPredefinedProfileEntriesModel       `tfsdk:"entries" json:"entries"`
 	OCREnabled        types.Bool                                 `tfsdk:"ocr_enabled" json:"ocr_enabled"`
+	Name              types.String                               `tfsdk:"name" json:"name,computed"`
+	Type              types.String                               `tfsdk:"type" json:"type,computed"`
 }
 
 type DLPPredefinedProfileContextAwarenessModel struct {

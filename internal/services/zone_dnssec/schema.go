@@ -33,6 +33,46 @@ func (r ZoneDNSSECResource) Schema(ctx context.Context, req resource.SchemaReque
 					stringvalidator.OneOfCaseInsensitive("active", "disabled"),
 				},
 			},
+			"algorithm": schema.StringAttribute{
+				Description: "Algorithm key code.",
+				Computed:    true,
+			},
+			"digest": schema.StringAttribute{
+				Description: "Digest hash.",
+				Computed:    true,
+			},
+			"digest_algorithm": schema.StringAttribute{
+				Description: "Type of digest algorithm.",
+				Computed:    true,
+			},
+			"digest_type": schema.StringAttribute{
+				Description: "Coded type for digest algorithm.",
+				Computed:    true,
+			},
+			"ds": schema.StringAttribute{
+				Description: "Full DS record.",
+				Computed:    true,
+			},
+			"flags": schema.Float64Attribute{
+				Description: "Flag for DNSSEC record.",
+				Computed:    true,
+			},
+			"key_tag": schema.Float64Attribute{
+				Description: "Code for key tag.",
+				Computed:    true,
+			},
+			"key_type": schema.StringAttribute{
+				Description: "Algorithm key type.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When DNSSEC was last modified.",
+				Computed:    true,
+			},
+			"public_key": schema.StringAttribute{
+				Description: "Public key for DS record.",
+				Computed:    true,
+			},
 		},
 	}
 }

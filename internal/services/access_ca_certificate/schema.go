@@ -24,6 +24,10 @@ func (r AccessCACertificateResource) Schema(ctx context.Context, req resource.Sc
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "The ID of the CA.",
+				Computed:    true,
+			},
 		},
 	}
 }

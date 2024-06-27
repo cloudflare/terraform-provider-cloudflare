@@ -26,6 +26,9 @@ type LogpushJobModel struct {
 	Name                     types.String                  `tfsdk:"name" json:"name"`
 	OutputOptions            *LogpushJobOutputOptionsModel `tfsdk:"output_options" json:"output_options"`
 	OwnershipChallenge       types.String                  `tfsdk:"ownership_challenge" json:"ownership_challenge"`
+	ErrorMessage             types.String                  `tfsdk:"error_message" json:"error_message,computed"`
+	LastComplete             types.String                  `tfsdk:"last_complete" json:"last_complete,computed"`
+	LastError                types.String                  `tfsdk:"last_error" json:"last_error,computed"`
 }
 
 type LogpushJobOutputOptionsModel struct {

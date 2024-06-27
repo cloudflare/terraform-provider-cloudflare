@@ -18,4 +18,6 @@ type AccessCustomPageModel struct {
 	Name       types.String `tfsdk:"name" json:"name"`
 	Type       types.String `tfsdk:"type" json:"type"`
 	AppCount   types.Int64  `tfsdk:"app_count" json:"app_count"`
+	CreatedAt  types.String `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt  types.String `tfsdk:"updated_at" json:"updated_at,computed"`
 }

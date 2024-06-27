@@ -25,6 +25,10 @@ type LoadBalancerPoolModel struct {
 	NotificationEmail  types.String                             `tfsdk:"notification_email" json:"notification_email"`
 	NotificationFilter *LoadBalancerPoolNotificationFilterModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringModel     `tfsdk:"origin_steering" json:"origin_steering"`
+	CheckRegions       *[]types.String                          `tfsdk:"check_regions" json:"check_regions,computed"`
+	CreatedOn          types.String                             `tfsdk:"created_on" json:"created_on,computed"`
+	DisabledAt         types.String                             `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	ModifiedOn         types.String                             `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type LoadBalancerPoolOriginsModel struct {

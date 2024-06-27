@@ -67,6 +67,24 @@ func (r AddressMapResource) Schema(ctx context.Context, req resource.SchemaReque
 					},
 				},
 			},
+			"can_delete": schema.BoolAttribute{
+				Description: "If set to false, then the Address Map cannot be deleted via API. This is true for Cloudflare-managed maps.",
+				Computed:    true,
+			},
+			"can_modify_ips": schema.BoolAttribute{
+				Description: "If set to false, then the IPs on the Address Map cannot be modified via the API. This is true for Cloudflare-managed maps.",
+				Computed:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"default_sni": schema.StringAttribute{
+				Description: "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
+				Computed:    true,
+			},
+			"modified_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

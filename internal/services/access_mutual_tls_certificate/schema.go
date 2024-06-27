@@ -41,6 +41,19 @@ func (r AccessMutualTLSCertificateResource) Schema(ctx context.Context, req reso
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"expires_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"fingerprint": schema.StringAttribute{
+				Description: "The MD5 fingerprint of the certificate.",
+				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

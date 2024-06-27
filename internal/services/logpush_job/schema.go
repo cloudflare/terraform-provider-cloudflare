@@ -173,6 +173,18 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 				Description: "Ownership challenge token to prove destination ownership.",
 				Optional:    true,
 			},
+			"error_message": schema.StringAttribute{
+				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
+				Computed:    true,
+			},
+			"last_complete": schema.StringAttribute{
+				Description: "Records the last time for which logs have been successfully pushed. If the last successful push was for logs range 2018-07-23T10:00:00Z to 2018-07-23T10:01:00Z then the value of this field will be 2018-07-23T10:01:00Z. If the job has never run or has just been enabled and hasn't run yet then the field will be empty.",
+				Computed:    true,
+			},
+			"last_error": schema.StringAttribute{
+				Description: "Records the last time the job failed. If not null, the job is currently failing. If null, the job has either never failed or has run successfully at least once since last failure. See also the error_message field.",
+				Computed:    true,
+			},
 		},
 	}
 }

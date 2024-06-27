@@ -164,6 +164,23 @@ func (r HealthcheckResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Optional:    true,
 				Default:     stringdefault.StaticString("HTTP"),
 			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"failure_reason": schema.StringAttribute{
+				Description: "The current failure reason if status is unhealthy.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"status": schema.StringAttribute{
+				Description: "The current status of the origin server according to the health check.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("unknown", "healthy", "unhealthy", "suspended"),
+				},
+			},
 		},
 	}
 }

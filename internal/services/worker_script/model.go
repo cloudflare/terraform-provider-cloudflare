@@ -11,12 +11,19 @@ type WorkerScriptResultEnvelope struct {
 }
 
 type WorkerScriptModel struct {
-	ID          types.String               `tfsdk:"id" json:"id"`
-	AccountID   types.String               `tfsdk:"account_id" path:"account_id"`
-	ScriptName  types.String               `tfsdk:"script_name" path:"script_name"`
-	AnyPartName types.String               `tfsdk:"any_part_name" json:"<any part name>"`
-	Metadata    *WorkerScriptMetadataModel `tfsdk:"metadata" json:"metadata"`
-	Message     types.String               `tfsdk:"message" json:"message"`
+	ID            types.String                       `tfsdk:"id" json:"id"`
+	AccountID     types.String                       `tfsdk:"account_id" path:"account_id"`
+	ScriptName    types.String                       `tfsdk:"script_name" path:"script_name"`
+	AnyPartName   types.String                       `tfsdk:"any_part_name" json:"<any part name>"`
+	Metadata      *WorkerScriptMetadataModel         `tfsdk:"metadata" json:"metadata"`
+	Message       types.String                       `tfsdk:"message" json:"message"`
+	CreatedOn     types.String                       `tfsdk:"created_on" json:"created_on,computed"`
+	Etag          types.String                       `tfsdk:"etag" json:"etag,computed"`
+	Logpush       types.Bool                         `tfsdk:"logpush" json:"logpush,computed"`
+	ModifiedOn    types.String                       `tfsdk:"modified_on" json:"modified_on,computed"`
+	PlacementMode types.String                       `tfsdk:"placement_mode" json:"placement_mode,computed"`
+	TailConsumers *[]*WorkerScriptTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	UsageModel    types.String                       `tfsdk:"usage_model" json:"usage_model,computed"`
 }
 
 type WorkerScriptMetadataModel struct {
@@ -79,6 +86,12 @@ type WorkerScriptMetadataPlacementModel struct {
 }
 
 type WorkerScriptMetadataTailConsumersModel struct {
+	Service     types.String `tfsdk:"service" json:"service"`
+	Environment types.String `tfsdk:"environment" json:"environment"`
+	Namespace   types.String `tfsdk:"namespace" json:"namespace"`
+}
+
+type WorkerScriptTailConsumersModel struct {
 	Service     types.String `tfsdk:"service" json:"service"`
 	Environment types.String `tfsdk:"environment" json:"environment"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace"`

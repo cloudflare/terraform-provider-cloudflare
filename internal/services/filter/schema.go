@@ -20,6 +20,22 @@ func (r FilterResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				Description: "The unique identifier of the filter.",
 				Optional:    true,
 			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the filter.",
+				Computed:    true,
+			},
+			"expression": schema.StringAttribute{
+				Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
+				Computed:    true,
+			},
+			"paused": schema.BoolAttribute{
+				Description: "When true, indicates that the filter is currently paused.",
+				Computed:    true,
+			},
+			"ref": schema.StringAttribute{
+				Description: "A short reference tag. Allows you to select related filters.",
+				Computed:    true,
+			},
 		},
 	}
 }

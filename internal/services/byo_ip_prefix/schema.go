@@ -35,6 +35,36 @@ func (r ByoIPPrefixResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: "Identifier for the uploaded LOA document.",
 				Required:    true,
 			},
+			"advertised": schema.BoolAttribute{
+				Description: "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
+				Computed:    true,
+			},
+			"advertised_modified_at": schema.StringAttribute{
+				Description: "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
+				Computed:    true,
+			},
+			"approved": schema.StringAttribute{
+				Description: "Approval state of the prefix (P = pending, V = active).",
+				Computed:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"description": schema.StringAttribute{
+				Description: "Description of the prefix.",
+				Computed:    true,
+			},
+			"modified_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"on_demand_enabled": schema.BoolAttribute{
+				Description: "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",
+				Computed:    true,
+			},
+			"on_demand_locked": schema.BoolAttribute{
+				Description: "Whether advertisement status of the prefix is locked, meaning it cannot be changed.",
+				Computed:    true,
+			},
 		},
 	}
 }

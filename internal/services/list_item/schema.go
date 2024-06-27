@@ -93,6 +93,10 @@ func (r ListItemResource) Schema(ctx context.Context, req resource.SchemaRequest
 					},
 				},
 			},
+			"operation_id": schema.StringAttribute{
+				Description: "The unique operation ID of the asynchronous action.",
+				Computed:    true,
+			},
 		},
 	}
 }

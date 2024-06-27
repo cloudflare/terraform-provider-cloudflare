@@ -596,6 +596,12 @@ func (r AccessGroupResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

@@ -27,6 +27,8 @@ type AccessPolicyModel struct {
 	PurposeJustificationRequired types.Bool                          `tfsdk:"purpose_justification_required" json:"purpose_justification_required"`
 	Require                      *[]*AccessPolicyRequireModel        `tfsdk:"require" json:"require"`
 	SessionDuration              types.String                        `tfsdk:"session_duration" json:"session_duration"`
+	CreatedAt                    types.String                        `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt                    types.String                        `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessPolicyIncludeModel struct {

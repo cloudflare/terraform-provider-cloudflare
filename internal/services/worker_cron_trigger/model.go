@@ -11,6 +11,13 @@ type WorkerCronTriggerResultEnvelope struct {
 }
 
 type WorkerCronTriggerModel struct {
-	AccountID  types.String `tfsdk:"account_id" path:"account_id"`
-	ScriptName types.String `tfsdk:"script_name" path:"script_name"`
+	AccountID  types.String                        `tfsdk:"account_id" path:"account_id"`
+	ScriptName types.String                        `tfsdk:"script_name" path:"script_name"`
+	Schedules  *[]*WorkerCronTriggerSchedulesModel `tfsdk:"schedules" json:"schedules,computed"`
+}
+
+type WorkerCronTriggerSchedulesModel struct {
+	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
+	Cron       types.String `tfsdk:"cron" json:"cron,computed"`
+	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

@@ -101,6 +101,87 @@ func (r DLPCustomProfileResource) Schema(ctx context.Context, req resource.Schem
 					},
 				},
 			},
+			"id": schema.StringAttribute{
+				Description: "The ID for this profile",
+				Computed:    true,
+			},
+			"allowed_match_count": schema.Float64Attribute{
+				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
+				Computed:    true,
+				Default:     float64default.StaticFloat64(0),
+			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the profile.",
+				Computed:    true,
+			},
+			"entries": schema.ListNestedAttribute{
+				Description: "The entries for this profile.",
+				Computed:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The ID for this entry",
+							Computed:    true,
+						},
+						"created_at": schema.StringAttribute{
+							Computed: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Description: "Whether the entry is enabled or not.",
+							Optional:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "The name of the entry.",
+							Optional:    true,
+						},
+						"pattern": schema.SingleNestedAttribute{
+							Description: "A pattern that matches an entry",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"regex": schema.StringAttribute{
+									Description: "The regex pattern.",
+									Required:    true,
+								},
+								"validation": schema.StringAttribute{
+									Description: "Validation algorithm for the pattern. This algorithm will get run on potential matches, and if it returns false, the entry will not be matched.",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("luhn"),
+									},
+								},
+							},
+						},
+						"profile_id": schema.StringAttribute{
+							Description: "ID of the parent profile",
+							Optional:    true,
+						},
+						"updated_at": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the profile.",
+				Computed:    true,
+			},
+			"ocr_enabled": schema.BoolAttribute{
+				Description: "If true, scan images via OCR to determine if any text present matches filters.",
+				Computed:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of the profile.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("custom"),
+				},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

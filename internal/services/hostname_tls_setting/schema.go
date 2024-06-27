@@ -33,6 +33,17 @@ func (r HostnameTLSSettingResource) Schema(ctx context.Context, req resource.Sch
 				Description: "The tls setting value.",
 				Required:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Description: "This is the time the tls setting was originally created for this hostname.",
+				Computed:    true,
+			},
+			"status": schema.StringAttribute{
+				Computed: true,
+			},
+			"updated_at": schema.StringAttribute{
+				Description: "This is the time the tls setting was updated.",
+				Computed:    true,
+			},
 		},
 	}
 }

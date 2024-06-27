@@ -661,6 +661,12 @@ func (r AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaReq
 				Optional:    true,
 				Default:     stringdefault.StaticString("24h"),
 			},
+			"created_at": schema.StringAttribute{
+				Computed: true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }

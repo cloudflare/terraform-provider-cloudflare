@@ -118,6 +118,12 @@ func (r LoadBalancerMonitorResource) Schema(ctx context.Context, req resource.Sc
 				},
 				Default: stringdefault.StaticString("http"),
 			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed: true,
+			},
 		},
 	}
 }
