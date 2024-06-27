@@ -105,7 +105,7 @@ func (r *ZoneSettingResource) Read(ctx context.Context, req resource.ReadRequest
 	env := ZoneSettingResultEnvelope{*data}
 	_, err := r.client.Zones.Settings.Get(
 		ctx,
-		data.SettingID.ValueString(),
+		data.ID.ValueString(),
 		zones.SettingGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -145,7 +145,7 @@ func (r *ZoneSettingResource) Update(ctx context.Context, req resource.UpdateReq
 	env := ZoneSettingResultEnvelope{*data}
 	_, err = r.client.Zones.Settings.Edit(
 		ctx,
-		data.SettingID.ValueString(),
+		data.ID.ValueString(),
 		zones.SettingEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
