@@ -62,30 +62,16 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	config := buildHyperdriveConfigFromModel(data, caching)
+	config := buildHyperdriveCreateUpdateConfigsFromModel(data, caching)
 
-	createHyperdriveConfig, err := r.client.V1.CreateHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()),
-		cfv1.CreateHyperdriveConfigParams{
-			Name: config.Name,
-			Origin: cfv1.HyperdriveConfigOrigin{
-				Database: config.Origin.Database,
-				Password: config.Origin.Password,
-				Host:     config.Origin.Host,
-				Port:     config.Origin.Port,
-				Scheme:   config.Origin.Scheme,
-				User:     config.Origin.User,
-			},
-			Caching: cfv1.HyperdriveConfigCaching{
-				Disabled: config.Caching.Disabled,
-			},
-		})
+	createHyperdriveConfig, err := r.client.V1.CreateHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), config)
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating hyperdrive config", err.Error())
 		return
 	}
 
 	var diags diag.Diagnostics
-	data, diags = buildHyperdriveConfigModelFromHyperdriveConfig(ctx, data, createHyperdriveConfig)
+	data, diags = buildHyperdriveConfigModelFromAPIResponse(ctx, data, createHyperdriveConfig)
 	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -108,7 +94,7 @@ func (r *HyperdriveConfigResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	var diags diag.Diagnostics
-	data, diags = buildHyperdriveConfigModelFromHyperdriveConfig(ctx, data, config)
+	data, diags = buildHyperdriveConfigModelFromAPIResponse(ctx, data, config)
 	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -125,22 +111,12 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	config := buildHyperdriveConfigFromModel(data, caching)
+	config := buildHyperdriveCreateUpdateConfigsFromModel(data, caching)
 
 	updatedConfig, err := r.client.V1.UpdateHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), cfv1.UpdateHyperdriveConfigParams{
-		Name:         config.Name,
-		HyperdriveID: config.ID,
-		Origin: cfv1.HyperdriveConfigOrigin{
-			Database: config.Origin.Database,
-			Password: config.Origin.Password,
-			Host:     config.Origin.Host,
-			Port:     config.Origin.Port,
-			Scheme:   config.Origin.Scheme,
-			User:     config.Origin.User,
-		},
-		Caching: cfv1.HyperdriveConfigCaching{
-			Disabled: config.Caching.Disabled,
-		},
+		Name:    config.Name,
+		Origin:  config.Origin,
+		Caching: config.Caching,
 	})
 
 	if err != nil {
@@ -149,7 +125,7 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	var diags diag.Diagnostics
-	data, diags = buildHyperdriveConfigModelFromHyperdriveConfig(ctx, data, updatedConfig)
+	data, diags = buildHyperdriveConfigModelFromAPIResponse(ctx, data, updatedConfig)
 	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -179,16 +155,25 @@ func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)
 }
 
-func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel, caching *HyperdriveConfigCachingModel) cfv1.HyperdriveConfig {
-	built := cfv1.HyperdriveConfig{
-		ID:   config.ID.ValueString(),
+func buildHyperdriveCreateUpdateConfigsFromModel(config *HyperdriveConfigModel, caching *HyperdriveConfigCachingModel) cfv1.CreateHyperdriveConfigParams {
+	built := cfv1.CreateHyperdriveConfigParams{
 		Name: config.Name.ValueString(),
-		Origin: cfv1.HyperdriveConfigOrigin{
-			Database: config.Origin.Database.ValueString(),
+		Origin: cfv1.HyperdriveConfigOriginWithSecrets{
+			HyperdriveConfigOrigin: cfv1.HyperdriveConfigOrigin{
+				Database: config.Origin.Database.ValueString(),
+				Host:     config.Origin.Host.ValueString(),
+			},
 			Password: config.Origin.Password.ValueString(),
-			Host:     config.Origin.Host.ValueString(),
-			Port:     int(config.Origin.Port.ValueInt64()),
 		},
+	}
+
+	if !config.Origin.Port.IsNull() {
+		built.Origin.Port = int(config.Origin.Port.ValueInt64())
+	}
+
+	if !config.Origin.AccessClientID.IsNull() && !config.Origin.AccessClientSecret.IsNull() {
+		built.Origin.AccessClientID = config.Origin.AccessClientID.ValueString()
+		built.Origin.AccessClientSecret = config.Origin.AccessClientSecret.ValueString()
 	}
 
 	if !config.Origin.Scheme.IsNull() {
@@ -201,45 +186,61 @@ func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel, caching *Hype
 
 	built.Caching = cfv1.HyperdriveConfigCaching{}
 
-	if caching != nil && !caching.Disabled.IsNull() {
-		built.Caching.Disabled = cfv1.BoolPtr(caching.Disabled.ValueBool())
+	if caching != nil {
+		if !caching.Disabled.IsNull() {
+			built.Caching.Disabled = cfv1.BoolPtr(caching.Disabled.ValueBool())
+		}
+		if !caching.MaxAge.IsNull() {
+			built.Caching.MaxAge = int(caching.MaxAge.ValueInt64())
+		}
+		if !caching.StaleWhileRevalidate.IsNull() {
+			built.Caching.StaleWhileRevalidate = int(caching.StaleWhileRevalidate.ValueInt64())
+		}
 	}
 
 	return built
 }
 
-func buildHyperdriveConfigModelFromHyperdriveConfig(ctx context.Context, data *HyperdriveConfigModel, config cfv1.HyperdriveConfig) (*HyperdriveConfigModel, diag.Diagnostics) {
+func buildHyperdriveConfigModelFromAPIResponse(ctx context.Context, data *HyperdriveConfigModel, config cfv1.HyperdriveConfig) (*HyperdriveConfigModel, diag.Diagnostics) {
 	var scheme = flatteners.String("postgres")
 	if data.Origin != nil {
 		scheme = data.Origin.Scheme
 	}
 
 	var password = flatteners.String("")
+	var accessClientSecret = flatteners.String("")
 	if data.Origin != nil {
 		password = data.Origin.Password
+		accessClientSecret = data.Origin.AccessClientSecret
 	}
 
 	var caching, diags = types.ObjectValueFrom(
 		ctx,
 		HyperdriveConfigCachingModel{}.AttributeTypes(),
 		HyperdriveConfigCachingModel{
-			Disabled: types.BoolValue(*config.Caching.Disabled),
+			Disabled:             types.BoolValue(*config.Caching.Disabled),
+			MaxAge:               flatteners.Int64(int64(config.Caching.MaxAge)),
+			StaleWhileRevalidate: flatteners.Int64(int64(config.Caching.StaleWhileRevalidate)),
 		},
 	)
+
+	origin := HyperdriveConfigOriginModel{
+		Database:           flatteners.String(config.Origin.Database),
+		Host:               flatteners.String(config.Origin.Host),
+		Port:               flatteners.Int64(int64(config.Origin.Port)),
+		User:               flatteners.String(config.Origin.User),
+		Scheme:             scheme,
+		Password:           password,
+		AccessClientID:     flatteners.String(config.Origin.AccessClientID),
+		AccessClientSecret: accessClientSecret,
+	}
 
 	built := HyperdriveConfigModel{
 		AccountID: data.AccountID,
 		ID:        flatteners.String(config.ID),
 		Name:      flatteners.String(config.Name),
-		Origin: &HyperdriveConfigOriginModel{
-			Database: flatteners.String(config.Origin.Database),
-			Host:     flatteners.String(config.Origin.Host),
-			Port:     flatteners.Int64(int64(config.Origin.Port)),
-			User:     flatteners.String(config.Origin.User),
-			Scheme:   scheme,
-			Password: password,
-		},
-		Caching: caching,
+		Origin:    &origin,
+		Caching:   caching,
 	}
 
 	return &built, diags
