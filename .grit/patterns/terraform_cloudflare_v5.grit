@@ -1,0 +1,199 @@
+
+language hcl
+
+pattern terraform_cloudflare_v5() {
+  or {
+  `cors_headers { $block }` => `cors_headers = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` },
+  `landing_page_design { $block }` => `landing_page_design = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` },
+  `saas_app { $block }` => `saas_app = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` },
+  `scim_config { $block }` => `scim_config = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` },
+  `exclude { $block }` => `exclude = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
+  `include { $block }` => `include = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
+  `require { $block }` => `require = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
+  `config { $block }` => `config = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_identity_provider" $_ { $_ }` },
+  `scim_config { $block }` => `scim_config = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_identity_provider" $_ { $_ }` },
+  `settings { $block }` => `settings = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_mutual_tls_hostname_settings" $_ { $_ }` },
+  `custom_pages { $block }` => `custom_pages = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_organization" $_ { $_ }` },
+  `login_design { $block }` => `login_design = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_organization" $_ { $_ }` },
+  `approval_group { $block }` => `approval_group = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+  `exclude { $block }` => `exclude = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+  `include { $block }` => `include = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+  `require { $block }` => `require = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+  `configuration { $block }` => `configuration = {
+  $block
+}` where { $block <: within `resource "cloudflare_access_rule" $_ { $_ }` },
+  `auth_id_characteristics { $block }` => `auth_id_characteristics = {
+  $block
+}` where { $block <: within `resource "cloudflare_api_shield" $_ { $_ }` },
+  `condition { $block }` => `condition = {
+  $block
+}` where { $block <: within `resource "cloudflare_api_token" $_ { $_ }` },
+  `validation_errors { $block }` => `validation_errors = {
+  $block
+}` where { $block <: within `resource "cloudflare_certificate_pack" $_ { $_ }` },
+  `validation_records { $block }` => `validation_records = {
+  $block
+}` where { $block <: within `resource "cloudflare_certificate_pack" $_ { $_ }` },
+  `ssl { $block }` => `ssl = {
+  $block
+}` where { $block <: within `resource "cloudflare_custom_hostname" $_ { $_ }` },
+  `custom_ssl_options { $block }` => `custom_ssl_options = {
+  $block
+}` where { $block <: within `resource "cloudflare_custom_ssl" $_ { $_ }` },
+  `custom_ssl_priority { $block }` => `custom_ssl_priority = {
+  $block
+}` where { $block <: within `resource "cloudflare_custom_ssl" $_ { $_ }` },
+  `data { $block }` => `data = {
+  $block
+}` where { $block <: within `resource "cloudflare_device_dex_test" $_ { $_ }` },
+  `config { $block }` => `config = {
+  $block
+}` where { $block <: within `resource "cloudflare_device_managed_networks" $_ { $_ }` },
+  `config { $block }` => `config = {
+  $block
+}` where { $block <: within `resource "cloudflare_device_posture_integration" $_ { $_ }` },
+  `input { $block }` => `input = {
+  $block
+}` where { $block <: within `resource "cloudflare_device_posture_rule" $_ { $_ }` },
+  `match { $block }` => `match = {
+  $block
+}` where { $block <: within `resource "cloudflare_device_posture_rule" $_ { $_ }` },
+  `context_awareness { $block }` => `context_awareness = {
+  $block
+}` where { $block <: within `resource "cloudflare_dlp_profile" $_ { $_ }` },
+  `hostname { $block }` => `hostname = {
+  $block
+}` where { $block <: within `resource "cloudflare_list_item" $_ { $_ }` },
+  `redirect { $block }` => `redirect = {
+  $block
+}` where { $block <: within `resource "cloudflare_list_item" $_ { $_ }` },
+  `rules { $block }` => `rules = {
+  $block
+}` where { $block <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
+  `output_options { $block }` => `output_options = {
+  $block
+}` where { $block <: within `resource "cloudflare_logpush_job" $_ { $_ }` },
+  `filters { $block }` => `filters = {
+  $block
+}` where { $block <: within `resource "cloudflare_notification_policy" $_ { $_ }` },
+  `actions { $block }` => `actions = {
+  $block
+}` where { $block <: within `resource "cloudflare_page_rule" $_ { $_ }` },
+  `build_config { $block }` => `build_config = {
+  $block
+}` where { $block <: within `resource "cloudflare_pages_project" $_ { $_ }` },
+  `deployment_configs { $block }` => `deployment_configs = {
+  $block
+}` where { $block <: within `resource "cloudflare_pages_project" $_ { $_ }` },
+  `source { $block }` => `source = {
+  $block
+}` where { $block <: within `resource "cloudflare_pages_project" $_ { $_ }` },
+  `action { $block }` => `action = {
+  $block
+}` where { $block <: within `resource "cloudflare_rate_limit" $_ { $_ }` },
+  `correlate { $block }` => `correlate = {
+  $block
+}` where { $block <: within `resource "cloudflare_rate_limit" $_ { $_ }` },
+  `match { $block }` => `match = {
+  $block
+}` where { $block <: within `resource "cloudflare_rate_limit" $_ { $_ }` },
+  `data { $block }` => `data = {
+  $block
+}` where { $block <: within `resource "cloudflare_record" $_ { $_ }` },
+  `rules { $block }` => `rules = {
+  $block
+}` where { $block <: within `resource "cloudflare_ruleset" $_ { $_ }` },
+  `dns { $block }` => `dns = {
+  $block
+}` where { $block <: within `resource "cloudflare_spectrum_application" $_ { $_ }` },
+  `edge_ips { $block }` => `edge_ips = {
+  $block
+}` where { $block <: within `resource "cloudflare_spectrum_application" $_ { $_ }` },
+  `origin_dns { $block }` => `origin_dns = {
+  $block
+}` where { $block <: within `resource "cloudflare_spectrum_application" $_ { $_ }` },
+  `origin_port_range { $block }` => `origin_port_range = {
+  $block
+}` where { $block <: within `resource "cloudflare_spectrum_application" $_ { $_ }` },
+  `antivirus { $block }` => `antivirus = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `block_page { $block }` => `block_page = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `body_scanning { $block }` => `body_scanning = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `custom_certificate { $block }` => `custom_certificate = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `extended_email_matching { $block }` => `extended_email_matching = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `fips { $block }` => `fips = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `logging { $block }` => `logging = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `payload_log { $block }` => `payload_log = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `proxy { $block }` => `proxy = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `ssh_session_log { $block }` => `ssh_session_log = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_account" $_ { $_ }` },
+  `rule_settings { $block }` => `rule_settings = {
+  $block
+}` where { $block <: within `resource "cloudflare_teams_rule" $_ { $_ }` },
+  `config { $block }` => `config = {
+  $block
+}` where { $block <: within `resource "cloudflare_tunnel_config" $_ { $_ }` },
+  `configuration { $block }` => `configuration = {
+  $block
+}` where { $block <: within `resource "cloudflare_user_agent_blocking_rule" $_ { $_ }` },
+  `additional_routes { $block }` => `additional_routes = {
+  $block
+}` where { $block <: within `resource "cloudflare_waiting_room" $_ { $_ }` },
+  `rules { $block }` => `rules = {
+  $block
+}` where { $block <: within `resource "cloudflare_waiting_room_rules" $_ { $_ }` },
+  `settings { $block }` => `settings = {
+  $block
+}` where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` }
+  }
+}
