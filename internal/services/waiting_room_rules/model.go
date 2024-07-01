@@ -10,6 +10,10 @@ type WaitingRoomRulesResultEnvelope struct {
 	Result WaitingRoomRulesModel `json:"result,computed"`
 }
 
+type WaitingRoomRulesListResultDataSourceEnvelope struct {
+	Result WaitingRoomRulesListDataSourceModel `json:"result,computed"`
+}
+
 type WaitingRoomRulesModel struct {
 	ZoneID        types.String `tfsdk:"zone_id" path:"zone_id"`
 	WaitingRoomID types.String `tfsdk:"waiting_room_id" path:"waiting_room_id"`
@@ -18,4 +22,7 @@ type WaitingRoomRulesModel struct {
 	Expression    types.String `tfsdk:"expression" json:"expression"`
 	Description   types.String `tfsdk:"description" json:"description"`
 	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled"`
+}
+
+type WaitingRoomRulesListDataSourceModel struct {
 }

@@ -261,12 +261,6 @@ func (r NotificationPolicyResource) Schema(ctx context.Context, req resource.Sch
 					},
 				},
 			},
-			"created": schema.StringAttribute{
-				Computed: true,
-			},
-			"modified": schema.StringAttribute{
-				Computed: true,
-			},
 			"errors": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -296,6 +290,12 @@ func (r NotificationPolicyResource) Schema(ctx context.Context, req resource.Sch
 			"success": schema.BoolAttribute{
 				Description: "Whether the API call was successful",
 				Computed:    true,
+			},
+			"created": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified": schema.StringAttribute{
+				Computed: true,
 			},
 		},
 	}

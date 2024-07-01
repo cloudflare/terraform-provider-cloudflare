@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &SpectrumApplicationResource{}
+var _ resource.ResourceWithConfigure = &SpectrumApplicationResource{}
 
 func NewResource() resource.Resource {
 	return &SpectrumApplicationResource{}

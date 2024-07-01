@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &Web3HostnameResource{}
+var _ resource.ResourceWithConfigure = &Web3HostnameResource{}
 
 func NewResource() resource.Resource {
 	return &Web3HostnameResource{}

@@ -10,6 +10,14 @@ type R2BucketResultEnvelope struct {
 	Result R2BucketModel `json:"result,computed"`
 }
 
+type R2BucketResultDataSourceEnvelope struct {
+	Result R2BucketDataSourceModel `json:"result,computed"`
+}
+
+type R2BucketsResultDataSourceEnvelope struct {
+	Result R2BucketsDataSourceModel `json:"result,computed"`
+}
+
 type R2BucketModel struct {
 	ID           types.String `tfsdk:"id" json:"-,computed"`
 	AccountID    types.String `tfsdk:"account_id" path:"account_id"`
@@ -18,4 +26,10 @@ type R2BucketModel struct {
 	StorageClass types.String `tfsdk:"storage_class" json:"storageClass"`
 	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`
 	Location     types.String `tfsdk:"location" json:"location,computed"`
+}
+
+type R2BucketDataSourceModel struct {
+}
+
+type R2BucketsDataSourceModel struct {
 }

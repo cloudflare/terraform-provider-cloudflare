@@ -10,6 +10,14 @@ type LogpushJobResultEnvelope struct {
 	Result LogpushJobModel `json:"result,computed"`
 }
 
+type LogpushJobResultDataSourceEnvelope struct {
+	Result LogpushJobDataSourceModel `json:"result,computed"`
+}
+
+type LogpushJobsResultDataSourceEnvelope struct {
+	Result LogpushJobsDataSourceModel `json:"result,computed"`
+}
+
 type LogpushJobModel struct {
 	ID                       types.Int64                   `tfsdk:"id" json:"id,computed"`
 	AccountID                types.String                  `tfsdk:"account_id" path:"account_id"`
@@ -44,4 +52,10 @@ type LogpushJobOutputOptionsModel struct {
 	RecordTemplate  types.String    `tfsdk:"record_template" json:"record_template"`
 	SampleRate      types.Float64   `tfsdk:"sample_rate" json:"sample_rate"`
 	TimestampFormat types.String    `tfsdk:"timestamp_format" json:"timestamp_format"`
+}
+
+type LogpushJobDataSourceModel struct {
+}
+
+type LogpushJobsDataSourceModel struct {
 }

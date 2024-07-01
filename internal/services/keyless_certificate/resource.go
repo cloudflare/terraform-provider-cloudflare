@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &KeylessCertificateResource{}
+var _ resource.ResourceWithConfigure = &KeylessCertificateResource{}
 
 func NewResource() resource.Resource {
 	return &KeylessCertificateResource{}

@@ -124,13 +124,13 @@ func (r GRETunnelResource) Schema(ctx context.Context, req resource.SchemaReques
 			"modified_gre_tunnel": schema.StringAttribute{
 				Computed: true,
 			},
-			"gre_tunnel": schema.StringAttribute{
-				Computed: true,
-			},
 			"deleted": schema.BoolAttribute{
 				Computed: true,
 			},
 			"deleted_gre_tunnel": schema.StringAttribute{
+				Computed: true,
+			},
+			"gre_tunnel": schema.StringAttribute{
 				Computed: true,
 			},
 		},

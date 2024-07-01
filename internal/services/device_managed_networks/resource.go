@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &DeviceManagedNetworksResource{}
+var _ resource.ResourceWithConfigure = &DeviceManagedNetworksResource{}
 
 func NewResource() resource.Resource {
 	return &DeviceManagedNetworksResource{}

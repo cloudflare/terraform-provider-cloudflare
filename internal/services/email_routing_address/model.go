@@ -10,6 +10,14 @@ type EmailRoutingAddressResultEnvelope struct {
 	Result EmailRoutingAddressModel `json:"result,computed"`
 }
 
+type EmailRoutingAddressResultDataSourceEnvelope struct {
+	Result EmailRoutingAddressDataSourceModel `json:"result,computed"`
+}
+
+type EmailRoutingAddressesResultDataSourceEnvelope struct {
+	Result EmailRoutingAddressesDataSourceModel `json:"result,computed"`
+}
+
 type EmailRoutingAddressModel struct {
 	ID                types.String `tfsdk:"id" json:"id"`
 	AccountIdentifier types.String `tfsdk:"account_identifier" path:"account_identifier"`
@@ -18,4 +26,10 @@ type EmailRoutingAddressModel struct {
 	Modified          types.String `tfsdk:"modified" json:"modified,computed"`
 	Tag               types.String `tfsdk:"tag" json:"tag,computed"`
 	Verified          types.String `tfsdk:"verified" json:"verified,computed"`
+}
+
+type EmailRoutingAddressDataSourceModel struct {
+}
+
+type EmailRoutingAddressesDataSourceModel struct {
 }

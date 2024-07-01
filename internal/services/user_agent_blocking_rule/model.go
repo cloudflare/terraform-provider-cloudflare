@@ -10,7 +10,21 @@ type UserAgentBlockingRuleResultEnvelope struct {
 	Result UserAgentBlockingRuleModel `json:"result,computed"`
 }
 
+type UserAgentBlockingRuleResultDataSourceEnvelope struct {
+	Result UserAgentBlockingRuleDataSourceModel `json:"result,computed"`
+}
+
+type UserAgentBlockingRulesResultDataSourceEnvelope struct {
+	Result UserAgentBlockingRulesDataSourceModel `json:"result,computed"`
+}
+
 type UserAgentBlockingRuleModel struct {
 	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String `tfsdk:"id" path:"id"`
+}
+
+type UserAgentBlockingRuleDataSourceModel struct {
+}
+
+type UserAgentBlockingRulesDataSourceModel struct {
 }

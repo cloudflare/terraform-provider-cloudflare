@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &APITokenResource{}
+var _ resource.ResourceWithConfigure = &APITokenResource{}
 
 func NewResource() resource.Resource {
 	return &APITokenResource{}

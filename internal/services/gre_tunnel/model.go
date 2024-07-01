@@ -16,9 +16,9 @@ type GRETunnelModel struct {
 	GRETunnels        *[]*GRETunnelGRETunnelsModel `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
 	Modified          types.Bool                   `tfsdk:"modified" json:"modified,computed"`
 	ModifiedGRETunnel types.String                 `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
-	GRETunnel         types.String                 `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 	Deleted           types.Bool                   `tfsdk:"deleted" json:"deleted,computed"`
 	DeletedGRETunnel  types.String                 `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
+	GRETunnel         types.String                 `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 }
 
 type GRETunnelGRETunnelsModel struct {

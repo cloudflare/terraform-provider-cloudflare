@@ -10,6 +10,14 @@ type LoadBalancerMonitorResultEnvelope struct {
 	Result LoadBalancerMonitorModel `json:"result,computed"`
 }
 
+type LoadBalancerMonitorResultDataSourceEnvelope struct {
+	Result LoadBalancerMonitorDataSourceModel `json:"result,computed"`
+}
+
+type LoadBalancerMonitorsResultDataSourceEnvelope struct {
+	Result LoadBalancerMonitorsDataSourceModel `json:"result,computed"`
+}
+
 type LoadBalancerMonitorModel struct {
 	ID              types.String `tfsdk:"id" json:"id,computed"`
 	AccountID       types.String `tfsdk:"account_id" path:"account_id"`
@@ -31,4 +39,10 @@ type LoadBalancerMonitorModel struct {
 	Type            types.String `tfsdk:"type" json:"type"`
 	CreatedOn       types.String `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn      types.String `tfsdk:"modified_on" json:"modified_on,computed"`
+}
+
+type LoadBalancerMonitorDataSourceModel struct {
+}
+
+type LoadBalancerMonitorsDataSourceModel struct {
 }

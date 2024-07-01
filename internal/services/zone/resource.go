@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &ZoneResource{}
+var _ resource.ResourceWithConfigure = &ZoneResource{}
 
 func NewResource() resource.Resource {
 	return &ZoneResource{}

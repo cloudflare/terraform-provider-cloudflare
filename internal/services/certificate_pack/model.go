@@ -10,6 +10,14 @@ type CertificatePackResultEnvelope struct {
 	Result CertificatePackModel `json:"result,computed"`
 }
 
+type CertificatePackResultDataSourceEnvelope struct {
+	Result CertificatePackDataSourceModel `json:"result,computed"`
+}
+
+type CertificatePacksResultDataSourceEnvelope struct {
+	Result CertificatePacksDataSourceModel `json:"result,computed"`
+}
+
 type CertificatePackModel struct {
 	ID                   types.String    `tfsdk:"id" json:"id"`
 	ZoneID               types.String    `tfsdk:"zone_id" path:"zone_id"`
@@ -21,4 +29,10 @@ type CertificatePackModel struct {
 	Type                 types.String    `tfsdk:"type" json:"type,computed"`
 	ValidationMethod     types.String    `tfsdk:"validation_method" json:"validation_method,computed"`
 	ValidityDays         types.Int64     `tfsdk:"validity_days" json:"validity_days,computed"`
+}
+
+type CertificatePackDataSourceModel struct {
+}
+
+type CertificatePacksDataSourceModel struct {
 }

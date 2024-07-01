@@ -10,6 +10,14 @@ type AccessIdentityProviderResultEnvelope struct {
 	Result AccessIdentityProviderModel `json:"result,computed"`
 }
 
+type AccessIdentityProviderResultDataSourceEnvelope struct {
+	Result AccessIdentityProviderDataSourceModel `json:"result,computed"`
+}
+
+type AccessIdentityProvidersResultDataSourceEnvelope struct {
+	Result AccessIdentityProvidersDataSourceModel `json:"result,computed"`
+}
+
 type AccessIdentityProviderModel struct {
 	ID         types.String                           `tfsdk:"id" json:"id,computed"`
 	AccountID  types.String                           `tfsdk:"account_id" path:"account_id"`
@@ -37,4 +45,10 @@ type AccessIdentityProviderSCIMConfigModel struct {
 	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision"`
 	Secret                 types.String `tfsdk:"secret" json:"secret"`
 	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision"`
+}
+
+type AccessIdentityProviderDataSourceModel struct {
+}
+
+type AccessIdentityProvidersDataSourceModel struct {
 }

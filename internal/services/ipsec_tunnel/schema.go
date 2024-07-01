@@ -194,13 +194,13 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"modified_ipsec_tunnel": schema.StringAttribute{
 				Computed: true,
 			},
-			"ipsec_tunnel": schema.StringAttribute{
-				Computed: true,
-			},
 			"deleted": schema.BoolAttribute{
 				Computed: true,
 			},
 			"deleted_ipsec_tunnel": schema.StringAttribute{
+				Computed: true,
+			},
+			"ipsec_tunnel": schema.StringAttribute{
 				Computed: true,
 			},
 		},

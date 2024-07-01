@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &ObservatoryScheduledTestResource{}
+var _ resource.ResourceWithConfigure = &ObservatoryScheduledTestResource{}
 
 func NewResource() resource.Resource {
 	return &ObservatoryScheduledTestResource{}

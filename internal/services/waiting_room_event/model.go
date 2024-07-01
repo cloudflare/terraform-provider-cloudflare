@@ -10,6 +10,14 @@ type WaitingRoomEventResultEnvelope struct {
 	Result WaitingRoomEventModel `json:"result,computed"`
 }
 
+type WaitingRoomEventResultDataSourceEnvelope struct {
+	Result WaitingRoomEventDataSourceModel `json:"result,computed"`
+}
+
+type WaitingRoomEventsResultDataSourceEnvelope struct {
+	Result WaitingRoomEventsDataSourceModel `json:"result,computed"`
+}
+
 type WaitingRoomEventModel struct {
 	ID                    types.String `tfsdk:"id" json:"id,computed"`
 	ZoneID                types.String `tfsdk:"zone_id" path:"zone_id"`
@@ -29,4 +37,10 @@ type WaitingRoomEventModel struct {
 	TotalActiveUsers      types.Int64  `tfsdk:"total_active_users" json:"total_active_users"`
 	CreatedOn             types.String `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn            types.String `tfsdk:"modified_on" json:"modified_on,computed"`
+}
+
+type WaitingRoomEventDataSourceModel struct {
+}
+
+type WaitingRoomEventsDataSourceModel struct {
 }

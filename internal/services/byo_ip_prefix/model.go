@@ -10,6 +10,14 @@ type ByoIPPrefixResultEnvelope struct {
 	Result ByoIPPrefixModel `json:"result,computed"`
 }
 
+type ByoIPPrefixResultDataSourceEnvelope struct {
+	Result ByoIPPrefixDataSourceModel `json:"result,computed"`
+}
+
+type ByoIPPrefixesResultDataSourceEnvelope struct {
+	Result ByoIPPrefixesDataSourceModel `json:"result,computed"`
+}
+
 type ByoIPPrefixModel struct {
 	ID                   types.String `tfsdk:"id" json:"id,computed"`
 	AccountID            types.String `tfsdk:"account_id" path:"account_id"`
@@ -24,4 +32,10 @@ type ByoIPPrefixModel struct {
 	ModifiedAt           types.String `tfsdk:"modified_at" json:"modified_at,computed"`
 	OnDemandEnabled      types.Bool   `tfsdk:"on_demand_enabled" json:"on_demand_enabled,computed"`
 	OnDemandLocked       types.Bool   `tfsdk:"on_demand_locked" json:"on_demand_locked,computed"`
+}
+
+type ByoIPPrefixDataSourceModel struct {
+}
+
+type ByoIPPrefixesDataSourceModel struct {
 }

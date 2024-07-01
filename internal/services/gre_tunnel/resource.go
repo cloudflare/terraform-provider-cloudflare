@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &GRETunnelResource{}
+var _ resource.ResourceWithConfigure = &GRETunnelResource{}
 
 func NewResource() resource.Resource {
 	return &GRETunnelResource{}
