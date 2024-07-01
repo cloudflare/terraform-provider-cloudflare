@@ -9,11 +9,16 @@ import { z } from "zod";
 
 const BlockTypeSchema = z.object({
   nesting_mode: z.string(),
+  block: z.object({
+    block_types: z.record(z.lazy(() => BlockTypeSchema)).optional(),
+  }).optional(),
 });
+
+const BlockTypesSchema = z.record(BlockTypeSchema).optional();
 
 const ResourceSchema = z.object({
   block: z.object({
-    block_types: z.record(BlockTypeSchema).optional(),
+    block_types: BlockTypesSchema
   })
 });
 
@@ -29,6 +34,20 @@ interface Result {
   attribute: string;
 }
 
+function findRecursiveBlockTypes(list: Result[], resource: string, schema: z.infer<typeof BlockTypesSchema>): Result[] {
+  for (const [attribute, blockType] of Object.entries(schema)) {
+    if (blockType.nesting_mode === "list") {
+      list.push({ resource, attribute });
+    }
+
+    if (blockType.block.block_types) {
+      findRecursiveBlockTypes(list, resource, blockType.block.block_types);
+    }
+  }
+
+  return list;
+}
+
 function findListNestingModeBlockTypes(schema: z.infer<typeof CloudflareSchema>): Result[] {
   const results: Result[] = [];
 
@@ -38,11 +57,7 @@ function findListNestingModeBlockTypes(schema: z.infer<typeof CloudflareSchema>)
   for (const [resourceName, resourceSchema] of Object.entries(resourceSchemas)) {
     const blockTypes = resourceSchema.block.block_types;
     if (blockTypes) {
-      for (const [attributeName, blockType] of Object.entries(blockTypes)) {
-        if (blockType.nesting_mode === "list") {
-          results.push({ resource: resourceName, attribute: attributeName });
-        }
-      }
+      findRecursiveBlockTypes(results, resourceName, blockTypes);
     }
   }
 
@@ -72,19 +87,19 @@ export default await sdk.defineWorkflow<typeof schema>({
 
     const results = findListNestingModeBlockTypes(oldSchema);
 
-    grit.logging.info(`Found ${results.length} resources with list nesting mode block types`);
+    const uniqueResults = Array.from(new Set(results.map(JSON.stringify))).map(JSON.parse);
 
-    const subqueries = results.map(({ resource, attribute }) =>
-      `  \`${attribute} { $block }\` => \`${attribute} = {
-  $block
-}\` where { $block <: within \`resource "${resource}" $_ { $_ }\` }`
+    grit.logging.info(`Found ${uniqueResults.length} resources with list nesting mode block types`);
+
+    const subqueries = uniqueResults.map(({ resource, attribute }) =>
+      `  inline_cloudflare_block_to_list(\`${attribute}\`) as $block where { $block <: within \`resource "${resource}" $_ { $_ }\` }`
     ).join(',\n');
 
     const query = `
 language hcl
 
 pattern terraform_cloudflare_v5() {
-  or {
+  any {
 ${subqueries}
   }
 }

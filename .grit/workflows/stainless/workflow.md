@@ -34,12 +34,14 @@ Many of the resources have had `block` attributes converted to lists. In the old
         },
 ```
 
-We will want to generate a GritQL migration for each such block. Make sure it is scoped to the right attribute.
+We will want to generate a GritQL migration for each such block.
 
-Here is an example for the above attribute:
+You should convert the block to a list using the `inline_cloudflare_block_to_list` pattern, like this:
 
 ```grit
 language hcl
 
-`cors_headers { $block }` => `cors_headers = { $block }` where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` }
+inline_cloudflare_block_to_list(`cors_headers`) as $block where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` }
 ```
+
+Make sure to look recursively for _all_ blocks in the schema. Eliminate all duplicates. We should use `any` to combine all the blocks into a single migration.
