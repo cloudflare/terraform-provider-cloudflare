@@ -10,6 +10,14 @@ type WorkersForPlatformsNamespaceResultEnvelope struct {
 	Result WorkersForPlatformsNamespaceModel `json:"result,computed"`
 }
 
+type WorkersForPlatformsNamespaceResultDataSourceEnvelope struct {
+	Result WorkersForPlatformsNamespaceDataSourceModel `json:"result,computed"`
+}
+
+type WorkersForPlatformsNamespacesResultDataSourceEnvelope struct {
+	Result WorkersForPlatformsNamespacesDataSourceModel `json:"result,computed"`
+}
+
 type WorkersForPlatformsNamespaceModel struct {
 	ID            types.String `tfsdk:"id" json:"-,computed"`
 	NamespaceID   types.String `tfsdk:"namespace_id" json:"namespace_id"`
@@ -21,4 +29,10 @@ type WorkersForPlatformsNamespaceModel struct {
 	ModifiedOn    types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 	NamespaceName types.String `tfsdk:"namespace_name" json:"namespace_name,computed"`
 	ScriptCount   types.Int64  `tfsdk:"script_count" json:"script_count,computed"`
+}
+
+type WorkersForPlatformsNamespaceDataSourceModel struct {
+}
+
+type WorkersForPlatformsNamespacesDataSourceModel struct {
 }

@@ -10,6 +10,14 @@ type ListItemResultEnvelope struct {
 	Result ListItemModel `json:"result,computed"`
 }
 
+type ListItemResultDataSourceEnvelope struct {
+	Result ListItemDataSourceModel `json:"result,computed"`
+}
+
+type ListItemsResultDataSourceEnvelope struct {
+	Result ListItemsDataSourceModel `json:"result,computed"`
+}
+
 type ListItemModel struct {
 	AccountID         types.String           `tfsdk:"account_id" path:"account_id"`
 	ListID            types.String           `tfsdk:"list_id" path:"list_id"`
@@ -35,4 +43,10 @@ type ListItemRedirectModel struct {
 	PreserveQueryString types.Bool   `tfsdk:"preserve_query_string" json:"preserve_query_string"`
 	StatusCode          types.Int64  `tfsdk:"status_code" json:"status_code"`
 	SubpathMatching     types.Bool   `tfsdk:"subpath_matching" json:"subpath_matching"`
+}
+
+type ListItemDataSourceModel struct {
+}
+
+type ListItemsDataSourceModel struct {
 }

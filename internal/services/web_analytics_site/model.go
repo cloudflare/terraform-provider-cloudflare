@@ -10,6 +10,14 @@ type WebAnalyticsSiteResultEnvelope struct {
 	Result WebAnalyticsSiteModel `json:"result,computed"`
 }
 
+type WebAnalyticsSiteResultDataSourceEnvelope struct {
+	Result WebAnalyticsSiteDataSourceModel `json:"result,computed"`
+}
+
+type WebAnalyticsSitesResultDataSourceEnvelope struct {
+	Result WebAnalyticsSitesDataSourceModel `json:"result,computed"`
+}
+
 type WebAnalyticsSiteModel struct {
 	ID          types.String                   `tfsdk:"id" json:"-,computed"`
 	SiteTag     types.String                   `tfsdk:"site_tag" json:"site_tag,computed"`
@@ -38,4 +46,10 @@ type WebAnalyticsSiteRulesetModel struct {
 	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled"`
 	ZoneName types.String `tfsdk:"zone_name" json:"zone_name"`
 	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag"`
+}
+
+type WebAnalyticsSiteDataSourceModel struct {
+}
+
+type WebAnalyticsSitesDataSourceModel struct {
 }

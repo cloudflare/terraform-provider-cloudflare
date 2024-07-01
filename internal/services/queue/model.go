@@ -10,6 +10,14 @@ type QueueResultEnvelope struct {
 	Result QueueModel `json:"result,computed"`
 }
 
+type QueueResultDataSourceEnvelope struct {
+	Result QueueDataSourceModel `json:"result,computed"`
+}
+
+type QueuesResultDataSourceEnvelope struct {
+	Result QueuesDataSourceModel `json:"result,computed"`
+}
+
 type QueueModel struct {
 	ID                  types.String `tfsdk:"id" json:"-,computed"`
 	QueueID             types.String `tfsdk:"queue_id" json:"queue_id,computed"`
@@ -21,4 +29,10 @@ type QueueModel struct {
 	ConsumersTotalCount types.String `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	Producers           types.String `tfsdk:"producers" json:"producers,computed"`
 	ProducersTotalCount types.String `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
+}
+
+type QueueDataSourceModel struct {
+}
+
+type QueuesDataSourceModel struct {
 }

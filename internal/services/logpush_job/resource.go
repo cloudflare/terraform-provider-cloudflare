@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &LogpushJobResource{}
+var _ resource.ResourceWithConfigure = &LogpushJobResource{}
 
 func NewResource() resource.Resource {
 	return &LogpushJobResource{}

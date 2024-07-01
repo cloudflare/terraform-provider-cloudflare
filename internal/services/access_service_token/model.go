@@ -10,6 +10,14 @@ type AccessServiceTokenResultEnvelope struct {
 	Result AccessServiceTokenModel `json:"result,computed"`
 }
 
+type AccessServiceTokenResultDataSourceEnvelope struct {
+	Result AccessServiceTokenDataSourceModel `json:"result,computed"`
+}
+
+type AccessServiceTokensResultDataSourceEnvelope struct {
+	Result AccessServiceTokensDataSourceModel `json:"result,computed"`
+}
+
 type AccessServiceTokenModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	AccountID    types.String `tfsdk:"account_id" path:"account_id"`
@@ -20,4 +28,10 @@ type AccessServiceTokenModel struct {
 	ClientSecret types.String `tfsdk:"client_secret" json:"client_secret,computed"`
 	CreatedAt    types.String `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt    types.String `tfsdk:"updated_at" json:"updated_at,computed"`
+}
+
+type AccessServiceTokenDataSourceModel struct {
+}
+
+type AccessServiceTokensDataSourceModel struct {
 }

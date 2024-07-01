@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &FallbackDomainResource{}
+var _ resource.ResourceWithConfigure = &FallbackDomainResource{}
 
 func NewResource() resource.Resource {
 	return &FallbackDomainResource{}

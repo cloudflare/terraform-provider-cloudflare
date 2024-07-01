@@ -10,6 +10,14 @@ type AccessMutualTLSCertificateResultEnvelope struct {
 	Result AccessMutualTLSCertificateModel `json:"result,computed"`
 }
 
+type AccessMutualTLSCertificateResultDataSourceEnvelope struct {
+	Result AccessMutualTLSCertificateDataSourceModel `json:"result,computed"`
+}
+
+type AccessMutualTLSCertificatesResultDataSourceEnvelope struct {
+	Result AccessMutualTLSCertificatesDataSourceModel `json:"result,computed"`
+}
+
 type AccessMutualTLSCertificateModel struct {
 	ID                  types.String    `tfsdk:"id" json:"id,computed"`
 	AccountID           types.String    `tfsdk:"account_id" path:"account_id"`
@@ -21,4 +29,10 @@ type AccessMutualTLSCertificateModel struct {
 	ExpiresOn           types.String    `tfsdk:"expires_on" json:"expires_on,computed"`
 	Fingerprint         types.String    `tfsdk:"fingerprint" json:"fingerprint,computed"`
 	UpdatedAt           types.String    `tfsdk:"updated_at" json:"updated_at,computed"`
+}
+
+type AccessMutualTLSCertificateDataSourceModel struct {
+}
+
+type AccessMutualTLSCertificatesDataSourceModel struct {
 }

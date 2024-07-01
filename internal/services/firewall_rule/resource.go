@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &FirewallRuleResource{}
+var _ resource.ResourceWithConfigure = &FirewallRuleResource{}
 
 func NewResource() resource.Resource {
 	return &FirewallRuleResource{}

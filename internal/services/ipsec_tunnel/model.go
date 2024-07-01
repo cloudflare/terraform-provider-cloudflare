@@ -24,9 +24,9 @@ type IPSECTunnelModel struct {
 	IPSECTunnels        *[]*IPSECTunnelIPSECTunnelsModel `tfsdk:"ipsec_tunnels" json:"ipsec_tunnels,computed"`
 	Modified            types.Bool                       `tfsdk:"modified" json:"modified,computed"`
 	ModifiedIPSECTunnel types.String                     `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed"`
-	IPSECTunnel         types.String                     `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
 	Deleted             types.Bool                       `tfsdk:"deleted" json:"deleted,computed"`
 	DeletedIPSECTunnel  types.String                     `tfsdk:"deleted_ipsec_tunnel" json:"deleted_ipsec_tunnel,computed"`
+	IPSECTunnel         types.String                     `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
 }
 
 type IPSECTunnelHealthCheckModel struct {

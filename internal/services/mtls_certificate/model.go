@@ -10,6 +10,14 @@ type MTLSCertificateResultEnvelope struct {
 	Result MTLSCertificateModel `json:"result,computed"`
 }
 
+type MTLSCertificateResultDataSourceEnvelope struct {
+	Result MTLSCertificateDataSourceModel `json:"result,computed"`
+}
+
+type MTLSCertificatesResultDataSourceEnvelope struct {
+	Result MTLSCertificatesDataSourceModel `json:"result,computed"`
+}
+
 type MTLSCertificateModel struct {
 	ID           types.String `tfsdk:"id" json:"id"`
 	AccountID    types.String `tfsdk:"account_id" path:"account_id"`
@@ -23,4 +31,10 @@ type MTLSCertificateModel struct {
 	Signature    types.String `tfsdk:"signature" json:"signature,computed"`
 	UpdatedAt    types.String `tfsdk:"updated_at" json:"updated_at,computed"`
 	UploadedOn   types.String `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
+}
+
+type MTLSCertificateDataSourceModel struct {
+}
+
+type MTLSCertificatesDataSourceModel struct {
 }

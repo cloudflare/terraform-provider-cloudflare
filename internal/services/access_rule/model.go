@@ -10,6 +10,14 @@ type AccessRuleResultEnvelope struct {
 	Result AccessRuleModel `json:"result,computed"`
 }
 
+type AccessRuleResultDataSourceEnvelope struct {
+	Result AccessRuleDataSourceModel `json:"result,computed"`
+}
+
+type AccessRulesResultDataSourceEnvelope struct {
+	Result AccessRulesDataSourceModel `json:"result,computed"`
+}
+
 type AccessRuleModel struct {
 	AccountID     types.String                  `tfsdk:"account_id" path:"account_id"`
 	ZoneID        types.String                  `tfsdk:"zone_id" path:"zone_id"`
@@ -23,4 +31,10 @@ type AccessRuleModel struct {
 type AccessRuleConfigurationModel struct {
 	Target types.String `tfsdk:"target" json:"target"`
 	Value  types.String `tfsdk:"value" json:"value"`
+}
+
+type AccessRuleDataSourceModel struct {
+}
+
+type AccessRulesDataSourceModel struct {
 }

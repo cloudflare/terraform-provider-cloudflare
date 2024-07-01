@@ -10,6 +10,14 @@ type CustomHostnameResultEnvelope struct {
 	Result CustomHostnameModel `json:"result,computed"`
 }
 
+type CustomHostnameResultDataSourceEnvelope struct {
+	Result CustomHostnameDataSourceModel `json:"result,computed"`
+}
+
+type CustomHostnamesResultDataSourceEnvelope struct {
+	Result CustomHostnamesDataSourceModel `json:"result,computed"`
+}
+
 type CustomHostnameModel struct {
 	ID                 types.String                       `tfsdk:"id" json:"id,computed"`
 	ZoneID             types.String                       `tfsdk:"zone_id" path:"zone_id"`
@@ -55,4 +63,10 @@ type CustomHostnameOwnershipVerificationModel struct {
 type CustomHostnameOwnershipVerificationHTTPModel struct {
 	HTTPBody types.String `tfsdk:"http_body" json:"http_body"`
 	HTTPURL  types.String `tfsdk:"http_url" json:"http_url"`
+}
+
+type CustomHostnameDataSourceModel struct {
+}
+
+type CustomHostnamesDataSourceModel struct {
 }

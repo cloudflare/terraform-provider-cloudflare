@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &CertificatePackResource{}
+var _ resource.ResourceWithConfigure = &CertificatePackResource{}
 
 func NewResource() resource.Resource {
 	return &CertificatePackResource{}

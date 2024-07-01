@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &WaitingRoomRulesResource{}
+var _ resource.ResourceWithConfigure = &WaitingRoomRulesResource{}
 
 func NewResource() resource.Resource {
 	return &WaitingRoomRulesResource{}

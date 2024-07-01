@@ -10,19 +10,27 @@ type NotificationPolicyWebhooksResultEnvelope struct {
 	Result NotificationPolicyWebhooksModel `json:"result,computed"`
 }
 
+type NotificationPolicyWebhooksResultDataSourceEnvelope struct {
+	Result NotificationPolicyWebhooksDataSourceModel `json:"result,computed"`
+}
+
+type NotificationPolicyWebhooksListResultDataSourceEnvelope struct {
+	Result NotificationPolicyWebhooksListDataSourceModel `json:"result,computed"`
+}
+
 type NotificationPolicyWebhooksModel struct {
 	ID          types.String                                `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                `tfsdk:"account_id" path:"account_id"`
 	Name        types.String                                `tfsdk:"name" json:"name"`
 	URL         types.String                                `tfsdk:"url" json:"url"`
 	Secret      types.String                                `tfsdk:"secret" json:"secret"`
+	Errors      *[]*NotificationPolicyWebhooksErrorsModel   `tfsdk:"errors" json:"errors,computed"`
+	Messages    *[]*NotificationPolicyWebhooksMessagesModel `tfsdk:"messages" json:"messages,computed"`
+	Success     types.Bool                                  `tfsdk:"success" json:"success,computed"`
 	CreatedAt   types.String                                `tfsdk:"created_at" json:"created_at,computed"`
 	LastFailure types.String                                `tfsdk:"last_failure" json:"last_failure,computed"`
 	LastSuccess types.String                                `tfsdk:"last_success" json:"last_success,computed"`
 	Type        types.String                                `tfsdk:"type" json:"type,computed"`
-	Errors      *[]*NotificationPolicyWebhooksErrorsModel   `tfsdk:"errors" json:"errors,computed"`
-	Messages    *[]*NotificationPolicyWebhooksMessagesModel `tfsdk:"messages" json:"messages,computed"`
-	Success     types.Bool                                  `tfsdk:"success" json:"success,computed"`
 }
 
 type NotificationPolicyWebhooksErrorsModel struct {
@@ -40,4 +48,10 @@ type NotificationPolicyWebhooksResultInfoModel struct {
 	Page       types.Float64 `tfsdk:"page" json:"page"`
 	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
 	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
+}
+
+type NotificationPolicyWebhooksDataSourceModel struct {
+}
+
+type NotificationPolicyWebhooksListDataSourceModel struct {
 }

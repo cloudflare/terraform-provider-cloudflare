@@ -10,7 +10,21 @@ type RateLimitResultEnvelope struct {
 	Result RateLimitModel `json:"result,computed"`
 }
 
+type RateLimitResultDataSourceEnvelope struct {
+	Result RateLimitDataSourceModel `json:"result,computed"`
+}
+
+type RateLimitsResultDataSourceEnvelope struct {
+	Result RateLimitsDataSourceModel `json:"result,computed"`
+}
+
 type RateLimitModel struct {
 	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String `tfsdk:"id" path:"id"`
+}
+
+type RateLimitDataSourceModel struct {
+}
+
+type RateLimitsDataSourceModel struct {
 }

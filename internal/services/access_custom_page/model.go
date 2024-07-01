@@ -10,6 +10,14 @@ type AccessCustomPageResultEnvelope struct {
 	Result AccessCustomPageModel `json:"result,computed"`
 }
 
+type AccessCustomPageResultDataSourceEnvelope struct {
+	Result AccessCustomPageDataSourceModel `json:"result,computed"`
+}
+
+type AccessCustomPagesResultDataSourceEnvelope struct {
+	Result AccessCustomPagesDataSourceModel `json:"result,computed"`
+}
+
 type AccessCustomPageModel struct {
 	ID         types.String `tfsdk:"id" json:"-,computed"`
 	UID        types.String `tfsdk:"uid" json:"uid,computed"`
@@ -20,4 +28,10 @@ type AccessCustomPageModel struct {
 	AppCount   types.Int64  `tfsdk:"app_count" json:"app_count"`
 	CreatedAt  types.String `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt  types.String `tfsdk:"updated_at" json:"updated_at,computed"`
+}
+
+type AccessCustomPageDataSourceModel struct {
+}
+
+type AccessCustomPagesDataSourceModel struct {
 }

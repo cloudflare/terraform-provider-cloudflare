@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &CustomSSLResource{}
+var _ resource.ResourceWithConfigure = &CustomSSLResource{}
 
 func NewResource() resource.Resource {
 	return &CustomSSLResource{}

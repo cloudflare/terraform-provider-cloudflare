@@ -10,6 +10,14 @@ type ZoneResultEnvelope struct {
 	Result ZoneModel `json:"result,computed"`
 }
 
+type ZoneResultDataSourceEnvelope struct {
+	Result ZoneDataSourceModel `json:"result,computed"`
+}
+
+type ZonesResultDataSourceEnvelope struct {
+	Result ZonesDataSourceModel `json:"result,computed"`
+}
+
 type ZoneModel struct {
 	ID                  types.String      `tfsdk:"id" json:"id,computed"`
 	Account             *ZoneAccountModel `tfsdk:"account" json:"account"`
@@ -44,4 +52,10 @@ type ZoneOwnerModel struct {
 	ID   types.String `tfsdk:"id" json:"id"`
 	Name types.String `tfsdk:"name" json:"name"`
 	Type types.String `tfsdk:"type" json:"type"`
+}
+
+type ZoneDataSourceModel struct {
+}
+
+type ZonesDataSourceModel struct {
 }

@@ -10,6 +10,14 @@ type FilterResultEnvelope struct {
 	Result FilterModel `json:"result,computed"`
 }
 
+type FilterResultDataSourceEnvelope struct {
+	Result FilterDataSourceModel `json:"result,computed"`
+}
+
+type FiltersResultDataSourceEnvelope struct {
+	Result FiltersDataSourceModel `json:"result,computed"`
+}
+
 type FilterModel struct {
 	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String `tfsdk:"id" path:"id"`
@@ -17,4 +25,10 @@ type FilterModel struct {
 	Expression     types.String `tfsdk:"expression" json:"expression,computed"`
 	Paused         types.Bool   `tfsdk:"paused" json:"paused,computed"`
 	Ref            types.String `tfsdk:"ref" json:"ref,computed"`
+}
+
+type FilterDataSourceModel struct {
+}
+
+type FiltersDataSourceModel struct {
 }

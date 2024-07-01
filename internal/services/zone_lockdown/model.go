@@ -10,6 +10,14 @@ type ZoneLockdownResultEnvelope struct {
 	Result ZoneLockdownModel `json:"result,computed"`
 }
 
+type ZoneLockdownResultDataSourceEnvelope struct {
+	Result ZoneLockdownDataSourceModel `json:"result,computed"`
+}
+
+type ZoneLockdownsResultDataSourceEnvelope struct {
+	Result ZoneLockdownsDataSourceModel `json:"result,computed"`
+}
+
 type ZoneLockdownModel struct {
 	ID             types.String    `tfsdk:"id" json:"id,computed"`
 	ZoneIdentifier types.String    `tfsdk:"zone_identifier" path:"zone_identifier"`
@@ -23,4 +31,10 @@ type ZoneLockdownModel struct {
 type ZoneLockdownConfigurationsModel struct {
 	Target types.String `tfsdk:"target" json:"target"`
 	Value  types.String `tfsdk:"value" json:"value"`
+}
+
+type ZoneLockdownDataSourceModel struct {
+}
+
+type ZoneLockdownsDataSourceModel struct {
 }

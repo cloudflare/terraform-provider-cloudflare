@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &WorkerScriptResource{}
+var _ resource.ResourceWithConfigure = &WorkerScriptResource{}
 
 func NewResource() resource.Resource {
 	return &WorkerScriptResource{}

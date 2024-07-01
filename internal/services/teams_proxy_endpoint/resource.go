@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &TeamsProxyEndpointResource{}
+var _ resource.ResourceWithConfigure = &TeamsProxyEndpointResource{}
 
 func NewResource() resource.Resource {
 	return &TeamsProxyEndpointResource{}

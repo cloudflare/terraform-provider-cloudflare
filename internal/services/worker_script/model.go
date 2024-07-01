@@ -10,6 +10,14 @@ type WorkerScriptResultEnvelope struct {
 	Result WorkerScriptModel `json:"result,computed"`
 }
 
+type WorkerScriptResultDataSourceEnvelope struct {
+	Result WorkerScriptDataSourceModel `json:"result,computed"`
+}
+
+type WorkerScriptsResultDataSourceEnvelope struct {
+	Result WorkerScriptsDataSourceModel `json:"result,computed"`
+}
+
 type WorkerScriptModel struct {
 	ID            types.String                       `tfsdk:"id" json:"id"`
 	AccountID     types.String                       `tfsdk:"account_id" path:"account_id"`
@@ -95,4 +103,10 @@ type WorkerScriptTailConsumersModel struct {
 	Service     types.String `tfsdk:"service" json:"service"`
 	Environment types.String `tfsdk:"environment" json:"environment"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace"`
+}
+
+type WorkerScriptDataSourceModel struct {
+}
+
+type WorkerScriptsDataSourceModel struct {
 }
