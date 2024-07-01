@@ -197,3 +197,5 @@ pattern terraform_cloudflare_v5() {
 }` where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` }
   }
 }
+
+terraform_cloudflare_v5()
