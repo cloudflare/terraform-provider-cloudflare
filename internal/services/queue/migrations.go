@@ -7,6 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 func (r QueueResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -18,7 +20,8 @@ func (r QueueResource) UpgradeState(ctx context.Context) map[int64]resource.Stat
 						Computed: true,
 					},
 					"queue_id": schema.StringAttribute{
-						Computed: true,
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
 						Description: "Identifier",
