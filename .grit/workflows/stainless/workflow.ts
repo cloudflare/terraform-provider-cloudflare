@@ -87,7 +87,9 @@ pattern terraform_cloudflare_v5() {
   or {
 ${subqueries}
   }
-}`;
+}
+
+terraform_cloudflare_v5()`;
 
     await grit.stdlib.writeFile({
       path: `.grit/patterns/terraform_cloudflare_v5.grit`,
