@@ -36,12 +36,22 @@ Many of the resources have had `block` attributes converted to lists. In the old
 
 We will want to generate a GritQL migration for each such block. The `nesting_mode` will be `list` or `set`.
 
-You should convert the block to a list using the `inline_cloudflare_block_to_list` pattern, like this:
+There are _two_ possible destination structures. You should determine this by inspecting the equivalent attribute in a `new_schema_file`.
+
+If the new nested attribute is `"nesting_mode": "set"` or `"nesting_mode": "list"`, then the block should be converted to a list, like this:
 
 ```grit
 language hcl
 
 inline_cloudflare_block_to_list(`cors_headers`) as $block where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` }
+```
+
+If the new nested attribute is `"nesting_mode": "single"`, then the block should be converted to a map, like this:
+
+```grit
+language hcl
+
+inline_cloudflare_block_to_map(`cors_headers`) as $block where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` }
 ```
 
 Make sure to look recursively for _all_ blocks in the schema. Eliminate all duplicates. We should use `any` to combine all the blocks into a single migration.

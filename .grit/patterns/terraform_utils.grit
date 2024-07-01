@@ -20,3 +20,9 @@ pattern inline_cloudflare_block_to_list($block_name) {
         $first += `]`,
     }
 }
+
+pattern inline_cloudflare_block_to_map($block_name) {
+    block(type=`$block_name`, body=$block) => `$block_name = {
+  $block
+}`
+}

@@ -184,14 +184,14 @@ resource "cloudflare_load_balancer_pool" "example" {
   enabled            = false
   minimum_origins    = 1
   notification_email = "someone@example.com"
-  load_shedding = [{
+  load_shedding = {
     default_percent = 55
     default_policy  = "random"
     session_percent = 12
     session_policy  = "hash"
-  }]
-  origin_steering = [{
+  }
+  origin_steering = {
     policy = "random"
-  }]
+  }
 }
 ```
