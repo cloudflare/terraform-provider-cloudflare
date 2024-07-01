@@ -10,6 +10,14 @@ type NotificationPolicyResultEnvelope struct {
 	Result NotificationPolicyModel `json:"result,computed"`
 }
 
+type NotificationPolicyResultDataSourceEnvelope struct {
+	Result NotificationPolicyDataSourceModel `json:"result,computed"`
+}
+
+type NotificationPoliciesResultDataSourceEnvelope struct {
+	Result NotificationPoliciesDataSourceModel `json:"result,computed"`
+}
+
 type NotificationPolicyModel struct {
 	ID          types.String                        `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                        `tfsdk:"account_id" path:"account_id"`
@@ -19,11 +27,11 @@ type NotificationPolicyModel struct {
 	Name        types.String                        `tfsdk:"name" json:"name"`
 	Description types.String                        `tfsdk:"description" json:"description"`
 	Filters     *NotificationPolicyFiltersModel     `tfsdk:"filters" json:"filters"`
-	Created     types.String                        `tfsdk:"created" json:"created,computed"`
-	Modified    types.String                        `tfsdk:"modified" json:"modified,computed"`
 	Errors      *[]*NotificationPolicyErrorsModel   `tfsdk:"errors" json:"errors,computed"`
 	Messages    *[]*NotificationPolicyMessagesModel `tfsdk:"messages" json:"messages,computed"`
 	Success     types.Bool                          `tfsdk:"success" json:"success,computed"`
+	Created     types.String                        `tfsdk:"created" json:"created,computed"`
+	Modified    types.String                        `tfsdk:"modified" json:"modified,computed"`
 }
 
 type NotificationPolicyFiltersModel struct {
@@ -84,4 +92,10 @@ type NotificationPolicyResultInfoModel struct {
 	Page       types.Float64 `tfsdk:"page" json:"page"`
 	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
 	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
+}
+
+type NotificationPolicyDataSourceModel struct {
+}
+
+type NotificationPoliciesDataSourceModel struct {
 }

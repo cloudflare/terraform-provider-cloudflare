@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &HealthcheckResource{}
+var _ resource.ResourceWithConfigure = &HealthcheckResource{}
 
 func NewResource() resource.Resource {
 	return &HealthcheckResource{}

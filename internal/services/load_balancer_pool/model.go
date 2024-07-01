@@ -10,6 +10,14 @@ type LoadBalancerPoolResultEnvelope struct {
 	Result LoadBalancerPoolModel `json:"result,computed"`
 }
 
+type LoadBalancerPoolResultDataSourceEnvelope struct {
+	Result LoadBalancerPoolDataSourceModel `json:"result,computed"`
+}
+
+type LoadBalancerPoolsResultDataSourceEnvelope struct {
+	Result LoadBalancerPoolsDataSourceModel `json:"result,computed"`
+}
+
 type LoadBalancerPoolModel struct {
 	ID                 types.String                             `tfsdk:"id" json:"id,computed"`
 	AccountID          types.String                             `tfsdk:"account_id" path:"account_id"`
@@ -69,4 +77,10 @@ type LoadBalancerPoolNotificationFilterPoolModel struct {
 
 type LoadBalancerPoolOriginSteeringModel struct {
 	Policy types.String `tfsdk:"policy" json:"policy"`
+}
+
+type LoadBalancerPoolDataSourceModel struct {
+}
+
+type LoadBalancerPoolsDataSourceModel struct {
 }

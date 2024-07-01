@@ -10,6 +10,14 @@ type WaitingRoomResultEnvelope struct {
 	Result WaitingRoomModel `json:"result,computed"`
 }
 
+type WaitingRoomResultDataSourceEnvelope struct {
+	Result WaitingRoomDataSourceModel `json:"result,computed"`
+}
+
+type WaitingRoomsResultDataSourceEnvelope struct {
+	Result WaitingRoomsDataSourceModel `json:"result,computed"`
+}
+
 type WaitingRoomModel struct {
 	ID                         types.String                         `tfsdk:"id" json:"id,computed"`
 	ZoneID                     types.String                         `tfsdk:"zone_id" path:"zone_id"`
@@ -45,4 +53,10 @@ type WaitingRoomAdditionalRoutesModel struct {
 type WaitingRoomCookieAttributesModel struct {
 	Samesite types.String `tfsdk:"samesite" json:"samesite"`
 	Secure   types.String `tfsdk:"secure" json:"secure"`
+}
+
+type WaitingRoomDataSourceModel struct {
+}
+
+type WaitingRoomsDataSourceModel struct {
 }

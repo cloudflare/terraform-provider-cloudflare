@@ -10,8 +10,22 @@ type PagesDomainResultEnvelope struct {
 	Result PagesDomainModel `json:"result,computed"`
 }
 
+type PagesDomainResultDataSourceEnvelope struct {
+	Result PagesDomainDataSourceModel `json:"result,computed"`
+}
+
+type PagesDomainsResultDataSourceEnvelope struct {
+	Result PagesDomainsDataSourceModel `json:"result,computed"`
+}
+
 type PagesDomainModel struct {
 	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
 	ProjectName types.String `tfsdk:"project_name" path:"project_name"`
 	DomainName  types.String `tfsdk:"domain_name" path:"domain_name"`
+}
+
+type PagesDomainDataSourceModel struct {
+}
+
+type PagesDomainsDataSourceModel struct {
 }

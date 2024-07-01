@@ -10,6 +10,14 @@ type TeamsLocationResultEnvelope struct {
 	Result TeamsLocationModel `json:"result,computed"`
 }
 
+type TeamsLocationResultDataSourceEnvelope struct {
+	Result TeamsLocationDataSourceModel `json:"result,computed"`
+}
+
+type TeamsLocationsResultDataSourceEnvelope struct {
+	Result TeamsLocationsDataSourceModel `json:"result,computed"`
+}
+
 type TeamsLocationModel struct {
 	ID            types.String                   `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                   `tfsdk:"account_id" path:"account_id"`
@@ -25,4 +33,10 @@ type TeamsLocationModel struct {
 
 type TeamsLocationNetworksModel struct {
 	Network types.String `tfsdk:"network" json:"network"`
+}
+
+type TeamsLocationDataSourceModel struct {
+}
+
+type TeamsLocationsDataSourceModel struct {
 }

@@ -10,6 +10,10 @@ type WorkerSecretResultEnvelope struct {
 	Result WorkerSecretModel `json:"result,computed"`
 }
 
+type WorkerSecretsResultDataSourceEnvelope struct {
+	Result WorkerSecretsDataSourceModel `json:"result,computed"`
+}
+
 type WorkerSecretModel struct {
 	AccountID         types.String `tfsdk:"account_id" path:"account_id"`
 	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
@@ -17,4 +21,7 @@ type WorkerSecretModel struct {
 	Name              types.String `tfsdk:"name" json:"name"`
 	Text              types.String `tfsdk:"text" json:"text"`
 	Type              types.String `tfsdk:"type" json:"type"`
+}
+
+type WorkerSecretsDataSourceModel struct {
 }

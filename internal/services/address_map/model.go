@@ -10,6 +10,14 @@ type AddressMapResultEnvelope struct {
 	Result AddressMapModel `json:"result,computed"`
 }
 
+type AddressMapResultDataSourceEnvelope struct {
+	Result AddressMapDataSourceModel `json:"result,computed"`
+}
+
+type AddressMapsResultDataSourceEnvelope struct {
+	Result AddressMapsDataSourceModel `json:"result,computed"`
+}
+
 type AddressMapModel struct {
 	ID           types.String                   `tfsdk:"id" json:"id,computed"`
 	AccountID    types.String                   `tfsdk:"account_id" path:"account_id"`
@@ -29,4 +37,10 @@ type AddressMapMembershipsModel struct {
 	CreatedAt  types.String `tfsdk:"created_at" json:"created_at"`
 	Identifier types.String `tfsdk:"identifier" json:"identifier"`
 	Kind       types.String `tfsdk:"kind" json:"kind"`
+}
+
+type AddressMapDataSourceModel struct {
+}
+
+type AddressMapsDataSourceModel struct {
 }

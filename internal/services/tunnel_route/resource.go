@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &TunnelRouteResource{}
+var _ resource.ResourceWithConfigure = &TunnelRouteResource{}
 
 func NewResource() resource.Resource {
 	return &TunnelRouteResource{}

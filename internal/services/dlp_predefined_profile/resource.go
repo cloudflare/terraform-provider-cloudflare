@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &DLPPredefinedProfileResource{}
+var _ resource.ResourceWithConfigure = &DLPPredefinedProfileResource{}
 
 func NewResource() resource.Resource {
 	return &DLPPredefinedProfileResource{}

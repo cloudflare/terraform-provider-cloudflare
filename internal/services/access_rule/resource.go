@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &AccessRuleResource{}
+var _ resource.ResourceWithConfigure = &AccessRuleResource{}
 
 func NewResource() resource.Resource {
 	return &AccessRuleResource{}

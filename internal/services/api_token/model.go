@@ -10,6 +10,14 @@ type APITokenResultEnvelope struct {
 	Result APITokenModel `json:"result,computed"`
 }
 
+type APITokenResultDataSourceEnvelope struct {
+	Result APITokenDataSourceModel `json:"result,computed"`
+}
+
+type APITokensResultDataSourceEnvelope struct {
+	Result APITokensDataSourceModel `json:"result,computed"`
+}
+
 type APITokenModel struct {
 	TokenID   types.String              `tfsdk:"token_id" path:"token_id"`
 	Name      types.String              `tfsdk:"name" json:"name"`
@@ -41,4 +49,10 @@ type APITokenConditionModel struct {
 type APITokenConditionRequestIPModel struct {
 	In    *[]types.String `tfsdk:"in" json:"in"`
 	NotIn *[]types.String `tfsdk:"not_in" json:"not_in"`
+}
+
+type APITokenDataSourceModel struct {
+}
+
+type APITokensDataSourceModel struct {
 }

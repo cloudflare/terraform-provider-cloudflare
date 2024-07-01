@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &MTLSCertificateResource{}
+var _ resource.ResourceWithConfigure = &MTLSCertificateResource{}
 
 func NewResource() resource.Resource {
 	return &MTLSCertificateResource{}

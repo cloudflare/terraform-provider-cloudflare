@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &StaticRouteResource{}
+var _ resource.ResourceWithConfigure = &StaticRouteResource{}
 
 func NewResource() resource.Resource {
 	return &StaticRouteResource{}

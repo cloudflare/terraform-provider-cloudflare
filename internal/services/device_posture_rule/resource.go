@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &DevicePostureRuleResource{}
+var _ resource.ResourceWithConfigure = &DevicePostureRuleResource{}
 
 func NewResource() resource.Resource {
 	return &DevicePostureRuleResource{}

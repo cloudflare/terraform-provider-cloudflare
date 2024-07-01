@@ -10,6 +10,14 @@ type AccessPolicyResultEnvelope struct {
 	Result AccessPolicyModel `json:"result,computed"`
 }
 
+type AccessPolicyResultDataSourceEnvelope struct {
+	Result AccessPolicyDataSourceModel `json:"result,computed"`
+}
+
+type AccessPoliciesResultDataSourceEnvelope struct {
+	Result AccessPoliciesDataSourceModel `json:"result,computed"`
+}
+
 type AccessPolicyModel struct {
 	ID                           types.String                        `tfsdk:"id" json:"id,computed"`
 	AppID                        types.String                        `tfsdk:"app_id" path:"app_id"`
@@ -311,4 +319,10 @@ type AccessPolicyRequireAuthMethodModel struct {
 
 type AccessPolicyRequireDevicePostureModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+}
+
+type AccessPolicyDataSourceModel struct {
+}
+
+type AccessPoliciesDataSourceModel struct {
 }

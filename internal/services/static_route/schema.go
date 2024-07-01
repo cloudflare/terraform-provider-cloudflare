@@ -82,13 +82,13 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"modified_route": schema.StringAttribute{
 				Computed: true,
 			},
-			"route": schema.StringAttribute{
-				Computed: true,
-			},
 			"deleted": schema.BoolAttribute{
 				Computed: true,
 			},
 			"deleted_route": schema.StringAttribute{
+				Computed: true,
+			},
+			"route": schema.StringAttribute{
 				Computed: true,
 			},
 		},

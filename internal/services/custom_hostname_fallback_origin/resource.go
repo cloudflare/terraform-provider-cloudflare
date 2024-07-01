@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &CustomHostnameFallbackOriginResource{}
+var _ resource.ResourceWithConfigure = &CustomHostnameFallbackOriginResource{}
 
 func NewResource() resource.Resource {
 	return &CustomHostnameFallbackOriginResource{}

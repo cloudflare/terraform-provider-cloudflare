@@ -10,6 +10,14 @@ type PagesProjectResultEnvelope struct {
 	Result PagesProjectModel `json:"result,computed"`
 }
 
+type PagesProjectResultDataSourceEnvelope struct {
+	Result PagesProjectDataSourceModel `json:"result,computed"`
+}
+
+type PagesProjectsResultDataSourceEnvelope struct {
+	Result PagesProjectsDataSourceModel `json:"result,computed"`
+}
+
 type PagesProjectModel struct {
 	AccountID           types.String                          `tfsdk:"account_id" path:"account_id"`
 	ProjectName         types.String                          `tfsdk:"project_name" path:"project_name"`
@@ -364,4 +372,10 @@ type PagesProjectLatestDeploymentStagesModel struct {
 	Name      types.String `tfsdk:"name" json:"name"`
 	StartedOn types.String `tfsdk:"started_on" json:"started_on,computed"`
 	Status    types.String `tfsdk:"status" json:"status,computed"`
+}
+
+type PagesProjectDataSourceModel struct {
+}
+
+type PagesProjectsDataSourceModel struct {
 }

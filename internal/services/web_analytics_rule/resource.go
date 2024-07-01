@@ -17,7 +17,7 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &WebAnalyticsRuleResource{}
+var _ resource.ResourceWithConfigure = &WebAnalyticsRuleResource{}
 
 func NewResource() resource.Resource {
 	return &WebAnalyticsRuleResource{}

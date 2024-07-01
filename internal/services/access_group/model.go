@@ -10,6 +10,14 @@ type AccessGroupResultEnvelope struct {
 	Result AccessGroupModel `json:"result,computed"`
 }
 
+type AccessGroupResultDataSourceEnvelope struct {
+	Result AccessGroupDataSourceModel `json:"result,computed"`
+}
+
+type AccessGroupsResultDataSourceEnvelope struct {
+	Result AccessGroupsDataSourceModel `json:"result,computed"`
+}
+
 type AccessGroupModel struct {
 	ID        types.String                `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                `tfsdk:"account_id" path:"account_id"`
@@ -297,4 +305,10 @@ type AccessGroupRequireAuthMethodModel struct {
 
 type AccessGroupRequireDevicePostureModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+}
+
+type AccessGroupDataSourceModel struct {
+}
+
+type AccessGroupsDataSourceModel struct {
 }

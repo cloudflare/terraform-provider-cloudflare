@@ -16,9 +16,9 @@ type StaticRouteModel struct {
 	Routes        *[]*StaticRouteRoutesModel `tfsdk:"routes" json:"routes,computed"`
 	Modified      types.Bool                 `tfsdk:"modified" json:"modified,computed"`
 	ModifiedRoute types.String               `tfsdk:"modified_route" json:"modified_route,computed"`
-	Route         types.String               `tfsdk:"route" json:"route,computed"`
 	Deleted       types.Bool                 `tfsdk:"deleted" json:"deleted,computed"`
 	DeletedRoute  types.String               `tfsdk:"deleted_route" json:"deleted_route,computed"`
+	Route         types.String               `tfsdk:"route" json:"route,computed"`
 }
 
 type StaticRouteRoutesModel struct {

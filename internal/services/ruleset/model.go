@@ -10,6 +10,14 @@ type RulesetResultEnvelope struct {
 	Result RulesetModel `json:"result,computed"`
 }
 
+type RulesetResultDataSourceEnvelope struct {
+	Result RulesetDataSourceModel `json:"result,computed"`
+}
+
+type RulesetsResultDataSourceEnvelope struct {
+	Result RulesetsDataSourceModel `json:"result,computed"`
+}
+
 type RulesetModel struct {
 	ID          types.String          `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String          `tfsdk:"account_id" path:"account_id"`
@@ -49,4 +57,10 @@ type RulesetRulesActionParametersResponseModel struct {
 
 type RulesetRulesLoggingModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled"`
+}
+
+type RulesetDataSourceModel struct {
+}
+
+type RulesetsDataSourceModel struct {
 }
