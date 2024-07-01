@@ -34,7 +34,7 @@ Many of the resources have had `block` attributes converted to lists. In the old
         },
 ```
 
-We will want to generate a GritQL migration for each such block.
+We will want to generate a GritQL migration for each such block. The `nesting_mode` will be `list` or `set`.
 
 You should convert the block to a list using the `inline_cloudflare_block_to_list` pattern, like this:
 

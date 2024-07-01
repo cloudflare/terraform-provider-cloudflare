@@ -36,7 +36,7 @@ interface Result {
 
 function findRecursiveBlockTypes(list: Result[], resource: string, schema: z.infer<typeof BlockTypesSchema>): Result[] {
   for (const [attribute, blockType] of Object.entries(schema)) {
-    if (blockType.nesting_mode === "list") {
+    if (blockType.nesting_mode === "list" || blockType.nesting_mode === "set") {
       list.push({ resource, attribute });
     }
 
