@@ -454,35 +454,12 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 		}
 
 		if inlineDecoder != nil {
-			var meta Field
 			dest := value.FieldByIndex(inlineDecoder.idx)
-			isValid := false
+
 			if dest.IsValid() && node.Type != gjson.Null {
 				err = inlineDecoder.fn(node, dest, state)
-				if err == nil {
-					isValid = true
-				}
 			}
 
-			if node.Type == gjson.Null {
-				meta = Field{
-					raw:    node.Raw,
-					status: null,
-				}
-			} else if !isValid {
-				meta = Field{
-					raw:    node.Raw,
-					status: invalid,
-				}
-			} else if isValid {
-				meta = Field{
-					raw:    node.Raw,
-					status: valid,
-				}
-			}
-			if metadata := getSubField(value, inlineDecoder.idx, inlineDecoder.goname); metadata.IsValid() {
-				metadata.Set(reflect.ValueOf(meta))
-			}
 			return err
 		}
 
@@ -492,14 +469,12 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 			typedExtraType = value.FieldByIndex(extraDecoder.idx).Type()
 			typedExtraFields = reflect.MakeMap(typedExtraType)
 		}
-		untypedExtraFields := map[string]Field{}
 
 		for fieldName, itemNode := range node.Map() {
 			df, explicit := decoderFields[fieldName]
 			var (
 				dest reflect.Value
 				fn   decoderFunc
-				meta Field
 			)
 			if explicit {
 				fn = df.fn
@@ -510,39 +485,10 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				fn = extraDecoder.fn
 			}
 
-			isValid := false
 			if dest.IsValid() && itemNode.Type != gjson.Null {
-				err = fn(itemNode, dest, state)
-				if err == nil {
-					isValid = true
-				}
+				_ = fn(itemNode, dest, state)
 			}
 
-			if itemNode.Type == gjson.Null {
-				meta = Field{
-					raw:    itemNode.Raw,
-					status: null,
-				}
-			} else if !isValid {
-				meta = Field{
-					raw:    itemNode.Raw,
-					status: invalid,
-				}
-			} else if isValid {
-				meta = Field{
-					raw:    itemNode.Raw,
-					status: valid,
-				}
-			}
-
-			if explicit {
-				if metadata := getSubField(value, df.idx, df.goname); metadata.IsValid() {
-					metadata.Set(reflect.ValueOf(meta))
-				}
-			}
-			if !explicit {
-				untypedExtraFields[fieldName] = meta
-			}
 			if !explicit && extraDecoder != nil {
 				typedExtraFields.SetMapIndex(reflect.ValueOf(fieldName), dest)
 			}
@@ -552,14 +498,6 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 			value.FieldByIndex(extraDecoder.idx).Set(typedExtraFields)
 		}
 
-		// Set exactness to 'extras' if there are untyped, extra fields.
-		if len(untypedExtraFields) > 0 && state.exactness > extras {
-			state.exactness = extras
-		}
-
-		if metadata := getSubField(value, []int{-1}, "Extras"); metadata.IsValid() && len(untypedExtraFields) > 0 {
-			metadata.Set(reflect.ValueOf(untypedExtraFields))
-		}
 		return nil
 	}
 }
