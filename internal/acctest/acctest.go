@@ -1,7 +1,9 @@
 package acctest
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
@@ -184,4 +186,31 @@ func SharedV2Client() *cfv2.Client {
 		option.WithAPIKey("CLOUDFLARE_API_KEY"),
 		option.WithAPIEmail("CLOUDFLARE_EMAIL"),
 	)
+}
+
+// LoadTestCase takes a filename and variadic parameters to build test case output.
+//
+// Example: If you have a "basic" test case that for `r2_bucket` resource, inside
+// of the `testdata` directory, you need to have a `basic.tf` file.
+//
+//	  $ tree internal/services/r2_bucket/
+//	  ├── ...
+//	  ├── schema.go
+//	  └── testdata
+//		  └── basic.tf
+//
+// The invocation would be `LoadTestCase("basic.tf", rnd, acountID)`.
+func LoadTestCase(filename string, parameters ...interface{}) string {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+
+	fullPath := filepath.Join(pwd, "testdata", filename)
+	f, err := os.ReadFile(fullPath)
+	if err != nil {
+		return ""
+	}
+
+	return fmt.Sprintf(string(f), parameters...)
 }
