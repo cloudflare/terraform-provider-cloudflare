@@ -18,10 +18,10 @@ type AccessOrganizationModel struct {
 	Name                           types.String                        `tfsdk:"name" json:"name"`
 	AllowAuthenticateViaWARP       types.Bool                          `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp"`
 	AutoRedirectToIdentity         types.Bool                          `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
-	IsUiReadOnly                   types.Bool                          `tfsdk:"is_ui_read_only" json:"is_ui_read_only"`
+	IsUIReadOnly                   types.Bool                          `tfsdk:"is_ui_read_only" json:"is_ui_read_only"`
 	LoginDesign                    *AccessOrganizationLoginDesignModel `tfsdk:"login_design" json:"login_design"`
 	SessionDuration                types.String                        `tfsdk:"session_duration" json:"session_duration"`
-	UiReadOnlyToggleReason         types.String                        `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason"`
+	UIReadOnlyToggleReason         types.String                        `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason"`
 	UserSeatExpirationInactiveTime types.String                        `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time"`
 	WARPAuthSessionDuration        types.String                        `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
 	CreatedAt                      types.String                        `tfsdk:"created_at" json:"created_at,computed"`
