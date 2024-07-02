@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_policy: Fix forcing new access policies when account id is not set through import
+```
