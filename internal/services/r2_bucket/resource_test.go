@@ -154,9 +154,9 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 }
 
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
-	return acctest.LoadTestCase("minimum.tf", rnd, accountID)
+	return acctest.LoadTestCase("r2bucketminimum.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
-	return acctest.LoadTestCase("basic.tf", rnd, accountID)
+	return acctest.LoadTestCase("r2bucketbasic.tf", rnd, accountID)
 }

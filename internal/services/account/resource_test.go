@@ -49,10 +49,7 @@ func TestAccCloudflareAccount_Basic(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccountName(rnd, name string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_account" "%[1]s" {
-	  name = "%[2]s"
-  }`, rnd, name)
+	return acctest.LoadTestCase("accountname.tf", rnd, name)
 }
 
 func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
@@ -96,9 +93,5 @@ func TestAccCloudflareAccount_2FAEnforced(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccountWith2FA(rnd, name string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_account" "%[1]s" {
-	  name = "%[2]s"
-	  enforce_twofactor = true
-  }`, rnd, name)
+	return acctest.LoadTestCase("accountwith2fa.tf", rnd, name)
 }

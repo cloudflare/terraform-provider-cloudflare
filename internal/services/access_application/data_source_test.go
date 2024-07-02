@@ -1,7 +1,6 @@
 package access_application_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -33,19 +32,7 @@ func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationAccountName(accountID, name, domain string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
-		account_id = "%[2]s"
-		name = "%[1]s"
-		domain = "%[1]s.%[3]s"
-	}
-
-	data "cloudflare_access_application" "%[1]s" {
-		account_id = "%[2]s"
-		name = "%[1]s"
-		depends_on = [cloudflare_access_application.%[1]s]
-	}
-	`, name, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationaccountname.tf", name, accountID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
@@ -70,19 +57,7 @@ func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationAccountDomain(accountID, name, domain string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
-		account_id = "%[2]s"
-		name = "%[1]s"
-		domain = "%[1]s.%[3]s"
-	}
-
-	data "cloudflare_access_application" "%[1]s" {
-		account_id = "%[2]s"
-		domain = "%[1]s.%[3]s"
-		depends_on = [cloudflare_access_application.%[1]s]
-	}
-	`, name, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationaccountdomain.tf", name, accountID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
@@ -107,19 +82,7 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationZoneName(zoneID, name, domain string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
-		zone_id = "%[2]s"
-		name = "%[1]s"
-		domain = "%[1]s.%[3]s"
-	}
-
-	data "cloudflare_access_application" "%[1]s" {
-		zone_id = "%[2]s"
-		name = "%[1]s"
-		depends_on = [cloudflare_access_application.%[1]s]
-	}
-	`, name, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationzonename.tf", name, zoneID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
@@ -144,17 +107,5 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessApplicationZoneDomain(zoneID, name, domain string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
-		zone_id = "%[2]s"
-		name = "%[1]s"
-		domain = "%[1]s.%[3]s"
-	}
-
-	data "cloudflare_access_application" "%[1]s" {
-		zone_id = "%[2]s"
-		domain = "%[1]s.%[3]s"
-		depends_on = [cloudflare_access_application.%[1]s]
-	}
-	`, name, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationzonedomain.tf", name, zoneID, domain)
 }

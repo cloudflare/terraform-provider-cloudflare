@@ -43,21 +43,7 @@ func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameFallbackOrigin(zoneID, rnd, subdomain, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname_fallback_origin" "%[2]s" {
-  zone_id = "%[1]s"
-  origin = "fallback-origin.%[3]s.%[4]s"
-}
-
-resource "cloudflare_record" "%[2]s" {
-  zone_id = "%[1]s"
-  name    = "fallback-origin.%[2]s.%[4]s"
-  value   = "example.com"
-  type    = "CNAME"
-  proxied = true
-  ttl     = 1
-  depends_on = [cloudflare_custom_hostname_fallback_origin.%[2]s]
-}`, zoneID, rnd, subdomain, domain)
+	return acctest.LoadTestCase("customhostnamefallbackorigin.tf", zoneID, rnd, subdomain, domain)
 }
 
 func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {

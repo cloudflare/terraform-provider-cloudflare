@@ -33,20 +33,5 @@ func TestAccCloudflareWorkerCronTrigger_Basic(t *testing.T) {
 }
 
 func testAccCloudflareWorkerCronTriggerConfigBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[1]s" {
-	account_id  = "%[2]s"
-	name = "%[1]s"
-	content = "addEventListener('fetch', event => {event.respondWith(new Response('test'))});"
-}
-
-resource "cloudflare_worker_cron_trigger" "%[1]s" {
-	account_id  = "%[2]s"
-	script_name = cloudflare_worker_script.%[1]s.name
-	schedules   = [
-		"*/5 * * * *",      # every 5 minutes
-		"10 7 * * mon-fri", # 7:10am every weekday
-	]
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("workercrontriggerconfigbasic.tf", rnd, accountID)
 }

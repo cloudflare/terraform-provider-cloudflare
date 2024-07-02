@@ -361,109 +361,29 @@ func TestAccCloudflareAccessIdentityProvider_SCIM_Secret_Enabled_After_Resource_
 }
 
 func testAccCheckCloudflareAccessIdentityProviderOneTimePin(name string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-  %[2]s_id = "%[3]s"
-  name     = "%[1]s"
-  type     = "onetimepin"
-}`, name, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accessidentityprovideronetimepin.tf", name, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-  type = "github"
-  config {
-    client_id = "test"
-    client_secret = "secret"
-  }
-}`, accountID, name)
+	return acctest.LoadTestCase("accessidentityprovideroauth.tf", accountID, name)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderOAuthUpdatedName(accountID, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s-updated"
-  type = "github"
-  config {
-    client_id = "test"
-    client_secret = "secret"
-  }
-}`, accountID, name)
+	return acctest.LoadTestCase("accessidentityprovideroauthupdatedname.tf", accountID, name)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderSAML(accountID, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-  type = "saml"
-  config {
-    issuer_url = "jumpcloud"
-    sso_target_url = "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"
-    attributes = [ "email", "username" ]
-    sign_request = false
-    idp_public_cert = "MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEG\nA1UEC…..GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"
-	}
-}`, accountID, name)
+	return acctest.LoadTestCase("accessidentityprovidersaml.tf", accountID, name)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}`, accountID, name)
+	return acctest.LoadTestCase("accessidentityproviderazuread.tf", accountID, name)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderAzureADUpdated(accountID, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test2"
-		client_secret  = "test2"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = false
-		user_deprovision         = true
-	}
-}`, accountID, name)
+	return acctest.LoadTestCase("accessidentityproviderazureadupdated.tf", accountID, name)
 }
 
 func testAccCheckCloudflareAccessIdentityProviderAzureADNoSCIM(accountID, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-}`, accountID, name)
+	return acctest.LoadTestCase("accessidentityproviderazureadnoscim.tf", accountID, name)
 }

@@ -760,326 +760,69 @@ func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.Loa
 }
 
 func testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  steering_policy = ""
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigbasic.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  session_affinity = "cookie"
-  session_affinity_ttl = 1800
-  session_affinity_attributes {
-    samesite = "Auto"
-    secure = "Auto"
-    drain_duration = 60
-    zero_downtime_failover = "sticky"
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigsessionaffinity.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigSessionAffinityIPCookie(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  session_affinity = "ip_cookie"
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigsessionaffinityipcookie.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigSessionAffinityHeader(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-session-affinity-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  session_affinity = "header"
-  session_affinity_ttl = 1800
-  session_affinity_attributes {
-    samesite = "Auto"
-    secure = "Auto"
-    drain_duration = 60
-    zero_downtime_failover = "temporary"
-	headers = ["x-custom"]
-	require_all_headers = true
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigsessionaffinityheader.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigAdaptiveRouting(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-adaptive-routing-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  adaptive_routing {
-    failover_across_pools = true
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigadaptiverouting.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigLocationStrategy(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-location-strategy-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  location_strategy {
-    prefer_ecs = "proximity"
-    mode = "pop"
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfiglocationstrategy.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigRandomSteering(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-random-steering-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  random_steering {
-    pool_weights = {
-      "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.3
-    }
-    default_weight = 0.9
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigrandomsteering.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigRandomSteeringUpdate(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-random-steering-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  random_steering {
-    pool_weights = {
-      "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.4
-    }
-    default_weight = 0.8
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigrandomsteeringupdate.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigGeoBalanced(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  description = "tf-acctest load balancer using geo-balancing"
-  proxied = true // can't set ttl with proxied
-  steering_policy = "geo"
-  pop_pools {
-    pop = "LAX"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-  country_pools {
-    country = "US"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-  region_pools {
-    region = "WNAM"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfiggeobalanced.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigGeoBalancedPoPCountry(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  description = "tf-acctest load balancer using pop/country geo-balancing"
-  proxied = true
-  steering_policy = "geo"
-  pop_pools {
-    pop = "LAX"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-  country_pools {
-    country = "US"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfiggeobalancedpopcountry.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigGeoBalancedPoPCountryToRegionUpdate(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  description = "tf-acctest load balancer using pop/country geo-balancing updated to region geo-balancing"
-  proxied = true
-  steering_policy = "geo"
-  region_pools {
-    region = "WNAM"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfiggeobalancedpopcountrytoregionupdate.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigProximityBalanced(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  description = "tf-acctest load balancer using proximity-balancing"
-  proxied = true // can't set ttl with proxied
-  steering_policy = "proximity"
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigproximitybalanced.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigLeastOutstandingRequestsBalanced(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  description = "tf-acctest load balancer using least outstanding requests steering"
-  proxied = true
-  steering_policy = "least_outstanding_requests"
-  rules {
-    name = "test rule 1"
-    condition = "dns.qry.type == 28"
-    overrides {
-      steering_policy = "least_outstanding_requests"
-    }
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigleastoutstandingrequestsbalanced.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigLeastConnectionsBalanced(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  description = "tf-acctest load balancer using least connections steering"
-  proxied = true
-  steering_policy = "least_connections"
-  rules {
-    name = "test rule 1"
-    condition = "dns.qry.type == 28"
-    overrides {
-      steering_policy = "least_connections"
-    }
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigleastconnectionsbalanced.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigDuplicatePool(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  pop_pools {
-    pop = "LAX"
-    pool_ids = ["i_am_an_invalid_pool_id"]
-  }
-  pop_pools {
-    pop = "LAX"
-    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigduplicatepool.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerConfigRules(zoneID, zone, id string) string {
-	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + fmt.Sprintf(`
-resource "cloudflare_load_balancer" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "tf-testacc-lb-%[3]s.%[2]s"
-  steering_policy = ""
-  description = "rules lb"
-  fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
-  default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  rules {
-    name = "test rule 1"
-    condition = "dns.qry.type == 28"
-    overrides {
-      steering_policy = "geo"
-      session_affinity_attributes {
-        samesite = "Auto"
-        secure = "Auto"
-        zero_downtime_failover = "sticky"
-      }
-      adaptive_routing {
-        failover_across_pools = true
-      }
-      location_strategy {
-        prefer_ecs = "always"
-        mode = "resolver_ip"
-      }
-      random_steering {
-        pool_weights = {
-          "${cloudflare_load_balancer_pool.%[3]s.id}" = 0.4
-        }
-        default_weight = 0.2
-      }
-    }
-  }
-  rules {
-    name = "test rule 2"
-    condition = "dns.qry.type == 28"
-    fixed_response {
-      message_body = "hello"
-      status_code = 200
-      content_type = "html"
-      location = "www.example.com"
-    }
-  }
-  rules {
-    name = "test rule 3"
-    condition = "dns.qry.type == 28"
-    overrides {
-      region_pools {
-		    region = "ENAM"
-		    pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-	    }
-    }
-  }
-}`, zoneID, zone, id)
+	return testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID) + acctest.LoadTestCase("loadbalancerconfigrules.tf", zoneID, zone, id)
 }
 
 func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_pool" "%[1]s" {
-  account_id = "%[2]s"
-  name = "my-tf-pool-basic-%[1]s"
-  latitude = 12.3
-  longitude = 55
-  origins {
-    name = "example-1"
-    address = "192.0.2.1"
-    enabled = true
-  }
-}`, id, accountID)
+	return acctest.LoadTestCase("loadbalancerpoolconfigbasic.tf", id, accountID)
 }

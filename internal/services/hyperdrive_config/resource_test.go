@@ -158,42 +158,13 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 func testHyperdriveConfigConfig(
 	rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin, caching cfv1.HyperdriveConfigCaching,
 ) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_hyperdrive_config" "%[1]s" {
-			account_id = "%[2]s"
-			name       = "%[3]s"
-			origin     = {
-				password = "%[4]s"
-				database = "%[5]s"
-				host     = "%[6]s"
-				port     = "%[7]s"
-				scheme   = "%[8]s"
-				user     = "%[9]s"
-			}
-			caching = {
-				disabled               = %[10]s
-			}
-		}`,
-		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User, fmt.Sprintf("%t", *caching.Disabled),
-	)
+	return acctest.LoadTestCase("hyperdriveconfigconfig.tf",
+		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User, fmt.Sprintf("%t", *caching.Disabled))
 }
 
 func testHyperdriveConfigConfigMinimum(
 	rnd, accountId, name string, password string, origin cfv1.HyperdriveConfigOrigin,
 ) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_hyperdrive_config" "%[1]s" {
-			account_id = "%[2]s"
-			name       = "%[3]s"
-			origin     = {
-				password   = "%[4]s"
-				database   = "%[5]s"
-				host       = "%[6]s"
-				port       = "%[7]s"
-				scheme	   = "%[8]s"
-				user       = "%[9]s"
-			}
-		}`,
-		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User,
-	)
+	return acctest.LoadTestCase("hyperdriveconfigconfigminimum.tf",
+		rnd, accountId, name, password, origin.Database, origin.Host, fmt.Sprintf("%d", origin.Port), origin.Scheme, origin.User)
 }

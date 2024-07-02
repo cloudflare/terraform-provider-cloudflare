@@ -77,20 +77,9 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 }
 
 func testCloudflareAccountMemberBasicConfig(resourceID, emailAddress, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_account_member" "%[1]s" {
-	account_id = "%[3]s"
-    email_address = "%[2]s"
-    role_ids = [ "05784afa30c1afe1440e79d9351c7430" ]
-  }`, resourceID, emailAddress, accountID)
+	return acctest.LoadTestCase("cloudflareaccountmemberbasicconfig.tf", resourceID, emailAddress, accountID)
 }
 
 func testCloudflareAccountMemberDirectAdd(resourceID, emailAddress, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_account_member" "%[1]s" {
-	account_id = "%[3]s"
-    email_address = "%[2]s"
-    role_ids = [ "05784afa30c1afe1440e79d9351c7430" ]
-	status = "accepted"
-  }`, resourceID, emailAddress, accountID)
+	return acctest.LoadTestCase("cloudflareaccountmemberdirectadd.tf", resourceID, emailAddress, accountID)
 }

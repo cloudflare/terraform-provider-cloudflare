@@ -178,23 +178,9 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 }
 
 func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier *cloudflare.ResourceContainer, cert, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
-	name                 = "%[1]s"
-	%[2]s_id             = "%[3]s"
-	associated_hostnames = ["%[5]s"]
-	certificate          = "%[4]s"
-}
-`, rnd, identifier.Type, identifier.Identifier, cert, domain)
+	return acctest.LoadTestCase("accessmutualtlscertificateconfigbasic.tf", rnd, identifier.Type, identifier.Identifier, cert, domain)
 }
 
 func testAccessMutualTLSCertificateUpdated(rnd string, identifier *cloudflare.ResourceContainer, cert string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
-	name                 = "%[1]s"
-	%[2]s_id             = "%[3]s"
-	associated_hostnames = []
-	certificate          = "%[4]s"
-}
-`, rnd, identifier.Type, identifier.Identifier, cert)
+	return acctest.LoadTestCase("accessmutualtlscertificateupdated.tf", rnd, identifier.Type, identifier.Identifier, cert)
 }

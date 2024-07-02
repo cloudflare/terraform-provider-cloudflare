@@ -1,7 +1,6 @@
 package bot_management_test
 
 import (
-	"fmt"
 	"os"
 	"regexp"
 	"testing"
@@ -82,34 +81,13 @@ func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 }
 
 func testCloudflareBotManagementSBFM(resourceName, rnd string, bm cloudflare.BotManagement) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_bot_management" "%[1]s" {
-		zone_id = "%[2]s"
-
-		enable_js = "%[3]t"
-
-		sbfm_definitely_automated = "%[4]s"
-		sbfm_likely_automated = "%[5]s"
-		sbfm_verified_bots = "%[6]s"
-		sbfm_static_resource_protection = "%[7]t"
-		optimize_wordpress = "%[8]t"
-	}
-`, resourceName, rnd,
+	return acctest.LoadTestCase("cloudflarebotmanagementsbfm.tf", resourceName, rnd,
 		*bm.EnableJS, *bm.SBFMDefinitelyAutomated,
 		*bm.SBFMLikelyAutomated, *bm.SBFMVerifiedBots,
 		*bm.SBFMStaticResourceProtection, *bm.OptimizeWordpress)
 }
 
 func testCloudflareBotManagementEntSubscription(resourceName, rnd string, bm cloudflare.BotManagement) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_bot_management" "%[1]s" {
-		zone_id = "%[2]s"
-
-		enable_js = "%[3]t"
-
-		suppress_session_score = "%[4]t"
-		auto_update_model = "%[5]t"
-	}
-`, resourceName, rnd,
-		*bm.EnableJS, *bm.SuppressSessionScore, *bm.AutoUpdateModel)
+	return acctest.LoadTestCase("cloudflarebotmanagemententsubscription.tf", resourceName, rnd,
+		*bm.EnableJS, *bm.SuppressSessionScore)
 }

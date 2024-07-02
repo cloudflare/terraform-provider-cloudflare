@@ -141,23 +141,11 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareWorkersKV(rName, key, value, accountID string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + fmt.Sprintf(`
-resource "cloudflare_workers_kv" "%[1]s" {
-	account_id = "%[4]s"
-	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
-	key = "%[2]s"
-	value = "%[3]s"
-}`, rName, key, value, accountID)
+	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + acctest.LoadTestCase("workerskv.tf", rName, key, value, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVWithAccount(rName string, key string, value string, accountID string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + fmt.Sprintf(`
-resource "cloudflare_workers_kv" "%[1]s" {
-	account_id = "%[4]s"
-	namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
-	key = "%[2]s"
-	value = "%[3]s"
-}`, rName, key, value, accountID)
+	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + acctest.LoadTestCase("workerskvwithaccount.tf", rName, key, value, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVPair) resource.TestCheckFunc {
@@ -189,9 +177,5 @@ func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVP
 }
 
 func testAccCheckCloudflareWorkersKVNamespace(rName, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_workers_kv_namespace" "%[1]s" {
-	account_id = "%[2]s"
-	title = "%[1]s"
-}`, rName, accountID)
+	return acctest.LoadTestCase("workerskvnamespace.tf", rName, accountID)
 }

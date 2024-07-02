@@ -125,15 +125,7 @@ func TestAccCloudflareCustomHostname_WithCertificate(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-  ssl {
-    method = "txt"
-  }
-}
-`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamebasic.tf", zoneID, rnd, domain)
 }
 
 func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
@@ -165,16 +157,7 @@ func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameWaitForActive(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-  ssl {
-    method = "txt"
-  }
-  wait_for_ssl_pending_validation = true
-}
-`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamewaitforactive.tf", zoneID, rnd, domain)
 }
 
 func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
@@ -207,24 +190,7 @@ func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameWithCustomOriginServer(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-  custom_origin_server = "origin.%[2]s.terraform.cfapi.net"
-	custom_origin_sni = "origin.%[2]s.terraform.cfapi.net"
-  ssl {
-    method = "txt"
-  }
-}
-
-resource "cloudflare_record" "%[2]s" {
-  zone_id = "%[1]s"
-  name    = "origin.%[2]s.terraform.cfapi.net"
-  value   = "example.com"
-  type    = "CNAME"
-  ttl     = 3600
-}`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamewithcustomoriginserver.tf", zoneID, rnd, domain)
 }
 
 func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
@@ -255,15 +221,7 @@ func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameWithHTTPValidation(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-  ssl {
-    method = "http"
-  }
-}
-`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamewithhttpvalidation.tf", zoneID, rnd, domain)
 }
 
 func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
@@ -308,54 +266,15 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameWithCustomSSLSettings(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-  ssl {
-    method = "http"
-    settings {
-      http2 = "off"
-      min_tls_version = "1.2"
-      ciphers = [
-        "ECDHE-RSA-AES128-GCM-SHA256",
-        "AES128-SHA"
-      ]
-      early_hints = "off"
-    }
-  }
-}
-`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamewithcustomsslsettings.tf", zoneID, rnd, domain)
 }
 
 func testAccCheckCloudflareCustomHostnameWithCustomSSLSettingsUpdated(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-  ssl {
-    method = "http"
-    settings {
-      http2 = "off"
-      min_tls_version = "1.1"
-      ciphers = [
-        "ECDHE-RSA-AES128-GCM-SHA256",
-        "AES128-SHA"
-      ]
-      early_hints = "off"
-    }
-  }
-}
-`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamewithcustomsslsettingsupdated.tf", zoneID, rnd, domain)
 }
 
 func testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-}
-`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamewithnossl.tf", zoneID, rnd, domain)
 }
 
 func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
@@ -529,39 +448,9 @@ func TestAccCloudflareCustomHostname_WithCustomMetadata(t *testing.T) {
 }
 
 func testAccCheckCloudflareCustomHostnameWithCustomMetadata(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_custom_hostname" "%[2]s" {
-		zone_id = "%[1]s"
-		hostname = "%[2]s.%[3]s"
-		ssl {
-			method = "txt"
-			wildcard = true
-		}
-		custom_metadata = {
-			"customer_id" = 12345
-			"redirect_to_https" = true
-			"security_tag" = "low"
-		}
-	}
-	`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("customhostnamewithcustommetadata.tf", zoneID, rnd, domain)
 }
 
 func testAccCheckCloudflareCustomHostnameWithCertificate(zoneID, rnd, domain, cert, key string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_custom_hostname" "%[2]s" {
-  zone_id = "%[1]s"
-  hostname = "%[2]s.%[3]s"
-  ssl {
-    method             = "http"
-    type               = "dv"
-	bundle_method      = "force"
-	custom_certificate = <<EOT
-%[4]s
-	EOT
-    custom_key = <<EOT
-%[5]s
-	EOT
-  }
-}
-`, zoneID, rnd, domain, cert, key)
+	return acctest.LoadTestCase("customhostnamewithcertificate.tf", zoneID, rnd, domain, cert, key)
 }

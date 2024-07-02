@@ -411,187 +411,33 @@ func testAccManuallyDeleteSpectrumApplication(name string, spectrumApp *cloudfla
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigBasic(zoneID, zoneName, ID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[3]s" {
-  zone_id  = "%[1]s"
-  protocol = "tcp/22"
-
-  dns {
-    type = "CNAME"
-    name = "%[3]s.%[2]s"
-  }
-
-  origin_direct = ["tcp://128.66.0.1:23"]
-  origin_port   = 22
-
-  edge_ips {
-	type = "dynamic"
-	connectivity = "all"
-  }
-}
-`, zoneID, zoneName, ID)
+	return acctest.LoadTestCase("spectrumapplicationconfigbasic.tf", zoneID, zoneName, ID)
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneID, zoneName, ID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-	zone_id = "%[1]s"
-	name    = "%[3]s.origin"
-	value   = "example.com"
-	type    = "CNAME"
-	ttl     = 3600
-}
-
-resource "cloudflare_spectrum_application" "%[3]s" {
-  depends_on = ["cloudflare_record.%[3]s"]
-  zone_id  = "%[1]s"
-  protocol = "tcp/22"
-
-  dns {
-    type = "CNAME"
-    name = "%[3]s.%[2]s"
-  }
-
-  origin_dns {
-    name = "%[3]s.origin.%[2]s"
-  }
-  origin_port   = 22
-
-  edge_ips {
-	type = "dynamic"
-	connectivity = "all"
-  }
-}`, zoneID, zoneName, ID)
+	return acctest.LoadTestCase("spectrumapplicationconfigorigindns.tf", zoneID, zoneName, ID)
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, zoneName, ID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-	zone_id = "%[1]s"
-	name    = "%[3]s.origin"
-	value   = "example.com"
-	type    = "CNAME"
-	ttl     = 3600
-}
-
-resource "cloudflare_spectrum_application" "%[3]s" {
-  depends_on = ["cloudflare_record.%[3]s"]
-
-  zone_id  = "%[1]s"
-  protocol = "tcp/22-23"
-
-  dns {
-    type = "CNAME"
-    name = "%[3]s.%[2]s"
-  }
-
-  origin_dns {
-    name = "%[3]s.origin.%[2]s"
-  }
-  origin_port_range {
-    start = 2022
-    end   = 2023
-  }
-
-  edge_ips {
-	type = "dynamic"
-	connectivity = "all"
-  }
-}`, zoneID, zoneName, ID)
+	return acctest.LoadTestCase("spectrumapplicationconfigoriginportrange.tf", zoneID, zoneName, ID)
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigBasicUpdated(zoneID, zoneName, ID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[3]s" {
-  zone_id  = "%[1]s"
-  protocol = "tcp/22"
-
-  dns {
-		type = "CNAME"
-		name = "%[3]s.%[2]s"
-  }
-
-  origin_direct = ["tcp://128.66.0.2:23"]
-  origin_port   = 22
-
-  edge_ips {
-	type = "dynamic"
-	connectivity = "all"
-  }
-}`, zoneID, zoneName, ID)
+	return acctest.LoadTestCase("spectrumapplicationconfigbasicupdated.tf", zoneID, zoneName, ID)
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigEdgeIPConnectivity(zoneID, zoneName, ID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[3]s" {
-  zone_id  = "%[1]s"
-  protocol = "tcp/22"
-
-  dns {
-    type = "CNAME"
-    name = "%[3]s.%[2]s"
-  }
-
-  origin_direct = ["tcp://128.66.0.3:23"]
-  origin_port   = 22
-  edge_ips {
-	type = "dynamic"
-	connectivity = "ipv4"
-  }
-}`, zoneID, zoneName, ID)
+	return acctest.LoadTestCase("spectrumapplicationconfigedgeipconnectivity.tf", zoneID, zoneName, ID)
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigEdgeIPsWithoutConnectivity(zoneID, zoneName, ID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[3]s" {
-  zone_id  = "%[1]s"
-  protocol = "tcp/22"
-
-  dns {
-    type = "ADDRESS"
-    name = "%[3]s.%[2]s"
-  }
-
-  origin_direct = ["tcp://128.66.0.4:23"]
-  origin_port   = 22
-  edge_ips {
-	type = "static"
-	ips = ["172.65.64.13"]
-  }
-}`, zoneID, zoneName, ID)
+	return acctest.LoadTestCase("spectrumapplicationconfigedgeipswithoutconnectivity.tf", zoneID, zoneName, ID)
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigMultipleEdgeIPs(zoneID, zoneName, ID, IPs string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[3]s" {
-  zone_id  = "%[1]s"
-  protocol = "tcp/22"
-
-  dns {
-    type = "ADDRESS"
-    name = "%[3]s.%[2]s"
-  }
-
-  origin_direct = ["tcp://128.66.0.4:23"]
-  origin_port   = 22
-  edge_ips {
-	type = "static"
-	ips = [%[4]s]
-  }
-}`, zoneID, zoneName, ID, IPs)
+	return acctest.LoadTestCase("spectrumapplicationconfigmultipleedgeips.tf", zoneID, zoneName, ID, IPs)
 }
 
 func testAccCheckCloudflareSpectrumApplicationConfigBasicTypes(zoneID, zoneName, ID, protocol string, port int) string {
-	return fmt.Sprintf(`
-resource "cloudflare_spectrum_application" "%[3]s" {
-  zone_id  = "%[1]s"
-  protocol = "%[4]s"
-
-  dns {
-    type = "CNAME"
-    name = "%[3]s.%[2]s"
-  }
-
-  origin_direct = ["tcp://128.66.0.4:%[5]d"]
-}`, zoneID, zoneName, ID, protocol, port)
+	return acctest.LoadTestCase("spectrumapplicationconfigbasictypes.tf", zoneID, zoneName, ID, protocol, port)
 }

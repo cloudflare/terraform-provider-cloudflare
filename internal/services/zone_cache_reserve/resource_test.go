@@ -113,9 +113,5 @@ func TestAccCloudflareZoneCacheReserve_Basic(t *testing.T) {
 // }
 
 func testAccCloudflareZoneCacheReserveConfig(zoneID, name string, enable bool) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_zone_cache_reserve" "%[2]s" {
-			zone_id = "%[1]s"
-			enabled = "%[3]t"
-		}`, zoneID, name, enable)
+	return acctest.LoadTestCase("zonecachereserveconfig.tf", zoneID, name, enable)
 }

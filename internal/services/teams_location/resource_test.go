@@ -47,12 +47,7 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 }
 
 func testAccCloudflareTeamsLocationConfigBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_teams_location" "%[1]s" {
-  name        = "%[1]s"
-  account_id  = "%[2]s"
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("teamslocationconfigbasic.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTeamsLocationDestroy(s *terraform.State) error {

@@ -1,7 +1,6 @@
 package email_routing_catch_all_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -12,22 +11,7 @@ import (
 )
 
 func testEmailRoutingRuleCatchAllConfig(resourceID, zoneID string, enabled bool) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_email_routing_catch_all" "%[1]s" {
-		  zone_id = "%[2]s"
-		  enabled = "%[3]t"
-		  name = "terraform rule catch all"
-
-		  matcher {
-			type  = "all"
-		  }
-
-		  action {
-			type = "forward"
-			value = ["destinationaddress@example.net"]
-		  }
-	}
-		`, resourceID, zoneID, enabled)
+	return acctest.LoadTestCase("emailroutingrulecatchallconfig.tf", resourceID, zoneID, enabled)
 }
 
 func TestAccCloudflareEmailRoutingCatchAll(t *testing.T) {

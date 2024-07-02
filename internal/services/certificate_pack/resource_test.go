@@ -76,19 +76,7 @@ func TestAccCertificatePack_AdvancedLetsEncrypt(t *testing.T) {
 }
 
 func testAccCertificatePackAdvancedLetsEncryptConfig(zoneID, domain, certType, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_certificate_pack" "%[3]s" {
-  zone_id = "%[1]s"
-  type = "%[4]s"
-  hosts = [
-    "*.%[2]s",
-    "%[2]s"
-  ]
-  validation_method = "txt"
-  validity_days = 90
-  certificate_authority = "lets_encrypt"
-  cloudflare_branding = false
-}`, zoneID, domain, rnd, certType)
+	return acctest.LoadTestCase("acccertificatepackadvancedletsencryptconfig.tf", zoneID, domain, rnd, certType)
 }
 
 func TestAccCertificatePack_WaitForActive(t *testing.T) {
@@ -119,18 +107,5 @@ func TestAccCertificatePack_WaitForActive(t *testing.T) {
 }
 
 func testAccCertificatePackAdvancedWaitForActiveConfig(zoneID, domain, certType, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_certificate_pack" "%[3]s" {
-  zone_id = "%[1]s"
-  type = "%[4]s"
-  hosts = [
-    "%[3]s.%[2]s",
-    "%[2]s"
-  ]
-  validation_method = "txt"
-  validity_days = 90
-  certificate_authority = "lets_encrypt"
-  cloudflare_branding = false
-  wait_for_active_status = true
-}`, zoneID, domain, rnd, certType)
+	return acctest.LoadTestCase("acccertificatepackadvancedwaitforactiveconfig.tf", zoneID, domain, rnd, certType)
 }

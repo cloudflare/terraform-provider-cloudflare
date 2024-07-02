@@ -73,11 +73,7 @@ func TestAccCloudflareWorkersForPlatforms_NamespaceManagement(t *testing.T) {
 }
 
 func testAccCheckCloudflareWorkersForPlatformsNamespaceManagement(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_workers_for_platforms_namespace" "%[1]s" {
-    account_id = "%[2]s"
-    name       = "%[1]s"
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("workersforplatformsnamespacemanagement.tf", rnd, accountID)
 }
 
 func TestAccCloudflareWorkersForPlatforms_UploadUserWorker(t *testing.T) {
@@ -126,23 +122,7 @@ func TestAccCloudflareWorkersForPlatforms_UploadUserWorker(t *testing.T) {
 }
 
 func testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, moduleContent, compatibilityDate string, tags []string) string {
-	return fmt.Sprintf(`
-	  resource "cloudflare_workers_for_platforms_namespace" "%[1]s" {
-		account_id = "%[2]s"
-		name       = "%[1]s"
-	  }
-
-	  resource "cloudflare_worker_script" "script_%[1]s" {
-		account_id          = "%[2]s"
-		name                = "script_%[1]s"
-		content             = %[3]s
-		module              = true
-		compatibility_date  = "%[4]s"
-		dispatch_namespace  = "%[1]s"
-		tags                = %[5]q
-
-		depends_on = [cloudflare_workers_for_platforms_namespace.%[1]s]
-	  }`, rnd, accountID, moduleContent, compatibilityDate, tags)
+	return acctest.LoadTestCase("workersforplatformsuploaduserworker.tf", rnd, accountID, moduleContent, compatibilityDate, tags)
 }
 
 func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {

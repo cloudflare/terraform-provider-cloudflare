@@ -48,13 +48,7 @@ func TestAccCloudflareTeamsProxyEndpoint_Basic(t *testing.T) {
 }
 
 func testAccCloudflareTeamsProxyEndpointConfigBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_teams_proxy_endpoint" "%[1]s" {
-  name        = "%[1]s"
-  account_id  = "%[2]s"
-  ips  = ["104.16.132.229/32"]
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("teamsproxyendpointconfigbasic.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTeamsProxyEndpointDestroy(s *terraform.State) error {

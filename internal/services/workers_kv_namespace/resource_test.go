@@ -67,11 +67,7 @@ func testAccCloudflareWorkersKVNamespaceDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareWorkersKVNamespace(rName, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_workers_kv_namespace" "%[1]s" {
-	account_id = "%[2]s"
-	title = "%[1]s"
-}`, rName, accountID)
+	return acctest.LoadTestCase("workerskvnamespace.tf", rName, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVNamespaceExists(title string, namespace *cloudflare.WorkersKVNamespace) resource.TestCheckFunc {

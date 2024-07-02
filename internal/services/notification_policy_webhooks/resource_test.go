@@ -1,7 +1,6 @@
 package notification_policy_webhooks_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -50,20 +49,9 @@ func TestAccCloudflareNotificationPolicyWebhooks(t *testing.T) {
 }
 
 func testCheckCloudflareNotificationPolicyWebhooks(name, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy_webhooks" "%[1]s" {
-	account_id  = "%[2]s"
-    name        = "my webhooks destination for receiving Cloudflare notifications"
-    url         = "https://example.com"
-    secret      =  "my-secret-key"
-  }`, name, accountID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicywebhooks.tf", name, accountID)
 }
 
 func testCheckCloudflareNotificationPolicyWebhooksUpdated(resName, webhooksName, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy_webhooks" "%[1]s" {
-	account_id  = "%[3]s"
-    name        = "%[2]s"
-	url         = "https://example.com"
-  }`, resName, webhooksName, accountID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicywebhooksupdated.tf", resName, webhooksName, accountID)
 }

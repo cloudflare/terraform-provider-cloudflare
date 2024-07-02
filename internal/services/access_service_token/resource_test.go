@@ -304,22 +304,11 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 }
 
 func testCloudflareAccessServiceTokenBasicConfig(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_service_token" "%[1]s" {
-  %[3]s_id = "%[4]s"
-  name     = "%[2]s"
-  min_days_for_renewal = "0"
-}`, resourceName, tokenName, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("cloudflareaccessservicetokenbasicconfig.tf", resourceName, tokenName, identifier.Type, identifier.Identifier)
 }
 
 func testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer, duration string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_service_token" "%[1]s" {
-  %[3]s_id = "%[4]s"
-  name     = "%[2]s"
-  min_days_for_renewal = "0"
-  duration = "%[5]s"
-}`, resourceName, tokenName, identifier.Type, identifier.Identifier, duration)
+	return acctest.LoadTestCase("cloudflareaccessservicetokenbasicconfigwithduration.tf", resourceName, tokenName, identifier.Type, identifier.Identifier, duration)
 }
 
 func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {

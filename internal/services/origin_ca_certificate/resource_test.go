@@ -203,13 +203,5 @@ func generateCSR(zone string) (string, error) {
 }
 
 func testAccCheckCloudflareOriginCACertificateConfigBasic(name string, zoneName, csr string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_origin_ca_certificate" "%[1]s" {
-	csr                = <<EOT
-%[3]sEOT
-	hostnames          = [ "%[2]s", "*.%[2]s" ]
-	request_type       = "origin-rsa"
-	requested_validity = 7
-}
-`, name, zoneName, csr)
+	return acctest.LoadTestCase("origincacertificateconfigbasic.tf", name, zoneName, csr)
 }

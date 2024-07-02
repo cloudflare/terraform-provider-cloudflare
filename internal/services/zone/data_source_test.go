@@ -190,18 +190,7 @@ func testAccCheckCloudflareZonesReturned(n string, a string, check func(int) boo
 }
 
 func testAccCloudflareZonesConfigMatchName(rnd string) string {
-	return fmt.Sprintf(`
-data "cloudflare_zones" "%[2]s" {
-  filter {
-    name   = "baa-com.cfapi.net"
-    // This is an ordering fix to ensure that the test suite doesn't assert
-    // state before all the resources are available.
-    paused = "${cloudflare_zone.foo_net.paused}"
-  }
-}
-
-%[1]s
-`, testZones, rnd)
+	return acctest.LoadTestCase("zonesconfigmatchname.tf", testZones, rnd)
 }
 
 func testAccCloudflareZonesConfigMatchPaused(rnd string) string {
@@ -218,34 +207,11 @@ data "cloudflare_zones" "%[2]s" {
 }
 
 func testAccCloudflareZonesConfigMatchRegex(rnd string) string {
-	return fmt.Sprintf(`
-data "cloudflare_zones" "%[2]s" {
-  filter {
-    match  = "baa-*"
-    // This is an ordering fix to ensure that the test suite doesn't assert
-    // state before all the resources are available.
-    paused = "${cloudflare_zone.foo_net.paused}"
-  }
-}
-
-%[1]s
-`, testZones, rnd)
+	return acctest.LoadTestCase("zonesconfigmatchregex.tf", testZones, rnd)
 }
 
 func testAccCloudflareZonesMatchFuzzyLookup(rnd string) string {
-	return fmt.Sprintf(`
-data "cloudflare_zones" "%[2]s" {
-  filter {
-    name = "foo-net"
-    lookup_type = "contains"
-    // This is an ordering fix to ensure that the test suite doesn't assert
-    // state before all the resources are available.
-    paused = "${cloudflare_zone.foo_net.paused}"
-  }
-}
-
-%[1]s
-`, testZones, rnd)
+	return acctest.LoadTestCase("zonesmatchfuzzylookup.tf", testZones, rnd)
 }
 
 var testZones = fmt.Sprintf(`resource "cloudflare_zone" "baa_com" {

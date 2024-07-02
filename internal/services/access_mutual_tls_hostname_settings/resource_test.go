@@ -110,14 +110,5 @@ func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.S
 }
 
 func testAccessMutualTLSHostnameSettingsConfig(rnd string, identifier *cfv1.ResourceContainer, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_mutual_tls_hostname_settings" "%[1]s" {
-	%[2]s_id             = "%[3]s"
-	settings {
-		hostname = "%[4]s"
-		client_certificate_forwarding = true
-		china_network = false
-	}
-}
-`, rnd, identifier.Type, identifier.Identifier, domain)
+	return acctest.LoadTestCase("accessmutualtlshostnamesettingsconfig.tf", rnd, identifier.Type, identifier.Identifier, domain)
 }

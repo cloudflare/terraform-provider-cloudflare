@@ -797,251 +797,75 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 }
 
 func testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "192.168.0.10"
-	type = "A"
-	ttl = 3600
-	tags = ["tag1", "tag2"]
-    comment = "this is a comment"
-}`, zoneID, name, rnd)
+	return acctest.LoadTestCase("recordconfigbasic.tf", zoneID, name, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigApex(zoneID, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[2]s" {
-	zone_id = "%[1]s"
-	name = "@"
-	value = "192.168.0.10"
-	type = "A"
-	ttl = 3600
-}`, zoneID, rnd)
+	return acctest.LoadTestCase("recordconfigapex.tf", zoneID, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigLOC(zoneID, name, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-  zone_id = "%[1]s"
-  name = "%[2]s"
-  data {
-    lat_degrees    = "37"
-    lat_minutes    = "46"
-    lat_seconds    = 46.000
-    lat_direction  = "N"
-    long_degrees   = "122"
-    long_minutes   = "23"
-    long_seconds   = 35.000
-    long_direction = "W"
-    altitude       = 0.00
-    size           = 100.00
-    precision_horz = 0.00
-    precision_vert = 0.00
-  }
-  type = "LOC"
-  ttl = 3600
-}`, zoneID, name, rnd)
+	return acctest.LoadTestCase("recordconfigloc.tf", zoneID, name, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigSRV(zoneID, rnd, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[2]s" {
-  zone_id = "%[1]s"
-  name = "_xmpp-client._tcp.%[2]s"
-  data {
-    priority = 5
-    weight = 0
-    port = 5222
-    target = "talk.l.google.com"
-    service = "_xmpp-client"
-    proto = "_tcp"
-    name = "%[2]s.%[3]s"
-  }
-  type = "SRV"
-  ttl = 3600
-}`, zoneID, rnd, domain)
+	return acctest.LoadTestCase("recordconfigsrv.tf", zoneID, rnd, domain)
 }
 
 func testAccCheckCloudflareRecordConfigCAA(resourceName, zoneID, name string, ttl int) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[1]s" {
-  zone_id = "%[2]s"
-  name = "%[3]s"
-  data {
-    flags = "0"
-    tag   = "issue"
-    value = "letsencrypt.org"
-  }
-  type = "CAA"
-  ttl = %[4]d
-}`, resourceName, zoneID, name, ttl)
+	return acctest.LoadTestCase("recordconfigcaa.tf", resourceName, zoneID, name, ttl)
 }
 
 func testAccCheckCloudflareRecordConfigProxied(zoneID, domain, name, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[4]s" {
-	zone_id = "%[1]s"
-	name = "%[3]s"
-	value = "%[2]s"
-	type = "CNAME"
-	proxied = true
-}`, zoneID, domain, name, rnd)
+	return acctest.LoadTestCase("recordconfigproxied.tf", zoneID, domain, name, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigNewValue(zoneID, name, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "192.168.0.11"
-	type = "A"
-	ttl = 3600
-	tags = ["updated_tag1", "updated_tag2"]
-    comment = "this is am updated comment"
-}`, zoneID, name, rnd)
+	return acctest.LoadTestCase("recordconfignewvalue.tf", zoneID, name, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigChangeType(zoneID, name, zoneName, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[4]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "%[3]s"
-	type = "CNAME"
-	ttl = 3600
-}`, zoneID, name, zoneName, rnd)
+	return acctest.LoadTestCase("recordconfigchangetype.tf", zoneID, name, zoneName, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigChangeHostname(zoneID, name, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s-changed"
-	value = "192.168.0.10"
-	type = "A"
-	ttl = 3600
-}`, zoneID, name, rnd)
+	return acctest.LoadTestCase("recordconfigchangehostname.tf", zoneID, name, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigTtlValidation(zoneID, name, zoneName, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[4]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "%[3]s"
-	type = "CNAME"
-	proxied = true
-	ttl = 3600
-}`, zoneID, name, zoneName, rnd)
+	return acctest.LoadTestCase("recordconfigttlvalidation.tf", zoneID, name, zoneName, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, name, zoneName, proxied, ttl string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[2]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "%[3]s"
-	type = "CNAME"
-	proxied = %[4]s
-	ttl = %[5]s
-}`, zoneID, name, zoneName, proxied, ttl)
+	return acctest.LoadTestCase("recordconfigexplicitproxied.tf", zoneID, name, zoneName, proxied, ttl)
 }
 
 func testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, name, zoneName string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[2]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "mail.terraform.cfapi.net"
-	type = "MX"
-	priority = 0
-	proxied = false
-	ttl = 300
-}`, zoneID, name, zoneName)
+	return acctest.LoadTestCase("recordconfigmxwithpriorityzero.tf", zoneID, name, zoneName)
 }
 
 func testAccCheckCloudflareRecordConfigHTTPS(zoneID, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[2]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	type = "HTTPS"
-	data {
-		priority = "1"
-		target   = "."
-		value    = "alpn=\"h2\""
-	}
-	ttl = 300
-}`, zoneID, rnd)
+	return acctest.LoadTestCase("recordconfighttps.tf", zoneID, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigSVCB(zoneID, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[2]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	type = "SVCB"
-	data {
-		priority = "2"
-		target   = "foo."
-		value    = "alpn=\"h3,h2\""
-	}
-	ttl = 300
-}`, zoneID, rnd)
+	return acctest.LoadTestCase("recordconfigsvcb.tf", zoneID, rnd)
 }
 
 func testAccCheckCloudflareRecordNullMX(zoneID, rnd string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_record" "%[1]s" {
-		zone_id  = "%[2]s"
-		type     = "MX"
-		name     = "%[1]s"
-		value    = "."
-		priority = 0
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("recordnullmx.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareRecordConfigMultipleTags(zoneID, name, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "192.168.0.10"
-	type = "A"
-	ttl = 3600
-	tags = ["tag1", "tag2"]
-    comment = "this is a comment"
-}`, zoneID, name, rnd)
+	return acctest.LoadTestCase("recordconfigmultipletags.tf", zoneID, name, rnd)
 }
 
 func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_record" "%[3]s" {
-	zone_id = "%[1]s"
-	name = "%[2]s"
-	value = "192.168.0.10"
-	type = "A"
-	ttl = 3600
-}`, zoneID, name, rnd)
+	return acctest.LoadTestCase("recordconfignotags.tf", zoneID, name, rnd)
 }
 
 func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
-	return fmt.Sprintf(`
-	 resource "cloudflare_record" "dnskey" {
- 		zone_id = "%[1]s"
-	   	name    = "%[2]s"
-	   	type    = "DNSKEY"
-
-	   	data {
-			algorithm  = 2
-		 	flags      = 2371
-		 	protocol   = 13
-		 	public_key = "mdsswUyr3DPW132mOi8V9xESWE8jTo0dxCjjnopKl+GqJxpVXckHAeF+KkxLbxILfDLUT0rAK9iUzy1L53eKGQ=="
-	   }
-	 }
-`, zoneID, name)
+	return acctest.LoadTestCase("recorddnskey.tf", zoneID, name)
 }
 
 func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {

@@ -72,14 +72,7 @@ func TestAccFilterSimple(t *testing.T) {
 }
 
 func testFilterConfig(resourceID, zoneID, paused, description, expression string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_filter" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  expression = "%[5]s"
-		}
-		`, resourceID, zoneID, paused, description, expression)
+	return acctest.LoadTestCase("filterconfig.tf", resourceID, zoneID, paused, description, expression)
 }
 
 const multiLineFilter = `
@@ -133,12 +126,5 @@ func TestAccFilterHTMLEntity(t *testing.T) {
 }
 
 func testFilterWithHTMLEntityConfig(resourceID, zoneID, paused, description, expression string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_filter" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  expression = "%[5]s"
-		}
-		`, resourceID, zoneID, paused, description, expression)
+	return acctest.LoadTestCase("filterwithhtmlentityconfig.tf", resourceID, zoneID, paused, description, expression)
 }

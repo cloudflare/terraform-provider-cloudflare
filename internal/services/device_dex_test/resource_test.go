@@ -94,50 +94,13 @@ func TestAccCloudflareDeviceDexTest_HTTP(t *testing.T) {
 }
 
 func testAccCloudflareDeviceDexTestsHttp(accountID, rnd string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_test" "%[1]s" {
-		account_id = "%[2]s"
-		name = "%[1]s"
-		description = "%[1]s"
-		interval = "0h30m0s"
-		enabled = true
-		data {
-			host = "https://dash.cloudflare.com/home"
-			kind = "http"
-			method = "GET"
-		}
-	}
-	`, rnd, accountID)
+	return acctest.LoadTestCase("devicedextestshttp.tf", rnd, accountID)
 }
 
 func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_test" "%[1]s" {
-		account_id = "%[2]s"
-		name = "%[1]s"
-		description = "%[1]s"
-		interval = "0h30m0s"
-		enabled = true
-		data {
-			host = "dash.cloudflare.com"
-			kind = "traceroute"
-		}
-	}
-	`, rnd, accountID)
+	return acctest.LoadTestCase("devicedexteststraceroute.tf", rnd, accountID)
 }
 
 func testAccCloudflareDeviceDexTestsTracerouteIpv4(accountID, rnd string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_test" "%[1]s" {
-		account_id = "%[2]s"
-		name = "%[1]s"
-		description = "%[1]s"
-		interval = "0h30m0s"
-		enabled = true
-		data {
-			host = "1.1.1.1"
-			kind = "traceroute"
-		}
-	}
-	`, rnd, accountID)
+	return acctest.LoadTestCase("devicedexteststracerouteipv4.tf", rnd, accountID)
 }

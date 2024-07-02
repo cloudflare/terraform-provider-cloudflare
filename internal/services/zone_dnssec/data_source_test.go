@@ -69,8 +69,5 @@ data "cloudflare_zone_dnssec" "%s" {
 }
 
 func testAccCloudflareZoneDNSSECResourceConfig(zoneID string, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_zone_dnssec" "%s" {
-	zone_id = "%s"
-}`, name, zoneID)
+	return acctest.LoadTestCase("zonednssecresourceconfig.tf", name, zoneID)
 }

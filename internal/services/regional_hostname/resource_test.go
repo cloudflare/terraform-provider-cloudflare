@@ -1,7 +1,6 @@
 package regional_hostname_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -42,10 +41,5 @@ func TestAccCloudflareRegionalHostname_Basic(t *testing.T) {
 }
 
 func testRegionalHostnameConfig(name string, zoneName, regionKey string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_regional_hostname" "%[1]s" {
-	zone_id = "%[2]s"
-	hostname = "%[3]s"
-	region_key = "%[4]s"
-}`, name, zoneID, zoneName, regionKey)
+	return acctest.LoadTestCase("regionalhostnameconfig.tf", name, zoneID, zoneName, regionKey)
 }

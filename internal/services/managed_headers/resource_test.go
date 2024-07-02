@@ -115,38 +115,9 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 }
 
 func testAccCheckCloudflareManagedHeaders(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_managed_headers" "%[1]s" {
-	zone_id  = "%[2]s"
-	managed_request_headers {
-		id = "add_true_client_ip_headers"
-		enabled = true
-	}
-
-	managed_request_headers {
-		id = "add_visitor_location_headers"
-		enabled = true
-	}
-
-	managed_response_headers {
-		id = "add_security_headers"
-		enabled = true
-	}
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("managedheaders.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareManagedHeadersRemovedHeader(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_managed_headers" "%[1]s" {
-	zone_id  = "%[2]s"
-	managed_request_headers {
-		id = "add_true_client_ip_headers"
-		enabled = true
-	}
-
-	managed_response_headers {
-		id = "add_security_headers"
-		enabled = true
-	}
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("managedheadersremovedheader.tf", rnd, zoneID)
 }

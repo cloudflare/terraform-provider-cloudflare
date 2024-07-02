@@ -30,19 +30,7 @@ func TestAccCloudflareTunnel_MatchName(t *testing.T) {
 
 func testCloudflareTunnelMatchName(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	return fmt.Sprintf(`
-resource "cloudflare_tunnel" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-	secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
-}
-
-data "cloudflare_tunnel" "%[2]s" {
-	account_id = cloudflare_tunnel.%[2]s.account_id
-	name       = cloudflare_tunnel.%[2]s.name
-	depends_on = [cloudflare_tunnel.%[2]s]
-}
-`, accountID, name)
+	return acctest.LoadTestCase("cloudflaretunnelmatchname.tf", accountID, name)
 }
 
 func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
@@ -88,20 +76,7 @@ func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
 
 func testCloudflareTunnelMatchIsDeleted_Default(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	return fmt.Sprintf(`
-resource "cloudflare_tunnel" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-	secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
-}
-
-data "cloudflare_tunnel" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-	is_deleted = false
-	depends_on = [cloudflare_tunnel.%[2]s]
-}
-`, accountID, name)
+	return acctest.LoadTestCase("default.tf", accountID, name)
 }
 
 func testCloudflareTunnelMatchIsDeleted_DeletedTunnels(name string) string {

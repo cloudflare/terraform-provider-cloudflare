@@ -420,139 +420,23 @@ func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudf
 
 // using IPs from 192.0.2.0/24 as per RFC5737.
 func testAccCheckCloudflareLoadBalancerPoolConfigBasic(id, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_pool" "%[1]s" {
-  account_id = "%[2]s"
-  name = "my-tf-pool-basic-%[1]s"
-  latitude = 12.3
-  longitude = 55
-  origins {
-    name = "example-1"
-    address = "192.0.2.1"
-    enabled = true
-  }
-}`, id, accountID)
+	return acctest.LoadTestCase("loadbalancerpoolconfigbasic.tf", id, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastOutstandingRequests(id, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_pool" "%[1]s" {
-  account_id = "%[2]s"
-  name = "my-tf-pool-basic-%[1]s"
-  latitude = 12.3
-  longitude = 55
-  origins {
-    name = "example-1"
-    address = "192.0.2.1"
-    enabled = true
-  }
-  origin_steering {
-    policy = "least_outstanding_requests"
-  }
-}`, id, accountID)
+	return acctest.LoadTestCase("loadbalancerpoolconfigoriginsteeringleastoutstandingrequests.tf", id, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerPoolConfigOriginSteeringLeastConnections(id, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_pool" "%[1]s" {
-  account_id = "%[2]s"
-  name = "my-tf-pool-basic-%[1]s"
-  latitude = 12.3
-  longitude = 55
-  origins {
-    name = "example-1"
-    address = "192.0.2.1"
-    enabled = true
-  }
-  origin_steering {
-    policy = "least_connections"
-  }
-}`, id, accountID)
+	return acctest.LoadTestCase("loadbalancerpoolconfigoriginsteeringleastconnections.tf", id, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerPoolConfigVirtualNetworkID(accountID, vnetResID, tunnelResID, tunnelRouteResID, poolResID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_tunnel_virtual_network" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "my-tf-vnet-for-pool-%[2]s"
-	comment     = "test"
-}
-
-resource "cloudflare_tunnel" "%[3]s" {
-	account_id = "%[1]s"
-	name       = "my-tf-tunnel-for-pool-%[3]s"
-	secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
-}
-
-resource "cloudflare_tunnel_route" "%[4]s" {
-    account_id = "%[1]s"
-    network = "192.0.2.1/32"
-    virtual_network_id = cloudflare_tunnel_virtual_network.%[2]s.id
-    tunnel_id = cloudflare_tunnel.%[3]s.id
-    comment = "test"
-}
-
-resource "cloudflare_load_balancer_pool" "%[5]s" {
-  account_id = "%[1]s"
-  name = "my-tf-pool-with-vnet-%[5]s"
-  latitude = 12.3
-  longitude = 55
-  origins {
-    name = "example-1"
-    address = "192.0.2.1"
-    virtual_network_id = cloudflare_tunnel_route.%[4]s.virtual_network_id
-    enabled = true
-  }
-}`, accountID, vnetResID, tunnelResID, tunnelRouteResID, poolResID)
+	return acctest.LoadTestCase("loadbalancerpoolconfigvirtualnetworkid.tf", accountID, vnetResID, tunnelResID, tunnelRouteResID, poolResID)
 }
 
 func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id, headerValue, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_pool" "%[1]s" {
-  name = "my-tf-pool-basic-%[1]s"
-  account_id = "%[3]s"
-  origins {
-    name = "example-1"
-    address = "192.0.2.1"
-    enabled = false
-    weight = 1.0
-    header {
-      header = "Host"
-      values = ["test1.%[2]s"]
-     }
-  }
-
-  origins {
-    name = "example-2"
-    address = "192.0.2.2"
-    weight = 0.5
-    header {
-      header = "Host"
-      values = ["test2.%[2]s"]
-    }
-  }
-
-  load_shedding {
-    default_percent = 55
-    default_policy = "random"
-    session_percent = 12
-    session_policy = "hash"
-  }
-
-  latitude = 12.3
-  longitude = 55
-
-  origin_steering {
-    policy = "random"
-  }
-
-  check_regions = ["WEU"]
-  description = "tfacc-fully-specified"
-  enabled = false
-  minimum_origins = 2
-  // monitor = abcd TODO: monitor resource
-  notification_email = "someone@example.com"
-}`, id, headerValue, accountID)
+	return acctest.LoadTestCase("loadbalancerpoolconfigfullyspecified.tf", id, headerValue, accountID)
 	// TODO add field to config after creating monitor resource
 }
 

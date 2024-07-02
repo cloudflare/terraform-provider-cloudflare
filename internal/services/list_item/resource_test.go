@@ -207,65 +207,11 @@ func TestAccCloudflareListItem_Redirect(t *testing.T) {
 }
 
 func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[2]s" {
-    account_id          = "%[4]s"
-    name                = "%[2]s"
-    description         = "list named %[2]s"
-    kind                = "ip"
-  }
-
-  resource "cloudflare_list_item" "%[1]s" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	ip         = "192.0.2.0"
-	comment    = "%[3]s"
-  }
-
-	resource "cloudflare_list_item" "%[1]s_no_comment" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	ip         = "192.0.2.1"
-  }
-`, ID, name, comment, accountID)
+	return acctest.LoadTestCase("iplistitem.tf", ID, name, comment, accountID)
 }
 
 func testAccCheckCloudflareIPListItemMultipleEntries(ID, name, comment, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[2]s" {
-    account_id          = "%[4]s"
-    name                = "%[2]s"
-    description         = "list named %[2]s"
-    kind                = "ip"
-  }
-
-  resource "cloudflare_list_item" "%[1]s_1" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	ip         = "192.0.2.0"
-	comment    = "%[3]s"
-  }
-
-  resource "cloudflare_list_item" "%[1]s_2" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	ip         = "192.0.2.1"
-	comment    = "%[3]s"
-  }
-
-  resource "cloudflare_list_item" "%[1]s_3" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	ip         = "192.0.2.2"
-	comment    = "%[3]s"
-  }
-
-  resource "cloudflare_list_item" "%[1]s_4" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	ip         = "192.0.2.3"
-	comment    = "%[3]s"
-  } `, ID, name, comment, accountID)
+	return acctest.LoadTestCase("iplistitemmultipleentries.tf", ID, name, comment, accountID)
 }
 
 func testAccCheckCloudflareListItemExists(n string, name string, listItem *cfv1.ListItem) resource.TestCheckFunc {
@@ -298,77 +244,19 @@ func testAccCheckCloudflareListItemExists(n string, name string, listItem *cfv1.
 }
 
 func testAccCheckCloudflareBadListItemType(ID, name, comment, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[2]s" {
-    account_id          = "%[4]s"
-    name                = "%[2]s"
-    description         = "list named %[2]s"
-    kind                = "redirect"
-  }
-
-  resource "cloudflare_list_item" "%[2]s" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	ip         = "192.0.2.0"
-	comment    = "%[3]s"
-  } `, ID, name, comment, accountID)
+	return acctest.LoadTestCase("badlistitemtype.tf", ID, name, comment, accountID)
 }
 
 func testAccCheckCloudflareASNListItem(ID, name, comment, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[2]s" {
-    account_id          = "%[4]s"
-    name                = "%[2]s"
-    description         = "list named %[2]s"
-    kind                = "asn"
-  }
-
-  resource "cloudflare_list_item" "%[1]s" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	asn = 1
-	comment    = "%[3]s"
-  } `, ID, name, comment, accountID)
+	return acctest.LoadTestCase("asnlistitem.tf", ID, name, comment, accountID)
 }
 
 func testAccCheckCloudflareHostnameListItem(ID, name, comment, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[2]s" {
-    account_id          = "%[4]s"
-    name                = "%[2]s"
-    description         = "list named %[2]s"
-    kind                = "hostname"
-  }
-
-  resource "cloudflare_list_item" "%[1]s" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	comment    = "%[3]s"
-	hostname {
-		url_hostname = "example.com"
-	}
-  } `, ID, name, comment, accountID)
+	return acctest.LoadTestCase("hostnamelistitem.tf", ID, name, comment, accountID)
 }
 
 func testAccCheckCloudflareHostnameRedirectItem(ID, name, comment, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[2]s" {
-    account_id          = "%[4]s"
-    name                = "%[2]s"
-    description         = "list named %[2]s"
-    kind                = "redirect"
-  }
-
-  resource "cloudflare_list_item" "%[1]s" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	comment    = "%[3]s"
-	redirect {
-		source_url = "example.com/"
-		target_url = "https://example1.com"
-		status_code = 301
-	}
-  } `, ID, name, comment, accountID)
+	return acctest.LoadTestCase("hostnameredirectitem.tf", ID, name, comment, accountID)
 }
 
 func TestAccCloudflareListItem_RedirectWithOverlappingSourceURL(t *testing.T) {
@@ -402,34 +290,5 @@ func TestAccCloudflareListItem_RedirectWithOverlappingSourceURL(t *testing.T) {
 }
 
 func testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(ID, name, comment, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[2]s" {
-    account_id          = "%[4]s"
-    name                = "%[2]s"
-    description         = "list named %[2]s"
-    kind                = "redirect"
-  }
-
-  resource "cloudflare_list_item" "%[1]s_1" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	comment    = "%[3]s"
-	redirect {
-		source_url = "www.site1.com/"
-		target_url = "https://example.com"
-		status_code = 301
-	}
-  }
-
-  resource "cloudflare_list_item" "%[1]s_2" {
-    account_id = "%[4]s"
-	list_id    = cloudflare_list.%[2]s.id
-	comment    = "%[3]s"
-	redirect {
-		source_url = "www.site1.com/test"
-		target_url = "https://cloudflare.com"
-		status_code = 301
-	}
-  }
-  `, ID, name, comment, accountID)
+	return acctest.LoadTestCase("hostnameredirectwithoverlappingsourceurl.tf", ID, name, comment, accountID)
 }

@@ -1,7 +1,6 @@
 package notification_policy_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -58,41 +57,11 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 }
 
 func testCheckCloudflareNotificationPolicy(name, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy" "%[1]s" {
-    name        = "test SSL policy from terraform provider"
-    account_id  = "%[2]s"
-    description = "test description"
-    enabled     =  true
-    alert_type  = "universal_ssl_event_type"
-    email_integration {
-      name =  ""
-      id   =  "test@example.com"
-    }
-    email_integration {
-      name =  ""
-      id   =  "test2@example.com"
-    }
-  }`, name, accountID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicy.tf", name, accountID)
 }
 
 func testCheckCloudflareNotificationPolicyUpdated(resName, policyName, policyDesc, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy" "%[1]s" {
-    name        = "%[2]s"
-    account_id  = "%[4]s"
-    description = "%[3]s"
-    enabled     =  true
-    alert_type  = "universal_ssl_event_type"
-    email_integration {
-      name =  ""
-      id   =  "test@example.com"
-    }
-    email_integration {
-      name =  ""
-      id   =  "test2@example.com"
-    }
-  }`, resName, policyName, policyDesc, accountID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicyupdated.tf", resName, policyName, policyDesc, accountID)
 }
 
 func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
@@ -175,45 +144,11 @@ func TestAccCloudflareNotificationPolicy_WithSelectorsAttribute(t *testing.T) {
 }
 
 func testCheckCloudflareNotificationPolicyWithFiltersAttribute(name, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy" "%[1]s" {
-    name        = "workers usage notification"
-    account_id  = "%[2]s"
-    description = "test description"
-    enabled     =  true
-    alert_type  = "billing_usage_alert"
-    email_integration {
-      name =  ""
-      id   =  "test@example.com"
-    }
-    filters {
-      product = [
-        "worker_requests",
-      ]
-	  limit = ["100"]
-	}
-  }`, name, accountID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicywithfiltersattribute.tf", name, accountID)
 }
 
 func testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(name, policyName, policyDesc, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy" "%[1]s" {
-    name        = "%[2]s"
-    account_id  = "%[4]s"
-    description = "%[3]s"
-    enabled     =  true
-    alert_type  = "billing_usage_alert"
-    email_integration {
-      name =  ""
-      id   =  "test@example.com"
-    }
-    filters {
-      product = [
-        "worker_requests",
-      ]
-      limit = ["100"]
-	}
-  }`, name, policyName, policyDesc, accountID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicywithfiltersattributeupdated.tf", name, policyName, policyDesc, accountID)
 }
 
 // func TestFlattenExpandFilters(t *testing.T) {
@@ -231,33 +166,7 @@ func testCheckCloudflareNotificationPolicyWithFiltersAttributeUpdated(name, poli
 // }
 
 func testCheckCloudflareNotificationPolicyWithSelectors(name, accountID, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy" "%[1]s" {
-    name        = "traffic anomalies alert"
-    account_id  = "%[2]s"
-    description = "test description"
-    enabled     =  true
-    alert_type  = "traffic_anomalies_alert"
-	email_integration {
-      name =  ""
-      id   =  "test@example.com"
-    }
-    filters {
-	   alert_trigger_preferences = [
-			"zscore_drop"
-		]
-		group_by = [
-			"zone"
-		]
-		selectors = [
-			"total"
-		]
-		where = [
-			"(origin_status_code eq 200)"
-		]
-		zones = ["%[3]s"]
-	}
-  }`, name, accountID, zoneID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicywithselectors.tf", name, accountID, zoneID)
 }
 
 func TestAccCloudflareNotificationPolicy_RemappingAffectedComponents(t *testing.T) {
@@ -288,19 +197,5 @@ func TestAccCloudflareNotificationPolicy_RemappingAffectedComponents(t *testing.
 }
 
 func testCheckCloudflareNotificationPolicyWithComponents(name, accountID, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_notification_policy" "%[1]s" {
-    name        = "traffic anomalies alert"
-    account_id  = "%[2]s"
-    description = "test description"
-    enabled     =  true
-    alert_type  = "incident_alert"
-	email_integration {
-      name =  ""
-      id   =  "test@example.com"
-    }
-    filters {
-	   affected_components = ["API"]
-	}
-  }`, name, accountID, zoneID)
+	return acctest.LoadTestCase("checkcloudflarenotificationpolicywithcomponents.tf", name, accountID, zoneID)
 }

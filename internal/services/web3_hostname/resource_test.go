@@ -55,26 +55,11 @@ func testSweepCloudflareWeb3Hostname(r string) error {
 }
 
 func buildWeb3HostnameConfigEthereum(name, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_web3_hostname" "%[1]s" {
-	zone_id = "%[2]s"
-	name = "%[1]s.%[3]s"
-	target = "ethereum"
-	description = "test"
-}
-`, name, zoneID, domain)
+	return acctest.LoadTestCase("buildweb3hostnameconfigethereum.tf", name, zoneID, domain)
 }
 
 func buildWeb3HostnameConfigIPFS(name, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_web3_hostname" "%[1]s" {
-	zone_id = "%[2]s"
-	name = "%[1]s.%[3]s"
-	target = "ipfs"
-	description = "test"
-	dnslink = "/ipns/onboarding.ipfs.cloudflare.com"
-}
-`, name, zoneID, domain)
+	return acctest.LoadTestCase("buildweb3hostnameconfigipfs.tf", name, zoneID, domain)
 }
 
 func TestAccCloudflareWeb3HostnameEthereum(t *testing.T) {

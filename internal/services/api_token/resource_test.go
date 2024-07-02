@@ -1,7 +1,6 @@
 package api_token_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -97,17 +96,7 @@ func TestAccAPIToken_DoesNotSetConditions(t *testing.T) {
 }
 
 func testAccCloudflareAPITokenWithoutCondition(resourceName, rnd, permissionID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_api_token" "%[1]s" {
-		name = "%[2]s"
-
-		policy {
-			effect = "allow"
-			permission_groups = [ "%[3]s" ]
-			resources = { "com.cloudflare.api.account.zone.*" = "*" }
-		}
-	}
-`, resourceName, rnd, permissionID)
+	return acctest.LoadTestCase("apitokenwithoutcondition.tf", resourceName, rnd, permissionID)
 }
 
 func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
@@ -138,23 +127,7 @@ func TestAccAPIToken_SetIndividualCondition(t *testing.T) {
 }
 
 func testAccCloudflareAPITokenWithIndividualCondition(rnd string, permissionID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_api_token" "%[1]s" {
-		name = "%[1]s"
-
-		policy {
-			effect = "allow"
-			permission_groups = [ "%[2]s" ]
-			resources = { "com.cloudflare.api.account.zone.*" = "*" }
-		}
-
-		condition {
-			request_ip {
-				in = ["192.0.2.1/32"]
-			}
-		}
-	}
-`, rnd, permissionID)
+	return acctest.LoadTestCase("apitokenwithindividualcondition.tf", rnd, permissionID)
 }
 
 func TestAccAPIToken_SetAllCondition(t *testing.T) {
@@ -185,58 +158,16 @@ func TestAccAPIToken_SetAllCondition(t *testing.T) {
 }
 
 func testAccCloudflareAPITokenWithAllCondition(rnd string, permissionID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_api_token" "%[1]s" {
-		name = "%[1]s"
-
-		policy {
-			effect = "allow"
-			permission_groups = [ "%[2]s" ]
-			resources = { "com.cloudflare.api.account.zone.*" = "*" }
-		}
-
-		condition {
-			request_ip {
-				in     = ["192.0.2.1/32"]
-				not_in = ["198.51.100.1/32"]
-			}
-		}
-	}
-`, rnd, permissionID)
+	return acctest.LoadTestCase("apitokenwithallcondition.tf", rnd, permissionID)
 }
 
 func testAPITokenConfigAllowDeny(resourceID, permissionID, zoneID string, allowAllZonesExceptOne bool) string {
 	var add string
 	if allowAllZonesExceptOne {
-		add = fmt.Sprintf(`
-    		policy {
-			  effect = "deny"
-			  permission_groups = [
-			    "%[1]s",
-			  ]
-			  resources = {
-			    "com.cloudflare.api.account.zone.%[2]s" = "*"
-			  }
-	    	}
-	  `, permissionID, zoneID)
+		add = acctest.LoadTestCase("apitokenconfigallowdeny.tf", permissionID, zoneID)
 	}
 
-	return fmt.Sprintf(`
-		resource "cloudflare_api_token" "%[1]s" {
-		  name = "%[1]s"
-
-		  policy {
-			effect = "allow"
-			permission_groups = [
-			  "%[2]s",
-			]
-			resources = {
-			  "com.cloudflare.api.account.zone.*" = "*"
-			}
-		  }
-		  %[3]s
-		}
-		`, resourceID, permissionID, add)
+	return acctest.LoadTestCase("apitokenconfigallowdeny.tf", resourceID, permissionID, add)
 }
 
 func TestAccAPIToken_TokenTTL(t *testing.T) {
@@ -267,18 +198,5 @@ func TestAccAPIToken_TokenTTL(t *testing.T) {
 }
 
 func testAccCloudflareAPITokenWithTTL(rnd string, permissionID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_api_token" "%[1]s" {
-		name = "%[1]s"
-
-		policy {
-			effect = "allow"
-			permission_groups = [ "%[2]s" ]
-			resources = { "com.cloudflare.api.account.zone.*" = "*" }
-		}
-
-		not_before = "2018-07-01T05:20:00Z"
-		expires_on = "2032-01-01T00:00:00Z"
-	}
-`, rnd, permissionID)
+	return acctest.LoadTestCase("apitokenwithttl.tf", rnd, permissionID)
 }

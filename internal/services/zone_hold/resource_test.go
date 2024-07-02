@@ -50,19 +50,10 @@ func TestAccCloudflareZoneHold_Full(t *testing.T) {
 }
 
 func testAccCloudflareZoneHoldOnResourceConfig(zoneID string, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_zone_hold" "%s" {
-	zone_id = "%s"
-	hold = true
-}`, name, zoneID)
+	return acctest.LoadTestCase("zoneholdonresourceconfig.tf", name, zoneID)
 }
 
 func testAccCloudflareZoneHoldOffWithTimeAfterResourceConfig(zoneID string, name string, t time.Time) string {
 	hold := t.Add(time.Duration(1 * time.Hour)).UTC().Format(time.RFC3339)
-	return fmt.Sprintf(`
-resource "cloudflare_zone_hold" "%s" {
-	zone_id = "%s"
-	hold = false
-	hold_after = "%s"
-}`, name, zoneID, hold)
+	return acctest.LoadTestCase("zoneholdoffwithtimeafterresourceconfig.tf", name, zoneID, hold)
 }

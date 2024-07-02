@@ -47,12 +47,7 @@ func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 }
 
 func testAccCheckCloudflareTunnelBasic(accID, name string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_tunnel" "%[2]s" {
-		account_id = "%[1]s"
-		name       = "%[2]s"
-		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
-	}`, accID, name)
+	return acctest.LoadTestCase("tunnelbasic.tf", accID, name)
 }
 
 func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
@@ -87,13 +82,7 @@ func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
 }
 
 func testAccCheckCloudflareTunnelManaged(accID, name string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_tunnel" "%[2]s" {
-		account_id = "%[1]s"
-		name       = "%[2]s"
-		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
-		config_src = "cloudflare"
-	}`, accID, name)
+	return acctest.LoadTestCase("tunnelmanaged.tf", accID, name)
 }
 
 func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
@@ -128,13 +117,7 @@ func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
 }
 
 func testAccCheckCloudflareTunnelUnmanaged(accID, name string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_tunnel" "%[2]s" {
-		account_id = "%[1]s"
-		name       = "%[2]s"
-		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
-		config_src = "local"
-	}`, accID, name)
+	return acctest.LoadTestCase("tunnelunmanaged.tf", accID, name)
 }
 
 func testAccCheckCloudflareTunnelDestroy(s *terraform.State) error {

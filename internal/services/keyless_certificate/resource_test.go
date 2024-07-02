@@ -81,15 +81,5 @@ func testAccCloudflareKeylessCertificate(resourceName, zoneId string, domain str
 	expiry := time.Now().Add(time.Hour * 730)
 	cert, _, _ := utils.GenerateEphemeralCertAndKey([]string{domain}, expiry)
 
-	return fmt.Sprintf(`
-resource "cloudflare_keyless_certificate" "%[1]s" {
-  zone_id       = "%[2]s"
-  bundle_method = "force"
-  name          = "%[1]s"
-  host          = "%[3]s"
-  port          = 24008
-  certificate   = <<EOT
-%[4]s
-  EOT
-}`, resourceName, zoneId, domain, cert)
+	return acctest.LoadTestCase("keylesscertificate.tf", resourceName, zoneId, domain, cert)
 }

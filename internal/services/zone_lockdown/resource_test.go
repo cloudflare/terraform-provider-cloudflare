@@ -83,16 +83,5 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 }
 
 func testCloudflareZoneLockdownConfig(resourceID, zoneID, paused, priority, description, url, target, value string) string {
-	return fmt.Sprintf(`
-				resource "cloudflare_zone_lockdown" "%[1]s" {
-					zone_id = "%[2]s"
-					paused = "%[3]s"
-					priority = "%[4]s"
-					description = "%[5]s"
-					urls = ["%[6]s"]
-					configurations {
-						target = "%[7]s"
-						value = "%[8]s"
-					}
-				}`, resourceID, zoneID, paused, priority, description, url, target, value)
+	return acctest.LoadTestCase("cloudflarezonelockdownconfig.tf", resourceID, zoneID, paused, priority, description, url, target, value)
 }

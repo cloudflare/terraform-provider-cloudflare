@@ -1,7 +1,6 @@
 package api_shield_schema_validation_settings_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -80,20 +79,9 @@ func TestAccCloudflareAPIShieldSchemaValidationSettings_Create(t *testing.T) {
 // }
 
 func testAccCloudflareAPIShieldSchemaValidationSettingsDefaultMitigationSet(resourceName, zone string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_api_shield_schema_validation_settings" "%[1]s" {
-		zone_id = "%[2]s"
-		validation_default_mitigation_action = "log"
-	}
-`, resourceName, zone)
+	return acctest.LoadTestCase("apishieldschemavalidationsettingsdefaultmitigationset.tf", resourceName, zone)
 }
 
 func testAccCloudflareAPIShieldSchemaValidationSettingsAllMitigationsSet(resourceName, zone string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_api_shield_schema_validation_settings" "%[1]s" {
-		zone_id = "%[2]s"
-		validation_default_mitigation_action = "block"
-		validation_override_mitigation_action = "none"
-	}
-`, resourceName, zone)
+	return acctest.LoadTestCase("apishieldschemavalidationsettingsallmitigationsset.tf", resourceName, zone)
 }

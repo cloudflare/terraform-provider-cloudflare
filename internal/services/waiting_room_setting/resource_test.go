@@ -33,10 +33,5 @@ func TestAccCloudflareWaitingRoomSettings_Create(t *testing.T) {
 }
 
 func testAccCloudflareWaitingRoomSettings(resourceName, zoneID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_waiting_room_settings" "%[1]s" {
-  zone_id                      = "%[2]s"
-  search_engine_crawler_bypass = true
-}
-`, resourceName, zoneID)
+	return acctest.LoadTestCase("waitingroomsettings.tf", resourceName, zoneID)
 }
