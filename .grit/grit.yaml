@@ -10,19 +10,26 @@ patterns:
           return $raw_code.text.substring(1, $raw_code.text.length - 1)
       }
 
+      function dir_name($file_name) js {
+          return $file_name.text.split("/").slice(0, -1).join("/")
+      }
+
+      function test_name($func_name) js {
+          return $func_name.text.toLowerCase().replaceAll("testacc", "")
+      }
 
       file($name, $body) where {
-        $count = 1,
-        $test_file_prefix = strip_extension($name),
-        $test_file_local_name = current_filename_without_extension(),
-        $body <: contains bubble($test_file_prefix, $test_file_local_name, $count) `fmt.Sprintf($args)` as $match where {
+        $body <: contains bubble($name) `fmt.Sprintf($args)` as $match where {
           $args <: [$template, $...],
           $template <: includes "resource",
           $string = extract_code($template),
-          $util = require_import(source="somepackage/util"),
           $test_text = text($string),
-          $new_files += file(name = `$test_file_prefix-$count.txt`, body = $test_text),
-          $template => `util.ExtractTests("./$test_file_local_name-$count.txt")`,
-          $count += 1,
+          $test_dir = dir_name($name),
+          $match <: within `func $func_name($_) $_ { $_ }`,
+          $test_name = test_name($func_name),
+          $test_file_name = `$test_name.tf`,
+          $new_files += file(name = `$test_dir/testdata/$test_file_name`, body = $test_text),
+          $template => `"$test_file_name"`,
+          $match => `acctest.LoadTestCase($args)`
         }
       }
