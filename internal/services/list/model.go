@@ -21,9 +21,9 @@ type ListsResultDataSourceEnvelope struct {
 type ListModel struct {
 	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
 	ListID      types.String `tfsdk:"list_id" path:"list_id"`
+	Description types.String `tfsdk:"description" json:"description"`
 	Kind        types.String `tfsdk:"kind" json:"kind"`
 	Name        types.String `tfsdk:"name" json:"name"`
-	Description types.String `tfsdk:"description" json:"description"`
 	ID          types.String `tfsdk:"id" json:"id,computed"`
 }
 

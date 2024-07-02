@@ -25,12 +25,14 @@ func (r DLPPredefinedProfileResource) UpgradeState(ctx context.Context) map[int6
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"profile_id": schema.StringAttribute{
-						Description: "The ID for this profile",
-						Required:    true,
+						Description:   "The ID for this profile",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"allowed_match_count": schema.Float64Attribute{
 						Description: "Related DLP policies will trigger when the match count exceeds the number set.",

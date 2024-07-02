@@ -22,15 +22,9 @@ func (r Web3HostnameResource) Schema(ctx context.Context, req resource.SchemaReq
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_identifier": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
-			},
-			"target": schema.StringAttribute{
-				Description: "Target gateway of the hostname.",
-				Required:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ethereum", "ipfs", "ipfs_universal_path"),
-				},
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{
 				Description: "An optional description of the hostname.",
@@ -39,6 +33,14 @@ func (r Web3HostnameResource) Schema(ctx context.Context, req resource.SchemaReq
 			"dnslink": schema.StringAttribute{
 				Description: "DNSLink value used if the target is ipfs.",
 				Optional:    true,
+			},
+			"target": schema.StringAttribute{
+				Description: "Target gateway of the hostname.",
+				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ethereum", "ipfs", "ipfs_universal_path"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,

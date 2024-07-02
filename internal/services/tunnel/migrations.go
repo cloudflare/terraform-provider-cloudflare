@@ -22,8 +22,9 @@ func (r TunnelResource) UpgradeState(ctx context.Context) map[int64]resource.Sta
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Cloudflare account ID",
-						Required:    true,
+						Description:   "Cloudflare account ID",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Description: "A user-friendly name for a tunnel.",

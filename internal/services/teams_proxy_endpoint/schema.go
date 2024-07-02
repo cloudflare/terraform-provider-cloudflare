@@ -20,7 +20,8 @@ func (r TeamsProxyEndpointResource) Schema(ctx context.Context, req resource.Sch
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ips": schema.ListAttribute{
 				Description: "A list of CIDRs to restrict ingress connections.",

@@ -25,6 +25,7 @@ type APITokenModel struct {
 	Condition *APITokenConditionModel   `tfsdk:"condition" json:"condition"`
 	ExpiresOn types.String              `tfsdk:"expires_on" json:"expires_on"`
 	NotBefore types.String              `tfsdk:"not_before" json:"not_before"`
+	Status    types.String              `tfsdk:"status" json:"status"`
 	Value     types.String              `tfsdk:"value" json:"value,computed"`
 	ID        types.String              `tfsdk:"id" json:"id,computed"`
 }

@@ -28,8 +28,9 @@ func (r LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]re
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
@@ -205,7 +206,7 @@ func (r LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]re
 					},
 					"check_regions": schema.ListAttribute{
 						Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
-						Computed:    true,
+						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"created_on": schema.StringAttribute{

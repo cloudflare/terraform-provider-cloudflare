@@ -22,8 +22,9 @@ func (r WorkersKVNamespaceResource) UpgradeState(ctx context.Context) map[int64]
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"title": schema.StringAttribute{
 						Description: "A human-readable string name for a Namespace.",

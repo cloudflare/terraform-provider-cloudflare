@@ -30,8 +30,9 @@ func (r TurnstileWidgetResource) UpgradeState(ctx context.Context) map[int64]res
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"domains": schema.ListAttribute{
 						Required:    true,
@@ -70,7 +71,8 @@ func (r TurnstileWidgetResource) UpgradeState(ctx context.Context) map[int64]res
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("world"),
 						},
-						Default: stringdefault.StaticString("world"),
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Default:       stringdefault.StaticString("world"),
 					},
 					"created_on": schema.StringAttribute{
 						Description: "When the widget was created.",

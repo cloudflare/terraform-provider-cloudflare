@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -17,11 +19,17 @@ func (r ListResource) UpgradeState(ctx context.Context) map[int64]resource.State
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"list_id": schema.StringAttribute{
-						Description: "The unique ID of the list.",
+						Description:   "The unique ID of the list.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
+					"description": schema.StringAttribute{
+						Description: "An informative summary of the list.",
 						Optional:    true,
 					},
 					"kind": schema.StringAttribute{
@@ -30,14 +38,12 @@ func (r ListResource) UpgradeState(ctx context.Context) map[int64]resource.State
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("ip", "redirect", "hostname", "asn"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
-						Description: "An informative name for the list. Use this name in filter and rule expressions.",
-						Required:    true,
-					},
-					"description": schema.StringAttribute{
-						Description: "An informative summary of the list.",
-						Optional:    true,
+						Description:   "An informative name for the list. Use this name in filter and rule expressions.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"id": schema.StringAttribute{
 						Description: "The unique ID of the item in the List.",

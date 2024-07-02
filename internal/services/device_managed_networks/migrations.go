@@ -28,7 +28,8 @@ func (r DeviceManagedNetworksResource) UpgradeState(ctx context.Context) map[int
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Required: true,
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"config": schema.SingleNestedAttribute{
 						Description: "The configuration object containing information for the WARP client to detect the managed network.",

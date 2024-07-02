@@ -25,7 +25,8 @@ func (r TeamsRuleResource) UpgradeState(ctx context.Context) map[int64]resource.
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Required: true,
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"action": schema.StringAttribute{
 						Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",

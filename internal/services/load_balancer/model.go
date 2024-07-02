@@ -38,8 +38,8 @@ type LoadBalancerModel struct {
 	SessionAffinityTTL        types.Float64                               `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl"`
 	SteeringPolicy            types.String                                `tfsdk:"steering_policy" json:"steering_policy"`
 	TTL                       types.Float64                               `tfsdk:"ttl" json:"ttl"`
+	Enabled                   types.Bool                                  `tfsdk:"enabled" json:"enabled"`
 	CreatedOn                 types.String                                `tfsdk:"created_on" json:"created_on,computed"`
-	Enabled                   types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
 	ModifiedOn                types.String                                `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 

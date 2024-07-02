@@ -22,12 +22,14 @@ func (r AccessServiceTokenResource) UpgradeState(ctx context.Context) map[int64]
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-						Optional:    true,
+						Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"zone_id": schema.StringAttribute{
-						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-						Optional:    true,
+						Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Description: "The name of the service token.",

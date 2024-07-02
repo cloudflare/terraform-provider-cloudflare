@@ -25,16 +25,19 @@ func (r AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaReq
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"app_id": schema.StringAttribute{
-				Description: "UUID",
-				Required:    true,
+				Description:   "UUID",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
+				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-				Optional:    true,
+				Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"decision": schema.StringAttribute{
 				Description: "The action Access will take if a user matches this policy.",

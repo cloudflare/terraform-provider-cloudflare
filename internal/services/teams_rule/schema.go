@@ -23,7 +23,8 @@ func (r TeamsRuleResource) Schema(ctx context.Context, req resource.SchemaReques
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",

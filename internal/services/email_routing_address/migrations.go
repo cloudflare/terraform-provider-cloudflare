@@ -22,8 +22,9 @@ func (r EmailRoutingAddressResource) UpgradeState(ctx context.Context) map[int64
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_identifier": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"email": schema.StringAttribute{
 						Description: "The contact email address of the user.",

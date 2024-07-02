@@ -26,8 +26,9 @@ func (r EmailRoutingCatchAllResource) UpgradeState(ctx context.Context) map[int6
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"zone_identifier": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"actions": schema.ListNestedAttribute{
 						Description: "List actions for the catch-all routing rule.",

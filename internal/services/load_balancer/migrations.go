@@ -28,7 +28,8 @@ func (r LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resour
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"zone_id": schema.StringAttribute{
-						Required: true,
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"default_pools": schema.ListAttribute{
 						Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
@@ -400,13 +401,14 @@ func (r LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resour
 						Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 						Optional:    true,
 					},
-					"created_on": schema.StringAttribute{
-						Computed: true,
-					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether to enable (the default) this load balancer.",
 						Computed:    true,
+						Optional:    true,
 						Default:     booldefault.StaticBool(true),
+					},
+					"created_on": schema.StringAttribute{
+						Computed: true,
 					},
 					"modified_on": schema.StringAttribute{
 						Computed: true,
