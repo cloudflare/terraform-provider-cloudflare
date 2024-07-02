@@ -17,11 +17,6 @@ import (
 func (r AccessIdentityProviderResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "UUID",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
 				Optional:      true,
@@ -84,6 +79,11 @@ func (r AccessIdentityProviderResource) Schema(ctx context.Context, req resource
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex"),
 				},
+			},
+			"id": schema.StringAttribute{
+				Description:   "UUID",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"scim_config": schema.SingleNestedAttribute{
 				Description: "The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider.",
