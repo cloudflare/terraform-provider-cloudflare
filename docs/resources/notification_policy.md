@@ -134,6 +134,7 @@ Optional:
 - `target_ip` (Set of String) Target ip to alert on for dos in CIDR notation.
 - `target_zone_name` (Set of String) Target domain to alert on.
 - `tunnel_id` (Set of String) Tunnel IDs to alert on.
+- `tunnel_name` (Set of String) Tunnel Names to alert on.
 - `where` (Set of String) Filter for alert.
 - `zones` (Set of String) A list of zone identifiers.
 
