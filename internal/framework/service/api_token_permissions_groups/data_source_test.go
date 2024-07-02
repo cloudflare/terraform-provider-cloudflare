@@ -2,7 +2,6 @@ package api_token_permissions_groups_test
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"testing"
 
@@ -12,13 +11,6 @@ import (
 )
 
 func TestAccCloudflareApiTokenPermissionGroups_Basic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the API token
-	// permission groups endpoint does not yet support the API tokens, and it
-	// results in misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

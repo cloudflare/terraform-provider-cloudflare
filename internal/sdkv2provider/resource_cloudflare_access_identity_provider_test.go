@@ -53,13 +53,6 @@ func testSweepCloudflareAccessIdentityProviders(r string) error {
 }
 
 func TestAccCloudflareAccessIdentityProvider_OneTimePin(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the OTP Access
-	// endpoint does not yet support the API tokens for updates and it results in
-	// state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{

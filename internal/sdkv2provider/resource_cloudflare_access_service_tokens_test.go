@@ -3,7 +3,6 @@ package sdkv2provider
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
 	"testing"
 
@@ -14,13 +13,6 @@ import (
 )
 
 func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// Service Tokens endpoint does not yet support the API tokens and it
-	// results in misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
@@ -166,13 +158,6 @@ func testAccCheckCloudflareAccessServiceTokenRenewed(n string, oldResourceState 
 }
 
 func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// Service Tokens endpoint does not yet support the API tokens and it
-	// results in misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
@@ -220,13 +205,6 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 }
 
 func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// Service Tokens endpoint does not yet support the API tokens and it
-	// results in misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]

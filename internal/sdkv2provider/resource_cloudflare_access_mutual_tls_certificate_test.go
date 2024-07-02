@@ -60,13 +60,6 @@ func testSweepCloudflareAccessMutualTLSCertificate(r string) error {
 }
 
 func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
@@ -103,13 +96,6 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 }
 
 func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")

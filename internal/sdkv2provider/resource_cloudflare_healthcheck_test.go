@@ -14,12 +14,6 @@ import (
 )
 
 func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
-	// service does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	rnd := generateRandomResourceName()
@@ -44,12 +38,6 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 }
 
 func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
-	// service does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	rnd := generateRandomResourceName()
@@ -89,12 +77,6 @@ func TestAccCloudflareHealthcheckTCPUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Healthcheck
-	// service does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	rnd := generateRandomResourceName()

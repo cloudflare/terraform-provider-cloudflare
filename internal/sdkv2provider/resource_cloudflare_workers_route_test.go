@@ -17,12 +17,6 @@ const (
 )
 
 func TestAccCloudflareWorkerRoute_MultiScript(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	var route cloudflare.WorkerRoute
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -97,12 +91,6 @@ resource "cloudflare_worker_script" "%[4]s" {
 }
 
 func TestAccCloudflareWorkerRoute_MultiScriptDisabledRoute(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Workers
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
 
 	var route cloudflare.WorkerRoute
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
