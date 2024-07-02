@@ -1,3 +1,28 @@
 version: 0.0.1
 patterns:
   - name: github.com/getgrit/stdlib#*
+  - name: extract_tests
+    description: Extract tests from Go files into their own files
+    body: |
+      language go
+
+      function extract_code($raw_code) js {
+          return $raw_code.text.substring(1, $raw_code.text.length - 1)
+      }
+
+
+      file($name, $body) where {
+        $count = 1,
+        $test_file_prefix = strip_extension($name),
+        $test_file_local_name = current_filename_without_extension(),
+        $body <: contains bubble($test_file_prefix, $test_file_local_name, $count) `fmt.Sprintf($args)` as $match where {
+          $args <: [$template, $...],
+          $template <: includes "resource",
+          $string = extract_code($template),
+          $util = require_import(source="somepackage/util"),
+          $test_text = text($string),
+          $new_files += file(name = `$test_file_prefix-$count.txt`, body = $test_text),
+          $template => `util.ExtractTests("./$test_file_local_name-$count.txt")`,
+          $count += 1,
+        }
+      }
