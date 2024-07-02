@@ -17,13 +17,9 @@ func (r AccessCustomPageResource) Schema(ctx context.Context, req resource.Schem
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "UUID",
-				Computed:    true,
-			},
-			"uid": schema.StringAttribute{
 				Description:   "UUID",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -50,10 +46,15 @@ func (r AccessCustomPageResource) Schema(ctx context.Context, req resource.Schem
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed: true,
+				Optional: true,
+			},
+			"uid": schema.StringAttribute{
+				Description:   "UUID",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"updated_at": schema.StringAttribute{
-				Computed: true,
+				Optional: true,
 			},
 		},
 	}

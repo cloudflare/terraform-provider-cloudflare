@@ -22,9 +22,9 @@ type AccessTagModel struct {
 	ID        types.String `tfsdk:"id" json:"-,computed"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id"`
 	Name      types.String `tfsdk:"name" json:"name"`
+	CreatedAt types.String `tfsdk:"created_at" json:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at" json:"updated_at"`
 	AppCount  types.Int64  `tfsdk:"app_count" json:"app_count,computed"`
-	CreatedAt types.String `tfsdk:"created_at" json:"created_at,computed"`
-	UpdatedAt types.String `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessTagDataSourceModel struct {
