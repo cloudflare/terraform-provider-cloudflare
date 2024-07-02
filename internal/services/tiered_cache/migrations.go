@@ -24,8 +24,9 @@ func (r TieredCacheResource) UpgradeState(ctx context.Context) map[int64]resourc
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"value": schema.StringAttribute{
 						Description: "Enable or disable the Smart Tiered Cache",

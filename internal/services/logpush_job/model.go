@@ -23,7 +23,6 @@ type LogpushJobModel struct {
 	AccountID                types.String                  `tfsdk:"account_id" path:"account_id"`
 	ZoneID                   types.String                  `tfsdk:"zone_id" path:"zone_id"`
 	DestinationConf          types.String                  `tfsdk:"destination_conf" json:"destination_conf"`
-	Dataset                  types.String                  `tfsdk:"dataset" json:"dataset"`
 	Enabled                  types.Bool                    `tfsdk:"enabled" json:"enabled"`
 	Frequency                types.String                  `tfsdk:"frequency" json:"frequency"`
 	Kind                     types.String                  `tfsdk:"kind" json:"kind"`
@@ -31,9 +30,10 @@ type LogpushJobModel struct {
 	MaxUploadBytes           types.Int64                   `tfsdk:"max_upload_bytes" json:"max_upload_bytes"`
 	MaxUploadIntervalSeconds types.Int64                   `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds"`
 	MaxUploadRecords         types.Int64                   `tfsdk:"max_upload_records" json:"max_upload_records"`
-	Name                     types.String                  `tfsdk:"name" json:"name"`
 	OutputOptions            *LogpushJobOutputOptionsModel `tfsdk:"output_options" json:"output_options"`
 	OwnershipChallenge       types.String                  `tfsdk:"ownership_challenge" json:"ownership_challenge"`
+	Dataset                  types.String                  `tfsdk:"dataset" json:"dataset"`
+	Name                     types.String                  `tfsdk:"name" json:"name"`
 	ErrorMessage             types.String                  `tfsdk:"error_message" json:"error_message,computed"`
 	LastComplete             types.String                  `tfsdk:"last_complete" json:"last_complete,computed"`
 	LastError                types.String                  `tfsdk:"last_error" json:"last_error,computed"`

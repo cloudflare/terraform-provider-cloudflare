@@ -20,6 +20,7 @@ type TunnelVirtualNetworkModel struct {
 	Name             types.String `tfsdk:"name" json:"name"`
 	Comment          types.String `tfsdk:"comment" json:"comment"`
 	IsDefault        types.Bool   `tfsdk:"is_default" json:"is_default"`
+	IsDefaultNetwork types.Bool   `tfsdk:"is_default_network" json:"is_default_network"`
 }
 
 type TunnelVirtualNetworksDataSourceModel struct {

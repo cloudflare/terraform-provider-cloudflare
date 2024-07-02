@@ -21,16 +21,14 @@ func (r AccessMutualTLSCertificateResource) Schema(ctx context.Context, req reso
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
+				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-				Optional:    true,
-			},
-			"certificate": schema.StringAttribute{
-				Description: "The certificate content.",
-				Required:    true,
+				Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the certificate.",
@@ -40,6 +38,11 @@ func (r AccessMutualTLSCertificateResource) Schema(ctx context.Context, req reso
 				Description: "The hostnames of the applications that will use this certificate.",
 				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"certificate": schema.StringAttribute{
+				Description:   "The certificate content.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,

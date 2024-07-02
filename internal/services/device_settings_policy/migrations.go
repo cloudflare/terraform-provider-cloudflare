@@ -7,6 +7,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 func (r DeviceSettingsPolicyResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -15,11 +18,13 @@ func (r DeviceSettingsPolicyResource) UpgradeState(ctx context.Context) map[int6
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Required: true,
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"policy_id": schema.StringAttribute{
-						Description: "Device ID.",
-						Optional:    true,
+						Description:   "Device ID.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"match": schema.StringAttribute{
 						Description: "The wirefilter expression to match devices.",
@@ -69,14 +74,6 @@ func (r DeviceSettingsPolicyResource) UpgradeState(ctx context.Context) map[int6
 						Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
 						Optional:    true,
 					},
-					"lan_allow_minutes": schema.Float64Attribute{
-						Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
-						Optional:    true,
-					},
-					"lan_allow_subnet_size": schema.Float64Attribute{
-						Description: "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
-						Optional:    true,
-					},
 					"service_mode_v2": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
@@ -97,6 +94,16 @@ func (r DeviceSettingsPolicyResource) UpgradeState(ctx context.Context) map[int6
 					"switch_locked": schema.BoolAttribute{
 						Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
 						Optional:    true,
+					},
+					"lan_allow_minutes": schema.Float64Attribute{
+						Description:   "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+					},
+					"lan_allow_subnet_size": schema.Float64Attribute{
+						Description:   "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 					},
 				},
 			},

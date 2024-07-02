@@ -24,8 +24,9 @@ func (r NotificationPolicyResource) Schema(ctx context.Context, req resource.Sch
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "The account id",
-				Required:    true,
+				Description:   "The account id",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"alert_type": schema.StringAttribute{
 				Description: "Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.",

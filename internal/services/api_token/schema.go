@@ -94,6 +94,13 @@ func (r APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Description: "The time before which the token MUST NOT be accepted for processing.",
 				Optional:    true,
 			},
+			"status": schema.StringAttribute{
+				Description: "Status of the token.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("active", "disabled", "expired"),
+				},
+			},
 			"value": schema.StringAttribute{
 				Description: "The token value.",
 				Computed:    true,

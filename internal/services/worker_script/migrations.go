@@ -25,12 +25,14 @@ func (r WorkerScriptResource) UpgradeState(ctx context.Context) map[int64]resour
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"script_name": schema.StringAttribute{
-						Description: "Name of the script, used in URLs and route configuration.",
-						Required:    true,
+						Description:   "Name of the script, used in URLs and route configuration.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"any_part_name": schema.StringAttribute{
 						Description: "A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.",

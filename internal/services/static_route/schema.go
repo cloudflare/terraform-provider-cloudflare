@@ -7,6 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,11 +16,49 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"route_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description:   "Identifier",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"nexthop": schema.StringAttribute{
+				Description: "The next-hop IP Address for the static route.",
+				Optional:    true,
+			},
+			"prefix": schema.StringAttribute{
+				Description: "IP Prefix in Classless Inter-Domain Routing format.",
+				Optional:    true,
+			},
+			"priority": schema.Int64Attribute{
+				Description: "Priority of the static route.",
+				Optional:    true,
+			},
+			"description": schema.StringAttribute{
+				Description: "An optional human provided description of the static route.",
+				Optional:    true,
+			},
+			"scope": schema.SingleNestedAttribute{
+				Description: "Used only for ECMP routes.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"colo_names": schema.ListAttribute{
+						Description: "List of colo names for the ECMP scope.",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
+					"colo_regions": schema.ListAttribute{
+						Description: "List of colo regions for the ECMP scope.",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
+				},
+			},
+			"weight": schema.Int64Attribute{
+				Description: "Optional weight of the ECMP scope - if provided.",
 				Optional:    true,
 			},
 			"routes": schema.ListNestedAttribute{

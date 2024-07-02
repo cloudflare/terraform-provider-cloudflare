@@ -21,12 +21,12 @@ type CustomHostnamesResultDataSourceEnvelope struct {
 type CustomHostnameModel struct {
 	ID                 types.String                       `tfsdk:"id" json:"id,computed"`
 	ZoneID             types.String                       `tfsdk:"zone_id" path:"zone_id"`
-	Hostname           types.String                       `tfsdk:"hostname" json:"hostname"`
 	SSL                *CustomHostnameSSLModel            `tfsdk:"ssl" json:"ssl"`
 	CustomMetadata     *CustomHostnameCustomMetadataModel `tfsdk:"custom_metadata" json:"custom_metadata"`
+	Hostname           types.String                       `tfsdk:"hostname" json:"hostname"`
+	CustomOriginServer types.String                       `tfsdk:"custom_origin_server" json:"custom_origin_server"`
+	CustomOriginSNI    types.String                       `tfsdk:"custom_origin_sni" json:"custom_origin_sni"`
 	CreatedAt          types.String                       `tfsdk:"created_at" json:"created_at,computed"`
-	CustomOriginServer types.String                       `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
-	CustomOriginSNI    types.String                       `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`
 	Status             types.String                       `tfsdk:"status" json:"status,computed"`
 	VerificationErrors *[]types.String                    `tfsdk:"verification_errors" json:"verification_errors,computed"`
 }

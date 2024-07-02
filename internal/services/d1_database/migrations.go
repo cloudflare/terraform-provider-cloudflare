@@ -24,8 +24,9 @@ func (r D1DatabaseResource) UpgradeState(ctx context.Context) map[int64]resource
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Account identifier tag.",
-						Required:    true,
+						Description:   "Account identifier tag.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Required: true,

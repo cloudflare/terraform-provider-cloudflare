@@ -13,12 +13,23 @@ type StaticRouteResultEnvelope struct {
 type StaticRouteModel struct {
 	AccountID     types.String               `tfsdk:"account_id" path:"account_id"`
 	RouteID       types.String               `tfsdk:"route_id" path:"route_id"`
+	Nexthop       types.String               `tfsdk:"nexthop" json:"nexthop"`
+	Prefix        types.String               `tfsdk:"prefix" json:"prefix"`
+	Priority      types.Int64                `tfsdk:"priority" json:"priority"`
+	Description   types.String               `tfsdk:"description" json:"description"`
+	Scope         *StaticRouteScopeModel     `tfsdk:"scope" json:"scope"`
+	Weight        types.Int64                `tfsdk:"weight" json:"weight"`
 	Routes        *[]*StaticRouteRoutesModel `tfsdk:"routes" json:"routes,computed"`
 	Modified      types.Bool                 `tfsdk:"modified" json:"modified,computed"`
 	ModifiedRoute types.String               `tfsdk:"modified_route" json:"modified_route,computed"`
 	Deleted       types.Bool                 `tfsdk:"deleted" json:"deleted,computed"`
 	DeletedRoute  types.String               `tfsdk:"deleted_route" json:"deleted_route,computed"`
 	Route         types.String               `tfsdk:"route" json:"route,computed"`
+}
+
+type StaticRouteScopeModel struct {
+	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names"`
+	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions"`
 }
 
 type StaticRouteRoutesModel struct {

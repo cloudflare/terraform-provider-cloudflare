@@ -25,8 +25,9 @@ func (r WebAnalyticsSiteResource) Schema(ctx context.Context, req resource.Schem
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"auto_install": schema.BoolAttribute{
 				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",

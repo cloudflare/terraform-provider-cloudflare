@@ -28,8 +28,9 @@ func (r TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schema
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"domains": schema.ListAttribute{
 				Required:    true,
@@ -68,7 +69,8 @@ func (r TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schema
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("world"),
 				},
-				Default: stringdefault.StaticString("world"),
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Default:       stringdefault.StaticString("world"),
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the widget was created.",

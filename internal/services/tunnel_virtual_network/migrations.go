@@ -7,6 +7,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 func (r TunnelVirtualNetworkResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -15,12 +18,14 @@ func (r TunnelVirtualNetworkResource) UpgradeState(ctx context.Context) map[int6
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Cloudflare account ID",
-						Required:    true,
+						Description:   "Cloudflare account ID",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"virtual_network_id": schema.StringAttribute{
-						Description: "UUID of the virtual network.",
-						Optional:    true,
+						Description:   "UUID of the virtual network.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Description: "A user-friendly name for the virtual network.",
@@ -31,6 +36,11 @@ func (r TunnelVirtualNetworkResource) UpgradeState(ctx context.Context) map[int6
 						Optional:    true,
 					},
 					"is_default": schema.BoolAttribute{
+						Description:   "If `true`, this virtual network is the default for the account.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+					},
+					"is_default_network": schema.BoolAttribute{
 						Description: "If `true`, this virtual network is the default for the account.",
 						Optional:    true,
 					},

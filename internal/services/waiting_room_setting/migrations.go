@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 func (r WaitingRoomSettingResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -16,8 +18,9 @@ func (r WaitingRoomSettingResource) UpgradeState(ctx context.Context) map[int64]
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"search_engine_crawler_bypass": schema.BoolAttribute{
 						Description: "Whether to allow verified search engine crawlers to bypass all waiting rooms on this zone.\nVerified search engine crawlers will not be tracked or counted by the waiting room system,\nand will not appear in waiting room analytics.\n",

@@ -7,6 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 func (r PagesDomainResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -15,16 +17,19 @@ func (r PagesDomainResource) UpgradeState(ctx context.Context) map[int64]resourc
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"project_name": schema.StringAttribute{
-						Description: "Name of the project.",
-						Required:    true,
+						Description:   "Name of the project.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"domain_name": schema.StringAttribute{
-						Description: "Name of the domain.",
-						Optional:    true,
+						Description:   "Name of the domain.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},

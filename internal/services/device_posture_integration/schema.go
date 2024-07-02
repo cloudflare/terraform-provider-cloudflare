@@ -22,7 +22,8 @@ func (r DevicePostureIntegrationResource) Schema(ctx context.Context, req resour
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The configuration object containing third-party integration information.",

@@ -21,8 +21,8 @@ type RegionalHostnamesResultDataSourceEnvelope struct {
 type RegionalHostnameModel struct {
 	ID        types.String                      `tfsdk:"id" json:"-,computed"`
 	ZoneID    types.String                      `tfsdk:"zone_id" path:"zone_id"`
-	Hostname  types.String                      `tfsdk:"hostname" json:"hostname"`
 	RegionKey types.String                      `tfsdk:"region_key" json:"region_key"`
+	Hostname  types.String                      `tfsdk:"hostname" json:"hostname"`
 	CreatedOn types.String                      `tfsdk:"created_on" json:"created_on,computed"`
 	Errors    *[]*RegionalHostnameErrorsModel   `tfsdk:"errors" json:"errors,computed"`
 	Messages  *[]*RegionalHostnameMessagesModel `tfsdk:"messages" json:"messages,computed"`

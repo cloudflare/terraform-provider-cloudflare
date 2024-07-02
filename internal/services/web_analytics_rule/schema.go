@@ -21,12 +21,14 @@ func (r WebAnalyticsRuleResource) Schema(ctx context.Context, req resource.Schem
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ruleset_id": schema.StringAttribute{
-				Description: "The Web Analytics ruleset identifier.",
-				Required:    true,
+				Description:   "The Web Analytics ruleset identifier.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"host": schema.StringAttribute{
 				Optional: true,
