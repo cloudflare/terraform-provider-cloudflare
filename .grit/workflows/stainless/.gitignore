@@ -1,3 +1,5 @@
 *.tfrc
 *.lock.hcl
 workflow.js
+new.json
+old.json
