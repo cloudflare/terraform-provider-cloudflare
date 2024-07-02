@@ -19,12 +19,12 @@ type AccessIdentityProvidersResultDataSourceEnvelope struct {
 }
 
 type AccessIdentityProviderModel struct {
-	ID         types.String                           `tfsdk:"id" json:"id,computed"`
 	AccountID  types.String                           `tfsdk:"account_id" path:"account_id"`
 	ZoneID     types.String                           `tfsdk:"zone_id" path:"zone_id"`
 	Config     *AccessIdentityProviderConfigModel     `tfsdk:"config" json:"config"`
 	Name       types.String                           `tfsdk:"name" json:"name"`
 	Type       types.String                           `tfsdk:"type" json:"type"`
+	ID         types.String                           `tfsdk:"id" json:"id"`
 	SCIMConfig *AccessIdentityProviderSCIMConfigModel `tfsdk:"scim_config" json:"scim_config"`
 }
 
