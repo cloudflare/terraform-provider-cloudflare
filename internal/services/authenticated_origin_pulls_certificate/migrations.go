@@ -7,6 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 func (r AuthenticatedOriginPullsCertificateResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -15,12 +17,14 @@ func (r AuthenticatedOriginPullsCertificateResource) UpgradeState(ctx context.Co
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"certificate_id": schema.StringAttribute{
-						Description: "Identifier",
-						Optional:    true,
+						Description:   "Identifier",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"certificate": schema.StringAttribute{
 						Description: "The zone's leaf certificate.",

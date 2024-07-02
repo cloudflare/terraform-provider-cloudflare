@@ -21,8 +21,9 @@ func (r ZoneLockdownResource) Schema(ctx context.Context, req resource.SchemaReq
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_identifier": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was created.",

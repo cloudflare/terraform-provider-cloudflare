@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -17,12 +19,14 @@ func (r AuthenticatedOriginPullsResource) UpgradeState(ctx context.Context) map[
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"hostname": schema.StringAttribute{
-						Description: "The hostname on the origin for which the client certificate uploaded will be used.",
-						Optional:    true,
+						Description:   "The hostname on the origin for which the client certificate uploaded will be used.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"config": schema.ListNestedAttribute{
 						Required: true,

@@ -8,6 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,12 +19,14 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"project_name": schema.StringAttribute{
-				Description: "Name of the project.",
-				Optional:    true,
+				Description:   "Name of the project.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"build_config": schema.SingleNestedAttribute{
 				Description: "Configs for the project build process.",
@@ -52,6 +57,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 						Optional:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"canonical_deployment": schema.SingleNestedAttribute{
 				Optional: true,
@@ -135,6 +141,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 						Computed:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"deployment_configs": schema.SingleNestedAttribute{
 				Description: "Configs for deployments in a project.",
@@ -625,6 +632,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
 				Optional: true,
@@ -708,14 +716,17 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 						Computed:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the project.",
-				Optional:    true,
+				Description:   "Name of the project.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"production_branch": schema.StringAttribute{
-				Description: "Production branch of the project. Used to identify production deployments.",
-				Optional:    true,
+				Description:   "Production branch of the project. Used to identify production deployments.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"id": schema.StringAttribute{
 				Description: "Id of the project.",

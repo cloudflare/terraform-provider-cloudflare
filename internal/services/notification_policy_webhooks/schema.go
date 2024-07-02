@@ -22,8 +22,9 @@ func (r NotificationPolicyWebhooksResource) Schema(ctx context.Context, req reso
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "The account id",
-				Required:    true,
+				Description:   "The account id",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the webhook destination. This will be included in the request body when you receive a webhook notification.",

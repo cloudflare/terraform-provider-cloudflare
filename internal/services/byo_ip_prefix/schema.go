@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -20,20 +21,28 @@ func (r ByoIPPrefixResource) Schema(ctx context.Context, req resource.SchemaRequ
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"asn": schema.Int64Attribute{
-				Description: "Autonomous System Number (ASN) the prefix will be advertised under.",
-				Required:    true,
+				Description:   "Autonomous System Number (ASN) the prefix will be advertised under.",
+				Required:      true,
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"cidr": schema.StringAttribute{
-				Description: "IP Prefix in Classless Inter-Domain Routing format.",
-				Required:    true,
+				Description:   "IP Prefix in Classless Inter-Domain Routing format.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"loa_document_id": schema.StringAttribute{
-				Description: "Identifier for the uploaded LOA document.",
-				Required:    true,
+				Description:   "Identifier for the uploaded LOA document.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"description": schema.StringAttribute{
+				Description: "Description of the prefix.",
+				Optional:    true,
 			},
 			"advertised": schema.BoolAttribute{
 				Description: "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
@@ -49,10 +58,6 @@ func (r ByoIPPrefixResource) Schema(ctx context.Context, req resource.SchemaRequ
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
-			},
-			"description": schema.StringAttribute{
-				Description: "Description of the prefix.",
-				Computed:    true,
 			},
 			"modified_at": schema.StringAttribute{
 				Computed: true,

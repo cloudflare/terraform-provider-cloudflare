@@ -22,8 +22,8 @@ type TeamsListModel struct {
 	ID          types.String            `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String            `tfsdk:"account_id" path:"account_id"`
 	Name        types.String            `tfsdk:"name" json:"name"`
-	Type        types.String            `tfsdk:"type" json:"type"`
 	Description types.String            `tfsdk:"description" json:"description"`
+	Type        types.String            `tfsdk:"type" json:"type"`
 	Items       *[]*TeamsListItemsModel `tfsdk:"items" json:"items"`
 	CreatedAt   types.String            `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt   types.String            `tfsdk:"updated_at" json:"updated_at,computed"`

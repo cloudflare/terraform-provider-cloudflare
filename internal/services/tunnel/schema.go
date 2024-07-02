@@ -20,8 +20,9 @@ func (r TunnelResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID",
-				Required:    true,
+				Description:   "Cloudflare account ID",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description: "A user-friendly name for a tunnel.",

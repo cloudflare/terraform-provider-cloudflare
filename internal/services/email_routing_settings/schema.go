@@ -23,8 +23,9 @@ func (r EmailRoutingSettingsResource) Schema(ctx context.Context, req resource.S
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_identifier": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the settings have been created.",

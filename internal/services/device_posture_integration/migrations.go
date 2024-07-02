@@ -24,7 +24,8 @@ func (r DevicePostureIntegrationResource) UpgradeState(ctx context.Context) map[
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Required: true,
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"config": schema.SingleNestedAttribute{
 						Description: "The configuration object containing third-party integration information.",

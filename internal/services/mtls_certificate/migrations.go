@@ -22,8 +22,9 @@ func (r MTLSCertificateResource) UpgradeState(ctx context.Context) map[int64]res
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"ca": schema.BoolAttribute{
 						Description: "Indicates whether the certificate is a CA or leaf certificate.",

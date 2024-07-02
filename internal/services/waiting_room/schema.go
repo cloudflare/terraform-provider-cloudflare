@@ -25,8 +25,9 @@ func (r WaitingRoomResource) Schema(ctx context.Context, req resource.SchemaRequ
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"host": schema.StringAttribute{
 				Description: "The host name to which the waiting room will be applied (no wildcards). Please do not include the scheme (http:// or https://). The host and path combination must be unique.",

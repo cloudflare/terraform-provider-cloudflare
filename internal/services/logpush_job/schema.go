@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,20 +28,18 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
+				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-				Optional:    true,
+				Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"destination_conf": schema.StringAttribute{
 				Description: "Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included.",
 				Required:    true,
-			},
-			"dataset": schema.StringAttribute{
-				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).",
-				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Flag that indicates if the job is enabled.",
@@ -81,10 +80,6 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(100000),
-			},
-			"name": schema.StringAttribute{
-				Description: "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
-				Optional:    true,
 			},
 			"output_options": schema.SingleNestedAttribute{
 				Description: "The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored.",
@@ -172,6 +167,16 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 			"ownership_challenge": schema.StringAttribute{
 				Description: "Ownership challenge token to prove destination ownership.",
 				Optional:    true,
+			},
+			"dataset": schema.StringAttribute{
+				Description:   "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"name": schema.StringAttribute{
+				Description:   "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"error_message": schema.StringAttribute{
 				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",

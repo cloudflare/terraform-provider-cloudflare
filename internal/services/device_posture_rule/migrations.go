@@ -24,7 +24,8 @@ func (r DevicePostureRuleResource) UpgradeState(ctx context.Context) map[int64]r
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Required: true,
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Description: "The name of the device posture rule.",

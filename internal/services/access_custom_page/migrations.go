@@ -28,8 +28,9 @@ func (r AccessCustomPageResource) UpgradeState(ctx context.Context) map[int64]re
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"custom_html": schema.StringAttribute{
 						Description: "Custom page HTML.",

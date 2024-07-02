@@ -18,17 +18,19 @@ func (r R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Name of the bucket",
-				Computed:    true,
+				Description:   "Name of the bucket",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description: "Account ID",
-				Required:    true,
+				Description:   "Account ID",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description:   "Name of the bucket",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"location_hint": schema.StringAttribute{
 				Description: "Location of the bucket",

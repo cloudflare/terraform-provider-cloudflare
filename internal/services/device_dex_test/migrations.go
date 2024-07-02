@@ -17,11 +17,13 @@ func (r DeviceDEXTestResource) UpgradeState(ctx context.Context) map[int64]resou
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description: "The name of the DEX test. Must be unique.",
-						Computed:    true,
+						Description:   "The name of the DEX test. Must be unique.",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"account_id": schema.StringAttribute{
-						Required: true,
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"data": schema.SingleNestedAttribute{
 						Description: "The configuration object which contains the details for the WARP client to conduct the test.",
@@ -52,7 +54,7 @@ func (r DeviceDEXTestResource) UpgradeState(ctx context.Context) map[int64]resou
 					"name": schema.StringAttribute{
 						Description:   "The name of the DEX test. Must be unique.",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"description": schema.StringAttribute{
 						Description: "Additional details about the test.",

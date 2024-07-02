@@ -26,8 +26,9 @@ func (r WorkersForPlatformsNamespaceResource) UpgradeState(ctx context.Context) 
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Description: "The name of the dispatch namespace",

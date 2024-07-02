@@ -24,6 +24,7 @@ type AccessOrganizationModel struct {
 	UIReadOnlyToggleReason         types.String                        `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason"`
 	UserSeatExpirationInactiveTime types.String                        `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time"`
 	WARPAuthSessionDuration        types.String                        `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
+	CustomPages                    *AccessOrganizationCustomPagesModel `tfsdk:"custom_pages" json:"custom_pages"`
 	CreatedAt                      types.String                        `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt                      types.String                        `tfsdk:"updated_at" json:"updated_at,computed"`
 }

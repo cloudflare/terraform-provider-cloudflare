@@ -20,15 +20,17 @@ func (r HyperdriveConfigResource) UpgradeState(ctx context.Context) map[int64]re
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Computed: true,
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"origin": schema.SingleNestedAttribute{
 						Required: true,

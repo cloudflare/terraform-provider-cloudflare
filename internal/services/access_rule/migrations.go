@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -17,12 +19,14 @@ func (r AccessRuleResource) UpgradeState(ctx context.Context) map[int64]resource
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-						Optional:    true,
+						Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"zone_id": schema.StringAttribute{
-						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-						Optional:    true,
+						Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"identifier": schema.StringAttribute{
 						Optional: true,

@@ -9,7 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,12 +19,14 @@ func (r TunnelConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID",
-				Required:    true,
+				Description:   "Cloudflare account ID",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"tunnel_id": schema.StringAttribute{
-				Description: "UUID of the tunnel.",
-				Required:    true,
+				Description:   "UUID of the tunnel.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",

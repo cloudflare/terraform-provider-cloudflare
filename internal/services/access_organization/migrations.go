@@ -18,16 +18,19 @@ func (r AccessOrganizationResource) UpgradeState(ctx context.Context) map[int64]
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description: "The name of your Zero Trust organization.",
-						Computed:    true,
+						Description:   "The name of your Zero Trust organization.",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"account_id": schema.StringAttribute{
-						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-						Optional:    true,
+						Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"zone_id": schema.StringAttribute{
-						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-						Optional:    true,
+						Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"auth_domain": schema.StringAttribute{
 						Description: "The unique subdomain assigned to your Zero Trust organization.",
@@ -36,7 +39,7 @@ func (r AccessOrganizationResource) UpgradeState(ctx context.Context) map[int64]
 					"name": schema.StringAttribute{
 						Description:   "The name of your Zero Trust organization.",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"allow_authenticate_via_warp": schema.BoolAttribute{
 						Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
@@ -92,6 +95,19 @@ func (r AccessOrganizationResource) UpgradeState(ctx context.Context) map[int64]
 					"warp_auth_session_duration": schema.StringAttribute{
 						Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `30m` or `2h45m`. Valid time units are: m, h.",
 						Optional:    true,
+					},
+					"custom_pages": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"forbidden": schema.StringAttribute{
+								Description: "The uid of the custom page to use when a user is denied access after failing a non-identity rule.",
+								Optional:    true,
+							},
+							"identity_denied": schema.StringAttribute{
+								Description: "The uid of the custom page to use when a user is denied access.",
+								Optional:    true,
+							},
+						},
 					},
 					"created_at": schema.StringAttribute{
 						Computed: true,

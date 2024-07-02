@@ -25,10 +25,10 @@ type AddressMapModel struct {
 	Enabled      types.Bool                     `tfsdk:"enabled" json:"enabled"`
 	IPs          *[]types.String                `tfsdk:"ips" json:"ips"`
 	Memberships  *[]*AddressMapMembershipsModel `tfsdk:"memberships" json:"memberships"`
+	DefaultSNI   types.String                   `tfsdk:"default_sni" json:"default_sni"`
 	CanDelete    types.Bool                     `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                     `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
 	CreatedAt    types.String                   `tfsdk:"created_at" json:"created_at,computed"`
-	DefaultSNI   types.String                   `tfsdk:"default_sni" json:"default_sni,computed"`
 	ModifiedAt   types.String                   `tfsdk:"modified_at" json:"modified_at,computed"`
 }
 

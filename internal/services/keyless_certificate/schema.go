@@ -25,12 +25,9 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
-			},
-			"certificate": schema.StringAttribute{
-				Description: "The zone's SSL certificate or SSL certificate and intermediate(s).",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"host": schema.StringAttribute{
 				Description: "The keyless SSL name.",
@@ -41,15 +38,6 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 				Computed:    true,
 				Optional:    true,
 				Default:     float64default.StaticFloat64(24008),
-			},
-			"bundle_method": schema.StringAttribute{
-				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
-				},
-				Default: stringdefault.StaticString("ubiquitous"),
 			},
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",
@@ -69,12 +57,27 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 					},
 				},
 			},
-			"created_on": schema.StringAttribute{
-				Description: "When the Keyless SSL was created.",
+			"certificate": schema.StringAttribute{
+				Description:   "The zone's SSL certificate or SSL certificate and intermediate(s).",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"bundle_method": schema.StringAttribute{
+				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
 				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Default:       stringdefault.StaticString("ubiquitous"),
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether or not the Keyless SSL is on or off.",
+				Optional:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the Keyless SSL was created.",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{

@@ -11,18 +11,20 @@ type DLPCustomProfileResultEnvelope struct {
 }
 
 type DLPCustomProfileModel struct {
-	AccountID         types.String                      `tfsdk:"account_id" path:"account_id"`
-	ProfileID         types.String                      `tfsdk:"profile_id" path:"profile_id"`
-	Profiles          *[]*DLPCustomProfileProfilesModel `tfsdk:"profiles" json:"profiles"`
-	ID                types.String                      `tfsdk:"id" json:"id,computed"`
-	AllowedMatchCount types.Float64                     `tfsdk:"allowed_match_count" json:"allowed_match_count,computed"`
-	CreatedAt         types.String                      `tfsdk:"created_at" json:"created_at,computed"`
-	Description       types.String                      `tfsdk:"description" json:"description,computed"`
-	Entries           *[]*DLPCustomProfileEntriesModel  `tfsdk:"entries" json:"entries,computed"`
-	Name              types.String                      `tfsdk:"name" json:"name,computed"`
-	OCREnabled        types.Bool                        `tfsdk:"ocr_enabled" json:"ocr_enabled,computed"`
-	Type              types.String                      `tfsdk:"type" json:"type,computed"`
-	UpdatedAt         types.String                      `tfsdk:"updated_at" json:"updated_at,computed"`
+	AccountID         types.String                           `tfsdk:"account_id" path:"account_id"`
+	ProfileID         types.String                           `tfsdk:"profile_id" path:"profile_id"`
+	Profiles          *[]*DLPCustomProfileProfilesModel      `tfsdk:"profiles" json:"profiles"`
+	AllowedMatchCount types.Float64                          `tfsdk:"allowed_match_count" json:"allowed_match_count"`
+	ContextAwareness  *DLPCustomProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness"`
+	Description       types.String                           `tfsdk:"description" json:"description"`
+	Entries           *[]*DLPCustomProfileEntriesModel       `tfsdk:"entries" json:"entries"`
+	Name              types.String                           `tfsdk:"name" json:"name"`
+	OCREnabled        types.Bool                             `tfsdk:"ocr_enabled" json:"ocr_enabled"`
+	SharedEntries     *[]*DLPCustomProfileSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries"`
+	ID                types.String                           `tfsdk:"id" json:"id,computed"`
+	CreatedAt         types.String                           `tfsdk:"created_at" json:"created_at,computed"`
+	Type              types.String                           `tfsdk:"type" json:"type,computed"`
+	UpdatedAt         types.String                           `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type DLPCustomProfileProfilesModel struct {
@@ -76,4 +78,9 @@ type DLPCustomProfileEntriesModel struct {
 type DLPCustomProfileEntriesPatternModel struct {
 	Regex      types.String `tfsdk:"regex" json:"regex"`
 	Validation types.String `tfsdk:"validation" json:"validation"`
+}
+
+type DLPCustomProfileSharedEntriesModel struct {
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
+	EntryID types.String `tfsdk:"entry_id" json:"entry_id,computed"`
 }

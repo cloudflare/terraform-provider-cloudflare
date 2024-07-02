@@ -24,8 +24,9 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"dns": schema.SingleNestedAttribute{
 				Description: "The name and type of DNS record for the Spectrum application.",

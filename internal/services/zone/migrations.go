@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -24,6 +25,13 @@ func (r ZoneResource) UpgradeState(ctx context.Context) map[int64]resource.State
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
+					"type": schema.StringAttribute{
+						Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("full", "partial", "secondary"),
+						},
+					},
 					"account": schema.SingleNestedAttribute{
 						Required: true,
 						Attributes: map[string]schema.Attribute{
@@ -32,17 +40,27 @@ func (r ZoneResource) UpgradeState(ctx context.Context) map[int64]resource.State
 								Optional:    true,
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
-						Description: "The domain name",
-						Required:    true,
+						Description:   "The domain name",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
-					"type": schema.StringAttribute{
-						Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
+					"plan": schema.SingleNestedAttribute{
+						Description: "(Deprecated) Please use the `/zones/{zone_id}/subscription` API\nto update a zone's plan. Changing this value will create/cancel\nassociated subscriptions. To view available plans for this zone,\nsee Zone Plans.\n",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("full", "partial", "secondary"),
+						Attributes: map[string]schema.Attribute{
+							"id": schema.StringAttribute{
+								Description: "Identifier",
+								Optional:    true,
+							},
 						},
+					},
+					"vanity_name_servers": schema.ListAttribute{
+						Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
+						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"activated_on": schema.StringAttribute{
 						Description: "The last time proof of ownership was detected and the zone was made\nactive",
@@ -77,11 +95,6 @@ func (r ZoneResource) UpgradeState(ctx context.Context) map[int64]resource.State
 					"original_registrar": schema.StringAttribute{
 						Description: "Registrar for the domain at the time of switching to Cloudflare",
 						Computed:    true,
-					},
-					"vanity_name_servers": schema.ListAttribute{
-						Description: "An array of domains used for custom name servers. This is only available for Business and Enterprise plans.",
-						Computed:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},
