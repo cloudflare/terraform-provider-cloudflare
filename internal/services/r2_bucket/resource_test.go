@@ -154,18 +154,9 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 }
 
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_r2_bucket" "%[1]s" {
-    account_id = "%[2]s"
-    name       = "%[1]s"
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("minimum.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_r2_bucket" "%[1]s" {
-    account_id = "%[2]s"
-    name       = "%[1]s"
-	location_hint   = "ENAM"
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("basic.tf", rnd, accountID)
 }
