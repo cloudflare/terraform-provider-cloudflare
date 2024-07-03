@@ -13,16 +13,16 @@
     kind        = "root"
     phase       = "http_request_redirect"
 
-    rules {
+    rules =[ {
       action = "redirect"
-      action_parameters {
-        from_list {
+      action_parameters =[ {
+        from_list =[ {
       	  name = cloudflare_list.list-%[1]s.name
       	  key = "http.request.full_uri"
         }
-      }
+      }]
       expression = "http.request.full_uri in $redirect_list_%[1]s"
       description = "Apply redirects from redirect list"
       enabled = true
-    }
-  }
+    }]
+  }]

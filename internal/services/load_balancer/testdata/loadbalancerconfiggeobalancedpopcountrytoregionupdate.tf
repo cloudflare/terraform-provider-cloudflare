@@ -7,8 +7,8 @@ resource "cloudflare_load_balancer" "%[3]s" {
   description = "tf-acctest load balancer using pop/country geo-balancing updated to region geo-balancing"
   proxied = true
   steering_policy = "geo"
-  region_pools {
+  region_pools =[ {
     region = "WNAM"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
+  }]
 }

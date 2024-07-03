@@ -6,17 +6,17 @@
     kind        = "zone"
     phase       = "http_request_firewall_managed"
 
-    rules {
+    rules =[ {
       action = "execute"
-      action_parameters {
+      action_parameters =[ {
         id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
+        overrides =[ {
           action = "log"
           enabled = true
-        }
-      }
+        }]
+      }]
       expression = "true"
       description = "Execute all rules in Cloudflare Managed Ruleset in log mode on my zone-level phase entry point ruleset"
       enabled = true
-    }
+    }]
   }

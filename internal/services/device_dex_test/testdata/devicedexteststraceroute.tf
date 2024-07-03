@@ -5,9 +5,9 @@
 		description = "%[1]s"
 		interval = "0h30m0s"
 		enabled = true
-		data {
-			host = "dash.cloudflare.com"
+		data = {
+  host = "dash.cloudflare.com"
 			kind = "traceroute"
-		}
+}
 	}
 	

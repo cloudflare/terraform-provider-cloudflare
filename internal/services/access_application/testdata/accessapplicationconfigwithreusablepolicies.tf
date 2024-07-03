@@ -3,18 +3,18 @@ resource "cloudflare_access_policy" "%[1]s_p1" {
   account_id     			= "%[3]s"
   name                      = "%[1]s"
   decision			  		= "allow"
-  include {
+  include =[ {
     email = ["a@example.com"]
-  }
+  }]
 }
 
 resource "cloudflare_access_policy" "%[1]s_p2" {
   account_id     			= "%[3]s"
   name                      = "%[1]s"
   decision			  		= "non_identity"
-  include {
+  include =[ {
     ip = ["127.0.0.1/32"]
-  }
+  }]
 }
 
 resource "cloudflare_access_application" "%[1]s" {

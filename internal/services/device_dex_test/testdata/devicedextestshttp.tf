@@ -5,10 +5,10 @@
 		description = "%[1]s"
 		interval = "0h30m0s"
 		enabled = true
-		data {
-			host = "https://dash.cloudflare.com/home"
+		data = {
+  host = "https://dash.cloudflare.com/home"
 			kind = "http"
 			method = "GET"
-		}
+}
 	}
 	

@@ -6,16 +6,16 @@
     kind        = "zone"
     phase       = "http_ratelimit"
 
-    rules {
+    rules =[ {
       action = "block"
-      action_parameters {
-        response {
+      action_parameters =[ {
+        response =[ {
           status_code = 418
           content_type = "text/plain"
           content = "test content"
-        }
-      }
-      ratelimit {
+        }]
+      }]
+      ratelimit =[ {
         characteristics = [
           "cf.colo.id",
           "ip.src"
@@ -24,9 +24,9 @@
         requests_per_period = 1000
         requests_to_origin  = false
         mitigation_timeout  = 0
-      }
+      }]
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http rate limit"
       enabled = true
-    }
+    }]
   }

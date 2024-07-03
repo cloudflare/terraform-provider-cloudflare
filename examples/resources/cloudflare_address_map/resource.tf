@@ -4,15 +4,17 @@ resource "cloudflare_address_map" "example" {
   default_sni = "*.example.com"
   enabled     = true
 
-  ips { ip = "192.0.2.1" }
-  ips { ip = "203.0.113.1" }
+  ips = [{ ip = "192.0.2.1" },
+    {
+      ip = "203.0.113.1"
+  }]
 
-  memberships {
+  memberships = [{
     identifier = "92f17202ed8bd63d69a66b86a49a8f6b"
     kind       = "account"
-  }
-  memberships {
-    identifier = "023e105f4ecef8ad9ca31a8372d0c353"
-    kind       = "zone"
-  }
+    },
+    {
+      identifier = "023e105f4ecef8ad9ca31a8372d0c353"
+      kind       = "zone"
+  }]
 }

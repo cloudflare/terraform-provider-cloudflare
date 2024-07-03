@@ -6,10 +6,10 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	description               = "My description"
 	schedule                  = "24h"
 	expiration                = "24h"
-	match {
+	match =[ {
 		platform = "mac"
-	}
-	input {
-		require_all = true
-	}
+	}]
+	input = {
+  require_all = true
+}
 }

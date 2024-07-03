@@ -5,16 +5,16 @@
     description = "%[1]s ruleset description"
     kind        = "zone"
     phase       = "http_request_firewall_managed"
-    rules {
+    rules =[ {
       action = "execute"
-      action_parameters {
+      action_parameters =[ {
         id = "efb7b8c949ac4650a09736fc376e9aee"
-        matched_data {
+        matched_data =[ {
           public_key = "bm90X2FfcmVhbF9wdWJsaWNfa2V5"
-        }
-      }
+        }]
+      }]
       expression = "true"
       description = "example using WAF payload logging"
       enabled = false
-    }
+    }]
   }

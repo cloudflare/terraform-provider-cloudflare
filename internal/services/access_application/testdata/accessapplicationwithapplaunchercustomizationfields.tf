@@ -8,18 +8,18 @@
 			bg_color = "#000000"
 			header_bg_color = "#000000"
 
-			footer_links {
+			footer_links =[ {
 				name = "footer link"
 				url = "https://www.cloudflare.com"
-			}
+			}]
 
 
-			landing_page_design {
+			landing_page_design =[ {
 				title = "title"
 				message = "message"
 				button_color = "#000000"
 				image_url = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
 				button_text_color = "#000000"
-			}
+			}]
 	}
 	

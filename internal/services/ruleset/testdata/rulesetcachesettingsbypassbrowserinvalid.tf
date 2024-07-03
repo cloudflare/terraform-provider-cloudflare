@@ -5,18 +5,18 @@
 		description = "set cache settings for the request"
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
-		rules {
+		rules =[ {
 		  action      = "set_cache_settings"
 		  description = "example"
 		  enabled     = true
 		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
+		  action_parameters =[ {
 			cache = true
-			browser_ttl {
+			browser_ttl =[ {
 			  mode    = "bypass"
 			  default = 100
-			}
-		  }
-		}
+			}]
+		  }]
+		}]
 	  }
 	

@@ -4,15 +4,15 @@
 		  enabled = "%[3]t"
           priority = "%[4]d"
 		  name = "terraform rule"
-		  matcher {
+		  matcher =[ {
 			field  = "to"
 			type = "literal"
 			value = "test@example.com"
-		  }
+		  }]
 
-		  action {
+		  action =[ {
 			type = "forward"
 			value = ["destinationaddress@example.net"]
-		  }
+		  }]
 	}
 		

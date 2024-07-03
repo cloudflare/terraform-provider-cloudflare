@@ -3,7 +3,7 @@ resource "cloudflare_spectrum_application" "example" {
   protocol     = "tcp/22"
   traffic_type = "direct"
 
-  dns {
+  dns = {
     type = "CNAME"
     name = "ssh.example.com"
   }
@@ -12,7 +12,7 @@ resource "cloudflare_spectrum_application" "example" {
     "tcp://192.0.2.1:22"
   ]
 
-  edge_ips {
+  edge_ips = {
     type = "static"
     ips  = ["203.0.113.1", "203.0.113.2"]
   }

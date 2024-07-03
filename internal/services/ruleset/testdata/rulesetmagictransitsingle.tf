@@ -6,15 +6,15 @@
     kind        = "root"
     phase       = "magic_transit"
 
-    rules {
+    rules =[ {
       action = "skip"
-      action_parameters {
+      action_parameters =[ {
         ruleset = "current"
-      }
+      }]
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
-      logging {
+      logging =[ {
         enabled = false
-      }
-    }
+      }]
+    }]
   }

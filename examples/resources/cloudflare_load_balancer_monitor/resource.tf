@@ -10,10 +10,10 @@ resource "cloudflare_load_balancer_monitor" "example" {
   interval       = 60
   retries        = 5
   description    = "example http load balancer"
-  header {
+  header = [{
     header = "Host"
     values = ["example.com"]
-  }
+  }]
   allow_insecure   = false
   follow_redirects = true
   probe_zone       = "example.com"

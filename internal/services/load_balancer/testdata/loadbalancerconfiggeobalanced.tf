@@ -7,16 +7,16 @@ resource "cloudflare_load_balancer" "%[3]s" {
   description = "tf-acctest load balancer using geo-balancing"
   proxied = true // can't set ttl with proxied
   steering_policy = "geo"
-  pop_pools {
+  pop_pools =[ {
     pop = "LAX"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-  country_pools {
+  }]
+  country_pools =[ {
     country = "US"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-  region_pools {
+  }]
+  region_pools =[ {
     region = "WNAM"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
+  }]
 }

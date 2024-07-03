@@ -3,10 +3,10 @@ resource "cloudflare_user_agent_blocking_rule" "example_1" {
   mode        = "js_challenge"
   paused      = false
   description = "My description 1"
-  configuration {
+  configuration = [{
     target = "ua"
     value  = "Chrome"
-  }
+  }]
 }
 
 resource "cloudflare_user_agent_blocking_rule" "example_2" {
@@ -14,8 +14,8 @@ resource "cloudflare_user_agent_blocking_rule" "example_2" {
   mode        = "challenge"
   paused      = true
   description = "My description 22"
-  configuration {
+  configuration = [{
     target = "ua"
     value  = "Mozilla"
-  }
+  }]
 }

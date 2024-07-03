@@ -2,9 +2,9 @@
 resource "cloudflare_custom_hostname" "%[2]s" {
   zone_id = "%[1]s"
   hostname = "%[2]s.%[3]s"
-  ssl {
-    method = "http"
-    settings {
+  ssl = {
+  method = "http"
+    settings =[ {
       http2 = "off"
       min_tls_version = "1.2"
       ciphers = [
@@ -12,6 +12,6 @@ resource "cloudflare_custom_hostname" "%[2]s" {
         "AES128-SHA"
       ]
       early_hints = "off"
-    }
-  }
+    }]
+}
 }

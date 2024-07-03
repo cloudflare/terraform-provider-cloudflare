@@ -5,17 +5,17 @@
     description = "%[3]s"
     kind = "asn"
 
-    item {
-      value {
+    item =[ {
+      value =[ {
         asn = 345
-      }
+      }]
       comment = "ASN test"
-    }
-
-    item {
-      value {
+    },
+    {
+    value =[ {
         asn = 567
-      }
+      }]
       comment = "ASN test two"
-    }
+    }]
+
   }

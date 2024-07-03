@@ -6,17 +6,17 @@
     kind        = "zone"
     phase       = "http_request_transform"
 
-    rules {
+    rules =[ {
       action = "rewrite"
-      action_parameters {
-		uri {
-		  path {
+      action_parameters =[ {
+		uri =[ {
+		  path =[ {
 			value = "/"
-		  }
-		}
-	  }
+		  }]
+		}]
+	  }]
       expression = "true"
       description = "strip off path"
       enabled = true
-    }
+    }]
   }

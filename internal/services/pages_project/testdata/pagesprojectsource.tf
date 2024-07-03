@@ -3,9 +3,9 @@
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  production_branch = "main"
-		  source {
+		  source =[ {
 			type = "github"
-			config {
+			config =[ {
 				owner = "%[4]s"
 				repo_name = "%[5]s"
 				production_branch = "main"
@@ -15,7 +15,7 @@
 				preview_deployment_setting = "custom"
 				preview_branch_includes = ["dev","preview"]
 				preview_branch_excludes = ["main", "prod"]
-			}
-		  }
+			}]
+		  }]
 		}
 		

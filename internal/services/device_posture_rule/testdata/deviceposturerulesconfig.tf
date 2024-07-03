@@ -5,13 +5,13 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
   description = "check for /dev/random"
   schedule    = "1h"
 
-  match {
+  match =[ {
     platform = "linux"
-  }
+  }]
 
-  input {
-    path = "/dev/random"
-  }
+  input = {
+  path = "/dev/random"
+}
 }
 
 data "cloudflare_device_posture_rules" "%[1]s" {

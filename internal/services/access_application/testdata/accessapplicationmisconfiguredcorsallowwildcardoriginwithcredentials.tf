@@ -5,10 +5,10 @@
       domain           = "%[1]s.%[2]s"
       type             = "self_hosted"
 
-      cors_headers {
-        allowed_methods = ["GET"]
+      cors_headers = {
+  allowed_methods = ["GET"]
         allowed_origins = ["*"]
         allow_credentials = true
-      }
+}
   }
   

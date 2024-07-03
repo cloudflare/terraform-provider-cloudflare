@@ -17,9 +17,9 @@
       decision       = "non_identity"
       precedence     = "10"
 
-      include {
+      include =[ {
         service_token = ["${cloudflare_access_service_token.%[1]s.id}"]
-      }
+      }]
     }
 
   

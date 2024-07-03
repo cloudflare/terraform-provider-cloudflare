@@ -4,11 +4,11 @@ resource "cloudflare_teams_location" "example" {
   client_default = true
   ecs_support    = false
 
-  networks {
+  networks = [{
     network = "203.0.113.1/32"
-  }
+    },
+    {
+      network = "203.0.113.2/32"
+  }]
 
-  networks {
-    network = "203.0.113.2/32"
-  }
 }

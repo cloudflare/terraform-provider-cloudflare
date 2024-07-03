@@ -6,19 +6,19 @@
     kind        = "zone"
     phase       = "ddos_l7"
 
-    rules {
+    rules =[ {
       action = "execute"
-      action_parameters {
+      action_parameters =[ {
         id = "4d21379b4f9f4bb088e0729962c8b3cf"
-        overrides {
-          rules {
+        overrides =[ {
+          rules =[ {
             id = "fdfdac75430c4c47a959592f0aa5e68a" # requests with odd HTTP headers or URI path
             sensitivity_level = "low"
-          }
-        }
-      }
+          }]
+        }]
+      }]
       expression = "true"
       description = "override HTTP DDoS ruleset rule"
       enabled = true
-    }
+    }]
   }

@@ -10,7 +10,7 @@ resource "cloudflare_pages_project" "build_config" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
   production_branch = "main"
-  build_config {
+  build_config = {
     build_command       = "npm run build"
     destination_dir     = "build"
     root_dir            = ""
@@ -24,9 +24,9 @@ resource "cloudflare_pages_project" "source_config" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
   production_branch = "main"
-  source {
+  source = [{
     type = "github"
-    config {
+    config = [{
       owner                         = "cloudflare"
       repo_name                     = "ninjakittens"
       production_branch             = "main"
@@ -36,8 +36,8 @@ resource "cloudflare_pages_project" "source_config" {
       preview_deployment_setting    = "custom"
       preview_branch_includes       = ["dev", "preview"]
       preview_branch_excludes       = ["main", "prod"]
-    }
-  }
+    }]
+  }]
 }
 
 # Pages project managing deployment configs
@@ -45,8 +45,8 @@ resource "cloudflare_pages_project" "deployment_configs" {
   account_id        = "f037e56e89293a057740de681ac9abbe"
   name              = "this-is-my-project-01"
   production_branch = "main"
-  deployment_configs {
-    preview {
+  deployment_configs = {
+    preview = [{
       environment_variables = {
         ENVIRONMENT = "preview"
       }
@@ -67,8 +67,8 @@ resource "cloudflare_pages_project" "deployment_configs" {
       }
       compatibility_date  = "2022-08-15"
       compatibility_flags = ["nodejs_compat"]
-    }
-    production {
+    }]
+    production = [{
       environment_variables = {
         ENVIRONMENT = "production"
         OTHER_VALUE = "other value"
@@ -95,7 +95,7 @@ resource "cloudflare_pages_project" "deployment_configs" {
       }
       compatibility_date  = "2022-08-16"
       compatibility_flags = ["nodejs_compat", "streams_enable_constructors"]
-    }
+    }]
   }
 }
 
@@ -105,9 +105,9 @@ resource "cloudflare_pages_project" "deployment_configs" {
   name              = "this-is-my-project-01"
   production_branch = "main"
 
-  source {
+  source = [{
     type = "github"
-    config {
+    config = [{
       owner                         = "cloudflare"
       repo_name                     = "ninjakittens"
       production_branch             = "main"
@@ -117,10 +117,10 @@ resource "cloudflare_pages_project" "deployment_configs" {
       preview_deployment_setting    = "custom"
       preview_branch_includes       = ["dev", "preview"]
       preview_branch_excludes       = ["main", "prod"]
-    }
-  }
+    }]
+  }]
 
-  build_config {
+  build_config = {
     build_command       = "npm run build"
     destination_dir     = "build"
     root_dir            = ""
@@ -128,8 +128,8 @@ resource "cloudflare_pages_project" "deployment_configs" {
     web_analytics_token = "021e1057c18547eca7b79f2516f06o7x"
   }
 
-  deployment_configs {
-    preview {
+  deployment_configs = {
+    preview = [{
       environment_variables = {
         ENVIRONMENT = "preview"
       }
@@ -150,8 +150,8 @@ resource "cloudflare_pages_project" "deployment_configs" {
       }
       compatibility_date  = "2022-08-15"
       compatibility_flags = ["nodejs_compat"]
-    }
-    production {
+    }]
+    production = [{
       environment_variables = {
         ENVIRONMENT = "production"
         OTHER_VALUE = "other value"
@@ -178,6 +178,6 @@ resource "cloudflare_pages_project" "deployment_configs" {
       }
       compatibility_date  = "2022-08-16"
       compatibility_flags = ["nodejs_compat", "streams_enable_constructors"]
-    }
+    }]
   }
 }

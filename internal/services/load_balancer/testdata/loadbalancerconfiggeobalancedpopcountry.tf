@@ -7,12 +7,12 @@ resource "cloudflare_load_balancer" "%[3]s" {
   description = "tf-acctest load balancer using pop/country geo-balancing"
   proxied = true
   steering_policy = "geo"
-  pop_pools {
+  pop_pools =[ {
     pop = "LAX"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
-  country_pools {
+  }]
+  country_pools =[ {
     country = "US"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
+  }]
 }

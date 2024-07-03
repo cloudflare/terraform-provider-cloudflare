@@ -6,23 +6,23 @@
     kind        = "root"
     phase       = "magic_transit"
 
-    rules {
+    rules =[ {
       action = "block"
       expression = "udp.dstport in { 32768..65535 }"
       description = "Block UDP Ephemeral Ports"
       enabled = true
-    }
-
-    rules {
-      action = "skip"
-	  action_parameters {
+    },
+    {
+    action = "skip"
+	  action_parameters =[ {
         ruleset = "current"
-      }
+      }]
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
       enabled = true
-      logging {
+      logging =[ {
         enabled = false
-      }
-    }
+      }]
+    }]
+
   }

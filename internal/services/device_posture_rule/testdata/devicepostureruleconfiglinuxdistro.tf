@@ -6,13 +6,13 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	description               = "My description"
 	schedule                  = "24h"
 	expiration                = "24h"
-	match {
+	match =[ {
 		platform = "linux"
-	}
-	input {
-		version = "1.0.0"
+	}]
+	input = {
+  version = "1.0.0"
         operator = "<"
 		os_distro_name = "ubuntu"
 		os_distro_revision = "1.0.0"
-	}
+}
 }

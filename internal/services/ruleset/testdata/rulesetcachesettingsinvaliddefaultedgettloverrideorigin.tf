@@ -6,16 +6,16 @@
     kind        = "zone"
     phase       = "http_request_cache_settings"
 
-    rules {
+    rules =[ {
       action = "set_cache_settings"
-      action_parameters {
-		edge_ttl {
+      action_parameters =[ {
+		edge_ttl =[ {
 			mode = "override_origin"
 			default = -1
-		}
-      }
+		}]
+      }]
 	  expression = "true"
 	  description = "%[1]s set cache settings rule"
 	  enabled = true
-    }
+    }]
   }

@@ -6,20 +6,20 @@
     kind        = "zone"
     phase       = "http_request_origin"
 
-    rules {
+    rules =[ {
       action = "route"
-      action_parameters {
+      action_parameters =[ {
         host_header = "%[1]s.%[4]s"
-        origin {
+        origin =[ {
           host = "%[1]s.%[4]s"
           port = 80
-        }
-        sni {
+        }]
+        sni =[ {
           value = "%[1]s.%[4]s"
-        }
-      }
+        }]
+      }]
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http request origin"
       enabled = true
-    }
+    }]
   }

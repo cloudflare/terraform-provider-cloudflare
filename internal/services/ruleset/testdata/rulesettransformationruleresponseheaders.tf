@@ -6,29 +6,29 @@
     kind        = "zone"
     phase       = "http_response_headers_transform"
 
-    rules {
+    rules =[ {
       action = "rewrite"
-      action_parameters {
-        headers {
+      action_parameters =[ {
+        headers =[ {
           name      = "example1"
           operation = "set"
           value     = "my-http-header-value1"
-        }
-
-        headers {
-          name       = "example2"
+        },
+    {
+    name       = "example2"
           operation  = "set"
           expression = "cf.zone.name"
-        }
-
-        headers {
-          name      = "example3"
+    },
+    {
+    name      = "example3"
           operation = "remove"
-        }
-      }
+    }]
+
+
+      }]
 
       expression = "true"
       description = "example header transformation rule"
       enabled = false
-    }
+    }]
   }

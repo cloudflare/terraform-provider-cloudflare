@@ -6,20 +6,20 @@
     kind        = "zone"
     phase       = "http_request_transform"
 
-    rules {
+    rules =[ {
       action = "rewrite"
-      action_parameters {
-        uri {
-          query {
+      action_parameters =[ {
+        uri =[ {
+          query =[ {
             expression = "concat(\"requestUrl=\", http.request.full_uri)"
-          }
-          path {
+          }]
+          path =[ {
             value = "/path/to/url"
-          }
-        }
-      }
+          }]
+        }]
+      }]
       expression = "true"
       description = "example for combining URI action parameters for path and query"
       enabled = true
-    }
+    }]
   }

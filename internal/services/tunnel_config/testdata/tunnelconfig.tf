@@ -30,11 +30,11 @@
 			  proxy_port = "8123"
 			  proxy_type = "socks"
 			  http2_origin = true
-			  ip_rules {
+			  ip_rules =[ {
 				prefix = "/web"
 				ports = [80, 443]
 				allow = false
-			  }
+			  }]
 			}
 			ingress_rule {
 			  hostname = "foo"

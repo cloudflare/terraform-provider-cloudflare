@@ -2,8 +2,8 @@
 resource "cloudflare_record" "%[3]s" {
   zone_id = "%[1]s"
   name = "%[2]s"
-  data {
-    lat_degrees    = "37"
+  data = {
+  lat_degrees    = "37"
     lat_minutes    = "46"
     lat_seconds    = 46.000
     lat_direction  = "N"
@@ -15,7 +15,7 @@ resource "cloudflare_record" "%[3]s" {
     size           = 100.00
     precision_horz = 0.00
     precision_vert = 0.00
-  }
+}
   type = "LOC"
   ttl = 3600
 }

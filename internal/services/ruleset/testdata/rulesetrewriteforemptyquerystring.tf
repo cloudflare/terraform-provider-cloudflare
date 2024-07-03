@@ -6,17 +6,17 @@
     kind        = "zone"
     phase       = "http_request_transform"
 
-    rules {
+    rules =[ {
       action = "rewrite"
-      action_parameters {
-		uri {
-		  query {
+      action_parameters =[ {
+		uri =[ {
+		  query =[ {
 			value = ""
-		  }
-		}
-	  }
+		  }]
+		}]
+	  }]
       expression = "true"
       description = "strip off query string"
       enabled = true
-    }
+    }]
   }

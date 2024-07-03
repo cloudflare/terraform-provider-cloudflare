@@ -5,8 +5,8 @@
       domain  = "%[1]s.%[2]s"
       type    = "self_hosted"
 
-    cors_headers {
-      allow_all_methods = true
-    }
+    cors_headers = {
+  allow_all_methods = true
+}
   }
   

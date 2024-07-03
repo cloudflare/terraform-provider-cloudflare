@@ -6,8 +6,8 @@ resource "cloudflare_zone_lockdown" "example" {
   urls = [
     "api.mysite.com/some/endpoint*",
   ]
-  configurations {
+  configurations = [{
     target = "ip_range"
     value  = "192.0.2.0/24"
-  }
+  }]
 }

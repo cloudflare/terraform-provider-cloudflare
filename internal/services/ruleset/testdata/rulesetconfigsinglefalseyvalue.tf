@@ -6,13 +6,13 @@
     kind        = "zone"
     phase       = "http_config_settings"
 
-    rules {
+    rules =[ {
       action = "set_config"
-	  action_parameters {
+	  action_parameters =[ {
 		bic  = false
-	  }
+	  }]
 	  expression  = "true"
 	  description = "disable BIC"
 	  enabled     = true
-	}
+	}]
   }

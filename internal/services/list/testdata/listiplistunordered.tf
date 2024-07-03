@@ -5,31 +5,31 @@
     description = "%[3]s"
     kind = "ip"
 
-    item {
-	  value {
+    item =[ {
+	  value =[ {
 	    ip = "192.0.2.2"
-	  }
+	  }]
 	  comment = "three"
-	}
-
-	item {
-      value {
+	},
+    {
+    value =[ {
         ip = "192.0.2.0"
-      }
+      }]
       comment = "one"
-    }
-
-	item {
-	  value {
+    },
+    {
+    value =[ {
 		ip = "192.0.2.3"
-	  }
+	  }]
 	  comment = "four"
-	}
-
-    item {
-      value {
+    },
+    {
+    value =[ {
         ip = "192.0.2.1"
-      }
+      }]
       comment = "two"
-    }
+    }]
+
+
+
   }
