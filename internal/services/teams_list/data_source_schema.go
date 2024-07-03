@@ -28,7 +28,7 @@ func (r TeamsListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "API Resource UUID tag.",
 				Optional:    true,
 			},
-			"count": schema.Float64Attribute{
+			"list_count": schema.Float64Attribute{
 				Description: "The number of items in the list.",
 				Optional:    true,
 			},

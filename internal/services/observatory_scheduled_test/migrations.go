@@ -28,7 +28,7 @@ func (r ObservatoryScheduledTestResource) UpgradeState(ctx context.Context) map[
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
-					"count": schema.Float64Attribute{
+					"item_count": schema.Float64Attribute{
 						Description: "Number of items affected.",
 						Computed:    true,
 					},
