@@ -15,36 +15,36 @@ description: |-
 resource "cloudflare_load_balancer_pool" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "example-pool"
-  origins {
+  origins = [{
     name    = "example-1"
     address = "192.0.2.1"
     enabled = false
-    header {
+    header = [{
       header = "Host"
       values = ["example-1"]
-    }
-  }
-  origins {
-    name    = "example-2"
-    address = "192.0.2.2"
-    header {
-      header = "Host"
-      values = ["example-2"]
-    }
-  }
+    }]
+    },
+    {
+      name    = "example-2"
+      address = "192.0.2.2"
+      header = [{
+        header = "Host"
+        values = ["example-2"]
+      }]
+  }]
   latitude           = 55
   longitude          = -12
   description        = "example load balancer pool"
   enabled            = false
   minimum_origins    = 1
   notification_email = "someone@example.com"
-  load_shedding {
+  load_shedding = {
     default_percent = 55
     default_policy  = "random"
     session_percent = 12
     session_policy  = "hash"
   }
-  origin_steering {
+  origin_steering = {
     policy = "random"
   }
 }
@@ -60,6 +60,7 @@ resource "cloudflare_load_balancer_pool" "example" {
 
 ### Optional
 
+- `check_regions` (List of String) A list of regions from which to run health checks. Null means every Cloudflare data center.
 - `description` (String) A human-readable description of the pool.
 - `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
 - `latitude` (Number) The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.
@@ -73,7 +74,6 @@ resource "cloudflare_load_balancer_pool" "example" {
 
 ### Read-Only
 
-- `check_regions` (List of String) A list of regions from which to run health checks. Null means every Cloudflare data center.
 - `created_on` (String)
 - `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
 - `id` (String) The ID of this resource.

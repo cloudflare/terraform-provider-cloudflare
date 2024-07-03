@@ -20,17 +20,19 @@ description: |-
 
 ### Optional
 
+- `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
+- `context_awareness` (Attributes) Scan the context of predefined entries to only return matches surrounded by keywords. (see [below for nested schema](#nestedatt--context_awareness))
+- `description` (String) The description of the profile.
+- `entries` (Attributes List) The custom entries for this profile. Array elements with IDs are modifying the existing entry with that ID. Elements without ID will create new entries. Any entry not in the list will be deleted. (see [below for nested schema](#nestedatt--entries))
+- `name` (String) The name of the profile.
+- `ocr_enabled` (Boolean) If true, scan images via OCR to determine if any text present matches filters.
 - `profile_id` (String) The ID for this profile
+- `shared_entries` (Attributes List) Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles). (see [below for nested schema](#nestedatt--shared_entries))
 
 ### Read-Only
 
-- `allowed_match_count` (Number) Related DLP policies will trigger when the match count exceeds the number set.
 - `created_at` (String)
-- `description` (String) The description of the profile.
-- `entries` (Attributes List) The entries for this profile. (see [below for nested schema](#nestedatt--entries))
 - `id` (String) The ID for this profile
-- `name` (String) The name of the profile.
-- `ocr_enabled` (Boolean) If true, scan images via OCR to determine if any text present matches filters.
 - `type` (String) The type of the profile.
 - `updated_at` (String)
 
@@ -86,6 +88,23 @@ Optional:
 
 
 
+<a id="nestedatt--context_awareness"></a>
+### Nested Schema for `context_awareness`
+
+Required:
+
+- `enabled` (Boolean) If true, scan the context of predefined entries to only return matches surrounded by keywords.
+- `skip` (Attributes) Content types to exclude from context analysis and return all matches. (see [below for nested schema](#nestedatt--context_awareness--skip))
+
+<a id="nestedatt--context_awareness--skip"></a>
+### Nested Schema for `context_awareness.skip`
+
+Required:
+
+- `files` (Boolean) If the content type is a file, skip context analysis and return all matches.
+
+
+
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`
 
@@ -112,5 +131,18 @@ Required:
 Optional:
 
 - `validation` (String) Validation algorithm for the pattern. This algorithm will get run on potential matches, and if it returns false, the entry will not be matched.
+
+
+
+<a id="nestedatt--shared_entries"></a>
+### Nested Schema for `shared_entries`
+
+Optional:
+
+- `enabled` (Boolean) Whether the entry is enabled or not.
+
+Read-Only:
+
+- `entry_id` (String) The ID for this entry
 
 

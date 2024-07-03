@@ -37,7 +37,7 @@ resource "cloudflare_account_member" "example" {
 ### Read-Only
 
 - `id` (String) Membership identifier tag.
-- `status` (String)
+- `status` (String) A member's status in the account.
 
 <a id="nestedatt--policies"></a>
 ### Nested Schema for `policies`

@@ -25,9 +25,9 @@ resource "cloudflare_access_application" "staging_app" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
-  policies                  = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
 }
 
@@ -38,11 +38,11 @@ resource "cloudflare_access_application" "staging_app" {
   domain           = "staging.example.com"
   type             = "self_hosted"
   session_duration = "24h"
-  policies         = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
-  cors_headers {
+  cors_headers = {
     allowed_methods   = ["GET", "POST", "OPTIONS"]
     allowed_origins   = ["https://example.com"]
     allow_credentials = true
@@ -124,6 +124,7 @@ Optional:
 - `client_id` (String) The application client id
 - `client_secret` (String) The application client secret, only returned on POST request.
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
+- `created_at` (String)
 - `custom_attributes` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_attributes))
 - `custom_claims` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_claims))
 - `default_relay_state` (String) The URL that the user will be redirected to after a successful login for IDP initiated logins.
@@ -140,10 +141,6 @@ Optional:
 - `scopes` (String) Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled
 - `sp_entity_id` (String) A globally unique name for an identity or service provider.
 - `sso_endpoint` (String) The endpoint where your SaaS application will send login requests.
-
-Read-Only:
-
-- `created_at` (String)
 - `updated_at` (String)
 
 <a id="nestedatt--saas_app--custom_attributes"></a>

@@ -22,11 +22,11 @@ resource "cloudflare_tunnel_config" "example_config" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   tunnel_id  = cloudflare_tunnel.example_tunnel.id
 
-  config {
-    warp_routing {
+  config = {
+    warp_routing = [{
       enabled = true
-    }
-    origin_request {
+    }]
+    origin_request = [{
       connect_timeout          = "1m0s"
       tls_timeout              = "1m0s"
       tcp_keep_alive           = "1m0s"
@@ -42,28 +42,29 @@ resource "cloudflare_tunnel_config" "example_config" {
       proxy_address            = "10.0.0.1"
       proxy_port               = "8123"
       proxy_type               = "socks"
-      ip_rules {
+      ip_rules = [{
         prefix = "/web"
         ports  = [80, 443]
         allow  = false
-      }
-    }
-    ingress_rule {
+      }]
+    }]
+    ingress_rule = [{
       hostname = "foo"
       path     = "/bar"
       service  = "http://10.0.0.2:8080"
-      origin_request {
+      origin_request = [{
         connect_timeout = "2m0s"
-        access {
+        access = [{
           required  = true
           team_name = "terraform"
           aud_tag   = ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"]
-        }
-      }
-    }
-    ingress_rule {
-      service = "https://10.0.0.3:8081"
-    }
+        }]
+      }]
+      },
+      {
+        service = "https://10.0.0.3:8081"
+    }]
+
   }
 }
 ```

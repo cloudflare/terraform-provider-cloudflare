@@ -36,7 +36,13 @@ resource "cloudflare_static_route" "example" {
 
 ### Optional
 
+- `description` (String) An optional human provided description of the static route.
+- `nexthop` (String) The next-hop IP Address for the static route.
+- `prefix` (String) IP Prefix in Classless Inter-Domain Routing format.
+- `priority` (Number) Priority of the static route.
 - `route_id` (String) Identifier
+- `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--scope))
+- `weight` (Number) Optional weight of the ECMP scope - if provided.
 
 ### Read-Only
 
@@ -46,6 +52,15 @@ resource "cloudflare_static_route" "example" {
 - `modified_route` (String)
 - `route` (String)
 - `routes` (Attributes List) (see [below for nested schema](#nestedatt--routes))
+
+<a id="nestedatt--scope"></a>
+### Nested Schema for `scope`
+
+Optional:
+
+- `colo_names` (List of String) List of colo names for the ECMP scope.
+- `colo_regions` (List of String) List of colo regions for the ECMP scope.
+
 
 <a id="nestedatt--routes"></a>
 ### Nested Schema for `routes`
