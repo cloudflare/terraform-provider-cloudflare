@@ -514,6 +514,14 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: "Tunnel IDs to alert on.",
 				},
+				"tunnel_name": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Tunnel Names to alert on.",
+				},
 			},
 		},
 	}
