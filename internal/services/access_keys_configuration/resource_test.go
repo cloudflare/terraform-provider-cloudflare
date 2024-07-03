@@ -39,11 +39,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *
 }
 
 func testAccessKeysConfigurationWithKeyRotationIntervalDays(rnd, accountID string, days int) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_keys_configuration" "%[1]s" {
-  account_id = "%[2]s"
-  key_rotation_interval_days = "%[3]d"
-}`, rnd, accountID, days)
+	return acctest.LoadTestCase("accesskeysconfigurationwithkeyrotationintervaldays.tf", rnd, accountID, days)
 }
 
 func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(t *testing.T) {
@@ -75,8 +71,5 @@ func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(
 }
 
 func testAccessKeysConfigurationWithoutKeyRotationIntervalDays(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_keys_configuration" "%[1]s" {
-  account_id = "%[2]s"
-}`, rnd, accountID)
+	return acctest.LoadTestCase("accesskeysconfigurationwithoutkeyrotationintervaldays.tf", rnd, accountID)
 }

@@ -317,24 +317,11 @@ func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
 }
 
 func testZoneConfig(resourceID, zoneName, paused, jumpStart, accountID string) string {
-	return fmt.Sprintf(`
-				resource "cloudflare_zone" "%[1]s" {
-					account_id = "%[5]s"
-					zone = "%[2]s"
-					paused = %[3]s
-					jump_start = %[4]s
-				}`, resourceID, zoneName, paused, jumpStart, accountID)
+	return acctest.LoadTestCase("zoneconfig.tf", resourceID, zoneName, paused, jumpStart, accountID)
 }
 
 func testZoneConfigWithPlan(resourceID, zoneName, paused, jumpStart, plan, accountID string) string {
-	return fmt.Sprintf(`
-				resource "cloudflare_zone" "%[1]s" {
-					account_id = "%[6]s"
-					zone = "%[2]s"
-					paused = %[3]s
-					jump_start = %[4]s
-					plan = "%[5]s"
-				}`, resourceID, zoneName, paused, jumpStart, plan, accountID)
+	return acctest.LoadTestCase("zoneconfigwithplan.tf", resourceID, zoneName, paused, jumpStart, plan, accountID)
 }
 
 func TestAccCloudflareZone_SetType(t *testing.T) {
@@ -359,26 +346,9 @@ func TestAccCloudflareZone_SetType(t *testing.T) {
 }
 
 func testZoneConfigWithTypeSetup(resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType string) string {
-	return fmt.Sprintf(`
-				resource "cloudflare_zone" "%[1]s" {
-					account_id = "%[6]s"
-					zone = "%[2]s"
-					paused = %[3]s
-					jump_start = %[4]s
-					plan = "%[5]s"
-					type = "%[7]s"
-				}`, resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType)
+	return acctest.LoadTestCase("zoneconfigwithtypesetup.tf", resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType)
 }
 
 func testZoneConfigWithTypeVanityNameServersSetup(resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType string) string {
-	return fmt.Sprintf(`
-				resource "cloudflare_zone" "%[1]s" {
-					account_id = "%[6]s"
-					zone = "%[2]s"
-					paused = %[3]s
-					jump_start = %[4]s
-					plan = "%[5]s"
-					type = "%[7]s"
-					vanity_name_servers = ["ns1.%[2]s", "ns2.%[2]s"]
-				}`, resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType)
+	return acctest.LoadTestCase("zoneconfigwithtypevanitynameserverssetup.tf", resourceID, zoneName, paused, jumpStart, plan, accountID, zoneType)
 }

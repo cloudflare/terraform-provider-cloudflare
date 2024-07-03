@@ -180,115 +180,19 @@ func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 }
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[1]s" {
-  account_id = "%[3]s"
-  name = "%[1]s"
-  content = "%[2]s"
-}`, rnd, scriptContent1, accountID)
+	return acctest.LoadTestCase("workerscriptconfigmultiscriptinitial.tf", rnd, scriptContent1, accountID)
 }
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[1]s" {
-  account_id = "%[3]s"
-  name = "%[1]s"
-  content = "%[2]s"
-}`, rnd, scriptContent2, accountID)
+	return acctest.LoadTestCase("workerscriptconfigmultiscriptupdate.tf", rnd, scriptContent2, accountID)
 }
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdateBinding(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_workers_kv_namespace" "%[1]s" {
-	account_id = "%[4]s"
-	title = "%[1]s"
-}
-
-resource "cloudflare_queue" "%[1]s" {
-	account_id = "%[4]s"
-	name = "%[1]s"
-}
-
-resource "cloudflare_worker_script" "%[1]s-service" {
-	account_id = "%[4]s"
-	name    = "%[1]s-service"
-	content = "%[2]s"
-}
-
-resource "cloudflare_worker_script" "%[1]s" {
-  account_id = "%[4]s"
-  name    = "%[1]s"
-  content = "%[2]s"
-
-  kv_namespace_binding {
-    name         = "MY_KV_NAMESPACE"
-    namespace_id = cloudflare_workers_kv_namespace.%[1]s.id
-  }
-
-  plain_text_binding {
-    name = "MY_PLAIN_TEXT"
-    text = "%[1]s"
-  }
-
-  secret_text_binding {
-    name = "MY_SECRET_TEXT"
-    text = "%[1]s"
-  }
-
-  webassembly_binding {
-    name = "MY_WASM"
-    module = "%[3]s"
-  }
-
-  r2_bucket_binding {
-	name = "MY_BUCKET"
-	bucket_name = "%[1]s"
-  }
-
-  service_binding {
-	name = "MY_SERVICE_BINDING"
-    service = cloudflare_worker_script.%[1]s-service.name
-    environment = "production"
-  }
-
-  queue_binding {
-    binding         = "MY_QUEUE"
-    queue = cloudflare_queue.%[1]s.name
-  }
-
-}`, rnd, scriptContent2, encodedWasm, accountID)
+	return acctest.LoadTestCase("workerscriptconfigmultiscriptupdatebinding.tf", rnd, scriptContent2, encodedWasm, accountID)
 }
 
 func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyID, r2AccessKeySecret string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_logpush_job" "%[1]s" {
-		enabled          = true
-		account_id       = "%[3]s"
-		name             = "%[1]s"
-		logpull_options  = "fields=Event,EventTimestampMs,Outcome,Exceptions,Logs,ScriptName"
-		destination_conf = "r2://%[1]s/date={DATE}?account-id=%[3]s&access-key-id=%[6]s&secret-access-key=%[7]s"
-		dataset          = "workers_trace_events"
-	}
-
-resource "cloudflare_worker_script" "%[1]s" {
-  account_id = "%[3]s"
-  name = "%[1]s"
-  content = "%[2]s"
-  module = true
-  compatibility_date = "%[4]s"
-  compatibility_flags = ["%[5]s"]
-  logpush = true
-	placement {
-		mode = "smart"
-	}
-
-	d1_database_binding {
-		name = "MY_DATABASE"
-		database_id = "%[8]s"
-	}
-
-	depends_on = [cloudflare_logpush_job.%[1]s]
-}`, rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret, d1DatabaseID)
+	return acctest.LoadTestCase("workerscriptuploadmodule.tf", rnd, moduleContent, accountID, compatibilityDate, strings.Join(compatibilityFlags, `","`), r2AccessKeyID, r2AccessKeySecret, d1DatabaseID)
 }
 
 // func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.WorkerScript, bindings []string) resource.TestCheckFunc {

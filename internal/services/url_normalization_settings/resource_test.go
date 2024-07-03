@@ -48,12 +48,7 @@ func TestAccCloudflareURLNormalizationSettings_CreateThenUpdate(t *testing.T) {
 }
 
 func testAccCheckCloudflareURLNormalizationSettingsConfig(zoneID, _type, scope, name string) string {
-	return fmt.Sprintf(`
-				resource "cloudflare_url_normalization_settings" "%[4]s" {
-					zone_id = "%[1]s"
-					type = "%[2]s"
-					scope = "%[3]s"
-				}`, zoneID, _type, scope, name)
+	return acctest.LoadTestCase("urlnormalizationsettingsconfig.tf", zoneID, _type, scope, name)
 }
 
 func testAccCheckCloudflareURLNormalizationSettingsDestroy(s *terraform.State) error {

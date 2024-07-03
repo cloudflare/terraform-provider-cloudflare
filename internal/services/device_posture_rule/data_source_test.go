@@ -39,27 +39,5 @@ func TestAccCloudflareDevicePostureRules_DataSource(t *testing.T) {
 }
 
 func testAccCloudflareDevicePostureRulesConfig(name, accountID string) string {
-	return fmt.Sprintf(`resource "cloudflare_device_posture_rule" "%[1]s" {
-  account_id = "%[2]s"
-  name        = "%[1]s"
-  type        = "file"
-  description = "check for /dev/random"
-  schedule    = "1h"
-
-  match {
-    platform = "linux"
-  }
-
-  input {
-    path = "/dev/random"
-  }
-}
-
-data "cloudflare_device_posture_rules" "%[1]s" {
-  account_id = "%[2]s"
-  name = "%[1]s"
-
-  depends_on = [cloudflare_device_posture_rule.%[1]s]
-}
-`, name, accountID)
+	return acctest.LoadTestCase("deviceposturerulesconfig.tf", name, accountID)
 }

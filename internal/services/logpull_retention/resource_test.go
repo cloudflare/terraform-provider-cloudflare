@@ -1,7 +1,6 @@
 package logpull_retention_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -39,9 +38,5 @@ func TestAccLogpullRetentionSetStatus(t *testing.T) {
 }
 
 func testLogpullRetentionSetConfig(id, zoneID, enabled string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_logpull_retention" "%[1]s" {
-    zone_id = "%[2]s"
-	  enabled = "%[3]s"
-  }`, id, zoneID, enabled)
+	return acctest.LoadTestCase("logpullretentionsetconfig.tf", id, zoneID, enabled)
 }

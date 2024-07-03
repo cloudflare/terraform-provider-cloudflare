@@ -2646,2319 +2646,299 @@ func TestAccCloudflareRuleset_ImportHandlesMissingValues(t *testing.T) {
 }
 
 func testAccCheckCloudflareRulesetMagicTransitSingle(rnd, name, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s magic transit ruleset description"
-    kind        = "root"
-    phase       = "magic_transit"
-
-    rules {
-      action = "skip"
-      action_parameters {
-        ruleset = "current"
-      }
-      expression = "tcp.dstport in { 32768..65535 }"
-      description = "Allow TCP Ephemeral Ports"
-      logging {
-        enabled = false
-      }
-    }
-  }`, rnd, name, accountID)
+	return acctest.LoadTestCase("rulesetmagictransitsingle.tf", rnd, name, accountID)
 }
 
 func testAccCheckCloudflareRulesetMagicTransitMultiple(rnd, name, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s magic transit ruleset description"
-    kind        = "root"
-    phase       = "magic_transit"
-
-    rules {
-      action = "block"
-      expression = "udp.dstport in { 32768..65535 }"
-      description = "Block UDP Ephemeral Ports"
-      enabled = true
-    }
-
-    rules {
-      action = "skip"
-	  action_parameters {
-        ruleset = "current"
-      }
-      expression = "tcp.dstport in { 32768..65535 }"
-      description = "Allow TCP Ephemeral Ports"
-      enabled = true
-      logging {
-        enabled = false
-      }
-    }
-  }`, rnd, name, accountID)
+	return acctest.LoadTestCase("rulesetmagictransitmultiple.tf", rnd, name, accountID)
 }
 
 func testAccCheckCloudflareRulesetCustomWAFBasic(rnd, name, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_custom"
-
-    rules {
-      action = "challenge"
-      expression = "(ip.geoip.country eq \"GB\" or ip.geoip.country eq \"FR\") or cf.threat_score > 0"
-      description = "%[1]s ruleset rule description"
-    }
-  }`, rnd, name, zoneID)
+	return acctest.LoadTestCase("rulesetcustomwafbasic.tf", rnd, name, zoneID)
 }
 
 func testAccCheckCloudflareRulesetManagedWAF(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-      }
-      expression = "true"
-      description = "Execute Cloudflare Managed Ruleset on my zone-level phase ruleset"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwaf.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFWithoutDescription(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-      }
-      expression = "true"
-      description = "Execute Cloudflare Managed Ruleset on my zone-level phase ruleset"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafwithoutdescription.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFOWASP(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-      }
-      expression = "true"
-      description = "Execute Cloudflare Managed OWASP Ruleset on my zone-level phase ruleset"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafowasp.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFOWASPBlockXSSAndAnomalyOver60(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    # enable all "XSS" rules
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-          categories {
-            category = "xss"
-            action = "block"
-            enabled = true
-          }
-        }
-      }
-      expression = "true"
-      description = "zone"
-      enabled = true
-    }
-
-    # set Anomaly Score for 60+ (low)
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        overrides {
-          rules {
-            id = "6179ae15870a4bb7b2d480d4843b323c"
-            action = "block"
-            score_threshold = 60
-          }
-        }
-      }
-      expression = "true"
-      description = "zone"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafowaspblockxssandanomalyover60.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFOWASPOnlyPL1(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    # disable PL2, PL3 and PL4
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        overrides {
-          categories {
-            category = "paranoia-level-2"
-            enabled = false
-          }
-
-          categories {
-            category = "paranoia-level-3"
-            enabled = false
-          }
-
-          categories {
-            category = "paranoia-level-4"
-            enabled = false
-          }
-
-          rules {
-            id = "6179ae15870a4bb7b2d480d4843b323c"
-            action = "block"
-            score_threshold = 60
-            enabled = true
-          }
-        }
-      }
-      expression = "true"
-      description = "zone"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafowasponlypl1.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFDeployMultiple(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "c2e184081120413c86c3ab7e14069605"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafdeploymultiple.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFDeployMultipleWithSkip(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "skip"
-      action_parameters {
-        ruleset = "current"
-      }
-      description = "not this zone"
-      expression = "(http.host eq \"%[4]s\" and http.request.method eq \"GET\")"
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "c2e184081120413c86c3ab7e14069605"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafdeploymultiplewithskip.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFDeployMultipleWithTopSkipAndLastSkip(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "skip"
-      action_parameters {
-        ruleset = "current"
-      }
-      description = "not this path"
-      expression = "(http.host eq \"%[4]s\" and http.request.uri.path contains \"/app/\")"
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "c2e184081120413c86c3ab7e14069605"
-      }
-      expression = "true"
-      description = "zone deployment test"
-      enabled = true
-    }
-
-    rules {
-      action = "skip"
-      action_parameters {
-        ruleset = "current"
-      }
-      description = "not this path either"
-      expression = "(http.host eq \"%[4]s\" and http.request.uri.path contains \"/httpbin/\")"
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafdeploymultiplewithtopskipandlastskip.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetSkipPhaseAndProducts(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "skip"
-      action_parameters {
-        ruleset = "current"
-      }
-      description = "not this zone"
-      expression = "http.host eq \"%[4]s\""
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-
-    rules {
-      action = "skip"
-      action_parameters {
-        phases = ["http_ratelimit", "http_request_firewall_managed"]
-      }
-      expression = "http.request.uri.path contains \"/skip-phase/\""
-      description = ""
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-
-    rules {
-      action = "skip"
-      action_parameters {
-        products = ["zoneLockdown", "uaBlock"]
-      }
-      expression = "http.request.uri.path contains \"/skip-products/\""
-      description = ""
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetskipphaseandproducts.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFWithCategoryBasedOverrides(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-          categories {
-            category = "wordpress"
-            action = "block"
-            enabled = true
-          }
-
-          categories {
-            category = "joomla"
-            action = "block"
-            enabled = true
-          }
-
-			rules {
-				id = "e3a567afc347477d9702d9047e97d760"
-				enabled = false
-			}
-        }
-      }
-
-      expression = "true"
-      description = "overrides to only enable wordpress rules to block"
-      enabled = false
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafwithcategorybasedoverrides.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFWithIDBasedOverrides(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-          rules {
-            id = "5de7edfa648c4d6891dc3e7f84534ffa"
-            action = "log"
-            enabled = true
-          }
-
-          rules {
-            id = "e3a567afc347477d9702d9047e97d760"
-            action = "log"
-            enabled = true
-          }
-        }
-      }
-
-      expression = "true"
-      description = "make 5de7edfa648c4d6891dc3e7f84534ffa and e3a567afc347477d9702d9047e97d760 log only"
-      enabled = false
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafwithidbasedoverrides.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetTransformationRuleURIPath(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_transform"
-
-    rules {
-      action = "rewrite"
-      action_parameters {
-        uri {
-          path {
-            value = "/static-rewrite"
-          }
-        }
-      }
-
-      expression = "(http.host eq \"%[4]s\")"
-      description = "URI transformation path example"
-      enabled = false
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesettransformationruleuripath.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetTransformationRuleURIQuery(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_transform"
-
-    rules {
-      action = "rewrite"
-      action_parameters {
-        uri {
-          query {
-            value = "a=b"
-          }
-        }
-      }
-
-      expression = "(http.host eq \"%[4]s\")"
-      description = "URI transformation query example"
-      enabled = false
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesettransformationruleuriquery.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetTransformationRuleRequestHeaders(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_late_transform"
-
-    rules {
-      action = "rewrite"
-      action_parameters {
-        headers {
-          name      = "example1"
-          operation = "set"
-          value     = "my-http-header-value1"
-        }
-
-        headers {
-          name       = "example2"
-          operation  = "set"
-          expression = "cf.zone.name"
-        }
-
-        headers {
-          name      = "example3"
-          operation = "remove"
-        }
-      }
-
-      expression = "true"
-      description = "example header transformation rule"
-      enabled = false
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesettransformationrulerequestheaders.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetTransformationRuleResponseHeaders(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_response_headers_transform"
-
-    rules {
-      action = "rewrite"
-      action_parameters {
-        headers {
-          name      = "example1"
-          operation = "set"
-          value     = "my-http-header-value1"
-        }
-
-        headers {
-          name       = "example2"
-          operation  = "set"
-          expression = "cf.zone.name"
-        }
-
-        headers {
-          name      = "example3"
-          operation = "remove"
-        }
-      }
-
-      expression = "true"
-      description = "example header transformation rule"
-      enabled = false
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesettransformationruleresponseheaders.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetResponseCompression(rnd, name, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_response_compression"
-
-    rules {
-      action = "compress_response"
-      action_parameters {
-        algorithms {
-			name = "brotli"
- 		}
-        algorithms {
-			name = "default"
- 		}
-      }
-
-      expression = "true"
-      description = "%[1]s compress response rule"
-      enabled = false
-    }
-  }`, rnd, name, zoneID)
+	return acctest.LoadTestCase("rulesetresponsecompression.tf", rnd, name, zoneID)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFPayloadLogging(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        matched_data {
-          public_key = "bm90X2FfcmVhbF9wdWJsaWNfa2V5"
-        }
-      }
-      expression = "true"
-      description = "example using WAF payload logging"
-      enabled = false
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafpayloadlogging.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetCustomErrors(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_custom_errors"
-
-    rules {
-      action = "serve_error"
-      action_parameters {
-        content = "my example error page"
-        content_type = "text/plain"
-        status_code = "530"
-      }
-      expression = "(http.request.uri.path matches \"^/api/\")"
-      description = "example http custom error response"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetcustomerrors.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetOrigin(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_origin"
-
-    rules {
-      action = "route"
-      action_parameters {
-        host_header = "%[1]s.%[4]s"
-        origin {
-          host = "%[1]s.%[4]s"
-          port = 80
-        }
-        sni {
-          value = "%[1]s.%[4]s"
-        }
-      }
-      expression = "(http.request.uri.path matches \"^/api/\")"
-      description = "example http request origin"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetorigin.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetOriginPortWithoutOrigin(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_origin"
-
-    rules {
-      action = "route"
-      action_parameters {
-        host_header = "%[1]s.%[4]s"
-        origin {
-          port = 80
-        }
-      }
-      expression = "(http.request.uri.path matches \"^/api/\")"
-      description = "example http request origin"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetoriginportwithoutorigin.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetRateLimit(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_ratelimit"
-
-    rules {
-      action = "block"
-      action_parameters {
-        response {
-          status_code = 418
-          content_type = "text/plain"
-          content = "test content"
-        }
-      }
-      ratelimit {
-        characteristics = [
-          "cf.colo.id",
-          "ip.src"
-        ]
-        period = 60
-        requests_per_period = 100
-        mitigation_timeout = 60
-        requests_to_origin = true
-      }
-      expression = "(http.request.uri.path matches \"^/api/\")"
-      description = "example http rate limit"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetratelimit.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetRateLimitScorePerPeriod(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_ratelimit"
-
-    rules {
-      action = "block"
-      action_parameters {
-        response {
-          status_code = 418
-          content_type = "text/plain"
-          content = "test content"
-        }
-      }
-      ratelimit {
-        characteristics = [
-          "cf.colo.id",
-          "ip.src"
-        ]
-        period = 60
-        score_per_period = 400
-		score_response_header_name = "my-score"
-        mitigation_timeout = 60
-        requests_to_origin = true
-      }
-      expression = "(http.request.uri.path matches \"^/api/\")"
-      description = "example http rate limit"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetratelimitscoreperperiod.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetRateLimitWithMitigationTimeoutOfZero(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_ratelimit"
-
-    rules {
-      action = "block"
-      action_parameters {
-        response {
-          status_code = 418
-          content_type = "text/plain"
-          content = "test content"
-        }
-      }
-      ratelimit {
-        characteristics = [
-          "cf.colo.id",
-          "ip.src"
-        ]
-        period              = 60
-        requests_per_period = 1000
-        requests_to_origin  = false
-        mitigation_timeout  = 0
-      }
-      expression = "(http.request.uri.path matches \"^/api/\")"
-      description = "example http rate limit"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetratelimitwithmitigationtimeoutofzero.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetTwoCustomRules(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id      = "%[2]s"
-    name         = "Terraform provider test"
-    description  = "%[1]s ruleset description"
-    kind         = "zone"
-    phase        = "http_request_firewall_custom"
-    rules {
-      action     = "log"
-      enabled    = true
-      expression = "(http.request.uri.path eq \"/admin\")"
-    }
-    rules {
-      action     = "challenge"
-      enabled    = true
-      expression = "(http.request.uri.path eq \"/login\")"
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesettwocustomrules.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetTwoCustomRulesReversed(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id      = "%[2]s"
-    name         = "Terraform provider test"
-    description  = "%[1]s ruleset description"
-    kind         = "zone"
-    phase        = "http_request_firewall_custom"
-    rules {
-      action     = "challenge"
-      enabled    = true
-      expression = "(http.request.uri.path eq \"/login\")"
-    }
-    rules {
-      action     = "log"
-      enabled    = true
-      expression = "(http.request.uri.path eq \"/admin\")"
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesettwocustomrulesreversed.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetThreeCustomRules(rnd, zoneID string, enableLoginRule bool) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id      = "%[2]s"
-    name         = "Terraform provider test"
-    description  = "%[1]s ruleset description"
-    kind         = "zone"
-    phase        = "http_request_firewall_custom"
-    rules {
-      action     = "log"
-      enabled    = true
-      expression = "(http.request.uri.path eq \"/admin\")"
-    }
-    rules {
-      action     = "challenge"
-      enabled    = %[3]t
-      expression = "(http.request.uri.path eq \"/login\")"
-    }
-    rules {
-      action     = "log"
-      enabled    = true
-      expression = "(http.request.uri.path eq \"/admin\")"
-    }
-  }`, rnd, zoneID, enableLoginRule)
+	return acctest.LoadTestCase("rulesetthreecustomrules.tf", rnd, zoneID, enableLoginRule)
 }
 
 func testAccCheckCloudflareRulesetTwoCustomRulesWithRef(rnd, zoneID string, enableAdminRule bool) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id      = "%[2]s"
-    name         = "Terraform provider test"
-    description  = "%[1]s ruleset description"
-    kind         = "zone"
-    phase        = "http_request_firewall_custom"
-    rules {
-      action     = "log"
-      enabled    =  %[3]t
-      expression = "(http.request.uri.path eq \"/admin\")"
-      ref        = "foo"
-    }
-    rules {
-        action     = "challenge"
-        enabled    = true
-        expression = "(http.request.uri.path eq \"/login\")"
-    }
-  }`, rnd, zoneID, enableAdminRule)
+	return acctest.LoadTestCase("rulesettwocustomruleswithref.tf", rnd, zoneID, enableAdminRule)
 }
 
 func testAccCheckCloudflareRulesetThreeCustomRulesWithRef(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id      = "%[2]s"
-    name         = "Terraform provider test"
-    description  = "%[1]s ruleset description"
-    kind         = "zone"
-    phase        = "http_request_firewall_custom"
-    rules {
-      action     = "log"
-      enabled    = false
-      expression = "(http.request.uri.path eq \"/admin\")"
-    }
-    rules {
-      action     = "log"
-      enabled    = false
-      expression = "(http.request.uri.path eq \"/admin\")"
-      ref        = "foo"
-    }
-    rules {
-        action     = "challenge"
-        enabled    = true
-        expression = "(http.request.uri.path eq \"/login\")"
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetthreecustomruleswithref.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetActionParametersOverridesActionEnabled(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-          action = "log"
-          enabled = true
-        }
-      }
-      expression = "true"
-      description = "Execute all rules in Cloudflare Managed Ruleset in log mode on my zone-level phase entry point ruleset"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetactionparametersoverridesactionenabled.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetActionParametersMultipleSkips(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "skip"
-      action_parameters {
-        rulesets = ["efb7b8c949ac4650a09736fc376e9aee"]
-      }
-      expression = "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rulesets\")"
-      description = "skip Cloudflare Manage ruleset"
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-
-    rules {
-      action = "skip"
-      action_parameters {
-        # efb7b8c949ac4650a09736fc376e9aee is the ruleset ID of the Cloudflare Managed rules
-        rules = {
-          "efb7b8c949ac4650a09736fc376e9aee" = "5de7edfa648c4d6891dc3e7f84534ffa,e3a567afc347477d9702d9047e97d760"
-        }
-      }
-      expression = "(cf.zone.name eq \"domain.xyz\" and http.request.uri.query contains \"skip=rules\")"
-      description = "skip Wordpress rule and SQLi rule"
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-          rules {
-            id = "5de7edfa648c4d6891dc3e7f84534ffa"
-            action = "block"
-            enabled = true
-          }
-          rules {
-            id = "75a0060762034a6cb663fd51a02344cb"
-            action = "log"
-            enabled = true
-          }
-          categories {
-            category = "wordpress"
-            action = "js_challenge"
-            enabled = true
-          }
-        }
-      }
-      expression = "true"
-      description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetactionparametersmultipleskips.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetActionParametersHTTPDDosOverride(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "ddos_l7"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4d21379b4f9f4bb088e0729962c8b3cf"
-        overrides {
-          rules {
-            id = "fdfdac75430c4c47a959592f0aa5e68a" # requests with odd HTTP headers or URI path
-            sensitivity_level = "low"
-          }
-        }
-      }
-      expression = "true"
-      description = "override HTTP DDoS ruleset rule"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetactionparametershttpddosoverride.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetAccountLevelCustomWAFRule(rnd, name, accountID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s_account_custom_firewall" {
-    account_id  = "%[3]s"
-    name        = "Custom Ruleset for my account"
-    description = "example block rule"
-    kind        = "custom"
-    phase       = "http_request_firewall_custom"
-
-    rules {
-      action = "block"
-      expression = "(http.host eq \"%[4]s\")"
-      description = "SID"
-      enabled = true
-    }
-  }
-
-  resource "cloudflare_ruleset" "%[1]s_account_custom_firewall_root" {
-    account_id  = "%[3]s"
-    name        = "Firewall Custom root"
-    description = ""
-    kind        = "root"
-    phase       = "http_request_firewall_custom"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = cloudflare_ruleset.%[1]s_account_custom_firewall.id
-      }
-      expression = "(cf.zone.name eq \"example.com\") and (cf.zone.plan eq \"ENT\")"
-      description = ""
-      enabled = true
-    }
-  }`, rnd, name, accountID, zoneName)
+	return acctest.LoadTestCase("rulesetaccountlevelcustomwafrule.tf", rnd, name, accountID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetTransformationRuleURIPathAndQueryCombination(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_transform"
-
-    rules {
-      action = "rewrite"
-      action_parameters {
-        uri {
-          query {
-            expression = "concat(\"requestUrl=\", http.request.full_uri)"
-          }
-          path {
-            value = "/path/to/url"
-          }
-        }
-      }
-      expression = "true"
-      description = "example for combining URI action parameters for path and query"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesettransformationruleuripathandquerycombination.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetExposedCredentialCheck(rnd, name, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "This ruleset includes a rule checking for exposed credentials."
-    kind        = "custom"
-    phase       = "http_request_firewall_custom"
-
-    rules {
-      action = "log"
-      expression = "http.request.method == \"POST\" && http.request.uri == \"/login.php\""
-      enabled = true
-      description = "example exposed credential check"
-      exposed_credential_check {
-        username_expression = "url_decode(http.request.body.form[\"username\"][0])"
-        password_expression = "url_decode(http.request.body.form[\"password\"][0])"
-      }
-    }
-  }
-`, rnd, name, accountID)
+	return acctest.LoadTestCase("rulesetexposedcredentialcheck.tf", rnd, name, accountID)
 }
 
 func testAccCheckCloudflareRulesetDisableLoggingForSkipAction(rnd, name, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "This ruleset includes a skip rule whose logging is disabled."
-    kind        = "root"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "skip"
-      action_parameters {
-        ruleset = "current"
-      }
-      expression = "(cf.zone.plan eq \"ENT\")"
-      enabled = true
-      description = "example disabled logging"
-      logging {
-        enabled = false
-      }
-    }
-  }
-`, rnd, name, accountID)
+	return acctest.LoadTestCase("rulesetdisableloggingforskipaction.tf", rnd, name, accountID)
 }
 
 func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteAlone(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id  = "%[2]s"
-    name        = "%[1]s managed WAF"
-    description = "%[1]s managed WAF ruleset description"
-    kind        = "root"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        overrides {
-          rules {
-            id = "6179ae15870a4bb7b2d480d4843b323c"
-            action = "block"
-            score_threshold = 25
-          }
-          enabled = true
-        }
-        matched_data {
-           public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
-        }
-      }
-      expression  = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
-      description = "Account OWASP %[3]s"
-      enabled     = true
-    }
-  }
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("executealone.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareRulesetConditionallySetActionParameterVersion_ExecuteThenSkip(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    account_id  = "%[2]s"
-    name        = "%[1]s managed WAF"
-    description = "%[1]s managed WAF ruleset description"
-    kind        = "root"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "skip"
-      action_parameters {
-        rules = {
-          "4814384a9e5d4991b9815dcfc25d2f1f" = "a6be45d4905042b9964ff81dc12e41d2,fa54f3d75ed446e78c22b4ea57b90acf,ec42fac3279943388b6be5ee9182835e,37da7855d2f94f69865365d894a556a4,f2db062052cf453fbe9e93f058ecf7e7,1129dfb383bb42e48466488cf3b37cb1"
-        }
-      }
-      expression = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
-      description = "Account skip rules OWASP"
-      enabled = true
-	  logging {
-		enabled = true
-	  }
-    }
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        overrides {
-          rules {
-            id = "6179ae15870a4bb7b2d480d4843b323c"
-            action = "block"
-            score_threshold = 25
-          }
-          enabled = true
-        }
-        matched_data {
-           public_key = "zpUlcpNtaNiSUN6LL6NiNz8XgIJZWWG3iSZDdPbMszM="
-        }
-      }
-      expression  = "(cf.zone.name eq \"%[3]s\") and (cf.zone.plan eq \"ENT\")"
-      description = "Account OWASP %[3]s"
-      enabled     = true
-    }
-  }
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("executethenskip.tf", rnd, accountID, domain)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFWithCategoryBasedOverridesActionManagedChallenge(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-        	categories {
-            	category = "wordpress"
-            	action = "managed_challenge"
-            	enabled = true
-        	}
-			rules {
-				id = "e3a567afc347477d9702d9047e97d760"
-				action = "managed_challenge"
-				enabled = true
-			}
-        }
-      }
-
-      expression = "true"
-      description = "overrides to only enable wordpress rules to managed_challenge"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafwithcategorybasedoverridesactionmanagedchallenge.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetManagedWAFWithActionManagedChallenge(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-			action = "managed_challenge"
-        }
-      }
-
-      expression = "true"
-      description = "overrides change action to managed_challenge on the Cloudflare Manage Ruleset"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetmanagedwafwithactionmanagedchallenge.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCheckCloudflareRulesetLogCustomField(rnd, name, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_log_custom_fields"
-
-    rules {
-      action = "log_custom_field"
-      action_parameters {
-        request_fields = [
-          "content-type",
-          "x-forwarded-for",
-          "host"
-        ]
-        response_fields = [
-          "server",
-          "content-type",
-          "allow"
-        ]
-        cookie_fields = [
-          "__ga",
-          "accountNumber",
-          "__cfruid"
-        ]
-      }
-
-      expression = "true"
-      description = "%[1]s log custom fields rule"
-      enabled = true
-    }
-  }`, rnd, name, zoneID)
+	return acctest.LoadTestCase("rulesetlogcustomfield.tf", rnd, name, zoneID)
 }
 
 func testAccCheckCloudflareRulesetActionParametersOverridesThrashingStatus(rnd, zoneID, zoneName, status string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id     = "%[2]s"
-    name        = "thrashing overrides for managed rules"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_firewall_managed"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides {
-          action = "log"
-          %[4]s
-        }
-      }
-      expression = "true"
-      description = "Execute all rules in Cloudflare Managed Ruleset in log mode on my zone-level phase entry point ruleset"
-      enabled = true
-    }
-  }`, rnd, zoneID, zoneName, status)
+	return acctest.LoadTestCase("rulesetactionparametersoverridesthrashingstatus.tf", rnd, zoneID, zoneName, status)
 }
 
 func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_cache_settings"
-
-    rules {
-      action = "set_cache_settings"
-      action_parameters {
-		additional_cacheable_ports = [8443]
-		edge_ttl {
-			mode = "override_origin"
-			default = 60
-			status_code_ttl {
-				status_code = 200
-				value = 50
-			}
-			status_code_ttl {
-				status_code_range {
-					from = 201
-					to = 300
-				}
-				value = 30
-			}
-		}
-		browser_ttl {
-			mode = "respect_origin"
-		}
-		serve_stale {
-			disable_stale_while_updating = true
-		}
-		respect_strong_etags = true
-		read_timeout = 2000
-		cache_key {
-			ignore_query_strings_order = false
-			cache_deception_armor = true
-			custom_key {
-				query_string {
-					exclude = ["*"]
-				}
-				header {
-					include = ["habc", "hdef"]
-					check_presence = ["habc_t", "hdef_t"]
-					exclude_origin = true
-				}
-				cookie {
-					include = ["cabc", "cdef"]
-					check_presence = ["cabc_t", "cdef_t"]
-				}
-				user {
-					device_type = true
-					geo = false
-				}
-				host {
-					resolved = true
-				}
-			}
-		}
-		origin_cache_control = true
-		origin_error_page_passthru = false
-      }
-	  expression = "true"
-	  description = "%[1]s set cache settings rule"
-	  enabled = true
-    }
-  }`, rnd, accountID, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsallenabled.tf", rnd, accountID, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsOptionalsEmpty(rnd, accountID, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_cache_settings"
-
-    rules {
-      action = "set_cache_settings"
-      action_parameters {
-		edge_ttl {
-			mode = "override_origin"
-			default = 60
-		}
-		browser_ttl {
-			mode = "respect_origin"
-		}
-      }
-	  expression = "true"
-	  description = "%[1]s set cache settings rule"
-	  enabled = true
-    }
-  }`, rnd, accountID, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsoptionalsempty.tf", rnd, accountID, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsOnlyExludeOrigin(rnd, accountID, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_cache_settings"
-
-    rules {
-      action = "set_cache_settings"
-      action_parameters {
-		edge_ttl {
-			mode = "override_origin"
-			default = 60
-		}
-		browser_ttl {
-			mode = "respect_origin"
-		}
-		cache_key {
-			custom_key {
-				header {
-					exclude_origin = true
-				}
-			}
-		}
-      }
-	  expression = "true"
-	  description = "%[1]s set cache settings rule"
-	  enabled = true
-    }
-  }`, rnd, accountID, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsonlyexludeorigin.tf", rnd, accountID, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsMissingDefaultEdgeTTLOverrideOrigin(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_cache_settings"
-
-    rules {
-      action = "set_cache_settings"
-      action_parameters {
-		edge_ttl {
-			mode = "override_origin"
-		}
-      }
-	  expression = "true"
-	  description = "%[1]s set cache settings rule"
-	  enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsmissingdefaultedgettloverrideorigin.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsMissingDefaultBrowserTTLOverrideOrigin(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_cache_settings"
-
-    rules {
-      action = "set_cache_settings"
-      action_parameters {
-		browser_ttl {
-			mode = "override_origin"
-		}
-      }
-	  expression = "true"
-	  description = "%[1]s set cache settings rule"
-	  enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsmissingdefaultbrowserttloverrideorigin.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsInvalidDefaultEdgeTTLOverrideOrigin(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_cache_settings"
-
-    rules {
-      action = "set_cache_settings"
-      action_parameters {
-		edge_ttl {
-			mode = "override_origin"
-			default = -1
-		}
-      }
-	  expression = "true"
-	  description = "%[1]s set cache settings rule"
-	  enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsinvaliddefaultedgettloverrideorigin.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsInvalidDefaultBrowserTTLOverrideOrigin(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_cache_settings"
-
-    rules {
-      action = "set_cache_settings"
-      action_parameters {
-		browser_ttl {
-			mode = "override_origin"
-			default = -1
-		}
-      }
-	  expression = "true"
-	  description = "%[1]s set cache settings rule"
-	  enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsinvaliddefaultbrowserttloverrideorigin.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsEdgeTTLRespectOrigin(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-		name        = "%[1]s"
-		description = "%[1]s ruleset description"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-
-		rules {
-			action = "set_cache_settings"
-			action_parameters {
-				edge_ttl {
-					status_code_ttl {
-						status_code_range {
-							from = 201
-							to = 300
-						}
-						value = 5
-					}
-					mode = "respect_origin"
-				}
-				cache = true
-			}
-			expression = "true"
-			description = "%[1]s set cache settings rule"
-			enabled = true
-		}
-	}`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsedgettlrespectorigin.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsNoCacheForStatus(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-		name        = "%[1]s"
-		description = "%[1]s ruleset description"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-
-		rules {
-			action = "set_cache_settings"
-			action_parameters {
-				edge_ttl {
-					mode = "override_origin"
-                    default = 60 * 60 * 24 * 30 // 30 days
-					status_code_ttl {
-						status_code_range {
-							from = 400
-							to = 500
-						}
-						value = 0
-					}
-				}
-			}
-			expression = "true"
-			description = "%[1]s set cache settings rule"
-			enabled = true
-		}
-	}`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsnocacheforstatus.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsStatusRangeGreaterThan(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-		name        = "%[1]s"
-		description = "%[1]s ruleset description"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-
-		rules {
-			action = "set_cache_settings"
-			action_parameters {
-				edge_ttl {
-					status_code_ttl {
-						status_code_range {
-						  from = 105
-						}
-						value = 1
-					  }
-					  status_code_ttl {
-						status_code_range {
-						  from = 100
-						  to   = 101
-						}
-						value = 1
-					  }
-					mode = "respect_origin"
-				}
-				cache = true
-			}
-			expression = "true"
-			description = "%[1]s set cache settings rule"
-			enabled = true
-		}
-	}`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsstatusrangegreaterthan.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsStatusRangeLessThan(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-		name        = "%[1]s"
-		description = "%[1]s ruleset description"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-
-		rules {
-			action = "set_cache_settings"
-			action_parameters {
-				edge_ttl {
-					status_code_ttl {
-						status_code_range {
-						  to = 400
-						}
-						value = 1
-					  }
-					  status_code_ttl {
-						status_code_range {
-						  from = 500
-						  to   = 501
-						}
-						value = 1
-					  }
-					mode = "respect_origin"
-				}
-				cache = true
-			}
-			expression = "true"
-			description = "%[1]s set cache settings rule"
-			enabled = true
-		}
-	}`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsstatusrangelessthan.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsFalse(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-		name        = "%[1]s"
-		description = "%[1]s ruleset description"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-
-		rules {
-			action = "set_cache_settings"
-			action_parameters {
-				cache = false
-			}
-			expression = "true"
-			description = "%[1]s set cache settings rule"
-			enabled = true
-		}
-	}`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsfalse.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_config_settings"
-
-    rules {
-      action = "set_config"
-      action_parameters {
-		automatic_https_rewrites = true
-		autominify {
-			html = true
-			css = true
-			js = true
-		}
-		bic = true
-		disable_apps = true
-		disable_zaraz = true
-		disable_rum = true
-		fonts = true
-		disable_railgun = true
-		email_obfuscation = true
-		mirage = true
-		opportunistic_encryption = true
-		polish = "off"
-		rocket_loader = true
-		security_level = "off"
-		server_side_excludes = true
-		ssl = "off"
-		sxg = true
-		hotlink_protection = true
-      }
-	  expression = "true"
-	  description = "%[1]s set config rule"
-	  enabled = true
-    }
-  }`, rnd, accountID, zoneID)
+	return acctest.LoadTestCase("rulesetconfigallenabled.tf", rnd, accountID, zoneID)
 }
 
 func testAccCloudflareRulesetRedirectFromList(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "list-%[1]s" {
-    account_id = "%[2]s"
-    name = "redirect_list_%[1]s"
-    description = "%[1]s list description"
-    kind = "redirect"
-  }
-
-  resource "cloudflare_ruleset" "%[1]s" {
-	account_id  = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "root"
-    phase       = "http_request_redirect"
-
-    rules {
-      action = "redirect"
-      action_parameters {
-        from_list {
-      	  name = cloudflare_list.list-%[1]s.name
-      	  key = "http.request.full_uri"
-        }
-      }
-      expression = "http.request.full_uri in $redirect_list_%[1]s"
-      description = "Apply redirects from redirect list"
-      enabled = true
-    }
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("rulesetredirectfromlist.tf", rnd, accountID)
 }
 
 func testAccCloudflareRulesetRedirectFromValue(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_dynamic_redirect"
-
-    rules {
-      action = "redirect"
-      action_parameters {
-        from_value {
-		  status_code = 301
-		  target_url {
-			value = "some_host.com"
-		  }
-		  preserve_query_string = true
-        }
-      }
-      expression = "true"
-      description = "Apply redirect from value"
-      enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetredirectfromvalue.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetRedirectFromValueWithoutPreservingQueryString(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_dynamic_redirect"
-
-    rules {
-      action = "redirect"
-      action_parameters {
-        from_value {
-		  status_code = 301
-		  target_url {
-			value = "some_host.com"
-		  }
-        }
-      }
-      expression = "true"
-      description = "Apply redirect from value"
-      enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetredirectfromvaluewithoutpreservingquerystring.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetActionParametersOverrideSensitivityForAllRulesetRules(rnd, name, zoneID, zoneName string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-    zone_id  = "%[3]s"
-    name        = "%[2]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "ddos_l7"
-
-    rules {
-      action = "execute"
-      action_parameters {
-        id = "4d21379b4f9f4bb088e0729962c8b3cf"
-        overrides {
-		  action            = "log"
-		  sensitivity_level = "low"
-        }
-      }
-      expression = "true"
-      description = "override HTTP DDoS ruleset rule"
-      enabled = true
-    }
-  }`, rnd, name, zoneID, zoneName)
+	return acctest.LoadTestCase("rulesetactionparametersoverridesensitivityforallrulesetrules.tf", rnd, name, zoneID, zoneName)
 }
 
 func testAccCloudflareRulesetRewriteForEmptyQueryString(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_transform"
-
-    rules {
-      action = "rewrite"
-      action_parameters {
-		uri {
-		  query {
-			value = ""
-		  }
-		}
-	  }
-      expression = "true"
-      description = "strip off query string"
-      enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetrewriteforemptyquerystring.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetRewriteForEmptyPath(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_request_transform"
-
-    rules {
-      action = "rewrite"
-      action_parameters {
-		uri {
-		  path {
-			value = "/"
-		  }
-		}
-	  }
-      expression = "true"
-      description = "strip off path"
-      enabled = true
-    }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetrewriteforemptypath.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetConfigSingleFalseyValue(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_config_settings"
-
-    rules {
-      action = "set_config"
-	  action_parameters {
-		bic  = false
-	  }
-	  expression  = "true"
-	  description = "disable BIC"
-	  enabled     = true
-	}
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetconfigsinglefalseyvalue.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetConfigConflictingCacheByDeviceConfigs(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_ruleset" "%[1]s" {
-	zone_id     = "%[2]s"
-    name        = "%[1]s"
-    description = "%[1]s ruleset description"
-    kind        = "zone"
-    phase       = "http_config_settings"
-
-    rules {
-		action = "set_cache_settings"
-		action_parameters {
-		  cache_key {
-			cache_by_device_type = true
-			custom_key {
-			  user {
-				geo = false
-			  }
-			}
-		  }
-		}
-		expression  = "true"
-		description = "do conflicting cache things"
-		enabled     = true
-	  }
-  }`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetconfigconflictingcachebydeviceconfigs.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsExclude(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-    	name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-		  action      = "set_cache_settings"
-		  description = "example"
-		  enabled     = true
-		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
-			cache = true
-			edge_ttl {
-			  mode    = "override_origin"
-			  default = 7200
-			}
-			cache_key {
-			  ignore_query_strings_order = true
-			  custom_key {
-				query_string {
-				  exclude = ["example"]
-				}
-			  }
-			}
-		  }
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsexplicitcustomkeycachekeysquerystringsexclude.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsExplicitCustomKeyCacheKeysQueryStringsInclude(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-    	name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-		  action      = "set_cache_settings"
-		  description = "example"
-		  enabled     = true
-		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
-			cache = true
-			edge_ttl {
-			  mode    = "override_origin"
-			  default = 7200
-			}
-			cache_key {
-			  ignore_query_strings_order = true
-			  custom_key {
-				query_string {
-				  include = ["another_example"]
-				}
-			  }
-			}
-		  }
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsexplicitcustomkeycachekeysquerystringsinclude.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsHandleDefaultHeaderExcludeOrigin(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-    	name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-		  action      = "set_cache_settings"
-		  description = "example"
-		  enabled     = true
-		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
-			cache = true
-			edge_ttl {
-			  mode    = "override_origin"
-			  default = 7200
-			}
-			cache_key {
-			  custom_key {
-				  header {
-					check_presence = ["x-forwarded-for"]
-					include        = ["x-test", "x-test2"]
-				  }
-		      }
-			}
-		  }
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingshandledefaultheaderexcludeorigin.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsHandleHeaderExcludeOriginSet(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-    	name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-		  action      = "set_cache_settings"
-		  description = "example"
-		  enabled     = true
-		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
-			cache = true
-			edge_ttl {
-			  mode    = "override_origin"
-			  default = 7200
-			}
-			cache_key {
-			  custom_key {
-				  header {
-					check_presence = ["x-forwarded-for"]
-					include        = ["x-test", "x-test2"]
-					exclude_origin = true
-				  }
-		      }
-			}
-		  }
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingshandleheaderexcludeoriginset.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsHandleHeaderExcludeOriginFalse(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-    	name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-		  action      = "set_cache_settings"
-		  description = "example"
-		  enabled     = true
-		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
-			cache = true
-			edge_ttl {
-			  mode    = "override_origin"
-			  default = 7200
-			}
-			cache_key {
-			  custom_key {
-				  header {
-					check_presence = ["x-forwarded-for"]
-					include        = ["x-test", "x-test2"]
-					exclude_origin = false
-				  }
-		      }
-			}
-		  }
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingshandleheaderexcludeoriginfalse.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsBypassByDefaultEdge(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-		name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-			action      = "set_cache_settings"
-			description = "example"
-			enabled     = true
-			expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-			action_parameters {
-				cache = true
-				edge_ttl {
-					mode = "bypass_by_default"
-				}
-			}
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsbypassbydefaultedge.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsBypassByDefaultEdgeInvalid(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-		name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-			action      = "set_cache_settings"
-			description = "example"
-			enabled     = true
-			expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-			action_parameters {
-				cache = true
-				edge_ttl {
-					mode    = "bypass_by_default"
-					default = 100
-				}
-			}
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsbypassbydefaultedgeinvalid.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsBypassBrowser(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-    	name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-		  action      = "set_cache_settings"
-		  description = "example"
-		  enabled     = true
-		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
-			cache = true
-			browser_ttl {
-			  mode    = "bypass"
-			}
-		  }
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsbypassbrowser.tf", rnd, zoneID)
 }
 
 func testAccCloudflareRulesetCacheSettingsBypassBrowserInvalid(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_ruleset" "%[1]s" {
-		zone_id     = "%[2]s"
-    	name        = "%[1]s"
-		description = "set cache settings for the request"
-		kind        = "zone"
-		phase       = "http_request_cache_settings"
-		rules {
-		  action      = "set_cache_settings"
-		  description = "example"
-		  enabled     = true
-		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
-			cache = true
-			browser_ttl {
-			  mode    = "bypass"
-			  default = 100
-			}
-		  }
-		}
-	  }
-	`, rnd, zoneID)
+	return acctest.LoadTestCase("rulesetcachesettingsbypassbrowserinvalid.tf", rnd, zoneID)
 }
 
 func testAccCheckCloudflareRulesetDestroy(s *terraform.State) error {

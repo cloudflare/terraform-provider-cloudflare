@@ -78,22 +78,7 @@ func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessIdentityProviderDataSource_NotFound(accountID, name string) string {
-	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name = "%[1]s-abc123"
-}
-
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-  name = "%[1]s"
-  type = "github"
-  config {
-    client_id = "test"
-    client_secret = "secret"
-	}
-}
-	`, name, accountID)
+	return acctest.LoadTestCase("notfound.tf", name, accountID)
 }
 
 func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
@@ -121,21 +106,5 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessIdentityProviderDataSourceGitHub(accountID, name string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_access_identity_provider" "%[1]s" {
-		account_id = "%[2]s"
-	  name = "%[1]s"
-	  type = "github"
-	  config {
-		client_id = "test"
-		client_secret = "secret"
-		}
-	}
-
-	data "cloudflare_access_identity_provider" "%[1]s" {
-		account_id = "%[2]s"
-		name = "%[1]s"
-		depends_on = [cloudflare_access_identity_provider.%[1]s]
-	}
-	`, name, accountID)
+	return acctest.LoadTestCase("accessidentityproviderdatasourcegithub.tf", name, accountID)
 }

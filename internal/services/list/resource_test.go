@@ -395,79 +395,11 @@ func TestAccCloudflareList_Import(t *testing.T) {
 }
 
 func testAccCheckCloudflareListIPListOrdered(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "ip"
-
-    item {
-      value {
-        ip = "192.0.2.0"
-      }
-      comment = "one"
-    }
-
-    item {
-      value {
-        ip = "192.0.2.1"
-      }
-      comment = "two"
-    }
-
-	item {
-	  value {
-		ip = "192.0.2.2"
-	  }
-	  comment = "three"
-	}
-
-	item {
-	  value {
-	    ip = "192.0.2.3"
-	  }
-	  comment = "four"
-	}
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listiplistordered.tf", ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListIPListUnordered(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "ip"
-
-    item {
-	  value {
-	    ip = "192.0.2.2"
-	  }
-	  comment = "three"
-	}
-
-	item {
-      value {
-        ip = "192.0.2.0"
-      }
-      comment = "one"
-    }
-
-	item {
-	  value {
-		ip = "192.0.2.3"
-	  }
-	  comment = "four"
-	}
-
-    item {
-      value {
-        ip = "192.0.2.1"
-      }
-      comment = "two"
-    }
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listiplistunordered.tf", ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.TestCheckFunc {
@@ -498,158 +430,29 @@ func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.
 }
 
 func testAccCheckCloudflareList(ID, name, description, accountID, kind string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "%[5]s"
-  }`, ID, name, description, accountID, kind)
+	return acctest.LoadTestCase("list.tf", ID, name, description, accountID, kind)
 }
 
 func testAccCheckCloudflareListIPUpdate(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "ip"
-
-    item {
-      value {
-        ip = "192.0.2.0"
-      }
-      comment = "one"
-    }
-
-    item {
-      value {
-        ip = "192.0.2.1"
-      }
-      comment = "two"
-    }
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listipupdate.tf", ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListRedirectUpdate(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "redirect"
-
-    item {
-      value {
-        redirect {
-          source_url = "cloudflare.com/blog"
-          target_url = "https://blog.cloudflare.com"
-        }
-      }
-      comment = "one"
-    }
-
-    item {
-      value {
-        redirect {
-          source_url = "cloudflare.com/foo"
-          target_url = "https://foo.cloudflare.com"
-          include_subdomains = "enabled"
-          subpath_matching = "enabled"
-          status_code = 301
-          preserve_query_string = "enabled"
-          preserve_path_suffix = "disabled"
-		}
-      }
-      comment = "two"
-    }
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listredirectupdate.tf", ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListRedirectUpdateTargetUrl(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "redirect"
-
-    item {
-      value {
-        redirect {
-          source_url = "cloudflare.com/blog"
-          target_url = "https://theblog.cloudflare.com"
-        }
-      }
-    }
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listredirectupdatetargeturl.tf", ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListBasicIP(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "ip"
-
-    item {
-		value {
-		  ip = "192.0.2.0"
-		}
-		comment = "one"
-	  }
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listbasicip.tf", ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListASNUpdate(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "asn"
-
-    item {
-      value {
-        asn = 345
-      }
-      comment = "ASN test"
-    }
-
-    item {
-      value {
-        asn = 567
-      }
-      comment = "ASN test two"
-    }
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listasnupdate.tf", ID, name, description, accountID)
 }
 
 func testAccCheckCloudflareListHostnameUpdate(ID, name, description, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_list" "%[1]s" {
-    account_id = "%[4]s"
-    name = "%[2]s"
-    description = "%[3]s"
-    kind = "hostname"
-
-    item {
-      value {
-        hostname {
-		  url_hostname = "*.google.com"
-		}
-      }
-      comment = "hostname one"
-    }
-
-    item {
-	  value {
-		hostname {
-		  url_hostname = "manutd.com"
-		}
-	  }
-      comment = "hostname two"
-    }
-  }`, ID, name, description, accountID)
+	return acctest.LoadTestCase("listhostnameupdate.tf", ID, name, description, accountID)
 }

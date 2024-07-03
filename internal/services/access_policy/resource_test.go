@@ -107,100 +107,19 @@ func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
 }
 
 func testAccessPolicyServiceTokenConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_service_token" "%[1]s" {
-      account_id = "%[3]s"
-      name       = "%[1]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "non_identity"
-      precedence     = "10"
-
-      include {
-        service_token = ["${cloudflare_access_service_token.%[1]s.id}"]
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyservicetokenconfig.tf", resourceID, zone, accountID)
 }
 
 func testAccessPolicyAnyServiceTokenConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "non_identity"
-      precedence     = "10"
-
-      include {
-        any_valid_service_token = true
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyanyservicetokenconfig.tf", resourceID, zone, accountID)
 }
 
 func testAccessPolicyWithZoneID(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name    = "%[1]s"
-      zone_id = "%[3]s"
-      domain  = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      zone_id        = "%[3]s"
-      decision       = "non_identity"
-      precedence     = "10"
-
-      include {
-        any_valid_service_token = true
-      }
-    }
-
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accesspolicywithzoneid.tf", resourceID, zone, zoneID)
 }
 
 func testAccessPolicyWithZoneIDUpdated(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name    = "%[1]s"
-      zone_id = "%[3]s"
-      domain  = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s-updated"
-      zone_id        = "%[3]s"
-      decision       = "non_identity"
-      precedence     = "10"
-
-      include {
-        any_valid_service_token = true
-      }
-    }
-
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accesspolicywithzoneidupdated.tf", resourceID, zone, zoneID)
 }
 
 func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
@@ -229,35 +148,7 @@ func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 }
 
 func testAccessPolicyGroupConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_group" "%[1]s" {
-        account_id     = "%[3]s"
-        name           = "%[1]s"
-
-        include {
-          ip = ["127.0.0.1/32"]
-        }
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "non_identity"
-      precedence     = "10"
-
-      include {
-        group = [cloudflare_access_group.%[1]s.id]
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicygroupconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
@@ -286,26 +177,7 @@ func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
 }
 
 func testAccessPolicyMTLSConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "non_identity"
-      precedence     = "10"
-
-      include {
-        certificate = true
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicymtlsconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
@@ -334,26 +206,7 @@ func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
 }
 
 func testAccessPolicyCommonNameConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        common_name = "example@example.com"
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicycommonnameconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
@@ -383,27 +236,7 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 }
 
 func testAccessPolicyEmailDomainConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-      session_duration = "12h"
-
-      include {
-        email_domain = ["example.com"]
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyemaildomainconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
@@ -434,26 +267,7 @@ func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
 }
 
 func testAccessPolicyEmailsConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        email = ["a@example.com", "b@example.com"]
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyemailsconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
@@ -482,26 +296,7 @@ func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
 }
 
 func testAccessPolicyEveryoneConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        everyone = true
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyeveryoneconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
@@ -532,26 +327,7 @@ func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
 }
 
 func testAccessPolicyIPsConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        ip = ["10.0.0.1/32", "10.0.0.2/32"]
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyipsconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
@@ -580,26 +356,7 @@ func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
 }
 
 func testAccessPolicyAuthMethodConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        auth_method = "hwk"
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyauthmethodconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
@@ -630,26 +387,7 @@ func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
 }
 
 func testAccessPolicyGeoConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        geo = ["US", "AU"]
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicygeoconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
@@ -681,28 +419,7 @@ func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
 }
 
 func testAccessPolicyOktaConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        okta {
-          name = ["jacob-group", "jacob-group1"]
-          identity_provider_id = "225934dc-14e4-4f55-87be-f5d798d23f91"
-        }
-      }
-    }
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyoktaconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_PurposeJustification(t *testing.T) {
@@ -773,28 +490,7 @@ func testAccCheckCloudflareAccessPolicyHasPJ(n string, accessIdentifier *cloudfl
 }
 
 func testAccessPolicyPurposeJustificationConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        email = ["a@example.com", "b@example.com"]
-      }
-
-      purpose_justification_required = "true"
-      purpose_justification_prompt = "Why should we let you in?"
-    }
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicypurposejustificationconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_ApprovalGroup(t *testing.T) {
@@ -895,39 +591,7 @@ func testAccCheckCloudflareAccessPolicyHasApprovalGroups(n string, accessIdentif
 }
 
 func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      purpose_justification_required = "true"
-      purpose_justification_prompt = "Why should we let you in?"
-      approval_required = "true"
-
-      include {
-        email = ["a@example.com", "b@example.com"]
-      }
-
-      approval_group {
-        email_addresses = ["test1@example.com", "test2@example.com", "test3@example.com"]
-        approvals_needed = "2"
-      }
-
-      approval_group {
-        email_addresses = ["test4@example.com"]
-        approvals_needed = "1"
-      }
-    }
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyapprovalgroupconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
@@ -957,29 +621,7 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 }
 
 func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = cloudflare_access_application.%[1]s.id
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-		external_evaluation {
-			evaluate_url = "https://example.com"
-			keys_url = "https://example.com/keys"
-		  }
-      }
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyexternalevalautionconfig.tf", resourceID, zone, accountID)
 }
 
 func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
@@ -1008,99 +650,9 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 }
 
 func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_teams_account" "%[1]s" {
-		account_id = "%[3]s"
-		tls_decrypt_enabled = true
-		protocol_detection_enabled = true
-		activity_log_enabled = true
-		url_browser_isolation_enabled = true
-		non_identity_browser_isolation_enabled = false
-		block_page {
-		  name = "%[1]s"
-		  enabled = true
-		  footer_text = "hello"
-		  header_text = "hello"
-		  logo_path = "https://example.com"
-		  background_color = "#000000"
-		  mailto_subject = "hello"
-		  mailto_address = "test@cloudflare.com"
-		}
-		body_scanning {
-		  inspection_mode = "deep"
-		}
-		fips {
-		  tls = true
-		}
-		antivirus {
-		  enabled_download_phase = true
-		  enabled_upload_phase = false
-		  fail_closed = true
-		}
-		proxy {
-		  tcp = true
-		  udp = false
-		  root_ca = true
-		  virtual_ip = false
-		}
-		logging {
-		  redact_pii = true
-		  settings_by_rule_type {
-			dns {
-			  log_all = false
-			  log_blocks = true
-			}
-			http {
-			  log_all = true
-			  log_blocks = true
-			}
-			l4 {
-			  log_all = false
-			  log_blocks = true
-			}
-		  }
-		}
-		ssh_session_log {
-		  public_key = "testvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
-		}
-		payload_log {
-		  public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
-		}
-	  }
-
-    resource "cloudflare_access_application" "%[1]s" {
-      name       = "%[1]s"
-      account_id = "%[3]s"
-      domain     = "%[1]s.%[2]s"
-	  depends_on = ["cloudflare_teams_account.%[1]s"]
-    }
-
-    resource "cloudflare_access_policy" "%[1]s" {
-      application_id = cloudflare_access_application.%[1]s.id
-      name           = "%[1]s"
-      account_id     = "%[3]s"
-      decision       = "allow"
-      precedence     = "1"
-
-      include {
-        email = ["a@example.com", "b@example.com"]
-      }
-
-      isolation_required = "true"
-    }
-
-  `, resourceID, zone, accountID)
+	return acctest.LoadTestCase("accesspolicyisolationrequiredconfig.tf", resourceID, zone, accountID)
 }
 
 func testAccessPolicyReusableConfig(resourceID, accountID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_policy" "%[1]s" {
-      name           = "%[1]s"
-      account_id     = "%[2]s"
-      decision       = "allow"
-      include {
-        email = ["a@example.com"]
-      }
-    }
-  `, resourceID, accountID)
+	return acctest.LoadTestCase("accesspolicyreusableconfig.tf", resourceID, accountID)
 }

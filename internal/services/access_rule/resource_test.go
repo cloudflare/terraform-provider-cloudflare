@@ -1,7 +1,6 @@
 package access_rule_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -147,29 +146,11 @@ func TestAccCloudflareAccessRule_IPv6(t *testing.T) {
 }
 
 func testAccessRuleAccountConfig(accountID, mode, notes, target, value, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_rule" "%[6]s" {
-  account_id = "%[1]s"
-  notes = "%[3]s"
-  mode = "%[2]s"
-  configuration {
-    target = "%[4]s"
-    value = "%[5]s"
-  }
-}`, accountID, mode, notes, target, value, rnd)
+	return acctest.LoadTestCase("accessruleaccountconfig.tf", accountID, mode, notes, target, value, rnd)
 }
 
 func testAccessRuleZoneConfig(zoneID, mode, notes, target, value, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_rule" "%[6]s" {
-  zone_id = "%[1]s"
-  notes = "%[3]s"
-  mode = "%[2]s"
-  configuration {
-    target = "%[4]s"
-    value = "%[5]s"
-  }
-}`, zoneID, mode, notes, target, value, rnd)
+	return acctest.LoadTestCase("accessrulezoneconfig.tf", zoneID, mode, notes, target, value, rnd)
 }
 
 // func TestValidateAccessRuleConfigurationIPRange(t *testing.T) {

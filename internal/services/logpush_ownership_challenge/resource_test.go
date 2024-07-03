@@ -1,7 +1,6 @@
 package logpush_ownership_challenge_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -33,10 +32,5 @@ func TestAccCloudflareLogpushOwnershipChallenge(t *testing.T) {
 }
 
 func testCloudflareLogpushOwnershipChallengeConfig(resourceID, zoneID, destinationConf string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_logpush_ownership_challenge" "%[1]s" {
-		  zone_id = "%[2]s"
-		  destination_conf = "%[3]s"
-		}
-		`, resourceID, zoneID, destinationConf)
+	return acctest.LoadTestCase("cloudflarelogpushownershipchallengeconfig.tf", resourceID, zoneID, destinationConf)
 }

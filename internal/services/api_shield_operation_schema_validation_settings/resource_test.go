@@ -66,32 +66,9 @@ func testAccCloudflareAPIShieldOperationSchemaValidationSettingsMitigation(resou
 		action = fmt.Sprintf("\"%s\"", *mitigation)
 	}
 
-	return fmt.Sprintf(`
-	resource "cloudflare_api_shield_operation" "terraform_test_acc_operation" {
-		zone_id = "%[2]s"
-		host = "foo.com"
-		method = "GET"
-        endpoint = "/api"
-	}
-	resource "cloudflare_api_shield_operation_schema_validation_settings" "%[1]s" {
-		zone_id = "%[2]s"
-		operation_id = cloudflare_api_shield_operation.terraform_test_acc_operation.id
-		mitigation_action = %[3]s
-	}
-`, resourceName, zone, action)
+	return acctest.LoadTestCase("apishieldoperationschemavalidationsettingsmitigation.tf", resourceName, zone, action)
 }
 
 func testAccCloudflareAPIShieldOperationSchemaValidationSettingsNoMitigation(resourceName, zone string) string {
-	return fmt.Sprintf(`
-	resource "cloudflare_api_shield_operation" "terraform_test_acc_operation" {
-		zone_id = "%[2]s"
-		host = "foo.com"
-		method = "GET"
-        endpoint = "/api"
-	}
-	resource "cloudflare_api_shield_operation_schema_validation_settings" "%[1]s" {
-		zone_id = "%[2]s"
-		operation_id = cloudflare_api_shield_operation.terraform_test_acc_operation.id
-	}
-`, resourceName, zone)
+	return acctest.LoadTestCase("apishieldoperationschemavalidationsettingsnomitigation.tf", resourceName, zone)
 }

@@ -55,18 +55,7 @@ func TestAccCloudflareUserAgentBlockingRule_Basic(t *testing.T) {
 }
 
 func testAccCloudflareUserAgentBlockingRule(rnd, zoneID, mode string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_user_agent_blocking_rule" "%[1]s" {
-	zone_id     = "%[2]s"
-	mode        = "%[3]s"
-	paused      = false
-	description = "My description"
-	configuration {
-		target = "ua"
-		value  = "Mozilla"
-	}
-}
-`, rnd, zoneID, mode)
+	return acctest.LoadTestCase("useragentblockingrule.tf", rnd, zoneID, mode)
 }
 
 func testAccCheckCloudflareUserAgentBlockingRulesDestroy(s *terraform.State) error {

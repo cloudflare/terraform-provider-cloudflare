@@ -460,210 +460,43 @@ func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.
 }
 
 func testAccCloudflareAccessGroupConfigBasic(resourceName string, email string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
-  %[3]s_id = "%[4]s"
-  name     = "%[1]s"
-
-  include {
-    any_valid_service_token = true
-    email = ["%[2]s"]
-    email_domain = ["example.com"]
-    ip = [
-      "192.0.2.1/32",
-      "192.0.2.2/32"
-    ]
-    ip_list = [
-      "e3a0f205-c525-4e48-a293-ba5d1f00e638",
-      "5d54cd30-ce52-46e4-9a46-a47887e1a167"
-    ]
-    saml {
-      attribute_name = "Name1"
-      attribute_value = "Value1"
-    }
-    saml {
-      attribute_name = "Name2"
-      attribute_value = "Value2"
-    }
-    azure {
-      id = ["group1"]
-      identity_provider_id = "1234"
-    }
-    azure {
-      id = ["group2"]
-      identity_provider_id = "5678"
-    }
-  }
-}`, resourceName, email, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accessgroupconfigbasic.tf", resourceName, email, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessGroupConfigBasicWithUpdate(resourceName, accountID, email string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
-  account_id = "%[2]s"
-  name = "%[1]s-updated"
-
-  include {
-    email = ["%[3]s"]
-	email_domain = ["example.com"]
-  }
-}`, resourceName, accountID, email)
+	return acctest.LoadTestCase("accessgroupconfigbasicwithupdate.tf", resourceName, accountID, email)
 }
 
 func testAccessGroupConfigExclude(resourceName, accountID, email string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
-  account_id = "%[2]s"
-  name = "%[1]s"
-
-  include {
-    email = ["%[3]s"]
-	email_domain = ["example.com"]
-  }
-
-  exclude {
-    email = ["%[3]s"]
-  }
-}`, resourceName, accountID, email)
+	return acctest.LoadTestCase("accessgroupconfigexclude.tf", resourceName, accountID, email)
 }
 
 func testAccessGroupConfigRequire(resourceName, accountID, email string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
-  account_id = "%[2]s"
-  name = "%[1]s"
-
-  include {
-    email = ["%[3]s"]
-	email_domain = ["example.com"]
-  }
-
-  require {
-    email = ["%[3]s"]
-  }
-}`, resourceName, accountID, email)
+	return acctest.LoadTestCase("accessgroupconfigrequire.tf", resourceName, accountID, email)
 }
 
 func testAccessGroupConfigFullConfig(resourceName, accountID, email string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
-  account_id = "%[2]s"
-  name = "%[1]s"
-
-  include {
-    email = ["%[3]s"]
-	email_domain = ["example.com"]
-	common_names = ["common", "name"]
-  }
-
-  require {
-    email = ["%[3]s"]
-  }
-
-  exclude {
-    email = ["%[3]s"]
-  }
-}`, resourceName, accountID, email)
+	return acctest.LoadTestCase("accessgroupconfigfullconfig.tf", resourceName, accountID, email)
 }
 
 func testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-  type = "github"
-  config {
-    client_id = "test"
-    client_secret = "secret"
-  }
-}
-
-resource "cloudflare_access_group" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-
-  include {
-    github {
-      name                 = "%[3]s"
-      teams                = ["%[4]s"]
-      identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
-    }
-  }
-}`, accountID, rnd, githubOrg, team)
+	return acctest.LoadTestCase("accessgroupwithidp.tf", accountID, rnd, githubOrg, team)
 }
 
 func testAccCloudflareAccessGroupWithIDPAuthContext(accountID, rnd, authCtxID, authCtxACID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-  type = "azureAD"
-  config {
-    client_id = "test"
-    client_secret = "secret"
-	directory_id = "foo"
-  }
-}
-
-resource "cloudflare_access_group" "%[2]s" {
-  account_id = "%[1]s"
-  name = "%[2]s"
-
-  include {
-    any_valid_service_token = true
-  }
-
-  require {
-    auth_context {
-      id = "%[3]s"
-      ac_id = "%[4]s"
-      identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
-    }
-  }
-}`, accountID, rnd, authCtxID, authCtxACID)
+	return acctest.LoadTestCase("accessgroupwithidpauthcontext.tf", accountID, rnd, authCtxID, authCtxACID)
 }
 
 func testAccCloudflareAccessGroupConfigBasicWithCommonName(resourceName string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
-  %[2]s_id = "%[3]s"
-  name     = "%[1]s"
-
-  include {
-    common_name = "common"
-  }
-}`, resourceName, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accessgroupconfigbasicwithcommonname.tf", resourceName, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessGroupConfigBasicWithCommonNames(resourceName string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
-  %[2]s_id = "%[3]s"
-  name     = "%[1]s"
-
-  include {
-    common_names = ["common", "name"]
-  }
-}`, resourceName, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accessgroupconfigbasicwithcommonnames.tf", resourceName, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessGroupConfigEmailList(resourceName string, emailListName string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[2]s" {
-  %[3]s_id    = "%[4]s"
-	name        = "%[2]s"
-	type        = "EMAIL"
-	description = "Email list test for %[1]s"
-	items       = [ "test@example.com" ]
-}
-resource "cloudflare_access_group" "%[1]s" {
-  %[3]s_id = "%[4]s"
-  name     = "%[1]s"
-
-  include {
-		email_list = [cloudflare_teams_list.%[2]s.id]
-  }
-}`, resourceName, emailListName, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accessgroupconfigemaillist.tf", resourceName, emailListName, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {

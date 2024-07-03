@@ -1,7 +1,6 @@
 package total_tls_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -12,13 +11,7 @@ import (
 )
 
 func testTotalTLS(rnd, zoneID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_total_tls" "%[1]s" {
-	zone_id = "%[2]s"
-	enabled = true
-	certificate_authority = "google"
-}
-`, rnd, zoneID)
+	return acctest.LoadTestCase("totaltls.tf", rnd, zoneID)
 }
 
 func TestAccCloudflareTotalTLS(t *testing.T) {

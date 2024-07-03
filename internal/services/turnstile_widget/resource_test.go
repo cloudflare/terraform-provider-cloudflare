@@ -142,33 +142,13 @@ func TestAccCloudflareTurnstileWidget_NoDomains(t *testing.T) {
 }
 
 func testAccCheckCloudflareTurnstileWidgetBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_turnstile_widget" "%[1]s" {
-    account_id     = "%[2]s"
-    name        = "%[1]s"
-	bot_fight_mode = false
-	domains = [ "example.com" ]
-	mode = "invisible"
-	region = "world"
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("turnstilewidgetbasic.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTurnstileWidgetMinimum(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_turnstile_widget" "%[1]s" {
-    account_id     = "%[2]s"
-    name        = "%[1]s"
-	domains = [ "example.com" ]
-	mode = "managed"
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("turnstilewidgetminimum.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTurnstileWidgetNoDomains(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_turnstile_widget" "%[1]s" {
-    account_id     = "%[2]s"
-    name        = "%[1]s"
-	domains = [ ]
-	mode = "managed"
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("turnstilewidgetnodomains.tf", rnd, accountID)
 }

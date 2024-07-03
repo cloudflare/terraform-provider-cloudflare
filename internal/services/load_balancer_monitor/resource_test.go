@@ -418,123 +418,37 @@ func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "%[1]s" {
-  account_id = "%[2]s"
-  expected_body = "alive"
-  expected_codes = "2xx"
-}`, rnd, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigbasic.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigFullySpecified(zoneName, accountID, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "%[3]s" {
-  account_id = "%[2]s"
-  expected_body = "dead"
-  expected_codes = "5xx"
-  method = "HEAD"
-  timeout = 9
-  path = "/custom"
-  interval = 60
-  retries = 5
-  consecutive_up = 2
-  consecutive_down = 2
-  port = 8080
-  description = "this is a very weird load balancer"
-  probe_zone = "%[1]s"
-  header {
-    header = "Host"
-    values = ["%[1]s"]
-  }
-}`, zoneName, accountID, rnd)
+	return acctest.LoadTestCase("loadbalancermonitorconfigfullyspecified.tf", zoneName, accountID, rnd)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, hostname, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "%[1]s" {
-  account_id = "%[3]s"
-  expected_body = "dead"
-  expected_codes = "5xx"
-  method = "HEAD"
-  timeout = 9
-  path = "/custom"
-  interval = 60
-  retries = 5
-  port = 8080
-  description = "this is a very weird load balancer"
-  header {
-    header = "Host"
-    values = ["%[2]s"]
-  }
-}`, rnd, hostname, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigwithheaders.tf", rnd, hostname, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigEmptyExpectedBody(resourceName, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "%[1]s" {
-  account_id = "%[2]s"
-  expected_body = ""
-  expected_codes = "2xx"
-  description = "we don't want to check for a given body"
-}`, resourceName, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigemptyexpectedbody.tf", resourceName, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigTcpFullySpecified(accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "test" {
-  account_id = "%[1]s"
-  type = "tcp"
-  method = "connection_established"
-  timeout = 9
-  interval = 60
-  retries = 5
-  port = 8080
-  description = "this is a very weird tcp load balancer"
-}`, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigtcpfullyspecified.tf", accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigUDPICMP(resourceName, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "%[1]s" {
-  account_id = "%[2]s"
-  type = "udp_icmp"
-  timeout = 2
-  interval = 60
-  retries = 5
-  port = 8080
-  description = "test setup udp_icmp"
-}`, resourceName, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigudpicmp.tf", resourceName, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigICMPPing(resourceName, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "%[1]s" {
-  account_id = "%[2]s"
-  type = "icmp_ping"
-  timeout = 2
-  interval = 60
-  retries = 5
-  description = "test setup icmp_ping"
-}`, resourceName, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigicmpping.tf", resourceName, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigSMTP(resourceName, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "%[1]s" {
-  account_id = "%[2]s"
-  type = "smtp"
-  timeout = 2
-  interval = 60
-  retries = 5
-  port = 8080
-  description = "test setup smtp"
-}`, resourceName, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigsmtp.tf", resourceName, accountID)
 }
 
 func testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired(accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_load_balancer_monitor" "test" {
-	account_id = "%[1]s"
-	description = "this is a wrong config"
-}`, accountID)
+	return acctest.LoadTestCase("loadbalancermonitorconfigmissingrequired.tf", accountID)
 }

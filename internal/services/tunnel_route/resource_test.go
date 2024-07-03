@@ -147,17 +147,5 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 }
 
 func testAccCloudflareTunnelRouteSimple(ID, comment, accountID, network string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_tunnel" "%[1]s" {
-	account_id = "%[3]s"
-	name       = "%[1]s"
-	secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
-}
-
-resource "cloudflare_tunnel_route" "%[1]s" {
-    account_id = "%[3]s"
-    tunnel_id = cloudflare_tunnel.%[1]s.id
-    network = "%[4]s"
-    comment = "%[2]s"
-}`, ID, comment, accountID, network)
+	return acctest.LoadTestCase("tunnelroutesimple.tf", ID, comment, accountID, network)
 }

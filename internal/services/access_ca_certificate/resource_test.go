@@ -70,18 +70,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 }
 
 func testAccCloudflareAccessCACertificateBasic(resourceName, domain string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-	name     = "%[1]s"
-	%[3]s_id = "%[4]s"
-	domain   = "%[1]s.%[2]s"
-	type     = "self_hosted"
-}
-
-resource "cloudflare_access_ca_certificate" "%[1]s" {
-  %[3]s_id       = "%[4]s"
-  app_id = cloudflare_access_application.%[1]s.id
-}`, resourceName, domain, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accesscacertificatebasic.tf", resourceName, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessCACertificateDestroy(s *terraform.State) error {

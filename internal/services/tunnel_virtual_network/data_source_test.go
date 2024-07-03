@@ -1,7 +1,6 @@
 package tunnel_virtual_network_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -29,16 +28,5 @@ func TestAccCloudflareTunneVirtualNetwork_MatchName(t *testing.T) {
 
 func testCloudflareTunnelVirtualNetworkMatchName(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	return fmt.Sprintf(`
-resource "cloudflare_tunnel_virtual_network" "%[2]s" {
-	account_id = "%[1]s"
-	name       = "%[2]s"
-	comment     = "test"
-}
-data "cloudflare_tunnel_virtual_network" "%[2]s" {
-	account_id = cloudflare_tunnel_virtual_network.%[2]s.account_id
-	name       = cloudflare_tunnel_virtual_network.%[2]s.name
-	depends_on = ["cloudflare_tunnel_virtual_network.%[2]s"]
-}
-`, accountID, name)
+	return acctest.LoadTestCase("cloudflaretunnelvirtualnetworkmatchname.tf", accountID, name)
 }

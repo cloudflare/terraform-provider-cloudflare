@@ -296,162 +296,35 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 }
 
 func testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "serial_number"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "windows"
-	}
-	input {
-		id = "asdf-123"
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfigserialnumber.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigOsVersion(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "os_version"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "mac"
-	}
-	input {
-		version = "10.0.1"
-		operator = "=="
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfigosversion.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigOsVersionExtra(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "os_version"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "mac"
-	}
-	input {
-		version = "10.0.1"
-		operator = "=="
-		os_version_extra = "(a)"
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfigosversionextra.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigLinuxDistro(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "os_version"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "linux"
-	}
-	input {
-		version = "1.0.0"
-        operator = "<"
-		os_distro_name = "ubuntu"
-		os_distro_revision = "1.0.0"
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfiglinuxdistro.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigDomainJoined(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "domain_joined"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "windows"
-	}
-	input {
-		domain = "example.com"
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfigdomainjoined.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigDiskEncryptionRequireAll(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "disk_encryption"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "mac"
-	}
-	input {
-		require_all = true
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfigdiskencryptionrequireall.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigDiskEncryptionCheckDisks(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "disk_encryption"
-	description               = "My description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "mac"
-	}
-	input {
-		require_all = false
-		check_disks = ["C", "D"]
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfigdiskencryptioncheckdisks.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigFirewall(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
-	account_id                = "%[2]s"
-	name                      = "%[1]s"
-	type                      = "firewall"
-	description               = "firewall description"
-	schedule                  = "24h"
-	expiration                = "24h"
-	match {
-		platform = "windows"
-	}
-	input {
-		enabled = true
-	}
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("devicepostureruleconfigfirewall.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {

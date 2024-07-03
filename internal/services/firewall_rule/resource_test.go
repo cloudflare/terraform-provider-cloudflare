@@ -72,22 +72,7 @@ func TestAccFirewallRuleSimple(t *testing.T) {
 }
 
 func testFirewallRuleConfig(resourceID, zoneID, paused, description, expression, action, priority string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_filter" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  expression = "%[5]s"
-		}
-		resource "cloudflare_firewall_rule" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  filter_id = "${cloudflare_filter.%[1]s.id}"
-		  action = "%[6]s"
-		  priority = %[7]s
-		}
-		`, resourceID, zoneID, paused, description, expression, action, priority)
+	return acctest.LoadTestCase("firewallruleconfig.tf", resourceID, zoneID, paused, description, expression, action, priority)
 }
 
 func TestAccFirewallRuleBypass(t *testing.T) {
@@ -118,23 +103,7 @@ func TestAccFirewallRuleBypass(t *testing.T) {
 }
 
 func testFirewallRuleBypassConfig(resourceID, zoneID, paused, description, expression string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_filter" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  expression = "%[5]s"
-		}
-		resource "cloudflare_firewall_rule" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  filter_id = "${cloudflare_filter.%[1]s.id}"
-		  action = "bypass"
-		  priority = "2"
-		  products = ["uaBlock", "waf"]
-		}
-		`, resourceID, zoneID, paused, description, expression)
+	return acctest.LoadTestCase("firewallrulebypassconfig.tf", resourceID, zoneID, paused, description, expression)
 }
 
 func TestAccFirewallRuleWithUnicodeAndHTMLEntity(t *testing.T) {
@@ -165,20 +134,5 @@ func TestAccFirewallRuleWithUnicodeAndHTMLEntity(t *testing.T) {
 }
 
 func testAccFirewallRuleWithUnicodeAndHTMLEntityConfig(resourceID, zoneID, paused, description, expression, action, priority string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_filter" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  expression = "%[5]s"
-		}
-		resource "cloudflare_firewall_rule" "%[1]s" {
-		  zone_id = "%[2]s"
-		  paused = "%[3]s"
-		  description = "%[4]s"
-		  filter_id = "${cloudflare_filter.%[1]s.id}"
-		  action = "%[6]s"
-		  priority = %[7]s
-		}
-		`, resourceID, zoneID, paused, description, expression, action, priority)
+	return acctest.LoadTestCase("accfirewallrulewithunicodeandhtmlentityconfig.tf", resourceID, zoneID, paused, description, expression, action, priority)
 }

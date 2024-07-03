@@ -110,42 +110,9 @@ func TestAccCloudflareEmailRoutingRule_Drop(t *testing.T) {
 }
 
 func testEmailRoutingRuleConfig(resourceID, zoneID string, enabled bool, priority int) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_email_routing_rule" "%[1]s" {
-		  zone_id = "%[2]s"
-		  enabled = "%[3]t"
-          priority = "%[4]d"
-		  name = "terraform rule"
-		  matcher {
-			field  = "to"
-			type = "literal"
-			value = "test@example.com"
-		  }
-
-		  action {
-			type = "forward"
-			value = ["destinationaddress@example.net"]
-		  }
-	}
-		`, resourceID, zoneID, enabled, priority)
+	return acctest.LoadTestCase("emailroutingruleconfig.tf", resourceID, zoneID, enabled, priority)
 }
 
 func testEmailRoutingRuleConfigDrop(resourceID, zoneID string, enabled bool, priority int) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_email_routing_rule" "%[1]s" {
-		  zone_id = "%[2]s"
-		  enabled = "%[3]t"
-          priority = "%[4]d"
-		  name = "%[1]s"
-		  matcher {
-			field  = "to"
-			type = "literal"
-			value = "test@example.com"
-		  }
-
-		  action {
-			type = "drop"
-		  }
-	}
-		`, resourceID, zoneID, enabled, priority)
+	return acctest.LoadTestCase("emailroutingruleconfigdrop.tf", resourceID, zoneID, enabled, priority)
 }

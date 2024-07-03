@@ -1,7 +1,6 @@
 package tiered_cache_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -12,12 +11,7 @@ import (
 )
 
 func testTieredCacheConfig(rnd, zoneID, cacheType string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_tiered_cache" "%[1]s" {
-	zone_id = "%[2]s"
-	cache_type = "%[3]s"
-}
-`, rnd, zoneID, cacheType)
+	return acctest.LoadTestCase("tieredcacheconfig.tf", rnd, zoneID, cacheType)
 }
 
 func TestAccCloudflareTieredCache_Smart(t *testing.T) {

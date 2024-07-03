@@ -65,11 +65,5 @@ func testAccCheckCloudflareWebAnalyticsSiteDestroy(s *terraform.State) error {
 }
 
 func testAccCloudflareWebAnalyticsSite(resourceName, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_web_analytics_site" "%[1]s" {
-  account_id    = "%[2]s"
-  host          = "%[3]s"
-  auto_install  = false
-}
-`, resourceName, accountID, domain)
+	return acctest.LoadTestCase("webanalyticssite.tf", resourceName, accountID, domain)
 }

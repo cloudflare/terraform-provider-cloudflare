@@ -64,12 +64,5 @@ func testAccCheckCloudflareObservatoryScheduledTestDestroy(s *terraform.State) e
 }
 
 func testAccCloudflareObservatoryScheduledTest(resourceName, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_observatory_scheduled_test" "%[1]s" {
-  zone_id   = "%[2]s"
-  url       = "%[3]s/%[1]s"
-  region    = "us-central1"
-  frequency = "DAILY"
-}
-`, resourceName, zoneID, domain)
+	return acctest.LoadTestCase("observatoryscheduledtest.tf", resourceName, zoneID, domain)
 }

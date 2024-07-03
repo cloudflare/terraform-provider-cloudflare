@@ -85,14 +85,7 @@ func TestAccCloudflareHostnameTLSSetting_Basic(t *testing.T) {
 }
 
 func testAccCheckCloudflareHostnameTLSSettingConfig(zoneID, hostname, setting, value, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_hostname_tls_setting" "%[5]s" {
-	zone_id	= "%[1]s"
-	hostname = "%[2]s"
-	setting = "%[3]s"
-	value = "%[4]s"
-}
-`, zoneID, hostname, setting, value, rnd)
+	return acctest.LoadTestCase("hostnametlssettingconfig.tf", zoneID, hostname, setting, value, rnd)
 }
 
 func testAccCheckCloudflareHostnameTLSSettingExists(name string, htlss *cloudflare.HostnameTLSSetting) resource.TestCheckFunc {

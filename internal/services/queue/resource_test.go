@@ -110,11 +110,7 @@ func testAccCloudflareQueueDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareQueue(rnd, accountID, name string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_queue" "%[1]s" {
-	account_id = "%[2]s"
-	name = "%[3]s"
-}`, rnd, accountID, name)
+	return acctest.LoadTestCase("queue.tf", rnd, accountID, name)
 }
 
 func testAccCheckCloudflareQueueExists(name string, queue *cloudflare.Queue) resource.TestCheckFunc {

@@ -166,34 +166,13 @@ func testAccCheckCloudflareHealthcheckExists(n string, zoneID string, load *clou
 }
 
 func testAccCheckCloudflareHealthcheckTCP(zoneID, name, ID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_healthcheck" "%[3]s" {
-    zone_id = "%[1]s"
-    name = "%[2]s"
-    address = "example.com"
-    type = "TCP"
-    method = "connection_established"
-    port = 80
-  }`, zoneID, name, ID)
+	return acctest.LoadTestCase("healthchecktcp.tf", zoneID, name, ID)
 }
 
 func testAccCheckCloudflareHealthcheckHTTP(zoneID, ID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_healthcheck" "%[2]s" {
-    zone_id = "%[1]s"
-    name = "%[2]s"
-    address = "example.com"
-    type = "HTTP"
-    expected_codes = [
-      "200"
-    ]
-  }`, zoneID, ID)
+	return acctest.LoadTestCase("healthcheckhttp.tf", zoneID, ID)
 }
 
 func testAccCheckHealthcheckConfigMissingRequired(zoneID, ID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_healthcheck" "%[2]s" {
-    zone_id = "%[1]s"
-    description = "Example health check description"
-  }`, zoneID, ID)
+	return acctest.LoadTestCase("acccheckhealthcheckconfigmissingrequired.tf", zoneID, ID)
 }

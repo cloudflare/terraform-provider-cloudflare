@@ -79,9 +79,5 @@ func TestAccCloudflareD1Database_Basic(t *testing.T) {
 }
 
 func testAccCheckCloudflareD1DatabaseBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-  resource "cloudflare_d1_database" "%[1]s" {
-    account_id = "%[2]s"
-    name       = "%[1]s"
-  }`, rnd, accountID)
+	return acctest.LoadTestCase("d1databasebasic.tf", rnd, accountID)
 }

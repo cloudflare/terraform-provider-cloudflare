@@ -1067,331 +1067,71 @@ func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) 
 }
 
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  %[3]s_id                  = "%[4]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[2]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  auto_redirect_to_identity = false
-}
-`, rnd, domain, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accessapplicationconfigbasic.tf", rnd, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id          = "%[2]s"
-  name             = "%[1]s"
-  domain           = "%[1]s.%[3]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  cors_headers {
-    allowed_methods = ["GET", "POST", "OPTIONS"]
-    allowed_origins = ["https://example.com"]
-    allow_credentials = true
-    max_age = 10
-  }
-  auto_redirect_to_identity = false
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigwithcors.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "saas"
-  session_duration = "24h"
-  saas_app {
-    consumer_service_url = "https://saas-app.example/sso/saml/consume"
-    sp_entity_id  = "saas-app.example"
-    name_id_format =  "email"
-	default_relay_state = "https://saas-app.example"
-	name_id_transform_jsonata = "$substringBefore(email, '@') & '+sandbox@' & $substringAfter(email, '@')"
-	saml_attribute_transform_jsonata = "$ ~>| groups | {'group_name': name} |"
-
-	custom_attribute {
-		name = "email"
-		name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-		source {
-			name = "user_email"
-		}
-	}
-	custom_attribute {
-		name = "rank"
-		required = true
-		friendly_name = "Rank"
-		source {
-			name = "rank"
-		}
-	}
-  }
-  auto_redirect_to_identity = false
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("accessapplicationconfigwithsamlsaas.tf", rnd, accountID)
 }
 
 func testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "saas"
-  session_duration = "24h"
-  saas_app {
-	auth_type = "oidc"
-	redirect_uris = ["https://saas-app.example/sso/oauth2/callback"]
-	grant_types = ["authorization_code", "hybrid"]
-	scopes = ["openid", "email", "profile", "groups"]
-	app_launcher_url = "https://saas-app.example/sso/login"
-	group_filter_regex = ".*"
-	allow_pkce_without_client_secret = false
-	refresh_token_options {
-		lifetime = "1h"
-	}
-	custom_claim {
-		name = "rank"
-		required = true
-		scope = "profile"
-		source {
-			name = "rank"
-		}
-	}
-
-	hybrid_and_implicit_options {
-		return_id_token_from_authorization_endpoint = true
-		return_access_token_from_authorization_endpoint = true
-	}
-  }
-  auto_redirect_to_identity = false
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("accessapplicationconfigwithoidcsaas.tf", rnd, accountID)
 }
 
 func testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-  zone_id = "%[2]s"
-  name    = "%[1]s"
-  type    = "onetimepin"
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  auto_redirect_to_identity = true
-  allowed_idps              = [cloudflare_access_identity_provider.%[1]s.id]
-
-  depends_on = ["cloudflare_access_identity_provider.%[1]s"]
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigwithautoredirecttoidentity.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  enable_binding_cookie     = true
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigwithenablebindingcookie.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  custom_deny_message       = "denied!"
-  custom_deny_url           = "https://www.cloudflare.com"
-	custom_non_identity_deny_url = "https://www.blocked.com"
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigwithcustomdenyfields.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain string, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-  account_id = "%[4]s"
-  name = "%[1]s"
-  type = "onetimepin"
-}
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  auto_redirect_to_identity = true
-  allowed_idps              = [cloudflare_access_identity_provider.%[1]s.id]
-}
-`, rnd, zoneID, domain, accountID)
+	return acctest.LoadTestCase("accessapplicationconfigwithadefinedidp.tf", rnd, zoneID, domain, accountID)
 }
 
 func testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2 string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[5]s" {
-  account_id = "%[4]s"
-  name = "%[5]s"
-  type = "onetimepin"
-}
-
-resource "cloudflare_access_identity_provider" "%[6]s" {
-  account_id = "%[4]s"
-  name = "%[6]s"
-  type = "github"
-  config {
-    client_id = "test"
-    client_secret = "secret"
-  }
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  allowed_idps              = [
-    cloudflare_access_identity_provider.%[5]s.id,
-    cloudflare_access_identity_provider.%[6]s.id,
-  ]
-}
-`, rnd, zoneID, domain, accountID, idp1, idp2)
+	return acctest.LoadTestCase("accessapplicationconfigwithmultipleidps.tf", rnd, zoneID, domain, accountID, idp1, idp2)
 }
 
 func testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                    = "%[2]s"
-  name                       = "%[1]s"
-  domain                     = "%[1]s.%[3]s"
-  type                       = "self_hosted"
-  session_duration           = "24h"
-  http_only_cookie_attribute = true
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigwithhttponlycookieattribute.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                    = "%[2]s"
-  name                       = "%[1]s"
-  domain                     = "%[1]s.%[3]s"
-  type                       = "self_hosted"
-  session_duration           = "24h"
-  http_only_cookie_attribute = false
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigwithhttponlycookieattributesettofalse.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                    = "%[2]s"
-  name                       = "%[1]s"
-  domain                     = "%[1]s.%[3]s"
-  type                       = "self_hosted"
-  session_duration           = "24h"
-  same_site_cookie_attribute = "strict"
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigsamesitecookieattribute.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                    = "%[2]s"
-  name                       = "%[1]s"
-  domain                     = "%[1]s.%[3]s"
-  type                       = "self_hosted"
-  session_duration           = "24h"
-  skip_interstitial          = true
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigskipinterstitial.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  app_launcher_visible      = true
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfigwithapplaunchervisible.tf", rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                    = "%[2]s"
-  name                       = "%[1]s"
-  domain                     = "%[1]s.%[3]s"
-  type                       = "self_hosted"
-  session_duration           = "24h"
-  logo_url          		 = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
-}
-`, rnd, zoneID, domain)
+	return acctest.LoadTestCase("accessapplicationconfiglogourl.tf", rnd, zoneID, domain)
 }
 
 func testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_access_application" "%[1]s" {
-			account_id       = "%[2]s"
-			type             = "app_launcher"
-			session_duration = "24h"
-			app_launcher_visible = false
-			app_launcher_logo_url = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
-			bg_color = "#000000"
-			header_bg_color = "#000000"
-
-			footer_links {
-				name = "footer link"
-				url = "https://www.cloudflare.com"
-			}
-
-
-			landing_page_design {
-				title = "title"
-				message = "message"
-				button_color = "#000000"
-				image_url = "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"
-				button_text_color = "#000000"
-			}
-	}
-	`, rnd, accountID)
+	return acctest.LoadTestCase("accessapplicationwithapplaunchercustomizationfields.tf", rnd, accountID)
 }
 
 func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
-  %[3]s_id                  = "%[4]s"
-  name                      = "%[1]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  auto_redirect_to_identity = false
-  self_hosted_domains       = [
-    "d1.%[1]s.%[2]s",
-    "d2.%[1]s.%[2]s"
-  ]
-}
-`, rnd, domain, identifier.Type, identifier.Identifier)
+	return acctest.LoadTestCase("accessapplicationwithselfhosteddomains.tf", rnd, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
@@ -1558,561 +1298,69 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildc
 }
 
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name    = "%[1]s"
-      zone_id = "%[3]s"
-      domain  = "%[1]s.%[2]s"
-      type    = "self_hosted"
-    }
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accessapplicationwithzoneid.tf", resourceID, zone, zoneID)
 }
 
 func testAccessApplicationWithZoneIDUpdated(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name    = "%[1]s-updated"
-      zone_id = "%[3]s"
-      domain  = "%[1]s.%[2]s"
-      type    = "self_hosted"
-    }
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accessapplicationwithzoneidupdated.tf", resourceID, zone, zoneID)
 }
 
 func testAccessApplicationWithMissingCORSMethods(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name    = "%[1]s-updated"
-      zone_id = "%[3]s"
-      domain  = "%[1]s.%[2]s"
-      type    = "self_hosted"
-
-    cors_headers {
-      allow_all_origins = true
-    }
-  }
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accessapplicationwithmissingcorsmethods.tf", resourceID, zone, zoneID)
 }
 
 func testAccessApplicationWithMissingCORSOrigins(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name    = "%[1]s-updated"
-      zone_id = "%[3]s"
-      domain  = "%[1]s.%[2]s"
-      type    = "self_hosted"
-
-    cors_headers {
-      allow_all_methods = true
-    }
-  }
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accessapplicationwithmissingcorsorigins.tf", resourceID, zone, zoneID)
 }
 
 func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name             = "%[1]s-updated"
-      zone_id          = "%[3]s"
-      domain           = "%[1]s.%[2]s"
-      type             = "self_hosted"
-      session_duration = "24z"
-  }
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accessapplicationwithinvalidsessionduration.tf", resourceID, zone, zoneID)
 }
 
 func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name             = "%[1]s-updated"
-      zone_id          = "%[3]s"
-      domain           = "%[1]s.%[2]s"
-      type             = "self_hosted"
-
-      cors_headers {
-        allowed_methods = ["GET"]
-        allow_all_origins = true
-        allow_credentials = true
-      }
-  }
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accessapplicationmisconfiguredcorsallowalloriginswithcredentials.tf", resourceID, zone, zoneID)
 }
 
 func testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(resourceID, zone, zoneID string) string {
-	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
-      name             = "%[1]s-updated"
-      zone_id          = "%[3]s"
-      domain           = "%[1]s.%[2]s"
-      type             = "self_hosted"
-
-      cors_headers {
-        allowed_methods = ["GET"]
-        allowed_origins = ["*"]
-        allow_credentials = true
-      }
-  }
-  `, resourceID, zone, zoneID)
+	return acctest.LoadTestCase("accessapplicationmisconfiguredcorsallowwildcardoriginwithcredentials.tf", resourceID, zone, zoneID)
 }
 
 func testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain string, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_tag" "%[1]s" {
-  account_id = "%[4]s"
-  name = "%[1]s"
-}
-resource "cloudflare_access_application" "%[1]s" {
-  zone_id                   = "%[2]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[3]s"
-  type                      = "self_hosted"
-  session_duration          = "24h"
-  tags                      = [cloudflare_access_tag.%[1]s.id]
-}
-`, rnd, zoneID, domain, accountID)
+	return acctest.LoadTestCase("accessapplicationconfigwithadefinedtag.tf", rnd, zoneID, domain, accountID)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "httpbasic"
-		user = "test"
-		password = "12345"
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfigvalidhttpbasic.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = false
-	remote_uri = "scim2.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = false
-	authentication {
-		scheme =  "oauthbearertoken"
-		token = "12345"
-	}
-  }
-}
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfigvalidoauthbearertokennomappings.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "oauthbearertoken"
-		token = "beepboop"
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfigvalidoauthbearertoken.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "oauth2"
-		client_id = "beepboop"
-		client_secret = "bop"
-		authorization_url = "https://www.authorization.com"
-		token_url = "https://www.token.com"
-		scopes = ["read"]
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfigvalidoauth2.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigOAuth2MissingRequired(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "oauth2"
-		client_id = "beepboop"
-		client_secret = "bop"
-		authorization_url = "https://www.authorization.com"
-		scopes = ["read"]
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfigoauth2missingrequired.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigAuthenticationInvalid(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "oauth2"
-		client_id = "beepboop"
-		client_secret = "bop"
-		authorization_url = "https://www.authorization.com"
-		token_url = "https://www.token.com"
-		token = "1234"
-		user = "user"
-		password = "ahhh"
-		scopes = ["read"]
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfigauthenticationinvalid.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigHttpBasicMissingRequired(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "httpbasic"
-		user = "test"
-	}
-	mappings {
-		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfighttpbasicmissingrequired.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigInvalidMappingSchema(rnd, accountID, domain string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
-	account_id = "%[2]s"
-	name       = "%[1]s"
-	type       = "azureAD"
-	config {
-		client_id      = "test"
-		client_secret  = "test"
-		directory_id   = "directory"
-		support_groups = true
-	}
-	scim_config {
-		enabled                  = true
-		group_member_deprovision = true
-		seat_deprovision         = true
-		user_deprovision         = true
-	}
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id       = "%[2]s"
-  name             = "%[1]s"
-  type             = "self_hosted"
-  session_duration = "24h"
-  domain = "%[1]s.%[3]s"
-  scim_config {
-	enabled = true
-	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
-	deactivate_on_delete = true
-	authentication {
-		scheme =  "httpbasic"
-		user = "test"
-		password = "12345"
-	}
-	mappings {
-		schema = "ietf:params:scim:schemas:core:2.0:User"
-		enabled = true
-		filter = "title pr or userType eq \"Intern\""
-		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations {
-			create = true
-			update = true
-			delete = true
-		}
-	}
-  }
-}
-`, rnd, accountID, domain)
+	return acctest.LoadTestCase("accessapplicationscimconfiginvalidmappingschema.tf", rnd, accountID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithReusablePolicies(rnd, domain string, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_policy" "%[1]s_p1" {
-  account_id     			= "%[3]s"
-  name                      = "%[1]s"
-  decision			  		= "allow"
-  include {
-    email = ["a@example.com"]
-  }
-}
-
-resource "cloudflare_access_policy" "%[1]s_p2" {
-  account_id     			= "%[3]s"
-  name                      = "%[1]s"
-  decision			  		= "non_identity"
-  include {
-    ip = ["127.0.0.1/32"]
-  }
-}
-
-resource "cloudflare_access_application" "%[1]s" {
-  account_id     			= "%[3]s"
-  name                      = "%[1]s"
-  domain                    = "%[1]s.%[2]s"
-  type                      = "self_hosted"
-  policies                  = [
-	cloudflare_access_policy.%[1]s_p1.id,
-	cloudflare_access_policy.%[1]s_p2.id
-  ]
-}
-`, rnd, domain, accountID)
+	return acctest.LoadTestCase("accessapplicationconfigwithreusablepolicies.tf", rnd, domain, accountID)
 }

@@ -65,12 +65,5 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, accountID, pageType, markup string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_access_custom_page" "%[1]s" {
-	account_id = "%[2]s"
-	name = "%[1]s"
-	type = "%[3]s"
-	custom_html = "%[4]s"
-}
-	`, rnd, accountID, pageType, markup)
+	return acctest.LoadTestCase("customhtml.tf", rnd, accountID, pageType, markup)
 }

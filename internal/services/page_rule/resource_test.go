@@ -1008,413 +1008,86 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 }
 
 func testAccCheckCloudflarePageRuleConfigMinify(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		minify {
-			js = "off"
-			css = "on"
-			html = "on"
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigminify.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigBasic(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		ssl = "flexible"
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigbasic.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigNewValue(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s/updated"
-	actions {
-		browser_check = "on"
-		ssl = "strict"
-		rocket_loader = "on"
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfignewvalue.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigFullySpecified(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		browser_check = "on"
-		browser_cache_ttl = 0
-		email_obfuscation = "on"
-		ip_geolocation = "on"
-		server_side_exclude = "on"
-		disable_apps = true
-		disable_performance = true
-		disable_security = true
-		cache_level = "bypass"
-		security_level = "essentially_off"
-		ssl = "flexible"
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigfullyspecified.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigForwardingOnly(zoneID, target, rnd, zoneName string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		// on/off options cannot even be set to off without causing error
-		forwarding_url {
-			url = "http://%[4]s/forward"
-			status_code = 301
-		}
-	}
-}`, zoneID, target, rnd, zoneName)
+	return acctest.LoadTestCase("pageruleconfigforwardingonly.tf", zoneID, target, rnd, zoneName)
 }
 
 func testAccCheckCloudflarePageRuleConfigForwardingAndOthers(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		disable_security = true
-		forwarding_url {
-			url = "http://%s/forward"
-			status_code = 301
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigforwardingandothers.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigDisableZaraz(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		disable_zaraz = true
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigdisablezaraz.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtl(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		ssl = "flexible"
-		edge_cache_ttl = 10
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigwithedgecachettl.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigWithEdgeCacheTtlAndAlwaysOnline(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		edge_cache_ttl = 10
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigwithedgecachettlandalwaysonline.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFields(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		cache_key_fields {
-			cookie {
-				check_presence = ["cookie_presence"]
-				include = ["cookie_include"]
-			}
-			header {
-				check_presence = ["header_presence"]
-				include = ["header_include"]
-			}
-			host {
-				resolved = true
-			}
-			query_string {
-				exclude = ["qs_exclude"]
-			}
-			user {}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfields.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsWithUnorderedEntries(zoneID, rnd, target string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[3]s"
-	actions {
-		cache_key_fields {
-			cookie {
-				check_presence = ["cookie_presence"]
-				include = ["cookie_include"]
-			}
-			header {
-				check_presence = ["header_presence"]
-				include = ["header_include"]
-			}
-			host {
-				resolved = true
-			}
-			query_string {
-				include = [
-          "test.anothertest",
-          "test.regiontest",
-          "test.devicetest",
-          "test.testthis",
-          "test.hello",
-          "test.segmenttest",
-          "test.usertype"
-				]
-			}
-			user {}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldswithunorderedentries.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIgnoreAllQueryString(zoneID, rnd, target string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[3]s"
-	actions {
-		cache_key_fields {
-			cookie {
-				check_presence = ["cookie_presence"]
-				include = ["cookie_include"]
-			}
-			header {
-				check_presence = ["header_presence"]
-				include = ["header_include"]
-			}
-			host {
-				resolved = true
-			}
-			query_string {
-				ignore = true
-			}
-			user {}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsignoreallquerystring.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIgnoreAllQueryString(zoneID, rnd, target string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[3]s"
-	actions {
-		cache_key_fields {
-			cookie {
-				check_presence = ["cookie_presence"]
-				include = ["cookie_include"]
-			}
-			header {
-				check_presence = ["header_presence"]
-				include = ["header_include"]
-			}
-			host {
-				resolved = true
-			}
-			query_string {
-				exclude = ["*"]
-			}
-			user {}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsinvalidignoreallquerystring.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsExcludeMultipleValuesQueryString(zoneID, rnd, target string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[3]s"
-	actions {
-		cache_key_fields {
-			cookie {
-				check_presence = ["cookie_presence"]
-				include = ["cookie_include"]
-			}
-			header {
-				check_presence = ["header_presence"]
-				include = ["header_include"]
-			}
-			host {
-				resolved = true
-			}
-			query_string {
-				exclude = ["query1", "query2"]
-			}
-			user {}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsexcludemultiplevaluesquerystring.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsNoQueryStringValuesDefined(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		cache_key_fields {
-			header {
-				exclude = ["origin"]
-			}
-			host {}
-			query_string {}
-			user {
-				device_type = true
-				geo = true
-			}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsnoquerystringvaluesdefined.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeAllQueryStringValues(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		cache_key_fields {
-			header {
-				exclude = ["origin"]
-			}
-			host {}
-			query_string {
-				ignore = false
-			}
-			user {
-				device_type = true
-				geo = true
-			}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsincludeallquerystringvalues.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsInvalidIncludeAllQueryStringValues(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		cache_key_fields {
-			header {
-				exclude = ["origin"]
-			}
-			host {}
-			query_string {
-				include = ["*"]
-			}
-			user {
-				device_type = true
-				geo = true
-			}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsinvalidincludeallquerystringvalues.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheKeyFieldsIncludeMultipleValuesQueryString(zoneID, rnd, target string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[3]s"
-	actions {
-		cache_key_fields {
-			cookie {
-				check_presence = ["cookie_presence"]
-				include = ["cookie_include"]
-			}
-			header {
-				check_presence = ["header_presence"]
-				include = ["header_include"]
-			}
-			host {
-				resolved = true
-			}
-			query_string {
-				include = ["query1", "query2"]
-			}
-			user {}
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachekeyfieldsincludemultiplevaluesquerystring.tf", zoneID, target, rnd)
 }
 
 func testAccCheckCloudflarePageRuleConfigCacheTTLByStatus(zoneID, target, rnd string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[2]s"
-	actions {
-		cache_ttl_by_status {
-			codes = "200-299"
-			ttl = 300
-		}
-		cache_ttl_by_status {
-			codes = "300-399"
-			ttl = 60
-		}
-		cache_ttl_by_status {
-			codes = "400-403"
-			ttl = -1
-		}
-		cache_ttl_by_status {
-			codes = "404"
-			ttl = 30
-		}
-		cache_ttl_by_status {
-			codes = "405-499"
-			ttl = -1
-		}
-		cache_ttl_by_status {
-			codes = "500-599"
-			ttl = 0
-		}
-	}
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleconfigcachettlbystatus.tf", zoneID, target, rnd)
 }
 func buildPageRuleConfig(rnd, zoneID, actions, target string) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_page_rule" "%[1]s" {
-			zone_id = "%[2]s"
-			target = "%[3]s"
-			actions {
-				%[4]s
-			}
-		}`,
+	return acctest.LoadTestCase("buildpageruleconfig.tf",
 		rnd,
 		zoneID,
 		target,
-		actions,
-	)
+		actions)
 }
 
 func testAccRunResourceTestSteps(t *testing.T, testSteps []resource.TestStep) {
@@ -1438,24 +1111,5 @@ func testAccCheckCloudflarePageRuleHasAction(pageRule *cloudflare.PageRule, key 
 }
 
 func testAccCheckCloudflarePageRuleEmtpyCookie(zoneID, rnd, target string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_page_rule" "%[3]s" {
-	zone_id = "%[1]s"
-	target = "%[3]s"
-	actions {
-    cache_key_fields {
-      host {
-        resolved = true
-      }
-      query_string {
-        ignore = true
-      }
-      user {
-        device_type = true
-        geo         = false
-        lang        = false
-      }
-    }
-  }
-}`, zoneID, target, rnd)
+	return acctest.LoadTestCase("pageruleemtpycookie.tf", zoneID, target, rnd)
 }

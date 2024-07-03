@@ -53,10 +53,5 @@ func TestAccCloudflareRegionalTieredCache_Basic(t *testing.T) {
 }
 
 func testAccCloudflareRegionalTieredCache(resourceName, zoneID, value string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_regional_tiered_cache" "%[1]s" {
-  zone_id = "%[2]s"
-  value   = "%[3]s"
-}
-`, resourceName, zoneID, value)
+	return acctest.LoadTestCase("regionaltieredcache.tf", resourceName, zoneID, value)
 }

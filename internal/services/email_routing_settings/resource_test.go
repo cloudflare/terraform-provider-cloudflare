@@ -1,7 +1,6 @@
 package email_routing_settings_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -12,12 +11,7 @@ import (
 )
 
 func testEmailRoutingSettingsConfig(resourceID, zoneID string, enabled bool) string {
-	return fmt.Sprintf(`
-		resource "cloudflare_email_routing_settings" "%[1]s" {
-		  zone_id = "%[2]s"
-		  enabled = "%[3]t"
-		}
-		`, resourceID, zoneID, enabled)
+	return acctest.LoadTestCase("emailroutingsettingsconfig.tf", resourceID, zoneID, enabled)
 }
 
 func TestAccTestEmailRoutingSettings(t *testing.T) {

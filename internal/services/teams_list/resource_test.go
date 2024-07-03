@@ -113,15 +113,7 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 }
 
 func testAccCloudflareTeamsListConfigBasic(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[1]s" {
-	account_id  = "%[2]s"
-	name        = "%[1]s"
-	description = "My description"
-	type        = "SERIAL"
-	items       = ["asdf-1234", "asdf-5678"]
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("teamslistconfigbasic.tf", rnd, accountID)
 }
 
 func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string {
@@ -130,27 +122,11 @@ func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string 
 		items = append(items, `"example-`+strconv.Itoa(i)+`"`)
 	}
 
-	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[1]s" {
-	account_id  = "%[2]s"
-	name        = "%[1]s"
-	description = "My description"
-	type        = "SERIAL"
-	items       = [%[3]s]
-}
-`, rnd, accountID, strings.Join(items, ","))
+	return acctest.LoadTestCase("teamslistconfigbigitemcount.tf", rnd, accountID, strings.Join(items, ","))
 }
 
 func testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID string) string {
-	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[1]s" {
-	account_id  = "%[2]s"
-	name        = "%[1]s"
-	description = "My description"
-	type        = "SERIAL"
-	items       = ["asdf-5678", "asdf-1234"]
-}
-`, rnd, accountID)
+	return acctest.LoadTestCase("teamslistconfigreordereditems.tf", rnd, accountID)
 }
 
 func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {
