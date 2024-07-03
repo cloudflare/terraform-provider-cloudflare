@@ -10,14 +10,6 @@ type DevicePostureRuleResultEnvelope struct {
 	Result DevicePostureRuleModel `json:"result,computed"`
 }
 
-type DevicePostureRuleResultDataSourceEnvelope struct {
-	Result DevicePostureRuleDataSourceModel `json:"result,computed"`
-}
-
-type DevicePostureRulesResultDataSourceEnvelope struct {
-	Result DevicePostureRulesDataSourceModel `json:"result,computed"`
-}
-
 type DevicePostureRuleModel struct {
 	ID          types.String                    `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                    `tfsdk:"account_id" path:"account_id"`
@@ -70,10 +62,4 @@ type DevicePostureRuleInputModel struct {
 
 type DevicePostureRuleMatchModel struct {
 	Platform types.String `tfsdk:"platform" json:"platform"`
-}
-
-type DevicePostureRuleDataSourceModel struct {
-}
-
-type DevicePostureRulesDataSourceModel struct {
 }

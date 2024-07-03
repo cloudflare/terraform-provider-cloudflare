@@ -10,10 +10,6 @@ type TunnelVirtualNetworkResultEnvelope struct {
 	Result TunnelVirtualNetworkModel `json:"result,computed"`
 }
 
-type TunnelVirtualNetworksResultDataSourceEnvelope struct {
-	Result TunnelVirtualNetworksDataSourceModel `json:"result,computed"`
-}
-
 type TunnelVirtualNetworkModel struct {
 	AccountID        types.String `tfsdk:"account_id" path:"account_id"`
 	VirtualNetworkID types.String `tfsdk:"virtual_network_id" path:"virtual_network_id"`
@@ -21,7 +17,4 @@ type TunnelVirtualNetworkModel struct {
 	Comment          types.String `tfsdk:"comment" json:"comment"`
 	IsDefault        types.Bool   `tfsdk:"is_default" json:"is_default"`
 	IsDefaultNetwork types.Bool   `tfsdk:"is_default_network" json:"is_default_network"`
-}
-
-type TunnelVirtualNetworksDataSourceModel struct {
 }

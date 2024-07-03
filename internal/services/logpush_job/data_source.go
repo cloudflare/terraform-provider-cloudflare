@@ -5,8 +5,14 @@ package logpush_job
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/logpush"
+	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -44,12 +50,72 @@ func (r *LogpushJobDataSource) Configure(ctx context.Context, req datasource.Con
 }
 
 func (r *LogpushJobDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *LogpushJobDataSource
+	var data *LogpushJobDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	if data.FindOneBy == nil {
+		res := new(http.Response)
+		env := LogpushJobResultDataSourceEnvelope{*data}
+		params := logpush.JobGetParams{}
+
+		if !data.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		}
+
+		_, err := r.client.Logpush.Jobs.Get(
+			ctx,
+			data.JobID.ValueInt64(),
+			params,
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+		bytes, _ := io.ReadAll(res.Body)
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+			return
+		}
+		data = &env.Result
+	} else {
+		params := logpush.JobListParams{}
+		if !data.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		}
+
+		items := &[]*LogpushJobDataSourceModel{}
+		env := LogpushJobResultListDataSourceEnvelope{items}
+
+		page, err := r.client.Logpush.Jobs.List(ctx, params)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+
+		if count := len(*items); count != 1 {
+			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
+			return
+		}
+		data = (*items)[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

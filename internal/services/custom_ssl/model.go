@@ -10,14 +10,6 @@ type CustomSSLResultEnvelope struct {
 	Result CustomSSLModel `json:"result,computed"`
 }
 
-type CustomSSLResultDataSourceEnvelope struct {
-	Result CustomSSLDataSourceModel `json:"result,computed"`
-}
-
-type CustomSSLsResultDataSourceEnvelope struct {
-	Result CustomSSLsDataSourceModel `json:"result,computed"`
-}
-
 type CustomSSLModel struct {
 	ZoneID              types.String                   `tfsdk:"zone_id" path:"zone_id"`
 	CustomCertificateID types.String                   `tfsdk:"custom_certificate_id" path:"custom_certificate_id"`
@@ -32,10 +24,4 @@ type CustomSSLModel struct {
 
 type CustomSSLGeoRestrictionsModel struct {
 	Label types.String `tfsdk:"label" json:"label"`
-}
-
-type CustomSSLDataSourceModel struct {
-}
-
-type CustomSSLsDataSourceModel struct {
 }

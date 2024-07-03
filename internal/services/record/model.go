@@ -10,14 +10,6 @@ type RecordResultEnvelope struct {
 	Result RecordModel `json:"result,computed"`
 }
 
-type RecordResultDataSourceEnvelope struct {
-	Result RecordDataSourceModel `json:"result,computed"`
-}
-
-type RecordsResultDataSourceEnvelope struct {
-	Result RecordsDataSourceModel `json:"result,computed"`
-}
-
 type RecordModel struct {
 	ZoneID   types.String     `tfsdk:"zone_id" path:"zone_id"`
 	Content  types.String     `tfsdk:"content" json:"content"`
@@ -71,10 +63,4 @@ type RecordDataModel struct {
 	Proto         types.String  `tfsdk:"proto" json:"proto"`
 	Weight        types.Float64 `tfsdk:"weight" json:"weight"`
 	Fingerprint   types.String  `tfsdk:"fingerprint" json:"fingerprint"`
-}
-
-type RecordDataSourceModel struct {
-}
-
-type RecordsDataSourceModel struct {
 }

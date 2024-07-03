@@ -13,7 +13,35 @@ var _ datasource.DataSourceWithConfigValidators = &AccessIdentityProviderDataSou
 var _ datasource.DataSourceWithValidateConfig = &AccessIdentityProviderDataSource{}
 
 func (r AccessIdentityProviderDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{}
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"identity_provider_id": schema.StringAttribute{
+				Description: "UUID",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"zone_id": schema.StringAttribute{
+				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Optional:    true,
+			},
+			"find_one_by": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"account_id": schema.StringAttribute{
+						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+						Optional:    true,
+					},
+					"zone_id": schema.StringAttribute{
+						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:    true,
+					},
+				},
+			},
+		},
+	}
 }
 
 func (r *AccessIdentityProviderDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {

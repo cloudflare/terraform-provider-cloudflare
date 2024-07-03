@@ -13,7 +13,35 @@ var _ datasource.DataSourceWithConfigValidators = &PagesDomainDataSource{}
 var _ datasource.DataSourceWithValidateConfig = &PagesDomainDataSource{}
 
 func (r PagesDomainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{}
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
+			},
+			"project_name": schema.StringAttribute{
+				Description: "Name of the project.",
+				Optional:    true,
+			},
+			"domain_name": schema.StringAttribute{
+				Description: "Name of the domain.",
+				Optional:    true,
+			},
+			"find_one_by": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"account_id": schema.StringAttribute{
+						Description: "Identifier",
+						Required:    true,
+					},
+					"project_name": schema.StringAttribute{
+						Description: "Name of the project.",
+						Required:    true,
+					},
+				},
+			},
+		},
+	}
 }
 
 func (r *PagesDomainDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {

@@ -10,14 +10,6 @@ type AccessApplicationResultEnvelope struct {
 	Result AccessApplicationModel `json:"result,computed"`
 }
 
-type AccessApplicationResultDataSourceEnvelope struct {
-	Result AccessApplicationDataSourceModel `json:"result,computed"`
-}
-
-type AccessApplicationsResultDataSourceEnvelope struct {
-	Result AccessApplicationsDataSourceModel `json:"result,computed"`
-}
-
 type AccessApplicationModel struct {
 	ID                       types.String                       `tfsdk:"id" json:"id,computed"`
 	AccountID                types.String                       `tfsdk:"account_id" path:"account_id"`
@@ -161,10 +153,4 @@ type AccessApplicationSaaSAppHybridAndImplicitOptionsModel struct {
 
 type AccessApplicationSaaSAppRefreshTokenOptionsModel struct {
 	Lifetime types.String `tfsdk:"lifetime" json:"lifetime"`
-}
-
-type AccessApplicationDataSourceModel struct {
-}
-
-type AccessApplicationsDataSourceModel struct {
 }

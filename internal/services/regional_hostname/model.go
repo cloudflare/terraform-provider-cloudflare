@@ -10,14 +10,6 @@ type RegionalHostnameResultEnvelope struct {
 	Result RegionalHostnameModel `json:"result,computed"`
 }
 
-type RegionalHostnameResultDataSourceEnvelope struct {
-	Result RegionalHostnameDataSourceModel `json:"result,computed"`
-}
-
-type RegionalHostnamesResultDataSourceEnvelope struct {
-	Result RegionalHostnamesDataSourceModel `json:"result,computed"`
-}
-
 type RegionalHostnameModel struct {
 	ID        types.String                      `tfsdk:"id" json:"-,computed"`
 	ZoneID    types.String                      `tfsdk:"zone_id" path:"zone_id"`
@@ -37,10 +29,4 @@ type RegionalHostnameErrorsModel struct {
 type RegionalHostnameMessagesModel struct {
 	Code    types.Int64  `tfsdk:"code" json:"code"`
 	Message types.String `tfsdk:"message" json:"message"`
-}
-
-type RegionalHostnameDataSourceModel struct {
-}
-
-type RegionalHostnamesDataSourceModel struct {
 }

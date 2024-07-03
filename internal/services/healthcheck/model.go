@@ -10,14 +10,6 @@ type HealthcheckResultEnvelope struct {
 	Result HealthcheckModel `json:"result,computed"`
 }
 
-type HealthcheckResultDataSourceEnvelope struct {
-	Result HealthcheckDataSourceModel `json:"result,computed"`
-}
-
-type HealthchecksResultDataSourceEnvelope struct {
-	Result HealthchecksDataSourceModel `json:"result,computed"`
-}
-
 type HealthcheckModel struct {
 	ID                   types.String                `tfsdk:"id" json:"id,computed"`
 	ZoneID               types.String                `tfsdk:"zone_id" path:"zone_id"`
@@ -54,10 +46,4 @@ type HealthcheckHTTPConfigModel struct {
 type HealthcheckTCPConfigModel struct {
 	Method types.String `tfsdk:"method" json:"method"`
 	Port   types.Int64  `tfsdk:"port" json:"port"`
-}
-
-type HealthcheckDataSourceModel struct {
-}
-
-type HealthchecksDataSourceModel struct {
 }

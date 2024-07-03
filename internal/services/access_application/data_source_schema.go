@@ -13,7 +13,35 @@ var _ datasource.DataSourceWithConfigValidators = &AccessApplicationDataSource{}
 var _ datasource.DataSourceWithValidateConfig = &AccessApplicationDataSource{}
 
 func (r AccessApplicationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{}
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"app_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
+			},
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"zone_id": schema.StringAttribute{
+				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Optional:    true,
+			},
+			"find_one_by": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"account_id": schema.StringAttribute{
+						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+						Optional:    true,
+					},
+					"zone_id": schema.StringAttribute{
+						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:    true,
+					},
+				},
+			},
+		},
+	}
 }
 
 func (r *AccessApplicationDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {

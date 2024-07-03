@@ -436,8 +436,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		logpush_job.NewLogpushJobsDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificateDataSource,
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
-		page_rule.NewPageRuleDataSource,
-		page_rule.NewPageRulesDataSource,
 		rate_limit.NewRateLimitDataSource,
 		rate_limit.NewRateLimitsDataSource,
 		waiting_room.NewWaitingRoomDataSource,

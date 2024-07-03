@@ -1,0 +1,119 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package custom_hostname
+
+import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+var _ datasource.DataSourceWithConfigValidators = &CustomHostnamesDataSource{}
+var _ datasource.DataSourceWithValidateConfig = &CustomHostnamesDataSource{}
+
+func (r CustomHostnamesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.",
+				Optional:    true,
+			},
+			"direction": schema.StringAttribute{
+				Description: "Direction to order hostnames.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
+			},
+			"hostname": schema.StringAttribute{
+				Description: "Fully qualified domain name to match against. This parameter cannot be used with the 'id' parameter.",
+				Optional:    true,
+			},
+			"order": schema.StringAttribute{
+				Description: "Field to order hostnames by.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ssl", "ssl_status"),
+				},
+			},
+			"page": schema.Float64Attribute{
+				Description: "Page number of paginated results.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"per_page": schema.Float64Attribute{
+				Description: "Number of hostnames per page.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"ssl": schema.Float64Attribute{
+				Description: "Whether to filter hostnames based on if they have SSL enabled.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.OneOf(0, 1),
+				},
+			},
+			"max_items": schema.Int64Attribute{
+				Description: "Max items to fetch, default: 1000",
+				Optional:    true,
+			},
+			"items": schema.ListNestedAttribute{
+				Description: "The items returned by the data source",
+				Computed:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Identifier",
+							Computed:    true,
+						},
+						"hostname": schema.StringAttribute{
+							Description: "The custom hostname that will point to your hostname via CNAME.",
+							Computed:    true,
+						},
+						"created_at": schema.StringAttribute{
+							Description: "This is the time the hostname was created.",
+							Computed:    true,
+						},
+						"custom_origin_server": schema.StringAttribute{
+							Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
+							Computed:    true,
+						},
+						"custom_origin_sni": schema.StringAttribute{
+							Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
+							Computed:    true,
+						},
+						"status": schema.StringAttribute{
+							Description: "Status of the hostname's activation.",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
+							},
+						},
+						"verification_errors": schema.ListAttribute{
+							Description: "These are errors that were encountered while trying to activate a hostname.",
+							Computed:    true,
+							ElementType: types.StringType,
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func (r *CustomHostnamesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+	return []datasource.ConfigValidator{}
+}
+
+func (r *CustomHostnamesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
+}
