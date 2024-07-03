@@ -15,7 +15,11 @@ patterns:
       }
 
       function test_name($func_name) js {
-          return $func_name.text.toLowerCase().replaceAll("testacc", "")
+          if ($func_name.text.toLowerCase().split("_").length > 1) {
+            return $func_name.text.toLowerCase().split(/_(.*)/)[1]
+          } else {
+            return $func_name.text.toLowerCase().replaceAll("testacccheckcloudflare", "").replaceAll("testacccloudflare", "").replaceAll(/^test/g, "")
+          }
       }
 
       file($name, $body) where {
