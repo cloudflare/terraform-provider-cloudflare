@@ -26,7 +26,7 @@ func (r ObservatoryScheduledTestResource) Schema(ctx context.Context, req resour
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"count": schema.Float64Attribute{
+			"item_count": schema.Float64Attribute{
 				Description: "Number of items affected.",
 				Computed:    true,
 			},

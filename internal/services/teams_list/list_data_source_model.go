@@ -19,7 +19,7 @@ type TeamsListsDataSourceModel struct {
 
 type TeamsListsItemsDataSourceModel struct {
 	ID          types.String  `tfsdk:"id" json:"id,computed"`
-	Count       types.Float64 `tfsdk:"count" json:"count,computed"`
+	ListCount   types.Float64 `tfsdk:"list_count" json:"count,computed"`
 	CreatedAt   types.String  `tfsdk:"created_at" json:"created_at,computed"`
 	Description types.String  `tfsdk:"description" json:"description,computed"`
 	Name        types.String  `tfsdk:"name" json:"name,computed"`
