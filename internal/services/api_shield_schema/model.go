@@ -10,14 +10,6 @@ type APIShieldSchemaResultEnvelope struct {
 	Result APIShieldSchemaModel `json:"result,computed"`
 }
 
-type APIShieldSchemaResultDataSourceEnvelope struct {
-	Result APIShieldSchemaDataSourceModel `json:"result,computed"`
-}
-
-type APIShieldSchemasResultDataSourceEnvelope struct {
-	Result APIShieldSchemasDataSourceModel `json:"result,computed"`
-}
-
 type APIShieldSchemaModel struct {
 	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id"`
 	SchemaID          types.String `tfsdk:"schema_id" path:"schema_id"`
@@ -46,10 +38,4 @@ type APIShieldSchemaUploadDetailsWarningsModel struct {
 	Code      types.Int64     `tfsdk:"code" json:"code"`
 	Locations *[]types.String `tfsdk:"locations" json:"locations"`
 	Message   types.String    `tfsdk:"message" json:"message"`
-}
-
-type APIShieldSchemaDataSourceModel struct {
-}
-
-type APIShieldSchemasDataSourceModel struct {
 }

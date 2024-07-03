@@ -10,14 +10,6 @@ type DeviceManagedNetworksResultEnvelope struct {
 	Result DeviceManagedNetworksModel `json:"result,computed"`
 }
 
-type DeviceManagedNetworksResultDataSourceEnvelope struct {
-	Result DeviceManagedNetworksDataSourceModel `json:"result,computed"`
-}
-
-type DeviceManagedNetworksListResultDataSourceEnvelope struct {
-	Result DeviceManagedNetworksListDataSourceModel `json:"result,computed"`
-}
-
 type DeviceManagedNetworksModel struct {
 	ID        types.String                      `tfsdk:"id" json:"-,computed"`
 	NetworkID types.String                      `tfsdk:"network_id" json:"network_id,computed"`
@@ -30,10 +22,4 @@ type DeviceManagedNetworksModel struct {
 type DeviceManagedNetworksConfigModel struct {
 	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr"`
 	Sha256      types.String `tfsdk:"sha256" json:"sha256"`
-}
-
-type DeviceManagedNetworksDataSourceModel struct {
-}
-
-type DeviceManagedNetworksListDataSourceModel struct {
 }

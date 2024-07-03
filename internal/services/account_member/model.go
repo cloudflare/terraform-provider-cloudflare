@@ -10,14 +10,6 @@ type AccountMemberResultEnvelope struct {
 	Result AccountMemberModel `json:"result,computed"`
 }
 
-type AccountMemberResultDataSourceEnvelope struct {
-	Result AccountMemberDataSourceModel `json:"result,computed"`
-}
-
-type AccountMembersResultDataSourceEnvelope struct {
-	Result AccountMembersDataSourceModel `json:"result,computed"`
-}
-
 type AccountMemberModel struct {
 	ID        types.String                   `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                   `tfsdk:"account_id" path:"account_id"`
@@ -48,10 +40,4 @@ type AccountMemberUserModel struct {
 	FirstName                      types.String `tfsdk:"first_name" json:"first_name"`
 	LastName                       types.String `tfsdk:"last_name" json:"last_name"`
 	TwoFactorAuthenticationEnabled types.Bool   `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
-}
-
-type AccountMemberDataSourceModel struct {
-}
-
-type AccountMembersDataSourceModel struct {
 }

@@ -10,14 +10,6 @@ type TurnstileWidgetResultEnvelope struct {
 	Result TurnstileWidgetModel `json:"result,computed"`
 }
 
-type TurnstileWidgetResultDataSourceEnvelope struct {
-	Result TurnstileWidgetDataSourceModel `json:"result,computed"`
-}
-
-type TurnstileWidgetsResultDataSourceEnvelope struct {
-	Result TurnstileWidgetsDataSourceModel `json:"result,computed"`
-}
-
 type TurnstileWidgetModel struct {
 	ID             types.String    `tfsdk:"id" json:"-,computed"`
 	Sitekey        types.String    `tfsdk:"sitekey" json:"sitekey,computed"`
@@ -32,10 +24,4 @@ type TurnstileWidgetModel struct {
 	CreatedOn      types.String    `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn     types.String    `tfsdk:"modified_on" json:"modified_on,computed"`
 	Secret         types.String    `tfsdk:"secret" json:"secret,computed"`
-}
-
-type TurnstileWidgetDataSourceModel struct {
-}
-
-type TurnstileWidgetsDataSourceModel struct {
 }

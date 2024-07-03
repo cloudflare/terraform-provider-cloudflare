@@ -10,14 +10,6 @@ type DeviceDEXTestResultEnvelope struct {
 	Result DeviceDEXTestModel `json:"result,computed"`
 }
 
-type DeviceDEXTestResultDataSourceEnvelope struct {
-	Result DeviceDEXTestDataSourceModel `json:"result,computed"`
-}
-
-type DeviceDEXTestsResultDataSourceEnvelope struct {
-	Result DeviceDEXTestsDataSourceModel `json:"result,computed"`
-}
-
 type DeviceDEXTestModel struct {
 	ID             types.String                         `tfsdk:"id" json:"-,computed"`
 	AccountID      types.String                         `tfsdk:"account_id" path:"account_id"`
@@ -40,10 +32,4 @@ type DeviceDEXTestTargetPoliciesModel struct {
 	ID      types.String `tfsdk:"id" json:"id"`
 	Default types.Bool   `tfsdk:"default" json:"default"`
 	Name    types.String `tfsdk:"name" json:"name"`
-}
-
-type DeviceDEXTestDataSourceModel struct {
-}
-
-type DeviceDEXTestsDataSourceModel struct {
 }

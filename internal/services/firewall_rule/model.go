@@ -10,14 +10,6 @@ type FirewallRuleResultEnvelope struct {
 	Result FirewallRuleModel `json:"result,computed"`
 }
 
-type FirewallRuleResultDataSourceEnvelope struct {
-	Result FirewallRuleDataSourceModel `json:"result,computed"`
-}
-
-type FirewallRulesResultDataSourceEnvelope struct {
-	Result FirewallRulesDataSourceModel `json:"result,computed"`
-}
-
 type FirewallRuleModel struct {
 	ZoneIdentifier types.String    `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String    `tfsdk:"id" path:"id"`
@@ -37,10 +29,4 @@ type FirewallRuleFilterModel struct {
 	Paused      types.Bool   `tfsdk:"paused" json:"paused"`
 	Ref         types.String `tfsdk:"ref" json:"ref"`
 	Deleted     types.Bool   `tfsdk:"deleted" json:"deleted"`
-}
-
-type FirewallRuleDataSourceModel struct {
-}
-
-type FirewallRulesDataSourceModel struct {
 }

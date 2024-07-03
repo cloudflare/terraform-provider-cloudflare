@@ -10,14 +10,6 @@ type Web3HostnameResultEnvelope struct {
 	Result Web3HostnameModel `json:"result,computed"`
 }
 
-type Web3HostnameResultDataSourceEnvelope struct {
-	Result Web3HostnameDataSourceModel `json:"result,computed"`
-}
-
-type Web3HostnamesResultDataSourceEnvelope struct {
-	Result Web3HostnamesDataSourceModel `json:"result,computed"`
-}
-
 type Web3HostnameModel struct {
 	ID             types.String `tfsdk:"id" json:"id,computed"`
 	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
@@ -28,10 +20,4 @@ type Web3HostnameModel struct {
 	ModifiedOn     types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name           types.String `tfsdk:"name" json:"name,computed"`
 	Status         types.String `tfsdk:"status" json:"status,computed"`
-}
-
-type Web3HostnameDataSourceModel struct {
-}
-
-type Web3HostnamesDataSourceModel struct {
 }

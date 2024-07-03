@@ -5,8 +5,14 @@ package record
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/dns"
+	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -44,12 +50,61 @@ func (r *RecordDataSource) Configure(ctx context.Context, req datasource.Configu
 }
 
 func (r *RecordDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *RecordDataSource
+	var data *RecordDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	if data.FindOneBy == nil {
+		res := new(http.Response)
+		env := RecordResultDataSourceEnvelope{*data}
+		_, err := r.client.DNS.Records.Get(
+			ctx,
+			data.DNSRecordID.ValueString(),
+			dns.RecordGetParams{
+				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			},
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+		bytes, _ := io.ReadAll(res.Body)
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+			return
+		}
+		data = &env.Result
+	} else {
+		items := &[]*RecordDataSourceModel{}
+		env := RecordResultListDataSourceEnvelope{items}
+
+		page, err := r.client.DNS.Records.List(ctx, dns.RecordListParams{
+			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+		})
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+
+		if count := len(*items); count != 1 {
+			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
+			return
+		}
+		data = (*items)[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

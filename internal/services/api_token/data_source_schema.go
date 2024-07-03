@@ -5,15 +5,45 @@ package api_token
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &APITokenDataSource{}
 var _ datasource.DataSourceWithValidateConfig = &APITokenDataSource{}
 
 func (r APITokenDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{}
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"token_id": schema.StringAttribute{
+				Optional: true,
+			},
+			"find_one_by": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"direction": schema.StringAttribute{
+						Description: "Direction to order results.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+						},
+					},
+					"page": schema.Float64Attribute{
+						Description: "Page number of paginated results.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"per_page": schema.Float64Attribute{
+						Description: "Maximum number of results per page.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
+			},
+		},
+	}
 }
 
 func (r *APITokenDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {

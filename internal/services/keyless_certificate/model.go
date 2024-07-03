@@ -10,14 +10,6 @@ type KeylessCertificateResultEnvelope struct {
 	Result KeylessCertificateModel `json:"result,computed"`
 }
 
-type KeylessCertificateResultDataSourceEnvelope struct {
-	Result KeylessCertificateDataSourceModel `json:"result,computed"`
-}
-
-type KeylessCertificatesResultDataSourceEnvelope struct {
-	Result KeylessCertificatesDataSourceModel `json:"result,computed"`
-}
-
 type KeylessCertificateModel struct {
 	ID           types.String                   `tfsdk:"id" json:"id,computed"`
 	ZoneID       types.String                   `tfsdk:"zone_id" path:"zone_id"`
@@ -37,10 +29,4 @@ type KeylessCertificateModel struct {
 type KeylessCertificateTunnelModel struct {
 	PrivateIP types.String `tfsdk:"private_ip" json:"private_ip"`
 	VnetID    types.String `tfsdk:"vnet_id" json:"vnet_id"`
-}
-
-type KeylessCertificateDataSourceModel struct {
-}
-
-type KeylessCertificatesDataSourceModel struct {
 }

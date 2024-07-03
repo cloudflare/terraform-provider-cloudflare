@@ -10,14 +10,6 @@ type LoadBalancerResultEnvelope struct {
 	Result LoadBalancerModel `json:"result,computed"`
 }
 
-type LoadBalancerResultDataSourceEnvelope struct {
-	Result LoadBalancerDataSourceModel `json:"result,computed"`
-}
-
-type LoadBalancersResultDataSourceEnvelope struct {
-	Result LoadBalancersDataSourceModel `json:"result,computed"`
-}
-
 type LoadBalancerModel struct {
 	ID                        types.String                                `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                `tfsdk:"zone_id" path:"zone_id"`
@@ -120,10 +112,4 @@ type LoadBalancerSessionAffinityAttributesModel struct {
 	Samesite             types.String    `tfsdk:"samesite" json:"samesite"`
 	Secure               types.String    `tfsdk:"secure" json:"secure"`
 	ZeroDowntimeFailover types.String    `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover"`
-}
-
-type LoadBalancerDataSourceModel struct {
-}
-
-type LoadBalancersDataSourceModel struct {
 }

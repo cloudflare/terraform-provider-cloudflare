@@ -13,7 +13,75 @@ var _ datasource.DataSourceWithConfigValidators = &WorkerScriptDataSource{}
 var _ datasource.DataSourceWithValidateConfig = &WorkerScriptDataSource{}
 
 func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{}
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
+			},
+			"script_name": schema.StringAttribute{
+				Description: "Name of the script, used in URLs and route configuration.",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The id of the script in the Workers system. Usually the script name.",
+				Optional:    true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the script was created.",
+				Optional:    true,
+			},
+			"etag": schema.StringAttribute{
+				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Optional:    true,
+			},
+			"logpush": schema.BoolAttribute{
+				Description: "Whether Logpush is turned on for the Worker.",
+				Optional:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the script was last modified.",
+				Optional:    true,
+			},
+			"placement_mode": schema.StringAttribute{
+				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
+				Optional:    true,
+			},
+			"tail_consumers": schema.ListNestedAttribute{
+				Description: "List of Workers that will consume logs from the attached Worker.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"service": schema.StringAttribute{
+							Description: "Name of Worker that is to be the consumer.",
+							Required:    true,
+						},
+						"environment": schema.StringAttribute{
+							Description: "Optional environment if the Worker utilizes one.",
+							Optional:    true,
+						},
+						"namespace": schema.StringAttribute{
+							Description: "Optional dispatch namespace the script belongs to.",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"usage_model": schema.StringAttribute{
+				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
+				Optional:    true,
+			},
+			"find_one_by": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"account_id": schema.StringAttribute{
+						Description: "Identifier",
+						Required:    true,
+					},
+				},
+			},
+		},
+	}
 }
 
 func (r *WorkerScriptDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {

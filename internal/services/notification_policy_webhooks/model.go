@@ -10,14 +10,6 @@ type NotificationPolicyWebhooksResultEnvelope struct {
 	Result NotificationPolicyWebhooksModel `json:"result,computed"`
 }
 
-type NotificationPolicyWebhooksResultDataSourceEnvelope struct {
-	Result NotificationPolicyWebhooksDataSourceModel `json:"result,computed"`
-}
-
-type NotificationPolicyWebhooksListResultDataSourceEnvelope struct {
-	Result NotificationPolicyWebhooksListDataSourceModel `json:"result,computed"`
-}
-
 type NotificationPolicyWebhooksModel struct {
 	ID          types.String                                `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                `tfsdk:"account_id" path:"account_id"`
@@ -48,10 +40,4 @@ type NotificationPolicyWebhooksResultInfoModel struct {
 	Page       types.Float64 `tfsdk:"page" json:"page"`
 	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
 	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
-}
-
-type NotificationPolicyWebhooksDataSourceModel struct {
-}
-
-type NotificationPolicyWebhooksListDataSourceModel struct {
 }
