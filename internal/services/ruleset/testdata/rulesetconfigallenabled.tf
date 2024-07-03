@@ -6,15 +6,15 @@
     kind        = "zone"
     phase       = "http_config_settings"
 
-    rules {
+    rules =[ {
       action = "set_config"
-      action_parameters {
+      action_parameters =[ {
 		automatic_https_rewrites = true
-		autominify {
+		autominify =[ {
 			html = true
 			css = true
 			js = true
-		}
+		}]
 		bic = true
 		disable_apps = true
 		disable_zaraz = true
@@ -31,9 +31,9 @@
 		ssl = "off"
 		sxg = true
 		hotlink_protection = true
-      }
+      }]
 	  expression = "true"
 	  description = "%[1]s set config rule"
 	  enabled = true
-    }
+    }]
   }

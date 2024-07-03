@@ -15,7 +15,7 @@ description: |-
 resource "cloudflare_custom_hostname" "example" {
   zone_id  = "0da42c8d2132a9ddaf714f9e7c920711"
   hostname = "hostname.example.com"
-  ssl {
+  ssl = {
     method = "txt"
   }
 }
@@ -32,12 +32,12 @@ resource "cloudflare_custom_hostname" "example" {
 ### Optional
 
 - `custom_metadata` (Attributes) These are per-hostname (customer) settings. (see [below for nested schema](#nestedatt--custom_metadata))
+- `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
+- `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
 
 ### Read-Only
 
 - `created_at` (String) This is the time the hostname was created.
-- `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
-- `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
 - `id` (String) Identifier
 - `status` (String) Status of the hostname's activation.
 - `verification_errors` (List of String) These are errors that were encountered while trying to activate a hostname.

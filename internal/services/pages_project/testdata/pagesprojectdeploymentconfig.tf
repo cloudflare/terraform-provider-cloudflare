@@ -3,8 +3,8 @@
 		  account_id = "%[2]s"
 		  name = "%[3]s"
 		  production_branch = "main"
-		  deployment_configs {
-		 	preview {
+		  deployment_configs = {
+  preview =[ {
 				environment_variables = {
 					ENVIRONMENT = "preview"
 				}
@@ -23,18 +23,18 @@
 				d1_databases = {
 					D1_BINDING = "445e2955-951a-4358-a35b-a4d0c813f63"
 				}
-				service_binding {
+				service_binding =[ {
 					name = "MY_SERVICE_BINDING"
 					service = "my-service"
 					environment = "preview"
-				}
+				}]
 				compatibility_date = "2022-08-15"
 				compatibility_flags = ["preview_flag"]
 				fail_open = true
 				always_use_latest_compatibility_date = true
 				usage_model = "unbound"
-			}
-        	production {
+			}]
+        	production =[ {
 				environment_variables = {
 					ENVIRONMENT = "production"
 					OTHER_VALUE = "other value"
@@ -59,20 +59,20 @@
 					D1_BINDING_1 = "445e2955-951a-4358-a35b-a4d0c813f63"
 					D1_BINDING_2 = "a399414b-c697-409a-a688-377db6433cd9"
 				}
-				service_binding {
+				service_binding =[ {
 					name = "MY_SERVICE_BINDING"
 					service = "my-service"
 					environment = "production"
-				}
+				}]
 				compatibility_date = "2022-08-16"
 				compatibility_flags = ["production_flag", "second flag"]
 				fail_open = true
 				always_use_latest_compatibility_date = false
 				usage_model = "bundled"
-				placement {
+				placement =[ {
 					mode = "smart"
-				}
-      		}
-		}
+				}]
+      		}]
+}
 		}
 		

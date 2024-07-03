@@ -6,9 +6,9 @@
     kind        = "zone"
     phase       = "http_log_custom_fields"
 
-    rules {
+    rules =[ {
       action = "log_custom_field"
-      action_parameters {
+      action_parameters =[ {
         request_fields = [
           "content-type",
           "x-forwarded-for",
@@ -24,10 +24,10 @@
           "accountNumber",
           "__cfruid"
         ]
-      }
+      }]
 
       expression = "true"
       description = "%[1]s log custom fields rule"
       enabled = true
-    }
+    }]
   }

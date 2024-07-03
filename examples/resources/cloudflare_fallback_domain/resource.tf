@@ -1,11 +1,11 @@
 # Use DNS servers 192.0.2.0 or 192.0.2.1 for example.com
 resource "cloudflare_fallback_domain" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  domains {
+  domains = [{
     suffix      = "example.com"
     description = "Example domain"
     dns_server  = ["192.0.2.0", "192.0.2.1"]
-  }
+  }]
 }
 
 # Explicitly adding example.com to the default entries.
@@ -18,11 +18,11 @@ resource "cloudflare_fallback_domain" "example" {
     }
   }
 
-  domains {
+  domains = [{
     suffix      = "example.com"
     description = "Example domain"
     dns_server  = ["192.0.2.0", "192.0.2.1"]
-  }
+  }]
 }
 
 # Create a device policy
@@ -38,9 +38,9 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
 resource "cloudflare_fallback_domain" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   policy_id  = cloudflare_device_settings_policy.developer_warp_policy.id
-  domains {
+  domains = [{
     suffix      = "example.com"
     description = "Example domain"
     dns_server  = ["192.0.2.0", "192.0.2.1"]
-  }
+  }]
 }

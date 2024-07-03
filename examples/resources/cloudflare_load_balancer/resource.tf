@@ -11,38 +11,38 @@ resource "cloudflare_load_balancer" "example" {
   proxied          = true
   steering_policy  = "geo"
 
-  pop_pools {
+  pop_pools = [{
     pop      = "LAX"
     pool_ids = [cloudflare_load_balancer_pool.example.id]
-  }
+  }]
 
-  country_pools {
+  country_pools = [{
     country  = "US"
     pool_ids = [cloudflare_load_balancer_pool.example.id]
-  }
+  }]
 
-  region_pools {
+  region_pools = [{
     region   = "WNAM"
     pool_ids = [cloudflare_load_balancer_pool.example.id]
-  }
+  }]
 
-  rules {
+  rules = [{
     name      = "example rule"
     condition = "http.request.uri.path contains \"testing\""
-    fixed_response {
+    fixed_response = [{
       message_body = "hello"
       status_code  = 200
       content_type = "html"
       location     = "www.example.com"
-    }
-  }
+    }]
+  }]
 }
 
 resource "cloudflare_load_balancer_pool" "example" {
   name = "example-lb-pool"
-  origins {
+  origins = [{
     name    = "example-1"
     address = "192.0.2.1"
     enabled = false
-  }
+  }]
 }

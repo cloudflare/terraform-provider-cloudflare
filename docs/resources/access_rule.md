@@ -17,7 +17,7 @@ resource "cloudflare_access_rule" "tor_exit_nodes" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   notes   = "Requests coming from known Tor exit nodes"
   mode    = "challenge"
-  configuration {
+  configuration = {
     target = "country"
     value  = "T1"
   }
@@ -28,7 +28,7 @@ resource "cloudflare_access_rule" "antarctica" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   notes   = "Requests coming from Antarctica"
   mode    = "whitelist"
-  configuration {
+  configuration = {
     target = "country"
     value  = "AQ"
   }
@@ -46,7 +46,7 @@ resource "cloudflare_access_rule" "office_network" {
   count      = length(var.my_office)
   notes      = "Requests coming from office network"
   mode       = "whitelist"
-  configuration {
+  configuration = {
     target = "ip_range"
     value  = element(var.my_office, count.index)
   }

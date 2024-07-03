@@ -5,11 +5,11 @@
     description = "test description"
     enabled     =  true
     alert_type  = "incident_alert"
-	email_integration {
+	email_integration =[ {
       name =  ""
       id   =  "test@example.com"
-    }
-    filters {
-	   affected_components = ["API"]
-	}
+    }]
+    filters = {
+  affected_components = ["API"]
+}
   }

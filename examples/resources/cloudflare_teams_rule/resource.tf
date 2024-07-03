@@ -6,7 +6,7 @@ resource "cloudflare_teams_rule" "example" {
   action      = "block"
   filters     = ["http"]
   traffic     = "http.request.uri == \"https://www.example.com/malicious\""
-  rule_settings {
+  rule_settings = {
     block_page_enabled = true
     block_page_reason  = "access not permitted"
   }

@@ -13,21 +13,21 @@ resource "cloudflare_spectrum_application" "%[3]s" {
   zone_id  = "%[1]s"
   protocol = "tcp/22-23"
 
-  dns {
-    type = "CNAME"
+  dns = {
+  type = "CNAME"
     name = "%[3]s.%[2]s"
-  }
+}
 
-  origin_dns {
-    name = "%[3]s.origin.%[2]s"
-  }
-  origin_port_range {
+  origin_dns = {
+  name = "%[3]s.origin.%[2]s"
+}
+  origin_port_range =[ {
     start = 2022
     end   = 2023
-  }
+  }]
 
-  edge_ips {
-	type = "dynamic"
+  edge_ips = {
+  type = "dynamic"
 	connectivity = "all"
-  }
+}
 }

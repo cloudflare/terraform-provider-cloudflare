@@ -17,7 +17,7 @@ resource "cloudflare_device_posture_integration" "example" {
   name       = "Device posture integration"
   type       = "workspace_one"
   interval   = "24h"
-  config {
+  config = {
     api_url       = "https://example.com/api"
     auth_url      = "https://example.com/connect/token"
     client_id     = "client-id"

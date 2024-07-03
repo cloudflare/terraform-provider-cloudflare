@@ -10,4 +10,3 @@
 		domain = "%[1]s.%[3]s"
 		depends_on = [cloudflare_access_application.%[1]s]
 	}
-	

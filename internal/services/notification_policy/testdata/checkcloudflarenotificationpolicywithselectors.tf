@@ -5,12 +5,12 @@
     description = "test description"
     enabled     =  true
     alert_type  = "traffic_anomalies_alert"
-	email_integration {
+	email_integration =[ {
       name =  ""
       id   =  "test@example.com"
-    }
-    filters {
-	   alert_trigger_preferences = [
+    }]
+    filters = {
+  alert_trigger_preferences = [
 			"zscore_drop"
 		]
 		group_by = [
@@ -23,5 +23,5 @@
 			"(origin_status_code eq 200)"
 		]
 		zones = ["%[3]s"]
-	}
+}
   }

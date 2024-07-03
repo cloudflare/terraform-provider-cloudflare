@@ -10,12 +10,12 @@
 			warp_auth_session_duration = "36h"
 			allow_authenticate_via_warp = false
 
-			login_design {
-				background_color = "#FFFFFF"
+			login_design = {
+  background_color = "#FFFFFF"
 				text_color       = "#000000"
 				logo_path        = "https://example.com/logo.png"
 				header_text      = "My header text"
 				footer_text      = "My footer text"
-			}
+}
 		}
 		

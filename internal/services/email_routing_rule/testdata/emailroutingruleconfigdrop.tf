@@ -4,14 +4,14 @@
 		  enabled = "%[3]t"
           priority = "%[4]d"
 		  name = "%[1]s"
-		  matcher {
+		  matcher =[ {
 			field  = "to"
 			type = "literal"
 			value = "test@example.com"
-		  }
+		  }]
 
-		  action {
+		  action =[ {
 			type = "drop"
-		  }
+		  }]
 	}
 		

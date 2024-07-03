@@ -32,14 +32,14 @@ resource "cloudflare_waiting_room" "%[1]s" {
   queue_all                 = false
   json_response_enabled     = true
   cookie_suffix             = "queue1"
-  additional_routes {
+  additional_routes =[ {
     host = "shop1.%[4]s"
     path = "%[5]s"
-  }
-
-  additional_routes {
+  },
+    {
     host = "shop2.%[4]s"
-  }
+    }]
+
 
   queueing_status_code      = 200
 

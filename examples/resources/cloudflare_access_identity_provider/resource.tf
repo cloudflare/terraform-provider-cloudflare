@@ -10,7 +10,7 @@ resource "cloudflare_access_identity_provider" "github_oauth" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "GitHub OAuth"
   type       = "github"
-  config {
+  config = {
     client_id     = "example"
     client_secret = "secret_key"
   }
@@ -21,7 +21,7 @@ resource "cloudflare_access_identity_provider" "jumpcloud_saml" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "JumpCloud SAML"
   type       = "saml"
-  config {
+  config = {
     issuer_url      = "jumpcloud"
     sso_target_url  = "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"
     attributes      = ["email", "username"]
@@ -35,7 +35,7 @@ resource "cloudflare_access_identity_provider" "okta" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "Okta"
   type       = "okta"
-  config {
+  config = {
     client_id     = "example"
     client_secret = "secret_key"
     api_token     = "okta_api_token"

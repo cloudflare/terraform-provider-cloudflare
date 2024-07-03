@@ -3,14 +3,14 @@ resource "cloudflare_email_routing_rule" "main" {
   name    = "terraform rule"
   enabled = true
 
-  matcher {
+  matcher = [{
     type  = "literal"
     field = "to"
     value = "test@example.com"
-  }
+  }]
 
-  action {
+  action = [{
     type  = "forward"
     value = ["destinationaddress@example.net"]
-  }
+  }]
 }

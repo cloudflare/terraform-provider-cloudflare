@@ -10,8 +10,8 @@ resource "cloudflare_load_balancer_monitor" "%[1]s" {
   retries = 5
   port = 8080
   description = "this is a very weird load balancer"
-  header {
+  header =[ {
     header = "Host"
     values = ["%[2]s"]
-  }
+  }]
 }

@@ -5,10 +5,10 @@
     description = "%[3]s"
     kind = "ip"
 
-    item {
-		value {
+    item =[ {
+		value =[ {
 		  ip = "192.0.2.0"
-		}
+		}]
 		comment = "one"
-	  }
+	  }]
   }

@@ -6,12 +6,12 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 	description               = "My description"
 	schedule                  = "24h"
 	expiration                = "24h"
-	match {
+	match =[ {
 		platform = "mac"
-	}
-	input {
-		version = "10.0.1"
+	}]
+	input = {
+  version = "10.0.1"
 		operator = "=="
 		os_version_extra = "(a)"
-	}
+}
 }

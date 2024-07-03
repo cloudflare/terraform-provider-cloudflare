@@ -9,9 +9,9 @@
         account_id     = "%[3]s"
         name           = "%[1]s"
 
-        include {
+        include =[ {
           ip = ["127.0.0.1/32"]
-        }
+        }]
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
@@ -21,9 +21,9 @@
       decision       = "non_identity"
       precedence     = "10"
 
-      include {
+      include =[ {
         group = [cloudflare_access_group.%[1]s.id]
-      }
+      }]
     }
 
   

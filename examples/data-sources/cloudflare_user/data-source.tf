@@ -3,7 +3,7 @@ data "cloudflare_api_token_permission_groups" "all" {}
 
 resource "cloudflare_api_token" "example" {
   name = "Terraform Cloud (Terraform)"
-  policy {
+  policy = [{
     permission_groups = [
       data.cloudflare_api_token_permission_groups.all.user["User Details Read"],
 
@@ -11,5 +11,5 @@ resource "cloudflare_api_token" "example" {
     resources = {
       "com.cloudflare.api.user.${data.cloudflare_user.me.id}" = "*",
     }
-  }
+  }]
 }

@@ -6,11 +6,11 @@ resource "cloudflare_device_posture_rule" "eaxmple" {
   schedule    = "24h"
   expiration  = "24h"
 
-  match {
+  match = [{
     platform = "linux"
-  }
+  }]
 
-  input {
+  input = {
     id                 = cloudflare_teams_list.corporate_devices.id
     version            = "1.0.0"
     operator           = "<"

@@ -9,10 +9,10 @@ resource "cloudflare_access_identity_provider" "%[6]s" {
   account_id = "%[4]s"
   name = "%[6]s"
   type = "github"
-  config {
-    client_id = "test"
+  config = {
+  client_id = "test"
     client_secret = "secret"
-  }
+}
 }
 
 resource "cloudflare_access_application" "%[1]s" {

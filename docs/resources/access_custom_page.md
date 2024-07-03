@@ -32,12 +32,12 @@ resource "cloudflare_access_custom_page" "example" {
 ### Optional
 
 - `app_count` (Number) Number of apps the custom page is assigned to.
+- `created_at` (String)
+- `uid` (String) UUID
+- `updated_at` (String)
 
 ### Read-Only
 
-- `created_at` (String)
 - `id` (String) UUID
-- `uid` (String) UUID
-- `updated_at` (String)
 
 

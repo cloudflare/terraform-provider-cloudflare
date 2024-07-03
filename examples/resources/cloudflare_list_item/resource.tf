@@ -26,7 +26,7 @@ resource "cloudflare_list" "example_redirect_list" {
 resource "cloudflare_list_item" "example_redirect_item" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   list_id    = cloudflare_list.example_ip_list.id
-  redirect {
+  redirect = {
     source_url       = "https://source.tld/"
     target_url       = "https://target.tld"
     status_code      = 302
@@ -47,7 +47,7 @@ resource "cloudflare_list_item" "example_asn_item" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   list_id    = cloudflare_list.example_asn_list.id
   comment    = "List Item Comment"
-  asn         = 6789
+  asn        = 6789
 }
 
 # Hostname List
@@ -63,7 +63,7 @@ resource "cloudflare_list_item" "example_hostname_item" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   list_id    = cloudflare_list.example_hostname_list.id
   comment    = "List Item Comment"
-  hostname {
+  hostname = {
     url_hostname = "example.com"
   }
 }

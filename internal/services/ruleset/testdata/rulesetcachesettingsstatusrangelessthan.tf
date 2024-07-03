@@ -6,29 +6,29 @@
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
 
-		rules {
+		rules =[ {
 			action = "set_cache_settings"
-			action_parameters {
-				edge_ttl {
-					status_code_ttl {
-						status_code_range {
+			action_parameters =[ {
+				edge_ttl =[ {
+					status_code_ttl =[ {
+						status_code_range =[ {
 						  to = 400
-						}
+						}]
 						value = 1
-					  }
-					  status_code_ttl {
-						status_code_range {
+					  },
+    {
+    status_code_range =[ {
 						  from = 500
 						  to   = 501
-						}
+						}]
 						value = 1
-					  }
+    }]
 					mode = "respect_origin"
-				}
+				}]
 				cache = true
-			}
+			}]
 			expression = "true"
 			description = "%[1]s set cache settings rule"
 			enabled = true
-		}
+		}]
 	}

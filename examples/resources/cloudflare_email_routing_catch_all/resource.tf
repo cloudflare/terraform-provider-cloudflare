@@ -3,12 +3,12 @@ resource "cloudflare_email_routing_catch_all" "example" {
   name    = "example catch all"
   enabled = true
 
-  matcher {
+  matcher = [{
     type = "all"
-  }
+  }]
 
-  action {
+  action = [{
     type  = "forward"
     value = ["destinationaddress@example.net"]
-  }
+  }]
 }

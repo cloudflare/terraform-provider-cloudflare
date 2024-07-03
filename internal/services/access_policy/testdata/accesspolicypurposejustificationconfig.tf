@@ -12,9 +12,9 @@
       decision       = "allow"
       precedence     = "1"
 
-      include {
+      include =[ {
         email = ["a@example.com", "b@example.com"]
-      }
+      }]
 
       purpose_justification_required = "true"
       purpose_justification_prompt = "Why should we let you in?"

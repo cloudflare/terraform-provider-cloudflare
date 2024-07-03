@@ -5,9 +5,9 @@
 		description = "%[1]s"
 		interval = "0h30m0s"
 		enabled = true
-		data {
-			host = "1.1.1.1"
+		data = {
+  host = "1.1.1.1"
 			kind = "traceroute"
-		}
+}
 	}
 	

@@ -16,14 +16,14 @@ resource "cloudflare_worker_script" "%[1]s" {
   compatibility_date = "%[4]s"
   compatibility_flags = ["%[5]s"]
   logpush = true
-	placement {
+	placement =[ {
 		mode = "smart"
-	}
+	}]
 
-	d1_database_binding {
+	d1_database_binding =[ {
 		name = "MY_DATABASE"
 		database_id = "%[8]s"
-	}
+	}]
 
 	depends_on = [cloudflare_logpush_job.%[1]s]
 }

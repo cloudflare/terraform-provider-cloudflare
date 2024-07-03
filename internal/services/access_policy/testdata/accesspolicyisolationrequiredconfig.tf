@@ -6,7 +6,7 @@
 		activity_log_enabled = true
 		url_browser_isolation_enabled = true
 		non_identity_browser_isolation_enabled = false
-		block_page {
+		block_page =[ {
 		  name = "%[1]s"
 		  enabled = true
 		  footer_text = "hello"
@@ -15,47 +15,47 @@
 		  background_color = "#000000"
 		  mailto_subject = "hello"
 		  mailto_address = "test@cloudflare.com"
-		}
-		body_scanning {
+		}]
+		body_scanning =[ {
 		  inspection_mode = "deep"
-		}
-		fips {
+		}]
+		fips =[ {
 		  tls = true
-		}
-		antivirus {
+		}]
+		antivirus =[ {
 		  enabled_download_phase = true
 		  enabled_upload_phase = false
 		  fail_closed = true
-		}
-		proxy {
+		}]
+		proxy =[ {
 		  tcp = true
 		  udp = false
 		  root_ca = true
 		  virtual_ip = false
-		}
-		logging {
+		}]
+		logging =[ {
 		  redact_pii = true
-		  settings_by_rule_type {
-			dns {
+		  settings_by_rule_type =[ {
+			dns =[ {
 			  log_all = false
 			  log_blocks = true
-			}
-			http {
+			}]
+			http =[ {
 			  log_all = true
 			  log_blocks = true
-			}
-			l4 {
+			}]
+			l4 =[ {
 			  log_all = false
 			  log_blocks = true
-			}
-		  }
-		}
-		ssh_session_log {
+			}]
+		  }]
+		}]
+		ssh_session_log =[ {
 		  public_key = "testvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
-		}
-		payload_log {
+		}]
+		payload_log =[ {
 		  public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
-		}
+		}]
 	  }
 
     resource "cloudflare_access_application" "%[1]s" {
@@ -72,9 +72,9 @@
       decision       = "allow"
       precedence     = "1"
 
-      include {
+      include =[ {
         email = ["a@example.com", "b@example.com"]
-      }
+      }]
 
       isolation_required = "true"
     }

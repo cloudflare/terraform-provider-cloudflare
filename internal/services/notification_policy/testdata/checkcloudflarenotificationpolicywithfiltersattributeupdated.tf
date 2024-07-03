@@ -5,14 +5,14 @@
     description = "%[3]s"
     enabled     =  true
     alert_type  = "billing_usage_alert"
-    email_integration {
+    email_integration =[ {
       name =  ""
       id   =  "test@example.com"
-    }
-    filters {
-      product = [
+    }]
+    filters = {
+  product = [
         "worker_requests",
       ]
       limit = ["100"]
-	}
+}
   }

@@ -12,9 +12,9 @@
       decision       = "non_identity"
       precedence     = "10"
 
-      include {
+      include =[ {
         certificate = true
-      }
+      }]
     }
 
   

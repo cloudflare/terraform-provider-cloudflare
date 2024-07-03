@@ -4,12 +4,12 @@ resource "cloudflare_load_balancer" "%[3]s" {
   name = "tf-testacc-lb-%[3]s.%[2]s"
   fallback_pool_id = "${cloudflare_load_balancer_pool.%[3]s.id}"
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  pop_pools {
+  pop_pools =[ {
     pop = "LAX"
     pool_ids = ["i_am_an_invalid_pool_id"]
-  }
-  pop_pools {
+  },
+    {
     pop = "LAX"
     pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
-  }
+    }]
 }

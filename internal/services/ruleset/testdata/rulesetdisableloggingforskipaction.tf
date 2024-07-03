@@ -6,16 +6,16 @@
     kind        = "root"
     phase       = "http_request_firewall_managed"
 
-    rules {
+    rules =[ {
       action = "skip"
-      action_parameters {
+      action_parameters =[ {
         ruleset = "current"
-      }
+      }]
       expression = "(cf.zone.plan eq \"ENT\")"
       enabled = true
       description = "example disabled logging"
-      logging {
+      logging =[ {
         enabled = false
-      }
-    }
+      }]
+    }]
   }

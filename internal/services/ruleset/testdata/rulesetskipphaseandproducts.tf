@@ -6,42 +6,42 @@
     kind        = "zone"
     phase       = "http_request_firewall_managed"
 
-    rules {
+    rules =[ {
       action = "skip"
-      action_parameters {
+      action_parameters =[ {
         ruleset = "current"
-      }
+      }]
       description = "not this zone"
       expression = "http.host eq \"%[4]s\""
       enabled = true
-	  logging {
+	  logging =[ {
 		enabled = true
-	  }
-    }
-
-    rules {
-      action = "skip"
-      action_parameters {
+	  }]
+    },
+    {
+    action = "skip"
+      action_parameters =[ {
         phases = ["http_ratelimit", "http_request_firewall_managed"]
-      }
+      }]
       expression = "http.request.uri.path contains \"/skip-phase/\""
       description = ""
       enabled = true
-	  logging {
+	  logging =[ {
 		enabled = true
-	  }
-    }
-
-    rules {
-      action = "skip"
-      action_parameters {
+	  }]
+    },
+    {
+    action = "skip"
+      action_parameters =[ {
         products = ["zoneLockdown", "uaBlock"]
-      }
+      }]
       expression = "http.request.uri.path contains \"/skip-products/\""
       description = ""
       enabled = true
-	  logging {
+	  logging =[ {
 		enabled = true
-	  }
-    }
+	  }]
+    }]
+
+
   }

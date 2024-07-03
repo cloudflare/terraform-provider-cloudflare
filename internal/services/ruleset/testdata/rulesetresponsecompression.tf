@@ -6,19 +6,19 @@
     kind        = "zone"
     phase       = "http_response_compression"
 
-    rules {
+    rules =[ {
       action = "compress_response"
-      action_parameters {
-        algorithms {
+      action_parameters =[ {
+        algorithms =[ {
 			name = "brotli"
- 		}
-        algorithms {
-			name = "default"
- 		}
-      }
+ 		},
+    {
+    name = "default"
+    }]
+      }]
 
       expression = "true"
       description = "%[1]s compress response rule"
       enabled = false
-    }
+    }]
   }

@@ -6,13 +6,13 @@
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
 
-		rules {
+		rules =[ {
 			action = "set_cache_settings"
-			action_parameters {
+			action_parameters =[ {
 				cache = false
-			}
+			}]
 			expression = "true"
 			description = "%[1]s set cache settings rule"
 			enabled = true
-		}
+		}]
 	}

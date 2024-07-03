@@ -12,9 +12,9 @@
       decision       = "allow"
       precedence     = "1"
 
-      include {
+      include =[ {
         auth_method = "hwk"
-      }
+      }]
     }
 
   

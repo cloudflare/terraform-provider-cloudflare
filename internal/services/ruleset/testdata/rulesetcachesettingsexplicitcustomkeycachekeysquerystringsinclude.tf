@@ -5,26 +5,26 @@
 		description = "set cache settings for the request"
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
-		rules {
+		rules =[ {
 		  action      = "set_cache_settings"
 		  description = "example"
 		  enabled     = true
 		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters {
+		  action_parameters =[ {
 			cache = true
-			edge_ttl {
+			edge_ttl =[ {
 			  mode    = "override_origin"
 			  default = 7200
-			}
-			cache_key {
+			}]
+			cache_key =[ {
 			  ignore_query_strings_order = true
-			  custom_key {
-				query_string {
+			  custom_key =[ {
+				query_string =[ {
 				  include = ["another_example"]
-				}
-			  }
-			}
-		  }
-		}
+				}]
+			  }]
+			}]
+		  }]
+		}]
 	  }
 	

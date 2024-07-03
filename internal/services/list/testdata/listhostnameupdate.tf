@@ -5,21 +5,21 @@
     description = "%[3]s"
     kind = "hostname"
 
-    item {
-      value {
-        hostname {
+    item =[ {
+      value =[ {
+        hostname =[ {
 		  url_hostname = "*.google.com"
-		}
-      }
+		}]
+      }]
       comment = "hostname one"
-    }
-
-    item {
-	  value {
-		hostname {
+    },
+    {
+    value =[ {
+		hostname =[ {
 		  url_hostname = "manutd.com"
-		}
-	  }
+		}]
+	  }]
       comment = "hostname two"
-    }
+    }]
+
   }

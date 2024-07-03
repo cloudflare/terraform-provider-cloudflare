@@ -6,7 +6,7 @@ resource "cloudflare_access_organization" "example" {
   user_seat_expiration_inactive_time = "720h"
   auto_redirect_to_identity          = false
 
-  login_design {
+  login_design = {
     background_color = "#ffffff"
     text_color       = "#000000"
     logo_path        = "https://example.com/logo.png"

@@ -8,14 +8,14 @@ resource "cloudflare_waiting_room" "example" {
   total_active_users   = 200
   cookie_suffix        = "queue1"
 
-  additional_routes {
+  additional_routes = [{
     host = "shop1.example.com"
     path = "/example-path"
-  }
+    },
+    {
+      host = "shop2.example.com"
+  }]
 
-  additional_routes {
-    host = "shop2.example.com"
-  }
 
-  queueing_status_code  = 200
+  queueing_status_code = 200
 }
