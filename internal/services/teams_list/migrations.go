@@ -70,7 +70,7 @@ func (r TeamsListResource) UpgradeState(ctx context.Context) map[int64]resource.
 					"updated_at": schema.StringAttribute{
 						Computed: true,
 					},
-					"count": schema.Float64Attribute{
+					"list_count": schema.Float64Attribute{
 						Description: "The number of items in the list.",
 						Computed:    true,
 					},

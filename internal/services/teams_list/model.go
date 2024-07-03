@@ -19,7 +19,7 @@ type TeamsListModel struct {
 	Items       *[]*TeamsListItemsModel `tfsdk:"items" json:"items"`
 	CreatedAt   types.String            `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt   types.String            `tfsdk:"updated_at" json:"updated_at,computed"`
-	Count       types.Float64           `tfsdk:"count" json:"count,computed"`
+	ListCount   types.Float64           `tfsdk:"list_count" json:"count,computed"`
 }
 
 type TeamsListItemsModel struct {
