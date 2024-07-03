@@ -10,14 +10,6 @@ type OriginCACertificateResultEnvelope struct {
 	Result OriginCACertificateModel `json:"result,computed"`
 }
 
-type OriginCACertificateResultDataSourceEnvelope struct {
-	Result OriginCACertificateDataSourceModel `json:"result,computed"`
-}
-
-type OriginCACertificatesResultDataSourceEnvelope struct {
-	Result OriginCACertificatesDataSourceModel `json:"result,computed"`
-}
-
 type OriginCACertificateModel struct {
 	CertificateID     types.String    `tfsdk:"certificate_id" path:"certificate_id"`
 	Csr               types.String    `tfsdk:"csr" json:"csr"`
@@ -25,10 +17,4 @@ type OriginCACertificateModel struct {
 	RequestType       types.String    `tfsdk:"request_type" json:"request_type"`
 	RequestedValidity types.Float64   `tfsdk:"requested_validity" json:"requested_validity"`
 	ID                types.String    `tfsdk:"id" json:"id,computed"`
-}
-
-type OriginCACertificateDataSourceModel struct {
-}
-
-type OriginCACertificatesDataSourceModel struct {
 }

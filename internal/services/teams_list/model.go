@@ -10,14 +10,6 @@ type TeamsListResultEnvelope struct {
 	Result TeamsListModel `json:"result,computed"`
 }
 
-type TeamsListResultDataSourceEnvelope struct {
-	Result TeamsListDataSourceModel `json:"result,computed"`
-}
-
-type TeamsListsResultDataSourceEnvelope struct {
-	Result TeamsListsDataSourceModel `json:"result,computed"`
-}
-
 type TeamsListModel struct {
 	ID          types.String            `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String            `tfsdk:"account_id" path:"account_id"`
@@ -34,10 +26,4 @@ type TeamsListItemsModel struct {
 	CreatedAt   types.String `tfsdk:"created_at" json:"created_at"`
 	Description types.String `tfsdk:"description" json:"description"`
 	Value       types.String `tfsdk:"value" json:"value"`
-}
-
-type TeamsListDataSourceModel struct {
-}
-
-type TeamsListsDataSourceModel struct {
 }

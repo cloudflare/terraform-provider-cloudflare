@@ -10,14 +10,6 @@ type DevicePostureIntegrationResultEnvelope struct {
 	Result DevicePostureIntegrationModel `json:"result,computed"`
 }
 
-type DevicePostureIntegrationResultDataSourceEnvelope struct {
-	Result DevicePostureIntegrationDataSourceModel `json:"result,computed"`
-}
-
-type DevicePostureIntegrationsResultDataSourceEnvelope struct {
-	Result DevicePostureIntegrationsDataSourceModel `json:"result,computed"`
-}
-
 type DevicePostureIntegrationModel struct {
 	ID        types.String                         `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                         `tfsdk:"account_id" path:"account_id"`
@@ -36,10 +28,4 @@ type DevicePostureIntegrationConfigModel struct {
 	ClientKey          types.String `tfsdk:"client_key" json:"client_key"`
 	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id"`
 	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret"`
-}
-
-type DevicePostureIntegrationDataSourceModel struct {
-}
-
-type DevicePostureIntegrationsDataSourceModel struct {
 }

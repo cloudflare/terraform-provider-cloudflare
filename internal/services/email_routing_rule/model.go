@@ -10,14 +10,6 @@ type EmailRoutingRuleResultEnvelope struct {
 	Result EmailRoutingRuleModel `json:"result,computed"`
 }
 
-type EmailRoutingRuleResultDataSourceEnvelope struct {
-	Result EmailRoutingRuleDataSourceModel `json:"result,computed"`
-}
-
-type EmailRoutingRulesResultDataSourceEnvelope struct {
-	Result EmailRoutingRulesDataSourceModel `json:"result,computed"`
-}
-
 type EmailRoutingRuleModel struct {
 	ID             types.String                      `tfsdk:"id" json:"id,computed"`
 	ZoneIdentifier types.String                      `tfsdk:"zone_identifier" path:"zone_identifier"`
@@ -38,10 +30,4 @@ type EmailRoutingRuleMatchersModel struct {
 	Field types.String `tfsdk:"field" json:"field"`
 	Type  types.String `tfsdk:"type" json:"type"`
 	Value types.String `tfsdk:"value" json:"value"`
-}
-
-type EmailRoutingRuleDataSourceModel struct {
-}
-
-type EmailRoutingRulesDataSourceModel struct {
 }

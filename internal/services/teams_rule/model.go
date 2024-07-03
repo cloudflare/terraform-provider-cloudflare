@@ -10,14 +10,6 @@ type TeamsRuleResultEnvelope struct {
 	Result TeamsRuleModel `json:"result,computed"`
 }
 
-type TeamsRuleResultDataSourceEnvelope struct {
-	Result TeamsRuleDataSourceModel `json:"result,computed"`
-}
-
-type TeamsRulesResultDataSourceEnvelope struct {
-	Result TeamsRulesDataSourceModel `json:"result,computed"`
-}
-
 type TeamsRuleModel struct {
 	ID            types.String                `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                `tfsdk:"account_id" path:"account_id"`
@@ -131,10 +123,4 @@ type TeamsRuleScheduleModel struct {
 	TimeZone types.String `tfsdk:"time_zone" json:"time_zone"`
 	Tue      types.String `tfsdk:"tue" json:"tue"`
 	Wed      types.String `tfsdk:"wed" json:"wed"`
-}
-
-type TeamsRuleDataSourceModel struct {
-}
-
-type TeamsRulesDataSourceModel struct {
 }

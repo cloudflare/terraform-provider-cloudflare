@@ -10,14 +10,6 @@ type PageRuleResultEnvelope struct {
 	Result PageRuleModel `json:"result,computed"`
 }
 
-type PageRuleResultDataSourceEnvelope struct {
-	Result PageRuleDataSourceModel `json:"result,computed"`
-}
-
-type PageRulesResultDataSourceEnvelope struct {
-	Result PageRulesDataSourceModel `json:"result,computed"`
-}
-
 type PageRuleModel struct {
 	ZoneID     types.String             `tfsdk:"zone_id" path:"zone_id"`
 	PageruleID types.String             `tfsdk:"pagerule_id" path:"pagerule_id"`
@@ -47,10 +39,4 @@ type PageRuleTargetsModel struct {
 type PageRuleTargetsConstraintModel struct {
 	Operator types.String `tfsdk:"operator" json:"operator"`
 	Value    types.String `tfsdk:"value" json:"value"`
-}
-
-type PageRuleDataSourceModel struct {
-}
-
-type PageRulesDataSourceModel struct {
 }

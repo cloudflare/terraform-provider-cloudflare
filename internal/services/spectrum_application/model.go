@@ -10,14 +10,6 @@ type SpectrumApplicationResultEnvelope struct {
 	Result SpectrumApplicationModel `json:"result,computed"`
 }
 
-type SpectrumApplicationResultDataSourceEnvelope struct {
-	Result SpectrumApplicationDataSourceModel `json:"result,computed"`
-}
-
-type SpectrumApplicationsResultDataSourceEnvelope struct {
-	Result SpectrumApplicationsDataSourceModel `json:"result,computed"`
-}
-
 type SpectrumApplicationModel struct {
 	ID               types.String                       `tfsdk:"id" json:"id,computed"`
 	Zone             types.String                       `tfsdk:"zone" path:"zone"`
@@ -50,10 +42,4 @@ type SpectrumApplicationEdgeIPsModel struct {
 	Connectivity types.String `tfsdk:"connectivity" json:"connectivity"`
 	Type         types.String `tfsdk:"type" json:"type"`
 	IPs          types.String `tfsdk:"ips" json:"ips"`
-}
-
-type SpectrumApplicationDataSourceModel struct {
-}
-
-type SpectrumApplicationsDataSourceModel struct {
 }

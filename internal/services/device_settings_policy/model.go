@@ -10,14 +10,6 @@ type DeviceSettingsPolicyResultEnvelope struct {
 	Result DeviceSettingsPolicyModel `json:"result,computed"`
 }
 
-type DeviceSettingsPolicyResultDataSourceEnvelope struct {
-	Result DeviceSettingsPolicyDataSourceModel `json:"result,computed"`
-}
-
-type DeviceSettingsPoliciesResultDataSourceEnvelope struct {
-	Result DeviceSettingsPoliciesDataSourceModel `json:"result,computed"`
-}
-
 type DeviceSettingsPolicyModel struct {
 	AccountID           types.String                            `tfsdk:"account_id" path:"account_id"`
 	PolicyID            types.String                            `tfsdk:"policy_id" path:"policy_id"`
@@ -43,10 +35,4 @@ type DeviceSettingsPolicyModel struct {
 type DeviceSettingsPolicyServiceModeV2Model struct {
 	Mode types.String  `tfsdk:"mode" json:"mode"`
 	Port types.Float64 `tfsdk:"port" json:"port"`
-}
-
-type DeviceSettingsPolicyDataSourceModel struct {
-}
-
-type DeviceSettingsPoliciesDataSourceModel struct {
 }

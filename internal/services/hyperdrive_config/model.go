@@ -10,14 +10,6 @@ type HyperdriveConfigResultEnvelope struct {
 	Result HyperdriveConfigModel `json:"result,computed"`
 }
 
-type HyperdriveConfigResultDataSourceEnvelope struct {
-	Result HyperdriveConfigDataSourceModel `json:"result,computed"`
-}
-
-type HyperdriveConfigsResultDataSourceEnvelope struct {
-	Result HyperdriveConfigsDataSourceModel `json:"result,computed"`
-}
-
 type HyperdriveConfigModel struct {
 	ID        types.String                  `tfsdk:"id" json:"-,computed"`
 	AccountID types.String                  `tfsdk:"account_id" path:"account_id"`
@@ -38,10 +30,4 @@ type HyperdriveConfigCachingModel struct {
 	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled"`
 	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age"`
 	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate"`
-}
-
-type HyperdriveConfigDataSourceModel struct {
-}
-
-type HyperdriveConfigsDataSourceModel struct {
 }
