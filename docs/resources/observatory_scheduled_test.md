@@ -30,6 +30,7 @@ resource "cloudflare_observatory_scheduled_test" "example" {
 ### Read-Only
 
 - `frequency` (String) The frequency of the test.
+- `item_count` (Number) Number of items affected.
 - `region` (String) A test region.
 
 ## Import
