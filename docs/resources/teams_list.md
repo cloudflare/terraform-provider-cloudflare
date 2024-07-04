@@ -38,6 +38,7 @@ resource "cloudflare_teams_list" "example" {
 
 - `created_at` (String)
 - `id` (String) API Resource UUID tag.
+- `list_count` (Number) The number of items in the list.
 - `updated_at` (String)
 
 <a id="nestedatt--items"></a>
