@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -147,6 +148,22 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareR2Bucket_InvalidLocation(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareR2BucketInvalidLocation(rnd, accountID),
+				ExpectError: regexp.MustCompile("Error: Invalid Attribute Value Match"),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_r2_bucket" "%[1]s" {
@@ -161,5 +178,14 @@ func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
     account_id = "%[2]s"
     name       = "%[1]s"
 	location   = "ENAM"
+  }`, rnd, accountID)
+}
+
+func testAccCheckCloudflareR2BucketInvalidLocation(rnd, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_r2_bucket" "%[1]s" {
+    account_id = "%[2]s"
+    name       = "%[1]s"
+	location   = "foo"
   }`, rnd, accountID)
 }
