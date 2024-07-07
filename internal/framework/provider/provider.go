@@ -20,6 +20,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_categories"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
@@ -372,6 +373,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		origin_ca_certificate.NewDataSource,
 		user.NewDataSource,
 		dlp_datasets.NewDataSource,
+		gateway_categories.NewDataSource,
 	}
 }
 
