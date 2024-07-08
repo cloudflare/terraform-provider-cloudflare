@@ -18,7 +18,7 @@ func NewDataSource() datasource.DataSource {
 }
 
 type CloudflareGatewayCategoriesDataSource struct {
-	client *cloudflare.Client
+	client *muxclient.Client
 }
 
 func (d *CloudflareGatewayCategoriesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -39,7 +39,7 @@ func (d *CloudflareGatewayCategoriesDataSource) Configure(ctx context.Context, r
 		return
 	}
 
-	d.client = client.V2
+	d.client = client
 }
 
 func (d *CloudflareGatewayCategoriesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -52,20 +52,34 @@ func (d *CloudflareGatewayCategoriesDataSource) Read(ctx context.Context, req da
 	}
 
 	// Create a new Gateway Category Service
-	service := zero_trust.NewGatewayCategoryService()
+	service := zero_trust.NewGatewayCategoryService(d.client.V2.Options...)
 
 	// Retrieve categories - v2 SDK way
-	iter := service.ListAutoPaging(ctx, params, d.client.Options...)
-	var categories []*GatewayCategoryModel
+	iter := service.ListAutoPaging(ctx, params)
+	var categories []GatewayCategoryModel
 
 	for iter.Next() {
 		category := iter.Current()
-		categories = append(categories, &GatewayCategoryModel{
-			ID:          types.Int64Value(category.ID),
-			Name:        types.StringValue(category.Name),
-			Description: types.StringValue(category.Description),
-			Class:       types.StringValue(string(category.Class)),
-			Beta:        types.BoolValue(category.Beta),
+
+		// Map subcategories
+		var subcategories []GatewaySubCategoryModel
+		for _, subcategory := range category.Subcategories {
+			subcategories = append(subcategories, GatewaySubCategoryModel{
+				ID:          types.Int64Value(subcategory.ID),
+				Name:        types.StringValue(subcategory.Name),
+				Description: types.StringValue(subcategory.Description),
+				Class:       types.StringValue(string(subcategory.Class)),
+				Beta:        types.BoolValue(subcategory.Beta),
+			})
+		}
+
+		categories = append(categories, GatewayCategoryModel{
+			ID:            types.Int64Value(category.ID),
+			Name:          types.StringValue(category.Name),
+			Description:   types.StringValue(category.Description),
+			Class:         types.StringValue(string(category.Class)),
+			Beta:          types.BoolValue(category.Beta),
+			Subcategories: subcategories,
 		})
 	}
 	if err := iter.Err(); err != nil {
@@ -74,8 +88,5 @@ func (d *CloudflareGatewayCategoriesDataSource) Read(ctx context.Context, req da
 	}
 
 	data.Categories = categories
-	resp.Diagnostics.Append(resp.State.Set(ctx, data)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

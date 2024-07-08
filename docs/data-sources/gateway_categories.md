@@ -25,17 +25,29 @@ data "cloudflare_gateway_categories" "example" {
 
 ### Read-Only
 
-- `categories` (List of Object) A list of Gateway Categories. (see [below for nested schema](#nestedatt--categories))
+- `categories` (Attributes List) A list of Gateway Categories. (see [below for nested schema](#nestedatt--categories))
 
 <a id="nestedatt--categories"></a>
 ### Nested Schema for `categories`
 
 Read-Only:
 
-- `beta` (Boolean)
-- `class` (String)
-- `description` (String)
-- `id` (Number)
-- `name` (String)
+- `beta` (Boolean) True if the category is in beta and subject to change.
+- `class` (String) Which account types are allowed to create policies based on this category.
+- `description` (String) A short summary of domains in the category.
+- `id` (Number) The identifier for this category. There is only one category per ID.
+- `name` (String) The name of the category.
+- `subcategories` (Attributes List) A list of subcategories. (see [below for nested schema](#nestedatt--categories--subcategories))
+
+<a id="nestedatt--categories--subcategories"></a>
+### Nested Schema for `categories.subcategories`
+
+Read-Only:
+
+- `beta` (Boolean) True if the subcategory is in beta and subject to change.
+- `class` (String) Which account types are allowed to create policies based on this subcategory.
+- `description` (String) A short summary of domains in the subcategory.
+- `id` (Number) The identifier for this subcategory. There is only one subcategory per ID.
+- `name` (String) The name of the subcategory.
 
 
