@@ -2,14 +2,20 @@ package r2_bucket
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
+
+var locationHints = []string{"WNAM", "ENAM", "WEUR", "EEUR", "APAC"}
 
 func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
@@ -39,9 +45,12 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 			"location": schema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				MarkdownDescription: "The location hint of the R2 bucket.",
+				MarkdownDescription: fmt.Sprintf("The location hint of the R2 bucket. %s", utils.RenderAvailableDocumentationValuesStringSlice(locationHints)),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
+				},
+				Validators: []validator.String{
+					stringvalidator.OneOf(locationHints...),
 				},
 			},
 		},

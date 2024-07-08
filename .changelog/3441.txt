@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_r2_bucket: add validation to location hint to prevent invalid values from drifting
+```
