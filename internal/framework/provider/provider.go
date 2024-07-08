@@ -200,7 +200,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	basePath = strings.TrimSuffix(basePath, "/") + "/"
 
 	baseURL := cfv1.BaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath))
-	cfv2Options = append(cfv2Options, option.WithBaseURL(fmt.Sprintf("https://%s%s/", baseHostname, basePath)))
+	cfv2Options = append(cfv2Options, option.WithBaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath)))
 
 	if !data.RPS.IsNull() {
 		rps = int64(data.RPS.ValueInt64())
