@@ -23,49 +23,49 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 			},
 			"sitekey": schema.StringAttribute{
 				Description: "Widget item identifier tag.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
-				Optional:    true,
+				Computed:    true,
 			},
 			"clearance_level": schema.StringAttribute{
 				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\n",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("no_clearance", "jschallenge", "managed", "interactive"),
 				},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the widget was created.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"domains": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("non-interactive", "invisible", "managed"),
 				},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the widget was modified.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
-				Optional:    true,
+				Computed:    true,
 			},
 			"offlabel": schema.BoolAttribute{
 				Description: "Do not show any Cloudflare branding on the widget (ENT only).\n",
-				Optional:    true,
+				Computed:    true,
 			},
 			"region": schema.StringAttribute{
 				Description: "Region where this widget can be used.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("world"),
 				},

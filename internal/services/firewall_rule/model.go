@@ -21,12 +21,3 @@ type FirewallRuleModel struct {
 	Products       *[]types.String `tfsdk:"products" json:"products,computed"`
 	Ref            types.String    `tfsdk:"ref" json:"ref,computed"`
 }
-
-type FirewallRuleFilterModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description"`
-	Expression  types.String `tfsdk:"expression" json:"expression"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused"`
-	Ref         types.String `tfsdk:"ref" json:"ref"`
-	Deleted     types.Bool   `tfsdk:"deleted" json:"deleted"`
-}

@@ -16,17 +16,17 @@ type PagesProjectResultListDataSourceEnvelope struct {
 
 type PagesProjectDataSourceModel struct {
 	AccountID           types.String                                    `tfsdk:"account_id" path:"account_id"`
-	ProjectName         types.String                                    `tfsdk:"project_name" path:"project_name"`
-	ID                  types.String                                    `tfsdk:"id" json:"id"`
+	ProjectName         types.String                                    `tfsdk:"project_name" json:"project_name"`
+	ID                  types.String                                    `tfsdk:"id" json:"id,computed"`
 	BuildConfig         *PagesProjectBuildConfigDataSourceModel         `tfsdk:"build_config" json:"build_config"`
 	CanonicalDeployment *PagesProjectCanonicalDeploymentDataSourceModel `tfsdk:"canonical_deployment" json:"canonical_deployment"`
-	CreatedOn           types.String                                    `tfsdk:"created_on" json:"created_on"`
+	CreatedOn           types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsDataSourceModel   `tfsdk:"deployment_configs" json:"deployment_configs"`
 	Domains             types.String                                    `tfsdk:"domains" json:"domains"`
 	LatestDeployment    *PagesProjectLatestDeploymentDataSourceModel    `tfsdk:"latest_deployment" json:"latest_deployment"`
 	Name                types.String                                    `tfsdk:"name" json:"name"`
 	ProductionBranch    types.String                                    `tfsdk:"production_branch" json:"production_branch"`
-	Source              types.String                                    `tfsdk:"source" json:"source"`
+	Source              types.String                                    `tfsdk:"source" json:"source,computed"`
 	Subdomain           types.String                                    `tfsdk:"subdomain" json:"subdomain"`
 	Aliases             types.String                                    `tfsdk:"aliases" json:"aliases"`
 	DeploymentTrigger   *PagesProjectDeploymentTriggerDataSourceModel   `tfsdk:"deployment_trigger" json:"deployment_trigger"`
@@ -67,17 +67,6 @@ type PagesProjectCanonicalDeploymentDataSourceModel struct {
 	Source      types.String                                             `tfsdk:"source" json:"source,computed"`
 	Stages      *[]*PagesProjectCanonicalDeploymentStagesDataSourceModel `tfsdk:"stages" json:"stages,computed"`
 	URL         types.String                                             `tfsdk:"url" json:"url,computed"`
-}
-
-type PagesProjectCanonicalDeploymentDeploymentTriggerDataSourceModel struct {
-	Metadata *PagesProjectCanonicalDeploymentDeploymentTriggerMetadataDataSourceModel `tfsdk:"metadata" json:"metadata"`
-	Type     types.String                                                             `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectCanonicalDeploymentDeploymentTriggerMetadataDataSourceModel struct {
-	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
-	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
-	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
 }
 
 type PagesProjectCanonicalDeploymentStagesDataSourceModel struct {
@@ -362,17 +351,6 @@ type PagesProjectLatestDeploymentDataSourceModel struct {
 	Source      types.String                                          `tfsdk:"source" json:"source,computed"`
 	Stages      *[]*PagesProjectLatestDeploymentStagesDataSourceModel `tfsdk:"stages" json:"stages,computed"`
 	URL         types.String                                          `tfsdk:"url" json:"url,computed"`
-}
-
-type PagesProjectLatestDeploymentDeploymentTriggerDataSourceModel struct {
-	Metadata *PagesProjectLatestDeploymentDeploymentTriggerMetadataDataSourceModel `tfsdk:"metadata" json:"metadata"`
-	Type     types.String                                                          `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectLatestDeploymentDeploymentTriggerMetadataDataSourceModel struct {
-	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
-	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
-	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
 }
 
 type PagesProjectLatestDeploymentStagesDataSourceModel struct {

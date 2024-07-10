@@ -18,11 +18,11 @@ type WaitingRoomRulesListDataSourceModel struct {
 }
 
 type WaitingRoomRulesListItemsDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Action      types.String `tfsdk:"action" json:"action,computed"`
+	ID          types.String `tfsdk:"id" json:"id"`
+	Action      types.String `tfsdk:"action" json:"action"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
+	Expression  types.String `tfsdk:"expression" json:"expression"`
 	LastUpdated types.String `tfsdk:"last_updated" json:"last_updated,computed"`
-	Version     types.String `tfsdk:"version" json:"version,computed"`
+	Version     types.String `tfsdk:"version" json:"version"`
 }

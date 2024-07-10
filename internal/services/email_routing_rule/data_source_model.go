@@ -17,25 +17,25 @@ type EmailRoutingRuleResultListDataSourceEnvelope struct {
 type EmailRoutingRuleDataSourceModel struct {
 	ZoneIdentifier types.String                                `tfsdk:"zone_identifier" path:"zone_identifier"`
 	RuleIdentifier types.String                                `tfsdk:"rule_identifier" path:"rule_identifier"`
-	ID             types.String                                `tfsdk:"id" json:"id"`
+	ID             types.String                                `tfsdk:"id" json:"id,computed"`
 	Actions        *[]*EmailRoutingRuleActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
-	Enabled        types.Bool                                  `tfsdk:"enabled" json:"enabled"`
+	Enabled        types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
 	Matchers       *[]*EmailRoutingRuleMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
 	Name           types.String                                `tfsdk:"name" json:"name"`
-	Priority       types.Float64                               `tfsdk:"priority" json:"priority"`
-	Tag            types.String                                `tfsdk:"tag" json:"tag"`
+	Priority       types.Float64                               `tfsdk:"priority" json:"priority,computed"`
+	Tag            types.String                                `tfsdk:"tag" json:"tag,computed"`
 	FindOneBy      *EmailRoutingRuleFindOneByDataSourceModel   `tfsdk:"find_one_by"`
 }
 
 type EmailRoutingRuleActionsDataSourceModel struct {
-	Type  types.String `tfsdk:"type" json:"type"`
-	Value types.String `tfsdk:"value" json:"value"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type EmailRoutingRuleMatchersDataSourceModel struct {
-	Field types.String `tfsdk:"field" json:"field"`
-	Type  types.String `tfsdk:"type" json:"type"`
-	Value types.String `tfsdk:"value" json:"value"`
+	Field types.String `tfsdk:"field" json:"field,computed"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type EmailRoutingRuleFindOneByDataSourceModel struct {

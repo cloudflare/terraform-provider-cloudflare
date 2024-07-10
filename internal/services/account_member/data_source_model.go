@@ -17,11 +17,10 @@ type AccountMemberResultListDataSourceEnvelope struct {
 type AccountMemberDataSourceModel struct {
 	AccountID types.String                             `tfsdk:"account_id" path:"account_id"`
 	MemberID  types.String                             `tfsdk:"member_id" path:"member_id"`
-	ID        types.String                             `tfsdk:"id" json:"id"`
+	ID        types.String                             `tfsdk:"id" json:"id,computed"`
 	Policies  *[]*AccountMemberPoliciesDataSourceModel `tfsdk:"policies" json:"policies"`
 	Roles     *[]*AccountMemberRolesDataSourceModel    `tfsdk:"roles" json:"roles"`
-	Status    types.String                             `tfsdk:"status" json:"status"`
-	User      *AccountMemberUserDataSourceModel        `tfsdk:"user" json:"user"`
+	Status    types.String                             `tfsdk:"status" json:"status,computed"`
 	FindOneBy *AccountMemberFindOneByDataSourceModel   `tfsdk:"find_one_by"`
 }
 
@@ -40,14 +39,14 @@ type AccountMemberPoliciesPermissionGroupsDataSourceModel struct {
 
 type AccountMemberPoliciesResourceGroupsDataSourceModel struct {
 	ID    types.String                                                `tfsdk:"id" json:"id,computed"`
-	Scope *[]*AccountMemberPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope"`
+	Scope *[]*AccountMemberPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope,computed"`
 	Meta  types.String                                                `tfsdk:"meta" json:"meta"`
 	Name  types.String                                                `tfsdk:"name" json:"name,computed"`
 }
 
 type AccountMemberPoliciesResourceGroupsScopeDataSourceModel struct {
 	Key     types.String                                                       `tfsdk:"key" json:"key,computed"`
-	Objects *[]*AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel `tfsdk:"objects" json:"objects"`
+	Objects *[]*AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel `tfsdk:"objects" json:"objects,computed"`
 }
 
 type AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
@@ -55,18 +54,10 @@ type AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
 }
 
 type AccountMemberRolesDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id"`
+	ID          types.String `tfsdk:"id" json:"id,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
 	Name        types.String `tfsdk:"name" json:"name,computed"`
 	Permissions types.String `tfsdk:"permissions" json:"permissions,computed"`
-}
-
-type AccountMemberUserDataSourceModel struct {
-	Email                          types.String `tfsdk:"email" json:"email"`
-	ID                             types.String `tfsdk:"id" json:"id,computed"`
-	FirstName                      types.String `tfsdk:"first_name" json:"first_name"`
-	LastName                       types.String `tfsdk:"last_name" json:"last_name"`
-	TwoFactorAuthenticationEnabled types.Bool   `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
 }
 
 type AccountMemberFindOneByDataSourceModel struct {

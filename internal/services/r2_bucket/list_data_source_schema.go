@@ -64,10 +64,12 @@ func (r R2BucketsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						"creation_date": schema.StringAttribute{
 							Description: "Creation timestamp",
 							Computed:    true,
+							Optional:    true,
 						},
 						"location": schema.StringAttribute{
 							Description: "Location of the bucket",
 							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("apac", "eeur", "enam", "weur", "wnam"),
 							},
@@ -75,6 +77,7 @@ func (r R2BucketsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						"name": schema.StringAttribute{
 							Description: "Name of the bucket",
 							Computed:    true,
+							Optional:    true,
 						},
 						"storage_class": schema.StringAttribute{
 							Description: "Storage class for newly uploaded objects, unless specified otherwise.",

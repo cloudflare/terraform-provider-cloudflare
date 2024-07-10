@@ -19,15 +19,15 @@ type LoadBalancerPoolDataSourceModel struct {
 	PoolID             types.String                                       `tfsdk:"pool_id" path:"pool_id"`
 	ID                 types.String                                       `tfsdk:"id" json:"id"`
 	CheckRegions       types.String                                       `tfsdk:"check_regions" json:"check_regions"`
-	CreatedOn          types.String                                       `tfsdk:"created_on" json:"created_on"`
+	CreatedOn          types.String                                       `tfsdk:"created_on" json:"created_on,computed"`
 	Description        types.String                                       `tfsdk:"description" json:"description"`
-	DisabledAt         types.String                                       `tfsdk:"disabled_at" json:"disabled_at"`
-	Enabled            types.Bool                                         `tfsdk:"enabled" json:"enabled"`
+	DisabledAt         types.String                                       `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	Enabled            types.Bool                                         `tfsdk:"enabled" json:"enabled,computed"`
 	Latitude           types.Float64                                      `tfsdk:"latitude" json:"latitude"`
 	LoadShedding       *LoadBalancerPoolLoadSheddingDataSourceModel       `tfsdk:"load_shedding" json:"load_shedding"`
 	Longitude          types.Float64                                      `tfsdk:"longitude" json:"longitude"`
-	MinimumOrigins     types.Int64                                        `tfsdk:"minimum_origins" json:"minimum_origins"`
-	ModifiedOn         types.String                                       `tfsdk:"modified_on" json:"modified_on"`
+	MinimumOrigins     types.Int64                                        `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
+	ModifiedOn         types.String                                       `tfsdk:"modified_on" json:"modified_on,computed"`
 	Monitor            types.String                                       `tfsdk:"monitor" json:"monitor"`
 	Name               types.String                                       `tfsdk:"name" json:"name"`
 	NotificationEmail  types.String                                       `tfsdk:"notification_email" json:"notification_email"`

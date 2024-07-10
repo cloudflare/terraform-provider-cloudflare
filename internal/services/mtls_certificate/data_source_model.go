@@ -17,14 +17,14 @@ type MTLSCertificateResultListDataSourceEnvelope struct {
 type MTLSCertificateDataSourceModel struct {
 	AccountID         types.String                             `tfsdk:"account_id" path:"account_id"`
 	MTLSCertificateID types.String                             `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id"`
-	ID                types.String                             `tfsdk:"id" json:"id"`
+	ID                types.String                             `tfsdk:"id" json:"id,computed"`
 	CA                types.Bool                               `tfsdk:"ca" json:"ca"`
 	Certificates      types.String                             `tfsdk:"certificates" json:"certificates"`
-	ExpiresOn         types.String                             `tfsdk:"expires_on" json:"expires_on"`
-	Issuer            types.String                             `tfsdk:"issuer" json:"issuer"`
+	ExpiresOn         types.String                             `tfsdk:"expires_on" json:"expires_on,computed"`
+	Issuer            types.String                             `tfsdk:"issuer" json:"issuer,computed"`
 	Name              types.String                             `tfsdk:"name" json:"name"`
-	SerialNumber      types.String                             `tfsdk:"serial_number" json:"serial_number"`
-	Signature         types.String                             `tfsdk:"signature" json:"signature"`
+	SerialNumber      types.String                             `tfsdk:"serial_number" json:"serial_number,computed"`
+	Signature         types.String                             `tfsdk:"signature" json:"signature,computed"`
 	UploadedOn        types.String                             `tfsdk:"uploaded_on" json:"uploaded_on"`
 	FindOneBy         *MTLSCertificateFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }

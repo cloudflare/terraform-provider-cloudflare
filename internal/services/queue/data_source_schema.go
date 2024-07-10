@@ -20,28 +20,29 @@ func (r QueueDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Optional:    true,
 			},
 			"queue_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+				Computed: true,
+				Optional: true,
 			},
 			"consumers": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"consumers_total_count": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"created_on": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"modified_on": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"producers": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"producers_total_count": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"queue_name": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

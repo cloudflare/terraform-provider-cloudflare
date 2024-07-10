@@ -17,10 +17,11 @@ type DevicePostureIntegrationsDataSourceModel struct {
 }
 
 type DevicePostureIntegrationsItemsDataSourceModel struct {
-	ID       types.String `tfsdk:"id" json:"id,computed"`
-	Interval types.String `tfsdk:"interval" json:"interval,computed"`
-	Name     types.String `tfsdk:"name" json:"name,computed"`
-	Type     types.String `tfsdk:"type" json:"type,computed"`
+	ID       types.String                                         `tfsdk:"id" json:"id"`
+	Config   *DevicePostureIntegrationsItemsConfigDataSourceModel `tfsdk:"config" json:"config"`
+	Interval types.String                                         `tfsdk:"interval" json:"interval"`
+	Name     types.String                                         `tfsdk:"name" json:"name"`
+	Type     types.String                                         `tfsdk:"type" json:"type"`
 }
 
 type DevicePostureIntegrationsItemsConfigDataSourceModel struct {

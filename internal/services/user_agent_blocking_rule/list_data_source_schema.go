@@ -56,13 +56,32 @@ func (r UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req dataso
 							Description: "The unique identifier of the User Agent Blocking rule.",
 							Computed:    true,
 						},
+						"configuration": schema.SingleNestedAttribute{
+							Description: "The configuration object for the current rule.",
+							Computed:    true,
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"target": schema.StringAttribute{
+									Description: "The configuration target for this rule. You must set the target to `ua` for User Agent Blocking rules.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"value": schema.StringAttribute{
+									Description: "The exact user agent string to match. This value will be compared to the received `User-Agent` HTTP header value.",
+									Computed:    true,
+									Optional:    true,
+								},
+							},
+						},
 						"description": schema.StringAttribute{
 							Description: "An informative summary of the rule.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"mode": schema.StringAttribute{
 							Description: "The action to apply to a matched request.",
 							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge"),
 							},
@@ -70,6 +89,7 @@ func (r UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req dataso
 						"paused": schema.BoolAttribute{
 							Description: "When true, indicates that the rule is currently paused.",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

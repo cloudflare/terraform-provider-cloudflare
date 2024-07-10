@@ -35,8 +35,3 @@ type ZoneLockdownsItemsDataSourceModel struct {
 	Paused      types.Bool      `tfsdk:"paused" json:"paused,computed"`
 	URLs        *[]types.String `tfsdk:"urls" json:"urls,computed"`
 }
-
-type ZoneLockdownsItemsConfigurationsDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target,computed"`
-	Value  types.String `tfsdk:"value" json:"value,computed"`
-}

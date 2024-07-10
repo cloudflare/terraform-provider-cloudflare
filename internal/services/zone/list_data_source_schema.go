@@ -128,6 +128,7 @@ func (r ZonesDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						"vanity_name_servers": schema.ListAttribute{
 							Description: "An array of domains used for custom name servers. This is only available for Business and Enterprise plans.",
 							Computed:    true,
+							Optional:    true,
 							ElementType: types.StringType,
 						},
 					},

@@ -53,17 +53,6 @@ type PagesProjectCanonicalDeploymentModel struct {
 	URL         types.String                                   `tfsdk:"url" json:"url,computed"`
 }
 
-type PagesProjectCanonicalDeploymentDeploymentTriggerModel struct {
-	Metadata *PagesProjectCanonicalDeploymentDeploymentTriggerMetadataModel `tfsdk:"metadata" json:"metadata"`
-	Type     types.String                                                   `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectCanonicalDeploymentDeploymentTriggerMetadataModel struct {
-	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
-	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
-	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
-}
-
 type PagesProjectCanonicalDeploymentStagesModel struct {
 	EndedOn   types.String `tfsdk:"ended_on" json:"ended_on,computed"`
 	Name      types.String `tfsdk:"name" json:"name"`
@@ -346,17 +335,6 @@ type PagesProjectLatestDeploymentModel struct {
 	Source      types.String                                `tfsdk:"source" json:"source,computed"`
 	Stages      *[]*PagesProjectLatestDeploymentStagesModel `tfsdk:"stages" json:"stages,computed"`
 	URL         types.String                                `tfsdk:"url" json:"url,computed"`
-}
-
-type PagesProjectLatestDeploymentDeploymentTriggerModel struct {
-	Metadata *PagesProjectLatestDeploymentDeploymentTriggerMetadataModel `tfsdk:"metadata" json:"metadata"`
-	Type     types.String                                                `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectLatestDeploymentDeploymentTriggerMetadataModel struct {
-	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
-	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
-	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
 }
 
 type PagesProjectLatestDeploymentStagesModel struct {

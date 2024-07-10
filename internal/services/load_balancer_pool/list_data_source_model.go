@@ -18,20 +18,23 @@ type LoadBalancerPoolsDataSourceModel struct {
 }
 
 type LoadBalancerPoolsItemsDataSourceModel struct {
-	ID                types.String                                     `tfsdk:"id" json:"id,computed"`
-	CheckRegions      *[]types.String                                  `tfsdk:"check_regions" json:"check_regions,computed"`
-	CreatedOn         types.String                                     `tfsdk:"created_on" json:"created_on,computed"`
-	Description       types.String                                     `tfsdk:"description" json:"description,computed"`
-	DisabledAt        types.String                                     `tfsdk:"disabled_at" json:"disabled_at,computed"`
-	Enabled           types.Bool                                       `tfsdk:"enabled" json:"enabled,computed"`
-	Latitude          types.Float64                                    `tfsdk:"latitude" json:"latitude,computed"`
-	Longitude         types.Float64                                    `tfsdk:"longitude" json:"longitude,computed"`
-	MinimumOrigins    types.Int64                                      `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
-	ModifiedOn        types.String                                     `tfsdk:"modified_on" json:"modified_on,computed"`
-	Monitor           types.String                                     `tfsdk:"monitor" json:"monitor,computed"`
-	Name              types.String                                     `tfsdk:"name" json:"name,computed"`
-	NotificationEmail types.String                                     `tfsdk:"notification_email" json:"notification_email,computed"`
-	Origins           *[]*LoadBalancerPoolsItemsOriginsDataSourceModel `tfsdk:"origins" json:"origins,computed"`
+	ID                 types.String                                             `tfsdk:"id" json:"id"`
+	CheckRegions       *[]types.String                                          `tfsdk:"check_regions" json:"check_regions"`
+	CreatedOn          types.String                                             `tfsdk:"created_on" json:"created_on,computed"`
+	Description        types.String                                             `tfsdk:"description" json:"description"`
+	DisabledAt         types.String                                             `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	Enabled            types.Bool                                               `tfsdk:"enabled" json:"enabled,computed"`
+	Latitude           types.Float64                                            `tfsdk:"latitude" json:"latitude"`
+	LoadShedding       *LoadBalancerPoolsItemsLoadSheddingDataSourceModel       `tfsdk:"load_shedding" json:"load_shedding"`
+	Longitude          types.Float64                                            `tfsdk:"longitude" json:"longitude"`
+	MinimumOrigins     types.Int64                                              `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
+	ModifiedOn         types.String                                             `tfsdk:"modified_on" json:"modified_on,computed"`
+	Monitor            types.String                                             `tfsdk:"monitor" json:"monitor"`
+	Name               types.String                                             `tfsdk:"name" json:"name"`
+	NotificationEmail  types.String                                             `tfsdk:"notification_email" json:"notification_email"`
+	NotificationFilter *LoadBalancerPoolsItemsNotificationFilterDataSourceModel `tfsdk:"notification_filter" json:"notification_filter"`
+	OriginSteering     *LoadBalancerPoolsItemsOriginSteeringDataSourceModel     `tfsdk:"origin_steering" json:"origin_steering"`
+	Origins            *[]*LoadBalancerPoolsItemsOriginsDataSourceModel         `tfsdk:"origins" json:"origins"`
 }
 
 type LoadBalancerPoolsItemsLoadSheddingDataSourceModel struct {
@@ -42,16 +45,18 @@ type LoadBalancerPoolsItemsLoadSheddingDataSourceModel struct {
 }
 
 type LoadBalancerPoolsItemsNotificationFilterDataSourceModel struct {
+	Origin *LoadBalancerPoolsItemsNotificationFilterOriginDataSourceModel `tfsdk:"origin" json:"origin"`
+	Pool   *LoadBalancerPoolsItemsNotificationFilterPoolDataSourceModel   `tfsdk:"pool" json:"pool"`
 }
 
 type LoadBalancerPoolsItemsNotificationFilterOriginDataSourceModel struct {
 	Disable types.Bool `tfsdk:"disable" json:"disable,computed"`
-	Healthy types.Bool `tfsdk:"healthy" json:"healthy,computed"`
+	Healthy types.Bool `tfsdk:"healthy" json:"healthy"`
 }
 
 type LoadBalancerPoolsItemsNotificationFilterPoolDataSourceModel struct {
 	Disable types.Bool `tfsdk:"disable" json:"disable,computed"`
-	Healthy types.Bool `tfsdk:"healthy" json:"healthy,computed"`
+	Healthy types.Bool `tfsdk:"healthy" json:"healthy"`
 }
 
 type LoadBalancerPoolsItemsOriginSteeringDataSourceModel struct {
@@ -59,14 +64,15 @@ type LoadBalancerPoolsItemsOriginSteeringDataSourceModel struct {
 }
 
 type LoadBalancerPoolsItemsOriginsDataSourceModel struct {
-	Address          types.String  `tfsdk:"address" json:"address,computed"`
-	DisabledAt       types.String  `tfsdk:"disabled_at" json:"disabled_at,computed"`
-	Enabled          types.Bool    `tfsdk:"enabled" json:"enabled,computed"`
-	Name             types.String  `tfsdk:"name" json:"name,computed"`
-	VirtualNetworkID types.String  `tfsdk:"virtual_network_id" json:"virtual_network_id,computed"`
-	Weight           types.Float64 `tfsdk:"weight" json:"weight,computed"`
+	Address          types.String                                        `tfsdk:"address" json:"address"`
+	DisabledAt       types.String                                        `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	Enabled          types.Bool                                          `tfsdk:"enabled" json:"enabled,computed"`
+	Header           *LoadBalancerPoolsItemsOriginsHeaderDataSourceModel `tfsdk:"header" json:"header"`
+	Name             types.String                                        `tfsdk:"name" json:"name"`
+	VirtualNetworkID types.String                                        `tfsdk:"virtual_network_id" json:"virtual_network_id"`
+	Weight           types.Float64                                       `tfsdk:"weight" json:"weight,computed"`
 }
 
 type LoadBalancerPoolsItemsOriginsHeaderDataSourceModel struct {
-	Host *[]types.String `tfsdk:"host" json:"Host,computed"`
+	Host *[]types.String `tfsdk:"host" json:"Host"`
 }

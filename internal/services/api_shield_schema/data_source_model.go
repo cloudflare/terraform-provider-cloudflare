@@ -16,11 +16,11 @@ type APIShieldSchemaResultListDataSourceEnvelope struct {
 
 type APIShieldSchemaDataSourceModel struct {
 	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	SchemaID          types.String                             `tfsdk:"schema_id" path:"schema_id"`
+	SchemaID          types.String                             `tfsdk:"schema_id" json:"schema_id"`
 	OmitSource        types.Bool                               `tfsdk:"omit_source" query:"omit_source"`
-	CreatedAt         types.String                             `tfsdk:"created_at" json:"created_at"`
-	Kind              types.String                             `tfsdk:"kind" json:"kind"`
-	Name              types.String                             `tfsdk:"name" json:"name"`
+	CreatedAt         types.String                             `tfsdk:"created_at" json:"created_at,computed"`
+	Kind              types.String                             `tfsdk:"kind" json:"kind,computed"`
+	Name              types.String                             `tfsdk:"name" json:"name,computed"`
 	Source            types.String                             `tfsdk:"source" json:"source"`
 	ValidationEnabled types.Bool                               `tfsdk:"validation_enabled" json:"validation_enabled"`
 	FindOneBy         *APIShieldSchemaFindOneByDataSourceModel `tfsdk:"find_one_by"`

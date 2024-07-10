@@ -15,7 +15,7 @@ type ByoIPPrefixResultListDataSourceEnvelope struct {
 }
 
 type ByoIPPrefixDataSourceModel struct {
-	AccountID            types.String                         `tfsdk:"account_id" path:"account_id"`
+	AccountID            types.String                         `tfsdk:"account_id" json:"account_id"`
 	PrefixID             types.String                         `tfsdk:"prefix_id" path:"prefix_id"`
 	ID                   types.String                         `tfsdk:"id" json:"id"`
 	Advertised           types.Bool                           `tfsdk:"advertised" json:"advertised"`

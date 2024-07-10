@@ -51,6 +51,7 @@ func (r QueuesDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 						},
 						"queue_name": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 					},
 				},

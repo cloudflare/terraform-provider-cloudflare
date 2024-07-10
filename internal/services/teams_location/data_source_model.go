@@ -30,7 +30,7 @@ type TeamsLocationDataSourceModel struct {
 }
 
 type TeamsLocationNetworksDataSourceModel struct {
-	Network types.String `tfsdk:"network" json:"network"`
+	Network types.String `tfsdk:"network" json:"network,computed"`
 }
 
 type TeamsLocationFindOneByDataSourceModel struct {

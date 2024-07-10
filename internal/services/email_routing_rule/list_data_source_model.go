@@ -21,10 +21,10 @@ type EmailRoutingRulesDataSourceModel struct {
 
 type EmailRoutingRulesItemsDataSourceModel struct {
 	ID       types.String                                      `tfsdk:"id" json:"id,computed"`
-	Actions  *[]*EmailRoutingRulesItemsActionsDataSourceModel  `tfsdk:"actions" json:"actions,computed"`
+	Actions  *[]*EmailRoutingRulesItemsActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
 	Enabled  types.Bool                                        `tfsdk:"enabled" json:"enabled,computed"`
-	Matchers *[]*EmailRoutingRulesItemsMatchersDataSourceModel `tfsdk:"matchers" json:"matchers,computed"`
-	Name     types.String                                      `tfsdk:"name" json:"name,computed"`
+	Matchers *[]*EmailRoutingRulesItemsMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
+	Name     types.String                                      `tfsdk:"name" json:"name"`
 	Priority types.Float64                                     `tfsdk:"priority" json:"priority,computed"`
 	Tag      types.String                                      `tfsdk:"tag" json:"tag,computed"`
 }

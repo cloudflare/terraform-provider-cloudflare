@@ -19,6 +19,6 @@ type WorkerSecretsDataSourceModel struct {
 }
 
 type WorkerSecretsItemsDataSourceModel struct {
-	Name types.String `tfsdk:"name" json:"name,computed"`
-	Type types.String `tfsdk:"type" json:"type,computed"`
+	Name types.String `tfsdk:"name" json:"name"`
+	Type types.String `tfsdk:"type" json:"type"`
 }

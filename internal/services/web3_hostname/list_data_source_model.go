@@ -19,10 +19,10 @@ type Web3HostnamesDataSourceModel struct {
 type Web3HostnamesItemsDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
 	CreatedOn   types.String `tfsdk:"created_on" json:"created_on,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Dnslink     types.String `tfsdk:"dnslink" json:"dnslink,computed"`
+	Description types.String `tfsdk:"description" json:"description"`
+	Dnslink     types.String `tfsdk:"dnslink" json:"dnslink"`
 	ModifiedOn  types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String `tfsdk:"name" json:"name,computed"`
 	Status      types.String `tfsdk:"status" json:"status,computed"`
-	Target      types.String `tfsdk:"target" json:"target,computed"`
+	Target      types.String `tfsdk:"target" json:"target"`
 }

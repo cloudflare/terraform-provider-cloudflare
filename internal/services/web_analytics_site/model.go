@@ -32,10 +32,3 @@ type WebAnalyticsSiteRulesModel struct {
 	Paths     *[]types.String `tfsdk:"paths" json:"paths"`
 	Priority  types.Float64   `tfsdk:"priority" json:"priority"`
 }
-
-type WebAnalyticsSiteRulesetModel struct {
-	ID       types.String `tfsdk:"id" json:"id"`
-	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled"`
-	ZoneName types.String `tfsdk:"zone_name" json:"zone_name"`
-	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag"`
-}

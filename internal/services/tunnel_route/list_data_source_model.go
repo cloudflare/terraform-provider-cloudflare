@@ -29,13 +29,13 @@ type TunnelRoutesDataSourceModel struct {
 
 type TunnelRoutesItemsDataSourceModel struct {
 	ID                 types.String `tfsdk:"id" json:"id,computed"`
-	Comment            types.String `tfsdk:"comment" json:"comment,computed"`
-	CreatedAt          types.String `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt          types.String `tfsdk:"deleted_at" json:"deleted_at,computed"`
-	Network            types.String `tfsdk:"network" json:"network,computed"`
-	TunType            types.String `tfsdk:"tun_type" json:"tun_type,computed"`
+	Comment            types.String `tfsdk:"comment" json:"comment"`
+	CreatedAt          types.String `tfsdk:"created_at" json:"created_at"`
+	DeletedAt          types.String `tfsdk:"deleted_at" json:"deleted_at"`
+	Network            types.String `tfsdk:"network" json:"network"`
+	TunType            types.String `tfsdk:"tun_type" json:"tun_type"`
 	TunnelID           types.String `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
-	TunnelName         types.String `tfsdk:"tunnel_name" json:"tunnel_name,computed"`
-	VirtualNetworkID   types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,computed"`
-	VirtualNetworkName types.String `tfsdk:"virtual_network_name" json:"virtual_network_name,computed"`
+	TunnelName         types.String `tfsdk:"tunnel_name" json:"tunnel_name"`
+	VirtualNetworkID   types.String `tfsdk:"virtual_network_id" json:"virtual_network_id"`
+	VirtualNetworkName types.String `tfsdk:"virtual_network_name" json:"virtual_network_name"`
 }

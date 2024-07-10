@@ -35,24 +35,30 @@ func (r AccessServiceTokensDataSource) Schema(ctx context.Context, req datasourc
 						"id": schema.StringAttribute{
 							Description: "The ID of the service token.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"client_id": schema.StringAttribute{
 							Description: "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 						"duration": schema.StringAttribute{
 							Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
 							Computed:    true,
+							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the service token.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"updated_at": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 					},
 				},

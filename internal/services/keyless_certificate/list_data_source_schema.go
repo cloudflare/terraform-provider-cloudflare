@@ -71,6 +71,21 @@ func (r KeylessCertificatesDataSource) Schema(ctx context.Context, req datasourc
 								stringvalidator.OneOfCaseInsensitive("active", "deleted"),
 							},
 						},
+						"tunnel": schema.SingleNestedAttribute{
+							Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+							Computed:    true,
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"private_ip": schema.StringAttribute{
+									Description: "Private IP of the Key Server Host",
+									Computed:    true,
+								},
+								"vnet_id": schema.StringAttribute{
+									Description: "Cloudflare Tunnel Virtual Network ID",
+									Computed:    true,
+								},
+							},
+						},
 					},
 				},
 			},

@@ -20,6 +20,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
+				Computed:    true,
 				Optional:    true,
 			},
 			"custom_certificate_id": schema.StringAttribute{
@@ -78,6 +79,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"label": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("us", "eu", "highest_security"),
@@ -102,7 +104,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					},
 					"host": schema.StringAttribute{
 						Description: "The keyless SSL name.",
-						Required:    true,
+						Computed:    true,
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "When the Keyless SSL was last modified.",
@@ -120,7 +122,6 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					"port": schema.Float64Attribute{
 						Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"status": schema.StringAttribute{
 						Description: "Status of the Keyless SSL.",
@@ -131,15 +132,16 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					},
 					"tunnel": schema.SingleNestedAttribute{
 						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+						Computed:    true,
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"private_ip": schema.StringAttribute{
 								Description: "Private IP of the Key Server Host",
-								Required:    true,
+								Computed:    true,
 							},
 							"vnet_id": schema.StringAttribute{
 								Description: "Cloudflare Tunnel Virtual Network ID",
-								Required:    true,
+								Computed:    true,
 							},
 						},
 					},

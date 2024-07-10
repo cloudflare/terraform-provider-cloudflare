@@ -67,6 +67,7 @@ func (r TunnelVirtualNetworksDataSource) Schema(ctx context.Context, req datasou
 						"deleted_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

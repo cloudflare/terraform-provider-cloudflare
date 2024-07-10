@@ -17,55 +17,56 @@ type DeviceSettingsPoliciesDataSourceModel struct {
 }
 
 type DeviceSettingsPoliciesItemsDataSourceModel struct {
-	AllowModeSwitch     types.Bool                                                    `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
-	AllowUpdates        types.Bool                                                    `tfsdk:"allow_updates" json:"allow_updates,computed"`
-	AllowedToLeave      types.Bool                                                    `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed"`
-	AutoConnect         types.Float64                                                 `tfsdk:"auto_connect" json:"auto_connect,computed"`
-	CaptivePortal       types.Float64                                                 `tfsdk:"captive_portal" json:"captive_portal,computed"`
-	Default             types.Bool                                                    `tfsdk:"default" json:"default,computed"`
-	Description         types.String                                                  `tfsdk:"description" json:"description,computed"`
-	DisableAutoFallback types.Bool                                                    `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed"`
-	Enabled             types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed"`
-	Exclude             *[]*DeviceSettingsPoliciesItemsExcludeDataSourceModel         `tfsdk:"exclude" json:"exclude,computed"`
-	ExcludeOfficeIPs    types.Bool                                                    `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed"`
-	FallbackDomains     *[]*DeviceSettingsPoliciesItemsFallbackDomainsDataSourceModel `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
-	GatewayUniqueID     types.String                                                  `tfsdk:"gateway_unique_id" json:"gateway_unique_id,computed"`
-	Include             *[]*DeviceSettingsPoliciesItemsIncludeDataSourceModel         `tfsdk:"include" json:"include,computed"`
-	LANAllowMinutes     types.Float64                                                 `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,computed"`
-	LANAllowSubnetSize  types.Float64                                                 `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,computed"`
-	Match               types.String                                                  `tfsdk:"match" json:"match,computed"`
-	Name                types.String                                                  `tfsdk:"name" json:"name,computed"`
-	PolicyID            types.String                                                  `tfsdk:"policy_id" json:"policy_id,computed"`
-	Precedence          types.Float64                                                 `tfsdk:"precedence" json:"precedence,computed"`
-	SupportURL          types.String                                                  `tfsdk:"support_url" json:"support_url,computed"`
-	SwitchLocked        types.Bool                                                    `tfsdk:"switch_locked" json:"switch_locked,computed"`
-	TargetTests         *[]*DeviceSettingsPoliciesItemsTargetTestsDataSourceModel     `tfsdk:"target_tests" json:"target_tests,computed"`
+	AllowModeSwitch     types.Bool                                                    `tfsdk:"allow_mode_switch" json:"allow_mode_switch"`
+	AllowUpdates        types.Bool                                                    `tfsdk:"allow_updates" json:"allow_updates"`
+	AllowedToLeave      types.Bool                                                    `tfsdk:"allowed_to_leave" json:"allowed_to_leave"`
+	AutoConnect         types.Float64                                                 `tfsdk:"auto_connect" json:"auto_connect"`
+	CaptivePortal       types.Float64                                                 `tfsdk:"captive_portal" json:"captive_portal"`
+	Default             types.Bool                                                    `tfsdk:"default" json:"default"`
+	Description         types.String                                                  `tfsdk:"description" json:"description"`
+	DisableAutoFallback types.Bool                                                    `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback"`
+	Enabled             types.Bool                                                    `tfsdk:"enabled" json:"enabled"`
+	Exclude             *[]*DeviceSettingsPoliciesItemsExcludeDataSourceModel         `tfsdk:"exclude" json:"exclude"`
+	ExcludeOfficeIPs    types.Bool                                                    `tfsdk:"exclude_office_ips" json:"exclude_office_ips"`
+	FallbackDomains     *[]*DeviceSettingsPoliciesItemsFallbackDomainsDataSourceModel `tfsdk:"fallback_domains" json:"fallback_domains"`
+	GatewayUniqueID     types.String                                                  `tfsdk:"gateway_unique_id" json:"gateway_unique_id"`
+	Include             *[]*DeviceSettingsPoliciesItemsIncludeDataSourceModel         `tfsdk:"include" json:"include"`
+	LANAllowMinutes     types.Float64                                                 `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes"`
+	LANAllowSubnetSize  types.Float64                                                 `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size"`
+	Match               types.String                                                  `tfsdk:"match" json:"match"`
+	Name                types.String                                                  `tfsdk:"name" json:"name"`
+	PolicyID            types.String                                                  `tfsdk:"policy_id" json:"policy_id"`
+	Precedence          types.Float64                                                 `tfsdk:"precedence" json:"precedence"`
+	ServiceModeV2       *DeviceSettingsPoliciesItemsServiceModeV2DataSourceModel      `tfsdk:"service_mode_v2" json:"service_mode_v2"`
+	SupportURL          types.String                                                  `tfsdk:"support_url" json:"support_url"`
+	SwitchLocked        types.Bool                                                    `tfsdk:"switch_locked" json:"switch_locked"`
+	TargetTests         *[]*DeviceSettingsPoliciesItemsTargetTestsDataSourceModel     `tfsdk:"target_tests" json:"target_tests"`
 }
 
 type DeviceSettingsPoliciesItemsExcludeDataSourceModel struct {
 	Address     types.String `tfsdk:"address" json:"address,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
-	Host        types.String `tfsdk:"host" json:"host,computed"`
+	Host        types.String `tfsdk:"host" json:"host"`
 }
 
 type DeviceSettingsPoliciesItemsFallbackDomainsDataSourceModel struct {
 	Suffix      types.String    `tfsdk:"suffix" json:"suffix,computed"`
-	Description types.String    `tfsdk:"description" json:"description,computed"`
-	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server,computed"`
+	Description types.String    `tfsdk:"description" json:"description"`
+	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server"`
 }
 
 type DeviceSettingsPoliciesItemsIncludeDataSourceModel struct {
 	Address     types.String `tfsdk:"address" json:"address,computed"`
 	Description types.String `tfsdk:"description" json:"description,computed"`
-	Host        types.String `tfsdk:"host" json:"host,computed"`
+	Host        types.String `tfsdk:"host" json:"host"`
 }
 
 type DeviceSettingsPoliciesItemsServiceModeV2DataSourceModel struct {
-	Mode types.String  `tfsdk:"mode" json:"mode,computed"`
-	Port types.Float64 `tfsdk:"port" json:"port,computed"`
+	Mode types.String  `tfsdk:"mode" json:"mode"`
+	Port types.Float64 `tfsdk:"port" json:"port"`
 }
 
 type DeviceSettingsPoliciesItemsTargetTestsDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id,computed"`
-	Name types.String `tfsdk:"name" json:"name,computed"`
+	ID   types.String `tfsdk:"id" json:"id"`
+	Name types.String `tfsdk:"name" json:"name"`
 }

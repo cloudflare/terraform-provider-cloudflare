@@ -26,17 +26,8 @@ type FirewallRulesItemsDataSourceModel struct {
 	ID          types.String    `tfsdk:"id" json:"id,computed"`
 	Action      types.String    `tfsdk:"action" json:"action,computed"`
 	Paused      types.Bool      `tfsdk:"paused" json:"paused,computed"`
-	Description types.String    `tfsdk:"description" json:"description,computed"`
-	Priority    types.Float64   `tfsdk:"priority" json:"priority,computed"`
-	Products    *[]types.String `tfsdk:"products" json:"products,computed"`
-	Ref         types.String    `tfsdk:"ref" json:"ref,computed"`
-}
-
-type FirewallRulesItemsFilterDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed"`
-	Ref         types.String `tfsdk:"ref" json:"ref,computed"`
-	Deleted     types.Bool   `tfsdk:"deleted" json:"deleted,computed"`
+	Description types.String    `tfsdk:"description" json:"description"`
+	Priority    types.Float64   `tfsdk:"priority" json:"priority"`
+	Products    *[]types.String `tfsdk:"products" json:"products"`
+	Ref         types.String    `tfsdk:"ref" json:"ref"`
 }

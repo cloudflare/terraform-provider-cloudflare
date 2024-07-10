@@ -34,10 +34,3 @@ type NotificationPolicyWebhooksMessagesModel struct {
 	Code    types.Int64  `tfsdk:"code" json:"code"`
 	Message types.String `tfsdk:"message" json:"message"`
 }
-
-type NotificationPolicyWebhooksResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count"`
-	Page       types.Float64 `tfsdk:"page" json:"page"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
-}

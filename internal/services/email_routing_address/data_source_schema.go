@@ -27,27 +27,28 @@ func (r EmailRoutingAddressDataSource) Schema(ctx context.Context, req datasourc
 			},
 			"id": schema.StringAttribute{
 				Description: "Destination address identifier.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the destination address has been created.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"email": schema.StringAttribute{
 				Description: "The contact email address of the user.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the destination address was last modified.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"tag": schema.StringAttribute{
 				Description: "Destination address tag. (Deprecated, replaced by destination address identifier)",
-				Optional:    true,
+				Computed:    true,
 			},
 			"verified": schema.StringAttribute{
 				Description: "The date and time the destination address has been verified. Null means not verified yet.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

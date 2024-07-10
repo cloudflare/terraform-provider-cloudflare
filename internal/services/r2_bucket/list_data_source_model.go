@@ -23,8 +23,8 @@ type R2BucketsDataSourceModel struct {
 }
 
 type R2BucketsItemsDataSourceModel struct {
-	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`
-	Location     types.String `tfsdk:"location" json:"location,computed"`
-	Name         types.String `tfsdk:"name" json:"name,computed"`
+	CreationDate types.String `tfsdk:"creation_date" json:"creation_date"`
+	Location     types.String `tfsdk:"location" json:"location"`
+	Name         types.String `tfsdk:"name" json:"name"`
 	StorageClass types.String `tfsdk:"storage_class" json:"storage_class,computed"`
 }

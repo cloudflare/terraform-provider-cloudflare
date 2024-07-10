@@ -17,12 +17,13 @@ type DeviceManagedNetworksListDataSourceModel struct {
 }
 
 type DeviceManagedNetworksListItemsDataSourceModel struct {
-	Name      types.String `tfsdk:"name" json:"name,computed"`
-	NetworkID types.String `tfsdk:"network_id" json:"network_id,computed"`
-	Type      types.String `tfsdk:"type" json:"type,computed"`
+	Config    *DeviceManagedNetworksListItemsConfigDataSourceModel `tfsdk:"config" json:"config"`
+	Name      types.String                                         `tfsdk:"name" json:"name"`
+	NetworkID types.String                                         `tfsdk:"network_id" json:"network_id"`
+	Type      types.String                                         `tfsdk:"type" json:"type"`
 }
 
 type DeviceManagedNetworksListItemsConfigDataSourceModel struct {
 	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr,computed"`
-	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed"`
+	Sha256      types.String `tfsdk:"sha256" json:"sha256"`
 }

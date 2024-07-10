@@ -34,19 +34,3 @@ type ZoneAccountModel struct {
 type ZonePlanModel struct {
 	ID types.String `tfsdk:"id" json:"id"`
 }
-
-type ZoneMetaModel struct {
-	CDNOnly                types.Bool  `tfsdk:"cdn_only" json:"cdn_only"`
-	CustomCertificateQuota types.Int64 `tfsdk:"custom_certificate_quota" json:"custom_certificate_quota"`
-	DNSOnly                types.Bool  `tfsdk:"dns_only" json:"dns_only"`
-	FoundationDNS          types.Bool  `tfsdk:"foundation_dns" json:"foundation_dns"`
-	PageRuleQuota          types.Int64 `tfsdk:"page_rule_quota" json:"page_rule_quota"`
-	PhishingDetected       types.Bool  `tfsdk:"phishing_detected" json:"phishing_detected"`
-	Step                   types.Int64 `tfsdk:"step" json:"step"`
-}
-
-type ZoneOwnerModel struct {
-	ID   types.String `tfsdk:"id" json:"id"`
-	Name types.String `tfsdk:"name" json:"name"`
-	Type types.String `tfsdk:"type" json:"type"`
-}

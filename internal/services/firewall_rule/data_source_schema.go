@@ -31,57 +31,31 @@ func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of the firewall rule.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass"),
 				},
 			},
-			"filter": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Description: "The unique identifier of the filter.",
-						Computed:    true,
-					},
-					"description": schema.StringAttribute{
-						Description: "An informative summary of the filter.",
-						Optional:    true,
-					},
-					"expression": schema.StringAttribute{
-						Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
-						Optional:    true,
-					},
-					"paused": schema.BoolAttribute{
-						Description: "When true, indicates that the filter is currently paused.",
-						Optional:    true,
-					},
-					"ref": schema.StringAttribute{
-						Description: "A short reference tag. Allows you to select related filters.",
-						Optional:    true,
-					},
-					"deleted": schema.BoolAttribute{
-						Description: "When true, indicates that the firewall rule was deleted.",
-						Optional:    true,
-					},
-				},
-			},
 			"paused": schema.BoolAttribute{
 				Description: "When true, indicates that the firewall rule is currently paused.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the firewall rule.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"priority": schema.Float64Attribute{
 				Description: "The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"products": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("zoneLockdown", "uaBlock", "bic", "hot", "securityLevel", "rateLimit", "waf"),
@@ -89,6 +63,7 @@ func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related firewall rules.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

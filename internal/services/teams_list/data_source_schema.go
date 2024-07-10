@@ -26,31 +26,37 @@ func (r TeamsListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"id": schema.StringAttribute{
 				Description: "API Resource UUID tag.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"list_count": schema.Float64Attribute{
 				Description: "The number of items in the list.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the list.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the list.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of list.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
 				},
 			},
 			"updated_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
