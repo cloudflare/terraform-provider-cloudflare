@@ -21,6 +21,7 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 			},
 			"policy_id": schema.StringAttribute{
 				Description: "Device ID.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"allow_mode_switch": schema.BoolAttribute{
@@ -65,14 +66,15 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
-							Required:    true,
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the Split Tunnel item, displayed in the client UI.",
-							Required:    true,
+							Computed:    true,
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -88,14 +90,16 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 					Attributes: map[string]schema.Attribute{
 						"suffix": schema.StringAttribute{
 							Description: "The domain suffix to match when resolving locally.",
-							Required:    true,
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the fallback domain, displayed in the client UI.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"dns_server": schema.ListAttribute{
 							Description: "A list of IP addresses to handle domain resolution.",
+							Computed:    true,
 							Optional:    true,
 							ElementType: types.StringType,
 						},
@@ -111,14 +115,15 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The address in CIDR format to include in the tunnel. If address is present, host must not be present.",
-							Required:    true,
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the split tunnel item, displayed in the client UI.",
-							Required:    true,
+							Computed:    true,
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to include in the tunnel. If host is present, address must not be present.",
+							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -149,10 +154,12 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
 						Description: "The mode to run the WARP client under.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"port": schema.Float64Attribute{
 						Description: "The port number when used with proxy mode.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -171,10 +178,12 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The id of the DEX test targeting this policy",
+							Computed:    true,
 							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the DEX test targeting this policy",
+							Computed:    true,
 							Optional:    true,
 						},
 					},

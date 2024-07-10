@@ -27,10 +27,11 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"id": schema.StringAttribute{
 				Description: "Membership identifier tag.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"policies": schema.ListNestedAttribute{
 				Description: "Access policy for the membership",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -40,6 +41,7 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 						},
 						"access": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.",
+							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
@@ -47,6 +49,7 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 						},
 						"permission_groups": schema.ListNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
+							Computed:    true,
 							Optional:    true,
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
@@ -56,6 +59,7 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 									},
 									"meta": schema.StringAttribute{
 										Description: "Attributes associated to the permission group.",
+										Computed:    true,
 										Optional:    true,
 									},
 									"name": schema.StringAttribute{
@@ -67,6 +71,7 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 						},
 						"resource_groups": schema.ListNestedAttribute{
 							Description: "A list of resource groups that the policy applies to.",
+							Computed:    true,
 							Optional:    true,
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
@@ -76,7 +81,7 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 									},
 									"scope": schema.ListNestedAttribute{
 										Description: "The scope associated to the resource group",
-										Required:    true,
+										Computed:    true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
 												"key": schema.StringAttribute{
@@ -85,7 +90,7 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 												},
 												"objects": schema.ListNestedAttribute{
 													Description: "A list of scope objects for additional context.",
-													Required:    true,
+													Computed:    true,
 													NestedObject: schema.NestedAttributeObject{
 														Attributes: map[string]schema.Attribute{
 															"key": schema.StringAttribute{
@@ -100,6 +105,7 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 									},
 									"meta": schema.StringAttribute{
 										Description: "Attributes associated to the resource group.",
+										Computed:    true,
 										Optional:    true,
 									},
 									"name": schema.StringAttribute{
@@ -114,12 +120,13 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"roles": schema.ListNestedAttribute{
 				Description: "Roles assigned to this Member.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "Role identifier tag.",
-							Required:    true,
+							Computed:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "Description of role's permissions.",
@@ -138,35 +145,9 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"status": schema.StringAttribute{
 				Description: "A member's status in the account.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
-				},
-			},
-			"user": schema.SingleNestedAttribute{
-				Description: "Details of the user associated to the membership.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"email": schema.StringAttribute{
-						Description: "The contact email address of the user.",
-						Required:    true,
-					},
-					"id": schema.StringAttribute{
-						Description: "Identifier",
-						Computed:    true,
-					},
-					"first_name": schema.StringAttribute{
-						Description: "User's first name",
-						Optional:    true,
-					},
-					"last_name": schema.StringAttribute{
-						Description: "User's last name",
-						Optional:    true,
-					},
-					"two_factor_authentication_enabled": schema.BoolAttribute{
-						Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
-						Computed:    true,
-					},
 				},
 			},
 			"find_one_by": schema.SingleNestedAttribute{

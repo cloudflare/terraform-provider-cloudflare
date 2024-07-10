@@ -91,6 +91,7 @@ func (r PagesProjectsDataSource) Schema(ctx context.Context, req datasource.Sche
 									"name": schema.StringAttribute{
 										Description: "The current build stage.",
 										Computed:    true,
+										Optional:    true,
 									},
 									"started_on": schema.StringAttribute{
 										Description: "When the stage started.",

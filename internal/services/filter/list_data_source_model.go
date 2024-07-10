@@ -27,6 +27,6 @@ type FiltersItemsDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
 	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
 	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Ref         types.String `tfsdk:"ref" json:"ref,computed"`
+	Description types.String `tfsdk:"description" json:"description"`
+	Ref         types.String `tfsdk:"ref" json:"ref"`
 }

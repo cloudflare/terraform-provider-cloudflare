@@ -27,18 +27,21 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"auto_install": schema.BoolAttribute{
 				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "A list of rules.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The Web Analytics rule identifier.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"created": schema.StringAttribute{
@@ -46,56 +49,69 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 						},
 						"host": schema.StringAttribute{
 							Description: "The hostname the rule will be applied to.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"inclusive": schema.BoolAttribute{
 							Description: "Whether the rule includes or excludes traffic from being measured.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"is_paused": schema.BoolAttribute{
 							Description: "Whether the rule is paused or not.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"paths": schema.StringAttribute{
 							Description: "The paths the rule will be applied to.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"priority": schema.Float64Attribute{
+							Computed: true,
 							Optional: true,
 						},
 					},
 				},
 			},
 			"ruleset": schema.SingleNestedAttribute{
+				Computed: true,
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "The Web Analytics ruleset identifier.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether the ruleset is enabled.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"zone_name": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 					"zone_tag": schema.StringAttribute{
 						Description: "The zone identifier.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
 			},
 			"site_tag": schema.StringAttribute{
 				Description: "The Web Analytics site identifier.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"site_token": schema.StringAttribute{
 				Description: "The Web Analytics site token.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"snippet": schema.StringAttribute{
 				Description: "Encoded JavaScript snippet.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

@@ -18,10 +18,10 @@ type AuthenticatedOriginPullsCertificatesDataSourceModel struct {
 
 type AuthenticatedOriginPullsCertificatesItemsDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Certificate types.String `tfsdk:"certificate" json:"certificate,computed"`
+	Certificate types.String `tfsdk:"certificate" json:"certificate"`
 	ExpiresOn   types.String `tfsdk:"expires_on" json:"expires_on,computed"`
 	Issuer      types.String `tfsdk:"issuer" json:"issuer,computed"`
 	Signature   types.String `tfsdk:"signature" json:"signature,computed"`
-	Status      types.String `tfsdk:"status" json:"status,computed"`
-	UploadedOn  types.String `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
+	Status      types.String `tfsdk:"status" json:"status"`
+	UploadedOn  types.String `tfsdk:"uploaded_on" json:"uploaded_on"`
 }

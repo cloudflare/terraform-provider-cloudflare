@@ -15,7 +15,7 @@ type CustomSSLResultListDataSourceEnvelope struct {
 }
 
 type CustomSSLDataSourceModel struct {
-	ZoneID              types.String                             `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID              types.String                             `tfsdk:"zone_id" json:"zone_id"`
 	CustomCertificateID types.String                             `tfsdk:"custom_certificate_id" path:"custom_certificate_id"`
 	ID                  types.String                             `tfsdk:"id" json:"id"`
 	BundleMethod        types.String                             `tfsdk:"bundle_method" json:"bundle_method"`
@@ -41,18 +41,18 @@ type CustomSSLKeylessServerDataSourceModel struct {
 	ID          types.String                                 `tfsdk:"id" json:"id,computed"`
 	CreatedOn   types.String                                 `tfsdk:"created_on" json:"created_on,computed"`
 	Enabled     types.Bool                                   `tfsdk:"enabled" json:"enabled,computed"`
-	Host        types.String                                 `tfsdk:"host" json:"host"`
+	Host        types.String                                 `tfsdk:"host" json:"host,computed"`
 	ModifiedOn  types.String                                 `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                                 `tfsdk:"name" json:"name,computed"`
 	Permissions *[]types.String                              `tfsdk:"permissions" json:"permissions,computed"`
-	Port        types.Float64                                `tfsdk:"port" json:"port"`
+	Port        types.Float64                                `tfsdk:"port" json:"port,computed"`
 	Status      types.String                                 `tfsdk:"status" json:"status,computed"`
 	Tunnel      *CustomSSLKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`
 }
 
 type CustomSSLKeylessServerTunnelDataSourceModel struct {
-	PrivateIP types.String `tfsdk:"private_ip" json:"private_ip"`
-	VnetID    types.String `tfsdk:"vnet_id" json:"vnet_id"`
+	PrivateIP types.String `tfsdk:"private_ip" json:"private_ip,computed"`
+	VnetID    types.String `tfsdk:"vnet_id" json:"vnet_id,computed"`
 }
 
 type CustomSSLFindOneByDataSourceModel struct {

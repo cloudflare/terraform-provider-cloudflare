@@ -83,18 +83,76 @@ func (r CustomHostnamesDataSource) Schema(ctx context.Context, req datasource.Sc
 						"created_at": schema.StringAttribute{
 							Description: "This is the time the hostname was created.",
 							Computed:    true,
+							Optional:    true,
+						},
+						"custom_metadata": schema.SingleNestedAttribute{
+							Description: "These are per-hostname (customer) settings.",
+							Computed:    true,
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"key": schema.StringAttribute{
+									Description: "Unique metadata for this hostname.",
+									Computed:    true,
+									Optional:    true,
+								},
+							},
 						},
 						"custom_origin_server": schema.StringAttribute{
 							Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"custom_origin_sni": schema.StringAttribute{
 							Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
 							Computed:    true,
+							Optional:    true,
+						},
+						"ownership_verification": schema.SingleNestedAttribute{
+							Description: "This is a record which can be placed to activate a hostname.",
+							Computed:    true,
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"name": schema.StringAttribute{
+									Description: "DNS Name for record.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"type": schema.StringAttribute{
+									Description: "DNS Record type.",
+									Computed:    true,
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("txt"),
+									},
+								},
+								"value": schema.StringAttribute{
+									Description: "Content for the record.",
+									Computed:    true,
+									Optional:    true,
+								},
+							},
+						},
+						"ownership_verification_http": schema.SingleNestedAttribute{
+							Description: "This presents the token to be served by the given http url to activate a hostname.",
+							Computed:    true,
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"http_body": schema.StringAttribute{
+									Description: "Token to be served.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"http_url": schema.StringAttribute{
+									Description: "The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.",
+									Computed:    true,
+									Optional:    true,
+								},
+							},
 						},
 						"status": schema.StringAttribute{
 							Description: "Status of the hostname's activation.",
 							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
 							},
@@ -102,6 +160,7 @@ func (r CustomHostnamesDataSource) Schema(ctx context.Context, req datasource.Sc
 						"verification_errors": schema.ListAttribute{
 							Description: "These are errors that were encountered while trying to activate a hostname.",
 							Computed:    true,
+							Optional:    true,
 							ElementType: types.StringType,
 						},
 					},

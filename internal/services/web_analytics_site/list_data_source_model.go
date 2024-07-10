@@ -20,27 +20,28 @@ type WebAnalyticsSitesDataSourceModel struct {
 }
 
 type WebAnalyticsSitesItemsDataSourceModel struct {
-	AutoInstall types.Bool                                     `tfsdk:"auto_install" json:"auto_install,computed"`
+	AutoInstall types.Bool                                     `tfsdk:"auto_install" json:"auto_install"`
 	Created     types.String                                   `tfsdk:"created" json:"created,computed"`
-	Rules       *[]*WebAnalyticsSitesItemsRulesDataSourceModel `tfsdk:"rules" json:"rules,computed"`
-	SiteTag     types.String                                   `tfsdk:"site_tag" json:"site_tag,computed"`
-	SiteToken   types.String                                   `tfsdk:"site_token" json:"site_token,computed"`
-	Snippet     types.String                                   `tfsdk:"snippet" json:"snippet,computed"`
+	Rules       *[]*WebAnalyticsSitesItemsRulesDataSourceModel `tfsdk:"rules" json:"rules"`
+	Ruleset     *WebAnalyticsSitesItemsRulesetDataSourceModel  `tfsdk:"ruleset" json:"ruleset"`
+	SiteTag     types.String                                   `tfsdk:"site_tag" json:"site_tag"`
+	SiteToken   types.String                                   `tfsdk:"site_token" json:"site_token"`
+	Snippet     types.String                                   `tfsdk:"snippet" json:"snippet"`
 }
 
 type WebAnalyticsSitesItemsRulesDataSourceModel struct {
-	ID        types.String    `tfsdk:"id" json:"id,computed"`
+	ID        types.String    `tfsdk:"id" json:"id"`
 	Created   types.String    `tfsdk:"created" json:"created,computed"`
-	Host      types.String    `tfsdk:"host" json:"host,computed"`
-	Inclusive types.Bool      `tfsdk:"inclusive" json:"inclusive,computed"`
-	IsPaused  types.Bool      `tfsdk:"is_paused" json:"is_paused,computed"`
-	Paths     *[]types.String `tfsdk:"paths" json:"paths,computed"`
-	Priority  types.Float64   `tfsdk:"priority" json:"priority,computed"`
+	Host      types.String    `tfsdk:"host" json:"host"`
+	Inclusive types.Bool      `tfsdk:"inclusive" json:"inclusive"`
+	IsPaused  types.Bool      `tfsdk:"is_paused" json:"is_paused"`
+	Paths     *[]types.String `tfsdk:"paths" json:"paths"`
+	Priority  types.Float64   `tfsdk:"priority" json:"priority"`
 }
 
 type WebAnalyticsSitesItemsRulesetDataSourceModel struct {
-	ID       types.String `tfsdk:"id" json:"id,computed"`
-	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,computed"`
-	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag,computed"`
+	ID       types.String `tfsdk:"id" json:"id"`
+	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled"`
+	ZoneName types.String `tfsdk:"zone_name" json:"zone_name"`
+	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag"`
 }

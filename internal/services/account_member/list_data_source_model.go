@@ -23,28 +23,28 @@ type AccountMembersDataSourceModel struct {
 
 type AccountMembersItemsDataSourceModel struct {
 	ID       types.String                                   `tfsdk:"id" json:"id,computed"`
-	Policies *[]*AccountMembersItemsPoliciesDataSourceModel `tfsdk:"policies" json:"policies,computed"`
-	Roles    *[]*AccountMembersItemsRolesDataSourceModel    `tfsdk:"roles" json:"roles,computed"`
+	Policies *[]*AccountMembersItemsPoliciesDataSourceModel `tfsdk:"policies" json:"policies"`
+	Roles    *[]*AccountMembersItemsRolesDataSourceModel    `tfsdk:"roles" json:"roles"`
 	Status   types.String                                   `tfsdk:"status" json:"status,computed"`
 }
 
 type AccountMembersItemsPoliciesDataSourceModel struct {
 	ID               types.String                                                   `tfsdk:"id" json:"id,computed"`
-	Access           types.String                                                   `tfsdk:"access" json:"access,computed"`
-	PermissionGroups *[]*AccountMembersItemsPoliciesPermissionGroupsDataSourceModel `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	ResourceGroups   *[]*AccountMembersItemsPoliciesResourceGroupsDataSourceModel   `tfsdk:"resource_groups" json:"resource_groups,computed"`
+	Access           types.String                                                   `tfsdk:"access" json:"access"`
+	PermissionGroups *[]*AccountMembersItemsPoliciesPermissionGroupsDataSourceModel `tfsdk:"permission_groups" json:"permission_groups"`
+	ResourceGroups   *[]*AccountMembersItemsPoliciesResourceGroupsDataSourceModel   `tfsdk:"resource_groups" json:"resource_groups"`
 }
 
 type AccountMembersItemsPoliciesPermissionGroupsDataSourceModel struct {
 	ID   types.String `tfsdk:"id" json:"id,computed"`
-	Meta types.String `tfsdk:"meta" json:"meta,computed"`
+	Meta types.String `tfsdk:"meta" json:"meta"`
 	Name types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type AccountMembersItemsPoliciesResourceGroupsDataSourceModel struct {
 	ID    types.String                                                      `tfsdk:"id" json:"id,computed"`
 	Scope *[]*AccountMembersItemsPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope,computed"`
-	Meta  types.String                                                      `tfsdk:"meta" json:"meta,computed"`
+	Meta  types.String                                                      `tfsdk:"meta" json:"meta"`
 	Name  types.String                                                      `tfsdk:"name" json:"name,computed"`
 }
 
@@ -62,12 +62,4 @@ type AccountMembersItemsRolesDataSourceModel struct {
 	Description types.String    `tfsdk:"description" json:"description,computed"`
 	Name        types.String    `tfsdk:"name" json:"name,computed"`
 	Permissions *[]types.String `tfsdk:"permissions" json:"permissions,computed"`
-}
-
-type AccountMembersItemsUserDataSourceModel struct {
-	Email                          types.String `tfsdk:"email" json:"email,computed"`
-	ID                             types.String `tfsdk:"id" json:"id,computed"`
-	FirstName                      types.String `tfsdk:"first_name" json:"first_name,computed"`
-	LastName                       types.String `tfsdk:"last_name" json:"last_name,computed"`
-	TwoFactorAuthenticationEnabled types.Bool   `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
 }

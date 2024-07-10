@@ -26,9 +26,9 @@ type DevicePostureIntegrationDataSourceModel struct {
 }
 
 type DevicePostureIntegrationConfigDataSourceModel struct {
-	APIURL   types.String `tfsdk:"api_url" json:"api_url"`
-	AuthURL  types.String `tfsdk:"auth_url" json:"auth_url"`
-	ClientID types.String `tfsdk:"client_id" json:"client_id"`
+	APIURL   types.String `tfsdk:"api_url" json:"api_url,computed"`
+	AuthURL  types.String `tfsdk:"auth_url" json:"auth_url,computed"`
+	ClientID types.String `tfsdk:"client_id" json:"client_id,computed"`
 }
 
 type DevicePostureIntegrationFindOneByDataSourceModel struct {

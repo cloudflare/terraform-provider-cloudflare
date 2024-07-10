@@ -45,14 +45,3 @@ type CustomHostnameSSLSettingsModel struct {
 type CustomHostnameCustomMetadataModel struct {
 	Key types.String `tfsdk:"key" json:"key"`
 }
-
-type CustomHostnameOwnershipVerificationModel struct {
-	Name  types.String `tfsdk:"name" json:"name"`
-	Type  types.String `tfsdk:"type" json:"type"`
-	Value types.String `tfsdk:"value" json:"value"`
-}
-
-type CustomHostnameOwnershipVerificationHTTPModel struct {
-	HTTPBody types.String `tfsdk:"http_body" json:"http_body"`
-	HTTPURL  types.String `tfsdk:"http_url" json:"http_url"`
-}

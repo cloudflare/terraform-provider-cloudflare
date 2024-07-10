@@ -18,24 +18,14 @@ type FirewallRuleDataSourceModel struct {
 	PathID         types.String                          `tfsdk:"path_id" path:"id"`
 	ZoneIdentifier types.String                          `tfsdk:"zone_identifier" path:"zone_identifier"`
 	QueryID        types.String                          `tfsdk:"query_id" query:"id"`
-	ID             types.String                          `tfsdk:"id" json:"id"`
-	Action         types.String                          `tfsdk:"action" json:"action"`
-	Filter         *FirewallRuleFilterDataSourceModel    `tfsdk:"filter" json:"filter"`
-	Paused         types.Bool                            `tfsdk:"paused" json:"paused"`
+	ID             types.String                          `tfsdk:"id" json:"id,computed"`
+	Action         types.String                          `tfsdk:"action" json:"action,computed"`
+	Paused         types.Bool                            `tfsdk:"paused" json:"paused,computed"`
 	Description    types.String                          `tfsdk:"description" json:"description"`
 	Priority       types.Float64                         `tfsdk:"priority" json:"priority"`
 	Products       types.String                          `tfsdk:"products" json:"products"`
 	Ref            types.String                          `tfsdk:"ref" json:"ref"`
 	FindOneBy      *FirewallRuleFindOneByDataSourceModel `tfsdk:"find_one_by"`
-}
-
-type FirewallRuleFilterDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description"`
-	Expression  types.String `tfsdk:"expression" json:"expression"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused"`
-	Ref         types.String `tfsdk:"ref" json:"ref"`
-	Deleted     types.Bool   `tfsdk:"deleted" json:"deleted"`
 }
 
 type FirewallRuleFindOneByDataSourceModel struct {

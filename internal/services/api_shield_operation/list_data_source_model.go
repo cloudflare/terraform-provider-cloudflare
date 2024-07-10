@@ -35,12 +35,3 @@ type APIShieldOperationsItemsDataSourceModel struct {
 	Origin      *[]types.String `tfsdk:"origin" json:"origin,computed"`
 	State       types.String    `tfsdk:"state" json:"state,computed"`
 }
-
-type APIShieldOperationsItemsFeaturesDataSourceModel struct {
-}
-
-type APIShieldOperationsItemsFeaturesTrafficStatsDataSourceModel struct {
-	LastUpdated   types.String  `tfsdk:"last_updated" json:"last_updated,computed"`
-	PeriodSeconds types.Int64   `tfsdk:"period_seconds" json:"period_seconds,computed"`
-	Requests      types.Float64 `tfsdk:"requests" json:"requests,computed"`
-}

@@ -22,33 +22,36 @@ func (r APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.Sc
 				Optional:    true,
 			},
 			"schema_id": schema.StringAttribute{
-				Optional: true,
-			},
-			"omit_source": schema.BoolAttribute{
-				Description: "Omit the source-files of schemas and only retrieve their meta-data.",
+				Description: "UUID identifier",
 				Computed:    true,
 				Optional:    true,
 			},
+			"omit_source": schema.BoolAttribute{
+				Description: "Omit the source-files of schemas and only retrieve their meta-data.",
+				Optional:    true,
+			},
 			"created_at": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"kind": schema.StringAttribute{
 				Description: "Kind of schema",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("openapi_v3"),
 				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the schema",
-				Optional:    true,
+				Computed:    true,
 			},
 			"source": schema.StringAttribute{
 				Description: "Source of the schema",
+				Computed:    true,
 				Optional:    true,
 			},
 			"validation_enabled": schema.BoolAttribute{
 				Description: "Flag whether schema is enabled for validation.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

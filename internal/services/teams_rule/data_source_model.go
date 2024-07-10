@@ -20,7 +20,7 @@ type TeamsRuleDataSourceModel struct {
 	ID            types.String                          `tfsdk:"id" json:"id"`
 	Action        types.String                          `tfsdk:"action" json:"action"`
 	CreatedAt     types.String                          `tfsdk:"created_at" json:"created_at"`
-	DeletedAt     types.String                          `tfsdk:"deleted_at" json:"deleted_at"`
+	DeletedAt     types.String                          `tfsdk:"deleted_at" json:"deleted_at,computed"`
 	Description   types.String                          `tfsdk:"description" json:"description"`
 	DevicePosture types.String                          `tfsdk:"device_posture" json:"device_posture"`
 	Enabled       types.Bool                            `tfsdk:"enabled" json:"enabled"`
@@ -82,14 +82,14 @@ type TeamsRuleRuleSettingsDNSResolversDataSourceModel struct {
 }
 
 type TeamsRuleRuleSettingsDNSResolversIPV4DataSourceModel struct {
-	IP                         types.String `tfsdk:"ip" json:"ip"`
+	IP                         types.String `tfsdk:"ip" json:"ip,computed"`
 	Port                       types.Int64  `tfsdk:"port" json:"port"`
 	RouteThroughPrivateNetwork types.Bool   `tfsdk:"route_through_private_network" json:"route_through_private_network"`
 	VnetID                     types.String `tfsdk:"vnet_id" json:"vnet_id"`
 }
 
 type TeamsRuleRuleSettingsDNSResolversIPV6DataSourceModel struct {
-	IP                         types.String `tfsdk:"ip" json:"ip"`
+	IP                         types.String `tfsdk:"ip" json:"ip,computed"`
 	Port                       types.Int64  `tfsdk:"port" json:"port"`
 	RouteThroughPrivateNetwork types.Bool   `tfsdk:"route_through_private_network" json:"route_through_private_network"`
 	VnetID                     types.String `tfsdk:"vnet_id" json:"vnet_id"`

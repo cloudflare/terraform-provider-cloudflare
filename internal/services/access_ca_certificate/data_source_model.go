@@ -15,16 +15,10 @@ type AccessCACertificateResultListDataSourceEnvelope struct {
 }
 
 type AccessCACertificateDataSourceModel struct {
-	AppID     types.String                                 `tfsdk:"app_id" path:"app_id"`
-	AccountID types.String                                 `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                 `tfsdk:"zone_id" path:"zone_id"`
-	ID        types.String                                 `tfsdk:"id" json:"id"`
-	AUD       types.String                                 `tfsdk:"aud" json:"aud"`
-	PublicKey types.String                                 `tfsdk:"public_key" json:"public_key"`
-	FindOneBy *AccessCACertificateFindOneByDataSourceModel `tfsdk:"find_one_by"`
-}
-
-type AccessCACertificateFindOneByDataSourceModel struct {
+	AppID     types.String `tfsdk:"app_id" path:"app_id"`
 	AccountID types.String `tfsdk:"account_id" path:"account_id"`
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	ID        types.String `tfsdk:"id" json:"id"`
+	AUD       types.String `tfsdk:"aud" json:"aud"`
+	PublicKey types.String `tfsdk:"public_key" json:"public_key"`
 }

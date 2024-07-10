@@ -34,19 +34,9 @@ type PagesProjectsItemsDataSourceModel struct {
 	URL         types.String                                `tfsdk:"url" json:"url,computed"`
 }
 
-type PagesProjectsItemsDeploymentTriggerDataSourceModel struct {
-	Type types.String `tfsdk:"type" json:"type,computed"`
-}
-
-type PagesProjectsItemsDeploymentTriggerMetadataDataSourceModel struct {
-	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
-	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
-	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
-}
-
 type PagesProjectsItemsStagesDataSourceModel struct {
 	EndedOn   types.String `tfsdk:"ended_on" json:"ended_on,computed"`
-	Name      types.String `tfsdk:"name" json:"name,computed"`
+	Name      types.String `tfsdk:"name" json:"name"`
 	StartedOn types.String `tfsdk:"started_on" json:"started_on,computed"`
 	Status    types.String `tfsdk:"status" json:"status,computed"`
 }

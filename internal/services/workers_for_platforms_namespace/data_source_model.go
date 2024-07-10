@@ -18,9 +18,9 @@ type WorkersForPlatformsNamespaceDataSourceModel struct {
 	AccountID         types.String                                          `tfsdk:"account_id" path:"account_id"`
 	DispatchNamespace types.String                                          `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
 	CreatedBy         types.String                                          `tfsdk:"created_by" json:"created_by"`
-	CreatedOn         types.String                                          `tfsdk:"created_on" json:"created_on"`
+	CreatedOn         types.String                                          `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedBy        types.String                                          `tfsdk:"modified_by" json:"modified_by"`
-	ModifiedOn        types.String                                          `tfsdk:"modified_on" json:"modified_on"`
+	ModifiedOn        types.String                                          `tfsdk:"modified_on" json:"modified_on,computed"`
 	NamespaceID       types.String                                          `tfsdk:"namespace_id" json:"namespace_id"`
 	NamespaceName     types.String                                          `tfsdk:"namespace_name" json:"namespace_name"`
 	ScriptCount       types.Int64                                           `tfsdk:"script_count" json:"script_count"`

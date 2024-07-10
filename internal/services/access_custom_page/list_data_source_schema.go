@@ -44,16 +44,20 @@ func (r AccessCustomPagesDataSource) Schema(ctx context.Context, req datasource.
 						"app_count": schema.Int64Attribute{
 							Description: "Number of apps the custom page is assigned to.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 						"uid": schema.StringAttribute{
 							Description: "UUID",
 							Computed:    true,
+							Optional:    true,
 						},
 						"updated_at": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 					},
 				},

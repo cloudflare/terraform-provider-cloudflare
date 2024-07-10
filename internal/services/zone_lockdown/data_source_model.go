@@ -15,20 +15,14 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 }
 
 type ZoneLockdownDataSourceModel struct {
-	ZoneIdentifier types.String                               `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                               `tfsdk:"id" path:"id"`
-	Configurations *ZoneLockdownConfigurationsDataSourceModel `tfsdk:"configurations" json:"configurations"`
-	CreatedOn      types.String                               `tfsdk:"created_on" json:"created_on"`
-	Description    types.String                               `tfsdk:"description" json:"description"`
-	ModifiedOn     types.String                               `tfsdk:"modified_on" json:"modified_on"`
-	Paused         types.Bool                                 `tfsdk:"paused" json:"paused"`
-	URLs           types.String                               `tfsdk:"urls" json:"urls"`
-	FindOneBy      *ZoneLockdownFindOneByDataSourceModel      `tfsdk:"find_one_by"`
-}
-
-type ZoneLockdownConfigurationsDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	ZoneIdentifier types.String                          `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ID             types.String                          `tfsdk:"id" json:"id"`
+	CreatedOn      types.String                          `tfsdk:"created_on" json:"created_on,computed"`
+	Description    types.String                          `tfsdk:"description" json:"description,computed"`
+	ModifiedOn     types.String                          `tfsdk:"modified_on" json:"modified_on,computed"`
+	Paused         types.Bool                            `tfsdk:"paused" json:"paused,computed"`
+	URLs           types.String                          `tfsdk:"urls" json:"urls,computed"`
+	FindOneBy      *ZoneLockdownFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 
 type ZoneLockdownFindOneByDataSourceModel struct {

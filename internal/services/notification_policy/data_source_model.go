@@ -17,14 +17,14 @@ type NotificationPolicyResultListDataSourceEnvelope struct {
 type NotificationPolicyDataSourceModel struct {
 	AccountID   types.String                                `tfsdk:"account_id" path:"account_id"`
 	PolicyID    types.String                                `tfsdk:"policy_id" path:"policy_id"`
-	ID          types.String                                `tfsdk:"id" json:"id"`
+	ID          types.String                                `tfsdk:"id" json:"id,computed"`
 	AlertType   types.String                                `tfsdk:"alert_type" json:"alert_type"`
-	Created     types.String                                `tfsdk:"created" json:"created"`
+	Created     types.String                                `tfsdk:"created" json:"created,computed"`
 	Description types.String                                `tfsdk:"description" json:"description"`
-	Enabled     types.Bool                                  `tfsdk:"enabled" json:"enabled"`
+	Enabled     types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
 	Filters     *NotificationPolicyFiltersDataSourceModel   `tfsdk:"filters" json:"filters"`
 	Mechanisms  types.String                                `tfsdk:"mechanisms" json:"mechanisms"`
-	Modified    types.String                                `tfsdk:"modified" json:"modified"`
+	Modified    types.String                                `tfsdk:"modified" json:"modified,computed"`
 	Name        types.String                                `tfsdk:"name" json:"name"`
 	FindOneBy   *NotificationPolicyFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }

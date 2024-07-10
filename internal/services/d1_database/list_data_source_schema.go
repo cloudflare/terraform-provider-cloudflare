@@ -48,12 +48,15 @@ func (r D1DatabasesDataSource) Schema(ctx context.Context, req datasource.Schema
 						},
 						"name": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 						"uuid": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 						"version": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 					},
 				},

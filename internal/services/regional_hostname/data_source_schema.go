@@ -21,15 +21,16 @@ func (r RegionalHostnameDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"hostname": schema.StringAttribute{
 				Description: "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the regional hostname was created",
-				Optional:    true,
+				Computed:    true,
 			},
 			"region_key": schema.StringAttribute{
 				Description: "Identifying key for the region",
-				Optional:    true,
+				Computed:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

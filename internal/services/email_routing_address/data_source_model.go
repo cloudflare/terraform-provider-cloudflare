@@ -17,12 +17,12 @@ type EmailRoutingAddressResultListDataSourceEnvelope struct {
 type EmailRoutingAddressDataSourceModel struct {
 	AccountIdentifier            types.String                                 `tfsdk:"account_identifier" path:"account_identifier"`
 	DestinationAddressIdentifier types.String                                 `tfsdk:"destination_address_identifier" path:"destination_address_identifier"`
-	ID                           types.String                                 `tfsdk:"id" json:"id"`
-	Created                      types.String                                 `tfsdk:"created" json:"created"`
+	ID                           types.String                                 `tfsdk:"id" json:"id,computed"`
+	Created                      types.String                                 `tfsdk:"created" json:"created,computed"`
 	Email                        types.String                                 `tfsdk:"email" json:"email"`
-	Modified                     types.String                                 `tfsdk:"modified" json:"modified"`
-	Tag                          types.String                                 `tfsdk:"tag" json:"tag"`
-	Verified                     types.String                                 `tfsdk:"verified" json:"verified"`
+	Modified                     types.String                                 `tfsdk:"modified" json:"modified,computed"`
+	Tag                          types.String                                 `tfsdk:"tag" json:"tag,computed"`
+	Verified                     types.String                                 `tfsdk:"verified" json:"verified,computed"`
 	FindOneBy                    *EmailRoutingAddressFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 

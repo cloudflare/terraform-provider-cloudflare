@@ -31,26 +31,26 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique ID of the ruleset.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"kind": schema.StringAttribute{
 				Description: "The kind of the ruleset.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("managed", "custom", "root", "zone"),
 				},
 			},
 			"last_updated": schema.StringAttribute{
 				Description: "The timestamp of when the ruleset was last modified.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The human-readable name of the ruleset.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"phase": schema.StringAttribute{
 				Description: "The phase of the ruleset.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_select_configuration", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed"),
 				},
@@ -70,10 +70,12 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						},
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"action": schema.StringAttribute{
 							Description: "The action to perform when the rule matches.",
+							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("block", "challenge", "compress_response", "execute", "js_challenge", "log", "managed_challenge", "redirect", "rewrite", "route", "score", "serve_error", "set_config", "skip", "set_cache_settings", "log_custom_field", "ddos_dynamic", "force_connection_close"),
@@ -81,23 +83,25 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						},
 						"action_parameters": schema.SingleNestedAttribute{
 							Description: "The parameters configuring the rule's action.",
+							Computed:    true,
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
 								"response": schema.SingleNestedAttribute{
 									Description: "The response to show when the block is applied.",
+									Computed:    true,
 									Optional:    true,
 									Attributes: map[string]schema.Attribute{
 										"content": schema.StringAttribute{
 											Description: "The content to return.",
-											Required:    true,
+											Computed:    true,
 										},
 										"content_type": schema.StringAttribute{
 											Description: "The type of the content to return.",
-											Required:    true,
+											Computed:    true,
 										},
 										"status_code": schema.Int64Attribute{
 											Description: "The status code to return.",
-											Required:    true,
+											Computed:    true,
 										},
 									},
 								},
@@ -117,20 +121,23 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						},
 						"expression": schema.StringAttribute{
 							Description: "The expression defining which traffic will match the rule.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"logging": schema.SingleNestedAttribute{
 							Description: "An object configuring the rule's logging behavior.",
+							Computed:    true,
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to generate a log when the rule matches.",
-									Required:    true,
+									Computed:    true,
 								},
 							},
 						},
 						"ref": schema.StringAttribute{
 							Description: "The reference of the rule (the rule ID by default).",
+							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -138,25 +145,11 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			},
 			"version": schema.StringAttribute{
 				Description: "The version of the ruleset.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative description of the ruleset.",
 				Computed:    true,
-				Optional:    true,
-			},
-			"find_one_by": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-						Optional:    true,
-					},
-					"zone_id": schema.StringAttribute{
-						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-						Optional:    true,
-					},
-				},
 			},
 		},
 	}

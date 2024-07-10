@@ -16,7 +16,7 @@ type DeviceSettingsPolicyResultListDataSourceEnvelope struct {
 
 type DeviceSettingsPolicyDataSourceModel struct {
 	AccountID           types.String                                           `tfsdk:"account_id" path:"account_id"`
-	PolicyID            types.String                                           `tfsdk:"policy_id" path:"policy_id"`
+	PolicyID            types.String                                           `tfsdk:"policy_id" json:"policy_id"`
 	AllowModeSwitch     types.Bool                                             `tfsdk:"allow_mode_switch" json:"allow_mode_switch"`
 	AllowUpdates        types.Bool                                             `tfsdk:"allow_updates" json:"allow_updates"`
 	AllowedToLeave      types.Bool                                             `tfsdk:"allowed_to_leave" json:"allowed_to_leave"`
@@ -44,20 +44,20 @@ type DeviceSettingsPolicyDataSourceModel struct {
 }
 
 type DeviceSettingsPolicyExcludeDataSourceModel struct {
-	Address     types.String `tfsdk:"address" json:"address"`
-	Description types.String `tfsdk:"description" json:"description"`
+	Address     types.String `tfsdk:"address" json:"address,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
 	Host        types.String `tfsdk:"host" json:"host"`
 }
 
 type DeviceSettingsPolicyFallbackDomainsDataSourceModel struct {
-	Suffix      types.String    `tfsdk:"suffix" json:"suffix"`
+	Suffix      types.String    `tfsdk:"suffix" json:"suffix,computed"`
 	Description types.String    `tfsdk:"description" json:"description"`
 	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server"`
 }
 
 type DeviceSettingsPolicyIncludeDataSourceModel struct {
-	Address     types.String `tfsdk:"address" json:"address"`
-	Description types.String `tfsdk:"description" json:"description"`
+	Address     types.String `tfsdk:"address" json:"address,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
 	Host        types.String `tfsdk:"host" json:"host"`
 }
 

@@ -24,22 +24,25 @@ func (r D1DatabaseDataSource) Schema(ctx context.Context, req datasource.SchemaR
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"file_size": schema.Float64Attribute{
 				Description: "The D1 database's size, in bytes.",
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"num_tables": schema.Float64Attribute{
 				Optional: true,
 			},
 			"uuid": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"version": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

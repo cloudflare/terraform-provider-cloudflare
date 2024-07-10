@@ -17,20 +17,13 @@ type DeviceDEXTestResultListDataSourceEnvelope struct {
 type DeviceDEXTestDataSourceModel struct {
 	AccountID      types.String                                   `tfsdk:"account_id" path:"account_id"`
 	DEXTestID      types.String                                   `tfsdk:"dex_test_id" path:"dex_test_id"`
-	Data           *DeviceDEXTestDataDataSourceModel              `tfsdk:"data" json:"data"`
-	Enabled        types.Bool                                     `tfsdk:"enabled" json:"enabled"`
-	Interval       types.String                                   `tfsdk:"interval" json:"interval"`
-	Name           types.String                                   `tfsdk:"name" json:"name"`
+	Enabled        types.Bool                                     `tfsdk:"enabled" json:"enabled,computed"`
+	Interval       types.String                                   `tfsdk:"interval" json:"interval,computed"`
+	Name           types.String                                   `tfsdk:"name" json:"name,computed"`
 	Description    types.String                                   `tfsdk:"description" json:"description"`
 	TargetPolicies *[]*DeviceDEXTestTargetPoliciesDataSourceModel `tfsdk:"target_policies" json:"target_policies"`
 	Targeted       types.Bool                                     `tfsdk:"targeted" json:"targeted"`
 	FindOneBy      *DeviceDEXTestFindOneByDataSourceModel         `tfsdk:"find_one_by"`
-}
-
-type DeviceDEXTestDataDataSourceModel struct {
-	Host   types.String `tfsdk:"host" json:"host"`
-	Kind   types.String `tfsdk:"kind" json:"kind"`
-	Method types.String `tfsdk:"method" json:"method"`
 }
 
 type DeviceDEXTestTargetPoliciesDataSourceModel struct {

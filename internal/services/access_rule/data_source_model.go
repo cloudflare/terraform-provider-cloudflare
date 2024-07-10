@@ -22,8 +22,6 @@ type AccessRuleDataSourceModel struct {
 }
 
 type AccessRuleFindOneByDataSourceModel struct {
-	AccountID     types.String                                     `tfsdk:"account_id" path:"account_id"`
-	ZoneID        types.String                                     `tfsdk:"zone_id" path:"zone_id"`
 	Direction     types.String                                     `tfsdk:"direction" query:"direction"`
 	EgsPagination *AccessRuleFindOneByEgsPaginationDataSourceModel `tfsdk:"egs_pagination" query:"egs-pagination"`
 	Filters       *AccessRuleFindOneByFiltersDataSourceModel       `tfsdk:"filters" query:"filters"`

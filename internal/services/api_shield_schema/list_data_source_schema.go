@@ -70,10 +70,12 @@ func (r APIShieldSchemasDataSource) Schema(ctx context.Context, req datasource.S
 						"source": schema.StringAttribute{
 							Description: "Source of the schema",
 							Computed:    true,
+							Optional:    true,
 						},
 						"validation_enabled": schema.BoolAttribute{
 							Description: "Flag whether schema is enabled for validation.",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

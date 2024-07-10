@@ -23,7 +23,7 @@ type EmailRoutingAddressesDataSourceModel struct {
 type EmailRoutingAddressesItemsDataSourceModel struct {
 	ID       types.String `tfsdk:"id" json:"id,computed"`
 	Created  types.String `tfsdk:"created" json:"created,computed"`
-	Email    types.String `tfsdk:"email" json:"email,computed"`
+	Email    types.String `tfsdk:"email" json:"email"`
 	Modified types.String `tfsdk:"modified" json:"modified,computed"`
 	Tag      types.String `tfsdk:"tag" json:"tag,computed"`
 	Verified types.String `tfsdk:"verified" json:"verified,computed"`

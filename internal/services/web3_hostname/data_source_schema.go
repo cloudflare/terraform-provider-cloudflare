@@ -27,35 +27,38 @@ func (r Web3HostnameDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An optional description of the hostname.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"dnslink": schema.StringAttribute{
 				Description: "DNSLink value used if the target is ipfs.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"modified_on": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The hostname that will point to the target gateway via CNAME.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the hostname's activation.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "pending", "deleting", "error"),
 				},
 			},
 			"target": schema.StringAttribute{
 				Description: "Target gateway of the hostname.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("ethereum", "ipfs", "ipfs_universal_path"),
