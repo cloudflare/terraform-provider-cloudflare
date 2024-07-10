@@ -18,7 +18,7 @@ type WebAnalyticsSiteDataSourceModel struct {
 	AccountID   types.String                              `tfsdk:"account_id" path:"account_id"`
 	SiteID      types.String                              `tfsdk:"site_id" path:"site_id"`
 	AutoInstall types.Bool                                `tfsdk:"auto_install" json:"auto_install"`
-	Created     types.String                              `tfsdk:"created" json:"created"`
+	Created     types.String                              `tfsdk:"created" json:"created,computed"`
 	Rules       *[]*WebAnalyticsSiteRulesDataSourceModel  `tfsdk:"rules" json:"rules"`
 	Ruleset     *WebAnalyticsSiteRulesetDataSourceModel   `tfsdk:"ruleset" json:"ruleset"`
 	SiteTag     types.String                              `tfsdk:"site_tag" json:"site_tag"`

@@ -27,22 +27,23 @@ func (r EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"id": schema.StringAttribute{
 				Description: "Routing rule identifier.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"actions": schema.ListNestedAttribute{
 				Description: "List actions patterns.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
 							Description: "Type of supported action.",
-							Required:    true,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("drop", "forward", "worker"),
 							},
 						},
 						"value": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -50,46 +51,46 @@ func (r EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.S
 			"enabled": schema.BoolAttribute{
 				Description: "Routing rule status.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"matchers": schema.ListNestedAttribute{
 				Description: "Matching patterns to forward to your actions.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"field": schema.StringAttribute{
 							Description: "Field for type matcher.",
-							Required:    true,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("to"),
 							},
 						},
 						"type": schema.StringAttribute{
 							Description: "Type of matcher.",
-							Required:    true,
+							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("literal"),
 							},
 						},
 						"value": schema.StringAttribute{
 							Description: "Value for matcher.",
-							Required:    true,
+							Computed:    true,
 						},
 					},
 				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Routing rule name.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"priority": schema.Float64Attribute{
 				Description: "Priority of the routing rule.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"tag": schema.StringAttribute{
 				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
-				Optional:    true,
+				Computed:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

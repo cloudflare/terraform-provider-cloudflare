@@ -20,7 +20,7 @@ type R2BucketDataSourceModel struct {
 	CreationDate types.String                      `tfsdk:"creation_date" json:"creation_date"`
 	Location     types.String                      `tfsdk:"location" json:"location"`
 	Name         types.String                      `tfsdk:"name" json:"name"`
-	StorageClass types.String                      `tfsdk:"storage_class" json:"storage_class"`
+	StorageClass types.String                      `tfsdk:"storage_class" json:"storage_class,computed"`
 	FindOneBy    *R2BucketFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 

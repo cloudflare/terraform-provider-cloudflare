@@ -16,16 +16,16 @@ type TurnstileWidgetResultListDataSourceEnvelope struct {
 
 type TurnstileWidgetDataSourceModel struct {
 	AccountID      types.String                             `tfsdk:"account_id" path:"account_id"`
-	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey"`
-	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode"`
-	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level"`
-	CreatedOn      types.String                             `tfsdk:"created_on" json:"created_on"`
-	Domains        types.String                             `tfsdk:"domains" json:"domains"`
-	Mode           types.String                             `tfsdk:"mode" json:"mode"`
-	ModifiedOn     types.String                             `tfsdk:"modified_on" json:"modified_on"`
-	Name           types.String                             `tfsdk:"name" json:"name"`
-	Offlabel       types.Bool                               `tfsdk:"offlabel" json:"offlabel"`
-	Region         types.String                             `tfsdk:"region" json:"region"`
+	Sitekey        types.String                             `tfsdk:"sitekey" json:"sitekey"`
+	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
+	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
+	CreatedOn      types.String                             `tfsdk:"created_on" json:"created_on,computed"`
+	Domains        types.String                             `tfsdk:"domains" json:"domains,computed"`
+	Mode           types.String                             `tfsdk:"mode" json:"mode,computed"`
+	ModifiedOn     types.String                             `tfsdk:"modified_on" json:"modified_on,computed"`
+	Name           types.String                             `tfsdk:"name" json:"name,computed"`
+	Offlabel       types.Bool                               `tfsdk:"offlabel" json:"offlabel,computed"`
+	Region         types.String                             `tfsdk:"region" json:"region,computed"`
 	Secret         types.String                             `tfsdk:"secret" json:"secret"`
 	FindOneBy      *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }

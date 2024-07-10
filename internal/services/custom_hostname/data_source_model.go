@@ -17,9 +17,8 @@ type CustomHostnameResultListDataSourceEnvelope struct {
 type CustomHostnameDataSourceModel struct {
 	ZoneID                    types.String                                            `tfsdk:"zone_id" path:"zone_id"`
 	CustomHostnameID          types.String                                            `tfsdk:"custom_hostname_id" path:"custom_hostname_id"`
-	ID                        types.String                                            `tfsdk:"id" json:"id"`
-	Hostname                  types.String                                            `tfsdk:"hostname" json:"hostname"`
-	SSL                       *CustomHostnameSSLDataSourceModel                       `tfsdk:"ssl" json:"ssl"`
+	ID                        types.String                                            `tfsdk:"id" json:"id,computed"`
+	Hostname                  types.String                                            `tfsdk:"hostname" json:"hostname,computed"`
 	CreatedAt                 types.String                                            `tfsdk:"created_at" json:"created_at"`
 	CustomMetadata            *CustomHostnameCustomMetadataDataSourceModel            `tfsdk:"custom_metadata" json:"custom_metadata"`
 	CustomOriginServer        types.String                                            `tfsdk:"custom_origin_server" json:"custom_origin_server"`
@@ -29,48 +28,6 @@ type CustomHostnameDataSourceModel struct {
 	Status                    types.String                                            `tfsdk:"status" json:"status"`
 	VerificationErrors        types.String                                            `tfsdk:"verification_errors" json:"verification_errors"`
 	FindOneBy                 *CustomHostnameFindOneByDataSourceModel                 `tfsdk:"find_one_by"`
-}
-
-type CustomHostnameSSLDataSourceModel struct {
-	ID                   types.String                                          `tfsdk:"id" json:"id"`
-	BundleMethod         types.String                                          `tfsdk:"bundle_method" json:"bundle_method,computed"`
-	CertificateAuthority types.String                                          `tfsdk:"certificate_authority" json:"certificate_authority"`
-	CustomCertificate    types.String                                          `tfsdk:"custom_certificate" json:"custom_certificate"`
-	CustomCsrID          types.String                                          `tfsdk:"custom_csr_id" json:"custom_csr_id"`
-	CustomKey            types.String                                          `tfsdk:"custom_key" json:"custom_key"`
-	ExpiresOn            types.String                                          `tfsdk:"expires_on" json:"expires_on"`
-	Hosts                types.String                                          `tfsdk:"hosts" json:"hosts"`
-	Issuer               types.String                                          `tfsdk:"issuer" json:"issuer"`
-	Method               types.String                                          `tfsdk:"method" json:"method"`
-	SerialNumber         types.String                                          `tfsdk:"serial_number" json:"serial_number"`
-	Settings             *CustomHostnameSSLSettingsDataSourceModel             `tfsdk:"settings" json:"settings"`
-	Signature            types.String                                          `tfsdk:"signature" json:"signature"`
-	Status               types.String                                          `tfsdk:"status" json:"status,computed"`
-	Type                 types.String                                          `tfsdk:"type" json:"type"`
-	UploadedOn           types.String                                          `tfsdk:"uploaded_on" json:"uploaded_on"`
-	ValidationErrors     *[]*CustomHostnameSSLValidationErrorsDataSourceModel  `tfsdk:"validation_errors" json:"validation_errors"`
-	ValidationRecords    *[]*CustomHostnameSSLValidationRecordsDataSourceModel `tfsdk:"validation_records" json:"validation_records"`
-	Wildcard             types.Bool                                            `tfsdk:"wildcard" json:"wildcard"`
-}
-
-type CustomHostnameSSLSettingsDataSourceModel struct {
-	Ciphers       types.String `tfsdk:"ciphers" json:"ciphers"`
-	EarlyHints    types.String `tfsdk:"early_hints" json:"early_hints"`
-	HTTP2         types.String `tfsdk:"http2" json:"http2"`
-	MinTLSVersion types.String `tfsdk:"min_tls_version" json:"min_tls_version"`
-	TLS1_3        types.String `tfsdk:"tls_1_3" json:"tls_1_3"`
-}
-
-type CustomHostnameSSLValidationErrorsDataSourceModel struct {
-	Message types.String `tfsdk:"message" json:"message"`
-}
-
-type CustomHostnameSSLValidationRecordsDataSourceModel struct {
-	Emails   types.String `tfsdk:"emails" json:"emails"`
-	HTTPBody types.String `tfsdk:"http_body" json:"http_body"`
-	HTTPURL  types.String `tfsdk:"http_url" json:"http_url"`
-	TXTName  types.String `tfsdk:"txt_name" json:"txt_name"`
-	TXTValue types.String `tfsdk:"txt_value" json:"txt_value"`
 }
 
 type CustomHostnameCustomMetadataDataSourceModel struct {

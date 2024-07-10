@@ -18,11 +18,11 @@ type AccessMutualTLSCertificatesDataSourceModel struct {
 }
 
 type AccessMutualTLSCertificatesItemsDataSourceModel struct {
-	ID                  types.String    `tfsdk:"id" json:"id,computed"`
-	AssociatedHostnames *[]types.String `tfsdk:"associated_hostnames" json:"associated_hostnames,computed"`
-	CreatedAt           types.String    `tfsdk:"created_at" json:"created_at,computed"`
-	ExpiresOn           types.String    `tfsdk:"expires_on" json:"expires_on,computed"`
-	Fingerprint         types.String    `tfsdk:"fingerprint" json:"fingerprint,computed"`
-	Name                types.String    `tfsdk:"name" json:"name,computed"`
-	UpdatedAt           types.String    `tfsdk:"updated_at" json:"updated_at,computed"`
+	ID                  types.String    `tfsdk:"id" json:"id"`
+	AssociatedHostnames *[]types.String `tfsdk:"associated_hostnames" json:"associated_hostnames"`
+	CreatedAt           types.String    `tfsdk:"created_at" json:"created_at"`
+	ExpiresOn           types.String    `tfsdk:"expires_on" json:"expires_on"`
+	Fingerprint         types.String    `tfsdk:"fingerprint" json:"fingerprint"`
+	Name                types.String    `tfsdk:"name" json:"name"`
+	UpdatedAt           types.String    `tfsdk:"updated_at" json:"updated_at"`
 }

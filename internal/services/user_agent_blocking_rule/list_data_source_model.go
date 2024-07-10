@@ -22,13 +22,14 @@ type UserAgentBlockingRulesDataSourceModel struct {
 }
 
 type UserAgentBlockingRulesItemsDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Mode        types.String `tfsdk:"mode" json:"mode,computed"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed"`
+	ID            types.String                                             `tfsdk:"id" json:"id,computed"`
+	Configuration *UserAgentBlockingRulesItemsConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration"`
+	Description   types.String                                             `tfsdk:"description" json:"description"`
+	Mode          types.String                                             `tfsdk:"mode" json:"mode"`
+	Paused        types.Bool                                               `tfsdk:"paused" json:"paused"`
 }
 
 type UserAgentBlockingRulesItemsConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target,computed"`
-	Value  types.String `tfsdk:"value" json:"value,computed"`
+	Target types.String `tfsdk:"target" json:"target"`
+	Value  types.String `tfsdk:"value" json:"value"`
 }

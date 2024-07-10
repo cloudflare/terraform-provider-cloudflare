@@ -18,11 +18,11 @@ type TeamsListsDataSourceModel struct {
 }
 
 type TeamsListsItemsDataSourceModel struct {
-	ID          types.String  `tfsdk:"id" json:"id,computed"`
+	ID          types.String  `tfsdk:"id" json:"id"`
 	ListCount   types.Float64 `tfsdk:"list_count" json:"count,computed"`
-	CreatedAt   types.String  `tfsdk:"created_at" json:"created_at,computed"`
-	Description types.String  `tfsdk:"description" json:"description,computed"`
-	Name        types.String  `tfsdk:"name" json:"name,computed"`
-	Type        types.String  `tfsdk:"type" json:"type,computed"`
-	UpdatedAt   types.String  `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt   types.String  `tfsdk:"created_at" json:"created_at"`
+	Description types.String  `tfsdk:"description" json:"description"`
+	Name        types.String  `tfsdk:"name" json:"name"`
+	Type        types.String  `tfsdk:"type" json:"type"`
+	UpdatedAt   types.String  `tfsdk:"updated_at" json:"updated_at"`
 }

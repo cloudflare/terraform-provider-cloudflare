@@ -37,6 +37,7 @@ func (r AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Conte
 						"certificate": schema.StringAttribute{
 							Description: "The zone's leaf certificate.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate from the authority expires.",
@@ -53,6 +54,7 @@ func (r AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Conte
 						"status": schema.StringAttribute{
 							Description: "Status of the certificate activation.",
 							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out"),
 							},
@@ -60,6 +62,7 @@ func (r AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Conte
 						"uploaded_on": schema.StringAttribute{
 							Description: "This is the time the certificate was uploaded.",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

@@ -43,6 +43,7 @@ func (r WorkerScriptsDataSource) Schema(ctx context.Context, req datasource.Sche
 						"logpush": schema.BoolAttribute{
 							Description: "Whether Logpush is turned on for the Worker.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"modified_on": schema.StringAttribute{
 							Description: "When the script was last modified.",
@@ -51,10 +52,12 @@ func (r WorkerScriptsDataSource) Schema(ctx context.Context, req datasource.Sche
 						"placement_mode": schema.StringAttribute{
 							Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
 							Computed:    true,
+							Optional:    true,
 						},
 						"tail_consumers": schema.ListNestedAttribute{
 							Description: "List of Workers that will consume logs from the attached Worker.",
 							Computed:    true,
+							Optional:    true,
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"service": schema.StringAttribute{
@@ -64,10 +67,12 @@ func (r WorkerScriptsDataSource) Schema(ctx context.Context, req datasource.Sche
 									"environment": schema.StringAttribute{
 										Description: "Optional environment if the Worker utilizes one.",
 										Computed:    true,
+										Optional:    true,
 									},
 									"namespace": schema.StringAttribute{
 										Description: "Optional dispatch namespace the script belongs to.",
 										Computed:    true,
+										Optional:    true,
 									},
 								},
 							},
@@ -75,6 +80,7 @@ func (r WorkerScriptsDataSource) Schema(ctx context.Context, req datasource.Sche
 						"usage_model": schema.StringAttribute{
 							Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

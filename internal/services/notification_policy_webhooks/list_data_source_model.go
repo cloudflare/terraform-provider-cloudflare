@@ -21,8 +21,8 @@ type NotificationPolicyWebhooksListItemsDataSourceModel struct {
 	CreatedAt   types.String `tfsdk:"created_at" json:"created_at,computed"`
 	LastFailure types.String `tfsdk:"last_failure" json:"last_failure,computed"`
 	LastSuccess types.String `tfsdk:"last_success" json:"last_success,computed"`
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Secret      types.String `tfsdk:"secret" json:"secret,computed"`
-	Type        types.String `tfsdk:"type" json:"type,computed"`
-	URL         types.String `tfsdk:"url" json:"url,computed"`
+	Name        types.String `tfsdk:"name" json:"name"`
+	Secret      types.String `tfsdk:"secret" json:"secret"`
+	Type        types.String `tfsdk:"type" json:"type"`
+	URL         types.String `tfsdk:"url" json:"url"`
 }

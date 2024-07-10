@@ -15,18 +15,17 @@ type RulesetResultListDataSourceEnvelope struct {
 }
 
 type RulesetDataSourceModel struct {
-	RulesetID   types.String                     `tfsdk:"ruleset_id" path:"ruleset_id"`
-	AccountID   types.String                     `tfsdk:"account_id" path:"account_id"`
-	ZoneID      types.String                     `tfsdk:"zone_id" path:"zone_id"`
-	ID          types.String                     `tfsdk:"id" json:"id"`
-	Kind        types.String                     `tfsdk:"kind" json:"kind"`
-	LastUpdated types.String                     `tfsdk:"last_updated" json:"last_updated"`
-	Name        types.String                     `tfsdk:"name" json:"name"`
-	Phase       types.String                     `tfsdk:"phase" json:"phase"`
-	Rules       *[]*RulesetRulesDataSourceModel  `tfsdk:"rules" json:"rules"`
-	Version     types.String                     `tfsdk:"version" json:"version"`
-	Description types.String                     `tfsdk:"description" json:"description"`
-	FindOneBy   *RulesetFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	RulesetID   types.String                    `tfsdk:"ruleset_id" path:"ruleset_id"`
+	AccountID   types.String                    `tfsdk:"account_id" path:"account_id"`
+	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id"`
+	ID          types.String                    `tfsdk:"id" json:"id,computed"`
+	Kind        types.String                    `tfsdk:"kind" json:"kind,computed"`
+	LastUpdated types.String                    `tfsdk:"last_updated" json:"last_updated,computed"`
+	Name        types.String                    `tfsdk:"name" json:"name,computed"`
+	Phase       types.String                    `tfsdk:"phase" json:"phase,computed"`
+	Rules       *[]*RulesetRulesDataSourceModel `tfsdk:"rules" json:"rules"`
+	Version     types.String                    `tfsdk:"version" json:"version,computed"`
+	Description types.String                    `tfsdk:"description" json:"description,computed"`
 }
 
 type RulesetRulesDataSourceModel struct {
@@ -48,16 +47,11 @@ type RulesetRulesActionParametersDataSourceModel struct {
 }
 
 type RulesetRulesActionParametersResponseDataSourceModel struct {
-	Content     types.String `tfsdk:"content" json:"content"`
-	ContentType types.String `tfsdk:"content_type" json:"content_type"`
-	StatusCode  types.Int64  `tfsdk:"status_code" json:"status_code"`
+	Content     types.String `tfsdk:"content" json:"content,computed"`
+	ContentType types.String `tfsdk:"content_type" json:"content_type,computed"`
+	StatusCode  types.Int64  `tfsdk:"status_code" json:"status_code,computed"`
 }
 
 type RulesetRulesLoggingDataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled"`
-}
-
-type RulesetFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }

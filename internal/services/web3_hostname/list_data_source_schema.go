@@ -40,10 +40,12 @@ func (r Web3HostnamesDataSource) Schema(ctx context.Context, req datasource.Sche
 						"description": schema.StringAttribute{
 							Description: "An optional description of the hostname.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"dnslink": schema.StringAttribute{
 							Description: "DNSLink value used if the target is ipfs.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"modified_on": schema.StringAttribute{
 							Computed: true,
@@ -62,6 +64,7 @@ func (r Web3HostnamesDataSource) Schema(ctx context.Context, req datasource.Sche
 						"target": schema.StringAttribute{
 							Description: "Target gateway of the hostname.",
 							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("ethereum", "ipfs", "ipfs_universal_path"),
 							},

@@ -21,10 +21,12 @@ func (r FilterDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of the filter.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the filter.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"expression": schema.StringAttribute{
@@ -37,6 +39,7 @@ func (r FilterDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			},
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related filters.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

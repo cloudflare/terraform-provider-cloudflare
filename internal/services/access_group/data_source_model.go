@@ -26,7 +26,6 @@ type AccessGroupDataSourceModel struct {
 	Name      types.String                            `tfsdk:"name" json:"name"`
 	Require   *[]*AccessGroupRequireDataSourceModel   `tfsdk:"require" json:"require"`
 	UpdatedAt types.String                            `tfsdk:"updated_at" json:"updated_at"`
-	FindOneBy *AccessGroupFindOneByDataSourceModel    `tfsdk:"find_one_by"`
 }
 
 type AccessGroupExcludeDataSourceModel struct {
@@ -52,73 +51,73 @@ type AccessGroupExcludeDataSourceModel struct {
 }
 
 type AccessGroupExcludeEmailDataSourceModel struct {
-	Email types.String `tfsdk:"email" json:"email"`
+	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupExcludeEmailListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupExcludeEmailDomainDataSourceModel struct {
-	Domain types.String `tfsdk:"domain" json:"domain"`
+	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
 type AccessGroupExcludeIPDataSourceModel struct {
-	IP types.String `tfsdk:"ip" json:"ip"`
+	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
 type AccessGroupExcludeIPListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupExcludeGroupDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupExcludeAzureADDataSourceModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type AccessGroupExcludeGitHubOrganizationDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Name         types.String `tfsdk:"name" json:"name"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type AccessGroupExcludeGSuiteDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupExcludeOktaDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupExcludeSAMLDataSourceModel struct {
-	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name"`
-	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type AccessGroupExcludeServiceTokenDataSourceModel struct {
-	TokenID types.String `tfsdk:"token_id" json:"token_id"`
+	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
 type AccessGroupExcludeExternalEvaluationDataSourceModel struct {
-	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url"`
-	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url"`
+	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
+	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
 type AccessGroupExcludeGeoDataSourceModel struct {
-	CountryCode types.String `tfsdk:"country_code" json:"country_code"`
+	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
 type AccessGroupExcludeAuthMethodDataSourceModel struct {
-	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method"`
+	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
 type AccessGroupExcludeDevicePostureDataSourceModel struct {
-	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }
 
 type AccessGroupIncludeDataSourceModel struct {
@@ -144,73 +143,73 @@ type AccessGroupIncludeDataSourceModel struct {
 }
 
 type AccessGroupIncludeEmailDataSourceModel struct {
-	Email types.String `tfsdk:"email" json:"email"`
+	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupIncludeEmailListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupIncludeEmailDomainDataSourceModel struct {
-	Domain types.String `tfsdk:"domain" json:"domain"`
+	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
 type AccessGroupIncludeIPDataSourceModel struct {
-	IP types.String `tfsdk:"ip" json:"ip"`
+	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
 type AccessGroupIncludeIPListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupIncludeGroupDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupIncludeAzureADDataSourceModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type AccessGroupIncludeGitHubOrganizationDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Name         types.String `tfsdk:"name" json:"name"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type AccessGroupIncludeGSuiteDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupIncludeOktaDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupIncludeSAMLDataSourceModel struct {
-	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name"`
-	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type AccessGroupIncludeServiceTokenDataSourceModel struct {
-	TokenID types.String `tfsdk:"token_id" json:"token_id"`
+	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
 type AccessGroupIncludeExternalEvaluationDataSourceModel struct {
-	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url"`
-	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url"`
+	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
+	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
 type AccessGroupIncludeGeoDataSourceModel struct {
-	CountryCode types.String `tfsdk:"country_code" json:"country_code"`
+	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
 type AccessGroupIncludeAuthMethodDataSourceModel struct {
-	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method"`
+	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
 type AccessGroupIncludeDevicePostureDataSourceModel struct {
-	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }
 
 type AccessGroupIsDefaultDataSourceModel struct {
@@ -236,73 +235,73 @@ type AccessGroupIsDefaultDataSourceModel struct {
 }
 
 type AccessGroupIsDefaultEmailDataSourceModel struct {
-	Email types.String `tfsdk:"email" json:"email"`
+	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupIsDefaultEmailListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupIsDefaultEmailDomainDataSourceModel struct {
-	Domain types.String `tfsdk:"domain" json:"domain"`
+	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
 type AccessGroupIsDefaultIPDataSourceModel struct {
-	IP types.String `tfsdk:"ip" json:"ip"`
+	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
 type AccessGroupIsDefaultIPListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupIsDefaultGroupDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupIsDefaultAzureADDataSourceModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type AccessGroupIsDefaultGitHubOrganizationDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Name         types.String `tfsdk:"name" json:"name"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type AccessGroupIsDefaultGSuiteDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupIsDefaultOktaDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupIsDefaultSAMLDataSourceModel struct {
-	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name"`
-	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type AccessGroupIsDefaultServiceTokenDataSourceModel struct {
-	TokenID types.String `tfsdk:"token_id" json:"token_id"`
+	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
 type AccessGroupIsDefaultExternalEvaluationDataSourceModel struct {
-	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url"`
-	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url"`
+	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
+	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
 type AccessGroupIsDefaultGeoDataSourceModel struct {
-	CountryCode types.String `tfsdk:"country_code" json:"country_code"`
+	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
 type AccessGroupIsDefaultAuthMethodDataSourceModel struct {
-	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method"`
+	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
 type AccessGroupIsDefaultDevicePostureDataSourceModel struct {
-	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }
 
 type AccessGroupRequireDataSourceModel struct {
@@ -328,76 +327,71 @@ type AccessGroupRequireDataSourceModel struct {
 }
 
 type AccessGroupRequireEmailDataSourceModel struct {
-	Email types.String `tfsdk:"email" json:"email"`
+	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupRequireEmailListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupRequireEmailDomainDataSourceModel struct {
-	Domain types.String `tfsdk:"domain" json:"domain"`
+	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
 type AccessGroupRequireIPDataSourceModel struct {
-	IP types.String `tfsdk:"ip" json:"ip"`
+	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
 type AccessGroupRequireIPListDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupRequireGroupDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
 type AccessGroupRequireAzureADDataSourceModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type AccessGroupRequireGitHubOrganizationDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Name         types.String `tfsdk:"name" json:"name"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type AccessGroupRequireGSuiteDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupRequireOktaDataSourceModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type AccessGroupRequireSAMLDataSourceModel struct {
-	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name"`
-	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type AccessGroupRequireServiceTokenDataSourceModel struct {
-	TokenID types.String `tfsdk:"token_id" json:"token_id"`
+	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
 type AccessGroupRequireExternalEvaluationDataSourceModel struct {
-	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url"`
-	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url"`
+	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
+	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
 type AccessGroupRequireGeoDataSourceModel struct {
-	CountryCode types.String `tfsdk:"country_code" json:"country_code"`
+	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
 type AccessGroupRequireAuthMethodDataSourceModel struct {
-	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method"`
+	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
 type AccessGroupRequireDevicePostureDataSourceModel struct {
-	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
-}
-
-type AccessGroupFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }

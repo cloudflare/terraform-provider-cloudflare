@@ -22,10 +22,10 @@ type WorkerDomainsDataSourceModel struct {
 }
 
 type WorkerDomainsItemsDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Environment types.String `tfsdk:"environment" json:"environment,computed"`
-	Hostname    types.String `tfsdk:"hostname" json:"hostname,computed"`
-	Service     types.String `tfsdk:"service" json:"service,computed"`
-	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id,computed"`
-	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name,computed"`
+	ID          types.String `tfsdk:"id" json:"id"`
+	Environment types.String `tfsdk:"environment" json:"environment"`
+	Hostname    types.String `tfsdk:"hostname" json:"hostname"`
+	Service     types.String `tfsdk:"service" json:"service"`
+	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id"`
+	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name"`
 }

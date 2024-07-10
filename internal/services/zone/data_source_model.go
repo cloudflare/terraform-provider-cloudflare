@@ -16,42 +16,18 @@ type ZoneResultListDataSourceEnvelope struct {
 
 type ZoneDataSourceModel struct {
 	ZoneID              types.String                  `tfsdk:"zone_id" path:"zone_id"`
-	ID                  types.String                  `tfsdk:"id" json:"id"`
-	Account             *ZoneAccountDataSourceModel   `tfsdk:"account" json:"account"`
-	ActivatedOn         types.String                  `tfsdk:"activated_on" json:"activated_on"`
-	CreatedOn           types.String                  `tfsdk:"created_on" json:"created_on"`
-	DevelopmentMode     types.Float64                 `tfsdk:"development_mode" json:"development_mode"`
-	Meta                *ZoneMetaDataSourceModel      `tfsdk:"meta" json:"meta"`
-	ModifiedOn          types.String                  `tfsdk:"modified_on" json:"modified_on"`
-	Name                types.String                  `tfsdk:"name" json:"name"`
-	NameServers         types.String                  `tfsdk:"name_servers" json:"name_servers"`
-	OriginalDnshost     types.String                  `tfsdk:"original_dnshost" json:"original_dnshost"`
-	OriginalNameServers types.String                  `tfsdk:"original_name_servers" json:"original_name_servers"`
-	OriginalRegistrar   types.String                  `tfsdk:"original_registrar" json:"original_registrar"`
-	Owner               *ZoneOwnerDataSourceModel     `tfsdk:"owner" json:"owner"`
+	ID                  types.String                  `tfsdk:"id" json:"id,computed"`
+	ActivatedOn         types.String                  `tfsdk:"activated_on" json:"activated_on,computed"`
+	CreatedOn           types.String                  `tfsdk:"created_on" json:"created_on,computed"`
+	DevelopmentMode     types.Float64                 `tfsdk:"development_mode" json:"development_mode,computed"`
+	ModifiedOn          types.String                  `tfsdk:"modified_on" json:"modified_on,computed"`
+	Name                types.String                  `tfsdk:"name" json:"name,computed"`
+	NameServers         types.String                  `tfsdk:"name_servers" json:"name_servers,computed"`
+	OriginalDnshost     types.String                  `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
+	OriginalNameServers types.String                  `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	OriginalRegistrar   types.String                  `tfsdk:"original_registrar" json:"original_registrar,computed"`
 	VanityNameServers   types.String                  `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
 	FindOneBy           *ZoneFindOneByDataSourceModel `tfsdk:"find_one_by"`
-}
-
-type ZoneAccountDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id"`
-	Name types.String `tfsdk:"name" json:"name"`
-}
-
-type ZoneMetaDataSourceModel struct {
-	CDNOnly                types.Bool  `tfsdk:"cdn_only" json:"cdn_only"`
-	CustomCertificateQuota types.Int64 `tfsdk:"custom_certificate_quota" json:"custom_certificate_quota"`
-	DNSOnly                types.Bool  `tfsdk:"dns_only" json:"dns_only"`
-	FoundationDNS          types.Bool  `tfsdk:"foundation_dns" json:"foundation_dns"`
-	PageRuleQuota          types.Int64 `tfsdk:"page_rule_quota" json:"page_rule_quota"`
-	PhishingDetected       types.Bool  `tfsdk:"phishing_detected" json:"phishing_detected"`
-	Step                   types.Int64 `tfsdk:"step" json:"step"`
-}
-
-type ZoneOwnerDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id"`
-	Name types.String `tfsdk:"name" json:"name"`
-	Type types.String `tfsdk:"type" json:"type"`
 }
 
 type ZoneFindOneByDataSourceModel struct {

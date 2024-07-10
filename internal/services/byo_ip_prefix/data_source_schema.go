@@ -17,6 +17,7 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
+				Computed:    true,
 				Optional:    true,
 			},
 			"prefix_id": schema.StringAttribute{
@@ -25,48 +26,60 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier",
+				Computed:    true,
 				Optional:    true,
 			},
 			"advertised": schema.BoolAttribute{
 				Description: "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"advertised_modified_at": schema.StringAttribute{
 				Description: "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"approved": schema.StringAttribute{
 				Description: "Approval state of the prefix (P = pending, V = active).",
+				Computed:    true,
 				Optional:    true,
 			},
 			"asn": schema.Int64Attribute{
 				Description: "Autonomous System Number (ASN) the prefix will be advertised under.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"cidr": schema.StringAttribute{
 				Description: "IP Prefix in Classless Inter-Domain Routing format.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of the prefix.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"loa_document_id": schema.StringAttribute{
 				Description: "Identifier for the uploaded LOA document.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"modified_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"on_demand_enabled": schema.BoolAttribute{
 				Description: "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"on_demand_locked": schema.BoolAttribute{
 				Description: "Whether advertisement status of the prefix is locked, meaning it cannot be changed.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

@@ -69,6 +69,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 						"policies": schema.ListNestedAttribute{
 							Description: "Access policy for the membership",
 							Computed:    true,
+							Optional:    true,
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -78,6 +79,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 									"access": schema.StringAttribute{
 										Description: "Allow or deny operations against the resources.",
 										Computed:    true,
+										Optional:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive("allow", "deny"),
 										},
@@ -85,6 +87,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 									"permission_groups": schema.ListNestedAttribute{
 										Description: "A set of permission groups that are specified to the policy.",
 										Computed:    true,
+										Optional:    true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
 												"id": schema.StringAttribute{
@@ -94,6 +97,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 												"meta": schema.StringAttribute{
 													Description: "Attributes associated to the permission group.",
 													Computed:    true,
+													Optional:    true,
 												},
 												"name": schema.StringAttribute{
 													Description: "Name of the group.",
@@ -105,6 +109,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 									"resource_groups": schema.ListNestedAttribute{
 										Description: "A list of resource groups that the policy applies to.",
 										Computed:    true,
+										Optional:    true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
 												"id": schema.StringAttribute{
@@ -138,6 +143,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 												"meta": schema.StringAttribute{
 													Description: "Attributes associated to the resource group.",
 													Computed:    true,
+													Optional:    true,
 												},
 												"name": schema.StringAttribute{
 													Description: "Name of the resource group.",
@@ -152,6 +158,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 						"roles": schema.ListNestedAttribute{
 							Description: "Roles assigned to this Member.",
 							Computed:    true,
+							Optional:    true,
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{

@@ -25,38 +25,42 @@ func (r MTLSCertificateDataSource) Schema(ctx context.Context, req datasource.Sc
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
+				Computed:    true,
 			},
 			"ca": schema.BoolAttribute{
 				Description: "Indicates whether the certificate is a CA or leaf certificate.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"certificates": schema.StringAttribute{
 				Description: "The uploaded root CA certificate.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate expires.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Optional unique name for the certificate. Only used for human readability.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"serial_number": schema.StringAttribute{
 				Description: "The certificate serial number.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"signature": schema.StringAttribute{
 				Description: "The type of hash used for the certificate.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"uploaded_on": schema.StringAttribute{
 				Description: "This is the time the certificate was uploaded.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

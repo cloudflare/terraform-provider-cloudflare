@@ -20,23 +20,23 @@ type LoadBalancerDataSourceModel struct {
 	ID                        types.String                                          `tfsdk:"id" json:"id"`
 	AdaptiveRouting           *LoadBalancerAdaptiveRoutingDataSourceModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
 	CountryPools              types.String                                          `tfsdk:"country_pools" json:"country_pools"`
-	CreatedOn                 types.String                                          `tfsdk:"created_on" json:"created_on"`
+	CreatedOn                 types.String                                          `tfsdk:"created_on" json:"created_on,computed"`
 	DefaultPools              types.String                                          `tfsdk:"default_pools" json:"default_pools"`
 	Description               types.String                                          `tfsdk:"description" json:"description"`
-	Enabled                   types.Bool                                            `tfsdk:"enabled" json:"enabled"`
+	Enabled                   types.Bool                                            `tfsdk:"enabled" json:"enabled,computed"`
 	FallbackPool              types.String                                          `tfsdk:"fallback_pool" json:"fallback_pool"`
 	LocationStrategy          *LoadBalancerLocationStrategyDataSourceModel          `tfsdk:"location_strategy" json:"location_strategy"`
-	ModifiedOn                types.String                                          `tfsdk:"modified_on" json:"modified_on"`
+	ModifiedOn                types.String                                          `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                      types.String                                          `tfsdk:"name" json:"name"`
 	PopPools                  types.String                                          `tfsdk:"pop_pools" json:"pop_pools"`
-	Proxied                   types.Bool                                            `tfsdk:"proxied" json:"proxied"`
+	Proxied                   types.Bool                                            `tfsdk:"proxied" json:"proxied,computed"`
 	RandomSteering            *LoadBalancerRandomSteeringDataSourceModel            `tfsdk:"random_steering" json:"random_steering"`
 	RegionPools               types.String                                          `tfsdk:"region_pools" json:"region_pools"`
 	Rules                     *[]*LoadBalancerRulesDataSourceModel                  `tfsdk:"rules" json:"rules"`
-	SessionAffinity           types.String                                          `tfsdk:"session_affinity" json:"session_affinity"`
+	SessionAffinity           types.String                                          `tfsdk:"session_affinity" json:"session_affinity,computed"`
 	SessionAffinityAttributes *LoadBalancerSessionAffinityAttributesDataSourceModel `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes"`
 	SessionAffinityTTL        types.Float64                                         `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl"`
-	SteeringPolicy            types.String                                          `tfsdk:"steering_policy" json:"steering_policy"`
+	SteeringPolicy            types.String                                          `tfsdk:"steering_policy" json:"steering_policy,computed"`
 	TTL                       types.Float64                                         `tfsdk:"ttl" json:"ttl"`
 	FindOneBy                 *LoadBalancerFindOneByDataSourceModel                 `tfsdk:"find_one_by"`
 }

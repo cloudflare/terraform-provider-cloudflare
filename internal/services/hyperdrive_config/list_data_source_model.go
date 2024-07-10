@@ -17,13 +17,15 @@ type HyperdriveConfigsDataSourceModel struct {
 }
 
 type HyperdriveConfigsItemsDataSourceModel struct {
-	Name types.String `tfsdk:"name" json:"name,computed"`
+	Caching *HyperdriveConfigsItemsCachingDataSourceModel `tfsdk:"caching" json:"caching"`
+	Name    types.String                                  `tfsdk:"name" json:"name"`
+	Origin  *HyperdriveConfigsItemsOriginDataSourceModel  `tfsdk:"origin" json:"origin"`
 }
 
 type HyperdriveConfigsItemsCachingDataSourceModel struct {
-	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed"`
-	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,computed"`
-	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,computed"`
+	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled"`
+	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age"`
+	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate"`
 }
 
 type HyperdriveConfigsItemsOriginDataSourceModel struct {

@@ -29,7 +29,7 @@ type WorkerScriptDataSourceModel struct {
 }
 
 type WorkerScriptTailConsumersDataSourceModel struct {
-	Service     types.String `tfsdk:"service" json:"service"`
+	Service     types.String `tfsdk:"service" json:"service,computed"`
 	Environment types.String `tfsdk:"environment" json:"environment"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace"`
 }

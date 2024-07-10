@@ -24,5 +24,5 @@ type QueuesItemsDataSourceModel struct {
 	Producers           types.String `tfsdk:"producers" json:"producers,computed"`
 	ProducersTotalCount types.String `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
 	QueueID             types.String `tfsdk:"queue_id" json:"queue_id,computed"`
-	QueueName           types.String `tfsdk:"queue_name" json:"queue_name,computed"`
+	QueueName           types.String `tfsdk:"queue_name" json:"queue_name"`
 }

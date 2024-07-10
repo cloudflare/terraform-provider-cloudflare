@@ -75,18 +75,22 @@ func (r FirewallRulesDataSource) Schema(ctx context.Context, req datasource.Sche
 						"description": schema.StringAttribute{
 							Description: "An informative summary of the firewall rule.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"priority": schema.Float64Attribute{
 							Description: "The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"products": schema.ListAttribute{
 							Computed:    true,
+							Optional:    true,
 							ElementType: types.StringType,
 						},
 						"ref": schema.StringAttribute{
 							Description: "A short reference tag. Allows you to select related firewall rules.",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

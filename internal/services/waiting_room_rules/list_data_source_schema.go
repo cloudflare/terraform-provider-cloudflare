@@ -36,10 +36,12 @@ func (r WaitingRoomRulesListDataSource) Schema(ctx context.Context, req datasour
 						"id": schema.StringAttribute{
 							Description: "The ID of the rule.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"action": schema.StringAttribute{
 							Description: "The action to take when the expression matches.",
 							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("bypass_waiting_room"),
 							},
@@ -55,6 +57,7 @@ func (r WaitingRoomRulesListDataSource) Schema(ctx context.Context, req datasour
 						"expression": schema.StringAttribute{
 							Description: "Criteria defining when there is a match for the current rule.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"last_updated": schema.StringAttribute{
 							Computed: true,
@@ -62,6 +65,7 @@ func (r WaitingRoomRulesListDataSource) Schema(ctx context.Context, req datasour
 						"version": schema.StringAttribute{
 							Description: "The version of the rule.",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

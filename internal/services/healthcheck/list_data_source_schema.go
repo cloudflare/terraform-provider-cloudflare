@@ -48,10 +48,12 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 						"address": schema.StringAttribute{
 							Description: "The hostname or IP address of the origin server to run health checks on.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"check_regions": schema.ListAttribute{
 							Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
 							Computed:    true,
+							Optional:    true,
 							ElementType: types.StringType,
 						},
 						"consecutive_fails": schema.Int64Attribute{
@@ -68,10 +70,60 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 						"description": schema.StringAttribute{
 							Description: "A human-readable description of the health check.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"failure_reason": schema.StringAttribute{
 							Description: "The current failure reason if status is unhealthy.",
 							Computed:    true,
+						},
+						"http_config": schema.SingleNestedAttribute{
+							Description: "Parameters specific to an HTTP or HTTPS health check.",
+							Computed:    true,
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"allow_insecure": schema.BoolAttribute{
+									Description: "Do not validate the certificate when the health check uses HTTPS.",
+									Computed:    true,
+								},
+								"expected_body": schema.StringAttribute{
+									Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"expected_codes": schema.ListAttribute{
+									Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
+									Computed:    true,
+									Optional:    true,
+									ElementType: types.StringType,
+								},
+								"follow_redirects": schema.BoolAttribute{
+									Description: "Follow redirects if the origin returns a 3xx status code.",
+									Computed:    true,
+								},
+								"header": schema.MapAttribute{
+									Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
+									Computed:    true,
+									Optional:    true,
+									ElementType: types.ListType{
+										ElemType: types.StringType,
+									},
+								},
+								"method": schema.StringAttribute{
+									Description: "The HTTP method to use for the health check.",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("GET", "HEAD"),
+									},
+								},
+								"path": schema.StringAttribute{
+									Description: "The endpoint path to health check against.",
+									Computed:    true,
+								},
+								"port": schema.Int64Attribute{
+									Description: "Port number to connect to for the health check. Defaults to 80 if type is HTTP or 443 if type is HTTPS.",
+									Computed:    true,
+								},
+							},
 						},
 						"interval": schema.Int64Attribute{
 							Description: "The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations.",
@@ -83,6 +135,7 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 						"name": schema.StringAttribute{
 							Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"retries": schema.Int64Attribute{
 							Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
@@ -98,6 +151,24 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 						"suspended": schema.BoolAttribute{
 							Description: "If suspended, no health checks are sent to the origin.",
 							Computed:    true,
+						},
+						"tcp_config": schema.SingleNestedAttribute{
+							Description: "Parameters specific to TCP health check.",
+							Computed:    true,
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"method": schema.StringAttribute{
+									Description: "The TCP connection method to use for the health check.",
+									Computed:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("connection_established"),
+									},
+								},
+								"port": schema.Int64Attribute{
+									Description: "Port number to connect to for the health check. Defaults to 80.",
+									Computed:    true,
+								},
+							},
 						},
 						"timeout": schema.Int64Attribute{
 							Description: "The timeout (in seconds) before marking the health check as failed.",

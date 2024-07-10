@@ -25,37 +25,41 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 				Optional: true,
 			},
 			"id": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"check_regions": schema.StringAttribute{
 				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("WNAM", "ENAM", "WEU", "EEU", "NSAM", "SSAM", "OC", "ME", "NAF", "SAF", "SAS", "SEAS", "NEAS", "ALL_REGIONS"),
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "A human-readable description of the pool.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"disabled_at": schema.StringAttribute{
 				Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
 				Computed:    true,
-				Optional:    true,
 			},
 			"latitude": schema.Float64Attribute{
 				Description: "The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"load_shedding": schema.SingleNestedAttribute{
 				Description: "Configures load shedding policies and percentages for the pool.",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"default_percent": schema.Float64Attribute{
@@ -84,34 +88,39 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"longitude": schema.Float64Attribute{
 				Description: "The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"minimum_origins": schema.Int64Attribute{
 				Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"modified_on": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 			},
 			"monitor": schema.StringAttribute{
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"notification_email": schema.StringAttribute{
 				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"notification_filter": schema.SingleNestedAttribute{
 				Description: "Filter pool and origin health notifications by resource type or health status. Use null to reset.",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"origin": schema.SingleNestedAttribute{
 						Description: "Filter options for a particular resource type (pool or origin). Use null to reset.",
+						Computed:    true,
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"disable": schema.BoolAttribute{
@@ -120,12 +129,14 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"pool": schema.SingleNestedAttribute{
 						Description: "Filter options for a particular resource type (pool or origin). Use null to reset.",
+						Computed:    true,
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"disable": schema.BoolAttribute{
@@ -134,6 +145,7 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -142,6 +154,7 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"origin_steering": schema.SingleNestedAttribute{
 				Description: "Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity.",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"policy": schema.StringAttribute{
@@ -155,11 +168,13 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"origins": schema.ListNestedAttribute{
 				Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"disabled_at": schema.StringAttribute{
@@ -172,20 +187,24 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 						},
 						"header": schema.SingleNestedAttribute{
 							Description: "The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'.",
+							Computed:    true,
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
 								"host": schema.StringAttribute{
 									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
+									Computed:    true,
 									Optional:    true,
 								},
 							},
 						},
 						"name": schema.StringAttribute{
 							Description: "A human-identifiable name for the origin.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"virtual_network_id": schema.StringAttribute{
 							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"weight": schema.Float64Attribute{

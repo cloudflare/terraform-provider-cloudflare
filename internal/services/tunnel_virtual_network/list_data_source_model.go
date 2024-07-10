@@ -26,5 +26,5 @@ type TunnelVirtualNetworksItemsDataSourceModel struct {
 	CreatedAt        types.String `tfsdk:"created_at" json:"created_at,computed"`
 	IsDefaultNetwork types.Bool   `tfsdk:"is_default_network" json:"is_default_network,computed"`
 	Name             types.String `tfsdk:"name" json:"name,computed"`
-	DeletedAt        types.String `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	DeletedAt        types.String `tfsdk:"deleted_at" json:"deleted_at"`
 }

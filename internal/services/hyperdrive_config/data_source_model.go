@@ -30,11 +30,11 @@ type HyperdriveConfigCachingDataSourceModel struct {
 }
 
 type HyperdriveConfigOriginDataSourceModel struct {
-	Database types.String `tfsdk:"database" json:"database"`
-	Host     types.String `tfsdk:"host" json:"host"`
-	Port     types.Int64  `tfsdk:"port" json:"port"`
+	Database types.String `tfsdk:"database" json:"database,computed"`
+	Host     types.String `tfsdk:"host" json:"host,computed"`
+	Port     types.Int64  `tfsdk:"port" json:"port,computed"`
 	Scheme   types.String `tfsdk:"scheme" json:"scheme,computed"`
-	User     types.String `tfsdk:"user" json:"user"`
+	User     types.String `tfsdk:"user" json:"user,computed"`
 }
 
 type HyperdriveConfigFindOneByDataSourceModel struct {

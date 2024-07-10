@@ -31,27 +31,31 @@ func (r AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"name": schema.StringAttribute{
 				Description: "Custom page name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "Custom page type.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("identity_denied", "forbidden"),
 				},
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "Number of apps the custom page is assigned to.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"uid": schema.StringAttribute{
 				Description: "UUID",
+				Computed:    true,
 				Optional:    true,
 			},
 			"updated_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

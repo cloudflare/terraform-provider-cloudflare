@@ -41,10 +41,12 @@ func (r WorkerSecretsDataSource) Schema(ctx context.Context, req datasource.Sche
 						"name": schema.StringAttribute{
 							Description: "The name of this secret, this is what will be to access it inside the Worker.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"type": schema.StringAttribute{
 							Description: "The type of secret to put.",
 							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("secret_text"),
 							},

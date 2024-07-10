@@ -23,17 +23,16 @@ type LogpushJobDataSourceModel struct {
 	DestinationConf          types.String                            `tfsdk:"destination_conf" json:"destination_conf"`
 	Enabled                  types.Bool                              `tfsdk:"enabled" json:"enabled"`
 	ErrorMessage             types.String                            `tfsdk:"error_message" json:"error_message"`
-	Frequency                types.String                            `tfsdk:"frequency" json:"frequency"`
+	Frequency                types.String                            `tfsdk:"frequency" json:"frequency,computed"`
 	Kind                     types.String                            `tfsdk:"kind" json:"kind"`
 	LastComplete             types.String                            `tfsdk:"last_complete" json:"last_complete"`
 	LastError                types.String                            `tfsdk:"last_error" json:"last_error"`
 	LogpullOptions           types.String                            `tfsdk:"logpull_options" json:"logpull_options"`
 	MaxUploadBytes           types.Int64                             `tfsdk:"max_upload_bytes" json:"max_upload_bytes"`
-	MaxUploadIntervalSeconds types.Int64                             `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds"`
-	MaxUploadRecords         types.Int64                             `tfsdk:"max_upload_records" json:"max_upload_records"`
+	MaxUploadIntervalSeconds types.Int64                             `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`
+	MaxUploadRecords         types.Int64                             `tfsdk:"max_upload_records" json:"max_upload_records,computed"`
 	Name                     types.String                            `tfsdk:"name" json:"name"`
 	OutputOptions            *LogpushJobOutputOptionsDataSourceModel `tfsdk:"output_options" json:"output_options"`
-	FindOneBy                *LogpushJobFindOneByDataSourceModel     `tfsdk:"find_one_by"`
 }
 
 type LogpushJobOutputOptionsDataSourceModel struct {
@@ -49,9 +48,4 @@ type LogpushJobOutputOptionsDataSourceModel struct {
 	RecordTemplate  types.String  `tfsdk:"record_template" json:"record_template,computed"`
 	SampleRate      types.Float64 `tfsdk:"sample_rate" json:"sample_rate,computed"`
 	TimestampFormat types.String  `tfsdk:"timestamp_format" json:"timestamp_format,computed"`
-}
-
-type LogpushJobFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 }

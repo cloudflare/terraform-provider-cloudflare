@@ -23,6 +23,7 @@ func (r UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req datasou
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of the User Agent Blocking rule.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"configuration": schema.SingleNestedAttribute{
@@ -31,10 +32,12 @@ func (r UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req datasou
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
 						Description: "The configuration target for this rule. You must set the target to `ua` for User Agent Blocking rules.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"value": schema.StringAttribute{
 						Description: "The exact user agent string to match. This value will be compared to the received `User-Agent` HTTP header value.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

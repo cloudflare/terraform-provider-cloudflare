@@ -27,31 +27,34 @@ func (r AddressMapDataSource) Schema(ctx context.Context, req datasource.SchemaR
 			},
 			"id": schema.StringAttribute{
 				Description: "Identifier",
+				Computed:    true,
 				Optional:    true,
 			},
 			"can_delete": schema.BoolAttribute{
 				Description: "If set to false, then the Address Map cannot be deleted via API. This is true for Cloudflare-managed maps.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"can_modify_ips": schema.BoolAttribute{
 				Description: "If set to false, then the IPs on the Address Map cannot be modified via the API. This is true for Cloudflare-managed maps.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"default_sni": schema.StringAttribute{
 				Description: "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An optional description field which may be used to describe the types of IPs or zones on the map.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"ips": schema.ListNestedAttribute{
 				Description: "The set of IPs on the Address Map.",
@@ -59,10 +62,12 @@ func (r AddressMapDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_at": schema.StringAttribute{
+							Computed: true,
 							Optional: true,
 						},
 						"ip": schema.StringAttribute{
 							Description: "An IPv4 or IPv6 address.",
+							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -78,14 +83,17 @@ func (r AddressMapDataSource) Schema(ctx context.Context, req datasource.SchemaR
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
+							Computed: true,
 							Optional: true,
 						},
 						"identifier": schema.StringAttribute{
 							Description: "The identifier for the membership (eg. a zone or account tag).",
+							Computed:    true,
 							Optional:    true,
 						},
 						"kind": schema.StringAttribute{
 							Description: "The type of the membership.",
+							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("zone", "account"),
@@ -95,6 +103,7 @@ func (r AddressMapDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				},
 			},
 			"modified_at": schema.StringAttribute{
+				Computed: true,
 				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{

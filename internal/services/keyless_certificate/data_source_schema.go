@@ -27,55 +27,55 @@ func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource
 			},
 			"id": schema.StringAttribute{
 				Description: "Keyless certificate identifier tag.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether or not the Keyless SSL is on or off.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"host": schema.StringAttribute{
 				Description: "The keyless SSL name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was last modified.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"permissions": schema.StringAttribute{
 				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"port": schema.Float64Attribute{
 				Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the Keyless SSL.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "deleted"),
 				},
 			},
 			"tunnel": schema.SingleNestedAttribute{
 				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+				Computed:    true,
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"private_ip": schema.StringAttribute{
 						Description: "Private IP of the Key Server Host",
-						Required:    true,
+						Computed:    true,
 					},
 					"vnet_id": schema.StringAttribute{
 						Description: "Cloudflare Tunnel Virtual Network ID",
-						Required:    true,
+						Computed:    true,
 					},
 				},
 			},
