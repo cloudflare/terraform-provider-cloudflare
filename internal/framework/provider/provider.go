@@ -196,11 +196,12 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 	} else {
 		basePath = utils.GetDefaultFromEnv(consts.APIBasePathEnvVarKey, consts.APIBasePathDefault)
 	}
-	// Adding a trailing slash for ResolveReference to work
-	basePath = strings.TrimSuffix(basePath, "/") + "/"
 
 	baseURL := cfv1.BaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath))
-	cfv2Options = append(cfv2Options, option.WithBaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePath)))
+
+	// Ensure there is a trailing slash for client.V2 basePath
+	basePathV2 := strings.TrimSuffix(basePath, "/") + "/"
+	cfv2Options = append(cfv2Options, option.WithBaseURL(fmt.Sprintf("https://%s%s", baseHostname, basePathV2)))
 
 	if !data.RPS.IsNull() {
 		rps = int64(data.RPS.ValueInt64())
