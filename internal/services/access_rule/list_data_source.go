@@ -54,7 +54,25 @@ func (r *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	params := firewall.AccessRuleListParams{}
+	params := firewall.AccessRuleListParams{
+		Direction: cloudflare.F(firewall.AccessRuleListParamsDirection(data.Direction.ValueString())),
+		EgsPagination: cloudflare.F(firewall.AccessRuleListParamsEgsPagination{
+			Json: cloudflare.F(firewall.AccessRuleListParamsEgsPaginationJson{
+				Page:    cloudflare.F(data.EgsPagination.Json.Page.ValueFloat64()),
+				PerPage: cloudflare.F(data.EgsPagination.Json.PerPage.ValueFloat64()),
+			}),
+		}),
+		Filters: cloudflare.F(firewall.AccessRuleListParamsFilters{
+			ConfigurationTarget: cloudflare.F(firewall.AccessRuleListParamsFiltersConfigurationTarget(data.Filters.ConfigurationTarget.ValueString())),
+			ConfigurationValue:  cloudflare.F(data.Filters.ConfigurationValue.ValueString()),
+			Match:               cloudflare.F(firewall.AccessRuleListParamsFiltersMatch(data.Filters.Match.ValueString())),
+			Mode:                cloudflare.F(firewall.AccessRuleListParamsFiltersMode(data.Filters.Mode.ValueString())),
+			Notes:               cloudflare.F(data.Filters.Notes.ValueString()),
+		}),
+		Order:   cloudflare.F(firewall.AccessRuleListParamsOrder(data.Order.ValueString())),
+		Page:    cloudflare.F(data.Page.ValueFloat64()),
+		PerPage: cloudflare.F(data.PerPage.ValueFloat64()),
+	}
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {

@@ -61,6 +61,9 @@ func (r *D1DatabasesDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	page, err := r.client.D1.Database.List(ctx, d1.DatabaseListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+		Name:      cloudflare.F(data.Name.ValueString()),
+		Page:      cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

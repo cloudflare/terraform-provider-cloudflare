@@ -86,7 +86,12 @@ func (r *WorkerDomainDataSource) Read(ctx context.Context, req datasource.ReadRe
 		env := WorkerDomainResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Workers.Domains.List(ctx, workers.DomainListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID:   cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			Environment: cloudflare.F(data.FindOneBy.Environment.ValueString()),
+			Hostname:    cloudflare.F(data.FindOneBy.Hostname.ValueString()),
+			Service:     cloudflare.F(data.FindOneBy.Service.ValueString()),
+			ZoneID:      cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneName:    cloudflare.F(data.FindOneBy.ZoneName.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

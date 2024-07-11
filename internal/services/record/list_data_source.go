@@ -8,6 +8,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/dns"
+	"github.com/cloudflare/cloudflare-go/v2/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -61,6 +62,33 @@ func (r *RecordsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 
 	page, err := r.client.DNS.Records.List(ctx, dns.RecordListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		Comment: cloudflare.F(dns.RecordListParamsComment{
+			Absent:     cloudflare.F(data.Comment.Absent.ValueString()),
+			Contains:   cloudflare.F(data.Comment.Contains.ValueString()),
+			Endswith:   cloudflare.F(data.Comment.Endswith.ValueString()),
+			Exact:      cloudflare.F(data.Comment.Exact.ValueString()),
+			Present:    cloudflare.F(data.Comment.Present.ValueString()),
+			Startswith: cloudflare.F(data.Comment.Startswith.ValueString()),
+		}),
+		Content:   cloudflare.F(data.Content.ValueString()),
+		Direction: cloudflare.F(shared.SortDirection(data.Direction.ValueString())),
+		Match:     cloudflare.F(dns.RecordListParamsMatch(data.Match.ValueString())),
+		Name:      cloudflare.F(data.Name.ValueString()),
+		Order:     cloudflare.F(dns.RecordListParamsOrder(data.Order.ValueString())),
+		Page:      cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
+		Proxied:   cloudflare.F(data.Proxied.ValueBool()),
+		Search:    cloudflare.F(data.Search.ValueString()),
+		Tag: cloudflare.F(dns.RecordListParamsTag{
+			Absent:     cloudflare.F(data.Tag.Absent.ValueString()),
+			Contains:   cloudflare.F(data.Tag.Contains.ValueString()),
+			Endswith:   cloudflare.F(data.Tag.Endswith.ValueString()),
+			Exact:      cloudflare.F(data.Tag.Exact.ValueString()),
+			Present:    cloudflare.F(data.Tag.Present.ValueString()),
+			Startswith: cloudflare.F(data.Tag.Startswith.ValueString()),
+		}),
+		TagMatch: cloudflare.F(dns.RecordListParamsTagMatch(data.TagMatch.ValueString())),
+		Type:     cloudflare.F(dns.RecordListParamsType(data.Type.ValueString())),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -16,7 +16,7 @@ type RateLimitResultListDataSourceEnvelope struct {
 
 type RateLimitDataSourceModel struct {
 	ZoneIdentifier types.String                       `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                       `tfsdk:"id" json:"id"`
+	ID             types.String                       `tfsdk:"id" path:"id"`
 	Action         *RateLimitActionDataSourceModel    `tfsdk:"action" json:"action"`
 	Bypass         *[]*RateLimitBypassDataSourceModel `tfsdk:"bypass" json:"bypass"`
 	Description    types.String                       `tfsdk:"description" json:"description"`

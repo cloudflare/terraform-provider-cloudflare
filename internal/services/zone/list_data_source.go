@@ -59,7 +59,19 @@ func (r *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ZonesItemsDataSourceModel{}
 
-	page, err := r.client.Zones.List(ctx, zones.ZoneListParams{})
+	page, err := r.client.Zones.List(ctx, zones.ZoneListParams{
+		Account: cloudflare.F(zones.ZoneListParamsAccount{
+			ID:   cloudflare.F(data.Account.ID.ValueString()),
+			Name: cloudflare.F(data.Account.Name.ValueString()),
+		}),
+		Direction: cloudflare.F(zones.ZoneListParamsDirection(data.Direction.ValueString())),
+		Match:     cloudflare.F(zones.ZoneListParamsMatch(data.Match.ValueString())),
+		Name:      cloudflare.F(data.Name.ValueString()),
+		Order:     cloudflare.F(zones.ZoneListParamsOrder(data.Order.ValueString())),
+		Page:      cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
+		Status:    cloudflare.F(zones.ZoneListParamsStatus(data.Status.ValueString())),
+	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

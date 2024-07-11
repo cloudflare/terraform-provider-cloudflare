@@ -5,6 +5,7 @@ package tunnel
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
@@ -54,13 +55,35 @@ func (r *TunnelsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
+	dataExistedAt, err := time.Parse(time.RFC3339, data.ExistedAt.ValueString())
+	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	dataWasActiveAt, err := time.Parse(time.RFC3339, data.WasActiveAt.ValueString())
+	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	dataWasInactiveAt, err := time.Parse(time.RFC3339, data.WasInactiveAt.ValueString())
+	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*TunnelsItemsDataSourceModel{}
 	env := TunnelsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TunnelsItemsDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
+		AccountID:     cloudflare.F(data.AccountID.ValueString()),
+		ExcludePrefix: cloudflare.F(data.ExcludePrefix.ValueString()),
+		ExistedAt:     cloudflare.F(dataExistedAt),
+		IncludePrefix: cloudflare.F(data.IncludePrefix.ValueString()),
+		IsDeleted:     cloudflare.F(data.IsDeleted.ValueBool()),
+		Name:          cloudflare.F(data.Name.ValueString()),
+		Page:          cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:       cloudflare.F(data.PerPage.ValueFloat64()),
+		Status:        cloudflare.F(zero_trust.TunnelListParamsStatus(data.Status.ValueString())),
+		TunTypes:      cloudflare.F(data.TunTypes.ValueString()),
+		UUID:          cloudflare.F(data.UUID.ValueString()),
+		WasActiveAt:   cloudflare.F(dataWasActiveAt),
+		WasInactiveAt: cloudflare.F(dataWasInactiveAt),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -86,7 +86,13 @@ func (r *R2BucketDataSource) Read(ctx context.Context, req datasource.ReadReques
 		env := R2BucketResultListDataSourceEnvelope{items}
 
 		page, err := r.client.R2.Buckets.List(ctx, r2.BucketListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID:    cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			Cursor:       cloudflare.F(data.FindOneBy.Cursor.ValueString()),
+			Direction:    cloudflare.F(r2.BucketListParamsDirection(data.FindOneBy.Direction.ValueString())),
+			NameContains: cloudflare.F(data.FindOneBy.NameContains.ValueString()),
+			Order:        cloudflare.F(r2.BucketListParamsOrder(data.FindOneBy.Order.ValueString())),
+			PerPage:      cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			StartAfter:   cloudflare.F(data.FindOneBy.StartAfter.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

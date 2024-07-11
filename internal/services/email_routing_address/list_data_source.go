@@ -62,7 +62,12 @@ func (r *EmailRoutingAddressesDataSource) Read(ctx context.Context, req datasour
 	page, err := r.client.EmailRouting.Addresses.List(
 		ctx,
 		data.AccountIdentifier.ValueString(),
-		email_routing.AddressListParams{},
+		email_routing.AddressListParams{
+			Direction: cloudflare.F(email_routing.AddressListParamsDirection(data.Direction.ValueString())),
+			Page:      cloudflare.F(data.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
+			Verified:  cloudflare.F(email_routing.AddressListParamsVerified(data.Verified.ValueBool())),
+		},
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

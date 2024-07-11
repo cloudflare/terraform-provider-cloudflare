@@ -62,7 +62,14 @@ func (r *FirewallRulesDataSource) Read(ctx context.Context, req datasource.ReadR
 	page, err := r.client.Firewall.Rules.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		firewall.RuleListParams{},
+		firewall.RuleListParams{
+			ID:          cloudflare.F(data.ID.ValueString()),
+			Action:      cloudflare.F(data.Action.ValueString()),
+			Description: cloudflare.F(data.Description.ValueString()),
+			Page:        cloudflare.F(data.Page.ValueFloat64()),
+			Paused:      cloudflare.F(data.Paused.ValueBool()),
+			PerPage:     cloudflare.F(data.PerPage.ValueFloat64()),
+		},
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

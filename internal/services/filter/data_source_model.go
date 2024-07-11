@@ -16,7 +16,7 @@ type FilterResultListDataSourceEnvelope struct {
 
 type FilterDataSourceModel struct {
 	ZoneIdentifier types.String                    `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                    `tfsdk:"id" json:"id"`
+	ID             types.String                    `tfsdk:"id" path:"id"`
 	Description    types.String                    `tfsdk:"description" json:"description"`
 	Expression     types.String                    `tfsdk:"expression" json:"expression"`
 	Paused         types.Bool                      `tfsdk:"paused" json:"paused"`

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -82,11 +83,33 @@ func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		}
 		data = &env.Result
 	} else {
+		dataFindOneByExistedAt, err := time.Parse(time.RFC3339, data.FindOneBy.ExistedAt.ValueString())
+		resp.Diagnostics.AddError("failed to parse time", err.Error())
+		dataFindOneByWasActiveAt, err := time.Parse(time.RFC3339, data.FindOneBy.WasActiveAt.ValueString())
+		resp.Diagnostics.AddError("failed to parse time", err.Error())
+		dataFindOneByWasInactiveAt, err := time.Parse(time.RFC3339, data.FindOneBy.WasInactiveAt.ValueString())
+		resp.Diagnostics.AddError("failed to parse time", err.Error())
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*TunnelDataSourceModel{}
 		env := TunnelResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID:     cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			ExcludePrefix: cloudflare.F(data.FindOneBy.ExcludePrefix.ValueString()),
+			ExistedAt:     cloudflare.F(dataFindOneByExistedAt),
+			IncludePrefix: cloudflare.F(data.FindOneBy.IncludePrefix.ValueString()),
+			IsDeleted:     cloudflare.F(data.FindOneBy.IsDeleted.ValueBool()),
+			Name:          cloudflare.F(data.FindOneBy.Name.ValueString()),
+			Page:          cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+			PerPage:       cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			Status:        cloudflare.F(zero_trust.TunnelListParamsStatus(data.FindOneBy.Status.ValueString())),
+			TunTypes:      cloudflare.F(data.FindOneBy.TunTypes.ValueString()),
+			UUID:          cloudflare.F(data.FindOneBy.UUID.ValueString()),
+			WasActiveAt:   cloudflare.F(dataFindOneByWasActiveAt),
+			WasInactiveAt: cloudflare.F(dataFindOneByWasInactiveAt),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

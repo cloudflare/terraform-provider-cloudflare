@@ -86,7 +86,9 @@ func (r *HealthcheckDataSource) Read(ctx context.Context, req datasource.ReadReq
 		env := HealthcheckResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
-			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneID:  cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			Page:    cloudflare.F[any](data.FindOneBy.Page.ValueString()),
+			PerPage: cloudflare.F[any](data.FindOneBy.PerPage.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
