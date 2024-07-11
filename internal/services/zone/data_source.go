@@ -84,7 +84,19 @@ func (r *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		items := &[]*ZoneDataSourceModel{}
 		env := ZoneResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Zones.List(ctx, zones.ZoneListParams{})
+		page, err := r.client.Zones.List(ctx, zones.ZoneListParams{
+			Account: cloudflare.F(zones.ZoneListParamsAccount{
+				ID:   cloudflare.F(data.FindOneBy.Account.ID.ValueString()),
+				Name: cloudflare.F(data.FindOneBy.Account.Name.ValueString()),
+			}),
+			Direction: cloudflare.F(zones.ZoneListParamsDirection(data.FindOneBy.Direction.ValueString())),
+			Match:     cloudflare.F(zones.ZoneListParamsMatch(data.FindOneBy.Match.ValueString())),
+			Name:      cloudflare.F(data.FindOneBy.Name.ValueString()),
+			Order:     cloudflare.F(zones.ZoneListParamsOrder(data.FindOneBy.Order.ValueString())),
+			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			Status:    cloudflare.F(zones.ZoneListParamsStatus(data.FindOneBy.Status.ValueString())),
+		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

@@ -82,7 +82,9 @@ func (r *OriginCACertificateDataSource) Read(ctx context.Context, req datasource
 		items := &[]*OriginCACertificateDataSourceModel{}
 		env := OriginCACertificateResultListDataSourceEnvelope{items}
 
-		page, err := r.client.OriginCACertificates.List(ctx, origin_ca_certificates.OriginCACertificateListParams{})
+		page, err := r.client.OriginCACertificates.List(ctx, origin_ca_certificates.OriginCACertificateListParams{
+			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

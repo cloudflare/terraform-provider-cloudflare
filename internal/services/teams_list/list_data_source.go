@@ -61,6 +61,7 @@ func (r *TeamsListsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 
 	page, err := r.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+		Type:      cloudflare.F(zero_trust.GatewayListListParamsType(data.Type.ValueString())),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

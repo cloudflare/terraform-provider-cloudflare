@@ -16,7 +16,7 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 
 type ZoneLockdownDataSourceModel struct {
 	ZoneIdentifier types.String                          `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                          `tfsdk:"id" json:"id"`
+	ID             types.String                          `tfsdk:"id" path:"id"`
 	CreatedOn      types.String                          `tfsdk:"created_on" json:"created_on,computed"`
 	Description    types.String                          `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     types.String                          `tfsdk:"modified_on" json:"modified_on,computed"`

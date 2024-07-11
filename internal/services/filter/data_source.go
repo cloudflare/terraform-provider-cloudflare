@@ -86,7 +86,15 @@ func (r *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		page, err := r.client.Filters.List(
 			ctx,
 			data.FindOneBy.ZoneIdentifier.ValueString(),
-			filters.FilterListParams{},
+			filters.FilterListParams{
+				ID:          cloudflare.F(data.FindOneBy.ID.ValueString()),
+				Description: cloudflare.F(data.FindOneBy.Description.ValueString()),
+				Expression:  cloudflare.F(data.FindOneBy.Expression.ValueString()),
+				Page:        cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+				Paused:      cloudflare.F(data.FindOneBy.Paused.ValueBool()),
+				PerPage:     cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+				Ref:         cloudflare.F(data.FindOneBy.Ref.ValueString()),
+			},
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

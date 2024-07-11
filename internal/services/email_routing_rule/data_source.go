@@ -86,7 +86,11 @@ func (r *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.Re
 		page, err := r.client.EmailRouting.Rules.List(
 			ctx,
 			data.FindOneBy.ZoneIdentifier.ValueString(),
-			email_routing.RuleListParams{},
+			email_routing.RuleListParams{
+				Enabled: cloudflare.F(email_routing.RuleListParamsEnabled(data.FindOneBy.Enabled.ValueBool())),
+				Page:    cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+				PerPage: cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			},
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

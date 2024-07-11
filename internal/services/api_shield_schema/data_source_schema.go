@@ -22,9 +22,8 @@ func (r APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.Sc
 				Optional:    true,
 			},
 			"schema_id": schema.StringAttribute{
-				Description: "UUID identifier",
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
 			},
 			"omit_source": schema.BoolAttribute{
 				Description: "Omit the source-files of schemas and only retrieve their meta-data.",

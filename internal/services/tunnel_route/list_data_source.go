@@ -5,6 +5,7 @@ package tunnel_route
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
@@ -54,13 +55,30 @@ func (r *TunnelRoutesDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
+	dataExistedAt, err := time.Parse(time.RFC3339, data.ExistedAt.ValueString())
+	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*TunnelRoutesItemsDataSourceModel{}
 	env := TunnelRoutesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TunnelRoutesItemsDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Networks.Routes.List(ctx, zero_trust.NetworkRouteListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
+		AccountID:        cloudflare.F(data.AccountID.ValueString()),
+		Comment:          cloudflare.F(data.Comment.ValueString()),
+		ExistedAt:        cloudflare.F(dataExistedAt),
+		IsDeleted:        cloudflare.F(data.IsDeleted.ValueBool()),
+		NetworkSubset:    cloudflare.F(data.NetworkSubset.ValueString()),
+		NetworkSuperset:  cloudflare.F(data.NetworkSuperset.ValueString()),
+		Page:             cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:          cloudflare.F(data.PerPage.ValueFloat64()),
+		RouteID:          cloudflare.F(data.RouteID.ValueString()),
+		TunTypes:         cloudflare.F(data.TunTypes.ValueString()),
+		TunnelID:         cloudflare.F(data.TunnelID.ValueString()),
+		VirtualNetworkID: cloudflare.F(data.VirtualNetworkID.ValueString()),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

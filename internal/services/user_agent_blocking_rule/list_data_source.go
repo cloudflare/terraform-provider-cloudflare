@@ -62,7 +62,13 @@ func (r *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 	page, err := r.client.Firewall.UARules.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		firewall.UARuleListParams{},
+		firewall.UARuleListParams{
+			Description:       cloudflare.F(data.Description.ValueString()),
+			DescriptionSearch: cloudflare.F(data.DescriptionSearch.ValueString()),
+			Page:              cloudflare.F(data.Page.ValueFloat64()),
+			PerPage:           cloudflare.F(data.PerPage.ValueFloat64()),
+			UASearch:          cloudflare.F(data.UASearch.ValueString()),
+		},
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -54,13 +54,35 @@ func (r *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
+	dataHost := []string{}
+	for _, item := range *data.Host {
+		dataHost = append(dataHost, item.ValueString())
+	}
+	dataMethod := []string{}
+	for _, item := range *data.Method {
+		dataMethod = append(dataMethod, item.ValueString())
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*APIShieldOperationsItemsDataSourceModel{}
 	env := APIShieldOperationsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*APIShieldOperationsItemsDataSourceModel{}
 
 	page, err := r.client.APIGateway.Discovery.Operations.List(ctx, api_gateway.DiscoveryOperationListParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
+		Diff:      cloudflare.F(data.Diff.ValueBool()),
+		Direction: cloudflare.F(api_gateway.DiscoveryOperationListParamsDirection(data.Direction.ValueString())),
+		Endpoint:  cloudflare.F(data.Endpoint.ValueString()),
+		Host:      cloudflare.F(dataHost),
+		Method:    cloudflare.F(dataMethod),
+		Order:     cloudflare.F(api_gateway.DiscoveryOperationListParamsOrder(data.Order.ValueString())),
+		Origin:    cloudflare.F(api_gateway.DiscoveryOperationListParamsOrigin(data.Origin.ValueString())),
+		Page:      cloudflare.F[any](data.Page.ValueString()),
+		PerPage:   cloudflare.F[any](data.PerPage.ValueString()),
+		State:     cloudflare.F(api_gateway.DiscoveryOperationListParamsState(data.State.ValueString())),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -60,7 +60,9 @@ func (r *WaitingRoomsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	acc := []*WaitingRoomsItemsDataSourceModel{}
 
 	page, err := r.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
+		Page:    cloudflare.F[any](data.Page.ValueString()),
+		PerPage: cloudflare.F[any](data.PerPage.ValueString()),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-go/v2/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -87,6 +88,33 @@ func (r *RecordDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 		page, err := r.client.DNS.Records.List(ctx, dns.RecordListParams{
 			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			Comment: cloudflare.F(dns.RecordListParamsComment{
+				Absent:     cloudflare.F(data.FindOneBy.Comment.Absent.ValueString()),
+				Contains:   cloudflare.F(data.FindOneBy.Comment.Contains.ValueString()),
+				Endswith:   cloudflare.F(data.FindOneBy.Comment.Endswith.ValueString()),
+				Exact:      cloudflare.F(data.FindOneBy.Comment.Exact.ValueString()),
+				Present:    cloudflare.F(data.FindOneBy.Comment.Present.ValueString()),
+				Startswith: cloudflare.F(data.FindOneBy.Comment.Startswith.ValueString()),
+			}),
+			Content:   cloudflare.F(data.FindOneBy.Content.ValueString()),
+			Direction: cloudflare.F(shared.SortDirection(data.FindOneBy.Direction.ValueString())),
+			Match:     cloudflare.F(dns.RecordListParamsMatch(data.FindOneBy.Match.ValueString())),
+			Name:      cloudflare.F(data.FindOneBy.Name.ValueString()),
+			Order:     cloudflare.F(dns.RecordListParamsOrder(data.FindOneBy.Order.ValueString())),
+			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			Proxied:   cloudflare.F(data.FindOneBy.Proxied.ValueBool()),
+			Search:    cloudflare.F(data.FindOneBy.Search.ValueString()),
+			Tag: cloudflare.F(dns.RecordListParamsTag{
+				Absent:     cloudflare.F(data.FindOneBy.Tag.Absent.ValueString()),
+				Contains:   cloudflare.F(data.FindOneBy.Tag.Contains.ValueString()),
+				Endswith:   cloudflare.F(data.FindOneBy.Tag.Endswith.ValueString()),
+				Exact:      cloudflare.F(data.FindOneBy.Tag.Exact.ValueString()),
+				Present:    cloudflare.F(data.FindOneBy.Tag.Present.ValueString()),
+				Startswith: cloudflare.F(data.FindOneBy.Tag.Startswith.ValueString()),
+			}),
+			TagMatch: cloudflare.F(dns.RecordListParamsTagMatch(data.FindOneBy.TagMatch.ValueString())),
+			Type:     cloudflare.F(dns.RecordListParamsType(data.FindOneBy.Type.ValueString())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

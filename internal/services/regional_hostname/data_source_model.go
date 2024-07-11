@@ -16,7 +16,7 @@ type RegionalHostnameResultListDataSourceEnvelope struct {
 
 type RegionalHostnameDataSourceModel struct {
 	ZoneID    types.String                              `tfsdk:"zone_id" path:"zone_id"`
-	Hostname  types.String                              `tfsdk:"hostname" json:"hostname"`
+	Hostname  types.String                              `tfsdk:"hostname" path:"hostname"`
 	CreatedOn types.String                              `tfsdk:"created_on" json:"created_on,computed"`
 	RegionKey types.String                              `tfsdk:"region_key" json:"region_key,computed"`
 	FindOneBy *RegionalHostnameFindOneByDataSourceModel `tfsdk:"find_one_by"`

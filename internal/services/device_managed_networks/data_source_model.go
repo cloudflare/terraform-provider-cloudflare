@@ -16,7 +16,7 @@ type DeviceManagedNetworksResultListDataSourceEnvelope struct {
 
 type DeviceManagedNetworksDataSourceModel struct {
 	AccountID types.String                                   `tfsdk:"account_id" path:"account_id"`
-	NetworkID types.String                                   `tfsdk:"network_id" json:"network_id"`
+	NetworkID types.String                                   `tfsdk:"network_id" path:"network_id"`
 	Config    *DeviceManagedNetworksConfigDataSourceModel    `tfsdk:"config" json:"config"`
 	Name      types.String                                   `tfsdk:"name" json:"name"`
 	Type      types.String                                   `tfsdk:"type" json:"type"`

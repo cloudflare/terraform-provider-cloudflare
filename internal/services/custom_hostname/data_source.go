@@ -86,7 +86,14 @@ func (r *CustomHostnameDataSource) Read(ctx context.Context, req datasource.Read
 		env := CustomHostnameResultListDataSourceEnvelope{items}
 
 		page, err := r.client.CustomHostnames.List(ctx, custom_hostnames.CustomHostnameListParams{
-			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneID:    cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ID:        cloudflare.F(data.FindOneBy.ID.ValueString()),
+			Direction: cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(data.FindOneBy.Direction.ValueString())),
+			Hostname:  cloudflare.F(data.FindOneBy.Hostname.ValueString()),
+			Order:     cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(data.FindOneBy.Order.ValueString())),
+			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			SSL:       cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(data.FindOneBy.SSL.ValueFloat64())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

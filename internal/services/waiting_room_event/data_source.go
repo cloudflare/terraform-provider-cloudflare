@@ -90,7 +90,9 @@ func (r *WaitingRoomEventDataSource) Read(ctx context.Context, req datasource.Re
 			ctx,
 			data.FindOneBy.WaitingRoomID.ValueString(),
 			waiting_rooms.EventListParams{
-				ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+				ZoneID:  cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+				Page:    cloudflare.F[any](data.FindOneBy.Page.ValueString()),
+				PerPage: cloudflare.F[any](data.FindOneBy.PerPage.ValueString()),
 			},
 		)
 		if err != nil {

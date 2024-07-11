@@ -16,7 +16,7 @@ type PagesProjectResultListDataSourceEnvelope struct {
 
 type PagesProjectDataSourceModel struct {
 	AccountID           types.String                                    `tfsdk:"account_id" path:"account_id"`
-	ProjectName         types.String                                    `tfsdk:"project_name" json:"project_name"`
+	ProjectName         types.String                                    `tfsdk:"project_name" path:"project_name"`
 	ID                  types.String                                    `tfsdk:"id" json:"id,computed"`
 	BuildConfig         *PagesProjectBuildConfigDataSourceModel         `tfsdk:"build_config" json:"build_config"`
 	CanonicalDeployment *PagesProjectCanonicalDeploymentDataSourceModel `tfsdk:"canonical_deployment" json:"canonical_deployment"`

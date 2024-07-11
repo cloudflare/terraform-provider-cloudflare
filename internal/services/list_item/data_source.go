@@ -89,6 +89,9 @@ func (r *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 			data.FindOneBy.ListID.ValueString(),
 			rules.ListItemListParams{
 				AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+				Cursor:    cloudflare.F(data.FindOneBy.Cursor.ValueString()),
+				PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueInt64()),
+				Search:    cloudflare.F(data.FindOneBy.Search.ValueString()),
 			},
 		)
 		if err != nil {

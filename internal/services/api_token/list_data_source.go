@@ -59,7 +59,11 @@ func (r *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*APITokensItemsDataSourceModel{}
 
-	page, err := r.client.User.Tokens.List(ctx, user.TokenListParams{})
+	page, err := r.client.User.Tokens.List(ctx, user.TokenListParams{
+		Direction: cloudflare.F(user.TokenListParamsDirection(data.Direction.ValueString())),
+		Page:      cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
+	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

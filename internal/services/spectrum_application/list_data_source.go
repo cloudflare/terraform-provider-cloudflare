@@ -62,7 +62,12 @@ func (r *SpectrumApplicationsDataSource) Read(ctx context.Context, req datasourc
 	page, err := r.client.Spectrum.Apps.List(
 		ctx,
 		data.Zone.ValueString(),
-		spectrum.AppListParams{},
+		spectrum.AppListParams{
+			Direction: cloudflare.F(spectrum.AppListParamsDirection(data.Direction.ValueString())),
+			Order:     cloudflare.F(spectrum.AppListParamsOrder(data.Order.ValueString())),
+			Page:      cloudflare.F(data.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
+		},
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
