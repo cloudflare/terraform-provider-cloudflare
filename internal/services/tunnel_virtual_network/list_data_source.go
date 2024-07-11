@@ -61,6 +61,10 @@ func (r *TunnelVirtualNetworksDataSource) Read(ctx context.Context, req datasour
 
 	page, err := r.client.ZeroTrust.Networks.VirtualNetworks.List(ctx, zero_trust.NetworkVirtualNetworkListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+		ID:        cloudflare.F(data.ID.ValueString()),
+		IsDefault: cloudflare.F(data.IsDefault.ValueBool()),
+		IsDeleted: cloudflare.F(data.IsDeleted.ValueBool()),
+		Name:      cloudflare.F(data.Name.ValueString()),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -15,7 +15,7 @@ type CustomSSLResultListDataSourceEnvelope struct {
 }
 
 type CustomSSLDataSourceModel struct {
-	ZoneID              types.String                             `tfsdk:"zone_id" json:"zone_id"`
+	ZoneID              types.String                             `tfsdk:"zone_id" path:"zone_id"`
 	CustomCertificateID types.String                             `tfsdk:"custom_certificate_id" path:"custom_certificate_id"`
 	ID                  types.String                             `tfsdk:"id" json:"id"`
 	BundleMethod        types.String                             `tfsdk:"bundle_method" json:"bundle_method"`

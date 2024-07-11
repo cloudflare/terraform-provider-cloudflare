@@ -16,7 +16,7 @@ type APIShieldSchemaResultListDataSourceEnvelope struct {
 
 type APIShieldSchemaDataSourceModel struct {
 	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	SchemaID          types.String                             `tfsdk:"schema_id" json:"schema_id"`
+	SchemaID          types.String                             `tfsdk:"schema_id" path:"schema_id"`
 	OmitSource        types.Bool                               `tfsdk:"omit_source" query:"omit_source"`
 	CreatedAt         types.String                             `tfsdk:"created_at" json:"created_at,computed"`
 	Kind              types.String                             `tfsdk:"kind" json:"kind,computed"`

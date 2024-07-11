@@ -61,6 +61,9 @@ func (r *WebAnalyticsSitesDataSource) Read(ctx context.Context, req datasource.R
 
 	page, err := r.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
+		OrderBy:   cloudflare.F(rum.SiteInfoListParamsOrderBy(data.OrderBy.ValueString())),
+		Page:      cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

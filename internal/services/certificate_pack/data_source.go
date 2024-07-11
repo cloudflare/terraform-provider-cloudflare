@@ -87,6 +87,7 @@ func (r *CertificatePackDataSource) Read(ctx context.Context, req datasource.Rea
 
 		page, err := r.client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
 			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			Status: cloudflare.F(ssl.CertificatePackListParamsStatus(data.FindOneBy.Status.ValueString())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

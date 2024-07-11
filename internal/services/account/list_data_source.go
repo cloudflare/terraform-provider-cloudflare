@@ -59,7 +59,12 @@ func (r *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccountsItemsDataSourceModel{}
 
-	page, err := r.client.Accounts.List(ctx, accounts.AccountListParams{})
+	page, err := r.client.Accounts.List(ctx, accounts.AccountListParams{
+		Direction: cloudflare.F(accounts.AccountListParamsDirection(data.Direction.ValueString())),
+		Name:      cloudflare.F(data.Name.ValueString()),
+		Page:      cloudflare.F(data.Page.ValueFloat64()),
+		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
+	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

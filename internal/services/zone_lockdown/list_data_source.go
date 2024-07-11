@@ -5,6 +5,7 @@ package zone_lockdown
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
@@ -54,6 +55,14 @@ func (r *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
+	dataCreatedOn, err := time.Parse(time.RFC3339, data.CreatedOn.ValueString())
+	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	dataModifiedOn, err := time.Parse(time.RFC3339, data.ModifiedOn.ValueString())
+	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*ZoneLockdownsItemsDataSourceModel{}
 	env := ZoneLockdownsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
@@ -62,7 +71,19 @@ func (r *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 	page, err := r.client.Firewall.Lockdowns.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		firewall.LockdownListParams{},
+		firewall.LockdownListParams{
+			CreatedOn:         cloudflare.F(dataCreatedOn),
+			Description:       cloudflare.F(data.Description.ValueString()),
+			DescriptionSearch: cloudflare.F(data.DescriptionSearch.ValueString()),
+			IP:                cloudflare.F(data.IP.ValueString()),
+			IPRangeSearch:     cloudflare.F(data.IPRangeSearch.ValueString()),
+			IPSearch:          cloudflare.F(data.IPSearch.ValueString()),
+			ModifiedOn:        cloudflare.F(dataModifiedOn),
+			Page:              cloudflare.F(data.Page.ValueFloat64()),
+			PerPage:           cloudflare.F(data.PerPage.ValueFloat64()),
+			Priority:          cloudflare.F(data.Priority.ValueFloat64()),
+			URISearch:         cloudflare.F(data.URISearch.ValueString()),
+		},
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
@@ -80,13 +81,33 @@ func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 		data = &env.Result
 	} else {
+		dataFindOneByCreatedOn, err := time.Parse(time.RFC3339, data.FindOneBy.CreatedOn.ValueString())
+		resp.Diagnostics.AddError("failed to parse time", err.Error())
+		dataFindOneByModifiedOn, err := time.Parse(time.RFC3339, data.FindOneBy.ModifiedOn.ValueString())
+		resp.Diagnostics.AddError("failed to parse time", err.Error())
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ZoneLockdownDataSourceModel{}
 		env := ZoneLockdownResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Firewall.Lockdowns.List(
 			ctx,
 			data.FindOneBy.ZoneIdentifier.ValueString(),
-			firewall.LockdownListParams{},
+			firewall.LockdownListParams{
+				CreatedOn:         cloudflare.F(dataFindOneByCreatedOn),
+				Description:       cloudflare.F(data.FindOneBy.Description.ValueString()),
+				DescriptionSearch: cloudflare.F(data.FindOneBy.DescriptionSearch.ValueString()),
+				IP:                cloudflare.F(data.FindOneBy.IP.ValueString()),
+				IPRangeSearch:     cloudflare.F(data.FindOneBy.IPRangeSearch.ValueString()),
+				IPSearch:          cloudflare.F(data.FindOneBy.IPSearch.ValueString()),
+				ModifiedOn:        cloudflare.F(dataFindOneByModifiedOn),
+				Page:              cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+				PerPage:           cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+				Priority:          cloudflare.F(data.FindOneBy.Priority.ValueFloat64()),
+				URISearch:         cloudflare.F(data.FindOneBy.URISearch.ValueString()),
+			},
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

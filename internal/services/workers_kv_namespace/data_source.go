@@ -87,6 +87,10 @@ func (r *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 
 		page, err := r.client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
 			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			Direction: cloudflare.F(kv.NamespaceListParamsDirection(data.FindOneBy.Direction.ValueString())),
+			Order:     cloudflare.F(kv.NamespaceListParamsOrder(data.FindOneBy.Order.ValueString())),
+			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

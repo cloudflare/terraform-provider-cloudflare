@@ -16,7 +16,7 @@ type DeviceSettingsPolicyResultListDataSourceEnvelope struct {
 
 type DeviceSettingsPolicyDataSourceModel struct {
 	AccountID           types.String                                           `tfsdk:"account_id" path:"account_id"`
-	PolicyID            types.String                                           `tfsdk:"policy_id" json:"policy_id"`
+	PolicyID            types.String                                           `tfsdk:"policy_id" path:"policy_id"`
 	AllowModeSwitch     types.Bool                                             `tfsdk:"allow_mode_switch" json:"allow_mode_switch"`
 	AllowUpdates        types.Bool                                             `tfsdk:"allow_updates" json:"allow_updates"`
 	AllowedToLeave      types.Bool                                             `tfsdk:"allowed_to_leave" json:"allowed_to_leave"`

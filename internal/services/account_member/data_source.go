@@ -87,6 +87,11 @@ func (r *AccountMemberDataSource) Read(ctx context.Context, req datasource.ReadR
 
 		page, err := r.client.Accounts.Members.List(ctx, accounts.MemberListParams{
 			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			Direction: cloudflare.F(accounts.MemberListParamsDirection(data.FindOneBy.Direction.ValueString())),
+			Order:     cloudflare.F(accounts.MemberListParamsOrder(data.FindOneBy.Order.ValueString())),
+			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			Status:    cloudflare.F(accounts.MemberListParamsStatus(data.FindOneBy.Status.ValueString())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

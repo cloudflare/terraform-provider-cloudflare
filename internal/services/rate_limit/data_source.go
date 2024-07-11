@@ -86,7 +86,10 @@ func (r *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 		page, err := r.client.RateLimits.List(
 			ctx,
 			data.FindOneBy.ZoneIdentifier.ValueString(),
-			rate_limits.RateLimitListParams{},
+			rate_limits.RateLimitListParams{
+				Page:    cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
+				PerPage: cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			},
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

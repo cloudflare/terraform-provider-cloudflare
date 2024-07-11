@@ -86,7 +86,11 @@ func (r *APIShieldSchemaDataSource) Read(ctx context.Context, req datasource.Rea
 		env := APIShieldSchemaResultListDataSourceEnvelope{items}
 
 		page, err := r.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
-			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneID:            cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			OmitSource:        cloudflare.F(data.FindOneBy.OmitSource.ValueBool()),
+			Page:              cloudflare.F[any](data.FindOneBy.Page.ValueString()),
+			PerPage:           cloudflare.F[any](data.FindOneBy.PerPage.ValueString()),
+			ValidationEnabled: cloudflare.F(data.FindOneBy.ValidationEnabled.ValueBool()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
