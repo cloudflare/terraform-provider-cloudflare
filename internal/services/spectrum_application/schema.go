@@ -5,6 +5,7 @@ package spectrum_application
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -13,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -66,9 +68,10 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 					},
 				},
 			},
-			"origin_port": schema.StringAttribute{
+			"origin_port": schema.DynamicAttribute{
 				Description: "The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `\"1000-2000\"`.\nNotes: If specifying a port range, the number of ports in the range must match the number of ports specified in the \"protocol\" field.",
 				Required:    true,
+				Validators:  []validator.Dynamic{customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{})},
 			},
 			"protocol": schema.StringAttribute{
 				Description: "The port configuration at Cloudflare’s edge. May specify a single port, for example `\"tcp/1000\"`, or a range of ports, for example `\"tcp/1000-2000\"`.",

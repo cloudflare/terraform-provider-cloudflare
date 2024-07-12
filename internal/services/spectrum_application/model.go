@@ -15,7 +15,7 @@ type SpectrumApplicationModel struct {
 	Zone             types.String                       `tfsdk:"zone" path:"zone"`
 	DNS              *SpectrumApplicationDNSModel       `tfsdk:"dns" json:"dns"`
 	OriginDNS        *SpectrumApplicationOriginDNSModel `tfsdk:"origin_dns" json:"origin_dns"`
-	OriginPort       types.String                       `tfsdk:"origin_port" json:"origin_port"`
+	OriginPort       types.Dynamic                      `tfsdk:"origin_port" json:"origin_port"`
 	Protocol         types.String                       `tfsdk:"protocol" json:"protocol"`
 	ArgoSmartRouting types.Bool                         `tfsdk:"argo_smart_routing" json:"argo_smart_routing"`
 	EdgeIPs          *SpectrumApplicationEdgeIPsModel   `tfsdk:"edge_ips" json:"edge_ips"`

@@ -5,6 +5,7 @@ package record
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -12,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -63,9 +65,10 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				Description: "Components of a CAA record.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
-					"flags": schema.StringAttribute{
+					"flags": schema.DynamicAttribute{
 						Description: "Flags for the CAA record.",
 						Optional:    true,
+						Validators:  []validator.Dynamic{customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{})},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",
