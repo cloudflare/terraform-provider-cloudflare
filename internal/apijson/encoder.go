@@ -2,6 +2,7 @@ package apijson
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"reflect"
 	"sort"
@@ -291,6 +292,42 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			} else {
 				return []byte(fmt.Sprint(tfPlan.ValueBool())), nil
 			}
+		}
+	}
+
+	if (t == reflect.TypeOf(basetypes.DynamicValue{})) {
+		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
+			var tfPlan = plan.Interface().(basetypes.DynamicValue)
+			var tfState = state.Interface().(basetypes.DynamicValue)
+
+			planValue := tfPlan.UnderlyingValue()
+			if tfPlan.IsUnderlyingValueNull() || tfPlan.IsUnderlyingValueUnknown() {
+				planValue = nil
+			}
+
+			stateValue := tfState.UnderlyingValue()
+			if tfState.IsUnderlyingValueNull() || tfState.IsUnderlyingValueUnknown() {
+				stateValue = nil
+			}
+
+			// if the plan is set to a value, use it
+			if planValue != nil {
+				valueType := planValue.Type(context.TODO()).ValueType(context.TODO())
+				if stateValue == nil {
+					// state must be non-nil, so set it to the plan if it is
+					// because the plan is set, the state will be ignored anyway
+					stateValue = planValue
+				}
+				return e.newStructTypeEncoder(reflect.TypeOf(valueType))(reflect.ValueOf(planValue), reflect.ValueOf(stateValue))
+			}
+
+			// if state is set to a value, and the plan is null, explicitly unset it
+			if stateValue != nil && (tfPlan.IsNull() || tfPlan.IsUnderlyingValueNull()) {
+				return []byte("null"), nil
+			}
+
+			// otherwise, omit the field
+			return nil, nil
 		}
 	}
 

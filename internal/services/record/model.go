@@ -25,7 +25,7 @@ type RecordModel struct {
 }
 
 type RecordDataModel struct {
-	Flags         types.String  `tfsdk:"flags" json:"flags"`
+	Flags         types.Dynamic `tfsdk:"flags" json:"flags"`
 	Tag           types.String  `tfsdk:"tag" json:"tag"`
 	Value         types.String  `tfsdk:"value" json:"value"`
 	Algorithm     types.Float64 `tfsdk:"algorithm" json:"algorithm"`
