@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &EmailRoutingRuleDataSource{}
@@ -42,8 +43,9 @@ func (r EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.S
 								stringvalidator.OneOfCaseInsensitive("drop", "forward", "worker"),
 							},
 						},
-						"value": schema.StringAttribute{
-							Computed: true,
+						"value": schema.ListAttribute{
+							Computed:    true,
+							ElementType: types.StringType,
 						},
 					},
 				},

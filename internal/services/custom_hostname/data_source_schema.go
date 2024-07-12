@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &CustomHostnameDataSource{}
@@ -111,10 +112,11 @@ func (r CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sch
 					stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
 				},
 			},
-			"verification_errors": schema.StringAttribute{
+			"verification_errors": schema.ListAttribute{
 				Description: "These are errors that were encountered while trying to activate a hostname.",
 				Computed:    true,
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

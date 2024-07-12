@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &LoadBalancerDataSource{}
@@ -46,10 +47,11 @@ func (r LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Schem
 			"created_on": schema.StringAttribute{
 				Computed: true,
 			},
-			"default_pools": schema.StringAttribute{
+			"default_pools": schema.ListAttribute{
 				Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
 				Computed:    true,
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"description": schema.StringAttribute{
 				Description: "Object description.",
@@ -192,10 +194,11 @@ func (r LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Schem
 									Computed:    true,
 									Optional:    true,
 								},
-								"default_pools": schema.StringAttribute{
+								"default_pools": schema.ListAttribute{
 									Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
 									Computed:    true,
 									Optional:    true,
+									ElementType: types.StringType,
 								},
 								"fallback_pool": schema.StringAttribute{
 									Description: "The pool ID to use when all other pools are detected as unhealthy.",
@@ -266,10 +269,11 @@ func (r LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Schem
 											Computed:    true,
 											Optional:    true,
 										},
-										"headers": schema.StringAttribute{
+										"headers": schema.ListAttribute{
 											Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",
 											Computed:    true,
 											Optional:    true,
+											ElementType: types.StringType,
 										},
 										"require_all_headers": schema.BoolAttribute{
 											Description: "When header `session_affinity` is enabled, this option can be used to specify how HTTP headers on load balancing requests will be used. The supported values are:\n- `\"true\"`: Load balancing requests must contain *all* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.\n- `\"false\"`: Load balancing requests must contain *at least one* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.",
@@ -345,10 +349,11 @@ func (r LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Schem
 						Computed:    true,
 						Optional:    true,
 					},
-					"headers": schema.StringAttribute{
+					"headers": schema.ListAttribute{
 						Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",
 						Computed:    true,
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"require_all_headers": schema.BoolAttribute{
 						Description: "When header `session_affinity` is enabled, this option can be used to specify how HTTP headers on load balancing requests will be used. The supported values are:\n- `\"true\"`: Load balancing requests must contain *all* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.\n- `\"false\"`: Load balancing requests must contain *at least one* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.",

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WebAnalyticsSiteDataSource{}
@@ -62,10 +63,11 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 							Computed:    true,
 							Optional:    true,
 						},
-						"paths": schema.StringAttribute{
+						"paths": schema.ListAttribute{
 							Description: "The paths the rule will be applied to.",
 							Computed:    true,
 							Optional:    true,
+							ElementType: types.StringType,
 						},
 						"priority": schema.Float64Attribute{
 							Computed: true,

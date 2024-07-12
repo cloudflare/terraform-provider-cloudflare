@@ -18,7 +18,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	AccountID          types.String                                       `tfsdk:"account_id" path:"account_id"`
 	PoolID             types.String                                       `tfsdk:"pool_id" path:"pool_id"`
 	ID                 types.String                                       `tfsdk:"id" json:"id"`
-	CheckRegions       types.String                                       `tfsdk:"check_regions" json:"check_regions"`
+	CheckRegions       *[]types.String                                    `tfsdk:"check_regions" json:"check_regions"`
 	CreatedOn          types.String                                       `tfsdk:"created_on" json:"created_on,computed"`
 	Description        types.String                                       `tfsdk:"description" json:"description"`
 	DisabledAt         types.String                                       `tfsdk:"disabled_at" json:"disabled_at,computed"`
@@ -74,7 +74,7 @@ type LoadBalancerPoolOriginsDataSourceModel struct {
 }
 
 type LoadBalancerPoolOriginsHeaderDataSourceModel struct {
-	Host types.String `tfsdk:"host" json:"Host"`
+	Host *[]types.String `tfsdk:"host" json:"Host"`
 }
 
 type LoadBalancerPoolFindOneByDataSourceModel struct {

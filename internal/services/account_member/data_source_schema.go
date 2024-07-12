@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccountMemberDataSource{}
@@ -136,9 +137,10 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 							Description: "Role Name.",
 							Computed:    true,
 						},
-						"permissions": schema.StringAttribute{
+						"permissions": schema.ListAttribute{
 							Description: "Access permissions for this User.",
 							Computed:    true,
+							ElementType: types.StringType,
 						},
 					},
 				},

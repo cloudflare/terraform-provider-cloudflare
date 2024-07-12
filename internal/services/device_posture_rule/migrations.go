@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r DevicePostureRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -108,9 +109,10 @@ func (r DevicePostureRuleResource) UpgradeState(ctx context.Context) map[int64]r
 								Description: "Enabled",
 								Optional:    true,
 							},
-							"check_disks": schema.StringAttribute{
+							"check_disks": schema.ListAttribute{
 								Description: "List of volume names to be checked for encryption.",
 								Optional:    true,
+								ElementType: types.StringType,
 							},
 							"require_all": schema.BoolAttribute{
 								Description: "Whether to check all disks for encryption.",

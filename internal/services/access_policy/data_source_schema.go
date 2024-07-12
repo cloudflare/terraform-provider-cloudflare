@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessPolicyDataSource{}
@@ -48,10 +49,11 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 							Description: "The number of approvals needed to obtain access.",
 							Computed:    true,
 						},
-						"email_addresses": schema.StringAttribute{
+						"email_addresses": schema.ListAttribute{
 							Description: "A list of emails that can approve the access request.",
 							Computed:    true,
 							Optional:    true,
+							ElementType: types.StringType,
 						},
 						"email_list_uuid": schema.StringAttribute{
 							Description: "The UUID of an re-usable email list.",

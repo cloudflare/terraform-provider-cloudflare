@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &FirewallRuleDataSource{}
@@ -54,12 +55,10 @@ func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				Optional:    true,
 			},
-			"products": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("zoneLockdown", "uaBlock", "bic", "hot", "securityLevel", "rateLimit", "waf"),
-				},
+			"products": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related firewall rules.",

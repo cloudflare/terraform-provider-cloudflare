@@ -24,7 +24,7 @@ type TeamsRuleDataSourceModel struct {
 	Description   types.String                          `tfsdk:"description" json:"description"`
 	DevicePosture types.String                          `tfsdk:"device_posture" json:"device_posture"`
 	Enabled       types.Bool                            `tfsdk:"enabled" json:"enabled"`
-	Filters       types.String                          `tfsdk:"filters" json:"filters"`
+	Filters       *[]types.String                       `tfsdk:"filters" json:"filters"`
 	Identity      types.String                          `tfsdk:"identity" json:"identity"`
 	Name          types.String                          `tfsdk:"name" json:"name"`
 	Precedence    types.Int64                           `tfsdk:"precedence" json:"precedence"`
@@ -53,7 +53,7 @@ type TeamsRuleRuleSettingsDataSourceModel struct {
 	L4override                      *TeamsRuleRuleSettingsL4overrideDataSourceModel           `tfsdk:"l4override" json:"l4override"`
 	NotificationSettings            *TeamsRuleRuleSettingsNotificationSettingsDataSourceModel `tfsdk:"notification_settings" json:"notification_settings"`
 	OverrideHost                    types.String                                              `tfsdk:"override_host" json:"override_host"`
-	OverrideIPs                     types.String                                              `tfsdk:"override_ips" json:"override_ips"`
+	OverrideIPs                     *[]types.String                                           `tfsdk:"override_ips" json:"override_ips"`
 	PayloadLog                      *TeamsRuleRuleSettingsPayloadLogDataSourceModel           `tfsdk:"payload_log" json:"payload_log"`
 	ResolveDNSThroughCloudflare     types.Bool                                                `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare"`
 	UntrustedCERT                   *TeamsRuleRuleSettingsUntrustedCERTDataSourceModel        `tfsdk:"untrusted_cert" json:"untrusted_cert"`

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &LoadBalancerPoolDataSource{}
@@ -28,13 +29,11 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 				Computed: true,
 				Optional: true,
 			},
-			"check_regions": schema.StringAttribute{
+			"check_regions": schema.ListAttribute{
 				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
 				Computed:    true,
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("WNAM", "ENAM", "WEU", "EEU", "NSAM", "SSAM", "OC", "ME", "NAF", "SAF", "SAS", "SEAS", "NEAS", "ALL_REGIONS"),
-				},
+				ElementType: types.StringType,
 			},
 			"created_on": schema.StringAttribute{
 				Computed: true,
@@ -190,10 +189,11 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 							Computed:    true,
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
-								"host": schema.StringAttribute{
+								"host": schema.ListAttribute{
 									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
 									Computed:    true,
 									Optional:    true,
+									ElementType: types.StringType,
 								},
 							},
 						},

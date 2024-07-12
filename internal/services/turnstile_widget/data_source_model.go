@@ -20,7 +20,7 @@ type TurnstileWidgetDataSourceModel struct {
 	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      types.String                             `tfsdk:"created_on" json:"created_on,computed"`
-	Domains        types.String                             `tfsdk:"domains" json:"domains,computed"`
+	Domains        *[]types.String                          `tfsdk:"domains" json:"domains,computed"`
 	Mode           types.String                             `tfsdk:"mode" json:"mode,computed"`
 	ModifiedOn     types.String                             `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name           types.String                             `tfsdk:"name" json:"name,computed"`

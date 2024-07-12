@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &HealthcheckDataSource{}
@@ -34,13 +35,11 @@ func (r HealthcheckDataSource) Schema(ctx context.Context, req datasource.Schema
 				Computed:    true,
 				Optional:    true,
 			},
-			"check_regions": schema.StringAttribute{
+			"check_regions": schema.ListAttribute{
 				Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
 				Computed:    true,
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("WNAM", "ENAM", "WEU", "EEU", "NSAM", "SSAM", "OC", "ME", "NAF", "SAF", "IN", "SEAS", "NEAS", "ALL_REGIONS"),
-				},
+				ElementType: types.StringType,
 			},
 			"consecutive_fails": schema.Int64Attribute{
 				Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
@@ -76,19 +75,23 @@ func (r HealthcheckDataSource) Schema(ctx context.Context, req datasource.Schema
 						Computed:    true,
 						Optional:    true,
 					},
-					"expected_codes": schema.StringAttribute{
+					"expected_codes": schema.ListAttribute{
 						Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
 						Computed:    true,
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"follow_redirects": schema.BoolAttribute{
 						Description: "Follow redirects if the origin returns a 3xx status code.",
 						Computed:    true,
 					},
-					"header": schema.StringAttribute{
+					"header": schema.MapAttribute{
 						Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
 						Computed:    true,
 						Optional:    true,
+						ElementType: types.ListType{
+							ElemType: types.StringType,
+						},
 					},
 					"method": schema.StringAttribute{
 						Description: "The HTTP method to use for the health check.",

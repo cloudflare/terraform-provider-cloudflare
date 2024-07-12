@@ -22,11 +22,11 @@ type ZoneDataSourceModel struct {
 	DevelopmentMode     types.Float64                 `tfsdk:"development_mode" json:"development_mode,computed"`
 	ModifiedOn          types.String                  `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                types.String                  `tfsdk:"name" json:"name,computed"`
-	NameServers         types.String                  `tfsdk:"name_servers" json:"name_servers,computed"`
+	NameServers         *[]types.String               `tfsdk:"name_servers" json:"name_servers,computed"`
 	OriginalDnshost     types.String                  `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
-	OriginalNameServers types.String                  `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	OriginalNameServers *[]types.String               `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	OriginalRegistrar   types.String                  `tfsdk:"original_registrar" json:"original_registrar,computed"`
-	VanityNameServers   types.String                  `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
+	VanityNameServers   *[]types.String               `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
 	FindOneBy           *ZoneFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 

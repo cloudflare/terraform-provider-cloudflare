@@ -22,13 +22,13 @@ type PagesProjectDataSourceModel struct {
 	CanonicalDeployment *PagesProjectCanonicalDeploymentDataSourceModel `tfsdk:"canonical_deployment" json:"canonical_deployment"`
 	CreatedOn           types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsDataSourceModel   `tfsdk:"deployment_configs" json:"deployment_configs"`
-	Domains             types.String                                    `tfsdk:"domains" json:"domains"`
+	Domains             *[]types.String                                 `tfsdk:"domains" json:"domains"`
 	LatestDeployment    *PagesProjectLatestDeploymentDataSourceModel    `tfsdk:"latest_deployment" json:"latest_deployment"`
 	Name                types.String                                    `tfsdk:"name" json:"name"`
 	ProductionBranch    types.String                                    `tfsdk:"production_branch" json:"production_branch"`
 	Source              types.String                                    `tfsdk:"source" json:"source,computed"`
 	Subdomain           types.String                                    `tfsdk:"subdomain" json:"subdomain"`
-	Aliases             types.String                                    `tfsdk:"aliases" json:"aliases"`
+	Aliases             *[]types.String                                 `tfsdk:"aliases" json:"aliases"`
 	DeploymentTrigger   *PagesProjectDeploymentTriggerDataSourceModel   `tfsdk:"deployment_trigger" json:"deployment_trigger"`
 	EnvVars             types.String                                    `tfsdk:"env_vars" json:"env_vars"`
 	Environment         types.String                                    `tfsdk:"environment" json:"environment"`
