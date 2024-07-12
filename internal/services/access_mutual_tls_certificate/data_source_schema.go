@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessMutualTLSCertificateDataSource{}
@@ -32,10 +33,11 @@ func (r AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req da
 				Computed:    true,
 				Optional:    true,
 			},
-			"associated_hostnames": schema.StringAttribute{
+			"associated_hostnames": schema.ListAttribute{
 				Description: "The hostnames of the applications that will use this certificate.",
 				Computed:    true,
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,

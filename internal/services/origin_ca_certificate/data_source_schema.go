@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &OriginCACertificateDataSource{}
@@ -26,9 +27,10 @@ func (r OriginCACertificateDataSource) Schema(ctx context.Context, req datasourc
 				Description: "The Certificate Signing Request (CSR). Must be newline-encoded.",
 				Optional:    true,
 			},
-			"hostnames": schema.StringAttribute{
+			"hostnames": schema.ListAttribute{
 				Description: "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"request_type": schema.StringAttribute{
 				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",

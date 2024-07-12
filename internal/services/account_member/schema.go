@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r AccountMemberResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -26,9 +27,10 @@ func (r AccountMemberResource) Schema(ctx context.Context, req resource.SchemaRe
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"roles": schema.StringAttribute{
+			"roles": schema.ListAttribute{
 				Description: "Array of roles associated with this member.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"policies": schema.ListNestedAttribute{
 				Description: "Array of policies associated with this member.",

@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -52,9 +53,10 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
 				Optional:    true,
 			},
-			"tags": schema.StringAttribute{
+			"tags": schema.ListAttribute{
 				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"ttl": schema.Float64Attribute{
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",

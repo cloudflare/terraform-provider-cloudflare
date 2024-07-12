@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &FallbackDomainDataSource{}
@@ -30,9 +31,10 @@ func (r FallbackDomainDataSource) Schema(ctx context.Context, req datasource.Sch
 				Description: "A description of the fallback domain, displayed in the client UI.",
 				Optional:    true,
 			},
-			"dns_server": schema.StringAttribute{
+			"dns_server": schema.ListAttribute{
 				Description: "A list of IP addresses to handle domain resolution.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

@@ -21,7 +21,7 @@ type ZoneLockdownDataSourceModel struct {
 	Description    types.String                          `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     types.String                          `tfsdk:"modified_on" json:"modified_on,computed"`
 	Paused         types.Bool                            `tfsdk:"paused" json:"paused,computed"`
-	URLs           types.String                          `tfsdk:"urls" json:"urls,computed"`
+	URLs           *[]types.String                       `tfsdk:"urls" json:"urls,computed"`
 	FindOneBy      *ZoneLockdownFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 

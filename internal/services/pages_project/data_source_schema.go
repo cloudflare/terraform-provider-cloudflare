@@ -739,9 +739,10 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 					},
 				},
 			},
-			"domains": schema.StringAttribute{
+			"domains": schema.ListAttribute{
 				Description: "A list of associated custom domains for the project.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
 				Optional: true,
@@ -842,9 +843,10 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "The Cloudflare subdomain associated with the project.",
 				Optional:    true,
 			},
-			"aliases": schema.StringAttribute{
+			"aliases": schema.ListAttribute{
 				Description: "A list of alias URLs pointing to this deployment.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"deployment_trigger": schema.SingleNestedAttribute{
 				Description: "Info about what caused the deployment.",

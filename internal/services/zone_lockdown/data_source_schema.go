@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZoneLockdownDataSource{}
@@ -40,9 +41,10 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "When true, indicates that the rule is currently paused.",
 				Computed:    true,
 			},
-			"urls": schema.StringAttribute{
+			"urls": schema.ListAttribute{
 				Description: "The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
 				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

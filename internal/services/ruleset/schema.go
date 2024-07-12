@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -99,9 +100,10 @@ func (r RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 								},
 							},
 						},
-						"categories": schema.StringAttribute{
+						"categories": schema.ListAttribute{
 							Description: "The categories of the rule.",
 							Computed:    true,
+							ElementType: types.StringType,
 						},
 						"description": schema.StringAttribute{
 							Description: "An informative description of the rule.",

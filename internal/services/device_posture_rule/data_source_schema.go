@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &DevicePostureRuleDataSource{}
@@ -115,10 +116,11 @@ func (r DevicePostureRuleDataSource) Schema(ctx context.Context, req datasource.
 						Computed:    true,
 						Optional:    true,
 					},
-					"check_disks": schema.StringAttribute{
+					"check_disks": schema.ListAttribute{
 						Description: "List of volume names to be checked for encryption.",
 						Computed:    true,
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"require_all": schema.BoolAttribute{
 						Description: "Whether to check all disks for encryption.",

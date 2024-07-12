@@ -28,13 +28,13 @@ type WebAnalyticsSiteDataSourceModel struct {
 }
 
 type WebAnalyticsSiteRulesDataSourceModel struct {
-	ID        types.String  `tfsdk:"id" json:"id"`
-	Created   types.String  `tfsdk:"created" json:"created,computed"`
-	Host      types.String  `tfsdk:"host" json:"host"`
-	Inclusive types.Bool    `tfsdk:"inclusive" json:"inclusive"`
-	IsPaused  types.Bool    `tfsdk:"is_paused" json:"is_paused"`
-	Paths     types.String  `tfsdk:"paths" json:"paths"`
-	Priority  types.Float64 `tfsdk:"priority" json:"priority"`
+	ID        types.String    `tfsdk:"id" json:"id"`
+	Created   types.String    `tfsdk:"created" json:"created,computed"`
+	Host      types.String    `tfsdk:"host" json:"host"`
+	Inclusive types.Bool      `tfsdk:"inclusive" json:"inclusive"`
+	IsPaused  types.Bool      `tfsdk:"is_paused" json:"is_paused"`
+	Paths     *[]types.String `tfsdk:"paths" json:"paths"`
+	Priority  types.Float64   `tfsdk:"priority" json:"priority"`
 }
 
 type WebAnalyticsSiteRulesetDataSourceModel struct {

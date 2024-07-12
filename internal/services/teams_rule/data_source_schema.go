@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &TeamsRuleDataSource{}
@@ -60,13 +61,11 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Computed:    true,
 				Optional:    true,
 			},
-			"filters": schema.StringAttribute{
+			"filters": schema.ListAttribute{
 				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
 				Computed:    true,
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("http", "dns", "l4", "egress"),
-				},
+				ElementType: types.StringType,
 			},
 			"identity": schema.StringAttribute{
 				Description: "The wirefilter expression used for identity matching.",
@@ -321,10 +320,11 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Computed:    true,
 						Optional:    true,
 					},
-					"override_ips": schema.StringAttribute{
+					"override_ips": schema.ListAttribute{
 						Description: "Override matching DNS queries with an IP or set of IPs.",
 						Computed:    true,
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"payload_log": schema.SingleNestedAttribute{
 						Description: "Configure DLP payload logging.",

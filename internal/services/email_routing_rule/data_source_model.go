@@ -28,8 +28,8 @@ type EmailRoutingRuleDataSourceModel struct {
 }
 
 type EmailRoutingRuleActionsDataSourceModel struct {
-	Type  types.String `tfsdk:"type" json:"type,computed"`
-	Value types.String `tfsdk:"value" json:"value,computed"`
+	Type  types.String    `tfsdk:"type" json:"type,computed"`
+	Value *[]types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type EmailRoutingRuleMatchersDataSourceModel struct {

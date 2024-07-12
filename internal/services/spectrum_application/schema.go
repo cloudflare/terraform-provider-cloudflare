@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -102,9 +103,10 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 							stringvalidator.OneOfCaseInsensitive("dynamic", "static"),
 						},
 					},
-					"ips": schema.StringAttribute{
+					"ips": schema.ListAttribute{
 						Description: "The array of customer owned IPs we broadcast via anycast for this hostname and application.",
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 				},
 			},

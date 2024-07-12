@@ -17,14 +17,14 @@ type AccessApplicationModel struct {
 	Domain                   types.String                       `tfsdk:"domain" json:"domain"`
 	Type                     types.String                       `tfsdk:"type" json:"type"`
 	AllowAuthenticateViaWARP types.Bool                         `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp"`
-	AllowedIdPs              types.String                       `tfsdk:"allowed_idps" json:"allowed_idps"`
+	AllowedIdPs              *[]types.String                    `tfsdk:"allowed_idps" json:"allowed_idps"`
 	AppLauncherVisible       types.Bool                         `tfsdk:"app_launcher_visible" json:"app_launcher_visible"`
 	AutoRedirectToIdentity   types.Bool                         `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
 	CORSHeaders              *AccessApplicationCORSHeadersModel `tfsdk:"cors_headers" json:"cors_headers"`
 	CustomDenyMessage        types.String                       `tfsdk:"custom_deny_message" json:"custom_deny_message"`
 	CustomDenyURL            types.String                       `tfsdk:"custom_deny_url" json:"custom_deny_url"`
 	CustomNonIdentityDenyURL types.String                       `tfsdk:"custom_non_identity_deny_url" json:"custom_non_identity_deny_url"`
-	CustomPages              types.String                       `tfsdk:"custom_pages" json:"custom_pages"`
+	CustomPages              *[]types.String                    `tfsdk:"custom_pages" json:"custom_pages"`
 	EnableBindingCookie      types.Bool                         `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie"`
 	HTTPOnlyCookieAttribute  types.Bool                         `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute"`
 	LogoURL                  types.String                       `tfsdk:"logo_url" json:"logo_url"`
@@ -34,23 +34,23 @@ type AccessApplicationModel struct {
 	Policies                 *[]*AccessApplicationPoliciesModel `tfsdk:"policies" json:"policies"`
 	SameSiteCookieAttribute  types.String                       `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute"`
 	SCIMConfig               *AccessApplicationSCIMConfigModel  `tfsdk:"scim_config" json:"scim_config"`
-	SelfHostedDomains        types.String                       `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
+	SelfHostedDomains        *[]types.String                    `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
 	ServiceAuth401Redirect   types.Bool                         `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect"`
 	SessionDuration          types.String                       `tfsdk:"session_duration" json:"session_duration"`
 	SkipInterstitial         types.Bool                         `tfsdk:"skip_interstitial" json:"skip_interstitial"`
-	Tags                     types.String                       `tfsdk:"tags" json:"tags"`
+	Tags                     *[]types.String                    `tfsdk:"tags" json:"tags"`
 	SaaSApp                  *AccessApplicationSaaSAppModel     `tfsdk:"saas_app" json:"saas_app"`
 }
 
 type AccessApplicationCORSHeadersModel struct {
-	AllowAllHeaders  types.Bool    `tfsdk:"allow_all_headers" json:"allow_all_headers"`
-	AllowAllMethods  types.Bool    `tfsdk:"allow_all_methods" json:"allow_all_methods"`
-	AllowAllOrigins  types.Bool    `tfsdk:"allow_all_origins" json:"allow_all_origins"`
-	AllowCredentials types.Bool    `tfsdk:"allow_credentials" json:"allow_credentials"`
-	AllowedHeaders   types.String  `tfsdk:"allowed_headers" json:"allowed_headers"`
-	AllowedMethods   types.String  `tfsdk:"allowed_methods" json:"allowed_methods"`
-	AllowedOrigins   types.String  `tfsdk:"allowed_origins" json:"allowed_origins"`
-	MaxAge           types.Float64 `tfsdk:"max_age" json:"max_age"`
+	AllowAllHeaders  types.Bool      `tfsdk:"allow_all_headers" json:"allow_all_headers"`
+	AllowAllMethods  types.Bool      `tfsdk:"allow_all_methods" json:"allow_all_methods"`
+	AllowAllOrigins  types.Bool      `tfsdk:"allow_all_origins" json:"allow_all_origins"`
+	AllowCredentials types.Bool      `tfsdk:"allow_credentials" json:"allow_credentials"`
+	AllowedHeaders   *[]types.String `tfsdk:"allowed_headers" json:"allowed_headers"`
+	AllowedMethods   *[]types.String `tfsdk:"allowed_methods" json:"allowed_methods"`
+	AllowedOrigins   *[]types.String `tfsdk:"allowed_origins" json:"allowed_origins"`
+	MaxAge           types.Float64   `tfsdk:"max_age" json:"max_age"`
 }
 
 type AccessApplicationPoliciesModel struct {
@@ -68,15 +68,15 @@ type AccessApplicationSCIMConfigModel struct {
 }
 
 type AccessApplicationSCIMConfigAuthenticationModel struct {
-	Password         types.String `tfsdk:"password" json:"password"`
-	Scheme           types.String `tfsdk:"scheme" json:"scheme"`
-	User             types.String `tfsdk:"user" json:"user"`
-	Token            types.String `tfsdk:"token" json:"token"`
-	AuthorizationURL types.String `tfsdk:"authorization_url" json:"authorization_url"`
-	ClientID         types.String `tfsdk:"client_id" json:"client_id"`
-	ClientSecret     types.String `tfsdk:"client_secret" json:"client_secret"`
-	TokenURL         types.String `tfsdk:"token_url" json:"token_url"`
-	Scopes           types.String `tfsdk:"scopes" json:"scopes"`
+	Password         types.String    `tfsdk:"password" json:"password"`
+	Scheme           types.String    `tfsdk:"scheme" json:"scheme"`
+	User             types.String    `tfsdk:"user" json:"user"`
+	Token            types.String    `tfsdk:"token" json:"token"`
+	AuthorizationURL types.String    `tfsdk:"authorization_url" json:"authorization_url"`
+	ClientID         types.String    `tfsdk:"client_id" json:"client_id"`
+	ClientSecret     types.String    `tfsdk:"client_secret" json:"client_secret"`
+	TokenURL         types.String    `tfsdk:"token_url" json:"token_url"`
+	Scopes           *[]types.String `tfsdk:"scopes" json:"scopes"`
 }
 
 type AccessApplicationSCIMConfigMappingsModel struct {
@@ -113,12 +113,12 @@ type AccessApplicationSaaSAppModel struct {
 	ClientID                      types.String                                           `tfsdk:"client_id" json:"client_id"`
 	ClientSecret                  types.String                                           `tfsdk:"client_secret" json:"client_secret"`
 	CustomClaims                  *AccessApplicationSaaSAppCustomClaimsModel             `tfsdk:"custom_claims" json:"custom_claims"`
-	GrantTypes                    types.String                                           `tfsdk:"grant_types" json:"grant_types"`
+	GrantTypes                    *[]types.String                                        `tfsdk:"grant_types" json:"grant_types"`
 	GroupFilterRegex              types.String                                           `tfsdk:"group_filter_regex" json:"group_filter_regex"`
 	HybridAndImplicitOptions      *AccessApplicationSaaSAppHybridAndImplicitOptionsModel `tfsdk:"hybrid_and_implicit_options" json:"hybrid_and_implicit_options"`
-	RedirectURIs                  types.String                                           `tfsdk:"redirect_uris" json:"redirect_uris"`
+	RedirectURIs                  *[]types.String                                        `tfsdk:"redirect_uris" json:"redirect_uris"`
 	RefreshTokenOptions           *AccessApplicationSaaSAppRefreshTokenOptionsModel      `tfsdk:"refresh_token_options" json:"refresh_token_options"`
-	Scopes                        types.String                                           `tfsdk:"scopes" json:"scopes"`
+	Scopes                        *[]types.String                                        `tfsdk:"scopes" json:"scopes"`
 }
 
 type AccessApplicationSaaSAppCustomAttributesModel struct {

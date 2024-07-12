@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &TurnstileWidgetDataSource{}
@@ -41,8 +42,9 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 				Description: "When the widget was created.",
 				Computed:    true,
 			},
-			"domains": schema.StringAttribute{
-				Computed: true,
+			"domains": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode",

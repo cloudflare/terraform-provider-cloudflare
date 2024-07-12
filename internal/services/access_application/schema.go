@@ -46,9 +46,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 				Description: "When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.",
 				Optional:    true,
 			},
-			"allowed_idps": schema.StringAttribute{
+			"allowed_idps": schema.ListAttribute{
 				Description: "The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"app_launcher_visible": schema.BoolAttribute{
 				Description: "Displays the application in the App Launcher.",
@@ -81,20 +82,20 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 						Description: "When set to `true`, includes credentials (cookies, authorization headers, or TLS client certificates) with requests.",
 						Optional:    true,
 					},
-					"allowed_headers": schema.StringAttribute{
+					"allowed_headers": schema.ListAttribute{
 						Description: "Allowed HTTP request headers.",
 						Optional:    true,
+						ElementType: types.StringType,
 					},
-					"allowed_methods": schema.StringAttribute{
+					"allowed_methods": schema.ListAttribute{
 						Description: "Allowed HTTP request methods.",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("GET", "POST", "HEAD", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"),
-						},
+						ElementType: types.StringType,
 					},
-					"allowed_origins": schema.StringAttribute{
+					"allowed_origins": schema.ListAttribute{
 						Description: "Allowed origins.",
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"max_age": schema.Float64Attribute{
 						Description: "The maximum number of seconds the results of a preflight request can be cached.",
@@ -114,9 +115,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 				Description: "The custom URL a user is redirected to when they are denied access to the application when failing non-identity rules.",
 				Optional:    true,
 			},
-			"custom_pages": schema.StringAttribute{
+			"custom_pages": schema.ListAttribute{
 				Description: "The custom pages that will be displayed when applicable for this application",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"enable_binding_cookie": schema.BoolAttribute{
 				Description: "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
@@ -219,9 +221,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 								Description: "URL used to generate the token used to authenticate with the remote SCIM service.",
 								Optional:    true,
 							},
-							"scopes": schema.StringAttribute{
+							"scopes": schema.ListAttribute{
 								Description: "The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.",
 								Optional:    true,
+								ElementType: types.StringType,
 							},
 						},
 					},
@@ -277,9 +280,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 					},
 				},
 			},
-			"self_hosted_domains": schema.StringAttribute{
+			"self_hosted_domains": schema.ListAttribute{
 				Description: "List of domains that Access will secure.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"service_auth_401_redirect": schema.BoolAttribute{
 				Description: "Returns a 401 status code when the request is blocked by a Service Auth policy.",
@@ -295,9 +299,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 				Description: "Enables automatic authentication through cloudflared.",
 				Optional:    true,
 			},
-			"tags": schema.StringAttribute{
+			"tags": schema.ListAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"saas_app": schema.SingleNestedAttribute{
 				Optional: true,
@@ -446,12 +451,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 							},
 						},
 					},
-					"grant_types": schema.StringAttribute{
+					"grant_types": schema.ListAttribute{
 						Description: "The OIDC flows supported by this application",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("authorization_code", "authorization_code_with_pkce", "refresh_tokens", "hybrid", "implicit"),
-						},
+						ElementType: types.StringType,
 					},
 					"group_filter_regex": schema.StringAttribute{
 						Description: "A regex to filter Cloudflare groups returned in ID token and userinfo endpoint",
@@ -470,9 +473,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 							},
 						},
 					},
-					"redirect_uris": schema.StringAttribute{
+					"redirect_uris": schema.ListAttribute{
 						Description: "The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens",
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"refresh_token_options": schema.SingleNestedAttribute{
 						Optional: true,
@@ -483,12 +487,10 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 							},
 						},
 					},
-					"scopes": schema.StringAttribute{
+					"scopes": schema.ListAttribute{
 						Description: "Define the user information shared with access, \"offline_access\" scope will be automatically enabled if refresh tokens are enabled",
 						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("openid", "groups", "email", "profile"),
-						},
+						ElementType: types.StringType,
 					},
 				},
 			},

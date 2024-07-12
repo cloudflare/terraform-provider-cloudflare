@@ -26,7 +26,7 @@ type CustomHostnameDataSourceModel struct {
 	OwnershipVerification     *CustomHostnameOwnershipVerificationDataSourceModel     `tfsdk:"ownership_verification" json:"ownership_verification"`
 	OwnershipVerificationHTTP *CustomHostnameOwnershipVerificationHTTPDataSourceModel `tfsdk:"ownership_verification_http" json:"ownership_verification_http"`
 	Status                    types.String                                            `tfsdk:"status" json:"status"`
-	VerificationErrors        types.String                                            `tfsdk:"verification_errors" json:"verification_errors"`
+	VerificationErrors        *[]types.String                                         `tfsdk:"verification_errors" json:"verification_errors"`
 	FindOneBy                 *CustomHostnameFindOneByDataSourceModel                 `tfsdk:"find_one_by"`
 }
 
