@@ -54,10 +54,10 @@ type AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
 }
 
 type AccountMemberRolesDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Permissions types.String `tfsdk:"permissions" json:"permissions,computed"`
+	ID          types.String    `tfsdk:"id" json:"id,computed"`
+	Description types.String    `tfsdk:"description" json:"description,computed"`
+	Name        types.String    `tfsdk:"name" json:"name,computed"`
+	Permissions *[]types.String `tfsdk:"permissions" json:"permissions,computed"`
 }
 
 type AccountMemberFindOneByDataSourceModel struct {

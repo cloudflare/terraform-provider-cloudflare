@@ -23,7 +23,7 @@ type FirewallRuleDataSourceModel struct {
 	Paused         types.Bool                            `tfsdk:"paused" json:"paused,computed"`
 	Description    types.String                          `tfsdk:"description" json:"description"`
 	Priority       types.Float64                         `tfsdk:"priority" json:"priority"`
-	Products       types.String                          `tfsdk:"products" json:"products"`
+	Products       *[]types.String                       `tfsdk:"products" json:"products"`
 	Ref            types.String                          `tfsdk:"ref" json:"ref"`
 	FindOneBy      *FirewallRuleFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }

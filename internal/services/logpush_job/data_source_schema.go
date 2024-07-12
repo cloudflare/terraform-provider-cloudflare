@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &LogpushJobDataSource{}
@@ -123,10 +124,11 @@ func (r LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						Description: "String to join fields. This field be ignored when `record_template` is set.",
 						Computed:    true,
 					},
-					"field_names": schema.StringAttribute{
+					"field_names": schema.ListAttribute{
 						Description: "List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.",
 						Computed:    true,
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"output_type": schema.StringAttribute{
 						Description: "Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.",

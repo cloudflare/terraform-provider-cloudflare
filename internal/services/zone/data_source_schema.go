@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZoneDataSource{}
@@ -45,26 +46,29 @@ func (r ZoneDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				Description: "The domain name",
 				Computed:    true,
 			},
-			"name_servers": schema.StringAttribute{
+			"name_servers": schema.ListAttribute{
 				Description: "The name servers Cloudflare assigns to a zone",
 				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"original_dnshost": schema.StringAttribute{
 				Description: "DNS host at the time of switching to Cloudflare",
 				Computed:    true,
 			},
-			"original_name_servers": schema.StringAttribute{
+			"original_name_servers": schema.ListAttribute{
 				Description: "Original name servers before moving to Cloudflare",
 				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"original_registrar": schema.StringAttribute{
 				Description: "Registrar for the domain at the time of switching to Cloudflare",
 				Computed:    true,
 			},
-			"vanity_name_servers": schema.StringAttribute{
+			"vanity_name_servers": schema.ListAttribute{
 				Description: "An array of domains used for custom name servers. This is only available for Business and Enterprise plans.",
 				Computed:    true,
 				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

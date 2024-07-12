@@ -23,7 +23,7 @@ type KeylessCertificateDataSourceModel struct {
 	Host                 types.String                                `tfsdk:"host" json:"host,computed"`
 	ModifiedOn           types.String                                `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                 types.String                                `tfsdk:"name" json:"name,computed"`
-	Permissions          types.String                                `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions          *[]types.String                             `tfsdk:"permissions" json:"permissions,computed"`
 	Port                 types.Float64                               `tfsdk:"port" json:"port,computed"`
 	Status               types.String                                `tfsdk:"status" json:"status,computed"`
 	Tunnel               *KeylessCertificateTunnelDataSourceModel    `tfsdk:"tunnel" json:"tunnel"`

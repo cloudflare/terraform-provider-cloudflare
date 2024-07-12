@@ -21,7 +21,7 @@ type LoadBalancerDataSourceModel struct {
 	AdaptiveRouting           *LoadBalancerAdaptiveRoutingDataSourceModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
 	CountryPools              types.String                                          `tfsdk:"country_pools" json:"country_pools"`
 	CreatedOn                 types.String                                          `tfsdk:"created_on" json:"created_on,computed"`
-	DefaultPools              types.String                                          `tfsdk:"default_pools" json:"default_pools"`
+	DefaultPools              *[]types.String                                       `tfsdk:"default_pools" json:"default_pools"`
 	Description               types.String                                          `tfsdk:"description" json:"description"`
 	Enabled                   types.Bool                                            `tfsdk:"enabled" json:"enabled,computed"`
 	FallbackPool              types.String                                          `tfsdk:"fallback_pool" json:"fallback_pool"`
@@ -75,7 +75,7 @@ type LoadBalancerRulesFixedResponseDataSourceModel struct {
 type LoadBalancerRulesOverridesDataSourceModel struct {
 	AdaptiveRouting           *LoadBalancerRulesOverridesAdaptiveRoutingDataSourceModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
 	CountryPools              types.String                                                        `tfsdk:"country_pools" json:"country_pools"`
-	DefaultPools              types.String                                                        `tfsdk:"default_pools" json:"default_pools"`
+	DefaultPools              *[]types.String                                                     `tfsdk:"default_pools" json:"default_pools"`
 	FallbackPool              types.String                                                        `tfsdk:"fallback_pool" json:"fallback_pool"`
 	LocationStrategy          *LoadBalancerRulesOverridesLocationStrategyDataSourceModel          `tfsdk:"location_strategy" json:"location_strategy"`
 	PopPools                  types.String                                                        `tfsdk:"pop_pools" json:"pop_pools"`
@@ -103,21 +103,21 @@ type LoadBalancerRulesOverridesRandomSteeringDataSourceModel struct {
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesDataSourceModel struct {
-	DrainDuration        types.Float64 `tfsdk:"drain_duration" json:"drain_duration"`
-	Headers              types.String  `tfsdk:"headers" json:"headers"`
-	RequireAllHeaders    types.Bool    `tfsdk:"require_all_headers" json:"require_all_headers,computed"`
-	Samesite             types.String  `tfsdk:"samesite" json:"samesite,computed"`
-	Secure               types.String  `tfsdk:"secure" json:"secure,computed"`
-	ZeroDowntimeFailover types.String  `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed"`
+	DrainDuration        types.Float64   `tfsdk:"drain_duration" json:"drain_duration"`
+	Headers              *[]types.String `tfsdk:"headers" json:"headers"`
+	RequireAllHeaders    types.Bool      `tfsdk:"require_all_headers" json:"require_all_headers,computed"`
+	Samesite             types.String    `tfsdk:"samesite" json:"samesite,computed"`
+	Secure               types.String    `tfsdk:"secure" json:"secure,computed"`
+	ZeroDowntimeFailover types.String    `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed"`
 }
 
 type LoadBalancerSessionAffinityAttributesDataSourceModel struct {
-	DrainDuration        types.Float64 `tfsdk:"drain_duration" json:"drain_duration"`
-	Headers              types.String  `tfsdk:"headers" json:"headers"`
-	RequireAllHeaders    types.Bool    `tfsdk:"require_all_headers" json:"require_all_headers,computed"`
-	Samesite             types.String  `tfsdk:"samesite" json:"samesite,computed"`
-	Secure               types.String  `tfsdk:"secure" json:"secure,computed"`
-	ZeroDowntimeFailover types.String  `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed"`
+	DrainDuration        types.Float64   `tfsdk:"drain_duration" json:"drain_duration"`
+	Headers              *[]types.String `tfsdk:"headers" json:"headers"`
+	RequireAllHeaders    types.Bool      `tfsdk:"require_all_headers" json:"require_all_headers,computed"`
+	Samesite             types.String    `tfsdk:"samesite" json:"samesite,computed"`
+	Secure               types.String    `tfsdk:"secure" json:"secure,computed"`
+	ZeroDowntimeFailover types.String    `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed"`
 }
 
 type LoadBalancerFindOneByDataSourceModel struct {

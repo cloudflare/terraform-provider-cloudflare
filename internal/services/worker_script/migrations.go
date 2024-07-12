@@ -34,9 +34,10 @@ func (r WorkerScriptResource) UpgradeState(ctx context.Context) map[int64]resour
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
-					"any_part_name": schema.StringAttribute{
+					"any_part_name": schema.ListAttribute{
 						Description: "A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.",
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"metadata": schema.SingleNestedAttribute{
 						Description: "JSON encoded metadata about the uploaded parts and Worker configuration.",
@@ -77,13 +78,15 @@ func (r WorkerScriptResource) UpgradeState(ctx context.Context) map[int64]resour
 								Description: "Migrations to apply for Durable Objects associated with this Worker.",
 								Optional:    true,
 								Attributes: map[string]schema.Attribute{
-									"deleted_classes": schema.StringAttribute{
+									"deleted_classes": schema.ListAttribute{
 										Description: "A list of classes to delete Durable Object namespaces from.",
 										Optional:    true,
+										ElementType: types.StringType,
 									},
-									"new_classes": schema.StringAttribute{
+									"new_classes": schema.ListAttribute{
 										Description: "A list of classes to create Durable Object namespaces from.",
 										Optional:    true,
+										ElementType: types.StringType,
 									},
 									"new_tag": schema.StringAttribute{
 										Description: "Tag to set as the latest migration tag.",

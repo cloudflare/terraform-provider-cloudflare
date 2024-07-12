@@ -34,7 +34,7 @@ type RulesetRulesDataSourceModel struct {
 	ID               types.String                                 `tfsdk:"id" json:"id"`
 	Action           types.String                                 `tfsdk:"action" json:"action"`
 	ActionParameters *RulesetRulesActionParametersDataSourceModel `tfsdk:"action_parameters" json:"action_parameters"`
-	Categories       types.String                                 `tfsdk:"categories" json:"categories,computed"`
+	Categories       *[]types.String                              `tfsdk:"categories" json:"categories,computed"`
 	Description      types.String                                 `tfsdk:"description" json:"description,computed"`
 	Enabled          types.Bool                                   `tfsdk:"enabled" json:"enabled,computed"`
 	Expression       types.String                                 `tfsdk:"expression" json:"expression"`

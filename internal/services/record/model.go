@@ -18,7 +18,7 @@ type RecordModel struct {
 	ID       types.String     `tfsdk:"id" json:"id"`
 	Comment  types.String     `tfsdk:"comment" json:"comment"`
 	Proxied  types.Bool       `tfsdk:"proxied" json:"proxied"`
-	Tags     types.String     `tfsdk:"tags" json:"tags"`
+	Tags     *[]types.String  `tfsdk:"tags" json:"tags"`
 	TTL      types.Float64    `tfsdk:"ttl" json:"ttl"`
 	Data     *RecordDataModel `tfsdk:"data" json:"data"`
 	Priority types.Float64    `tfsdk:"priority" json:"priority"`

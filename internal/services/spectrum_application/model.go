@@ -39,7 +39,7 @@ type SpectrumApplicationOriginDNSModel struct {
 }
 
 type SpectrumApplicationEdgeIPsModel struct {
-	Connectivity types.String `tfsdk:"connectivity" json:"connectivity"`
-	Type         types.String `tfsdk:"type" json:"type"`
-	IPs          types.String `tfsdk:"ips" json:"ips"`
+	Connectivity types.String    `tfsdk:"connectivity" json:"connectivity"`
+	Type         types.String    `tfsdk:"type" json:"type"`
+	IPs          *[]types.String `tfsdk:"ips" json:"ips"`
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r DevicePostureRuleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -106,9 +107,10 @@ func (r DevicePostureRuleResource) Schema(ctx context.Context, req resource.Sche
 						Description: "Enabled",
 						Optional:    true,
 					},
-					"check_disks": schema.StringAttribute{
+					"check_disks": schema.ListAttribute{
 						Description: "List of volume names to be checked for encryption.",
 						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"require_all": schema.BoolAttribute{
 						Description: "Whether to check all disks for encryption.",

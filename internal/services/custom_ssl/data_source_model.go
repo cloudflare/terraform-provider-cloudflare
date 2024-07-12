@@ -20,7 +20,7 @@ type CustomSSLDataSourceModel struct {
 	ID                  types.String                             `tfsdk:"id" json:"id"`
 	BundleMethod        types.String                             `tfsdk:"bundle_method" json:"bundle_method"`
 	ExpiresOn           types.String                             `tfsdk:"expires_on" json:"expires_on"`
-	Hosts               types.String                             `tfsdk:"hosts" json:"hosts"`
+	Hosts               *[]types.String                          `tfsdk:"hosts" json:"hosts"`
 	Issuer              types.String                             `tfsdk:"issuer" json:"issuer"`
 	ModifiedOn          types.String                             `tfsdk:"modified_on" json:"modified_on"`
 	Priority            types.Float64                            `tfsdk:"priority" json:"priority"`

@@ -43,8 +43,9 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "When the certificate from the authority expires.",
 				Optional:    true,
 			},
-			"hosts": schema.StringAttribute{
-				Optional: true,
+			"hosts": schema.ListAttribute{
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",

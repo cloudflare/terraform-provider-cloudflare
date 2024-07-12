@@ -14,7 +14,7 @@ type WorkerScriptModel struct {
 	ID            types.String                       `tfsdk:"id" json:"id"`
 	AccountID     types.String                       `tfsdk:"account_id" path:"account_id"`
 	ScriptName    types.String                       `tfsdk:"script_name" path:"script_name"`
-	AnyPartName   types.String                       `tfsdk:"any_part_name" json:"<any part name>"`
+	AnyPartName   *[]types.String                    `tfsdk:"any_part_name" json:"<any part name>"`
 	Metadata      *WorkerScriptMetadataModel         `tfsdk:"metadata" json:"metadata"`
 	Message       types.String                       `tfsdk:"message" json:"message"`
 	CreatedOn     types.String                       `tfsdk:"created_on" json:"created_on,computed"`
@@ -43,8 +43,8 @@ type WorkerScriptMetadataModel struct {
 }
 
 type WorkerScriptMetadataMigrationsModel struct {
-	DeletedClasses     types.String                                              `tfsdk:"deleted_classes" json:"deleted_classes"`
-	NewClasses         types.String                                              `tfsdk:"new_classes" json:"new_classes"`
+	DeletedClasses     *[]types.String                                           `tfsdk:"deleted_classes" json:"deleted_classes"`
+	NewClasses         *[]types.String                                           `tfsdk:"new_classes" json:"new_classes"`
 	NewTag             types.String                                              `tfsdk:"new_tag" json:"new_tag"`
 	OldTag             types.String                                              `tfsdk:"old_tag" json:"old_tag"`
 	RenamedClasses     *[]*WorkerScriptMetadataMigrationsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes"`

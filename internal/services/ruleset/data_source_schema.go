@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &RulesetDataSource{}
@@ -107,9 +108,10 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 								},
 							},
 						},
-						"categories": schema.StringAttribute{
+						"categories": schema.ListAttribute{
 							Description: "The categories of the rule.",
 							Computed:    true,
+							ElementType: types.StringType,
 						},
 						"description": schema.StringAttribute{
 							Description: "An informative description of the rule.",

@@ -37,9 +37,9 @@ type AccessPolicyDataSourceModel struct {
 }
 
 type AccessPolicyApprovalGroupsDataSourceModel struct {
-	ApprovalsNeeded types.Float64 `tfsdk:"approvals_needed" json:"approvals_needed,computed"`
-	EmailAddresses  types.String  `tfsdk:"email_addresses" json:"email_addresses"`
-	EmailListUUID   types.String  `tfsdk:"email_list_uuid" json:"email_list_uuid"`
+	ApprovalsNeeded types.Float64   `tfsdk:"approvals_needed" json:"approvals_needed,computed"`
+	EmailAddresses  *[]types.String `tfsdk:"email_addresses" json:"email_addresses"`
+	EmailListUUID   types.String    `tfsdk:"email_list_uuid" json:"email_list_uuid"`
 }
 
 type AccessPolicyExcludeDataSourceModel struct {
