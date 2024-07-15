@@ -22,8 +22,8 @@ type TeamsLocationsItemsDataSourceModel struct {
 	ClientDefault         types.Bool                                     `tfsdk:"client_default" json:"client_default"`
 	CreatedAt             timetypes.RFC3339                              `tfsdk:"created_at" json:"created_at"`
 	DNSDestinationIPsID   types.String                                   `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id"`
-	DohSubdomain          types.String                                   `tfsdk:"doh_subdomain" json:"doh_subdomain"`
-	EcsSupport            types.Bool                                     `tfsdk:"ecs_support" json:"ecs_support"`
+	DOHSubdomain          types.String                                   `tfsdk:"doh_subdomain" json:"doh_subdomain"`
+	ECSSupport            types.Bool                                     `tfsdk:"ecs_support" json:"ecs_support"`
 	Endpoints             *TeamsLocationsItemsEndpointsDataSourceModel   `tfsdk:"endpoints" json:"endpoints"`
 	IP                    types.String                                   `tfsdk:"ip" json:"ip"`
 	IPV4Destination       types.String                                   `tfsdk:"ipv4_destination" json:"ipv4_destination"`
@@ -34,28 +34,28 @@ type TeamsLocationsItemsDataSourceModel struct {
 }
 
 type TeamsLocationsItemsEndpointsDataSourceModel struct {
-	Doh  *TeamsLocationsItemsEndpointsDohDataSourceModel  `tfsdk:"doh" json:"doh"`
-	Dot  *TeamsLocationsItemsEndpointsDotDataSourceModel  `tfsdk:"dot" json:"dot"`
+	DOH  *TeamsLocationsItemsEndpointsDOHDataSourceModel  `tfsdk:"doh" json:"doh"`
+	DOT  *TeamsLocationsItemsEndpointsDOTDataSourceModel  `tfsdk:"dot" json:"dot"`
 	IPV4 *TeamsLocationsItemsEndpointsIPV4DataSourceModel `tfsdk:"ipv4" json:"ipv4"`
 	IPV6 *TeamsLocationsItemsEndpointsIPV6DataSourceModel `tfsdk:"ipv6" json:"ipv6"`
 }
 
-type TeamsLocationsItemsEndpointsDohDataSourceModel struct {
+type TeamsLocationsItemsEndpointsDOHDataSourceModel struct {
 	Enabled      types.Bool                                                 `tfsdk:"enabled" json:"enabled"`
-	Networks     *[]*TeamsLocationsItemsEndpointsDohNetworksDataSourceModel `tfsdk:"networks" json:"networks"`
+	Networks     *[]*TeamsLocationsItemsEndpointsDOHNetworksDataSourceModel `tfsdk:"networks" json:"networks"`
 	RequireToken types.Bool                                                 `tfsdk:"require_token" json:"require_token"`
 }
 
-type TeamsLocationsItemsEndpointsDohNetworksDataSourceModel struct {
+type TeamsLocationsItemsEndpointsDOHNetworksDataSourceModel struct {
 	Network types.String `tfsdk:"network" json:"network,computed"`
 }
 
-type TeamsLocationsItemsEndpointsDotDataSourceModel struct {
+type TeamsLocationsItemsEndpointsDOTDataSourceModel struct {
 	Enabled  types.Bool                                                 `tfsdk:"enabled" json:"enabled"`
-	Networks *[]*TeamsLocationsItemsEndpointsDotNetworksDataSourceModel `tfsdk:"networks" json:"networks"`
+	Networks *[]*TeamsLocationsItemsEndpointsDOTNetworksDataSourceModel `tfsdk:"networks" json:"networks"`
 }
 
-type TeamsLocationsItemsEndpointsDotNetworksDataSourceModel struct {
+type TeamsLocationsItemsEndpointsDOTNetworksDataSourceModel struct {
 	Network types.String `tfsdk:"network" json:"network,computed"`
 }
 
