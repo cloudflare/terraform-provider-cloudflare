@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -61,6 +62,9 @@ func (r SpectrumApplicationResource) UpgradeState(ctx context.Context) map[int64
 							"ttl": schema.Int64Attribute{
 								Description: "The TTL of our resolution of your DNS record in seconds.",
 								Optional:    true,
+								Validators: []validator.Int64{
+									int64validator.AtLeast(600),
+								},
 							},
 							"type": schema.StringAttribute{
 								Description: "The type of DNS record associated with the origin. \"\" is used to specify a combination of A/AAAA records.",

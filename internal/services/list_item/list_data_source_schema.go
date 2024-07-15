@@ -5,8 +5,10 @@ package list_item
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ListItemsDataSource{}
@@ -30,6 +32,9 @@ func (r ListItemsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			"per_page": schema.Int64Attribute{
 				Description: "Amount of results to include in each paginated response. A non-negative 32 bit integer.",
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 500),
+				},
 			},
 			"search": schema.StringAttribute{
 				Description: "A search query to filter returned items. Its meaning depends on the list type: IP addresses must start with the provided string, hostnames and bulk redirects must contain the string, and ASNs must match the string exactly.",

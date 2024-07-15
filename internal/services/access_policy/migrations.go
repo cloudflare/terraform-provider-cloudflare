@@ -5,6 +5,7 @@ package access_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -247,6 +248,9 @@ func (r AccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resour
 								"approvals_needed": schema.Float64Attribute{
 									Description: "The number of approvals needed to obtain access.",
 									Required:    true,
+									Validators: []validator.Float64{
+										float64validator.AtLeast(0),
+									},
 								},
 								"email_addresses": schema.ListAttribute{
 									Description: "A list of emails that can approve the access request.",
