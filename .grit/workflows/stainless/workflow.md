@@ -55,3 +55,5 @@ inline_cloudflare_block_to_map(`cors_headers`) as $block where { $block <: withi
 ```
 
 Make sure to look recursively for _all_ blocks in the schema. Eliminate all duplicates. We should use `any` to combine all the blocks into a single migration.
+
+You must carefully look inside the `new` schema to find the correct nesting mode for each block. If the attribute can't be found in the new schema, this is an error and your recursion logic is wrong.
