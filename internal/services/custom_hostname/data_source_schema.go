@@ -152,11 +152,17 @@ func (r CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sch
 						Description: "Page number of paginated results.",
 						Computed:    true,
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.AtLeast(1),
+						},
 					},
 					"per_page": schema.Float64Attribute{
 						Description: "Number of hostnames per page.",
 						Computed:    true,
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(5, 50),
+						},
 					},
 					"ssl": schema.Float64Attribute{
 						Description: "Whether to filter hostnames based on if they have SSL enabled.",

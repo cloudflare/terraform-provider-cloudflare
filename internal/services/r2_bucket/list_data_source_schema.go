@@ -5,6 +5,7 @@ package r2_bucket
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -47,6 +48,9 @@ func (r R2BucketsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "Maximum number of buckets to return in a single call",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(1, 1000),
+				},
 			},
 			"start_after": schema.StringAttribute{
 				Description: "Bucket name to start searching after. Buckets are ordered lexicographically.",

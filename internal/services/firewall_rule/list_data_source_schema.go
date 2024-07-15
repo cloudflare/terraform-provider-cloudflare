@@ -5,6 +5,7 @@ package firewall_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -38,6 +39,9 @@ func (r FirewallRulesDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Page number of paginated results.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
 			},
 			"paused": schema.BoolAttribute{
 				Description: "When true, indicates that the firewall rule is currently paused.",
@@ -47,6 +51,9 @@ func (r FirewallRulesDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Number of firewall rules per page.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(5, 100),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -81,6 +88,9 @@ func (r FirewallRulesDataSource) Schema(ctx context.Context, req datasource.Sche
 							Description: "The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.",
 							Computed:    true,
 							Optional:    true,
+							Validators: []validator.Float64{
+								float64validator.Between(0, 2147483647),
+							},
 						},
 						"products": schema.ListAttribute{
 							Computed:    true,

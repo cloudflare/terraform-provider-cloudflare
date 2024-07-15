@@ -5,8 +5,10 @@ package waiting_room_event
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WaitingRoomEventDataSource{}
@@ -68,6 +70,9 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "If set, the event will override the waiting room's `new_users_per_minute` property while it is active. If null, the event will inherit it. This can only be set if the event's `total_active_users` property is also set.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(200, 2147483647),
+				},
 			},
 			"prequeue_start_time": schema.StringAttribute{
 				Description: "An ISO 8601 timestamp that marks when to begin queueing all users before the event starts. The prequeue must start at least five minutes before `event_start_time`.",
@@ -83,6 +88,9 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "If set, the event will override the waiting room's `session_duration` property while it is active. If null, the event will inherit it.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 30),
+				},
 			},
 			"shuffle_at_event_start": schema.BoolAttribute{
 				Description: "If enabled, users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. This is useful for situations when many users will join the event prequeue at the same time and you want to shuffle them to ensure fairness. Naturally, it makes the most sense to enable this feature when the `queueing_method` during the event respects ordering such as **fifo**, or else the shuffling may be unnecessary.",
@@ -96,6 +104,9 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "If set, the event will override the waiting room's `total_active_users` property while it is active. If null, the event will inherit it. This can only be set if the event's `new_users_per_minute` property is also set.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(200, 2147483647),
+				},
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

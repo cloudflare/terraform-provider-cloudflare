@@ -5,6 +5,7 @@ package load_balancer_pool
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -74,6 +75,9 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 								"default_percent": schema.Float64Attribute{
 									Description: "The percent of traffic to shed from the pool, according to the default policy. Applies to new sessions and traffic without session affinity.",
 									Computed:    true,
+									Validators: []validator.Float64{
+										float64validator.Between(0, 100),
+									},
 								},
 								"default_policy": schema.StringAttribute{
 									Description: "The default policy to use when load shedding. A random policy randomly sheds a given percent of requests. A hash policy computes a hash over the CF-Connecting-IP address and sheds all requests originating from a percent of IPs.",
@@ -85,6 +89,9 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 								"session_percent": schema.Float64Attribute{
 									Description: "The percent of existing sessions to shed from the pool, according to the session policy.",
 									Computed:    true,
+									Validators: []validator.Float64{
+										float64validator.Between(0, 100),
+									},
 								},
 								"session_policy": schema.StringAttribute{
 									Description: "Only the hash policy is supported for existing sessions (to avoid exponential decay).",
@@ -220,6 +227,9 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 									"weight": schema.Float64Attribute{
 										Description: "The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.\n- `origin_steering.policy=\"least_outstanding_requests\"`: Use weight to scale the origin's outstanding requests.\n- `origin_steering.policy=\"least_connections\"`: Use weight to scale the origin's open connections.",
 										Computed:    true,
+										Validators: []validator.Float64{
+											float64validator.Between(0, 1),
+										},
 									},
 								},
 							},

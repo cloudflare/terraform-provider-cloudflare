@@ -5,6 +5,7 @@ package tunnel_route
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -45,10 +46,16 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "Page number of paginated results.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
 			},
 			"per_page": schema.Float64Attribute{
 				Description: "Number of results to display.",
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(1, 1000),
+				},
 			},
 			"route_id": schema.StringAttribute{
 				Description: "UUID of the route.",

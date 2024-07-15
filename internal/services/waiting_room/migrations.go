@@ -42,10 +42,16 @@ func (r WaitingRoomResource) UpgradeState(ctx context.Context) map[int64]resourc
 					"new_users_per_minute": schema.Int64Attribute{
 						Description: "Sets the number of new users that will be let into the route every minute. This value is used as baseline for the number of users that are let in per minute. So it is possible that there is a little more or little less traffic coming to the route based on the traffic patterns at that time around the world.",
 						Required:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(200, 2147483647),
+						},
 					},
 					"total_active_users": schema.Int64Attribute{
 						Description: "Sets the total number of active user sessions on the route at a point in time. A route is a combination of host and path on which a waiting room is available. This value is used as a baseline for the total number of active user sessions on the route. It is possible to have a situation where there are more or less active users sessions on the route based on the traffic patterns at that time around the world.",
 						Required:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(200, 2147483647),
+						},
 					},
 					"additional_routes": schema.ListNestedAttribute{
 						Description: "Only available for the Waiting Room Advanced subscription. Additional hostname and path combinations to which this waiting room will be applied. There is an implied wildcard at the end of the path. The hostname and path combination must be unique to this and all other waiting rooms.",
@@ -160,7 +166,10 @@ func (r WaitingRoomResource) UpgradeState(ctx context.Context) map[int64]resourc
 						Description: "Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. If a user is not seen by Cloudflare again in that time period, they will be treated as a new user that visits the route.",
 						Computed:    true,
 						Optional:    true,
-						Default:     int64default.StaticInt64(5),
+						Validators: []validator.Int64{
+							int64validator.Between(1, 30),
+						},
+						Default: int64default.StaticInt64(5),
 					},
 					"suspended": schema.BoolAttribute{
 						Description: "Suspends or allows traffic going to the waiting room. If set to `true`, the traffic will not go to the waiting room.",

@@ -62,10 +62,6 @@ func (r HyperdriveConfigDataSource) Schema(ctx context.Context, req datasource.S
 						Description: "The host (hostname or IP) of your origin database.",
 						Computed:    true,
 					},
-					"port": schema.Int64Attribute{
-						Description: "The port (default: 5432 for Postgres) of your origin database.",
-						Computed:    true,
-					},
 					"scheme": schema.StringAttribute{
 						Description: "Specifies the URL scheme used to connect to your origin database.",
 						Computed:    true,
@@ -76,6 +72,16 @@ func (r HyperdriveConfigDataSource) Schema(ctx context.Context, req datasource.S
 					"user": schema.StringAttribute{
 						Description: "The user of your origin database.",
 						Computed:    true,
+					},
+					"access_client_id": schema.StringAttribute{
+						Description: "The Client ID of the Access token to use when connecting to the origin database",
+						Computed:    true,
+						Optional:    true,
+					},
+					"port": schema.Int64Attribute{
+						Description: "The port (default: 5432 for Postgres) of your origin database.",
+						Computed:    true,
+						Optional:    true,
 					},
 				},
 			},

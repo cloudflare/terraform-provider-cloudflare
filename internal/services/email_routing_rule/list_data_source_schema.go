@@ -5,6 +5,7 @@ package email_routing_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -30,11 +31,17 @@ func (r EmailRoutingRulesDataSource) Schema(ctx context.Context, req datasource.
 				Description: "Page number of paginated results.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
 			},
 			"per_page": schema.Float64Attribute{
 				Description: "Maximum number of results per page.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(5, 50),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -108,6 +115,9 @@ func (r EmailRoutingRulesDataSource) Schema(ctx context.Context, req datasource.
 						"priority": schema.Float64Attribute{
 							Description: "Priority of the routing rule.",
 							Computed:    true,
+							Validators: []validator.Float64{
+								float64validator.AtLeast(0),
+							},
 						},
 						"tag": schema.StringAttribute{
 							Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",

@@ -5,6 +5,8 @@ package load_balancer
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -113,6 +115,9 @@ func (r LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Schem
 					"default_weight": schema.Float64Attribute{
 						Description: "The default weight for pools in the load balancer that are not specified in the pool_weights map.",
 						Computed:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 1),
+						},
 					},
 					"pool_weights": schema.StringAttribute{
 						Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
@@ -239,6 +244,9 @@ func (r LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Schem
 										"default_weight": schema.Float64Attribute{
 											Description: "The default weight for pools in the load balancer that are not specified in the pool_weights map.",
 											Computed:    true,
+											Validators: []validator.Float64{
+												float64validator.Between(0, 1),
+											},
 										},
 										"pool_weights": schema.StringAttribute{
 											Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
@@ -324,6 +332,9 @@ func (r LoadBalancerDataSource) Schema(ctx context.Context, req datasource.Schem
 						"priority": schema.Int64Attribute{
 							Description: "The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If no value is provided for any rule the array order of the rules field will be used to assign a priority.",
 							Computed:    true,
+							Validators: []validator.Int64{
+								int64validator.AtLeast(0),
+							},
 						},
 						"terminates": schema.BoolAttribute{
 							Description: "If this rule's condition is true, this causes rule evaluation to stop after processing this rule.",

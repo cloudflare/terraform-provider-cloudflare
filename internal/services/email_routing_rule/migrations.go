@@ -5,6 +5,7 @@ package email_routing_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -90,7 +91,10 @@ func (r EmailRoutingRuleResource) UpgradeState(ctx context.Context) map[int64]re
 						Description: "Priority of the routing rule.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.AtLeast(0),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"tag": schema.StringAttribute{
 						Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
