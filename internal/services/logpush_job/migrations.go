@@ -5,6 +5,8 @@ package logpush_job
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -25,8 +27,11 @@ func (r LogpushJobResource) UpgradeState(ctx context.Context) map[int64]resource
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"id": schema.Int64Attribute{
-						Description:   "Unique id of the job.",
-						Computed:      true,
+						Description: "Unique id of the job.",
+						Computed:    true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(1),
+						},
 						PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
@@ -70,18 +75,27 @@ func (r LogpushJobResource) UpgradeState(ctx context.Context) map[int64]resource
 					"max_upload_bytes": schema.Int64Attribute{
 						Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size. This parameter is not available for jobs with `edge` as its kind.",
 						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.Between(5000000, 1000000000),
+						},
 					},
 					"max_upload_interval_seconds": schema.Int64Attribute{
 						Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.",
 						Computed:    true,
 						Optional:    true,
-						Default:     int64default.StaticInt64(30),
+						Validators: []validator.Int64{
+							int64validator.Between(30, 300),
+						},
+						Default: int64default.StaticInt64(30),
 					},
 					"max_upload_records": schema.Int64Attribute{
 						Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.",
 						Computed:    true,
 						Optional:    true,
-						Default:     int64default.StaticInt64(100000),
+						Validators: []validator.Int64{
+							int64validator.Between(1000, 1000000),
+						},
+						Default: int64default.StaticInt64(100000),
 					},
 					"output_options": schema.SingleNestedAttribute{
 						Description: "The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored.",
@@ -153,7 +167,10 @@ func (r LogpushJobResource) UpgradeState(ctx context.Context) map[int64]resource
 								Description: "Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
 								Computed:    true,
 								Optional:    true,
-								Default:     float64default.StaticFloat64(1),
+								Validators: []validator.Float64{
+									float64validator.Between(0, 1),
+								},
+								Default: float64default.StaticFloat64(1),
 							},
 							"timestamp_format": schema.StringAttribute{
 								Description: "String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.",

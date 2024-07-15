@@ -5,6 +5,7 @@ package firewall_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -50,6 +51,9 @@ func (r FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaReq
 			"priority": schema.Float64Attribute{
 				Description: "The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.",
 				Computed:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 2147483647),
+				},
 			},
 			"products": schema.ListAttribute{
 				Computed:    true,

@@ -5,6 +5,7 @@ package rate_limit
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -26,11 +27,17 @@ func (r RateLimitsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "The page number of paginated results.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
 			},
 			"per_page": schema.Float64Attribute{
 				Description: "The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(1, 1000),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -79,6 +86,9 @@ func (r RateLimitsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 									Description: "The time in seconds during which Cloudflare will perform the mitigation action. Must be an integer value greater than or equal to the period.\nNotes: If \"mode\" is \"challenge\", \"managed_challenge\", or \"js_challenge\", Cloudflare will use the zone's Challenge Passage time and you should not provide this value.",
 									Computed:    true,
 									Optional:    true,
+									Validators: []validator.Float64{
+										float64validator.Between(1, 86400),
+									},
 								},
 							},
 						},
@@ -184,11 +194,17 @@ func (r RateLimitsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 							Description: "The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.",
 							Computed:    true,
 							Optional:    true,
+							Validators: []validator.Float64{
+								float64validator.Between(10, 86400),
+							},
 						},
 						"threshold": schema.Float64Attribute{
 							Description: "The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.",
 							Computed:    true,
 							Optional:    true,
+							Validators: []validator.Float64{
+								float64validator.AtLeast(1),
+							},
 						},
 					},
 				},

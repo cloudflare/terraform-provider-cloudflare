@@ -5,6 +5,7 @@ package dlp_custom_profile
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -38,7 +39,10 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 									Description: "Related DLP policies will trigger when the match count exceeds the number set.",
 									Computed:    true,
 									Optional:    true,
-									Default:     float64default.StaticFloat64(0),
+									Validators: []validator.Float64{
+										float64validator.Between(0, 1000),
+									},
+									Default: float64default.StaticFloat64(0),
 								},
 								"context_awareness": schema.SingleNestedAttribute{
 									Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -113,7 +117,10 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 						Description: "Related DLP policies will trigger when the match count exceeds the number set.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 1000),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"context_awareness": schema.SingleNestedAttribute{
 						Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",

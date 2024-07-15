@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -35,11 +36,17 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "Page number of paginated results.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
 			},
 			"per_page": schema.Float64Attribute{
 				Description: "Number of zones per page.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(5, 50),
+				},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the zone's custom SSL.",

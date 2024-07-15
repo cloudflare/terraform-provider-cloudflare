@@ -5,10 +5,12 @@ package regional_hostname
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 func (r RegionalHostnameResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -45,6 +47,9 @@ func (r RegionalHostnameResource) UpgradeState(ctx context.Context) map[int64]re
 							Attributes: map[string]schema.Attribute{
 								"code": schema.Int64Attribute{
 									Required: true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(1000),
+									},
 								},
 								"message": schema.StringAttribute{
 									Required: true,
@@ -58,6 +63,9 @@ func (r RegionalHostnameResource) UpgradeState(ctx context.Context) map[int64]re
 							Attributes: map[string]schema.Attribute{
 								"code": schema.Int64Attribute{
 									Required: true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(1000),
+									},
 								},
 								"message": schema.StringAttribute{
 									Required: true,

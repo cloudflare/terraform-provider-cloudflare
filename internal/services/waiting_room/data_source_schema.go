@@ -116,6 +116,9 @@ func (r WaitingRoomDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Sets the number of new users that will be let into the route every minute. This value is used as baseline for the number of users that are let in per minute. So it is possible that there is a little more or little less traffic coming to the route based on the traffic patterns at that time around the world.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(200, 2147483647),
+				},
 			},
 			"next_event_prequeue_start_time": schema.StringAttribute{
 				Description: "An ISO 8601 timestamp that marks when the next event will begin queueing.",
@@ -152,6 +155,9 @@ func (r WaitingRoomDataSource) Schema(ctx context.Context, req datasource.Schema
 			"session_duration": schema.Int64Attribute{
 				Description: "Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. If a user is not seen by Cloudflare again in that time period, they will be treated as a new user that visits the route.",
 				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 30),
+				},
 			},
 			"suspended": schema.BoolAttribute{
 				Description: "Suspends or allows traffic going to the waiting room. If set to `true`, the traffic will not go to the waiting room.",
@@ -161,6 +167,9 @@ func (r WaitingRoomDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Sets the total number of active user sessions on the route at a point in time. A route is a combination of host and path on which a waiting room is available. This value is used as a baseline for the total number of active user sessions on the route. It is possible to have a situation where there are more or less active users sessions on the route based on the traffic patterns at that time around the world.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(200, 2147483647),
+				},
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

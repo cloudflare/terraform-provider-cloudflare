@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -62,6 +63,9 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(30, 86400),
+				},
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",
@@ -83,6 +87,9 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					"algorithm": schema.Float64Attribute{
 						Description: "Algorithm.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 255),
+						},
 					},
 					"certificate": schema.StringAttribute{
 						Description: "Certificate.",
@@ -91,14 +98,23 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					"key_tag": schema.Float64Attribute{
 						Description: "Key Tag.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
 					},
 					"type": schema.Float64Attribute{
 						Description: "Type.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
 					},
 					"protocol": schema.Float64Attribute{
 						Description: "Protocol.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 255),
+						},
 					},
 					"public_key": schema.StringAttribute{
 						Description: "Public Key.",
@@ -111,10 +127,16 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					"digest_type": schema.Float64Attribute{
 						Description: "Digest Type.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 255),
+						},
 					},
 					"priority": schema.Float64Attribute{
 						Description: "priority.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
 					},
 					"target": schema.StringAttribute{
 						Description: "target.",
@@ -123,10 +145,16 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					"altitude": schema.Float64Attribute{
 						Description: "Altitude of location in meters.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(-100000, 42849672.95),
+						},
 					},
 					"lat_degrees": schema.Float64Attribute{
 						Description: "Degrees of latitude.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 90),
+						},
 					},
 					"lat_direction": schema.StringAttribute{
 						Description: "Latitude direction.",
@@ -139,17 +167,26 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 						Description: "Minutes of latitude.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 59),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"lat_seconds": schema.Float64Attribute{
 						Description: "Seconds of latitude.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 59.999),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"long_degrees": schema.Float64Attribute{
 						Description: "Degrees of longitude.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 180),
+						},
 					},
 					"long_direction": schema.StringAttribute{
 						Description: "Longitude direction.",
@@ -162,39 +199,60 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 						Description: "Minutes of longitude.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 59),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"long_seconds": schema.Float64Attribute{
 						Description: "Seconds of longitude.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 59.999),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"precision_horz": schema.Float64Attribute{
 						Description: "Horizontal precision of location.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 90000000),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"precision_vert": schema.Float64Attribute{
 						Description: "Vertical precision of location.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 90000000),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"size": schema.Float64Attribute{
 						Description: "Size of location in meters.",
 						Computed:    true,
 						Optional:    true,
-						Default:     float64default.StaticFloat64(0),
+						Validators: []validator.Float64{
+							float64validator.Between(0, 90000000),
+						},
+						Default: float64default.StaticFloat64(0),
 					},
 					"order": schema.Float64Attribute{
 						Description: "Order.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
 					},
 					"preference": schema.Float64Attribute{
 						Description: "Preference.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
 					},
 					"regex": schema.StringAttribute{
 						Description: "Regex.",
@@ -211,14 +269,23 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					"matching_type": schema.Float64Attribute{
 						Description: "Matching Type.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 255),
+						},
 					},
 					"selector": schema.Float64Attribute{
 						Description: "Selector.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 255),
+						},
 					},
 					"usage": schema.Float64Attribute{
 						Description: "Usage.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 255),
+						},
 					},
 					"name": schema.StringAttribute{
 						Description: "A valid hostname. Deprecated in favor of the regular 'name' outside the data map. This data map field represents the remainder of the full 'name' after the service and protocol.",
@@ -227,6 +294,9 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					"port": schema.Float64Attribute{
 						Description: "The port of the service.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
 					},
 					"proto": schema.StringAttribute{
 						Description: "A valid protocol, prefixed with an underscore. Deprecated in favor of the regular 'name' outside the data map. This data map field normally represents the second label of that 'name'.",
@@ -235,6 +305,9 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 					"weight": schema.Float64Attribute{
 						Description: "The record weight.",
 						Optional:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(0, 65535),
+						},
 					},
 					"fingerprint": schema.StringAttribute{
 						Description: "fingerprint.",
@@ -245,6 +318,9 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			"priority": schema.Float64Attribute{
 				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 65535),
+				},
 			},
 		},
 	}

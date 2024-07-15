@@ -5,6 +5,7 @@ package load_balancer_pool
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -78,7 +79,10 @@ func (r LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]re
 									Description: "The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.\n- `origin_steering.policy=\"least_outstanding_requests\"`: Use weight to scale the origin's outstanding requests.\n- `origin_steering.policy=\"least_connections\"`: Use weight to scale the origin's open connections.",
 									Computed:    true,
 									Optional:    true,
-									Default:     float64default.StaticFloat64(1),
+									Validators: []validator.Float64{
+										float64validator.Between(0, 1),
+									},
+									Default: float64default.StaticFloat64(1),
 								},
 							},
 						},
@@ -105,7 +109,10 @@ func (r LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]re
 								Description: "The percent of traffic to shed from the pool, according to the default policy. Applies to new sessions and traffic without session affinity.",
 								Computed:    true,
 								Optional:    true,
-								Default:     float64default.StaticFloat64(0),
+								Validators: []validator.Float64{
+									float64validator.Between(0, 100),
+								},
+								Default: float64default.StaticFloat64(0),
 							},
 							"default_policy": schema.StringAttribute{
 								Description: "The default policy to use when load shedding. A random policy randomly sheds a given percent of requests. A hash policy computes a hash over the CF-Connecting-IP address and sheds all requests originating from a percent of IPs.",
@@ -120,7 +127,10 @@ func (r LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]re
 								Description: "The percent of existing sessions to shed from the pool, according to the session policy.",
 								Computed:    true,
 								Optional:    true,
-								Default:     float64default.StaticFloat64(0),
+								Validators: []validator.Float64{
+									float64validator.Between(0, 100),
+								},
+								Default: float64default.StaticFloat64(0),
 							},
 							"session_policy": schema.StringAttribute{
 								Description: "Only the hash policy is supported for existing sessions (to avoid exponential decay).",

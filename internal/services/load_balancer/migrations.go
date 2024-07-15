@@ -5,6 +5,8 @@ package load_balancer
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -106,7 +108,10 @@ func (r LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resour
 								Description: "The default weight for pools in the load balancer that are not specified in the pool_weights map.",
 								Computed:    true,
 								Optional:    true,
-								Default:     float64default.StaticFloat64(1),
+								Validators: []validator.Float64{
+									float64validator.Between(0, 1),
+								},
+								Default: float64default.StaticFloat64(1),
 							},
 							"pool_weights": schema.StringAttribute{
 								Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
@@ -224,7 +229,10 @@ func (r LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resour
 													Description: "The default weight for pools in the load balancer that are not specified in the pool_weights map.",
 													Computed:    true,
 													Optional:    true,
-													Default:     float64default.StaticFloat64(1),
+													Validators: []validator.Float64{
+														float64validator.Between(0, 1),
+													},
+													Default: float64default.StaticFloat64(1),
 												},
 												"pool_weights": schema.StringAttribute{
 													Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
@@ -316,7 +324,10 @@ func (r LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resour
 									Description: "The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If no value is provided for any rule the array order of the rules field will be used to assign a priority.",
 									Computed:    true,
 									Optional:    true,
-									Default:     int64default.StaticInt64(0),
+									Validators: []validator.Int64{
+										int64validator.AtLeast(0),
+									},
+									Default: int64default.StaticInt64(0),
 								},
 								"terminates": schema.BoolAttribute{
 									Description: "If this rule's condition is true, this causes rule evaluation to stop after processing this rule.",
