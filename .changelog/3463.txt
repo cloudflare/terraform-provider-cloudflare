@@ -1,0 +1,3 @@
+```release-note:bug
+fix resource/cloudflare_risk_behavior bug where partial definition of risk behaviors resulted in a provider error
+```
