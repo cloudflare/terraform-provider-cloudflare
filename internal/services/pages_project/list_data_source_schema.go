@@ -5,9 +5,9 @@ package pages_project
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &PagesProjectsDataSource{}
@@ -36,7 +36,7 @@ func (r PagesProjectsDataSource) Schema(ctx context.Context, req datasource.Sche
 						"aliases": schema.ListAttribute{
 							Description: "A list of alias URLs pointing to this deployment.",
 							Computed:    true,
-							ElementType: types.StringType,
+							ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 						},
 						"build_config": schema.StringAttribute{
 							Computed: true,

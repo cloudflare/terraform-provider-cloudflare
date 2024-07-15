@@ -3,6 +3,7 @@
 package ruleset
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,11 +19,11 @@ type RulesetsDataSourceModel struct {
 }
 
 type RulesetsItemsDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Kind        types.String `tfsdk:"kind" json:"kind,computed"`
-	LastUpdated types.String `tfsdk:"last_updated" json:"last_updated,computed"`
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Phase       types.String `tfsdk:"phase" json:"phase,computed"`
-	Version     types.String `tfsdk:"version" json:"version,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
+	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	Kind        types.String      `tfsdk:"kind" json:"kind,computed"`
+	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed"`
+	Name        types.String      `tfsdk:"name" json:"name,computed"`
+	Phase       types.String      `tfsdk:"phase" json:"phase,computed"`
+	Version     types.String      `tfsdk:"version" json:"version,computed"`
+	Description types.String      `tfsdk:"description" json:"description,computed"`
 }

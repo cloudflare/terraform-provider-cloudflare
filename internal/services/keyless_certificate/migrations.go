@@ -5,6 +5,7 @@ package keyless_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -13,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r KeylessCertificateResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -89,7 +89,7 @@ func (r KeylessCertificateResource) UpgradeState(ctx context.Context) map[int64]
 					"permissions": schema.ListAttribute{
 						Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
 						Computed:    true,
-						ElementType: types.StringType,
+						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 					},
 					"status": schema.StringAttribute{
 						Description: "Status of the Keyless SSL.",

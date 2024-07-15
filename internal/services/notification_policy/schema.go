@@ -5,6 +5,7 @@ package notification_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -45,7 +46,7 @@ func (r NotificationPolicyResource) Schema(ctx context.Context, req resource.Sch
 				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 				Required:    true,
 				ElementType: types.ListType{
-					ElemType: types.StringType,
+					ElemType: jsontypes.NewNormalizedNull().Type(ctx),
 				},
 			},
 			"name": schema.StringAttribute{

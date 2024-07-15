@@ -3,6 +3,7 @@
 package notification_policy_webhooks
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,12 +18,12 @@ type NotificationPolicyWebhooksListDataSourceModel struct {
 }
 
 type NotificationPolicyWebhooksListItemsDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	CreatedAt   types.String `tfsdk:"created_at" json:"created_at,computed"`
-	LastFailure types.String `tfsdk:"last_failure" json:"last_failure,computed"`
-	LastSuccess types.String `tfsdk:"last_success" json:"last_success,computed"`
-	Name        types.String `tfsdk:"name" json:"name"`
-	Secret      types.String `tfsdk:"secret" json:"secret"`
-	Type        types.String `tfsdk:"type" json:"type"`
-	URL         types.String `tfsdk:"url" json:"url"`
+	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	LastFailure timetypes.RFC3339 `tfsdk:"last_failure" json:"last_failure,computed"`
+	LastSuccess timetypes.RFC3339 `tfsdk:"last_success" json:"last_success,computed"`
+	Name        types.String      `tfsdk:"name" json:"name"`
+	Secret      types.String      `tfsdk:"secret" json:"secret"`
+	Type        types.String      `tfsdk:"type" json:"type"`
+	URL         types.String      `tfsdk:"url" json:"url"`
 }

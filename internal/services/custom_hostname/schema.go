@@ -5,6 +5,7 @@ package custom_hostname
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -152,7 +153,7 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 			"verification_errors": schema.ListAttribute{
 				Description: "These are errors that were encountered while trying to activate a hostname.",
 				Computed:    true,
-				ElementType: types.StringType,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 		},
 	}

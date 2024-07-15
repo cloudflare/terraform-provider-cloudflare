@@ -5,11 +5,11 @@ package pages_project
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &PagesProjectDataSource{}
@@ -77,7 +77,7 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
-						ElementType: types.StringType,
+						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 					},
 					"build_config": schema.StringAttribute{
 						Computed: true,
@@ -222,7 +222,7 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 								Description: "Compatibility flags used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								ElementType: types.StringType,
+								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -511,7 +511,7 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 								Description: "Compatibility flags used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								ElementType: types.StringType,
+								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -742,7 +742,7 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 			"domains": schema.ListAttribute{
 				Description: "A list of associated custom domains for the project.",
 				Optional:    true,
-				ElementType: types.StringType,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
 				Optional: true,
@@ -754,7 +754,7 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
-						ElementType: types.StringType,
+						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 					},
 					"build_config": schema.StringAttribute{
 						Computed: true,
@@ -846,7 +846,7 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 			"aliases": schema.ListAttribute{
 				Description: "A list of alias URLs pointing to this deployment.",
 				Optional:    true,
-				ElementType: types.StringType,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 			"deployment_trigger": schema.SingleNestedAttribute{
 				Description: "Info about what caused the deployment.",

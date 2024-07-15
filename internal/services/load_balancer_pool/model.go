@@ -3,6 +3,8 @@
 package load_balancer_pool
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,19 +23,19 @@ type LoadBalancerPoolModel struct {
 	LoadShedding       *LoadBalancerPoolLoadSheddingModel       `tfsdk:"load_shedding" json:"load_shedding"`
 	Longitude          types.Float64                            `tfsdk:"longitude" json:"longitude"`
 	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins"`
-	Monitor            types.String                             `tfsdk:"monitor" json:"monitor"`
+	Monitor            jsontypes.Normalized                     `tfsdk:"monitor" json:"monitor"`
 	NotificationEmail  types.String                             `tfsdk:"notification_email" json:"notification_email"`
 	NotificationFilter *LoadBalancerPoolNotificationFilterModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringModel     `tfsdk:"origin_steering" json:"origin_steering"`
 	CheckRegions       *[]types.String                          `tfsdk:"check_regions" json:"check_regions"`
-	CreatedOn          types.String                             `tfsdk:"created_on" json:"created_on,computed"`
-	DisabledAt         types.String                             `tfsdk:"disabled_at" json:"disabled_at,computed"`
-	ModifiedOn         types.String                             `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn          timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed"`
+	DisabledAt         timetypes.RFC3339                        `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	ModifiedOn         timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type LoadBalancerPoolOriginsModel struct {
 	Address          types.String                        `tfsdk:"address" json:"address"`
-	DisabledAt       types.String                        `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed"`
 	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled"`
 	Header           *LoadBalancerPoolOriginsHeaderModel `tfsdk:"header" json:"header"`
 	Name             types.String                        `tfsdk:"name" json:"name"`

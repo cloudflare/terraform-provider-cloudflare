@@ -3,6 +3,7 @@
 package waiting_room
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -31,8 +32,8 @@ type WaitingRoomModel struct {
 	QueueingStatusCode         types.Int64                          `tfsdk:"queueing_status_code" json:"queueing_status_code"`
 	SessionDuration            types.Int64                          `tfsdk:"session_duration" json:"session_duration"`
 	Suspended                  types.Bool                           `tfsdk:"suspended" json:"suspended"`
-	CreatedOn                  types.String                         `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn                 types.String                         `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn                  timetypes.RFC3339                    `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn                 timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	NextEventPrequeueStartTime types.String                         `tfsdk:"next_event_prequeue_start_time" json:"next_event_prequeue_start_time,computed"`
 	NextEventStartTime         types.String                         `tfsdk:"next_event_start_time" json:"next_event_start_time,computed"`
 }

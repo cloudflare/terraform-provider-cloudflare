@@ -3,6 +3,8 @@
 package worker_script
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,17 +19,17 @@ type WorkerScriptModel struct {
 	AnyPartName   *[]types.String                    `tfsdk:"any_part_name" json:"<any part name>"`
 	Metadata      *WorkerScriptMetadataModel         `tfsdk:"metadata" json:"metadata"`
 	Message       types.String                       `tfsdk:"message" json:"message"`
-	CreatedOn     types.String                       `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn     timetypes.RFC3339                  `tfsdk:"created_on" json:"created_on,computed"`
 	Etag          types.String                       `tfsdk:"etag" json:"etag,computed"`
 	Logpush       types.Bool                         `tfsdk:"logpush" json:"logpush,computed"`
-	ModifiedOn    types.String                       `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn    timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed"`
 	PlacementMode types.String                       `tfsdk:"placement_mode" json:"placement_mode,computed"`
 	TailConsumers *[]*WorkerScriptTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 	UsageModel    types.String                       `tfsdk:"usage_model" json:"usage_model,computed"`
 }
 
 type WorkerScriptMetadataModel struct {
-	Bindings           *[]types.String                            `tfsdk:"bindings" json:"bindings"`
+	Bindings           *[]jsontypes.Normalized                    `tfsdk:"bindings" json:"bindings"`
 	BodyPart           types.String                               `tfsdk:"body_part" json:"body_part"`
 	CompatibilityDate  types.String                               `tfsdk:"compatibility_date" json:"compatibility_date"`
 	CompatibilityFlags *[]types.String                            `tfsdk:"compatibility_flags" json:"compatibility_flags"`
@@ -39,7 +41,7 @@ type WorkerScriptMetadataModel struct {
 	Tags               *[]types.String                            `tfsdk:"tags" json:"tags"`
 	TailConsumers      *[]*WorkerScriptMetadataTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers"`
 	UsageModel         types.String                               `tfsdk:"usage_model" json:"usage_model"`
-	VersionTags        types.String                               `tfsdk:"version_tags" json:"version_tags"`
+	VersionTags        jsontypes.Normalized                       `tfsdk:"version_tags" json:"version_tags"`
 }
 
 type WorkerScriptMetadataMigrationsModel struct {

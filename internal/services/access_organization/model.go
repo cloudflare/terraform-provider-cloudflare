@@ -3,6 +3,7 @@
 package access_organization
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,8 +26,8 @@ type AccessOrganizationModel struct {
 	UserSeatExpirationInactiveTime types.String                        `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time"`
 	WARPAuthSessionDuration        types.String                        `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
 	CustomPages                    *AccessOrganizationCustomPagesModel `tfsdk:"custom_pages" json:"custom_pages"`
-	CreatedAt                      types.String                        `tfsdk:"created_at" json:"created_at,computed"`
-	UpdatedAt                      types.String                        `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt                      timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt                      timetypes.RFC3339                   `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessOrganizationLoginDesignModel struct {

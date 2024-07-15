@@ -3,6 +3,7 @@
 package tiered_cache
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,9 +12,9 @@ type TieredCacheResultEnvelope struct {
 }
 
 type TieredCacheModel struct {
-	ID         types.String `tfsdk:"id" json:"id"`
-	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id"`
-	Value      types.String `tfsdk:"value" json:"value"`
-	Editable   types.Bool   `tfsdk:"editable" json:"editable,computed"`
-	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
+	ID         types.String      `tfsdk:"id" json:"id"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id"`
+	Value      types.String      `tfsdk:"value" json:"value"`
+	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
+	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
 }

@@ -3,6 +3,7 @@
 package account
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,7 +16,7 @@ type AccountResultListDataSourceEnvelope struct {
 }
 
 type AccountDataSourceModel struct {
-	AccountID types.String                     `tfsdk:"account_id" path:"account_id"`
+	AccountID jsontypes.Normalized             `tfsdk:"account_id" path:"account_id"`
 	FindOneBy *AccountFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 

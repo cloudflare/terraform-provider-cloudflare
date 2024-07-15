@@ -3,6 +3,7 @@
 package zone_cache_variants
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,7 +15,7 @@ type ZoneCacheVariantsModel struct {
 	ID         types.String                 `tfsdk:"id" json:"id"`
 	ZoneID     types.String                 `tfsdk:"zone_id" path:"zone_id"`
 	Value      *ZoneCacheVariantsValueModel `tfsdk:"value" json:"value"`
-	ModifiedOn types.String                 `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn timetypes.RFC3339            `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type ZoneCacheVariantsValueModel struct {

@@ -5,6 +5,7 @@ package worker_script
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -44,7 +45,7 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 					"bindings": schema.ListAttribute{
 						Description: "List of bindings available to the worker.",
 						Optional:    true,
-						ElementType: types.StringType,
+						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 					},
 					"body_part": schema.StringAttribute{
 						Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
