@@ -5,12 +5,12 @@ package custom_hostname
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &CustomHostnamesDataSource{}
@@ -161,7 +161,7 @@ func (r CustomHostnamesDataSource) Schema(ctx context.Context, req datasource.Sc
 							Description: "These are errors that were encountered while trying to activate a hostname.",
 							Computed:    true,
 							Optional:    true,
-							ElementType: types.StringType,
+							ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 						},
 					},
 				},

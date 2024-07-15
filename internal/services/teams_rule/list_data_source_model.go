@@ -3,6 +3,8 @@
 package teams_rule
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,8 +21,8 @@ type TeamsRulesDataSourceModel struct {
 type TeamsRulesItemsDataSourceModel struct {
 	ID            types.String                                `tfsdk:"id" json:"id"`
 	Action        types.String                                `tfsdk:"action" json:"action"`
-	CreatedAt     types.String                                `tfsdk:"created_at" json:"created_at"`
-	DeletedAt     types.String                                `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	CreatedAt     timetypes.RFC3339                           `tfsdk:"created_at" json:"created_at"`
+	DeletedAt     timetypes.RFC3339                           `tfsdk:"deleted_at" json:"deleted_at,computed"`
 	Description   types.String                                `tfsdk:"description" json:"description"`
 	DevicePosture types.String                                `tfsdk:"device_posture" json:"device_posture"`
 	Enabled       types.Bool                                  `tfsdk:"enabled" json:"enabled"`
@@ -31,11 +33,11 @@ type TeamsRulesItemsDataSourceModel struct {
 	RuleSettings  *TeamsRulesItemsRuleSettingsDataSourceModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *TeamsRulesItemsScheduleDataSourceModel     `tfsdk:"schedule" json:"schedule"`
 	Traffic       types.String                                `tfsdk:"traffic" json:"traffic"`
-	UpdatedAt     types.String                                `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt     timetypes.RFC3339                           `tfsdk:"updated_at" json:"updated_at"`
 }
 
 type TeamsRulesItemsRuleSettingsDataSourceModel struct {
-	AddHeaders                      types.String                                                    `tfsdk:"add_headers" json:"add_headers"`
+	AddHeaders                      jsontypes.Normalized                                            `tfsdk:"add_headers" json:"add_headers"`
 	AllowChildBypass                types.Bool                                                      `tfsdk:"allow_child_bypass" json:"allow_child_bypass"`
 	AuditSSH                        *TeamsRulesItemsRuleSettingsAuditSSHDataSourceModel             `tfsdk:"audit_ssh" json:"audit_ssh"`
 	BisoAdminControls               *TeamsRulesItemsRuleSettingsBisoAdminControlsDataSourceModel    `tfsdk:"biso_admin_controls" json:"biso_admin_controls"`

@@ -3,6 +3,7 @@
 package access_rule
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,7 +16,7 @@ type AccessRuleResultListDataSourceEnvelope struct {
 }
 
 type AccessRuleDataSourceModel struct {
-	Identifier types.String                        `tfsdk:"identifier" path:"identifier"`
+	Identifier jsontypes.Normalized                `tfsdk:"identifier" path:"identifier"`
 	AccountID  types.String                        `tfsdk:"account_id" path:"account_id"`
 	ZoneID     types.String                        `tfsdk:"zone_id" path:"zone_id"`
 	FindOneBy  *AccessRuleFindOneByDataSourceModel `tfsdk:"find_one_by"`

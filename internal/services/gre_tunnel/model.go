@@ -3,6 +3,8 @@
 package gre_tunnel
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,10 +25,10 @@ type GRETunnelModel struct {
 	TTL                   types.Int64                  `tfsdk:"ttl" json:"ttl"`
 	GRETunnels            *[]*GRETunnelGRETunnelsModel `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
 	Modified              types.Bool                   `tfsdk:"modified" json:"modified,computed"`
-	ModifiedGRETunnel     types.String                 `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
+	ModifiedGRETunnel     jsontypes.Normalized         `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
 	Deleted               types.Bool                   `tfsdk:"deleted" json:"deleted,computed"`
-	DeletedGRETunnel      types.String                 `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
-	GRETunnel             types.String                 `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
+	DeletedGRETunnel      jsontypes.Normalized         `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
+	GRETunnel             jsontypes.Normalized         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 }
 
 type GRETunnelHealthCheckModel struct {
@@ -43,10 +45,10 @@ type GRETunnelGRETunnelsModel struct {
 	InterfaceAddress      types.String                         `tfsdk:"interface_address" json:"interface_address"`
 	Name                  types.String                         `tfsdk:"name" json:"name"`
 	ID                    types.String                         `tfsdk:"id" json:"id,computed"`
-	CreatedOn             types.String                         `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn             timetypes.RFC3339                    `tfsdk:"created_on" json:"created_on,computed"`
 	Description           types.String                         `tfsdk:"description" json:"description"`
 	HealthCheck           *GRETunnelGRETunnelsHealthCheckModel `tfsdk:"health_check" json:"health_check"`
-	ModifiedOn            types.String                         `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn            timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	Mtu                   types.Int64                          `tfsdk:"mtu" json:"mtu"`
 	TTL                   types.Int64                          `tfsdk:"ttl" json:"ttl"`
 }

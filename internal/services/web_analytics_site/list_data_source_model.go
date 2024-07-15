@@ -3,6 +3,7 @@
 package web_analytics_site
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,7 +22,7 @@ type WebAnalyticsSitesDataSourceModel struct {
 
 type WebAnalyticsSitesItemsDataSourceModel struct {
 	AutoInstall types.Bool                                     `tfsdk:"auto_install" json:"auto_install"`
-	Created     types.String                                   `tfsdk:"created" json:"created,computed"`
+	Created     timetypes.RFC3339                              `tfsdk:"created" json:"created,computed"`
 	Rules       *[]*WebAnalyticsSitesItemsRulesDataSourceModel `tfsdk:"rules" json:"rules"`
 	Ruleset     *WebAnalyticsSitesItemsRulesetDataSourceModel  `tfsdk:"ruleset" json:"ruleset"`
 	SiteTag     types.String                                   `tfsdk:"site_tag" json:"site_tag"`
@@ -30,13 +31,13 @@ type WebAnalyticsSitesItemsDataSourceModel struct {
 }
 
 type WebAnalyticsSitesItemsRulesDataSourceModel struct {
-	ID        types.String    `tfsdk:"id" json:"id"`
-	Created   types.String    `tfsdk:"created" json:"created,computed"`
-	Host      types.String    `tfsdk:"host" json:"host"`
-	Inclusive types.Bool      `tfsdk:"inclusive" json:"inclusive"`
-	IsPaused  types.Bool      `tfsdk:"is_paused" json:"is_paused"`
-	Paths     *[]types.String `tfsdk:"paths" json:"paths"`
-	Priority  types.Float64   `tfsdk:"priority" json:"priority"`
+	ID        types.String      `tfsdk:"id" json:"id"`
+	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
+	Host      types.String      `tfsdk:"host" json:"host"`
+	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive"`
+	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused"`
+	Paths     *[]types.String   `tfsdk:"paths" json:"paths"`
+	Priority  types.Float64     `tfsdk:"priority" json:"priority"`
 }
 
 type WebAnalyticsSitesItemsRulesetDataSourceModel struct {

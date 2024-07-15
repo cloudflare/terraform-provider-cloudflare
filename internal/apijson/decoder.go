@@ -12,6 +12,8 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/tidwall/gjson"
@@ -135,6 +137,9 @@ func unmarshalerDecoder(n gjson.Result, v reflect.Value, state *decoderState) er
 func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
 	if t.ConvertibleTo(reflect.TypeOf(time.Time{})) {
 		return d.newTimeTypeDecoder(t)
+	}
+	if t != reflect.TypeOf(jsontypes.Normalized{}) && t.ConvertibleTo(reflect.TypeOf(timetypes.RFC3339{})) {
+		return d.newCustomTimeTypeDecoder(t)
 	}
 	if !d.root && t.Implements(reflect.TypeOf((*json.Unmarshaler)(nil)).Elem()) {
 		return unmarshalerDecoder
@@ -439,6 +444,24 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 		}
 	}
 
+	if (t == reflect.TypeOf(jsontypes.Normalized{})) {
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			raw := ""
+			switch node.Type {
+			case gjson.Null:
+				raw = "null"
+			case gjson.Number:
+				fallthrough
+			case gjson.String:
+				raw = node.Raw
+			default:
+				raw = node.String()
+			}
+			value.Set(reflect.ValueOf(jsontypes.NewNormalizedValue(raw)))
+			return nil
+		}
+	}
+
 	// This helper allows us to recursively collect field encoders into a flat
 	// array. The parameter `index` keeps track of the access patterns necessary
 	// to get to some field.
@@ -532,7 +555,7 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				fn = extraDecoder.fn
 			}
 
-			if dest.IsValid() && itemNode.Type != gjson.Null {
+			if dest.IsValid() {
 				_ = fn(itemNode, dest, state)
 			}
 
@@ -637,38 +660,56 @@ func (d *decoderBuilder) newPrimitiveTypeDecoder(t reflect.Type) decoderFunc {
 	}
 }
 
+func decodeTime(format string, value string, state *decoderState) (*time.Time, error) {
+	parsed, err := time.Parse(format, value)
+	if err == nil {
+		return &parsed, nil
+	}
+
+	if guardStrict(state, true) {
+		return nil, err
+	}
+
+	layouts := []string{
+		"2006-01-02",
+		"2006-01-02T15:04:05Z07:00",
+		"2006-01-02T15:04:05Z0700",
+		"2006-01-02T15:04:05",
+		"2006-01-02 15:04:05Z07:00",
+		"2006-01-02 15:04:05Z0700",
+		"2006-01-02 15:04:05",
+	}
+
+	for _, layout := range layouts {
+		parsed, err := time.Parse(layout, value)
+		if err == nil {
+			return &parsed, nil
+		}
+	}
+
+	return nil, fmt.Errorf("unable to leniently parse date-time string: %s", value)
+}
+
 func (d *decoderBuilder) newTimeTypeDecoder(t reflect.Type) decoderFunc {
 	format := d.dateFormat
 	return func(n gjson.Result, v reflect.Value, state *decoderState) error {
-		parsed, err := time.Parse(format, n.Str)
+		parsed, err := decodeTime(format, n.Str, state)
 		if err == nil {
-			v.Set(reflect.ValueOf(parsed).Convert(t))
-			return nil
+			v.Set(reflect.ValueOf(*parsed).Convert(t))
 		}
+		return err
+	}
+}
 
-		if guardStrict(state, true) {
-			return err
+func (d *decoderBuilder) newCustomTimeTypeDecoder(t reflect.Type) decoderFunc {
+	format := d.dateFormat
+	return func(n gjson.Result, v reflect.Value, state *decoderState) error {
+		parsed, err := decodeTime(format, n.Str, state)
+		if err == nil {
+			val := timetypes.NewRFC3339TimePointerValue(parsed)
+			v.Set(reflect.ValueOf(val).Convert(t))
 		}
-
-		layouts := []string{
-			"2006-01-02",
-			"2006-01-02T15:04:05Z07:00",
-			"2006-01-02T15:04:05Z0700",
-			"2006-01-02T15:04:05",
-			"2006-01-02 15:04:05Z07:00",
-			"2006-01-02 15:04:05Z0700",
-			"2006-01-02 15:04:05",
-		}
-
-		for _, layout := range layouts {
-			parsed, err := time.Parse(layout, n.Str)
-			if err == nil {
-				v.Set(reflect.ValueOf(parsed).Convert(t))
-				return nil
-			}
-		}
-
-		return fmt.Errorf("unable to leniently parse date-time string: %s", n.Str)
+		return err
 	}
 }
 

@@ -3,6 +3,8 @@
 package ipsec_tunnel
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,10 +25,10 @@ type IPSECTunnelModel struct {
 	ReplayProtection    types.Bool                       `tfsdk:"replay_protection" json:"replay_protection"`
 	IPSECTunnels        *[]*IPSECTunnelIPSECTunnelsModel `tfsdk:"ipsec_tunnels" json:"ipsec_tunnels,computed"`
 	Modified            types.Bool                       `tfsdk:"modified" json:"modified,computed"`
-	ModifiedIPSECTunnel types.String                     `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed"`
+	ModifiedIPSECTunnel jsontypes.Normalized             `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed"`
 	Deleted             types.Bool                       `tfsdk:"deleted" json:"deleted,computed"`
-	DeletedIPSECTunnel  types.String                     `tfsdk:"deleted_ipsec_tunnel" json:"deleted_ipsec_tunnel,computed"`
-	IPSECTunnel         types.String                     `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
+	DeletedIPSECTunnel  jsontypes.Normalized             `tfsdk:"deleted_ipsec_tunnel" json:"deleted_ipsec_tunnel,computed"`
+	IPSECTunnel         jsontypes.Normalized             `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
 }
 
 type IPSECTunnelHealthCheckModel struct {
@@ -43,17 +45,17 @@ type IPSECTunnelIPSECTunnelsModel struct {
 	Name               types.String                                   `tfsdk:"name" json:"name"`
 	ID                 types.String                                   `tfsdk:"id" json:"id,computed"`
 	AllowNullCipher    types.Bool                                     `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          types.String                                   `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn          timetypes.RFC3339                              `tfsdk:"created_on" json:"created_on,computed"`
 	CustomerEndpoint   types.String                                   `tfsdk:"customer_endpoint" json:"customer_endpoint"`
 	Description        types.String                                   `tfsdk:"description" json:"description"`
-	ModifiedOn         types.String                                   `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                              `tfsdk:"modified_on" json:"modified_on,computed"`
 	PSKMetadata        *IPSECTunnelIPSECTunnelsPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
 	ReplayProtection   types.Bool                                     `tfsdk:"replay_protection" json:"replay_protection"`
 	TunnelHealthCheck  *IPSECTunnelIPSECTunnelsTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
 type IPSECTunnelIPSECTunnelsPSKMetadataModel struct {
-	LastGeneratedOn types.String `tfsdk:"last_generated_on" json:"last_generated_on,computed"`
+	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed"`
 }
 
 type IPSECTunnelIPSECTunnelsTunnelHealthCheckModel struct {

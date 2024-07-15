@@ -3,6 +3,7 @@
 package address_map
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,12 +18,12 @@ type AddressMapsDataSourceModel struct {
 }
 
 type AddressMapsItemsDataSourceModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	CanDelete    types.Bool   `tfsdk:"can_delete" json:"can_delete,computed"`
-	CanModifyIPs types.Bool   `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
-	CreatedAt    types.String `tfsdk:"created_at" json:"created_at"`
-	DefaultSNI   types.String `tfsdk:"default_sni" json:"default_sni"`
-	Description  types.String `tfsdk:"description" json:"description"`
-	Enabled      types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	ModifiedAt   types.String `tfsdk:"modified_at" json:"modified_at"`
+	ID           types.String      `tfsdk:"id" json:"id"`
+	CanDelete    types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
+	CanModifyIPs types.Bool        `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
+	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
+	DefaultSNI   types.String      `tfsdk:"default_sni" json:"default_sni"`
+	Description  types.String      `tfsdk:"description" json:"description"`
+	Enabled      types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
+	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at"`
 }

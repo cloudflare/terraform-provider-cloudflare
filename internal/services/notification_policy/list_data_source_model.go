@@ -3,6 +3,8 @@
 package notification_policy
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,12 +21,12 @@ type NotificationPoliciesDataSourceModel struct {
 type NotificationPoliciesItemsDataSourceModel struct {
 	ID          types.String                                     `tfsdk:"id" json:"id,computed"`
 	AlertType   types.String                                     `tfsdk:"alert_type" json:"alert_type"`
-	Created     types.String                                     `tfsdk:"created" json:"created,computed"`
+	Created     timetypes.RFC3339                                `tfsdk:"created" json:"created,computed"`
 	Description types.String                                     `tfsdk:"description" json:"description"`
 	Enabled     types.Bool                                       `tfsdk:"enabled" json:"enabled,computed"`
 	Filters     *NotificationPoliciesItemsFiltersDataSourceModel `tfsdk:"filters" json:"filters"`
-	Mechanisms  map[string]*[]types.String                       `tfsdk:"mechanisms" json:"mechanisms"`
-	Modified    types.String                                     `tfsdk:"modified" json:"modified,computed"`
+	Mechanisms  map[string]*[]jsontypes.Normalized               `tfsdk:"mechanisms" json:"mechanisms"`
+	Modified    timetypes.RFC3339                                `tfsdk:"modified" json:"modified,computed"`
 	Name        types.String                                     `tfsdk:"name" json:"name"`
 }
 

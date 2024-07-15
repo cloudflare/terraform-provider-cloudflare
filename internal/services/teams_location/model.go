@@ -3,6 +3,7 @@
 package teams_location
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,10 +18,10 @@ type TeamsLocationModel struct {
 	ClientDefault types.Bool                     `tfsdk:"client_default" json:"client_default"`
 	EcsSupport    types.Bool                     `tfsdk:"ecs_support" json:"ecs_support"`
 	Networks      *[]*TeamsLocationNetworksModel `tfsdk:"networks" json:"networks"`
-	CreatedAt     types.String                   `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt     timetypes.RFC3339              `tfsdk:"created_at" json:"created_at,computed"`
 	DohSubdomain  types.String                   `tfsdk:"doh_subdomain" json:"doh_subdomain,computed"`
 	IP            types.String                   `tfsdk:"ip" json:"ip,computed"`
-	UpdatedAt     types.String                   `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt     timetypes.RFC3339              `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type TeamsLocationNetworksModel struct {

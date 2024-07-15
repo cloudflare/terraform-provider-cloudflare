@@ -3,6 +3,7 @@
 package access_application
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -96,7 +97,7 @@ type AccessApplicationSCIMConfigMappingsOperationsModel struct {
 type AccessApplicationSaaSAppModel struct {
 	AuthType                      types.String                                           `tfsdk:"auth_type" json:"auth_type"`
 	ConsumerServiceURL            types.String                                           `tfsdk:"consumer_service_url" json:"consumer_service_url"`
-	CreatedAt                     types.String                                           `tfsdk:"created_at" json:"created_at"`
+	CreatedAt                     timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at"`
 	CustomAttributes              *AccessApplicationSaaSAppCustomAttributesModel         `tfsdk:"custom_attributes" json:"custom_attributes"`
 	DefaultRelayState             types.String                                           `tfsdk:"default_relay_state" json:"default_relay_state"`
 	IdPEntityID                   types.String                                           `tfsdk:"idp_entity_id" json:"idp_entity_id"`
@@ -106,7 +107,7 @@ type AccessApplicationSaaSAppModel struct {
 	SAMLAttributeTransformJsonata types.String                                           `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata"`
 	SPEntityID                    types.String                                           `tfsdk:"sp_entity_id" json:"sp_entity_id"`
 	SSOEndpoint                   types.String                                           `tfsdk:"sso_endpoint" json:"sso_endpoint"`
-	UpdatedAt                     types.String                                           `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt                     timetypes.RFC3339                                      `tfsdk:"updated_at" json:"updated_at"`
 	AccessTokenLifetime           types.String                                           `tfsdk:"access_token_lifetime" json:"access_token_lifetime"`
 	AllowPKCEWithoutClientSecret  types.Bool                                             `tfsdk:"allow_pkce_without_client_secret" json:"allow_pkce_without_client_secret"`
 	AppLauncherURL                types.String                                           `tfsdk:"app_launcher_url" json:"app_launcher_url"`

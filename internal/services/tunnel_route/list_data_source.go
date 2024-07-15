@@ -5,7 +5,6 @@ package tunnel_route
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
@@ -55,8 +54,8 @@ func (r *TunnelRoutesDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	dataExistedAt, err := time.Parse(time.RFC3339, data.ExistedAt.ValueString())
-	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	dataExistedAt, errs := data.ExistedAt.ValueRFC3339Time()
+	resp.Diagnostics.Append(errs...)
 	if resp.Diagnostics.HasError() {
 		return
 	}

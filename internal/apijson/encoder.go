@@ -3,17 +3,24 @@ package apijson
 import (
 	"bytes"
 	"context"
+	stdjson "encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/tidwall/sjson"
 )
 
+var explicitJsonNull = []byte("null")
 var encoders sync.Map // map[encoderEntry]encoderFunc
 
 // Marshals the given data to a JSON string.
@@ -52,6 +59,18 @@ type encoderEntry struct {
 	reflect.Type
 	dateFormat string
 	root       bool
+}
+
+func errorFromDiagnostics(diags diag.Diagnostics) error {
+	if diags == nil {
+		return nil
+	}
+	messages := []string{}
+	for _, err := range diags {
+		messages = append(messages, err.Summary())
+		messages = append(messages, err.Detail())
+	}
+	return errors.New(strings.Join(messages, " "))
 }
 
 func (e *encoder) marshal(plan interface{}, state interface{}) ([]byte, error) {
@@ -107,6 +126,9 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 	if t.ConvertibleTo(reflect.TypeOf(time.Time{})) {
 		return e.newTimeTypeEncoder()
 	}
+	if t != reflect.TypeOf(jsontypes.Normalized{}) && t.ConvertibleTo(reflect.TypeOf(timetypes.RFC3339{})) {
+		return e.newCustomTimeTypeEncoder()
+	}
 	// if !e.root && t.Implements(reflect.TypeOf((*json.Marshaler)(nil)).Elem()) {
 	// 	return marshalerEncoder
 	// }
@@ -123,7 +145,7 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 			}
 			// if plan is nil but state isn't, then marshal the field as an explicit null
 			if !s.IsNil() && p.IsNil() {
-				return []byte("null"), nil
+				return explicitJsonNull, nil
 			}
 			// if state is nil, then there is no value to unset. we still have to pass
 			// some value in for state, so we pass in the plan value so it marshals as-is
@@ -153,7 +175,7 @@ func (e *encoder) newPrimitiveTypeEncoder(t reflect.Type) encoderFunc {
 	// code more and this current code shouldn't cause any issues
 	case reflect.String:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
-			return []byte(fmt.Sprintf("%q", p.String())), nil
+			return stdjson.Marshal(p.String())
 		}
 	case reflect.Bool:
 		return func(p reflect.Value, s reflect.Value) ([]byte, error) {
@@ -189,6 +211,12 @@ func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
 	itemEncoder := e.typeEncoder(t.Elem())
 
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+		if state.IsNil() && plan.IsNil() {
+			return nil, nil
+		} else if plan.IsNil() {
+			return explicitJsonNull, nil
+		}
+
 		json := []byte("[]")
 		for i := 0; i < plan.Len(); i++ {
 			planItem := plan.Index(i)
@@ -200,7 +228,7 @@ func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
 			if value == nil {
 				// Assume that empty items should be inserted as `null` so that the output array
 				// will be the same length as the input array
-				value = []byte("null")
+				value = explicitJsonNull
 			}
 
 			json, err = sjson.SetRawBytes(json, "-1", value)
@@ -222,11 +250,11 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfState.IsNull() && tfPlan.IsNull() {
 				return nil, nil
 			} else if tfPlan.IsNull() {
-				return []byte("null"), nil
+				return explicitJsonNull, nil
 			} else if tfPlan.IsUnknown() {
 				return nil, nil
 			} else {
-				return []byte(fmt.Sprintf("\"%s\"", tfPlan.ValueString())), nil
+				return stdjson.Marshal(tfPlan.ValueString())
 			}
 		}
 	}
@@ -238,7 +266,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfState.IsNull() && tfPlan.IsNull() {
 				return nil, nil
 			} else if tfPlan.IsNull() {
-				return []byte("null"), nil
+				return explicitJsonNull, nil
 			} else if tfPlan.IsUnknown() {
 				return nil, nil
 			} else {
@@ -254,7 +282,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfState.IsNull() && tfPlan.IsNull() {
 				return nil, nil
 			} else if tfPlan.IsNull() {
-				return []byte("null"), nil
+				return explicitJsonNull, nil
 			} else if tfPlan.IsUnknown() {
 				return nil, nil
 			} else {
@@ -270,7 +298,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfState.IsNull() && tfPlan.IsNull() {
 				return nil, nil
 			} else if tfPlan.IsNull() {
-				return []byte("null"), nil
+				return explicitJsonNull, nil
 			} else if tfPlan.IsUnknown() {
 				return nil, nil
 			} else {
@@ -286,7 +314,7 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 			if tfState.IsNull() && tfPlan.IsNull() {
 				return nil, nil
 			} else if tfPlan.IsNull() {
-				return []byte("null"), nil
+				return explicitJsonNull, nil
 			} else if tfPlan.IsUnknown() {
 				return nil, nil
 			} else {
@@ -328,6 +356,22 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 
 			// otherwise, omit the field
 			return nil, nil
+		}
+	}
+
+	if (t == reflect.TypeOf(jsontypes.Normalized{})) {
+		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
+			var tfPlan = plan.Interface().(jsontypes.Normalized)
+			var tfState = state.Interface().(jsontypes.Normalized)
+			if tfState.IsNull() && tfPlan.IsNull() {
+				return nil, nil
+			} else if tfPlan.IsNull() {
+				return explicitJsonNull, nil
+			} else if tfPlan.IsUnknown() {
+				return nil, nil
+			} else {
+				return []byte(tfPlan.ValueString()), nil
+			}
 		}
 	}
 
@@ -432,6 +476,17 @@ func (e *encoder) newTimeTypeEncoder() encoderFunc {
 	}
 }
 
+func (e *encoder) newCustomTimeTypeEncoder() encoderFunc {
+	format := e.dateFormat
+	return func(value reflect.Value, state reflect.Value) (json []byte, err error) {
+		val, errs := value.Convert(reflect.TypeOf(timetypes.RFC3339{})).Interface().(timetypes.RFC3339).ValueRFC3339Time()
+		if errs != nil {
+			return nil, errorFromDiagnostics(errs)
+		}
+		return stdjson.Marshal(val.Format(format))
+	}
+}
+
 func (e encoder) newInterfaceEncoder() encoderFunc {
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
 		plan = plan.Elem()
@@ -495,8 +550,14 @@ func (e *encoder) encodeMapEntries(json []byte, p reflect.Value, s reflect.Value
 	return json, nil
 }
 
-func (e *encoder) newMapEncoder(t reflect.Type) encoderFunc {
+func (e *encoder) newMapEncoder(_ reflect.Type) encoderFunc {
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+		if state.IsNil() && plan.IsNil() {
+			return nil, nil
+		} else if plan.IsNil() {
+			return explicitJsonNull, nil
+		}
+
 		json := []byte("{}")
 		var err error
 		json, err = e.encodeMapEntries(json, plan, state)

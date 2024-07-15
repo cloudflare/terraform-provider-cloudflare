@@ -5,6 +5,7 @@ package notification_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -302,7 +303,7 @@ func (r NotificationPolicyDataSource) Schema(ctx context.Context, req datasource
 				Computed:    true,
 				Optional:    true,
 				ElementType: types.ListType{
-					ElemType: types.StringType,
+					ElemType: jsontypes.NewNormalizedNull().Type(ctx),
 				},
 			},
 			"modified": schema.StringAttribute{

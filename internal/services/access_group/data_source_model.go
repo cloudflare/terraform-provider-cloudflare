@@ -3,6 +3,8 @@
 package access_group
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,23 +21,23 @@ type AccessGroupDataSourceModel struct {
 	AccountID types.String                            `tfsdk:"account_id" path:"account_id"`
 	ZoneID    types.String                            `tfsdk:"zone_id" path:"zone_id"`
 	ID        types.String                            `tfsdk:"id" json:"id"`
-	CreatedAt types.String                            `tfsdk:"created_at" json:"created_at"`
+	CreatedAt timetypes.RFC3339                       `tfsdk:"created_at" json:"created_at"`
 	Exclude   *[]*AccessGroupExcludeDataSourceModel   `tfsdk:"exclude" json:"exclude"`
 	Include   *[]*AccessGroupIncludeDataSourceModel   `tfsdk:"include" json:"include"`
 	IsDefault *[]*AccessGroupIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default"`
 	Name      types.String                            `tfsdk:"name" json:"name"`
 	Require   *[]*AccessGroupRequireDataSourceModel   `tfsdk:"require" json:"require"`
-	UpdatedAt types.String                            `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt timetypes.RFC3339                       `tfsdk:"updated_at" json:"updated_at"`
 }
 
 type AccessGroupExcludeDataSourceModel struct {
 	Email                *AccessGroupExcludeEmailDataSourceModel              `tfsdk:"email" json:"email"`
 	EmailList            *AccessGroupExcludeEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
 	EmailDomain          *AccessGroupExcludeEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             types.String                                         `tfsdk:"everyone" json:"everyone"`
+	Everyone             jsontypes.Normalized                                 `tfsdk:"everyone" json:"everyone"`
 	IP                   *AccessGroupExcludeIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
 	IPList               *AccessGroupExcludeIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          types.String                                         `tfsdk:"certificate" json:"certificate"`
+	Certificate          jsontypes.Normalized                                 `tfsdk:"certificate" json:"certificate"`
 	Group                *AccessGroupExcludeGroupDataSourceModel              `tfsdk:"group" json:"group"`
 	AzureAD              *AccessGroupExcludeAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
 	GitHubOrganization   *AccessGroupExcludeGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
@@ -43,7 +45,7 @@ type AccessGroupExcludeDataSourceModel struct {
 	Okta                 *AccessGroupExcludeOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
 	SAML                 *AccessGroupExcludeSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
 	ServiceToken         *AccessGroupExcludeServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken types.String                                         `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                 `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
 	ExternalEvaluation   *AccessGroupExcludeExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
 	Geo                  *AccessGroupExcludeGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
 	AuthMethod           *AccessGroupExcludeAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
@@ -124,10 +126,10 @@ type AccessGroupIncludeDataSourceModel struct {
 	Email                *AccessGroupIncludeEmailDataSourceModel              `tfsdk:"email" json:"email"`
 	EmailList            *AccessGroupIncludeEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
 	EmailDomain          *AccessGroupIncludeEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             types.String                                         `tfsdk:"everyone" json:"everyone"`
+	Everyone             jsontypes.Normalized                                 `tfsdk:"everyone" json:"everyone"`
 	IP                   *AccessGroupIncludeIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
 	IPList               *AccessGroupIncludeIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          types.String                                         `tfsdk:"certificate" json:"certificate"`
+	Certificate          jsontypes.Normalized                                 `tfsdk:"certificate" json:"certificate"`
 	Group                *AccessGroupIncludeGroupDataSourceModel              `tfsdk:"group" json:"group"`
 	AzureAD              *AccessGroupIncludeAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
 	GitHubOrganization   *AccessGroupIncludeGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
@@ -135,7 +137,7 @@ type AccessGroupIncludeDataSourceModel struct {
 	Okta                 *AccessGroupIncludeOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
 	SAML                 *AccessGroupIncludeSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
 	ServiceToken         *AccessGroupIncludeServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken types.String                                         `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                 `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
 	ExternalEvaluation   *AccessGroupIncludeExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
 	Geo                  *AccessGroupIncludeGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
 	AuthMethod           *AccessGroupIncludeAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
@@ -216,10 +218,10 @@ type AccessGroupIsDefaultDataSourceModel struct {
 	Email                *AccessGroupIsDefaultEmailDataSourceModel              `tfsdk:"email" json:"email"`
 	EmailList            *AccessGroupIsDefaultEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
 	EmailDomain          *AccessGroupIsDefaultEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             types.String                                           `tfsdk:"everyone" json:"everyone"`
+	Everyone             jsontypes.Normalized                                   `tfsdk:"everyone" json:"everyone"`
 	IP                   *AccessGroupIsDefaultIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
 	IPList               *AccessGroupIsDefaultIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          types.String                                           `tfsdk:"certificate" json:"certificate"`
+	Certificate          jsontypes.Normalized                                   `tfsdk:"certificate" json:"certificate"`
 	Group                *AccessGroupIsDefaultGroupDataSourceModel              `tfsdk:"group" json:"group"`
 	AzureAD              *AccessGroupIsDefaultAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
 	GitHubOrganization   *AccessGroupIsDefaultGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
@@ -227,7 +229,7 @@ type AccessGroupIsDefaultDataSourceModel struct {
 	Okta                 *AccessGroupIsDefaultOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
 	SAML                 *AccessGroupIsDefaultSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
 	ServiceToken         *AccessGroupIsDefaultServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken types.String                                           `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                   `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
 	ExternalEvaluation   *AccessGroupIsDefaultExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
 	Geo                  *AccessGroupIsDefaultGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
 	AuthMethod           *AccessGroupIsDefaultAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
@@ -308,10 +310,10 @@ type AccessGroupRequireDataSourceModel struct {
 	Email                *AccessGroupRequireEmailDataSourceModel              `tfsdk:"email" json:"email"`
 	EmailList            *AccessGroupRequireEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
 	EmailDomain          *AccessGroupRequireEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             types.String                                         `tfsdk:"everyone" json:"everyone"`
+	Everyone             jsontypes.Normalized                                 `tfsdk:"everyone" json:"everyone"`
 	IP                   *AccessGroupRequireIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
 	IPList               *AccessGroupRequireIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          types.String                                         `tfsdk:"certificate" json:"certificate"`
+	Certificate          jsontypes.Normalized                                 `tfsdk:"certificate" json:"certificate"`
 	Group                *AccessGroupRequireGroupDataSourceModel              `tfsdk:"group" json:"group"`
 	AzureAD              *AccessGroupRequireAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
 	GitHubOrganization   *AccessGroupRequireGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
@@ -319,7 +321,7 @@ type AccessGroupRequireDataSourceModel struct {
 	Okta                 *AccessGroupRequireOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
 	SAML                 *AccessGroupRequireSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
 	ServiceToken         *AccessGroupRequireServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken types.String                                         `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                 `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
 	ExternalEvaluation   *AccessGroupRequireExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
 	Geo                  *AccessGroupRequireGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
 	AuthMethod           *AccessGroupRequireAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`

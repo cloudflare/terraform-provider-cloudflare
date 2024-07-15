@@ -3,6 +3,7 @@
 package authenticated_origin_pulls_certificate
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,11 +20,11 @@ type AuthenticatedOriginPullsCertificateDataSourceModel struct {
 	CertificateID types.String                                                 `tfsdk:"certificate_id" path:"certificate_id"`
 	ID            types.String                                                 `tfsdk:"id" json:"id"`
 	Certificate   types.String                                                 `tfsdk:"certificate" json:"certificate"`
-	ExpiresOn     types.String                                                 `tfsdk:"expires_on" json:"expires_on"`
+	ExpiresOn     timetypes.RFC3339                                            `tfsdk:"expires_on" json:"expires_on"`
 	Issuer        types.String                                                 `tfsdk:"issuer" json:"issuer"`
 	Signature     types.String                                                 `tfsdk:"signature" json:"signature"`
 	Status        types.String                                                 `tfsdk:"status" json:"status"`
-	UploadedOn    types.String                                                 `tfsdk:"uploaded_on" json:"uploaded_on"`
+	UploadedOn    timetypes.RFC3339                                            `tfsdk:"uploaded_on" json:"uploaded_on"`
 	FindOneBy     *AuthenticatedOriginPullsCertificateFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 

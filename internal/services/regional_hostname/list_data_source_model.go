@@ -3,6 +3,7 @@
 package regional_hostname
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,7 +18,7 @@ type RegionalHostnamesDataSourceModel struct {
 }
 
 type RegionalHostnamesItemsDataSourceModel struct {
-	CreatedOn types.String `tfsdk:"created_on" json:"created_on,computed"`
-	Hostname  types.String `tfsdk:"hostname" json:"hostname,computed"`
-	RegionKey types.String `tfsdk:"region_key" json:"region_key,computed"`
+	CreatedOn timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
+	Hostname  types.String      `tfsdk:"hostname" json:"hostname,computed"`
+	RegionKey types.String      `tfsdk:"region_key" json:"region_key,computed"`
 }

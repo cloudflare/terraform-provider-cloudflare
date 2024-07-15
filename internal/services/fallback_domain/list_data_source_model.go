@@ -3,6 +3,7 @@
 package fallback_domain
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,7 +18,7 @@ type FallbackDomainsDataSourceModel struct {
 }
 
 type FallbackDomainsItemsDataSourceModel struct {
-	Suffix      types.String    `tfsdk:"suffix" json:"suffix,computed"`
-	Description types.String    `tfsdk:"description" json:"description"`
-	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server"`
+	Suffix      types.String            `tfsdk:"suffix" json:"suffix,computed"`
+	Description types.String            `tfsdk:"description" json:"description"`
+	DNSServer   *[]jsontypes.Normalized `tfsdk:"dns_server" json:"dns_server"`
 }
