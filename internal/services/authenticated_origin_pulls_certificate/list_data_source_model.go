@@ -18,7 +18,7 @@ type AuthenticatedOriginPullsCertificatesDataSourceModel struct {
 }
 
 type AuthenticatedOriginPullsCertificatesItemsDataSourceModel struct {
-	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	ID          types.String      `tfsdk:"id" json:"id"`
 	Certificate types.String      `tfsdk:"certificate" json:"certificate"`
 	ExpiresOn   timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed"`
 	Issuer      types.String      `tfsdk:"issuer" json:"issuer,computed"`

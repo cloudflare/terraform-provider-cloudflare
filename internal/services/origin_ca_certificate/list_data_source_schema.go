@@ -58,6 +58,7 @@ func (r OriginCACertificatesDataSource) Schema(ctx context.Context, req datasour
 						"id": schema.StringAttribute{
 							Description: "Identifier",
 							Computed:    true,
+							Optional:    true,
 						},
 						"certificate": schema.StringAttribute{
 							Description: "The Origin CA certificate. Will be newline-encoded.",

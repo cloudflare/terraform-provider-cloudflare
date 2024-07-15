@@ -31,6 +31,7 @@ func (r MTLSCertificatesDataSource) Schema(ctx context.Context, req datasource.S
 						"id": schema.StringAttribute{
 							Description: "Identifier",
 							Computed:    true,
+							Optional:    true,
 						},
 						"ca": schema.BoolAttribute{
 							Description: "Indicates whether the certificate is a CA or leaf certificate.",

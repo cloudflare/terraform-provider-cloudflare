@@ -23,7 +23,7 @@ type OriginCACertificatesItemsDataSourceModel struct {
 	Hostnames         *[]jsontypes.Normalized `tfsdk:"hostnames" json:"hostnames,computed"`
 	RequestType       types.String            `tfsdk:"request_type" json:"request_type,computed"`
 	RequestedValidity types.Float64           `tfsdk:"requested_validity" json:"requested_validity,computed"`
-	ID                types.String            `tfsdk:"id" json:"id,computed"`
+	ID                types.String            `tfsdk:"id" json:"id"`
 	Certificate       types.String            `tfsdk:"certificate" json:"certificate,computed"`
 	ExpiresOn         timetypes.RFC3339       `tfsdk:"expires_on" json:"expires_on,computed"`
 }

@@ -33,6 +33,7 @@ func (r AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Conte
 						"id": schema.StringAttribute{
 							Description: "Identifier",
 							Computed:    true,
+							Optional:    true,
 						},
 						"certificate": schema.StringAttribute{
 							Description: "The zone's leaf certificate.",
