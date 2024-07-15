@@ -78,6 +78,7 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 						"id": schema.StringAttribute{
 							Description: "UUID of the route.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"comment": schema.StringAttribute{
 							Description: "Optional remark describing the route.",
@@ -110,6 +111,7 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 						"tunnel_id": schema.StringAttribute{
 							Description: "UUID of the tunnel.",
 							Computed:    true,
+							Optional:    true,
 						},
 						"tunnel_name": schema.StringAttribute{
 							Description: "A user-friendly name for a tunnel.",

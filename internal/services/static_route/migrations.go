@@ -81,7 +81,7 @@ func (r StaticRouteResource) UpgradeState(ctx context.Context) map[int64]resourc
 								},
 								"id": schema.StringAttribute{
 									Description: "Identifier",
-									Computed:    true,
+									Optional:    true,
 								},
 								"created_on": schema.StringAttribute{
 									Description: "When the route was created.",

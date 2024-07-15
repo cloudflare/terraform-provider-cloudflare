@@ -38,7 +38,7 @@ type StaticRouteRoutesModel struct {
 	Nexthop     types.String                 `tfsdk:"nexthop" json:"nexthop"`
 	Prefix      types.String                 `tfsdk:"prefix" json:"prefix"`
 	Priority    types.Int64                  `tfsdk:"priority" json:"priority"`
-	ID          types.String                 `tfsdk:"id" json:"id,computed"`
+	ID          types.String                 `tfsdk:"id" json:"id"`
 	CreatedOn   timetypes.RFC3339            `tfsdk:"created_on" json:"created_on,computed"`
 	Description types.String                 `tfsdk:"description" json:"description"`
 	ModifiedOn  timetypes.RFC3339            `tfsdk:"modified_on" json:"modified_on,computed"`

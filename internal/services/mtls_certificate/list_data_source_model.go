@@ -18,7 +18,7 @@ type MTLSCertificatesDataSourceModel struct {
 }
 
 type MTLSCertificatesItemsDataSourceModel struct {
-	ID           types.String      `tfsdk:"id" json:"id,computed"`
+	ID           types.String      `tfsdk:"id" json:"id"`
 	CA           types.Bool        `tfsdk:"ca" json:"ca"`
 	Certificates types.String      `tfsdk:"certificates" json:"certificates"`
 	ExpiresOn    timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed"`
