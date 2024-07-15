@@ -48,7 +48,7 @@ type LoadBalancersItemsAdaptiveRoutingDataSourceModel struct {
 
 type LoadBalancersItemsLocationStrategyDataSourceModel struct {
 	Mode      types.String `tfsdk:"mode" json:"mode,computed"`
-	PreferEcs types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
+	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
 }
 
 type LoadBalancersItemsRandomSteeringDataSourceModel struct {
@@ -95,7 +95,7 @@ type LoadBalancersItemsRulesOverridesAdaptiveRoutingDataSourceModel struct {
 
 type LoadBalancersItemsRulesOverridesLocationStrategyDataSourceModel struct {
 	Mode      types.String `tfsdk:"mode" json:"mode,computed"`
-	PreferEcs types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
+	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
 }
 
 type LoadBalancersItemsRulesOverridesRandomSteeringDataSourceModel struct {
