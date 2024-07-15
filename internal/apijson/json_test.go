@@ -7,9 +7,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
 	"github.com/tidwall/gjson"
 )
 
@@ -53,6 +54,11 @@ type Slices struct {
 type DateTime struct {
 	Date     time.Time `json:"date" format:"date"`
 	DateTime time.Time `json:"date-time" format:"date-time"`
+}
+
+type DateTimeCustom struct {
+	DateCustom     timetypes.RFC3339 `json:"date" format:"date"`
+	DateTimeCustom timetypes.RFC3339 `json:"date-time" format:"date-time"`
 }
 
 type AdditionalProperties struct {
@@ -159,6 +165,21 @@ func DropDiagnostic[resType interface{}](res resType, diags diag.Diagnostics) re
 	return res
 }
 
+type JsonModel struct {
+	Arr  jsontypes.Normalized            `tfsdk:"arr" json:"arr"`
+	Bol  jsontypes.Normalized            `tfsdk:"bol" json:"bol"`
+	Map  jsontypes.Normalized            `tfsdk:"map" json:"map"`
+	Nil  jsontypes.Normalized            `tfsdk:"nil" json:"nil"`
+	Num  jsontypes.Normalized            `tfsdk:"num" json:"num"`
+	Str  jsontypes.Normalized            `tfsdk:"str" json:"str"`
+	Arr2 []jsontypes.Normalized          `tfsdk:"arr2" json:"arr2"`
+	Map2 map[string]jsontypes.Normalized `tfsdk:"map2" json:"map2"`
+}
+
+func time2time(t time.Time) timetypes.RFC3339 {
+	return timetypes.NewRFC3339TimePointerValue(&t)
+}
+
 var tests = map[string]struct {
 	buf string
 	val interface{}
@@ -204,6 +225,14 @@ var tests = map[string]struct {
 	"date_time_missing_timezone_colon_coerce": {`"2007-03-01T13:03:05+0100"`, time.Date(2007, time.March, 1, 13, 3, 5, 0, time.FixedZone("", 60*60))},
 	"date_time_nano_missing_t_coerce":         {`"2007-03-01 13:03:05.123456789Z"`, time.Date(2007, time.March, 1, 13, 3, 5, 123456789, time.UTC)},
 
+	"date_time_custom":             {`"2007-03-01T13:00:00Z"`, time2time(time.Date(2007, time.March, 1, 13, 0, 0, 0, time.UTC))},
+	"date_time_custom_nano_coerce": {`"2007-03-01T13:03:05.123456789Z"`, time2time(time.Date(2007, time.March, 1, 13, 3, 5, 123456789, time.UTC))},
+
+	"date_time_custom_missing_t_coerce":              {`"2007-03-01 13:03:05Z"`, time2time(time.Date(2007, time.March, 1, 13, 3, 5, 0, time.UTC))},
+	"date_time_custom_missing_timezone_coerce":       {`"2007-03-01T13:03:05"`, time2time(time.Date(2007, time.March, 1, 13, 3, 5, 0, time.UTC))},
+	"date_time_custom_missing_timezone_colon_coerce": {`"2007-03-01T13:03:05+0100"`, time2time(time.Date(2007, time.March, 1, 13, 3, 5, 0, time.FixedZone("", 60*60)))},
+	"date_time_custom_nano_missing_t_coerce":         {`"2007-03-01 13:03:05.123456789Z"`, time2time(time.Date(2007, time.March, 1, 13, 3, 5, 123456789, time.UTC))},
+
 	"map_string":    {`{"foo":"bar"}`, map[string]string{"foo": "bar"}},
 	"map_interface": {`{"a":1,"b":"str","c":false}`, map[string]interface{}{"a": float64(1), "b": "str", "c": false}},
 
@@ -236,6 +265,14 @@ var tests = map[string]struct {
 		DateTime{
 			Date:     time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC),
 			DateTime: time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC),
+		},
+	},
+
+	"datetime_custom_struct": {
+		`{"date":"2006-01-02","date-time":"2006-01-02T15:04:05Z"}`,
+		DateTimeCustom{
+			DateCustom:     time2time(time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC)),
+			DateTimeCustom: time2time(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
 		},
 	},
 
@@ -338,6 +375,24 @@ var tests = map[string]struct {
 			},
 		},
 	},
+
+	"json_struct": {
+		`{"arr":[true,1,"one"],"arr2":[true,1,"one"],"bol":false,"map":{"nil":null,"bol":false,"str":"two"},"map2":{"bol":false,"nil":null,"str":"two"},"nil":null,"num":2,"str":"two"}`,
+		JsonModel{
+			Arr:  jsontypes.NewNormalizedValue(`[true,1,"one"]`),
+			Bol:  jsontypes.NewNormalizedValue("false"),
+			Map:  jsontypes.NewNormalizedValue(`{"nil":null,"bol":false,"str":"two"}`),
+			Nil:  jsontypes.NewNormalizedValue("null"),
+			Num:  jsontypes.NewNormalizedValue("2"),
+			Str:  jsontypes.NewNormalizedValue(`"two"`),
+			Arr2: []jsontypes.Normalized{jsontypes.NewNormalizedValue("true"), jsontypes.NewNormalizedValue("1"), jsontypes.NewNormalizedValue(`"one"`)},
+			Map2: map[string]jsontypes.Normalized{"nil": jsontypes.NewNormalizedValue("null"), "bol": jsontypes.NewNormalizedValue("false"), "str": jsontypes.NewNormalizedValue(`"two"`)},
+		},
+	},
+
+	"json_struct_nil1": {`{}`, JsonModel{Nil: jsontypes.NewNormalizedNull()}},
+	"json_struct_nil2": {`{}`, JsonModel{}},
+	"json_struct_nil3": {`{"nil":null}`, JsonModel{Nil: jsontypes.NewNormalizedValue("null")}},
 }
 
 var decode_only_tests = map[string]struct {
@@ -368,7 +423,7 @@ var encode_only_tests = map[string]struct {
 	val interface{}
 }{
 	"tfsdk_struct_encode": {
-		`{"result":{"a":"88281d6015751d6172e7313b0c665b5e","b":"http://example.com/example.html	20"}}`,
+		`{"result":{"a":"88281d6015751d6172e7313b0c665b5e","b":"http://example.com/example.html\t20"}}`,
 		ResultEnvelope{RecordsModel{
 			A: types.StringValue("88281d6015751d6172e7313b0c665b5e"),
 			B: types.StringValue("http://example.com/example.html\t20"),

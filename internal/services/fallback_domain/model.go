@@ -3,6 +3,7 @@
 package fallback_domain
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,9 +12,9 @@ type FallbackDomainResultEnvelope struct {
 }
 
 type FallbackDomainModel struct {
-	AccountID   types.String    `tfsdk:"account_id" path:"account_id"`
-	PolicyID    types.String    `tfsdk:"policy_id" path:"policy_id"`
-	Suffix      types.String    `tfsdk:"suffix" json:"suffix"`
-	Description types.String    `tfsdk:"description" json:"description"`
-	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server"`
+	AccountID   types.String            `tfsdk:"account_id" path:"account_id"`
+	PolicyID    types.String            `tfsdk:"policy_id" path:"policy_id"`
+	Suffix      types.String            `tfsdk:"suffix" json:"suffix"`
+	Description types.String            `tfsdk:"description" json:"description"`
+	DNSServer   *[]jsontypes.Normalized `tfsdk:"dns_server" json:"dns_server"`
 }

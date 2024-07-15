@@ -5,12 +5,12 @@ package origin_ca_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &OriginCACertificateDataSource{}
@@ -30,7 +30,7 @@ func (r OriginCACertificateDataSource) Schema(ctx context.Context, req datasourc
 			"hostnames": schema.ListAttribute{
 				Description: "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
 				Optional:    true,
-				ElementType: types.StringType,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 			"request_type": schema.StringAttribute{
 				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",

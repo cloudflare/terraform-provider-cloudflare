@@ -5,7 +5,6 @@ package zone_lockdown
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
@@ -55,10 +54,10 @@ func (r *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	dataCreatedOn, err := time.Parse(time.RFC3339, data.CreatedOn.ValueString())
-	resp.Diagnostics.AddError("failed to parse time", err.Error())
-	dataModifiedOn, err := time.Parse(time.RFC3339, data.ModifiedOn.ValueString())
-	resp.Diagnostics.AddError("failed to parse time", err.Error())
+	dataCreatedOn, errs := data.CreatedOn.ValueRFC3339Time()
+	resp.Diagnostics.Append(errs...)
+	dataModifiedOn, errs := data.ModifiedOn.ValueRFC3339Time()
+	resp.Diagnostics.Append(errs...)
 	if resp.Diagnostics.HasError() {
 		return
 	}

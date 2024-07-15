@@ -3,6 +3,8 @@
 package notification_policy
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,15 +17,15 @@ type NotificationPolicyModel struct {
 	AccountID   types.String                        `tfsdk:"account_id" path:"account_id"`
 	AlertType   types.String                        `tfsdk:"alert_type" json:"alert_type"`
 	Enabled     types.Bool                          `tfsdk:"enabled" json:"enabled"`
-	Mechanisms  map[string]*[]types.String          `tfsdk:"mechanisms" json:"mechanisms"`
+	Mechanisms  map[string]*[]jsontypes.Normalized  `tfsdk:"mechanisms" json:"mechanisms"`
 	Name        types.String                        `tfsdk:"name" json:"name"`
 	Description types.String                        `tfsdk:"description" json:"description"`
 	Filters     *NotificationPolicyFiltersModel     `tfsdk:"filters" json:"filters"`
 	Errors      *[]*NotificationPolicyErrorsModel   `tfsdk:"errors" json:"errors,computed"`
 	Messages    *[]*NotificationPolicyMessagesModel `tfsdk:"messages" json:"messages,computed"`
 	Success     types.Bool                          `tfsdk:"success" json:"success,computed"`
-	Created     types.String                        `tfsdk:"created" json:"created,computed"`
-	Modified    types.String                        `tfsdk:"modified" json:"modified,computed"`
+	Created     timetypes.RFC3339                   `tfsdk:"created" json:"created,computed"`
+	Modified    timetypes.RFC3339                   `tfsdk:"modified" json:"modified,computed"`
 }
 
 type NotificationPolicyFiltersModel struct {

@@ -3,6 +3,7 @@
 package logpush_job
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,9 +27,9 @@ type LogpushJobModel struct {
 	OwnershipChallenge       types.String                  `tfsdk:"ownership_challenge" json:"ownership_challenge"`
 	Dataset                  types.String                  `tfsdk:"dataset" json:"dataset"`
 	Name                     types.String                  `tfsdk:"name" json:"name"`
-	ErrorMessage             types.String                  `tfsdk:"error_message" json:"error_message,computed"`
-	LastComplete             types.String                  `tfsdk:"last_complete" json:"last_complete,computed"`
-	LastError                types.String                  `tfsdk:"last_error" json:"last_error,computed"`
+	ErrorMessage             timetypes.RFC3339             `tfsdk:"error_message" json:"error_message,computed"`
+	LastComplete             timetypes.RFC3339             `tfsdk:"last_complete" json:"last_complete,computed"`
+	LastError                timetypes.RFC3339             `tfsdk:"last_error" json:"last_error,computed"`
 }
 
 type LogpushJobOutputOptionsModel struct {

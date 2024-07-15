@@ -3,6 +3,7 @@
 package spectrum_application
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,8 +24,8 @@ type SpectrumApplicationModel struct {
 	ProxyProtocol    types.String                       `tfsdk:"proxy_protocol" json:"proxy_protocol"`
 	TLS              types.String                       `tfsdk:"tls" json:"tls"`
 	TrafficType      types.String                       `tfsdk:"traffic_type" json:"traffic_type"`
-	CreatedOn        types.String                       `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn       types.String                       `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn        timetypes.RFC3339                  `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn       timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type SpectrumApplicationDNSModel struct {

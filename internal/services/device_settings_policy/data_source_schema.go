@@ -5,9 +5,9 @@ package device_settings_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &DeviceSettingsPolicyDataSource{}
@@ -101,7 +101,7 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 							Description: "A list of IP addresses to handle domain resolution.",
 							Computed:    true,
 							Optional:    true,
-							ElementType: types.StringType,
+							ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 						},
 					},
 				},

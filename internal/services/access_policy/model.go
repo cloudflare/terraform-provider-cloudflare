@@ -3,6 +3,8 @@
 package access_policy
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,18 +29,18 @@ type AccessPolicyModel struct {
 	PurposeJustificationRequired types.Bool                          `tfsdk:"purpose_justification_required" json:"purpose_justification_required"`
 	Require                      *[]*AccessPolicyRequireModel        `tfsdk:"require" json:"require"`
 	SessionDuration              types.String                        `tfsdk:"session_duration" json:"session_duration"`
-	CreatedAt                    types.String                        `tfsdk:"created_at" json:"created_at,computed"`
-	UpdatedAt                    types.String                        `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt                    timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt                    timetypes.RFC3339                   `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessPolicyIncludeModel struct {
 	Email                *AccessPolicyIncludeEmailModel              `tfsdk:"email" json:"email"`
 	EmailList            *AccessPolicyIncludeEmailListModel          `tfsdk:"email_list" json:"email_list"`
 	EmailDomain          *AccessPolicyIncludeEmailDomainModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             types.String                                `tfsdk:"everyone" json:"everyone"`
+	Everyone             jsontypes.Normalized                        `tfsdk:"everyone" json:"everyone"`
 	IP                   *AccessPolicyIncludeIPModel                 `tfsdk:"ip" json:"ip"`
 	IPList               *AccessPolicyIncludeIPListModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          types.String                                `tfsdk:"certificate" json:"certificate"`
+	Certificate          jsontypes.Normalized                        `tfsdk:"certificate" json:"certificate"`
 	Group                *AccessPolicyIncludeGroupModel              `tfsdk:"group" json:"group"`
 	AzureAD              *AccessPolicyIncludeAzureADModel            `tfsdk:"azure_ad" json:"azureAD"`
 	GitHubOrganization   *AccessPolicyIncludeGitHubOrganizationModel `tfsdk:"github_organization" json:"github-organization"`
@@ -46,7 +48,7 @@ type AccessPolicyIncludeModel struct {
 	Okta                 *AccessPolicyIncludeOktaModel               `tfsdk:"okta" json:"okta"`
 	SAML                 *AccessPolicyIncludeSAMLModel               `tfsdk:"saml" json:"saml"`
 	ServiceToken         *AccessPolicyIncludeServiceTokenModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken types.String                                `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	AnyValidServiceToken jsontypes.Normalized                        `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
 	ExternalEvaluation   *AccessPolicyIncludeExternalEvaluationModel `tfsdk:"external_evaluation" json:"external_evaluation"`
 	Geo                  *AccessPolicyIncludeGeoModel                `tfsdk:"geo" json:"geo"`
 	AuthMethod           *AccessPolicyIncludeAuthMethodModel         `tfsdk:"auth_method" json:"auth_method"`
@@ -133,10 +135,10 @@ type AccessPolicyExcludeModel struct {
 	Email                *AccessPolicyExcludeEmailModel              `tfsdk:"email" json:"email"`
 	EmailList            *AccessPolicyExcludeEmailListModel          `tfsdk:"email_list" json:"email_list"`
 	EmailDomain          *AccessPolicyExcludeEmailDomainModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             types.String                                `tfsdk:"everyone" json:"everyone"`
+	Everyone             jsontypes.Normalized                        `tfsdk:"everyone" json:"everyone"`
 	IP                   *AccessPolicyExcludeIPModel                 `tfsdk:"ip" json:"ip"`
 	IPList               *AccessPolicyExcludeIPListModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          types.String                                `tfsdk:"certificate" json:"certificate"`
+	Certificate          jsontypes.Normalized                        `tfsdk:"certificate" json:"certificate"`
 	Group                *AccessPolicyExcludeGroupModel              `tfsdk:"group" json:"group"`
 	AzureAD              *AccessPolicyExcludeAzureADModel            `tfsdk:"azure_ad" json:"azureAD"`
 	GitHubOrganization   *AccessPolicyExcludeGitHubOrganizationModel `tfsdk:"github_organization" json:"github-organization"`
@@ -144,7 +146,7 @@ type AccessPolicyExcludeModel struct {
 	Okta                 *AccessPolicyExcludeOktaModel               `tfsdk:"okta" json:"okta"`
 	SAML                 *AccessPolicyExcludeSAMLModel               `tfsdk:"saml" json:"saml"`
 	ServiceToken         *AccessPolicyExcludeServiceTokenModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken types.String                                `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	AnyValidServiceToken jsontypes.Normalized                        `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
 	ExternalEvaluation   *AccessPolicyExcludeExternalEvaluationModel `tfsdk:"external_evaluation" json:"external_evaluation"`
 	Geo                  *AccessPolicyExcludeGeoModel                `tfsdk:"geo" json:"geo"`
 	AuthMethod           *AccessPolicyExcludeAuthMethodModel         `tfsdk:"auth_method" json:"auth_method"`
@@ -225,10 +227,10 @@ type AccessPolicyRequireModel struct {
 	Email                *AccessPolicyRequireEmailModel              `tfsdk:"email" json:"email"`
 	EmailList            *AccessPolicyRequireEmailListModel          `tfsdk:"email_list" json:"email_list"`
 	EmailDomain          *AccessPolicyRequireEmailDomainModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             types.String                                `tfsdk:"everyone" json:"everyone"`
+	Everyone             jsontypes.Normalized                        `tfsdk:"everyone" json:"everyone"`
 	IP                   *AccessPolicyRequireIPModel                 `tfsdk:"ip" json:"ip"`
 	IPList               *AccessPolicyRequireIPListModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          types.String                                `tfsdk:"certificate" json:"certificate"`
+	Certificate          jsontypes.Normalized                        `tfsdk:"certificate" json:"certificate"`
 	Group                *AccessPolicyRequireGroupModel              `tfsdk:"group" json:"group"`
 	AzureAD              *AccessPolicyRequireAzureADModel            `tfsdk:"azure_ad" json:"azureAD"`
 	GitHubOrganization   *AccessPolicyRequireGitHubOrganizationModel `tfsdk:"github_organization" json:"github-organization"`
@@ -236,7 +238,7 @@ type AccessPolicyRequireModel struct {
 	Okta                 *AccessPolicyRequireOktaModel               `tfsdk:"okta" json:"okta"`
 	SAML                 *AccessPolicyRequireSAMLModel               `tfsdk:"saml" json:"saml"`
 	ServiceToken         *AccessPolicyRequireServiceTokenModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken types.String                                `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	AnyValidServiceToken jsontypes.Normalized                        `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
 	ExternalEvaluation   *AccessPolicyRequireExternalEvaluationModel `tfsdk:"external_evaluation" json:"external_evaluation"`
 	Geo                  *AccessPolicyRequireGeoModel                `tfsdk:"geo" json:"geo"`
 	AuthMethod           *AccessPolicyRequireAuthMethodModel         `tfsdk:"auth_method" json:"auth_method"`

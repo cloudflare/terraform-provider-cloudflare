@@ -3,6 +3,8 @@
 package waiting_room
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -12,8 +14,8 @@ type WaitingRoomsResultListDataSourceEnvelope struct {
 
 type WaitingRoomsDataSourceModel struct {
 	ZoneID   types.String                         `tfsdk:"zone_id" path:"zone_id"`
-	Page     types.String                         `tfsdk:"page" query:"page"`
-	PerPage  types.String                         `tfsdk:"per_page" query:"per_page"`
+	Page     jsontypes.Normalized                 `tfsdk:"page" query:"page"`
+	PerPage  jsontypes.Normalized                 `tfsdk:"per_page" query:"per_page"`
 	MaxItems types.Int64                          `tfsdk:"max_items"`
 	Items    *[]*WaitingRoomsItemsDataSourceModel `tfsdk:"items"`
 }
@@ -23,14 +25,14 @@ type WaitingRoomsItemsDataSourceModel struct {
 	AdditionalRoutes           *[]*WaitingRoomsItemsAdditionalRoutesDataSourceModel `tfsdk:"additional_routes" json:"additional_routes"`
 	CookieAttributes           *WaitingRoomsItemsCookieAttributesDataSourceModel    `tfsdk:"cookie_attributes" json:"cookie_attributes"`
 	CookieSuffix               types.String                                         `tfsdk:"cookie_suffix" json:"cookie_suffix"`
-	CreatedOn                  types.String                                         `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn                  timetypes.RFC3339                                    `tfsdk:"created_on" json:"created_on,computed"`
 	CustomPageHTML             types.String                                         `tfsdk:"custom_page_html" json:"custom_page_html,computed"`
 	DefaultTemplateLanguage    types.String                                         `tfsdk:"default_template_language" json:"default_template_language,computed"`
 	Description                types.String                                         `tfsdk:"description" json:"description,computed"`
 	DisableSessionRenewal      types.Bool                                           `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed"`
 	Host                       types.String                                         `tfsdk:"host" json:"host"`
 	JsonResponseEnabled        types.Bool                                           `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
-	ModifiedOn                 types.String                                         `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn                 timetypes.RFC3339                                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                       types.String                                         `tfsdk:"name" json:"name"`
 	NewUsersPerMinute          types.Int64                                          `tfsdk:"new_users_per_minute" json:"new_users_per_minute"`
 	NextEventPrequeueStartTime types.String                                         `tfsdk:"next_event_prequeue_start_time" json:"next_event_prequeue_start_time"`

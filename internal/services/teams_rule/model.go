@@ -3,6 +3,8 @@
 package teams_rule
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,13 +26,13 @@ type TeamsRuleModel struct {
 	RuleSettings  *TeamsRuleRuleSettingsModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *TeamsRuleScheduleModel     `tfsdk:"schedule" json:"schedule"`
 	Traffic       types.String                `tfsdk:"traffic" json:"traffic"`
-	CreatedAt     types.String                `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt     types.String                `tfsdk:"deleted_at" json:"deleted_at,computed"`
-	UpdatedAt     types.String                `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt     timetypes.RFC3339           `tfsdk:"created_at" json:"created_at,computed"`
+	DeletedAt     timetypes.RFC3339           `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	UpdatedAt     timetypes.RFC3339           `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type TeamsRuleRuleSettingsModel struct {
-	AddHeaders                      types.String                                    `tfsdk:"add_headers" json:"add_headers"`
+	AddHeaders                      jsontypes.Normalized                            `tfsdk:"add_headers" json:"add_headers"`
 	AllowChildBypass                types.Bool                                      `tfsdk:"allow_child_bypass" json:"allow_child_bypass"`
 	AuditSSH                        *TeamsRuleRuleSettingsAuditSSHModel             `tfsdk:"audit_ssh" json:"audit_ssh"`
 	BisoAdminControls               *TeamsRuleRuleSettingsBisoAdminControlsModel    `tfsdk:"biso_admin_controls" json:"biso_admin_controls"`

@@ -3,6 +3,7 @@
 package logpush_job
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,11 +23,11 @@ type LogpushJobDataSourceModel struct {
 	Dataset                  types.String                            `tfsdk:"dataset" json:"dataset"`
 	DestinationConf          types.String                            `tfsdk:"destination_conf" json:"destination_conf"`
 	Enabled                  types.Bool                              `tfsdk:"enabled" json:"enabled"`
-	ErrorMessage             types.String                            `tfsdk:"error_message" json:"error_message"`
+	ErrorMessage             timetypes.RFC3339                       `tfsdk:"error_message" json:"error_message"`
 	Frequency                types.String                            `tfsdk:"frequency" json:"frequency,computed"`
 	Kind                     types.String                            `tfsdk:"kind" json:"kind"`
-	LastComplete             types.String                            `tfsdk:"last_complete" json:"last_complete"`
-	LastError                types.String                            `tfsdk:"last_error" json:"last_error"`
+	LastComplete             timetypes.RFC3339                       `tfsdk:"last_complete" json:"last_complete"`
+	LastError                timetypes.RFC3339                       `tfsdk:"last_error" json:"last_error"`
 	LogpullOptions           types.String                            `tfsdk:"logpull_options" json:"logpull_options"`
 	MaxUploadBytes           types.Int64                             `tfsdk:"max_upload_bytes" json:"max_upload_bytes"`
 	MaxUploadIntervalSeconds types.Int64                             `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`

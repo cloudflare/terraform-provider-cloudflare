@@ -3,6 +3,8 @@
 package dlp_custom_profile
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,9 +24,9 @@ type DLPCustomProfileModel struct {
 	OCREnabled        types.Bool                             `tfsdk:"ocr_enabled" json:"ocr_enabled"`
 	SharedEntries     *[]*DLPCustomProfileSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries"`
 	ID                types.String                           `tfsdk:"id" json:"id,computed"`
-	CreatedAt         types.String                           `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt         timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed"`
 	Type              types.String                           `tfsdk:"type" json:"type,computed"`
-	UpdatedAt         types.String                           `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt         timetypes.RFC3339                      `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type DLPCustomProfileProfilesModel struct {
@@ -67,12 +69,12 @@ type DLPCustomProfileContextAwarenessSkipModel struct {
 
 type DLPCustomProfileEntriesModel struct {
 	ID        types.String                         `tfsdk:"id" json:"id,computed"`
-	CreatedAt types.String                         `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed"`
 	Enabled   types.Bool                           `tfsdk:"enabled" json:"enabled"`
 	Name      types.String                         `tfsdk:"name" json:"name"`
 	Pattern   *DLPCustomProfileEntriesPatternModel `tfsdk:"pattern" json:"pattern"`
-	ProfileID types.String                         `tfsdk:"profile_id" json:"profile_id"`
-	UpdatedAt types.String                         `tfsdk:"updated_at" json:"updated_at,computed"`
+	ProfileID jsontypes.Normalized                 `tfsdk:"profile_id" json:"profile_id"`
+	UpdatedAt timetypes.RFC3339                    `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type DLPCustomProfileEntriesPatternModel struct {

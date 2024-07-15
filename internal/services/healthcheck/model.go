@@ -3,6 +3,7 @@
 package healthcheck
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,9 +27,9 @@ type HealthcheckModel struct {
 	TCPConfig            *HealthcheckTCPConfigModel  `tfsdk:"tcp_config" json:"tcp_config"`
 	Timeout              types.Int64                 `tfsdk:"timeout" json:"timeout"`
 	Type                 types.String                `tfsdk:"type" json:"type"`
-	CreatedOn            types.String                `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn            timetypes.RFC3339           `tfsdk:"created_on" json:"created_on,computed"`
 	FailureReason        types.String                `tfsdk:"failure_reason" json:"failure_reason,computed"`
-	ModifiedOn           types.String                `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn           timetypes.RFC3339           `tfsdk:"modified_on" json:"modified_on,computed"`
 	Status               types.String                `tfsdk:"status" json:"status,computed"`
 }
 

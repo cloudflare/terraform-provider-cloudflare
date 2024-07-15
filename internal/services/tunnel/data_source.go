@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -83,12 +82,12 @@ func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		}
 		data = &env.Result
 	} else {
-		dataFindOneByExistedAt, err := time.Parse(time.RFC3339, data.FindOneBy.ExistedAt.ValueString())
-		resp.Diagnostics.AddError("failed to parse time", err.Error())
-		dataFindOneByWasActiveAt, err := time.Parse(time.RFC3339, data.FindOneBy.WasActiveAt.ValueString())
-		resp.Diagnostics.AddError("failed to parse time", err.Error())
-		dataFindOneByWasInactiveAt, err := time.Parse(time.RFC3339, data.FindOneBy.WasInactiveAt.ValueString())
-		resp.Diagnostics.AddError("failed to parse time", err.Error())
+		dataFindOneByExistedAt, errs := data.FindOneBy.ExistedAt.ValueRFC3339Time()
+		resp.Diagnostics.Append(errs...)
+		dataFindOneByWasActiveAt, errs := data.FindOneBy.WasActiveAt.ValueRFC3339Time()
+		resp.Diagnostics.Append(errs...)
+		dataFindOneByWasInactiveAt, errs := data.FindOneBy.WasInactiveAt.ValueRFC3339Time()
+		resp.Diagnostics.Append(errs...)
 		if resp.Diagnostics.HasError() {
 			return
 		}

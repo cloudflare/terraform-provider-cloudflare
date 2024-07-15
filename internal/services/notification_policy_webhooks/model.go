@@ -3,6 +3,7 @@
 package notification_policy_webhooks
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,9 +20,9 @@ type NotificationPolicyWebhooksModel struct {
 	Errors      *[]*NotificationPolicyWebhooksErrorsModel   `tfsdk:"errors" json:"errors,computed"`
 	Messages    *[]*NotificationPolicyWebhooksMessagesModel `tfsdk:"messages" json:"messages,computed"`
 	Success     types.Bool                                  `tfsdk:"success" json:"success,computed"`
-	CreatedAt   types.String                                `tfsdk:"created_at" json:"created_at,computed"`
-	LastFailure types.String                                `tfsdk:"last_failure" json:"last_failure,computed"`
-	LastSuccess types.String                                `tfsdk:"last_success" json:"last_success,computed"`
+	CreatedAt   timetypes.RFC3339                           `tfsdk:"created_at" json:"created_at,computed"`
+	LastFailure timetypes.RFC3339                           `tfsdk:"last_failure" json:"last_failure,computed"`
+	LastSuccess timetypes.RFC3339                           `tfsdk:"last_success" json:"last_success,computed"`
 	Type        types.String                                `tfsdk:"type" json:"type,computed"`
 }
 

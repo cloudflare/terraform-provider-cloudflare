@@ -3,6 +3,7 @@
 package api_token
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,7 +16,7 @@ type APITokenResultListDataSourceEnvelope struct {
 }
 
 type APITokenDataSourceModel struct {
-	TokenID   types.String                      `tfsdk:"token_id" path:"token_id"`
+	TokenID   jsontypes.Normalized              `tfsdk:"token_id" path:"token_id"`
 	FindOneBy *APITokenFindOneByDataSourceModel `tfsdk:"find_one_by"`
 }
 

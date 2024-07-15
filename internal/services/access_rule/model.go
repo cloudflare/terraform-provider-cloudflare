@@ -3,6 +3,7 @@
 package access_rule
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,7 +14,7 @@ type AccessRuleResultEnvelope struct {
 type AccessRuleModel struct {
 	AccountID     types.String                  `tfsdk:"account_id" path:"account_id"`
 	ZoneID        types.String                  `tfsdk:"zone_id" path:"zone_id"`
-	Identifier    types.String                  `tfsdk:"identifier" path:"identifier"`
+	Identifier    jsontypes.Normalized          `tfsdk:"identifier" path:"identifier"`
 	Configuration *AccessRuleConfigurationModel `tfsdk:"configuration" json:"configuration"`
 	Mode          types.String                  `tfsdk:"mode" json:"mode"`
 	Notes         types.String                  `tfsdk:"notes" json:"notes"`

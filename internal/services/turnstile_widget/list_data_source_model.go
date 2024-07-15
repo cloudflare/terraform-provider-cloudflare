@@ -3,6 +3,7 @@
 package turnstile_widget
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,14 +22,14 @@ type TurnstileWidgetsDataSourceModel struct {
 }
 
 type TurnstileWidgetsItemsDataSourceModel struct {
-	BotFightMode   types.Bool      `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
-	ClearanceLevel types.String    `tfsdk:"clearance_level" json:"clearance_level,computed"`
-	CreatedOn      types.String    `tfsdk:"created_on" json:"created_on,computed"`
-	Domains        *[]types.String `tfsdk:"domains" json:"domains,computed"`
-	Mode           types.String    `tfsdk:"mode" json:"mode,computed"`
-	ModifiedOn     types.String    `tfsdk:"modified_on" json:"modified_on,computed"`
-	Name           types.String    `tfsdk:"name" json:"name,computed"`
-	Offlabel       types.Bool      `tfsdk:"offlabel" json:"offlabel,computed"`
-	Region         types.String    `tfsdk:"region" json:"region,computed"`
-	Sitekey        types.String    `tfsdk:"sitekey" json:"sitekey,computed"`
+	BotFightMode   types.Bool        `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
+	ClearanceLevel types.String      `tfsdk:"clearance_level" json:"clearance_level,computed"`
+	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
+	Domains        *[]types.String   `tfsdk:"domains" json:"domains,computed"`
+	Mode           types.String      `tfsdk:"mode" json:"mode,computed"`
+	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
+	Name           types.String      `tfsdk:"name" json:"name,computed"`
+	Offlabel       types.Bool        `tfsdk:"offlabel" json:"offlabel,computed"`
+	Region         types.String      `tfsdk:"region" json:"region,computed"`
+	Sitekey        types.String      `tfsdk:"sitekey" json:"sitekey,computed"`
 }

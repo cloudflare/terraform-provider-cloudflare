@@ -3,6 +3,8 @@
 package pages_project
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,21 +22,21 @@ type PagesProjectDataSourceModel struct {
 	ID                  types.String                                    `tfsdk:"id" json:"id,computed"`
 	BuildConfig         *PagesProjectBuildConfigDataSourceModel         `tfsdk:"build_config" json:"build_config"`
 	CanonicalDeployment *PagesProjectCanonicalDeploymentDataSourceModel `tfsdk:"canonical_deployment" json:"canonical_deployment"`
-	CreatedOn           types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn           timetypes.RFC3339                               `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsDataSourceModel   `tfsdk:"deployment_configs" json:"deployment_configs"`
-	Domains             *[]types.String                                 `tfsdk:"domains" json:"domains"`
+	Domains             *[]jsontypes.Normalized                         `tfsdk:"domains" json:"domains"`
 	LatestDeployment    *PagesProjectLatestDeploymentDataSourceModel    `tfsdk:"latest_deployment" json:"latest_deployment"`
 	Name                types.String                                    `tfsdk:"name" json:"name"`
 	ProductionBranch    types.String                                    `tfsdk:"production_branch" json:"production_branch"`
-	Source              types.String                                    `tfsdk:"source" json:"source,computed"`
+	Source              jsontypes.Normalized                            `tfsdk:"source" json:"source,computed"`
 	Subdomain           types.String                                    `tfsdk:"subdomain" json:"subdomain"`
-	Aliases             *[]types.String                                 `tfsdk:"aliases" json:"aliases"`
+	Aliases             *[]jsontypes.Normalized                         `tfsdk:"aliases" json:"aliases"`
 	DeploymentTrigger   *PagesProjectDeploymentTriggerDataSourceModel   `tfsdk:"deployment_trigger" json:"deployment_trigger"`
-	EnvVars             types.String                                    `tfsdk:"env_vars" json:"env_vars"`
+	EnvVars             jsontypes.Normalized                            `tfsdk:"env_vars" json:"env_vars"`
 	Environment         types.String                                    `tfsdk:"environment" json:"environment"`
 	IsSkipped           types.Bool                                      `tfsdk:"is_skipped" json:"is_skipped"`
-	LatestStage         types.String                                    `tfsdk:"latest_stage" json:"latest_stage"`
-	ModifiedOn          types.String                                    `tfsdk:"modified_on" json:"modified_on"`
+	LatestStage         jsontypes.Normalized                            `tfsdk:"latest_stage" json:"latest_stage"`
+	ModifiedOn          timetypes.RFC3339                               `tfsdk:"modified_on" json:"modified_on"`
 	ProjectID           types.String                                    `tfsdk:"project_id" json:"project_id"`
 	ShortID             types.String                                    `tfsdk:"short_id" json:"short_id"`
 	Stages              *[]*PagesProjectStagesDataSourceModel           `tfsdk:"stages" json:"stages"`
@@ -53,27 +55,27 @@ type PagesProjectBuildConfigDataSourceModel struct {
 
 type PagesProjectCanonicalDeploymentDataSourceModel struct {
 	ID          types.String                                             `tfsdk:"id" json:"id,computed"`
-	Aliases     *[]types.String                                          `tfsdk:"aliases" json:"aliases,computed"`
-	BuildConfig types.String                                             `tfsdk:"build_config" json:"build_config,computed"`
-	CreatedOn   types.String                                             `tfsdk:"created_on" json:"created_on,computed"`
-	EnvVars     types.String                                             `tfsdk:"env_vars" json:"env_vars,computed"`
+	Aliases     *[]jsontypes.Normalized                                  `tfsdk:"aliases" json:"aliases,computed"`
+	BuildConfig jsontypes.Normalized                                     `tfsdk:"build_config" json:"build_config,computed"`
+	CreatedOn   timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed"`
+	EnvVars     jsontypes.Normalized                                     `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment types.String                                             `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped   types.Bool                                               `tfsdk:"is_skipped" json:"is_skipped,computed"`
-	LatestStage types.String                                             `tfsdk:"latest_stage" json:"latest_stage,computed"`
-	ModifiedOn  types.String                                             `tfsdk:"modified_on" json:"modified_on,computed"`
+	LatestStage jsontypes.Normalized                                     `tfsdk:"latest_stage" json:"latest_stage,computed"`
+	ModifiedOn  timetypes.RFC3339                                        `tfsdk:"modified_on" json:"modified_on,computed"`
 	ProjectID   types.String                                             `tfsdk:"project_id" json:"project_id,computed"`
 	ProjectName types.String                                             `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID     types.String                                             `tfsdk:"short_id" json:"short_id,computed"`
-	Source      types.String                                             `tfsdk:"source" json:"source,computed"`
+	Source      jsontypes.Normalized                                     `tfsdk:"source" json:"source,computed"`
 	Stages      *[]*PagesProjectCanonicalDeploymentStagesDataSourceModel `tfsdk:"stages" json:"stages,computed"`
 	URL         types.String                                             `tfsdk:"url" json:"url,computed"`
 }
 
 type PagesProjectCanonicalDeploymentStagesDataSourceModel struct {
-	EndedOn   types.String `tfsdk:"ended_on" json:"ended_on,computed"`
-	Name      types.String `tfsdk:"name" json:"name"`
-	StartedOn types.String `tfsdk:"started_on" json:"started_on,computed"`
-	Status    types.String `tfsdk:"status" json:"status,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	Name      types.String      `tfsdk:"name" json:"name"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
 type PagesProjectDeploymentConfigsDataSourceModel struct {
@@ -86,7 +88,7 @@ type PagesProjectDeploymentConfigsPreviewDataSourceModel struct {
 	AnalyticsEngineDatasets *PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets"`
 	Browsers                *PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel                `tfsdk:"browsers" json:"browsers"`
 	CompatibilityDate       types.String                                                                `tfsdk:"compatibility_date" json:"compatibility_date"`
-	CompatibilityFlags      *[]types.String                                                             `tfsdk:"compatibility_flags" json:"compatibility_flags"`
+	CompatibilityFlags      *[]jsontypes.Normalized                                                     `tfsdk:"compatibility_flags" json:"compatibility_flags"`
 	D1Databases             *PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel             `tfsdk:"d1_databases" json:"d1_databases"`
 	DurableObjectNamespaces *PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDataSourceModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces"`
 	EnvVars                 *PagesProjectDeploymentConfigsPreviewEnvVarsDataSourceModel                 `tfsdk:"env_vars" json:"env_vars"`
@@ -105,7 +107,7 @@ type PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewAIBindingsAIBindingDataSourceModel struct {
-	ProjectID types.String `tfsdk:"project_id" json:"project_id"`
+	ProjectID jsontypes.Normalized `tfsdk:"project_id" json:"project_id"`
 }
 
 type PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel struct {
@@ -117,7 +119,7 @@ type PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsAnalyticsEngineB
 }
 
 type PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel struct {
-	Browser types.String `tfsdk:"browser" json:"BROWSER"`
+	Browser jsontypes.Normalized `tfsdk:"browser" json:"BROWSER"`
 }
 
 type PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel struct {
@@ -213,7 +215,7 @@ type PagesProjectDeploymentConfigsProductionDataSourceModel struct {
 	AnalyticsEngineDatasets *PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets"`
 	Browsers                *PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel                `tfsdk:"browsers" json:"browsers"`
 	CompatibilityDate       types.String                                                                   `tfsdk:"compatibility_date" json:"compatibility_date"`
-	CompatibilityFlags      *[]types.String                                                                `tfsdk:"compatibility_flags" json:"compatibility_flags"`
+	CompatibilityFlags      *[]jsontypes.Normalized                                                        `tfsdk:"compatibility_flags" json:"compatibility_flags"`
 	D1Databases             *PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel             `tfsdk:"d1_databases" json:"d1_databases"`
 	DurableObjectNamespaces *PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDataSourceModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces"`
 	EnvVars                 *PagesProjectDeploymentConfigsProductionEnvVarsDataSourceModel                 `tfsdk:"env_vars" json:"env_vars"`
@@ -232,7 +234,7 @@ type PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel struct {
 }
 
 type PagesProjectDeploymentConfigsProductionAIBindingsAIBindingDataSourceModel struct {
-	ProjectID types.String `tfsdk:"project_id" json:"project_id"`
+	ProjectID jsontypes.Normalized `tfsdk:"project_id" json:"project_id"`
 }
 
 type PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel struct {
@@ -244,7 +246,7 @@ type PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsAnalyticsEngi
 }
 
 type PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel struct {
-	Browser types.String `tfsdk:"browser" json:"BROWSER"`
+	Browser jsontypes.Normalized `tfsdk:"browser" json:"BROWSER"`
 }
 
 type PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel struct {
@@ -337,27 +339,27 @@ type PagesProjectDeploymentConfigsProductionVectorizeBindingsVectorizeDataSource
 
 type PagesProjectLatestDeploymentDataSourceModel struct {
 	ID          types.String                                          `tfsdk:"id" json:"id,computed"`
-	Aliases     *[]types.String                                       `tfsdk:"aliases" json:"aliases,computed"`
-	BuildConfig types.String                                          `tfsdk:"build_config" json:"build_config,computed"`
-	CreatedOn   types.String                                          `tfsdk:"created_on" json:"created_on,computed"`
-	EnvVars     types.String                                          `tfsdk:"env_vars" json:"env_vars,computed"`
+	Aliases     *[]jsontypes.Normalized                               `tfsdk:"aliases" json:"aliases,computed"`
+	BuildConfig jsontypes.Normalized                                  `tfsdk:"build_config" json:"build_config,computed"`
+	CreatedOn   timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed"`
+	EnvVars     jsontypes.Normalized                                  `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment types.String                                          `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped   types.Bool                                            `tfsdk:"is_skipped" json:"is_skipped,computed"`
-	LatestStage types.String                                          `tfsdk:"latest_stage" json:"latest_stage,computed"`
-	ModifiedOn  types.String                                          `tfsdk:"modified_on" json:"modified_on,computed"`
+	LatestStage jsontypes.Normalized                                  `tfsdk:"latest_stage" json:"latest_stage,computed"`
+	ModifiedOn  timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
 	ProjectID   types.String                                          `tfsdk:"project_id" json:"project_id,computed"`
 	ProjectName types.String                                          `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID     types.String                                          `tfsdk:"short_id" json:"short_id,computed"`
-	Source      types.String                                          `tfsdk:"source" json:"source,computed"`
+	Source      jsontypes.Normalized                                  `tfsdk:"source" json:"source,computed"`
 	Stages      *[]*PagesProjectLatestDeploymentStagesDataSourceModel `tfsdk:"stages" json:"stages,computed"`
 	URL         types.String                                          `tfsdk:"url" json:"url,computed"`
 }
 
 type PagesProjectLatestDeploymentStagesDataSourceModel struct {
-	EndedOn   types.String `tfsdk:"ended_on" json:"ended_on,computed"`
-	Name      types.String `tfsdk:"name" json:"name"`
-	StartedOn types.String `tfsdk:"started_on" json:"started_on,computed"`
-	Status    types.String `tfsdk:"status" json:"status,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	Name      types.String      `tfsdk:"name" json:"name"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
 type PagesProjectDeploymentTriggerDataSourceModel struct {
@@ -372,10 +374,10 @@ type PagesProjectDeploymentTriggerMetadataDataSourceModel struct {
 }
 
 type PagesProjectStagesDataSourceModel struct {
-	EndedOn   types.String `tfsdk:"ended_on" json:"ended_on,computed"`
-	Name      types.String `tfsdk:"name" json:"name"`
-	StartedOn types.String `tfsdk:"started_on" json:"started_on,computed"`
-	Status    types.String `tfsdk:"status" json:"status,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	Name      types.String      `tfsdk:"name" json:"name"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
 type PagesProjectFindOneByDataSourceModel struct {

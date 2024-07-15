@@ -5,11 +5,11 @@ package fallback_domain
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r FallbackDomainResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -37,7 +37,7 @@ func (r FallbackDomainResource) UpgradeState(ctx context.Context) map[int64]reso
 					"dns_server": schema.ListAttribute{
 						Description: "A list of IP addresses to handle domain resolution.",
 						Optional:    true,
-						ElementType: types.StringType,
+						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 					},
 				},
 			},

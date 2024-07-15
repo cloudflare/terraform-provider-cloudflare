@@ -6,6 +6,8 @@ require (
 	github.com/cloudflare/cloudflare-go/v2 v2.3.0
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-framework v1.9.0
+	github.com/hashicorp/terraform-plugin-framework-jsontypes v0.1.0
+	github.com/hashicorp/terraform-plugin-framework-timetypes v0.4.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.12.0
 	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/tidwall/gjson v1.14.4
