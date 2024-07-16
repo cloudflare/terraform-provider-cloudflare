@@ -24,7 +24,7 @@ func (r APIShieldOperationResource) UpgradeState(ctx context.Context) map[int64]
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"operation_id": schema.StringAttribute{
-						Description:   "UUID identifier",
+						Description:   "UUID",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
