@@ -19,14 +19,12 @@ description: |-
 - `aliases` (String) A list of alias URLs pointing to this deployment.
 - `build_config` (Attributes) Configs for the project build process. (see [below for nested schema](#nestedatt--build_config))
 - `canonical_deployment` (Attributes) (see [below for nested schema](#nestedatt--canonical_deployment))
-- `created_on` (String) When the project was created.
 - `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--deployment_configs))
 - `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--deployment_trigger))
 - `domains` (String) A list of associated custom domains for the project.
 - `env_vars` (String) A dict of env variables to build this deploy.
 - `environment` (String) Type of deploy.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `id` (String) Id of the project.
 - `is_skipped` (Boolean) If the deployment has been skipped.
 - `latest_deployment` (Attributes) (see [below for nested schema](#nestedatt--latest_deployment))
 - `latest_stage` (String)
@@ -36,10 +34,15 @@ description: |-
 - `project_id` (String) Id of the project.
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
-- `source` (String)
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--stages))
 - `subdomain` (String) The Cloudflare subdomain associated with the project.
 - `url` (String) The live URL to view this deployment.
+
+### Read-Only
+
+- `created_on` (String) When the project was created.
+- `id` (String) Id of the project.
+- `source` (String)
 
 <a id="nestedatt--build_config"></a>
 ### Nested Schema for `build_config`

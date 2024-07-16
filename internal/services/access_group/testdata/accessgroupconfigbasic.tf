@@ -15,21 +15,21 @@ resource "cloudflare_access_group" "%[1]s" {
       "e3a0f205-c525-4e48-a293-ba5d1f00e638",
       "5d54cd30-ce52-46e4-9a46-a47887e1a167"
     ]
-    saml {
+    saml = [{
       attribute_name = "Name1"
       attribute_value = "Value1"
-    }
-    saml {
+    },
+    {
       attribute_name = "Name2"
       attribute_value = "Value2"
-    }
-    azure {
+    }]
+    azure = [{
       id = ["group1"]
       identity_provider_id = "1234"
-    }
-    azure {
+    },
+    {
       id = ["group2"]
       identity_provider_id = "5678"
-    }
+    }]
   }
 }

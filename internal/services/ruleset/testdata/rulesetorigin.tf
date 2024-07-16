@@ -8,16 +8,16 @@
 
     rules =[ {
       action = "route"
-      action_parameters =[ {
-        host_header = "%[1]s.%[4]s"
-        origin =[ {
-          host = "%[1]s.%[4]s"
+      action_parameters = {
+    host_header = "%[1]s.%[4]s"
+        origin = {
+    host = "%[1]s.%[4]s"
           port = 80
-        }]
-        sni =[ {
-          value = "%[1]s.%[4]s"
-        }]
-      }]
+  }
+        sni = {
+    value = "%[1]s.%[4]s"
+  }
+  }
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http request origin"
       enabled = true

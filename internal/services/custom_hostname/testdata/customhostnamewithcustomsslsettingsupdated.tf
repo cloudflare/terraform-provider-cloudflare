@@ -4,7 +4,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
   hostname = "%[2]s.%[3]s"
   ssl = {
   method = "http"
-    settings =[ {
+    settings = {
       http2 = "off"
       min_tls_version = "1.1"
       ciphers = [

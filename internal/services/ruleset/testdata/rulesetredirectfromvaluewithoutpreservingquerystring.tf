@@ -8,14 +8,14 @@
 
     rules =[ {
       action = "redirect"
-      action_parameters =[ {
-        from_value =[ {
-		  status_code = 301
-		  target_url =[ {
-			value = "some_host.com"
-		  }]
-        }]
-      }]
+      action_parameters = {
+    from_value = {
+    status_code = 301
+		  target_url = {
+    value = "some_host.com"
+  }
+  }
+  }
       expression = "true"
       description = "Apply redirect from value"
       enabled = true

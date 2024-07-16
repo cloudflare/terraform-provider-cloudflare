@@ -26,7 +26,7 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `client_id` (String) The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.
 - `created_at` (String)

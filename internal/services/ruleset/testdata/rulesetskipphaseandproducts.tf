@@ -8,39 +8,39 @@
 
     rules =[ {
       action = "skip"
-      action_parameters =[ {
-        ruleset = "current"
-      }]
+      action_parameters = {
+    ruleset = "current"
+  }
       description = "not this zone"
       expression = "http.host eq \"%[4]s\""
       enabled = true
-	  logging =[ {
-		enabled = true
-	  }]
+	  logging = {
+    enabled = true
+  }
     },
     {
     action = "skip"
-      action_parameters =[ {
-        phases = ["http_ratelimit", "http_request_firewall_managed"]
-      }]
+      action_parameters = {
+    phases = ["http_ratelimit", "http_request_firewall_managed"]
+  }
       expression = "http.request.uri.path contains \"/skip-phase/\""
       description = ""
       enabled = true
-	  logging =[ {
-		enabled = true
-	  }]
+	  logging = {
+    enabled = true
+  }
     },
     {
     action = "skip"
-      action_parameters =[ {
-        products = ["zoneLockdown", "uaBlock"]
-      }]
+      action_parameters = {
+    products = ["zoneLockdown", "uaBlock"]
+  }
       expression = "http.request.uri.path contains \"/skip-products/\""
       description = ""
       enabled = true
-	  logging =[ {
-		enabled = true
-	  }]
+	  logging = {
+    enabled = true
+  }
     }]
 
 

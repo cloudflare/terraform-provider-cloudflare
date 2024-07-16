@@ -8,9 +8,9 @@
 
     rules =[ {
       action = "execute"
-      action_parameters =[ {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-      }]
+      action_parameters = {
+    id = "4814384a9e5d4991b9815dcfc25d2f1f"
+  }
       expression = "true"
       description = "Execute Cloudflare Managed OWASP Ruleset on my zone-level phase ruleset"
       enabled = true

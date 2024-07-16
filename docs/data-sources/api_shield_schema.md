@@ -15,15 +15,18 @@ description: |-
 
 ### Optional
 
-- `created_at` (String)
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `kind` (String) Kind of schema
-- `name` (String) Name of the schema
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
 - `schema_id` (String)
 - `source` (String) Source of the schema
 - `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 - `zone_id` (String) Identifier
+
+### Read-Only
+
+- `created_at` (String)
+- `kind` (String) Kind of schema
+- `name` (String) Name of the schema
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

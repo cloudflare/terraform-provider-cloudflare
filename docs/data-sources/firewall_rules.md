@@ -34,14 +34,17 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
-- `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
 - `description` (String) An informative summary of the firewall rule.
-- `id` (String) The unique identifier of the firewall rule.
-- `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
 - `priority` (Number) The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.
 - `products` (List of String)
 - `ref` (String) A short reference tag. Allows you to select related firewall rules.
+
+Read-Only:
+
+- `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
+- `id` (String) The unique identifier of the firewall rule.
+- `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
 
 

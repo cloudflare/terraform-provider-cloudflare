@@ -29,14 +29,17 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `created_at` (String)
 - `description` (String) The description of the list.
 - `id` (String) API Resource UUID tag.
-- `list_count` (Number) The number of items in the list.
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
 - `updated_at` (String)
+
+Read-Only:
+
+- `list_count` (Number) The number of items in the list.
 
 

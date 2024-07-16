@@ -28,11 +28,14 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `app_count` (Number) The number of applications that have this tag
 - `created_at` (String)
-- `name` (String) The name of the tag
 - `updated_at` (String)
+
+Read-Only:
+
+- `name` (String) The name of the tag
 
 

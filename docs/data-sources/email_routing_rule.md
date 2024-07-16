@@ -16,20 +16,23 @@ description: |-
 ### Optional
 
 - `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
-- `enabled` (Boolean) Routing rule status.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `id` (String) Routing rule identifier.
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
 - `name` (String) Routing rule name.
-- `priority` (Number) Priority of the routing rule.
 - `rule_identifier` (String) Routing rule identifier.
-- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 - `zone_identifier` (String) Identifier
+
+### Read-Only
+
+- `enabled` (Boolean) Routing rule status.
+- `id` (String) Routing rule identifier.
+- `priority` (Number) Priority of the routing rule.
+- `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
 <a id="nestedatt--actions"></a>
 ### Nested Schema for `actions`
 
-Required:
+Read-Only:
 
 - `type` (String) Type of supported action.
 - `value` (String)
@@ -52,7 +55,7 @@ Optional:
 <a id="nestedatt--matchers"></a>
 ### Nested Schema for `matchers`
 
-Required:
+Read-Only:
 
 - `field` (String) Field for type matcher.
 - `type` (String) Type of matcher.

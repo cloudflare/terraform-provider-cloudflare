@@ -21,10 +21,13 @@ description: |-
 - `custom_html` (String) Custom page HTML.
 - `custom_page_id` (String) UUID
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `name` (String) Custom page name.
-- `type` (String) Custom page type.
 - `uid` (String) UUID
 - `updated_at` (String)
+
+### Read-Only
+
+- `name` (String) Custom page name.
+- `type` (String) Custom page type.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

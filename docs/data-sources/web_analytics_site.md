@@ -17,7 +17,6 @@ description: |-
 
 - `account_id` (String) Identifier
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
-- `created` (String)
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--rules))
 - `ruleset` (Attributes) (see [below for nested schema](#nestedatt--ruleset))
@@ -25,6 +24,10 @@ description: |-
 - `site_tag` (String) The Web Analytics site identifier.
 - `site_token` (String) The Web Analytics site token.
 - `snippet` (String) Encoded JavaScript snippet.
+
+### Read-Only
+
+- `created` (String)
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

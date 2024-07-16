@@ -28,13 +28,16 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `app_count` (Number) Number of apps the custom page is assigned to.
 - `created_at` (String)
-- `name` (String) Custom page name.
-- `type` (String) Custom page type.
 - `uid` (String) UUID
 - `updated_at` (String)
+
+Read-Only:
+
+- `name` (String) Custom page name.
+- `type` (String) Custom page type.
 
 

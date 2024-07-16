@@ -9,7 +9,7 @@ resource "cloudflare_rate_limit" "%[1]s" {
       schemes = ["HTTP", "HTTPS"]
       methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"]
     }]
-    response =[ {
+    response = {
       statuses = [200, 201, 202, 301, 429]
       origin_traffic = false
       headers = [
@@ -25,14 +25,14 @@ resource "cloudflare_rate_limit" "%[1]s" {
 	    }
       ]
     }]
-  }]
+  }
   action =[ {
     mode = "simulate"
     timeout = 43200
-    response =[ {
+    response = {
       content_type = "text/plain"
       body = "my response body"
-    }]
+    }
   }]
   correlate =[ {
 	  by = "nat"

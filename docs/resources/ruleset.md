@@ -37,9 +37,9 @@ resource "cloudflare_ruleset" "zone_level_managed_waf" {
 
   rules = [{
     action = "execute"
-    action_parameters = [{
-      id = "efb7b8c949ac4650a09736fc376e9aee"
-    }]
+    action_parameters = {
+    id = "efb7b8c949ac4650a09736fc376e9aee"
+  }
     expression  = "(http.host eq \"example.host.com\")"
     description = "Execute Cloudflare Managed Ruleset on my zone-level phase entry point ruleset"
     enabled     = true
@@ -56,10 +56,9 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
 
   rules = [{
     action = "execute"
-    action_parameters = [{
-      id = "efb7b8c949ac4650a09736fc376e9aee"
-      overrides = [{
-        categories = [{
+    action_parameters = {
+    id = "efb7b8c949ac4650a09736fc376e9aee"
+      overrides = { categories = [{
           category = "wordpress"
           action   = "block"
           enabled  = true
@@ -68,10 +67,8 @@ resource "cloudflare_ruleset" "zone_level_managed_waf_with_category_based_overri
             category = "joomla"
             action   = "block"
             enabled  = true
-        }]
-
-      }]
-    }]
+        }] }
+  }
 
     expression  = "(http.host eq \"example.host.com\")"
     description = "overrides to only enable wordpress rules to block"
@@ -89,13 +86,13 @@ resource "cloudflare_ruleset" "transform_uri_rule_path" {
 
   rules = [{
     action = "rewrite"
-    action_parameters = [{
-      uri = [{
-        path = [{
-          value = "/my-new-route"
-        }]
-      }]
-    }]
+    action_parameters = {
+    uri = {
+    path = {
+    value = "/my-new-route"
+  }
+  }
+  }
 
     expression  = "(http.host eq \"example.com\" and http.request.uri.path eq \"/old-path\")"
     description = "example URI path transform rule"
@@ -113,13 +110,13 @@ resource "cloudflare_ruleset" "transform_uri_rule_query" {
 
   rules = [{
     action = "rewrite"
-    action_parameters = [{
-      uri = [{
-        query = [{
-          value = "old=new_again"
-        }]
-      }]
-    }]
+    action_parameters = {
+    uri = {
+    query = {
+    value = "old=new_again"
+  }
+  }
+  }
 
     expression  = "(http.host eq \"example.host.com\")"
     description = "URI transformation query example"
@@ -137,8 +134,8 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
 
   rules = [{
     action = "rewrite"
-    action_parameters = [{
-      headers = [{
+    action_parameters = {
+    headers = [{
         name      = "example-http-header-1"
         operation = "set"
         value     = "my-http-header-value-1"
@@ -152,9 +149,7 @@ resource "cloudflare_ruleset" "transform_uri_http_headers" {
           name      = "example-http-header-3-to-remove"
           operation = "remove"
       }]
-
-
-    }]
+  }
 
     expression  = "(http.host eq \"example.host.com\")"
     description = "example request header transform rule"
@@ -172,15 +167,15 @@ resource "cloudflare_ruleset" "rate_limiting_example" {
 
   rules = [{
     action = "block"
-    ratelimit = [{
-      characteristics = [
+    ratelimit = {
+    characteristics = [
         "cf.colo.id",
         "ip.src"
       ]
       period              = 60
       requests_per_period = 100
       mitigation_timeout  = 600
-    }]
+  }
 
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "rate limit for API"
@@ -198,13 +193,13 @@ resource "cloudflare_ruleset" "http_origin_example" {
 
   rules = [{
     action = "route"
-    action_parameters = [{
-      host_header = "some.host"
-      origin = [{
-        host = "some.host"
+    action_parameters = {
+    host_header = "some.host"
+      origin = {
+    host = "some.host"
         port = 80
-      }]
-    }]
+  }
+  }
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "change origin to some.host"
     enabled     = true
@@ -221,8 +216,8 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
 
   rules = [{
     action = "log_custom_field"
-    action_parameters = [{
-      request_fields = [
+    action_parameters = {
+    request_fields = [
         "content-type",
         "x-forwarded-for",
         "host"
@@ -237,7 +232,7 @@ resource "cloudflare_ruleset" "custom_fields_logging_example" {
         "accountNumber",
         "__cfruid"
       ]
-    }]
+  }
 
     expression  = "(http.host eq \"example.host.com\")"
     description = "log custom fields rule"
@@ -255,9 +250,9 @@ resource "cloudflare_ruleset" "cache_settings_example" {
 
   rules = [{
     action = "set_cache_settings"
-    action_parameters = [{
-      edge_ttl = [{
-        mode    = "override_origin"
+    action_parameters = {
+    edge_ttl = {
+    mode    = "override_origin"
         default = 60
         status_code_ttl = [{
           status_code = 200
@@ -270,41 +265,41 @@ resource "cloudflare_ruleset" "cache_settings_example" {
             }]
             value = 30
         }]
-      }]
-      browser_ttl = [{
-        mode = "respect_origin"
-      }]
-      serve_stale = [{
-        disable_stale_while_updating = true
-      }]
+  }
+      browser_ttl = {
+    mode = "respect_origin"
+  }
+      serve_stale = {
+    disable_stale_while_updating = true
+  }
       respect_strong_etags = true
-      cache_key = [{
-        ignore_query_strings_order = false
+      cache_key = {
+    ignore_query_strings_order = false
         cache_deception_armor      = true
-        custom_key = [{
-          query_string = [{
-            exclude = ["*"]
-          }]
-          header = [{
-            include        = ["habc", "hdef"]
+        custom_key = {
+    query_string = {
+    exclude = ["*"]
+  }
+          header = {
+    include        = ["habc", "hdef"]
             check_presence = ["habc_t", "hdef_t"]
             exclude_origin = true
-          }]
-          cookie = [{
-            include        = ["cabc", "cdef"]
+  }
+          cookie = {
+    include        = ["cabc", "cdef"]
             check_presence = ["cabc_t", "cdef_t"]
-          }]
-          user = [{
-            device_type = true
+  }
+          user = {
+    device_type = true
             geo         = false
-          }]
-          host = [{
-            resolved = true
-          }]
-        }]
-      }]
+  }
+          host = {
+    resolved = true
+  }
+  }
+  }
       origin_error_page_passthru = false
-    }]
+  }
     expression  = "(http.host eq \"example.host.com\")"
     description = "set cache settings rule"
     enabled     = true
@@ -321,12 +316,12 @@ resource "cloudflare_ruleset" "redirect_from_list_example" {
 
   rules = [{
     action = "redirect"
-    action_parameters = [{
-      from_list = [{
-        name = "redirect_list"
+    action_parameters = {
+    from_list = {
+    name = "redirect_list"
         key  = "http.request.full_uri"
-      }]
-    }]
+  }
+  }
     expression  = "http.request.full_uri in $redirect_list"
     description = "Apply redirects from redirect_list"
     enabled     = true
@@ -343,15 +338,15 @@ resource "cloudflare_ruleset" "redirect_from_value_example" {
 
   rules = [{
     action = "redirect"
-    action_parameters = [{
-      from_value = [{
-        status_code = 301
-        target_url = [{
-          value = "some_host.com"
-        }]
+    action_parameters = {
+    from_value = {
+    status_code = 301
+        target_url = {
+    value = "some_host.com"
+  }
         preserve_query_string = true
-      }]
-    }]
+  }
+  }
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "Apply redirect from value"
     enabled     = true
@@ -367,11 +362,11 @@ resource "cloudflare_ruleset" "http_custom_error_example" {
   phase       = "http_custom_errors"
   rules = [{
     action = "serve_error"
-    action_parameters = [{
-      content      = "some error html"
+    action_parameters = {
+    content      = "some error html"
       content_type = "text/html"
       status_code  = "530"
-    }]
+  }
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "serve some error response"
     enabled     = true
@@ -388,10 +383,10 @@ resource "cloudflare_ruleset" "http_config_rules_example" {
 
   rules = [{
     action = "set_config"
-    action_parameters = [{
-      email_obfuscation = true
+    action_parameters = {
+    email_obfuscation = true
       bic               = true
-    }]
+  }
     expression  = "(http.request.uri.path matches \"^/api/\")"
     description = "set config rules for matching request"
     enabled     = true
@@ -408,14 +403,14 @@ resource "cloudflare_ruleset" "response_compress_brotli_html" {
 
   rules = [{
     action = "compress_response"
-    action_parameters = [{
-      algorithms = [{
+    action_parameters = {
+    algorithms = [{
         name = "brotli"
         },
         {
           name = "auto"
       }]
-    }]
+  }
     expression  = "http.response.content_type.media_type == \"text/html\""
     description = "Prefer brotli compression for HTML"
     enabled     = true

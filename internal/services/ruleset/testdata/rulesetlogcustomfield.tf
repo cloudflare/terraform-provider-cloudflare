@@ -8,8 +8,8 @@
 
     rules =[ {
       action = "log_custom_field"
-      action_parameters =[ {
-        request_fields = [
+      action_parameters = {
+    request_fields = [
           "content-type",
           "x-forwarded-for",
           "host"
@@ -24,7 +24,7 @@
           "accountNumber",
           "__cfruid"
         ]
-      }]
+  }
 
       expression = "true"
       description = "%[1]s log custom fields rule"

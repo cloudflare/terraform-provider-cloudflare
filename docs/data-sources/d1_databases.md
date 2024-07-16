@@ -31,11 +31,14 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
-- `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 - `name` (String)
 - `uuid` (String)
 - `version` (String)
+
+Read-Only:
+
+- `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 
 

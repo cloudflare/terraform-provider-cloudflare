@@ -49,10 +49,13 @@ Read-Only:
 <a id="nestedatt--items--stages"></a>
 ### Nested Schema for `items.stages`
 
+Optional:
+
+- `name` (String) The current build stage.
+
 Read-Only:
 
 - `ended_on` (String) When the stage ended.
-- `name` (String) The current build stage.
 - `started_on` (String) When the stage started.
 - `status` (String) State of the current stage.
 

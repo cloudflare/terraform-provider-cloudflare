@@ -27,7 +27,7 @@ description: |-
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
 
-Required:
+Read-Only:
 
 - `api_url` (String) The Workspace One API URL provided in the Workspace One Admin Dashboard.
 - `auth_url` (String) The Workspace One Authorization URL depending on your region.

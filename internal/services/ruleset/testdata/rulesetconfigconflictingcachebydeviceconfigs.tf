@@ -8,16 +8,16 @@
 
     rules =[ {
 		action = "set_cache_settings"
-		action_parameters =[ {
-		  cache_key =[ {
-			cache_by_device_type = true
-			custom_key =[ {
-			  user =[ {
-				geo = false
-			  }]
-			}]
-		  }]
-		}]
+		action_parameters = {
+    cache_key = {
+    cache_by_device_type = true
+			custom_key = {
+    user = {
+    geo = false
+  }
+  }
+  }
+  }
 		expression  = "true"
 		description = "do conflicting cache things"
 		enabled     = true

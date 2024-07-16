@@ -28,7 +28,7 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `client_default` (Boolean) True if the location is the default location.
 - `created_at` (String)

@@ -7,10 +7,10 @@
 
     item =[ {
       value =[ {
-        redirect =[ {
+        redirect = {
           source_url = "cloudflare.com/blog"
           target_url = "https://theblog.cloudflare.com"
-        }]
+        }
       }]
     }]
   }

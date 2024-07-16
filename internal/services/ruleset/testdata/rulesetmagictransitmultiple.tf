@@ -14,15 +14,15 @@
     },
     {
     action = "skip"
-	  action_parameters =[ {
-        ruleset = "current"
-      }]
+	  action_parameters = {
+    ruleset = "current"
+  }
       expression = "tcp.dstport in { 32768..65535 }"
       description = "Allow TCP Ephemeral Ports"
       enabled = true
-      logging =[ {
-        enabled = false
-      }]
+      logging = {
+    enabled = false
+  }
     }]
 
   }

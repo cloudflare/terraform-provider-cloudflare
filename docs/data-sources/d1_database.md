@@ -16,7 +16,6 @@ description: |-
 ### Optional
 
 - `account_id` (String) Account identifier tag.
-- `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 - `database_id` (String)
 - `file_size` (Number) The D1 database's size, in bytes.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
@@ -24,6 +23,10 @@ description: |-
 - `num_tables` (Number)
 - `uuid` (String)
 - `version` (String)
+
+### Read-Only
+
+- `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

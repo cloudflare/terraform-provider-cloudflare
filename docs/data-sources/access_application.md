@@ -55,15 +55,6 @@ data "cloudflare_access_application" "example" {
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `app_id` (String) Identifier
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
-
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
-
-Optional:
-
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 

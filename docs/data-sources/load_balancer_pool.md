@@ -17,16 +17,11 @@ description: |-
 
 - `account_id` (String) Identifier
 - `check_regions` (String) A list of regions from which to run health checks. Null means every Cloudflare data center.
-- `created_on` (String)
 - `description` (String) A human-readable description of the pool.
-- `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
-- `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `latitude` (Number) The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.
 - `load_shedding` (Attributes) Configures load shedding policies and percentages for the pool. (see [below for nested schema](#nestedatt--load_shedding))
 - `longitude` (Number) The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.
-- `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
-- `modified_on` (String)
 - `monitor` (String) The ID of the Monitor to use for checking the health of origins within this pool.
 - `name` (String) A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.
 - `notification_email` (String) This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
@@ -37,7 +32,12 @@ description: |-
 
 ### Read-Only
 
+- `created_on` (String)
+- `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
+- `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
 - `id` (String) The ID of this resource.
+- `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
+- `modified_on` (String)
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

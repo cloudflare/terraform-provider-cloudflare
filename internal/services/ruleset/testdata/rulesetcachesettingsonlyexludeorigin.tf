@@ -8,22 +8,22 @@
 
     rules =[ {
       action = "set_cache_settings"
-      action_parameters =[ {
-		edge_ttl =[ {
-			mode = "override_origin"
+      action_parameters = {
+    edge_ttl = {
+    mode = "override_origin"
 			default = 60
-		}]
-		browser_ttl =[ {
-			mode = "respect_origin"
-		}]
-		cache_key =[ {
-			custom_key =[ {
-				header =[ {
-					exclude_origin = true
-				}]
-			}]
-		}]
-      }]
+  }
+		browser_ttl = {
+    mode = "respect_origin"
+  }
+		cache_key = {
+    custom_key = {
+    header = {
+    exclude_origin = true
+  }
+  }
+  }
+  }
 	  expression = "true"
 	  description = "%[1]s set cache settings rule"
 	  enabled = true

@@ -8,13 +8,11 @@
 
     rules =[ {
       action = "execute"
-      action_parameters =[ {
-        id = "4d21379b4f9f4bb088e0729962c8b3cf"
-        overrides =[ {
-		  action            = "log"
-		  sensitivity_level = "low"
-        }]
-      }]
+      action_parameters = {
+    id = "4d21379b4f9f4bb088e0729962c8b3cf"
+        overrides = { action            = "log"
+		  sensitivity_level = "low" }
+  }
       expression = "true"
       description = "override HTTP DDoS ruleset rule"
       enabled = true

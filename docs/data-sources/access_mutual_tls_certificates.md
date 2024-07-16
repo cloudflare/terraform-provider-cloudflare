@@ -26,7 +26,7 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `associated_hostnames` (List of String) The hostnames of the applications that will use this certificate.
 - `created_at` (String)

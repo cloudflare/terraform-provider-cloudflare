@@ -34,11 +34,14 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `creation_date` (String) Creation timestamp
 - `location` (String) Location of the bucket
 - `name` (String) Name of the bucket
+
+Read-Only:
+
 - `storage_class` (String) Storage class for newly uploaded objects, unless specified otherwise.
 
 

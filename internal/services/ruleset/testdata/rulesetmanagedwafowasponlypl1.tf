@@ -9,10 +9,9 @@
     # disable PL2, PL3 and PL4
     rules =[ {
       action = "execute"
-      action_parameters =[ {
-        id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        overrides =[ {
-          categories =[ {
+      action_parameters = {
+    id = "4814384a9e5d4991b9815dcfc25d2f1f"
+        overrides = { categories =[ {
             category = "paranoia-level-2"
             enabled = false
           },
@@ -32,9 +31,8 @@
             action = "block"
             score_threshold = 60
             enabled = true
-          }]
-        }]
-      }]
+          }] }
+  }
       expression = "true"
       description = "zone"
       enabled = true

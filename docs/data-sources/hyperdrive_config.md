@@ -43,15 +43,12 @@ Required:
 <a id="nestedatt--origin"></a>
 ### Nested Schema for `origin`
 
-Required:
+Read-Only:
 
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
 - `port` (Number) The port (default: 5432 for Postgres) of your origin database.
-- `user` (String) The user of your origin database.
-
-Read-Only:
-
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
+- `user` (String) The user of your origin database.
 
 

@@ -28,8 +28,31 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `caching` (Attributes) (see [below for nested schema](#nestedatt--items--caching))
+- `name` (String)
+- `origin` (Attributes) (see [below for nested schema](#nestedatt--items--origin))
+
+<a id="nestedatt--items--caching"></a>
+### Nested Schema for `items.caching`
+
+Optional:
+
+- `disabled` (Boolean) When set to true, disables the caching of SQL responses. (Default: false)
+- `max_age` (Number) When present, specifies max duration for which items should persist in the cache. (Default: 60)
+- `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. (Default: 15)
+
+
+<a id="nestedatt--items--origin"></a>
+### Nested Schema for `items.origin`
+
 Read-Only:
 
-- `name` (String)
+- `database` (String) The name of your origin database.
+- `host` (String) The host (hostname or IP) of your origin database.
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
+- `scheme` (String) Specifies the URL scheme used to connect to your origin database.
+- `user` (String) The user of your origin database.
 
 

@@ -17,16 +17,19 @@ description: |-
 
 - `account_id` (String) The account id
 - `alert_type` (String) Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.
-- `created` (String)
 - `description` (String) Optional description for the Notification policy.
-- `enabled` (Boolean) Whether or not the Notification policy is enabled.
 - `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--filters))
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `id` (String) The unique identifier of a notification policy
 - `mechanisms` (String) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
-- `modified` (String)
 - `name` (String) Name of the policy.
 - `policy_id` (String) The unique identifier of a notification policy
+
+### Read-Only
+
+- `created` (String)
+- `enabled` (Boolean) Whether or not the Notification policy is enabled.
+- `id` (String) The unique identifier of a notification policy
+- `modified` (String)
 
 <a id="nestedatt--filters"></a>
 ### Nested Schema for `filters`

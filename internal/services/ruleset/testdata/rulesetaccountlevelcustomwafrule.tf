@@ -23,11 +23,11 @@
 
     rules =[ {
       action = "execute"
-      action_parameters =[ {
-        id = cloudflare_ruleset.%[1]s_account_custom_firewall.id
+      action_parameters = {
+    id = cloudflare_ruleset.%[1]s_account_custom_firewall.id
       }
       expression = "(cf.zone.name eq \"example.com\") and (cf.zone.plan eq \"ENT\")"
       description = ""
       enabled = true
-    }]
+  }
   }]

@@ -33,40 +33,52 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--items--policies))
+- `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--items--roles))
+
 Read-Only:
 
 - `id` (String) Membership identifier tag.
-- `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--items--policies))
-- `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--items--roles))
 - `status` (String) A member's status in the account.
 
 <a id="nestedatt--items--policies"></a>
 ### Nested Schema for `items.policies`
 
-Read-Only:
+Optional:
 
 - `access` (String) Allow or deny operations against the resources.
-- `id` (String) Policy identifier.
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--items--policies--permission_groups))
 - `resource_groups` (Attributes List) A list of resource groups that the policy applies to. (see [below for nested schema](#nestedatt--items--policies--resource_groups))
+
+Read-Only:
+
+- `id` (String) Policy identifier.
 
 <a id="nestedatt--items--policies--permission_groups"></a>
 ### Nested Schema for `items.policies.permission_groups`
 
+Optional:
+
+- `meta` (String) Attributes associated to the permission group.
+
 Read-Only:
 
 - `id` (String) Identifier of the group.
-- `meta` (String) Attributes associated to the permission group.
 - `name` (String) Name of the group.
 
 
 <a id="nestedatt--items--policies--resource_groups"></a>
 ### Nested Schema for `items.policies.resource_groups`
 
+Optional:
+
+- `meta` (String) Attributes associated to the resource group.
+
 Read-Only:
 
 - `id` (String) Identifier of the group.
-- `meta` (String) Attributes associated to the resource group.
 - `name` (String) Name of the resource group.
 - `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--items--policies--resource_groups--scope))
 

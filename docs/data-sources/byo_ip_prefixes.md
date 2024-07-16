@@ -28,7 +28,7 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `account_id` (String) Identifier
 - `advertised` (Boolean) Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.

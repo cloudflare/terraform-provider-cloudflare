@@ -32,13 +32,16 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `source` (String) Source of the schema
+- `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
+
 Read-Only:
 
 - `created_at` (String)
 - `kind` (String) Kind of schema
 - `name` (String) Name of the schema
 - `schema_id` (String) UUID identifier
-- `source` (String) Source of the schema
-- `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 
 

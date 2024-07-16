@@ -32,11 +32,14 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
+
 Read-Only:
 
 - `comment` (String) Optional remark describing the virtual network.
 - `created_at` (String) Timestamp of when the resource was created.
-- `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
 - `id` (String) UUID of the virtual network.
 - `is_default_network` (Boolean) If `true`, this virtual network is the default for the account.
 - `name` (String) A user-friendly name for the virtual network.

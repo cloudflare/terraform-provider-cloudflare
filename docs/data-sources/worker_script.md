@@ -38,13 +38,13 @@ Required:
 <a id="nestedatt--tail_consumers"></a>
 ### Nested Schema for `tail_consumers`
 
-Required:
-
-- `service` (String) Name of Worker that is to be the consumer.
-
 Optional:
 
 - `environment` (String) Optional environment if the Worker utilizes one.
 - `namespace` (String) Optional dispatch namespace the script belongs to.
+
+Read-Only:
+
+- `service` (String) Name of Worker that is to be the consumer.
 
 

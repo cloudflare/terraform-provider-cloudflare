@@ -28,7 +28,7 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `allow_mode_switch` (Boolean) Whether to allow the user to switch WARP between modes.
 - `allow_updates` (Boolean) Whether to receive update notifications when a new version of the client is available.
@@ -50,6 +50,7 @@ Read-Only:
 - `name` (String) The name of the device settings profile.
 - `policy_id` (String) Device ID.
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
+- `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--items--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
 - `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--items--target_tests))
@@ -57,37 +58,55 @@ Read-Only:
 <a id="nestedatt--items--exclude"></a>
 ### Nested Schema for `items.exclude`
 
+Optional:
+
+- `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
+
 Read-Only:
 
 - `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
 - `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-- `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
 
 
 <a id="nestedatt--items--fallback_domains"></a>
 ### Nested Schema for `items.fallback_domains`
 
-Read-Only:
+Optional:
 
 - `description` (String) A description of the fallback domain, displayed in the client UI.
 - `dns_server` (List of String) A list of IP addresses to handle domain resolution.
+
+Read-Only:
+
 - `suffix` (String) The domain suffix to match when resolving locally.
 
 
 <a id="nestedatt--items--include"></a>
 ### Nested Schema for `items.include`
 
+Optional:
+
+- `host` (String) The domain name to include in the tunnel. If host is present, address must not be present.
+
 Read-Only:
 
 - `address` (String) The address in CIDR format to include in the tunnel. If address is present, host must not be present.
 - `description` (String) A description of the split tunnel item, displayed in the client UI.
-- `host` (String) The domain name to include in the tunnel. If host is present, address must not be present.
+
+
+<a id="nestedatt--items--service_mode_v2"></a>
+### Nested Schema for `items.service_mode_v2`
+
+Optional:
+
+- `mode` (String) The mode to run the WARP client under.
+- `port` (Number) The port number when used with proxy mode.
 
 
 <a id="nestedatt--items--target_tests"></a>
 ### Nested Schema for `items.target_tests`
 
-Read-Only:
+Optional:
 
 - `id` (String) The id of the DEX test targeting this policy
 - `name` (String) The name of the DEX test targeting this policy

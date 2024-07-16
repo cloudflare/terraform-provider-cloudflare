@@ -8,9 +8,9 @@
 
 		rules =[ {
 			action = "set_cache_settings"
-			action_parameters =[ {
-				cache = false
-			}]
+			action_parameters = {
+    cache = false
+  }
 			expression = "true"
 			description = "%[1]s set cache settings rule"
 			enabled = true

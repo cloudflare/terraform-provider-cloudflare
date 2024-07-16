@@ -28,6 +28,10 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `queue_name` (String)
+
 Read-Only:
 
 - `consumers` (String)
@@ -37,6 +41,5 @@ Read-Only:
 - `producers` (String)
 - `producers_total_count` (String)
 - `queue_id` (String)
-- `queue_name` (String)
 
 

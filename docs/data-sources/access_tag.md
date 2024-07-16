@@ -19,9 +19,12 @@ description: |-
 - `app_count` (Number) The number of applications that have this tag
 - `created_at` (String)
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `name` (String) The name of the tag
 - `tag_name` (String) The name of the tag
 - `updated_at` (String)
+
+### Read-Only
+
+- `name` (String) The name of the tag
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

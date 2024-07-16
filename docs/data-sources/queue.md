@@ -16,15 +16,18 @@ description: |-
 ### Optional
 
 - `account_id` (String) Identifier
+- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `queue_id` (String) Identifier
+- `queue_name` (String)
+
+### Read-Only
+
 - `consumers` (String)
 - `consumers_total_count` (String)
 - `created_on` (String)
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `modified_on` (String)
 - `producers` (String)
 - `producers_total_count` (String)
-- `queue_id` (String) Identifier
-- `queue_name` (String)
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

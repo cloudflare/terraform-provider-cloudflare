@@ -42,7 +42,7 @@ Required:
 <a id="nestedatt--networks"></a>
 ### Nested Schema for `networks`
 
-Required:
+Read-Only:
 
 - `network` (String) The IPv4 address or IPv4 CIDR. IPv4 CIDRs are limited to a maximum of /24.
 

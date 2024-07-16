@@ -8,9 +8,9 @@
 
 		rules =[ {
 			action = "set_cache_settings"
-			action_parameters =[ {
-				edge_ttl =[ {
-					status_code_ttl =[ {
+			action_parameters = {
+    edge_ttl = {
+    status_code_ttl =[ {
 						status_code_range =[ {
 						  from = 105
 						}]
@@ -24,9 +24,9 @@
 						value = 1
     }]
 					mode = "respect_origin"
-				}]
+  }
 				cache = true
-			}]
+  }
 			expression = "true"
 			description = "%[1]s set cache settings rule"
 			enabled = true

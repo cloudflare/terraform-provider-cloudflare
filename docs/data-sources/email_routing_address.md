@@ -16,10 +16,13 @@ description: |-
 ### Optional
 
 - `account_identifier` (String) Identifier
-- `created` (String) The date and time the destination address has been created.
 - `destination_address_identifier` (String) Destination address identifier.
 - `email` (String) The contact email address of the user.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+
+### Read-Only
+
+- `created` (String) The date and time the destination address has been created.
 - `id` (String) Destination address identifier.
 - `modified` (String) The date and time the destination address was last modified.
 - `tag` (String) Destination address tag. (Deprecated, replaced by destination address identifier)

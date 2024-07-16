@@ -18,7 +18,6 @@ description: |-
 - `account_id` (String)
 - `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
 - `created_at` (String)
-- `deleted_at` (String) Date of deletion, if any.
 - `description` (String) The description of the rule.
 - `device_posture` (String) The wirefilter expression used for device posture check matching.
 - `enabled` (Boolean) True if the rule is enabled.
@@ -33,6 +32,10 @@ description: |-
 - `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--schedule))
 - `traffic` (String) The wirefilter expression used for traffic matching.
 - `updated_at` (String)
+
+### Read-Only
+
+- `deleted_at` (String) Date of deletion, if any.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`
@@ -109,29 +112,29 @@ Optional:
 <a id="nestedatt--rule_settings--dns_resolvers--ipv4"></a>
 ### Nested Schema for `rule_settings.dns_resolvers.ipv4`
 
-Required:
-
-- `ip` (String) IPv4 address of upstream resolver.
-
 Optional:
 
 - `port` (Number) A port number to use for upstream resolver. Defaults to 53 if unspecified.
 - `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when vnet_id is set.
 - `vnet_id` (String) Optionally specify a virtual network for this resolver. Uses default virtual network id if omitted.
+
+Read-Only:
+
+- `ip` (String) IPv4 address of upstream resolver.
 
 
 <a id="nestedatt--rule_settings--dns_resolvers--ipv6"></a>
 ### Nested Schema for `rule_settings.dns_resolvers.ipv6`
 
-Required:
-
-- `ip` (String) IPv6 address of upstream resolver.
-
 Optional:
 
 - `port` (Number) A port number to use for upstream resolver. Defaults to 53 if unspecified.
 - `route_through_private_network` (Boolean) Whether to connect to this resolver over a private network. Must be set when vnet_id is set.
 - `vnet_id` (String) Optionally specify a virtual network for this resolver. Uses default virtual network id if omitted.
+
+Read-Only:
+
+- `ip` (String) IPv6 address of upstream resolver.
 
 
 

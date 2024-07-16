@@ -20,11 +20,14 @@ description: |-
 - `description` (String) The description of the list.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `id` (String) API Resource UUID tag.
-- `list_count` (Number) The number of items in the list.
 - `list_id` (String) API Resource UUID tag.
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
 - `updated_at` (String)
+
+### Read-Only
+
+- `list_count` (Number) The number of items in the list.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

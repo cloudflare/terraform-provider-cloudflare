@@ -18,7 +18,6 @@ description: |-
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `created_at` (String)
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `group_id` (String) UUID
 - `id` (String) UUID
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
@@ -56,7 +55,7 @@ Optional:
 <a id="nestedatt--exclude--auth_method"></a>
 ### Nested Schema for `exclude.auth_method`
 
-Required:
+Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
@@ -64,7 +63,7 @@ Required:
 <a id="nestedatt--exclude--azure_ad"></a>
 ### Nested Schema for `exclude.azure_ad`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Azure identity provider.
 - `id` (String) The ID of an Azure group.
@@ -73,7 +72,7 @@ Required:
 <a id="nestedatt--exclude--device_posture"></a>
 ### Nested Schema for `exclude.device_posture`
 
-Required:
+Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
@@ -81,7 +80,7 @@ Required:
 <a id="nestedatt--exclude--email"></a>
 ### Nested Schema for `exclude.email`
 
-Required:
+Read-Only:
 
 - `email` (String) The email of the user.
 
@@ -89,7 +88,7 @@ Required:
 <a id="nestedatt--exclude--email_domain"></a>
 ### Nested Schema for `exclude.email_domain`
 
-Required:
+Read-Only:
 
 - `domain` (String) The email domain to match.
 
@@ -97,7 +96,7 @@ Required:
 <a id="nestedatt--exclude--email_list"></a>
 ### Nested Schema for `exclude.email_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
@@ -105,7 +104,7 @@ Required:
 <a id="nestedatt--exclude--external_evaluation"></a>
 ### Nested Schema for `exclude.external_evaluation`
 
-Required:
+Read-Only:
 
 - `evaluate_url` (String) The API endpoint containing your business logic.
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
@@ -114,7 +113,7 @@ Required:
 <a id="nestedatt--exclude--geo"></a>
 ### Nested Schema for `exclude.geo`
 
-Required:
+Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
@@ -122,7 +121,7 @@ Required:
 <a id="nestedatt--exclude--github_organization"></a>
 ### Nested Schema for `exclude.github_organization`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
@@ -131,7 +130,7 @@ Required:
 <a id="nestedatt--exclude--group"></a>
 ### Nested Schema for `exclude.group`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
@@ -139,7 +138,7 @@ Required:
 <a id="nestedatt--exclude--gsuite"></a>
 ### Nested Schema for `exclude.gsuite`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Google Workspace identity provider.
 - `email` (String) The email of the Google Workspace group.
@@ -148,7 +147,7 @@ Required:
 <a id="nestedatt--exclude--ip"></a>
 ### Nested Schema for `exclude.ip`
 
-Required:
+Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
@@ -156,7 +155,7 @@ Required:
 <a id="nestedatt--exclude--ip_list"></a>
 ### Nested Schema for `exclude.ip_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
@@ -164,7 +163,7 @@ Required:
 <a id="nestedatt--exclude--okta"></a>
 ### Nested Schema for `exclude.okta`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Okta identity provider.
 - `email` (String) The email of the Okta group.
@@ -173,7 +172,7 @@ Required:
 <a id="nestedatt--exclude--saml"></a>
 ### Nested Schema for `exclude.saml`
 
-Required:
+Read-Only:
 
 - `attribute_name` (String) The name of the SAML attribute.
 - `attribute_value` (String) The SAML attribute value to look for.
@@ -182,19 +181,10 @@ Required:
 <a id="nestedatt--exclude--service_token"></a>
 ### Nested Schema for `exclude.service_token`
 
-Required:
+Read-Only:
 
 - `token_id` (String) The ID of a Service Token.
 
-
-
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
-
-Optional:
-
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 
 <a id="nestedatt--include"></a>
@@ -225,7 +215,7 @@ Optional:
 <a id="nestedatt--include--auth_method"></a>
 ### Nested Schema for `include.auth_method`
 
-Required:
+Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
@@ -233,7 +223,7 @@ Required:
 <a id="nestedatt--include--azure_ad"></a>
 ### Nested Schema for `include.azure_ad`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Azure identity provider.
 - `id` (String) The ID of an Azure group.
@@ -242,7 +232,7 @@ Required:
 <a id="nestedatt--include--device_posture"></a>
 ### Nested Schema for `include.device_posture`
 
-Required:
+Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
@@ -250,7 +240,7 @@ Required:
 <a id="nestedatt--include--email"></a>
 ### Nested Schema for `include.email`
 
-Required:
+Read-Only:
 
 - `email` (String) The email of the user.
 
@@ -258,7 +248,7 @@ Required:
 <a id="nestedatt--include--email_domain"></a>
 ### Nested Schema for `include.email_domain`
 
-Required:
+Read-Only:
 
 - `domain` (String) The email domain to match.
 
@@ -266,7 +256,7 @@ Required:
 <a id="nestedatt--include--email_list"></a>
 ### Nested Schema for `include.email_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
@@ -274,7 +264,7 @@ Required:
 <a id="nestedatt--include--external_evaluation"></a>
 ### Nested Schema for `include.external_evaluation`
 
-Required:
+Read-Only:
 
 - `evaluate_url` (String) The API endpoint containing your business logic.
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
@@ -283,7 +273,7 @@ Required:
 <a id="nestedatt--include--geo"></a>
 ### Nested Schema for `include.geo`
 
-Required:
+Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
@@ -291,7 +281,7 @@ Required:
 <a id="nestedatt--include--github_organization"></a>
 ### Nested Schema for `include.github_organization`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
@@ -300,7 +290,7 @@ Required:
 <a id="nestedatt--include--group"></a>
 ### Nested Schema for `include.group`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
@@ -308,7 +298,7 @@ Required:
 <a id="nestedatt--include--gsuite"></a>
 ### Nested Schema for `include.gsuite`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Google Workspace identity provider.
 - `email` (String) The email of the Google Workspace group.
@@ -317,7 +307,7 @@ Required:
 <a id="nestedatt--include--ip"></a>
 ### Nested Schema for `include.ip`
 
-Required:
+Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
@@ -325,7 +315,7 @@ Required:
 <a id="nestedatt--include--ip_list"></a>
 ### Nested Schema for `include.ip_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
@@ -333,7 +323,7 @@ Required:
 <a id="nestedatt--include--okta"></a>
 ### Nested Schema for `include.okta`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Okta identity provider.
 - `email` (String) The email of the Okta group.
@@ -342,7 +332,7 @@ Required:
 <a id="nestedatt--include--saml"></a>
 ### Nested Schema for `include.saml`
 
-Required:
+Read-Only:
 
 - `attribute_name` (String) The name of the SAML attribute.
 - `attribute_value` (String) The SAML attribute value to look for.
@@ -351,7 +341,7 @@ Required:
 <a id="nestedatt--include--service_token"></a>
 ### Nested Schema for `include.service_token`
 
-Required:
+Read-Only:
 
 - `token_id` (String) The ID of a Service Token.
 
@@ -385,7 +375,7 @@ Optional:
 <a id="nestedatt--is_default--auth_method"></a>
 ### Nested Schema for `is_default.auth_method`
 
-Required:
+Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
@@ -393,7 +383,7 @@ Required:
 <a id="nestedatt--is_default--azure_ad"></a>
 ### Nested Schema for `is_default.azure_ad`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Azure identity provider.
 - `id` (String) The ID of an Azure group.
@@ -402,7 +392,7 @@ Required:
 <a id="nestedatt--is_default--device_posture"></a>
 ### Nested Schema for `is_default.device_posture`
 
-Required:
+Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
@@ -410,7 +400,7 @@ Required:
 <a id="nestedatt--is_default--email"></a>
 ### Nested Schema for `is_default.email`
 
-Required:
+Read-Only:
 
 - `email` (String) The email of the user.
 
@@ -418,7 +408,7 @@ Required:
 <a id="nestedatt--is_default--email_domain"></a>
 ### Nested Schema for `is_default.email_domain`
 
-Required:
+Read-Only:
 
 - `domain` (String) The email domain to match.
 
@@ -426,7 +416,7 @@ Required:
 <a id="nestedatt--is_default--email_list"></a>
 ### Nested Schema for `is_default.email_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
@@ -434,7 +424,7 @@ Required:
 <a id="nestedatt--is_default--external_evaluation"></a>
 ### Nested Schema for `is_default.external_evaluation`
 
-Required:
+Read-Only:
 
 - `evaluate_url` (String) The API endpoint containing your business logic.
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
@@ -443,7 +433,7 @@ Required:
 <a id="nestedatt--is_default--geo"></a>
 ### Nested Schema for `is_default.geo`
 
-Required:
+Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
@@ -451,7 +441,7 @@ Required:
 <a id="nestedatt--is_default--github_organization"></a>
 ### Nested Schema for `is_default.github_organization`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
@@ -460,7 +450,7 @@ Required:
 <a id="nestedatt--is_default--group"></a>
 ### Nested Schema for `is_default.group`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
@@ -468,7 +458,7 @@ Required:
 <a id="nestedatt--is_default--gsuite"></a>
 ### Nested Schema for `is_default.gsuite`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Google Workspace identity provider.
 - `email` (String) The email of the Google Workspace group.
@@ -477,7 +467,7 @@ Required:
 <a id="nestedatt--is_default--ip"></a>
 ### Nested Schema for `is_default.ip`
 
-Required:
+Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
@@ -485,7 +475,7 @@ Required:
 <a id="nestedatt--is_default--ip_list"></a>
 ### Nested Schema for `is_default.ip_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
@@ -493,7 +483,7 @@ Required:
 <a id="nestedatt--is_default--okta"></a>
 ### Nested Schema for `is_default.okta`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Okta identity provider.
 - `email` (String) The email of the Okta group.
@@ -502,7 +492,7 @@ Required:
 <a id="nestedatt--is_default--saml"></a>
 ### Nested Schema for `is_default.saml`
 
-Required:
+Read-Only:
 
 - `attribute_name` (String) The name of the SAML attribute.
 - `attribute_value` (String) The SAML attribute value to look for.
@@ -511,7 +501,7 @@ Required:
 <a id="nestedatt--is_default--service_token"></a>
 ### Nested Schema for `is_default.service_token`
 
-Required:
+Read-Only:
 
 - `token_id` (String) The ID of a Service Token.
 
@@ -545,7 +535,7 @@ Optional:
 <a id="nestedatt--require--auth_method"></a>
 ### Nested Schema for `require.auth_method`
 
-Required:
+Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
@@ -553,7 +543,7 @@ Required:
 <a id="nestedatt--require--azure_ad"></a>
 ### Nested Schema for `require.azure_ad`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Azure identity provider.
 - `id` (String) The ID of an Azure group.
@@ -562,7 +552,7 @@ Required:
 <a id="nestedatt--require--device_posture"></a>
 ### Nested Schema for `require.device_posture`
 
-Required:
+Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
@@ -570,7 +560,7 @@ Required:
 <a id="nestedatt--require--email"></a>
 ### Nested Schema for `require.email`
 
-Required:
+Read-Only:
 
 - `email` (String) The email of the user.
 
@@ -578,7 +568,7 @@ Required:
 <a id="nestedatt--require--email_domain"></a>
 ### Nested Schema for `require.email_domain`
 
-Required:
+Read-Only:
 
 - `domain` (String) The email domain to match.
 
@@ -586,7 +576,7 @@ Required:
 <a id="nestedatt--require--email_list"></a>
 ### Nested Schema for `require.email_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
@@ -594,7 +584,7 @@ Required:
 <a id="nestedatt--require--external_evaluation"></a>
 ### Nested Schema for `require.external_evaluation`
 
-Required:
+Read-Only:
 
 - `evaluate_url` (String) The API endpoint containing your business logic.
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
@@ -603,7 +593,7 @@ Required:
 <a id="nestedatt--require--geo"></a>
 ### Nested Schema for `require.geo`
 
-Required:
+Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
@@ -611,7 +601,7 @@ Required:
 <a id="nestedatt--require--github_organization"></a>
 ### Nested Schema for `require.github_organization`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Github identity provider.
 - `name` (String) The name of the organization.
@@ -620,7 +610,7 @@ Required:
 <a id="nestedatt--require--group"></a>
 ### Nested Schema for `require.group`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
@@ -628,7 +618,7 @@ Required:
 <a id="nestedatt--require--gsuite"></a>
 ### Nested Schema for `require.gsuite`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Google Workspace identity provider.
 - `email` (String) The email of the Google Workspace group.
@@ -637,7 +627,7 @@ Required:
 <a id="nestedatt--require--ip"></a>
 ### Nested Schema for `require.ip`
 
-Required:
+Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
@@ -645,7 +635,7 @@ Required:
 <a id="nestedatt--require--ip_list"></a>
 ### Nested Schema for `require.ip_list`
 
-Required:
+Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
@@ -653,7 +643,7 @@ Required:
 <a id="nestedatt--require--okta"></a>
 ### Nested Schema for `require.okta`
 
-Required:
+Read-Only:
 
 - `connection_id` (String) The ID of your Okta identity provider.
 - `email` (String) The email of the Okta group.
@@ -662,7 +652,7 @@ Required:
 <a id="nestedatt--require--saml"></a>
 ### Nested Schema for `require.saml`
 
-Required:
+Read-Only:
 
 - `attribute_name` (String) The name of the SAML attribute.
 - `attribute_value` (String) The SAML attribute value to look for.
@@ -671,7 +661,7 @@ Required:
 <a id="nestedatt--require--service_token"></a>
 ### Nested Schema for `require.service_token`
 
-Required:
+Read-Only:
 
 - `token_id` (String) The ID of a Service Token.
 

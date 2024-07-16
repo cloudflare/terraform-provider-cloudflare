@@ -11,9 +11,9 @@
       expression = "http.request.method == \"POST\" && http.request.uri == \"/login.php\""
       enabled = true
       description = "example exposed credential check"
-      exposed_credential_check =[ {
-        username_expression = "url_decode(http.request.body.form[\"username\"][0])"
+      exposed_credential_check = {
+    username_expression = "url_decode(http.request.body.form[\"username\"][0])"
         password_expression = "url_decode(http.request.body.form[\"password\"][0])"
-      }]
+  }
     }]
   }

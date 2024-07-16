@@ -28,7 +28,7 @@ resource "cloudflare_access_application" "%[1]s" {
 	remote_uri = "scim2.com"
 	idp_uid = cloudflare_access_identity_provider.%[1]s.id
 	deactivate_on_delete = false
-	authentication {
+	authentication = {
 		scheme =  "oauthbearertoken"
 		token = "12345"
 }
