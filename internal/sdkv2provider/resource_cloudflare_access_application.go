@@ -283,8 +283,8 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		updatedAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
-	if value, ok := d.GetOk("policies"); ok {
-		policies := expandInterfaceToStringList(value)
+	if d.HasChange("policies") {
+		policies := expandInterfaceToStringList(d.Get("policies"))
 		updatedAccessApplication.Policies = &policies
 	}
 
