@@ -5,10 +5,12 @@ package d1_database
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 func (r D1DatabaseResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
@@ -30,6 +32,13 @@ func (r D1DatabaseResource) UpgradeState(ctx context.Context) map[int64]resource
 					},
 					"name": schema.StringAttribute{
 						Required: true,
+					},
+					"primary_location_hint": schema.StringAttribute{
+						Description: "Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("wnam", "enam", "weur", "eeur", "apac", "oc"),
+						},
 					},
 					"created_at": schema.StringAttribute{
 						Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
