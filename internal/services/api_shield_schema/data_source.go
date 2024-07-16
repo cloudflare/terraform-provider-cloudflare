@@ -88,8 +88,8 @@ func (r *APIShieldSchemaDataSource) Read(ctx context.Context, req datasource.Rea
 		page, err := r.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
 			ZoneID:            cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
 			OmitSource:        cloudflare.F(data.FindOneBy.OmitSource.ValueBool()),
-			Page:              cloudflare.F[any](data.FindOneBy.Page.ValueString()),
-			PerPage:           cloudflare.F[any](data.FindOneBy.PerPage.ValueString()),
+			Page:              cloudflare.F(data.FindOneBy.Page.ValueInt64()),
+			PerPage:           cloudflare.F(data.FindOneBy.PerPage.ValueInt64()),
 			ValidationEnabled: cloudflare.F(data.FindOneBy.ValidationEnabled.ValueBool()),
 		})
 		if err != nil {

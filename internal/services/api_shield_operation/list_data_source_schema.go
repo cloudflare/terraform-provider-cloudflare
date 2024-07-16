@@ -5,6 +5,7 @@ package api_shield_operation
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -61,15 +62,21 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 					stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
 				},
 			},
-			"page": schema.StringAttribute{
+			"page": schema.Int64Attribute{
 				Description: "Page number of paginated results.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(1),
+				},
 			},
-			"per_page": schema.StringAttribute{
+			"per_page": schema.Int64Attribute{
 				Description: "Maximum number of results per page.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(5, 50),
+				},
 			},
 			"state": schema.StringAttribute{
 				Description: "Filter results to only include discovery results in a particular state. States are as follows\n  * `review` - Discovered operations that are not saved into API Shield Endpoint Management\n  * `saved` - Discovered operations that are already saved into API Shield Endpoint Management\n  * `ignored` - Discovered operations that have been marked as ignored\n",
@@ -88,7 +95,7 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "UUID identifier",
+							Description: "UUID",
 							Computed:    true,
 						},
 						"endpoint": schema.StringAttribute{

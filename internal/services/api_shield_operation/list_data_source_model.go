@@ -3,7 +3,6 @@
 package api_shield_operation
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,8 +20,8 @@ type APIShieldOperationsDataSourceModel struct {
 	Method    *[]types.String                             `tfsdk:"method" query:"method"`
 	Order     types.String                                `tfsdk:"order" query:"order"`
 	Origin    types.String                                `tfsdk:"origin" query:"origin"`
-	Page      jsontypes.Normalized                        `tfsdk:"page" query:"page"`
-	PerPage   jsontypes.Normalized                        `tfsdk:"per_page" query:"per_page"`
+	Page      types.Int64                                 `tfsdk:"page" query:"page"`
+	PerPage   types.Int64                                 `tfsdk:"per_page" query:"per_page"`
 	State     types.String                                `tfsdk:"state" query:"state"`
 	MaxItems  types.Int64                                 `tfsdk:"max_items"`
 	Items     *[]*APIShieldOperationsItemsDataSourceModel `tfsdk:"items"`
