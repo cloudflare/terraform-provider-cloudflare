@@ -106,6 +106,11 @@ var teamsRuleSettings = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "Turns on IP category based filter on dns if the rule contains dns category checks.",
 	},
+	"ignore_cname_category_matches": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Set to true, to ignore the category matches at CNAME domains in a response.",
+	},
 	"allow_child_bypass": {
 		Type:        schema.TypeBool,
 		Optional:    true,
@@ -339,11 +344,13 @@ var teamsDnsResolverSettings = map[string]*schema.Schema{
 		Elem: &schema.Resource{
 			Schema: teamsDnsResolverAddress,
 		},
+		MaxItems:    10,
 		Description: "IPv4 resolvers.",
 	},
 	"ipv6": {
 		Type:     schema.TypeList,
 		Optional: true,
+		MaxItems: 10,
 		Elem: &schema.Resource{
 			Schema: teamsDnsResolverAddress,
 		},
