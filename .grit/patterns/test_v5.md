@@ -165,18 +165,18 @@ resource "cloudflare_load_balancer_pool" "example" {
     name    = "example-1"
     address = "192.0.2.1"
     enabled = false
-    header = [{
+    header = {
       header = "Host"
       values = ["example-1"]
-    }]
+    }
   },
   {
     name    = "example-2"
     address = "192.0.2.2"
-    header = [{
+    header = {
       header = "Host"
       values = ["example-2"]
-    }]
+    }
   }]
   latitude           = 55
   longitude          = -12
