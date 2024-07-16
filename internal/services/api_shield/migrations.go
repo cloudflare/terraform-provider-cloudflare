@@ -5,6 +5,7 @@ package api_shield
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -24,7 +25,7 @@ func (r APIShieldResource) UpgradeState(ctx context.Context) map[int64]resource.
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"auth_id_characteristics": schema.ListNestedAttribute{
-						Optional: true,
+						Required: true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"name": schema.StringAttribute{
@@ -40,6 +41,42 @@ func (r APIShieldResource) UpgradeState(ctx context.Context) map[int64]resource.
 								},
 							},
 						},
+					},
+					"errors": schema.ListNestedAttribute{
+						Computed: true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"code": schema.Int64Attribute{
+									Required: true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(1000),
+									},
+								},
+								"message": schema.StringAttribute{
+									Required: true,
+								},
+							},
+						},
+					},
+					"messages": schema.ListNestedAttribute{
+						Computed: true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"code": schema.Int64Attribute{
+									Required: true,
+									Validators: []validator.Int64{
+										int64validator.AtLeast(1000),
+									},
+								},
+								"message": schema.StringAttribute{
+									Required: true,
+								},
+							},
+						},
+					},
+					"success": schema.BoolAttribute{
+						Description: "Whether the API call was successful",
+						Computed:    true,
 					},
 				},
 			},

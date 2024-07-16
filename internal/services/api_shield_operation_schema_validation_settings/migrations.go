@@ -24,6 +24,7 @@ func (r APIShieldOperationSchemaValidationSettingsResource) UpgradeState(ctx con
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"operation_id": schema.StringAttribute{
+						Description:   "UUID",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},

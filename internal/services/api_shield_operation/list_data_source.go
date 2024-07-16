@@ -80,8 +80,8 @@ func (r *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 		Method:    cloudflare.F(dataMethod),
 		Order:     cloudflare.F(api_gateway.DiscoveryOperationListParamsOrder(data.Order.ValueString())),
 		Origin:    cloudflare.F(api_gateway.DiscoveryOperationListParamsOrigin(data.Origin.ValueString())),
-		Page:      cloudflare.F[any](data.Page.ValueString()),
-		PerPage:   cloudflare.F[any](data.PerPage.ValueString()),
+		Page:      cloudflare.F(data.Page.ValueInt64()),
+		PerPage:   cloudflare.F(data.PerPage.ValueInt64()),
 		State:     cloudflare.F(api_gateway.DiscoveryOperationListParamsState(data.State.ValueString())),
 	})
 	if err != nil {

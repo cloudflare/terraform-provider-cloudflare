@@ -66,7 +66,6 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
 		api_gateway.ConfigurationUpdateParams{
@@ -81,12 +80,11 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.Unmarshal(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -148,7 +146,6 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	res := new(http.Response)
-	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
 		api_gateway.ConfigurationUpdateParams{
@@ -163,12 +160,11 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.Unmarshal(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
