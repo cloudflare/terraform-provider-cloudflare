@@ -51,18 +51,23 @@ interface Result {
 function findRecursiveBlockTypes(list: Result[], resource: string, oldBlockSchema: z.infer<typeof BlockTypesSchema>, newSchema: z.infer<typeof AttributesSchema>): Result[] {
   for (const [attribute, blockType] of Object.entries(oldBlockSchema)) {
     const attributeSchema = newSchema ? newSchema[attribute] : undefined;
-    const nestedSchema = attributeSchema ? attributeSchema.nested_type?.attributes : undefined
+
+    const nestedSchema = attributeSchema ? attributeSchema.nested_type?.attributes : undefined;
+    if (!nestedSchema) {
+      grit.logging.error(`No nested schema found for ${resource}.${attribute}`)
+    }
 
     if (blockType.nesting_mode === "list" || blockType.nesting_mode === "set") {
+      const nestingMode = attributeSchema?.nested_type?.nesting_mode ?? 'list';
       list.push({
         resource,
         attribute,
-        nestingMode: attributeSchema?.nested_type?.nesting_mode ?? 'list',
+        nestingMode
       });
     }
 
     if (blockType.block.block_types) {
-      findRecursiveBlockTypes(list, resource, blockType.block.block_types, newSchema?.[attribute]?.block?.block_types, nestedSchema);
+      findRecursiveBlockTypes(list, resource, blockType.block.block_types, nestedSchema);
     }
   }
 
