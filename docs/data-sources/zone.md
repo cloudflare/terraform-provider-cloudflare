@@ -29,34 +29,25 @@ resource "cloudflare_record" "example" {
 
 ### Optional
 
-- `account` (Attributes) The account the zone belongs to (see [below for nested schema](#nestedatt--account))
+- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `vanity_name_servers` (String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
+- `zone_id` (String) Identifier
+
+### Read-Only
+
 - `activated_on` (String) The last time proof of ownership was detected and the zone was made
 active
 - `created_on` (String) When the zone was created
 - `development_mode` (Number) The interval (in seconds) from when development mode expires
 (positive integer) or last expired (negative integer) for the
 domain. If development mode has never been enabled, this value is 0.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `id` (String) Identifier
-- `meta` (Attributes) Metadata about the zone (see [below for nested schema](#nestedatt--meta))
 - `modified_on` (String) When the zone was last modified
 - `name` (String) The domain name
 - `name_servers` (String) The name servers Cloudflare assigns to a zone
 - `original_dnshost` (String) DNS host at the time of switching to Cloudflare
 - `original_name_servers` (String) Original name servers before moving to Cloudflare
 - `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare
-- `owner` (Attributes) The owner of the zone (see [below for nested schema](#nestedatt--owner))
-- `vanity_name_servers` (String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
-- `zone_id` (String) Identifier
-
-<a id="nestedatt--account"></a>
-### Nested Schema for `account`
-
-Optional:
-
-- `id` (String) Identifier
-- `name` (String) The name of the account
-
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`
@@ -95,30 +86,5 @@ Optional:
   * `starts_with_case_sensitive`
   * `ends_with_case_sensitive`
   * `contains_case_sensitive`
-
-
-
-<a id="nestedatt--meta"></a>
-### Nested Schema for `meta`
-
-Optional:
-
-- `cdn_only` (Boolean) The zone is only configured for CDN
-- `custom_certificate_quota` (Number) Number of Custom Certificates the zone can have
-- `dns_only` (Boolean) The zone is only configured for DNS
-- `foundation_dns` (Boolean) The zone is setup with Foundation DNS
-- `page_rule_quota` (Number) Number of Page Rules a zone can have
-- `phishing_detected` (Boolean) The zone has been flagged for phishing
-- `step` (Number)
-
-
-<a id="nestedatt--owner"></a>
-### Nested Schema for `owner`
-
-Optional:
-
-- `id` (String) Identifier
-- `name` (String) Name of the owner
-- `type` (String) The type of owner
 
 

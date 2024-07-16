@@ -16,13 +16,18 @@ description: |-
 ### Optional
 
 - `account_id` (String) Identifier
+- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `secret` (String) Secret key for this widget.
+- `sitekey` (String) Widget item identifier tag.
+
+### Read-Only
+
 - `bot_fight_mode` (Boolean) If bot_fight_mode is set to `true`, Cloudflare issues computationally
 expensive challenges in response to malicious bots (ENT only).
 - `clearance_level` (String) If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,
 this setting can determine the clearance level to be set
 - `created_on` (String) When the widget was created.
 - `domains` (String)
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `mode` (String) Widget Mode
 - `modified_on` (String) When the widget was modified.
 - `name` (String) Human readable widget name. Not unique. Cloudflare suggests that you
@@ -30,8 +35,6 @@ set this to a meaningful string to make it easier to identify your
 widget, and where it is used.
 - `offlabel` (Boolean) Do not show any Cloudflare branding on the widget (ENT only).
 - `region` (String) Region where this widget can be used.
-- `secret` (String) Secret key for this widget.
-- `sitekey` (String) Widget item identifier tag.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

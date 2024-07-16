@@ -15,34 +15,20 @@ description: |-
 
 ### Optional
 
-- `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
 - `description` (String) An informative summary of the firewall rule.
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `id` (String) The unique identifier of the firewall rule.
 - `path_id` (String) The unique identifier of the firewall rule.
-- `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
 - `priority` (Number) The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.
 - `products` (String)
 - `query_id` (String) The unique identifier of the firewall rule.
 - `ref` (String) A short reference tag. Allows you to select related firewall rules.
 - `zone_identifier` (String) Identifier
 
-<a id="nestedatt--filter"></a>
-### Nested Schema for `filter`
+### Read-Only
 
-Optional:
-
-- `deleted` (Boolean) When true, indicates that the firewall rule was deleted.
-- `description` (String) An informative summary of the filter.
-- `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
-- `paused` (Boolean) When true, indicates that the filter is currently paused.
-- `ref` (String) A short reference tag. Allows you to select related filters.
-
-Read-Only:
-
-- `id` (String) The unique identifier of the filter.
-
+- `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
+- `id` (String) The unique identifier of the firewall rule.
+- `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

@@ -8,14 +8,14 @@
 
     rules =[ {
       action = "skip"
-      action_parameters =[ {
-        ruleset = "current"
-      }]
+      action_parameters = {
+    ruleset = "current"
+  }
       expression = "(cf.zone.plan eq \"ENT\")"
       enabled = true
       description = "example disabled logging"
-      logging =[ {
-        enabled = false
-      }]
+      logging = {
+    enabled = false
+  }
     }]
   }

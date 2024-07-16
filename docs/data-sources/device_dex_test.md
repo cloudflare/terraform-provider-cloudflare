@@ -16,25 +16,17 @@ description: |-
 ### Optional
 
 - `account_id` (String)
-- `data` (Attributes) The configuration object which contains the details for the WARP client to conduct the test. (see [below for nested schema](#nestedatt--data))
 - `description` (String) Additional details about the test.
 - `dex_test_id` (String) API UUID.
-- `enabled` (Boolean) Determines whether or not the test is active.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `interval` (String) How often the test will run.
-- `name` (String) The name of the DEX test. Must be unique.
 - `target_policies` (Attributes List) Device settings profiles targeted by this test (see [below for nested schema](#nestedatt--target_policies))
 - `targeted` (Boolean)
 
-<a id="nestedatt--data"></a>
-### Nested Schema for `data`
+### Read-Only
 
-Optional:
-
-- `host` (String) The desired endpoint to test.
-- `kind` (String) The type of test.
-- `method` (String) The HTTP request method type.
-
+- `enabled` (Boolean) Determines whether or not the test is active.
+- `interval` (String) How often the test will run.
+- `name` (String) The name of the DEX test. Must be unique.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

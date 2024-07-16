@@ -8,11 +8,11 @@
 
     rules =[ {
       action = "serve_error"
-      action_parameters =[ {
-        content = "my example error page"
+      action_parameters = {
+    content = "my example error page"
         content_type = "text/plain"
         status_code = "530"
-      }]
+  }
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http custom error response"
       enabled = true

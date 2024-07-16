@@ -8,13 +8,13 @@
 
     rules =[ {
       action = "rewrite"
-      action_parameters =[ {
-		uri =[ {
-		  path =[ {
-			value = "/"
-		  }]
-		}]
-	  }]
+      action_parameters = {
+    uri = {
+    path = {
+    value = "/"
+  }
+  }
+  }
       expression = "true"
       description = "strip off path"
       enabled = true

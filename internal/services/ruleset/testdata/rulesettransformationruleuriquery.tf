@@ -8,13 +8,13 @@
 
     rules =[ {
       action = "rewrite"
-      action_parameters =[ {
-        uri =[ {
-          query =[ {
-            value = "a=b"
-          }]
-        }]
-      }]
+      action_parameters = {
+    uri = {
+    query = {
+    value = "a=b"
+  }
+  }
+  }
 
       expression = "(http.host eq \"%[4]s\")"
       description = "URI transformation query example"

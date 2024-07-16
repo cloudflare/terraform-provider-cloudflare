@@ -31,26 +31,44 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
-- `created` (String)
 - `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--items--rules))
+- `ruleset` (Attributes) (see [below for nested schema](#nestedatt--items--ruleset))
 - `site_tag` (String) The Web Analytics site identifier.
 - `site_token` (String) The Web Analytics site token.
 - `snippet` (String) Encoded JavaScript snippet.
 
-<a id="nestedatt--items--rules"></a>
-### Nested Schema for `items.rules`
-
 Read-Only:
 
 - `created` (String)
+
+<a id="nestedatt--items--rules"></a>
+### Nested Schema for `items.rules`
+
+Optional:
+
 - `host` (String) The hostname the rule will be applied to.
 - `id` (String) The Web Analytics rule identifier.
 - `inclusive` (Boolean) Whether the rule includes or excludes traffic from being measured.
 - `is_paused` (Boolean) Whether the rule is paused or not.
 - `paths` (List of String) The paths the rule will be applied to.
 - `priority` (Number)
+
+Read-Only:
+
+- `created` (String)
+
+
+<a id="nestedatt--items--ruleset"></a>
+### Nested Schema for `items.ruleset`
+
+Optional:
+
+- `enabled` (Boolean) Whether the ruleset is enabled.
+- `id` (String) The Web Analytics ruleset identifier.
+- `zone_name` (String)
+- `zone_tag` (String) The zone identifier.
 
 

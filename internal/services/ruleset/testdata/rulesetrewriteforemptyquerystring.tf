@@ -8,13 +8,13 @@
 
     rules =[ {
       action = "rewrite"
-      action_parameters =[ {
-		uri =[ {
-		  query =[ {
-			value = ""
-		  }]
-		}]
-	  }]
+      action_parameters = {
+    uri = {
+    query = {
+    value = ""
+  }
+  }
+  }
       expression = "true"
       description = "strip off query string"
       enabled = true

@@ -17,8 +17,11 @@ description: |-
 
 - `account_id` (String) Identifier
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `id` (String) Namespace identifier tag.
 - `namespace_id` (String) Namespace identifier tag.
+
+### Read-Only
+
+- `id` (String) Namespace identifier tag.
 - `supports_url_encoding` (Boolean) True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".
 - `title` (String) A human-readable string name for a Namespace.
 

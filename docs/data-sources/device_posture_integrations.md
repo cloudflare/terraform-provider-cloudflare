@@ -28,11 +28,21 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
+- `config` (Attributes) The configuration object containing third-party integration information. (see [below for nested schema](#nestedatt--items--config))
 - `id` (String) API UUID.
 - `interval` (String) The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).
 - `name` (String) The name of the device posture integration.
 - `type` (String) The type of device posture integration.
+
+<a id="nestedatt--items--config"></a>
+### Nested Schema for `items.config`
+
+Read-Only:
+
+- `api_url` (String) The Workspace One API URL provided in the Workspace One Admin Dashboard.
+- `auth_url` (String) The Workspace One Authorization URL depending on your region.
+- `client_id` (String) The Workspace One client ID provided in the Workspace One Admin Dashboard.
 
 

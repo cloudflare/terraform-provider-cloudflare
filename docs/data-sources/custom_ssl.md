@@ -58,29 +58,26 @@ Optional:
 <a id="nestedatt--keyless_server"></a>
 ### Nested Schema for `keyless_server`
 
-Required:
-
-- `host` (String) The keyless SSL name.
-
 Optional:
 
-- `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--keyless_server--tunnel))
 
 Read-Only:
 
 - `created_on` (String) When the Keyless SSL was created.
 - `enabled` (Boolean) Whether or not the Keyless SSL is on or off.
+- `host` (String) The keyless SSL name.
 - `id` (String) Keyless certificate identifier tag.
 - `modified_on` (String) When the Keyless SSL was last modified.
 - `name` (String) The keyless SSL name.
 - `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.
+- `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
 
 <a id="nestedatt--keyless_server--tunnel"></a>
 ### Nested Schema for `keyless_server.tunnel`
 
-Required:
+Read-Only:
 
 - `private_ip` (String) Private IP of the Key Server Host
 - `vnet_id` (String) Cloudflare Tunnel Virtual Network ID

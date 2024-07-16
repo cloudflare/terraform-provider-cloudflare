@@ -31,13 +31,16 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--items--actions))
-- `enabled` (Boolean) Routing rule status.
-- `id` (String) Routing rule identifier.
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--items--matchers))
 - `name` (String) Routing rule name.
+
+Read-Only:
+
+- `enabled` (Boolean) Routing rule status.
+- `id` (String) Routing rule identifier.
 - `priority` (Number) Priority of the routing rule.
 - `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 

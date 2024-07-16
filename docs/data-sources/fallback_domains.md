@@ -28,10 +28,13 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `description` (String) A description of the fallback domain, displayed in the client UI.
 - `dns_server` (List of String) A list of IP addresses to handle domain resolution.
+
+Read-Only:
+
 - `suffix` (String) The domain suffix to match when resolving locally.
 
 

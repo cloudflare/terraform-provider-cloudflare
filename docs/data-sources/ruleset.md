@@ -16,26 +16,19 @@ description: |-
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
+- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
+- `ruleset_id` (String) The unique ID of the ruleset.
+- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+
+### Read-Only
+
 - `description` (String) An informative description of the ruleset.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `id` (String) The unique ID of the ruleset.
 - `kind` (String) The kind of the ruleset.
 - `last_updated` (String) The timestamp of when the ruleset was last modified.
 - `name` (String) The human-readable name of the ruleset.
 - `phase` (String) The phase of the ruleset.
-- `rules` (Attributes List) The list of rules in the ruleset. (see [below for nested schema](#nestedatt--rules))
-- `ruleset_id` (String) The unique ID of the ruleset.
 - `version` (String) The version of the ruleset.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
-
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
-
-Optional:
-
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
-
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
@@ -67,7 +60,7 @@ Optional:
 <a id="nestedatt--rules--action_parameters--response"></a>
 ### Nested Schema for `rules.action_parameters.response`
 
-Required:
+Read-Only:
 
 - `content` (String) The content to return.
 - `content_type` (String) The type of the content to return.
@@ -78,7 +71,7 @@ Required:
 <a id="nestedatt--rules--logging"></a>
 ### Nested Schema for `rules.logging`
 
-Required:
+Read-Only:
 
 - `enabled` (Boolean) Whether to generate a log when the rule matches.
 

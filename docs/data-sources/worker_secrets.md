@@ -30,7 +30,7 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `name` (String) The name of this secret, this is what will be to access it inside the Worker.
 - `type` (String) The type of secret to put.

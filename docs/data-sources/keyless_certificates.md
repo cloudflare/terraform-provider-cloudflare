@@ -28,6 +28,10 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--items--tunnel))
+
 Read-Only:
 
 - `created_on` (String) When the Keyless SSL was created.
@@ -39,5 +43,13 @@ Read-Only:
 - `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
+
+<a id="nestedatt--items--tunnel"></a>
+### Nested Schema for `items.tunnel`
+
+Read-Only:
+
+- `private_ip` (String) Private IP of the Key Server Host
+- `vnet_id` (String) Cloudflare Tunnel Virtual Network ID
 
 

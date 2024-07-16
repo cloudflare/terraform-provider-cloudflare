@@ -13,8 +13,8 @@ resource "cloudflare_load_balancer_monitor" "%[3]s" {
   port = 8080
   description = "this is a very weird load balancer"
   probe_zone = "%[1]s"
-  header =[ {
+  header = {
     header = "Host"
     values = ["%[1]s"]
-  }]
+  }
 }

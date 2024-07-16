@@ -10,21 +10,21 @@
 		  description = "example"
 		  enabled     = true
 		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters =[ {
-			cache = true
-			edge_ttl =[ {
-			  mode    = "override_origin"
+		  action_parameters = {
+    cache = true
+			edge_ttl = {
+    mode    = "override_origin"
 			  default = 7200
-			}]
-			cache_key =[ {
-			  ignore_query_strings_order = true
-			  custom_key =[ {
-				query_string =[ {
-				  exclude = ["example"]
-				}]
-			  }]
-			}]
-		  }]
+  }
+			cache_key = {
+    ignore_query_strings_order = true
+			  custom_key = {
+    query_string = {
+    exclude = ["example"]
+  }
+  }
+  }
+  }
 		}]
 	  }
 	

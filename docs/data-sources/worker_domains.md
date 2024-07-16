@@ -33,7 +33,7 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Read-Only:
+Optional:
 
 - `environment` (String) Worker environment associated with the zone and hostname.
 - `hostname` (String) Hostname of the Worker Domain.

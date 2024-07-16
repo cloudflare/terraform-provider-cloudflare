@@ -25,14 +25,12 @@ description: |-
 
 Optional:
 
-- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `direction` (String) The direction used to sort returned rules.
 - `egs_pagination` (Attributes) (see [below for nested schema](#nestedatt--find_one_by--egs_pagination))
 - `filters` (Attributes) (see [below for nested schema](#nestedatt--find_one_by--filters))
 - `order` (String) The field used to sort returned rules.
 - `page` (Number) Requested page within paginated list of results.
 - `per_page` (Number) Maximum number of results requested.
-- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 <a id="nestedatt--find_one_by--egs_pagination"></a>
 ### Nested Schema for `find_one_by.egs_pagination`

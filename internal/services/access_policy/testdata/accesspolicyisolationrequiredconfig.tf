@@ -6,8 +6,8 @@
 		activity_log_enabled = true
 		url_browser_isolation_enabled = true
 		non_identity_browser_isolation_enabled = false
-		block_page =[ {
-		  name = "%[1]s"
+		block_page = {
+    name = "%[1]s"
 		  enabled = true
 		  footer_text = "hello"
 		  header_text = "hello"
@@ -15,47 +15,47 @@
 		  background_color = "#000000"
 		  mailto_subject = "hello"
 		  mailto_address = "test@cloudflare.com"
-		}]
-		body_scanning =[ {
-		  inspection_mode = "deep"
-		}]
-		fips =[ {
-		  tls = true
-		}]
-		antivirus =[ {
-		  enabled_download_phase = true
+  }
+		body_scanning = {
+    inspection_mode = "deep"
+  }
+		fips = {
+    tls = true
+  }
+		antivirus = {
+    enabled_download_phase = true
 		  enabled_upload_phase = false
 		  fail_closed = true
-		}]
-		proxy =[ {
-		  tcp = true
+  }
+		proxy = {
+    tcp = true
 		  udp = false
 		  root_ca = true
 		  virtual_ip = false
-		}]
-		logging =[ {
-		  redact_pii = true
+  }
+		logging = {
+    redact_pii = true
 		  settings_by_rule_type =[ {
-			dns =[ {
-			  log_all = false
+			dns = {
+    log_all = false
 			  log_blocks = true
-			}]
-			http =[ {
-			  log_all = true
+  }
+			http = {
+    log_all = true
 			  log_blocks = true
-			}]
-			l4 =[ {
-			  log_all = false
+  }
+			l4 = {
+    log_all = false
 			  log_blocks = true
-			}]
+  }
 		  }]
-		}]
-		ssh_session_log =[ {
-		  public_key = "testvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
-		}]
-		payload_log =[ {
-		  public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
-		}]
+  }
+		ssh_session_log = {
+    public_key = "testvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
+  }
+		payload_log = {
+    public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
+  }
 	  }
 
     resource "cloudflare_access_application" "%[1]s" {

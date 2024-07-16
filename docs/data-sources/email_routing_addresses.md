@@ -32,10 +32,13 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `email` (String) The contact email address of the user.
+
 Read-Only:
 
 - `created` (String) The date and time the destination address has been created.
-- `email` (String) The contact email address of the user.
 - `id` (String) Destination address identifier.
 - `modified` (String) The date and time the destination address was last modified.
 - `tag` (String) Destination address tag. (Deprecated, replaced by destination address identifier)

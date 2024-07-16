@@ -13,10 +13,9 @@
       precedence     = "1"
 
       include =[ {
-        okta =[ {
+        okta = {
           name = ["jacob-group", "jacob-group1"]
           identity_provider_id = "225934dc-14e4-4f55-87be-f5d798d23f91"
         }]
       }]
     }
-  

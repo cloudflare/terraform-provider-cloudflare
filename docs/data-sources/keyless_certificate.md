@@ -15,19 +15,22 @@ description: |-
 
 ### Optional
 
+- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `keyless_certificate_id` (String) Identifier
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))
+- `zone_id` (String) Identifier
+
+### Read-Only
+
 - `created_on` (String) When the Keyless SSL was created.
 - `enabled` (Boolean) Whether or not the Keyless SSL is on or off.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `host` (String) The keyless SSL name.
 - `id` (String) Keyless certificate identifier tag.
-- `keyless_certificate_id` (String) Identifier
 - `modified_on` (String) When the Keyless SSL was last modified.
 - `name` (String) The keyless SSL name.
 - `permissions` (String) Available permissions for the Keyless SSL for the current user requesting the item.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))
-- `zone_id` (String) Identifier
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`
@@ -40,7 +43,7 @@ Required:
 <a id="nestedatt--tunnel"></a>
 ### Nested Schema for `tunnel`
 
-Required:
+Read-Only:
 
 - `private_ip` (String) Private IP of the Key Server Host
 - `vnet_id` (String) Cloudflare Tunnel Virtual Network ID

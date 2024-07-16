@@ -104,6 +104,10 @@ Optional:
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
+Optional:
+
+- `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
+
 Read-Only:
 
 - `activated_on` (String) The last time proof of ownership was detected and the zone was made
@@ -119,6 +123,5 @@ domain. If development mode has never been enabled, this value is 0.
 - `original_dnshost` (String) DNS host at the time of switching to Cloudflare
 - `original_name_servers` (List of String) Original name servers before moving to Cloudflare
 - `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare
-- `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
 
 

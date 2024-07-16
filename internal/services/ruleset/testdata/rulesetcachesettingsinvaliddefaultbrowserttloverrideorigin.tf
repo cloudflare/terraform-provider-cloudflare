@@ -8,12 +8,12 @@
 
     rules =[ {
       action = "set_cache_settings"
-      action_parameters =[ {
-		browser_ttl =[ {
-			mode = "override_origin"
+      action_parameters = {
+    browser_ttl = {
+    mode = "override_origin"
 			default = -1
-		}]
-      }]
+  }
+  }
 	  expression = "true"
 	  description = "%[1]s set cache settings rule"
 	  enabled = true

@@ -13,11 +13,9 @@
       precedence     = "1"
 
       include =[ {
-		external_evaluation =[ {
+		external_evaluation = {
 			evaluate_url = "https://example.com"
 			keys_url = "https://example.com/keys"
 		  }]
       }]
     }
-
-  

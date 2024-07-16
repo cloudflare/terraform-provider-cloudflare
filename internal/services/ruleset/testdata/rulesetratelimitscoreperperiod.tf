@@ -8,15 +8,15 @@
 
     rules =[ {
       action = "block"
-      action_parameters =[ {
-        response =[ {
+      action_parameters = {
+    response = {
           status_code = 418
           content_type = "text/plain"
           content = "test content"
-        }]
-      }]
-      ratelimit =[ {
-        characteristics = [
+        }
+  }
+      ratelimit = {
+    characteristics = [
           "cf.colo.id",
           "ip.src"
         ]
@@ -25,7 +25,7 @@
 		score_response_header_name = "my-score"
         mitigation_timeout = 60
         requests_to_origin = true
-      }]
+  }
       expression = "(http.request.uri.path matches \"^/api/\")"
       description = "example http rate limit"
       enabled = true

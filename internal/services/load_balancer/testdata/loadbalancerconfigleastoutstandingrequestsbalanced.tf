@@ -10,8 +10,6 @@ resource "cloudflare_load_balancer" "%[3]s" {
   rules =[ {
     name = "test rule 1"
     condition = "dns.qry.type == 28"
-    overrides =[ {
-      steering_policy = "least_outstanding_requests"
-    }]
+    overrides = { steering_policy = "least_outstanding_requests" }
   }]
 }

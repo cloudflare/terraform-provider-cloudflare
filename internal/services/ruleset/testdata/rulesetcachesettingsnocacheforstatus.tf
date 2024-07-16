@@ -8,9 +8,9 @@
 
 		rules =[ {
 			action = "set_cache_settings"
-			action_parameters =[ {
-				edge_ttl =[ {
-					mode = "override_origin"
+			action_parameters = {
+    edge_ttl = {
+    mode = "override_origin"
                     default = 60 * 60 * 24 * 30 // 30 days
 					status_code_ttl =[ {
 						status_code_range =[ {
@@ -19,8 +19,8 @@
 						}]
 						value = 0
 					}]
-				}]
-			}]
+  }
+  }
 			expression = "true"
 			description = "%[1]s set cache settings rule"
 			enabled = true

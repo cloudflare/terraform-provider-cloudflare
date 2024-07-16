@@ -15,11 +15,14 @@ description: |-
 
 ### Optional
 
-- `created_on` (String) When the regional hostname was created
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `hostname` (String) DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`
-- `region_key` (String) Identifying key for the region
 - `zone_id` (String) Identifier
+
+### Read-Only
+
+- `created_on` (String) When the regional hostname was created
+- `region_key` (String) Identifying key for the region
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

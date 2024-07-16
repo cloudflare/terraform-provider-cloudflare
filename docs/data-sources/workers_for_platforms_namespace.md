@@ -17,14 +17,17 @@ description: |-
 
 - `account_id` (String) Identifier
 - `created_by` (String) Identifier
-- `created_on` (String) When the script was created.
 - `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `modified_by` (String) Identifier
-- `modified_on` (String) When the script was last modified.
 - `namespace_id` (String) API Resource UUID tag.
 - `namespace_name` (String) Name of the Workers for Platforms dispatch namespace.
 - `script_count` (Number) The current number of scripts in this Dispatch Namespace
+
+### Read-Only
+
+- `created_on` (String) When the script was created.
+- `modified_on` (String) When the script was last modified.
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

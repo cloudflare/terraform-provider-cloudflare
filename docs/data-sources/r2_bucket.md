@@ -21,6 +21,9 @@ description: |-
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `location` (String) Location of the bucket
 - `name` (String) Name of the bucket
+
+### Read-Only
+
 - `storage_class` (String) Storage class for newly uploaded objects, unless specified otherwise.
 
 <a id="nestedatt--find_one_by"></a>

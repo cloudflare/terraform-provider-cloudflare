@@ -8,9 +8,9 @@
 
     rules =[ {
       action = "set_config"
-	  action_parameters =[ {
-		bic  = false
-	  }]
+	  action_parameters = {
+    bic  = false
+  }
 	  expression  = "true"
 	  description = "disable BIC"
 	  enabled     = true

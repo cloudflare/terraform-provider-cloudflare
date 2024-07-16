@@ -6,10 +6,10 @@ resource "cloudflare_load_balancer" "%[3]s" {
   default_pool_ids = ["${cloudflare_load_balancer_pool.%[3]s.id}"]
   session_affinity = "cookie"
   session_affinity_ttl = 1800
-  session_affinity_attributes =[ = {
+  session_affinity_attributes = {
   samesite = "Auto"
     secure = "Auto"
     drain_duration = 60
     zero_downtime_failover = "sticky"
-}]
+}
 }

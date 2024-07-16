@@ -17,25 +17,28 @@ description: |-
 
 - `address` (String) The hostname or IP address of the origin server to run health checks on.
 - `check_regions` (String) A list of regions from which to run health checks. Null means Cloudflare will pick a default region.
-- `consecutive_fails` (Number) The number of consecutive fails required from a health check before changing the health to unhealthy.
-- `consecutive_successes` (Number) The number of consecutive successes required from a health check before changing the health to healthy.
-- `created_on` (String)
 - `description` (String) A human-readable description of the health check.
-- `failure_reason` (String) The current failure reason if status is unhealthy.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `healthcheck_id` (String) Identifier
 - `http_config` (Attributes) Parameters specific to an HTTP or HTTPS health check. (see [below for nested schema](#nestedatt--http_config))
+- `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.
+- `tcp_config` (Attributes) Parameters specific to TCP health check. (see [below for nested schema](#nestedatt--tcp_config))
+- `zone_id` (String) Identifier
+
+### Read-Only
+
+- `consecutive_fails` (Number) The number of consecutive fails required from a health check before changing the health to unhealthy.
+- `consecutive_successes` (Number) The number of consecutive successes required from a health check before changing the health to healthy.
+- `created_on` (String)
+- `failure_reason` (String) The current failure reason if status is unhealthy.
 - `id` (String) Identifier
 - `interval` (Number) The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations.
 - `modified_on` (String)
-- `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.
 - `retries` (Number) The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.
 - `status` (String) The current status of the origin server according to the health check.
 - `suspended` (Boolean) If suspended, no health checks are sent to the origin.
-- `tcp_config` (Attributes) Parameters specific to TCP health check. (see [below for nested schema](#nestedatt--tcp_config))
 - `timeout` (Number) The timeout (in seconds) before marking the health check as failed.
 - `type` (String) The protocol to use for the health check. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'.
-- `zone_id` (String) Identifier
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

@@ -25,13 +25,13 @@ description: |-
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
 
-Required:
-
-- `tls_sockaddr` (String) A network address of the form "host:port" that the WARP client will use to detect the presence of a TLS host.
-
 Optional:
 
 - `sha256` (String) The SHA-256 hash of the TLS certificate presented by the host found at tls_sockaddr. If absent, regular certificate verification (trusted roots, valid timestamp, etc) will be used to validate the certificate.
+
+Read-Only:
+
+- `tls_sockaddr` (String) A network address of the form "host:port" that the WARP client will use to detect the presence of a TLS host.
 
 
 <a id="nestedatt--find_one_by"></a>

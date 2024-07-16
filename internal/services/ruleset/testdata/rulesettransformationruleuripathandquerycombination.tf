@@ -8,16 +8,16 @@
 
     rules =[ {
       action = "rewrite"
-      action_parameters =[ {
-        uri =[ {
-          query =[ {
-            expression = "concat(\"requestUrl=\", http.request.full_uri)"
-          }]
-          path =[ {
-            value = "/path/to/url"
-          }]
-        }]
-      }]
+      action_parameters = {
+    uri = {
+    query = {
+    expression = "concat(\"requestUrl=\", http.request.full_uri)"
+  }
+          path = {
+    value = "/path/to/url"
+  }
+  }
+  }
       expression = "true"
       description = "example for combining URI action parameters for path and query"
       enabled = true

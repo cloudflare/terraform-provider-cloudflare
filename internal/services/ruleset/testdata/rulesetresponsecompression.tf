@@ -8,14 +8,14 @@
 
     rules =[ {
       action = "compress_response"
-      action_parameters =[ {
-        algorithms =[ {
+      action_parameters = {
+    algorithms =[ {
 			name = "brotli"
  		},
     {
     name = "default"
     }]
-      }]
+  }
 
       expression = "true"
       description = "%[1]s compress response rule"

@@ -17,12 +17,14 @@ description: |-
 
 - `account_id` (String) Account identifier tag.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `id` (String) Membership identifier tag.
 - `member_id` (String) Membership identifier tag.
 - `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--policies))
 - `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--roles))
+
+### Read-Only
+
+- `id` (String) Membership identifier tag.
 - `status` (String) A member's status in the account.
-- `user` (Attributes) Details of the user associated to the membership. (see [below for nested schema](#nestedatt--user))
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`
@@ -69,10 +71,6 @@ Read-Only:
 <a id="nestedatt--policies--resource_groups"></a>
 ### Nested Schema for `policies.resource_groups`
 
-Required:
-
-- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--policies--resource_groups--scope))
-
 Optional:
 
 - `meta` (String) Attributes associated to the resource group.
@@ -81,20 +79,18 @@ Read-Only:
 
 - `id` (String) Identifier of the group.
 - `name` (String) Name of the resource group.
+- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--policies--resource_groups--scope))
 
 <a id="nestedatt--policies--resource_groups--scope"></a>
 ### Nested Schema for `policies.resource_groups.scope`
 
-Required:
-
-- `objects` (Attributes List) A list of scope objects for additional context. (see [below for nested schema](#nestedatt--policies--resource_groups--scope--objects))
-
 Read-Only:
 
 - `key` (String) This is a combination of pre-defined resource name and identifier (like Account ID etc.)
+- `objects` (Attributes List) A list of scope objects for additional context. (see [below for nested schema](#nestedatt--policies--resource_groups--scope--objects))
 
 <a id="nestedatt--policies--resource_groups--scope--objects"></a>
-### Nested Schema for `policies.resource_groups.scope.key`
+### Nested Schema for `policies.resource_groups.scope.objects`
 
 Read-Only:
 
@@ -107,32 +103,11 @@ Read-Only:
 <a id="nestedatt--roles"></a>
 ### Nested Schema for `roles`
 
-Required:
-
-- `id` (String) Role identifier tag.
-
 Read-Only:
 
 - `description` (String) Description of role's permissions.
+- `id` (String) Role identifier tag.
 - `name` (String) Role Name.
 - `permissions` (String) Access permissions for this User.
-
-
-<a id="nestedatt--user"></a>
-### Nested Schema for `user`
-
-Required:
-
-- `email` (String) The contact email address of the user.
-
-Optional:
-
-- `first_name` (String) User's first name
-- `last_name` (String) User's last name
-
-Read-Only:
-
-- `id` (String) Identifier
-- `two_factor_authentication_enabled` (Boolean) Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.
 
 

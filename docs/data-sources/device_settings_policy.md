@@ -45,27 +45,27 @@ description: |-
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`
 
-Required:
-
-- `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
-- `description` (String) A description of the Split Tunnel item, displayed in the client UI.
-
 Optional:
 
 - `host` (String) The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.
+
+Read-Only:
+
+- `address` (String) The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.
+- `description` (String) A description of the Split Tunnel item, displayed in the client UI.
 
 
 <a id="nestedatt--fallback_domains"></a>
 ### Nested Schema for `fallback_domains`
 
-Required:
-
-- `suffix` (String) The domain suffix to match when resolving locally.
-
 Optional:
 
 - `description` (String) A description of the fallback domain, displayed in the client UI.
 - `dns_server` (List of String) A list of IP addresses to handle domain resolution.
+
+Read-Only:
+
+- `suffix` (String) The domain suffix to match when resolving locally.
 
 
 <a id="nestedatt--find_one_by"></a>
@@ -79,14 +79,14 @@ Required:
 <a id="nestedatt--include"></a>
 ### Nested Schema for `include`
 
-Required:
-
-- `address` (String) The address in CIDR format to include in the tunnel. If address is present, host must not be present.
-- `description` (String) A description of the split tunnel item, displayed in the client UI.
-
 Optional:
 
 - `host` (String) The domain name to include in the tunnel. If host is present, address must not be present.
+
+Read-Only:
+
+- `address` (String) The address in CIDR format to include in the tunnel. If address is present, host must not be present.
+- `description` (String) A description of the split tunnel item, displayed in the client UI.
 
 
 <a id="nestedatt--service_mode_v2"></a>

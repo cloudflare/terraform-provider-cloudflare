@@ -15,17 +15,20 @@ description: |-
 
 ### Optional
 
-- `created_on` (String)
 - `description` (String) An optional description of the hostname.
 - `dnslink` (String) DNSLink value used if the target is ipfs.
 - `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `id` (String) Identifier
 - `identifier` (String) Identifier
+- `target` (String) Target gateway of the hostname.
+- `zone_identifier` (String) Identifier
+
+### Read-Only
+
+- `created_on` (String)
+- `id` (String) Identifier
 - `modified_on` (String)
 - `name` (String) The hostname that will point to the target gateway via CNAME.
 - `status` (String) Status of the hostname's activation.
-- `target` (String) Target gateway of the hostname.
-- `zone_identifier` (String) Identifier
 
 <a id="nestedatt--find_one_by"></a>
 ### Nested Schema for `find_one_by`

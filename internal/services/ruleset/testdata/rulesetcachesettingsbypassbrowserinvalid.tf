@@ -10,13 +10,13 @@
 		  description = "example"
 		  enabled     = true
 		  expression  = "(http.host eq \"example.com\" and starts_with(http.request.uri.path, \"/example\"))"
-		  action_parameters =[ {
-			cache = true
-			browser_ttl =[ {
-			  mode    = "bypass"
+		  action_parameters = {
+    cache = true
+			browser_ttl = {
+    mode    = "bypass"
 			  default = 100
-			}]
-		  }]
+  }
+  }
 		}]
 	  }
 	

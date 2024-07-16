@@ -8,8 +8,8 @@
 
     rules =[ {
       action = "rewrite"
-      action_parameters =[ {
-        headers =[ {
+      action_parameters = {
+    headers =[ {
           name      = "example1"
           operation = "set"
           value     = "my-http-header-value1"
@@ -23,9 +23,7 @@
     name      = "example3"
           operation = "remove"
     }]
-
-
-      }]
+  }
 
       expression = "true"
       description = "example header transformation rule"

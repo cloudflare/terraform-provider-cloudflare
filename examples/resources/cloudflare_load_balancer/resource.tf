@@ -29,12 +29,12 @@ resource "cloudflare_load_balancer" "example" {
   rules = [{
     name      = "example rule"
     condition = "http.request.uri.path contains \"testing\""
-    fixed_response = [{
+    fixed_response = {
       message_body = "hello"
       status_code  = 200
       content_type = "html"
       location     = "www.example.com"
-    }]
+    }
   }]
 }
 
