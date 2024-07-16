@@ -936,8 +936,25 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttrSet(name, "domain"),
 					resource.TestCheckResourceAttr(name, "self_hosted_domains.#", "2"),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.0", fmt.Sprintf("d1.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.1", fmt.Sprintf("d2.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains2(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.#", "2"),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.0", fmt.Sprintf("d3.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.1", fmt.Sprintf("d4.%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
@@ -1389,6 +1406,22 @@ resource "cloudflare_access_application" "%[1]s" {
   self_hosted_domains       = [
     "d1.%[1]s.%[2]s",
     "d2.%[1]s.%[2]s"
+  ]
+}
+`, rnd, domain, identifier.Type, identifier.Identifier)
+}
+
+func testAccCloudflareAccessApplicationWithSelfHostedDomains2(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_application" "%[1]s" {
+  %[3]s_id                  = "%[4]s"
+  name                      = "%[1]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
+  self_hosted_domains       = [
+    "d3.%[1]s.%[2]s",
+    "d4.%[1]s.%[2]s"
   ]
 }
 `, rnd, domain, identifier.Type, identifier.Identifier)
