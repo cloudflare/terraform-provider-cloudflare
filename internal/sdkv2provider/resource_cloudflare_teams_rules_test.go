@@ -168,7 +168,6 @@ func TestAccCloudflareTeamsRule_CustomResolver(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccPreCheck(t)
 		},
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCheckCloudflareTeamsRuleDestroy,
