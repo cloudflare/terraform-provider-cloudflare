@@ -139,7 +139,7 @@ func (r TeamsAccountResource) Schema(ctx context.Context, req resource.SchemaReq
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
-								Description: "UUID of certificate to be used for interception.",
+								Description: "UUID of certificate to be used for interception. Certificate must be active on the edge.",
 								Required:    true,
 							},
 						},

@@ -40,6 +40,88 @@ func (r TeamsLocationResource) UpgradeState(ctx context.Context) map[int64]resou
 						Description: "True if the location needs to resolve EDNS queries.",
 						Optional:    true,
 					},
+					"endpoints": schema.SingleNestedAttribute{
+						Description: "The destination endpoints configured for this location. When updating a location, if this field is absent or set with null, the endpoints configuration remains unchanged.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"doh": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "True if the endpoint is enabled for this location.",
+										Optional:    true,
+									},
+									"networks": schema.ListNestedAttribute{
+										Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+										Optional:    true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"network": schema.StringAttribute{
+													Description: "The IP address or IP CIDR.",
+													Required:    true,
+												},
+											},
+										},
+									},
+									"require_token": schema.BoolAttribute{
+										Description: "True if the endpoint requires [user identity](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/agentless/dns/dns-over-https/#filter-doh-requests-by-user) authentication.",
+										Optional:    true,
+									},
+								},
+							},
+							"dot": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "True if the endpoint is enabled for this location.",
+										Optional:    true,
+									},
+									"networks": schema.ListNestedAttribute{
+										Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+										Optional:    true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"network": schema.StringAttribute{
+													Description: "The IP address or IP CIDR.",
+													Required:    true,
+												},
+											},
+										},
+									},
+								},
+							},
+							"ipv4": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "True if the endpoint is enabled for this location.",
+										Optional:    true,
+									},
+								},
+							},
+							"ipv6": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "True if the endpoint is enabled for this location.",
+										Optional:    true,
+									},
+									"networks": schema.ListNestedAttribute{
+										Description: "A list of allowed source IPv6 network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+										Optional:    true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"network": schema.StringAttribute{
+													Description: "The IPv6 address or IPv6 CIDR.",
+													Required:    true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 					"networks": schema.ListNestedAttribute{
 						Description: "A list of network ranges that requests from this location would originate from. A non-empty list is only effective if the ipv4 endpoint is enabled for this location.",
 						Optional:    true,
