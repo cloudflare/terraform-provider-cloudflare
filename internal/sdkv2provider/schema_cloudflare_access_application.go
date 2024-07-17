@@ -67,7 +67,6 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			},
 			Optional: true,
 			Description: "The policies associated with the application, in ascending order of precedence." +
-				" When omitted, the application policies are not be updated." +
 				" Warning: Do not use this field while you still have this application ID referenced as `application_id`" +
 				" in any `cloudflare_access_policy` resource, as it can result in an inconsistent state.",
 		},
