@@ -43,6 +43,10 @@ func (r HyperdriveConfigResource) UpgradeState(ctx context.Context) map[int64]re
 								Description: "The host (hostname or IP) of your origin database.",
 								Required:    true,
 							},
+							"port": schema.Int64Attribute{
+								Description: "The port (default: 5432 for Postgres) of your origin database.",
+								Required:    true,
+							},
 							"scheme": schema.StringAttribute{
 								Description: "Specifies the URL scheme used to connect to your origin database.",
 								Computed:    true,
@@ -55,14 +59,6 @@ func (r HyperdriveConfigResource) UpgradeState(ctx context.Context) map[int64]re
 							"user": schema.StringAttribute{
 								Description: "The user of your origin database.",
 								Required:    true,
-							},
-							"access_client_id": schema.StringAttribute{
-								Description: "The Client ID of the Access token to use when connecting to the origin database",
-								Optional:    true,
-							},
-							"port": schema.Int64Attribute{
-								Description: "The port (default: 5432 for Postgres) of your origin database.",
-								Optional:    true,
 							},
 						},
 					},
