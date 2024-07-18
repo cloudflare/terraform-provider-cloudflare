@@ -3,7 +3,6 @@
 package teams_list
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,13 +17,13 @@ type TeamsListModel struct {
 	Description types.String            `tfsdk:"description" json:"description"`
 	Type        types.String            `tfsdk:"type" json:"type"`
 	Items       *[]*TeamsListItemsModel `tfsdk:"items" json:"items"`
-	CreatedAt   timetypes.RFC3339       `tfsdk:"created_at" json:"created_at,computed"`
-	UpdatedAt   timetypes.RFC3339       `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt   types.String            `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt   types.String            `tfsdk:"updated_at" json:"updated_at,computed"`
 	ListCount   types.Float64           `tfsdk:"list_count" json:"count,computed"`
 }
 
 type TeamsListItemsModel struct {
-	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
-	Description types.String      `tfsdk:"description" json:"description"`
-	Value       types.String      `tfsdk:"value" json:"value"`
+	CreatedAt   types.String `tfsdk:"created_at" json:"created_at"`
+	Description types.String `tfsdk:"description" json:"description"`
+	Value       types.String `tfsdk:"value" json:"value"`
 }

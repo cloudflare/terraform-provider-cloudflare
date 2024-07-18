@@ -3,8 +3,6 @@
 package static_route
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,10 +21,10 @@ type StaticRouteModel struct {
 	Weight        types.Int64                `tfsdk:"weight" json:"weight"`
 	Routes        *[]*StaticRouteRoutesModel `tfsdk:"routes" json:"routes,computed"`
 	Modified      types.Bool                 `tfsdk:"modified" json:"modified,computed"`
-	ModifiedRoute jsontypes.Normalized       `tfsdk:"modified_route" json:"modified_route,computed"`
+	ModifiedRoute types.String               `tfsdk:"modified_route" json:"modified_route,computed"`
 	Deleted       types.Bool                 `tfsdk:"deleted" json:"deleted,computed"`
-	DeletedRoute  jsontypes.Normalized       `tfsdk:"deleted_route" json:"deleted_route,computed"`
-	Route         jsontypes.Normalized       `tfsdk:"route" json:"route,computed"`
+	DeletedRoute  types.String               `tfsdk:"deleted_route" json:"deleted_route,computed"`
+	Route         types.String               `tfsdk:"route" json:"route,computed"`
 }
 
 type StaticRouteScopeModel struct {
@@ -38,10 +36,10 @@ type StaticRouteRoutesModel struct {
 	Nexthop     types.String                 `tfsdk:"nexthop" json:"nexthop"`
 	Prefix      types.String                 `tfsdk:"prefix" json:"prefix"`
 	Priority    types.Int64                  `tfsdk:"priority" json:"priority"`
-	ID          types.String                 `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339            `tfsdk:"created_on" json:"created_on,computed"`
+	ID          types.String                 `tfsdk:"id" json:"id,computed"`
+	CreatedOn   types.String                 `tfsdk:"created_on" json:"created_on,computed"`
 	Description types.String                 `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339            `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn  types.String                 `tfsdk:"modified_on" json:"modified_on,computed"`
 	Scope       *StaticRouteRoutesScopeModel `tfsdk:"scope" json:"scope"`
 	Weight      types.Int64                  `tfsdk:"weight" json:"weight"`
 }
