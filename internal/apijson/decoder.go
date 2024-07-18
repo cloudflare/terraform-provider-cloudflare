@@ -1,9 +1,11 @@
 package apijson
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/big"
 	"reflect"
 	"strconv"
 	"sync"
@@ -364,6 +366,21 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 		}
 	}
 
+	if (t == reflect.TypeOf(basetypes.NumberValue{})) {
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if node.Type == gjson.Null {
+				value.Set(reflect.ValueOf(types.Float64Null()))
+				return nil
+			}
+			value.Set(reflect.ValueOf(types.NumberValue(big.NewFloat(node.Float()))))
+			_, err := strconv.ParseFloat(node.Str, 64)
+			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
+				return fmt.Errorf("apijson: failed to parse types.Float64Value")
+			}
+			return nil
+		}
+	}
+
 	if (t == reflect.TypeOf(basetypes.BoolValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if node.Type == gjson.Null {
@@ -380,15 +397,45 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.ListValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			eleType := value.Interface().(basetypes.ListValue).ElementType(context.TODO())
 			if node.Type == gjson.Null {
-				// value.Set(reflect.ValueOf(types.ListNull()))
+				value.Set(reflect.ValueOf(types.ListNull(eleType)))
 				return nil
 			}
-			if node.Type == gjson.True || node.Type == gjson.False {
-				value.Set(reflect.ValueOf(types.BoolValue(node.Bool())))
+			return fmt.Errorf("cannot deserialize ListValue")
+		}
+	}
+
+	if (t == reflect.TypeOf(basetypes.DynamicValue{})) {
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			// deserialize based on the type of JSON we have
+			switch node.Type {
+			case gjson.Null:
+				value.Set(reflect.ValueOf(types.DynamicNull()))
 				return nil
+			case gjson.True:
+				value.Set(reflect.ValueOf(types.DynamicValue(types.BoolValue(true))))
+				return nil
+			case gjson.False:
+				value.Set(reflect.ValueOf(types.DynamicValue(types.BoolValue(false))))
+				return nil
+			case gjson.Number:
+				_, err := strconv.ParseInt(node.String(), 10, 64)
+				if err == nil {
+					value.Set(reflect.ValueOf(types.DynamicValue(types.Int64Value(node.Int()))))
+					return nil
+				} else {
+					value.Set(reflect.ValueOf(types.DynamicValue(types.Float64Value(node.Float()))))
+					return nil
+				}
+			case gjson.String:
+				value.Set(reflect.ValueOf(types.DynamicValue(types.StringValue(node.String()))))
+				return nil
+			case gjson.JSON:
+				return fmt.Errorf("apijson: cannot deserialize nested JSON into types.DynamicValue")
+			default:
+				return fmt.Errorf("apijson: cannot deserialize unexpected type to types.DynamicValue")
 			}
-			return fmt.Errorf("cannot deserialize bool")
 		}
 	}
 

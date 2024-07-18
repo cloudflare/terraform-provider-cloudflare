@@ -1,11 +1,13 @@
 package apijson
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/tidwall/gjson"
@@ -140,14 +142,21 @@ type UnionTime time.Time
 
 func (UnionTime) union() {}
 
-type DNSRecordsResultEnvelope struct {
-	Result DNSRecordsModel `json:"result"`
+type ResultEnvelope struct {
+	Result RecordsModel `json:"result"`
 }
 
-type DNSRecordsModel struct {
-	ZoneID  types.String `tfsdk:"zone_id" json:"zone_id"`
-	Content types.String `tfsdk:"content" json:"content"`
-	ID      types.String `tfsdk:"id" json:"id,computed"`
+type RecordsModel struct {
+	A types.String `tfsdk:"a" json:"a"`
+	B types.String `tfsdk:"b" json:"b"`
+	C types.String `tfsdk:"c" json:"c,computed"`
+}
+
+func DropDiagnostic[resType interface{}](res resType, diags diag.Diagnostics) resType {
+	for _, d := range diags {
+		panic(fmt.Sprintf("%s: %s", d.Summary(), d.Detail()))
+	}
+	return res
 }
 
 var tests = map[string]struct {
@@ -297,10 +306,11 @@ var tests = map[string]struct {
 		},
 	},
 
-	"tfsdk_null_string": {"", types.StringNull()},
-	"tfsdk_null_int":    {"", types.Int64Null()},
-	"tfsdk_null_float":  {"", types.Float64Null()},
-	"tfsdk_null_bool":   {"", types.BoolNull()},
+	"tfsdk_null_string":  {"", types.StringNull()},
+	"tfsdk_null_int":     {"", types.Int64Null()},
+	"tfsdk_null_float":   {"", types.Float64Null()},
+	"tfsdk_null_bool":    {"", types.BoolNull()},
+	"tfsdk_null_dynamic": {"", types.DynamicNull()},
 
 	"tfsdk_string":             {`"hey"`, types.StringValue("hey")},
 	"tfsdk_true":               {"true", types.BoolValue(true)},
@@ -312,6 +322,8 @@ var tests = map[string]struct {
 	"tfsdk_float_1.54":         {"1.54", types.Float64Value(1.54)},
 	"tfsdk_float_1.89":         {"1.89", types.Float64Value(1.89)},
 	"tfsdk_array_ptr":          {"[\"hi\",null]", &[]types.String{types.StringValue("hi"), types.StringNull()}},
+	"tfsdk_dynamic_string":     {`"hey"`, types.DynamicValue(types.StringValue("hey"))},
+	"tfsdk_dynamic_int":        {"5", types.DynamicValue(types.Int64Value(5))},
 
 	"embedded_tfsdk_struct": {
 		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
@@ -333,11 +345,11 @@ var decode_only_tests = map[string]struct {
 	val interface{}
 }{
 	"tfsdk_struct_decode": {
-		`{"result":{"id":"7887590e1967befa70f48ffe9f61ce80","zone_id":"88281d6015751d6172e7313b0c665b5e","zone_name":"stlapi.com","name":"test_text_node_5.stlapi.com","type":"URI","content":"http://example.com/example.html\t20","priority":10,"proxiable":false,"proxied":false,"ttl":1,"locked":false,"data":{"content":"http://example.com/example.html","weight":20},"meta":{"auto_added":false,"managed_by_apps":false,"managed_by_argo_tunnel":false},"comment":"this is a test DNS record from terraform","tags":[],"created_on":"2024-03-14T18:30:43.769177Z","modified_on":"2024-03-14T18:30:43.769177Z"},"success":true,"errors":[],"messages":[]}`,
-		DNSRecordsResultEnvelope{DNSRecordsModel{
-			ZoneID:  types.StringValue("88281d6015751d6172e7313b0c665b5e"),
-			Content: types.StringValue("http://example.com/example.html\t20"),
-			ID:      types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
+		`{"result":{"c":"7887590e1967befa70f48ffe9f61ce80","a":"88281d6015751d6172e7313b0c665b5e","extra":"property","another":2,"b":"http://example.com/example.html\t20"}`,
+		ResultEnvelope{RecordsModel{
+			A: types.StringValue("88281d6015751d6172e7313b0c665b5e"),
+			B: types.StringValue("http://example.com/example.html\t20"),
+			C: types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
 		}},
 	},
 
@@ -356,11 +368,11 @@ var encode_only_tests = map[string]struct {
 	val interface{}
 }{
 	"tfsdk_struct_encode": {
-		`{"result":{"content":"http://example.com/example.html` + "\t" + `20","zone_id":"88281d6015751d6172e7313b0c665b5e"}}`,
-		DNSRecordsResultEnvelope{DNSRecordsModel{
-			ZoneID:  types.StringValue("88281d6015751d6172e7313b0c665b5e"),
-			Content: types.StringValue("http://example.com/example.html\t20"),
-			ID:      types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
+		`{"result":{"a":"88281d6015751d6172e7313b0c665b5e","b":"http://example.com/example.html	20"}}`,
+		ResultEnvelope{RecordsModel{
+			A: types.StringValue("88281d6015751d6172e7313b0c665b5e"),
+			B: types.StringValue("http://example.com/example.html\t20"),
+			C: types.StringValue("7887590e1967befa70f48ffe9f61ce80"),
 		}},
 	},
 
@@ -437,6 +449,16 @@ var updateTests = map[string]struct {
 	"int update":    {types.Int64Value(42), types.Int64Value(43), "43"},
 	"unset int":     {types.Int64Value(42), types.Int64Null(), "null"},
 	"omit null int": {types.Int64Null(), types.Int64Null(), ""},
+
+	"dynamic omit null":                     {types.DynamicNull(), types.DynamicNull(), ""},
+	"dynamic omit underlying null state":    {types.DynamicValue(types.Int64Null()), types.DynamicNull(), ""},
+	"dynamic omit underlying null plan":     {types.DynamicNull(), types.DynamicValue(types.Int64Null()), ""},
+	"dynamic omit unknown":                  {types.DynamicUnknown(), types.DynamicUnknown(), ""},
+	"dynamic omit underlying unknown state": {types.DynamicValue(types.Int64Unknown()), types.DynamicUnknown(), ""},
+	"dynamic omit underlying unknown plan":  {types.DynamicUnknown(), types.DynamicValue(types.Int64Unknown()), ""},
+	"dynamic unset null":                    {types.DynamicValue(types.Int64Value(4)), types.DynamicNull(), "null"},
+	"dynamic int set":                       {types.DynamicNull(), types.DynamicValue(types.Int64Value(5)), "5"},
+	"dynamic int update":                    {types.DynamicValue(types.Int64Value(4)), types.DynamicValue(types.Int64Value(5)), "5"},
 
 	"set struct fields": {
 		TfsdkStructs{},
@@ -520,6 +542,72 @@ func TestEncodeForUpdate(t *testing.T) {
 			}
 			if string(raw) != test.expected {
 				t.Fatalf("expected %+#v, %+#v to serialize to \n%s\n but got \n%s\n", test.state, test.plan, test.expected, string(raw))
+			}
+		})
+	}
+}
+
+var decode_from_value_tests = map[string]struct {
+	buf      string
+	starting interface{}
+	expected interface{}
+}{
+
+	"tfsdk_dynamic_null": {
+		`null`,
+		types.DynamicNull(),
+		types.DynamicNull(),
+	},
+
+	"tfsdk_dynamic_string_from_null": {
+		`"hey"`,
+		types.DynamicNull(),
+		types.DynamicValue(types.StringValue("hey")),
+	},
+
+	"tfsdk_dynamic_string_from_unknown": {
+		`"hey"`,
+		types.DynamicUnknown(),
+		types.DynamicValue(types.StringValue("hey")),
+	},
+
+	"tfsdk_dynamic_string_from_value": {
+		`"hey"`,
+		types.DynamicValue(types.StringValue("before_value")),
+		types.DynamicValue(types.StringValue("hey")),
+	},
+
+	"tfsdk_dynamic_int_from_null": {
+		`14`,
+		types.DynamicNull(),
+		types.DynamicValue(types.Int64Value(14)),
+	},
+
+	"tfsdk_dynamic_int_from_unknown": {
+		`14`,
+		types.DynamicUnknown(),
+		types.DynamicValue(types.Int64Value(14)),
+	},
+
+	"tfsdk_dynamic_int_from_value": {
+		`14`,
+		types.DynamicValue(types.Int64Value(5)),
+		types.DynamicValue(types.Int64Value(14)),
+	},
+}
+
+func TestDecodeFromValue(t *testing.T) {
+	for name, test := range decode_from_value_tests {
+		t.Run(name, func(t *testing.T) {
+			v := reflect.ValueOf(test.starting)
+			starting := reflect.New(v.Type())
+			starting.Elem().Set(v)
+
+			if err := Unmarshal([]byte(test.buf), starting.Interface()); err != nil {
+				t.Fatalf("deserialization of %v failed with error %v", test.buf, err)
+			}
+			if !reflect.DeepEqual(starting.Elem().Interface(), test.expected) {
+				t.Fatalf("expected '%s' to deserialize to \n%#v\nbut got\n%#v", test.buf, test.expected, starting)
 			}
 		})
 	}
