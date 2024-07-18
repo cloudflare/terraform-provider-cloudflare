@@ -19,7 +19,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 
 resource "cloudflare_fallback_domain" "%[1]s" {
   account_id = "%[2]s"
-  domains =[ {
+  domains = [{
     description = "%[3]s"
     suffix      = "%[4]s"
     dns_server  = ["%[5]s"]

@@ -12,7 +12,7 @@
       decision       = "allow"
       precedence     = "1"
 
-      include =[ {
+      include = [{
         ip = ["10.0.0.1/32", "10.0.0.2/32"]
       }]
     }

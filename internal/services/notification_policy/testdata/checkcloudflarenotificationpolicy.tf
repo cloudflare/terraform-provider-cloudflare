@@ -5,7 +5,7 @@
     description = "test description"
     enabled     =  true
     alert_type  = "universal_ssl_event_type"
-    email_integration =[ {
+    email_integration = [{
       name =  ""
       id   =  "test@example.com"
     },

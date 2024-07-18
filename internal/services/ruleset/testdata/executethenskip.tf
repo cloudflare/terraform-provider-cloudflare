@@ -6,7 +6,7 @@
     kind        = "root"
     phase       = "http_request_firewall_managed"
 
-    rules =[ {
+    rules = [{
       action = "skip"
       action_parameters = {
     rules = {
@@ -24,7 +24,7 @@
     action = "execute"
       action_parameters = {
     id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        overrides = { rules =[ {
+        overrides = { rules = [{
             id = "6179ae15870a4bb7b2d480d4843b323c"
             action = "block"
             score_threshold = 25

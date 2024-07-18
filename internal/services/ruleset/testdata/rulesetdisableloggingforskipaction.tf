@@ -6,7 +6,7 @@
     kind        = "root"
     phase       = "http_request_firewall_managed"
 
-    rules =[ {
+    rules = [{
       action = "skip"
       action_parameters = {
     ruleset = "current"

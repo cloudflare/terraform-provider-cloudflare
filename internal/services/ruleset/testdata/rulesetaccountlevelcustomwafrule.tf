@@ -6,7 +6,7 @@
     kind        = "custom"
     phase       = "http_request_firewall_custom"
 
-    rules =[ {
+    rules = [{
       action = "block"
       expression = "(http.host eq \"%[4]s\")"
       description = "SID"
@@ -21,7 +21,7 @@
     kind        = "root"
     phase       = "http_request_firewall_custom"
 
-    rules =[ {
+    rules = [{
       action = "execute"
       action_parameters = {
     id = cloudflare_ruleset.%[1]s_account_custom_firewall.id

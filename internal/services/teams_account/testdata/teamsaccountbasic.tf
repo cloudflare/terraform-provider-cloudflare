@@ -40,7 +40,7 @@ resource "cloudflare_teams_account" "%[1]s" {
   }
   logging = {
     redact_pii = true
-    settings_by_rule_type =[ {
+    settings_by_rule_type = [{
       dns = {
     log_all = false
         log_blocks = true
@@ -61,10 +61,10 @@ resource "cloudflare_teams_account" "%[1]s" {
   payload_log = {
     public_key = "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="
   }
-  extended_email_matching =[ {
+  extended_email_matching = [{
 	enabled = true
   }]
-  custom_certificate =[ {
+  custom_certificate = [{
 	enabled = false
   }]
 }

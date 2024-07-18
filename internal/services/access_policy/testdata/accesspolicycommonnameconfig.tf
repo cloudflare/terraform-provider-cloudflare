@@ -12,7 +12,7 @@
       decision       = "allow"
       precedence     = "1"
 
-      include =[ {
+      include = [{
         common_name = "example@example.com"
       }]
     }

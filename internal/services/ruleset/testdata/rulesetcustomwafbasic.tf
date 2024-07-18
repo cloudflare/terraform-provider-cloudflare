@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_request_firewall_custom"
 
-    rules =[ {
+    rules = [{
       action = "challenge"
       expression = "(ip.geoip.country eq \"GB\" or ip.geoip.country eq \"FR\") or cf.threat_score > 0"
       description = "%[1]s ruleset rule description"

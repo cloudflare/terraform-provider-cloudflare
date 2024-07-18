@@ -5,8 +5,8 @@
     description = "%[3]s"
     kind = "redirect"
 
-    item =[ {
-      value =[ {
+    item = [{
+      value = [{
         redirect = {
           source_url = "cloudflare.com/blog"
           target_url = "https://blog.cloudflare.com"
@@ -15,7 +15,7 @@
       comment = "one"
     },
     {
-    value =[ {
+    value = [{
         redirect = {
           source_url = "cloudflare.com/foo"
           target_url = "https://foo.cloudflare.com"

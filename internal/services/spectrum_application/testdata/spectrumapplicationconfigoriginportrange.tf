@@ -21,7 +21,7 @@ resource "cloudflare_spectrum_application" "%[3]s" {
   origin_dns = {
   name = "%[3]s.origin.%[2]s"
 }
-  origin_port_range =[ {
+  origin_port_range = [{
     start = 2022
     end   = 2023
   }]

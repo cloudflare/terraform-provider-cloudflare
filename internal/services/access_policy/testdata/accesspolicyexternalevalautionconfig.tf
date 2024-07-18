@@ -12,7 +12,7 @@
       decision       = "allow"
       precedence     = "1"
 
-      include =[ {
+      include = [{
 		external_evaluation = {
 			evaluate_url = "https://example.com"
 			keys_url = "https://example.com/keys"

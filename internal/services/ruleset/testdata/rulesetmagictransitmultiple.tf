@@ -6,7 +6,7 @@
     kind        = "root"
     phase       = "magic_transit"
 
-    rules =[ {
+    rules = [{
       action = "block"
       expression = "udp.dstport in { 32768..65535 }"
       description = "Block UDP Ephemeral Ports"

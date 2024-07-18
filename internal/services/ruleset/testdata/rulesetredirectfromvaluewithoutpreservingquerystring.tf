@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_request_dynamic_redirect"
 
-    rules =[ {
+    rules = [{
       action = "redirect"
       action_parameters = {
     from_value = {

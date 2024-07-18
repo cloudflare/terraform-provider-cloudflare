@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "ddos_l7"
 
-    rules =[ {
+    rules = [{
       action = "execute"
       action_parameters = {
     id = "4d21379b4f9f4bb088e0729962c8b3cf"

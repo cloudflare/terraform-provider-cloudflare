@@ -35,7 +35,7 @@
   }
 		logging = {
     redact_pii = true
-		  settings_by_rule_type =[ {
+		  settings_by_rule_type = [{
 			dns = {
     log_all = false
 			  log_blocks = true
@@ -72,7 +72,7 @@
       decision       = "allow"
       precedence     = "1"
 
-      include =[ {
+      include = [{
         email = ["a@example.com", "b@example.com"]
       }]
 

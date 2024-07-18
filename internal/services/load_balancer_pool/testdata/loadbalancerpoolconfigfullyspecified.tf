@@ -2,12 +2,12 @@
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   name = "my-tf-pool-basic-%[1]s"
   account_id = "%[3]s"
-  origins =[ {
+  origins = [{
     name = "example-1"
     address = "192.0.2.1"
     enabled = false
     weight = 1.0
-    header =[ {
+    header = [{
       header = "Host"
       values = ["test1.%[2]s"]
      }]
@@ -16,7 +16,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     name = "example-2"
     address = "192.0.2.2"
     weight = 0.5
-    header =[ {
+    header = [{
       header = "Host"
       values = ["test2.%[2]s"]
     }]

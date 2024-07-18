@@ -7,7 +7,7 @@ resource "cloudflare_load_balancer" "%[3]s" {
   description = "tf-acctest load balancer using least connections steering"
   proxied = true
   steering_policy = "least_connections"
-  rules =[ {
+  rules = [{
     name = "test rule 1"
     condition = "dns.qry.type == 28"
     overrides = { steering_policy = "least_connections" }

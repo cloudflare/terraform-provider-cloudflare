@@ -6,7 +6,7 @@
     kind        = "root"
     phase       = "magic_transit"
 
-    rules =[ {
+    rules = [{
       action = "skip"
       action_parameters = {
     ruleset = "current"

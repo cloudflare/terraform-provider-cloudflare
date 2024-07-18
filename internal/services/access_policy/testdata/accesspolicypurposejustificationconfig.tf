@@ -12,7 +12,7 @@
       decision       = "allow"
       precedence     = "1"
 
-      include =[ {
+      include = [{
         email = ["a@example.com", "b@example.com"]
       }]
 

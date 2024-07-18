@@ -7,11 +7,11 @@
     phase       = "http_request_firewall_managed"
 
     # enable all "XSS" rules
-    rules =[ {
+    rules = [{
       action = "execute"
       action_parameters = {
     id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides = { categories =[ {
+        overrides = { categories = [{
             category = "xss"
             action = "block"
             enabled = true
@@ -25,7 +25,7 @@
     action = "execute"
       action_parameters = {
     id = "4814384a9e5d4991b9815dcfc25d2f1f"
-        overrides = { rules =[ {
+        overrides = { rules = [{
             id = "6179ae15870a4bb7b2d480d4843b323c"
             action = "block"
             score_threshold = 60

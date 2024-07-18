@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_request_origin"
 
-    rules =[ {
+    rules = [{
       action = "route"
       action_parameters = {
     host_header = "%[1]s.%[4]s"

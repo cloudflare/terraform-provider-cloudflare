@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_log_custom_fields"
 
-    rules =[ {
+    rules = [{
       action = "log_custom_field"
       action_parameters = {
     request_fields = [

@@ -16,11 +16,11 @@
       purpose_justification_prompt = "Why should we let you in?"
       approval_required = "true"
 
-      include =[ {
+      include = [{
         email = ["a@example.com", "b@example.com"]
       }]
 
-      approval_group =[ {
+      approval_groups = [{
         email_addresses = ["test1@example.com", "test2@example.com", "test3@example.com"]
         approvals_needed = "2"
       },

@@ -6,10 +6,10 @@
     kind        = "zone"
     phase       = "http_response_headers_transform"
 
-    rules =[ {
+    rules = [{
       action = "rewrite"
       action_parameters = {
-    headers =[ {
+    headers = [{
           name      = "example1"
           operation = "set"
           value     = "my-http-header-value1"

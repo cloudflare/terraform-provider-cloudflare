@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_config_settings"
 
-    rules =[ {
+    rules = [{
 		action = "set_cache_settings"
 		action_parameters = {
     cache_key = {

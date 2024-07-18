@@ -6,18 +6,18 @@
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
 
-		rules =[ {
+		rules = [{
 			action = "set_cache_settings"
 			action_parameters = {
     edge_ttl = {
-    status_code_ttl =[ {
-						status_code_range =[ {
+    status_code_ttl = [{
+						status_code_range = [{
 						  from = 105
 						}]
 						value = 1
 					  },
     {
-    status_code_range =[ {
+    status_code_range = [{
 						  from = 100
 						  to   = 101
 						}]

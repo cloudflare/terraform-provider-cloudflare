@@ -5,14 +5,14 @@
     description = "%[3]s"
     kind = "asn"
 
-    item =[ {
-      value =[ {
+    item = [{
+      value = [{
         asn = 345
       }]
       comment = "ASN test"
     },
     {
-    value =[ {
+    value = [{
         asn = 567
       }]
       comment = "ASN test two"

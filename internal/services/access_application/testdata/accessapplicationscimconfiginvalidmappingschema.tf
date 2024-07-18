@@ -33,16 +33,16 @@ resource "cloudflare_access_application" "%[1]s" {
 		user = "test"
 		password = "12345"
 }
-	mappings =[ {
+	mappings = [{
 		schema = "ietf:params:scim:schemas:core:2.0:User"
 		enabled = true
 		filter = "title pr or userType eq \"Intern\""
 		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations =[ {
-			create = true
+		operations = {
+    create = true
 			update = true
 			delete = true
-		}]
+  }
 	}]
   }
 }

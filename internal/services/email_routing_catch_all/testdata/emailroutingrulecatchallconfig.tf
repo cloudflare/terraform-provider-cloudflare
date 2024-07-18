@@ -4,11 +4,11 @@
 		  enabled = "%[3]t"
 		  name = "terraform rule catch all"
 
-		  matcher =[ {
+		  matcher = [{
 			type  = "all"
 		  }]
 
-		  action =[ {
+		  action = [{
 			type = "forward"
 			value = ["destinationaddress@example.net"]
 		  }]

@@ -6,7 +6,7 @@
     kind        = "custom"
     phase       = "http_request_firewall_custom"
 
-    rules =[ {
+    rules = [{
       action = "log"
       expression = "http.request.method == \"POST\" && http.request.uri == \"/login.php\""
       enabled = true

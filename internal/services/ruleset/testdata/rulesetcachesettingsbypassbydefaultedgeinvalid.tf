@@ -5,7 +5,7 @@
 		description = "set cache settings for the request"
 		kind        = "zone"
 		phase       = "http_request_cache_settings"
-		rules =[ {
+		rules = [{
 			action      = "set_cache_settings"
 			description = "example"
 			enabled     = true

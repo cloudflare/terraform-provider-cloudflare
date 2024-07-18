@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_request_cache_settings"
 
-    rules =[ {
+    rules = [{
       action = "set_cache_settings"
       action_parameters = {
     browser_ttl = {

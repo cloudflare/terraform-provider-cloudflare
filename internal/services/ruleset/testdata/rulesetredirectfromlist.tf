@@ -13,7 +13,7 @@
     kind        = "root"
     phase       = "http_request_redirect"
 
-    rules =[ {
+    rules = [{
       action = "redirect"
       action_parameters = {
     from_list = {

@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_request_firewall_managed"
 
-    rules =[ {
+    rules = [{
       action = "skip"
       action_parameters = {
     rulesets = ["efb7b8c949ac4650a09736fc376e9aee"]
@@ -37,7 +37,7 @@
     action = "execute"
       action_parameters = {
     id = "efb7b8c949ac4650a09736fc376e9aee"
-        overrides = { rules =[ {
+        overrides = { rules = [{
             id = "5de7edfa648c4d6891dc3e7f84534ffa"
             action = "block"
             enabled = true
@@ -48,7 +48,7 @@
             enabled = true
     }]
           
-          categories =[ {
+          categories = [{
             category = "wordpress"
             action = "js_challenge"
             enabled = true

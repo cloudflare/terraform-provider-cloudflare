@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_custom_errors"
 
-    rules =[ {
+    rules = [{
       action = "serve_error"
       action_parameters = {
     content = "my example error page"

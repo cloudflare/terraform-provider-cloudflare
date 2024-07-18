@@ -6,10 +6,10 @@
     kind        = "zone"
     phase       = "http_response_compression"
 
-    rules =[ {
+    rules = [{
       action = "compress_response"
       action_parameters = {
-    algorithms =[ {
+    algorithms = [{
 			name = "brotli"
  		},
     {

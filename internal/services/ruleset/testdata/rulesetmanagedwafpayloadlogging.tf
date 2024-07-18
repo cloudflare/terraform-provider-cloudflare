@@ -5,7 +5,7 @@
     description = "%[1]s ruleset description"
     kind        = "zone"
     phase       = "http_request_firewall_managed"
-    rules =[ {
+    rules = [{
       action = "execute"
       action_parameters = {
     id = "efb7b8c949ac4650a09736fc376e9aee"

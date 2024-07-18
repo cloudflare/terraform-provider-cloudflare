@@ -6,7 +6,7 @@
     kind        = "zone"
     phase       = "http_ratelimit"
 
-    rules =[ {
+    rules = [{
       action = "block"
       action_parameters = {
     response = {

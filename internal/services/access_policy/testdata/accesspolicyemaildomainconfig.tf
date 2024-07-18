@@ -13,7 +13,7 @@
       precedence     = "1"
       session_duration = "12h"
 
-      include =[ {
+      include = [{
         email_domain = ["example.com"]
       }]
     }
