@@ -3,7 +3,6 @@
 package device_settings_policy
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -51,9 +50,9 @@ type DeviceSettingsPolicyExcludeDataSourceModel struct {
 }
 
 type DeviceSettingsPolicyFallbackDomainsDataSourceModel struct {
-	Suffix      types.String            `tfsdk:"suffix" json:"suffix,computed"`
-	Description types.String            `tfsdk:"description" json:"description"`
-	DNSServer   *[]jsontypes.Normalized `tfsdk:"dns_server" json:"dns_server"`
+	Suffix      types.String    `tfsdk:"suffix" json:"suffix,computed"`
+	Description types.String    `tfsdk:"description" json:"description"`
+	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server"`
 }
 
 type DeviceSettingsPolicyIncludeDataSourceModel struct {
