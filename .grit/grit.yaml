@@ -1,5 +1,7 @@
 version: 0.0.1
 patterns:
+  - name: version_5_upgrade
+    file: ../templates/guides/version-5-upgrade.md
   - name: github.com/getgrit/stdlib#*
   - name: extract_tests
     description: Extract tests from Go files into their own files

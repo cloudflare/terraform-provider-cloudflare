@@ -12,7 +12,6 @@ terraform_cloudflare_v5()
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   require {
@@ -25,7 +24,6 @@ resource "cloudflare_access_policy" "test_policy" {
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   require =[{
@@ -42,7 +40,6 @@ Multiple blocks should be collapsed into a single list attribute.
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   include {
@@ -63,7 +60,6 @@ resource "cloudflare_access_policy" "test_policy" {
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   include = [{
@@ -88,7 +84,6 @@ Nested blocks must also be rewritten.
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   require {
@@ -103,13 +98,12 @@ resource "cloudflare_access_policy" "test_policy" {
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   require = [{
-    azure = [{
+    azure = {
       id = ["1234"]
-    }]
+    }
   }]
 }
 ```

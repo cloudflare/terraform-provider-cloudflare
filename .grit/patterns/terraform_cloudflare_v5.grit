@@ -18,7 +18,7 @@ pattern terraform_cloudflare_v5() {
   inline_cloudflare_block_to_map(`operations`) as $block where { $block <: within `resource "cloudflare_access_application" $_ { $_ }` },
   inline_cloudflare_block_to_list(`exclude`) as $block where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
   inline_cloudflare_block_to_list(`auth_context`) as $block where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
-  inline_cloudflare_block_to_list(`azure`) as $block where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
+  inline_cloudflare_block_to_map(`azure`) as $block where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
   inline_cloudflare_block_to_map(`external_evaluation`) as $block where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
   inline_cloudflare_block_to_list(`github`) as $block where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
   inline_cloudflare_block_to_map(`gsuite`) as $block where { $block <: within `resource "cloudflare_access_group" $_ { $_ }` },
@@ -34,7 +34,7 @@ pattern terraform_cloudflare_v5() {
   inline_cloudflare_block_to_list(`approval_group`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
   inline_cloudflare_block_to_list(`exclude`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
   inline_cloudflare_block_to_list(`auth_context`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
-  inline_cloudflare_block_to_list(`azure`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+  inline_cloudflare_block_to_map(`azure`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
   inline_cloudflare_block_to_map(`external_evaluation`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
   inline_cloudflare_block_to_list(`github`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
   inline_cloudflare_block_to_map(`gsuite`) as $block where { $block <: within `resource "cloudflare_access_policy" $_ { $_ }` },
@@ -214,7 +214,20 @@ pattern terraform_cloudflare_v5() {
   inline_cloudflare_block_to_list(`minify`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` },
   inline_cloudflare_block_to_list(`mobile_redirect`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` },
   inline_cloudflare_block_to_list(`nel`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` },
-  inline_cloudflare_block_to_list(`security_header`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` }    
+  inline_cloudflare_block_to_list(`security_header`) as $block where { $block <: within `resource "cloudflare_zone_settings_override" $_ { $_ }` },
+
+  // provider
+  `version = $version` => `version = "~> 5"` where { $match <: within `provider "cloudflare" { $_ }` },
+
+  // cloudflare_access_policy
+  `application_id = $id` as $app_id => . where { $app_id <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+  `precedence = $p` as $precedence => . where { $precedence <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+
+  // cloudflare_zone
+  `account_id = $id` => `account = {
+    id = $id
+  }` where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
+  `jump_start = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }`}
   }
 }
 
