@@ -35,7 +35,7 @@ resource "cloudflare_zone" "example" {
 
 - `jump_start` (Boolean) Whether to scan for DNS records on creation. Ignored after zone is created.
 - `paused` (Boolean) Whether this zone is paused (traffic bypasses Cloudflare). Defaults to `false`.
-- `plan` (String) The name of the commercial plan to apply to the zone. Available values: `free`, `lite`, `pro`, `pro_plus`, `business`, `enterprise`, `partners_free`, `partners_pro`, `partners_business`, `partners_enterprise`.
+- `plan` (String) The name of the commercial plan to apply to the zone. Available values: `free`, `lite`, `pro`, `pro_plus`, `business`, `enterprise`, `partners_free`, `partners_pro`, `partners_business`, `partners_enterprise`, `msp_biz`.
 - `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is typically a partner-hosted zone or a CNAME setup. Available values: `full`, `partial`, `secondary`. Defaults to `full`.
 - `vanity_name_servers` (List of String) List of Vanity Nameservers (if set).
 
