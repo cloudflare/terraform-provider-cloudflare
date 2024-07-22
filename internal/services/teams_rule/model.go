@@ -35,7 +35,7 @@ type TeamsRuleRuleSettingsModel struct {
 	AddHeaders                      jsontypes.Normalized                            `tfsdk:"add_headers" json:"add_headers"`
 	AllowChildBypass                types.Bool                                      `tfsdk:"allow_child_bypass" json:"allow_child_bypass"`
 	AuditSSH                        *TeamsRuleRuleSettingsAuditSSHModel             `tfsdk:"audit_ssh" json:"audit_ssh"`
-	BisoAdminControls               *TeamsRuleRuleSettingsBisoAdminControlsModel    `tfsdk:"biso_admin_controls" json:"biso_admin_controls"`
+	BISOAdminControls               *TeamsRuleRuleSettingsBISOAdminControlsModel    `tfsdk:"biso_admin_controls" json:"biso_admin_controls"`
 	BlockPageEnabled                types.Bool                                      `tfsdk:"block_page_enabled" json:"block_page_enabled"`
 	BlockReason                     types.String                                    `tfsdk:"block_reason" json:"block_reason"`
 	BypassParentRule                types.Bool                                      `tfsdk:"bypass_parent_rule" json:"bypass_parent_rule"`
@@ -59,7 +59,7 @@ type TeamsRuleRuleSettingsAuditSSHModel struct {
 	CommandLogging types.Bool `tfsdk:"command_logging" json:"command_logging"`
 }
 
-type TeamsRuleRuleSettingsBisoAdminControlsModel struct {
+type TeamsRuleRuleSettingsBISOAdminControlsModel struct {
 	DCP types.Bool `tfsdk:"dcp" json:"dcp"`
 	DD  types.Bool `tfsdk:"dd" json:"dd"`
 	DK  types.Bool `tfsdk:"dk" json:"dk"`

@@ -32,7 +32,7 @@ func (r R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"location_hint": schema.StringAttribute{
+			"location": schema.StringAttribute{
 				Description: "Location of the bucket",
 				Optional:    true,
 				Validators: []validator.String{
@@ -51,13 +51,6 @@ func (r R2BucketResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"creation_date": schema.StringAttribute{
 				Description: "Creation timestamp",
 				Computed:    true,
-			},
-			"location": schema.StringAttribute{
-				Description: "Location of the bucket",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("apac", "eeur", "enam", "weur", "wnam"),
-				},
 			},
 		},
 	}
