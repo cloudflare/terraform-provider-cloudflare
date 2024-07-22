@@ -1,0 +1,18 @@
+language hcl
+
+pattern terraform_cloudflare_v5_attribute_renames() {
+  any {
+    // provider
+    `version = $version` => `version = "~> 5"` where { $match <: within `provider "cloudflare" { $_ }` },
+
+    // cloudflare_access_policy
+    `application_id = $id` as $app_id => . where { $app_id <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+    `precedence = $p` as $precedence => . where { $precedence <: within `resource "cloudflare_access_policy" $_ { $_ }` },
+
+    // cloudflare_zone
+    `account_id = $id` => `account = {
+      id = $id
+    }` where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
+    `jump_start = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }` }
+  }
+}
