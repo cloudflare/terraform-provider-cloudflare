@@ -5,7 +5,6 @@ package notification_policy_webhooks
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -47,9 +46,6 @@ func (r NotificationPolicyWebhooksResource) UpgradeState(ctx context.Context) ma
 							Attributes: map[string]schema.Attribute{
 								"code": schema.Int64Attribute{
 									Required: true,
-									Validators: []validator.Int64{
-										int64validator.AtLeast(1000),
-									},
 								},
 								"message": schema.StringAttribute{
 									Required: true,
@@ -63,9 +59,6 @@ func (r NotificationPolicyWebhooksResource) UpgradeState(ctx context.Context) ma
 							Attributes: map[string]schema.Attribute{
 								"code": schema.Int64Attribute{
 									Required: true,
-									Validators: []validator.Int64{
-										int64validator.AtLeast(1000),
-									},
 								},
 								"message": schema.StringAttribute{
 									Required: true,

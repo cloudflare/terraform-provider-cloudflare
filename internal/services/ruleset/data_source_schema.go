@@ -5,7 +5,6 @@ package ruleset
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -104,9 +103,6 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 										"status_code": schema.Int64Attribute{
 											Description: "The status code to return.",
 											Computed:    true,
-											Validators: []validator.Int64{
-												int64validator.Between(400, 499),
-											},
 										},
 									},
 								},

@@ -3,7 +3,6 @@
 package account_member
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -33,15 +32,15 @@ type AccountMemberPoliciesDataSourceModel struct {
 }
 
 type AccountMemberPoliciesPermissionGroupsDataSourceModel struct {
-	ID   types.String         `tfsdk:"id" json:"id,computed"`
-	Meta jsontypes.Normalized `tfsdk:"meta" json:"meta"`
-	Name types.String         `tfsdk:"name" json:"name,computed"`
+	ID   types.String `tfsdk:"id" json:"id,computed"`
+	Meta types.String `tfsdk:"meta" json:"meta"`
+	Name types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type AccountMemberPoliciesResourceGroupsDataSourceModel struct {
 	ID    types.String                                                `tfsdk:"id" json:"id,computed"`
 	Scope *[]*AccountMemberPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope,computed"`
-	Meta  jsontypes.Normalized                                        `tfsdk:"meta" json:"meta"`
+	Meta  types.String                                                `tfsdk:"meta" json:"meta"`
 	Name  types.String                                                `tfsdk:"name" json:"name,computed"`
 }
 

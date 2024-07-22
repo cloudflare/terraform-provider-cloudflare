@@ -3,8 +3,6 @@
 package keyless_certificate
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,12 +18,12 @@ type KeylessCertificatesDataSourceModel struct {
 
 type KeylessCertificatesItemsDataSourceModel struct {
 	ID          types.String                                   `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                              `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn   types.String                                   `tfsdk:"created_on" json:"created_on,computed"`
 	Enabled     types.Bool                                     `tfsdk:"enabled" json:"enabled,computed"`
 	Host        types.String                                   `tfsdk:"host" json:"host,computed"`
-	ModifiedOn  timetypes.RFC3339                              `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn  types.String                                   `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                                   `tfsdk:"name" json:"name,computed"`
-	Permissions *[]jsontypes.Normalized                        `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions *[]types.String                                `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                                  `tfsdk:"port" json:"port,computed"`
 	Status      types.String                                   `tfsdk:"status" json:"status,computed"`
 	Tunnel      *KeylessCertificatesItemsTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`

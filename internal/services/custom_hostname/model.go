@@ -3,8 +3,6 @@
 package custom_hostname
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,9 +18,9 @@ type CustomHostnameModel struct {
 	Hostname           types.String                       `tfsdk:"hostname" json:"hostname"`
 	CustomOriginServer types.String                       `tfsdk:"custom_origin_server" json:"custom_origin_server"`
 	CustomOriginSNI    types.String                       `tfsdk:"custom_origin_sni" json:"custom_origin_sni"`
-	CreatedAt          timetypes.RFC3339                  `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt          types.String                       `tfsdk:"created_at" json:"created_at,computed"`
 	Status             types.String                       `tfsdk:"status" json:"status,computed"`
-	VerificationErrors *[]jsontypes.Normalized            `tfsdk:"verification_errors" json:"verification_errors,computed"`
+	VerificationErrors *[]types.String                    `tfsdk:"verification_errors" json:"verification_errors,computed"`
 }
 
 type CustomHostnameSSLModel struct {

@@ -3,8 +3,6 @@
 package load_balancer
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,16 +14,16 @@ type LoadBalancerModel struct {
 	ID                        types.String                                `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                `tfsdk:"zone_id" path:"zone_id"`
 	DefaultPools              *[]types.String                             `tfsdk:"default_pools" json:"default_pools"`
-	FallbackPool              jsontypes.Normalized                        `tfsdk:"fallback_pool" json:"fallback_pool"`
+	FallbackPool              types.String                                `tfsdk:"fallback_pool" json:"fallback_pool"`
 	Name                      types.String                                `tfsdk:"name" json:"name"`
 	AdaptiveRouting           *LoadBalancerAdaptiveRoutingModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
-	CountryPools              jsontypes.Normalized                        `tfsdk:"country_pools" json:"country_pools"`
+	CountryPools              types.String                                `tfsdk:"country_pools" json:"country_pools"`
 	Description               types.String                                `tfsdk:"description" json:"description"`
 	LocationStrategy          *LoadBalancerLocationStrategyModel          `tfsdk:"location_strategy" json:"location_strategy"`
-	PopPools                  jsontypes.Normalized                        `tfsdk:"pop_pools" json:"pop_pools"`
+	PopPools                  types.String                                `tfsdk:"pop_pools" json:"pop_pools"`
 	Proxied                   types.Bool                                  `tfsdk:"proxied" json:"proxied"`
 	RandomSteering            *LoadBalancerRandomSteeringModel            `tfsdk:"random_steering" json:"random_steering"`
-	RegionPools               jsontypes.Normalized                        `tfsdk:"region_pools" json:"region_pools"`
+	RegionPools               types.String                                `tfsdk:"region_pools" json:"region_pools"`
 	Rules                     *[]*LoadBalancerRulesModel                  `tfsdk:"rules" json:"rules"`
 	SessionAffinity           types.String                                `tfsdk:"session_affinity" json:"session_affinity"`
 	SessionAffinityAttributes *LoadBalancerSessionAffinityAttributesModel `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes"`
@@ -33,8 +31,8 @@ type LoadBalancerModel struct {
 	SteeringPolicy            types.String                                `tfsdk:"steering_policy" json:"steering_policy"`
 	TTL                       types.Float64                               `tfsdk:"ttl" json:"ttl"`
 	Enabled                   types.Bool                                  `tfsdk:"enabled" json:"enabled"`
-	CreatedOn                 timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn                timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn                 types.String                                `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn                types.String                                `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type LoadBalancerAdaptiveRoutingModel struct {
@@ -43,12 +41,12 @@ type LoadBalancerAdaptiveRoutingModel struct {
 
 type LoadBalancerLocationStrategyModel struct {
 	Mode      types.String `tfsdk:"mode" json:"mode"`
-	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs"`
+	PreferEcs types.String `tfsdk:"prefer_ecs" json:"prefer_ecs"`
 }
 
 type LoadBalancerRandomSteeringModel struct {
-	DefaultWeight types.Float64        `tfsdk:"default_weight" json:"default_weight"`
-	PoolWeights   jsontypes.Normalized `tfsdk:"pool_weights" json:"pool_weights"`
+	DefaultWeight types.Float64 `tfsdk:"default_weight" json:"default_weight"`
+	PoolWeights   types.String  `tfsdk:"pool_weights" json:"pool_weights"`
 }
 
 type LoadBalancerRulesModel struct {
@@ -70,13 +68,13 @@ type LoadBalancerRulesFixedResponseModel struct {
 
 type LoadBalancerRulesOverridesModel struct {
 	AdaptiveRouting           *LoadBalancerRulesOverridesAdaptiveRoutingModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
-	CountryPools              jsontypes.Normalized                                      `tfsdk:"country_pools" json:"country_pools"`
+	CountryPools              types.String                                              `tfsdk:"country_pools" json:"country_pools"`
 	DefaultPools              *[]types.String                                           `tfsdk:"default_pools" json:"default_pools"`
-	FallbackPool              jsontypes.Normalized                                      `tfsdk:"fallback_pool" json:"fallback_pool"`
+	FallbackPool              types.String                                              `tfsdk:"fallback_pool" json:"fallback_pool"`
 	LocationStrategy          *LoadBalancerRulesOverridesLocationStrategyModel          `tfsdk:"location_strategy" json:"location_strategy"`
-	PopPools                  jsontypes.Normalized                                      `tfsdk:"pop_pools" json:"pop_pools"`
+	PopPools                  types.String                                              `tfsdk:"pop_pools" json:"pop_pools"`
 	RandomSteering            *LoadBalancerRulesOverridesRandomSteeringModel            `tfsdk:"random_steering" json:"random_steering"`
-	RegionPools               jsontypes.Normalized                                      `tfsdk:"region_pools" json:"region_pools"`
+	RegionPools               types.String                                              `tfsdk:"region_pools" json:"region_pools"`
 	SessionAffinity           types.String                                              `tfsdk:"session_affinity" json:"session_affinity"`
 	SessionAffinityAttributes *LoadBalancerRulesOverridesSessionAffinityAttributesModel `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes"`
 	SessionAffinityTTL        types.Float64                                             `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl"`
@@ -90,12 +88,12 @@ type LoadBalancerRulesOverridesAdaptiveRoutingModel struct {
 
 type LoadBalancerRulesOverridesLocationStrategyModel struct {
 	Mode      types.String `tfsdk:"mode" json:"mode"`
-	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs"`
+	PreferEcs types.String `tfsdk:"prefer_ecs" json:"prefer_ecs"`
 }
 
 type LoadBalancerRulesOverridesRandomSteeringModel struct {
-	DefaultWeight types.Float64        `tfsdk:"default_weight" json:"default_weight"`
-	PoolWeights   jsontypes.Normalized `tfsdk:"pool_weights" json:"pool_weights"`
+	DefaultWeight types.Float64 `tfsdk:"default_weight" json:"default_weight"`
+	PoolWeights   types.String  `tfsdk:"pool_weights" json:"pool_weights"`
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesModel struct {
