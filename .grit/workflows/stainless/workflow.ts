@@ -132,16 +132,14 @@ export default await sdk.defineWorkflow<typeof schema>({
     const query = `
 language hcl
 
-pattern terraform_cloudflare_v5() {
+pattern terraform_cloudflare_v5_block_to_attribute() {
   any {
-${subqueries.join(',\n')}    
+${subqueries.join(',\n')}
   }
-}
-
-terraform_cloudflare_v5()`;
+}`;
 
     await grit.stdlib.writeFile({
-      path: `.grit/patterns/terraform_cloudflare_v5.grit`,
+      path: `.grit/patterns/terraform_cloudflare_v5_block_to_attribute.grit`,
       content: query,
     }, {});
 
