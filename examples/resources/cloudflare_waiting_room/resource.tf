@@ -18,4 +18,6 @@ resource "cloudflare_waiting_room" "example" {
   }
 
   queueing_status_code  = 200
+
+  enabled_origin_commands = ["revoke"]
 }

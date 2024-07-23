@@ -64,6 +64,7 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		CookieSuffix:            d.Get("cookie_suffix").(string),
 		AdditionalRoutes:        additional_routes,
 		QueueingStatusCode:      d.Get("queueing_status_code").(int),
+		EnabledOriginCommands:   d.Get("enabled_origin_commands").([]string),
 	}
 }
 
@@ -119,6 +120,7 @@ func resourceCloudflareWaitingRoomRead(ctx context.Context, d *schema.ResourceDa
 	d.Set("cookie_suffix", waitingRoom.CookieSuffix)
 	d.Set("additional_routes", flattenWaitingRoomAdditionalRoutes(waitingRoom.AdditionalRoutes))
 	d.Set("queueing_status_code", waitingRoom.QueueingStatusCode)
+	d.Set("enabled_origin_commands", waitingRoom.EnabledOriginCommands)
 	return nil
 }
 

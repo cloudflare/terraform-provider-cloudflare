@@ -80,6 +80,7 @@ func TestAccCloudflareWaitingRoom_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "additional_routes.1.host", "shop2."+domain),
 					resource.TestCheckResourceAttr(name, "additional_routes.1.path", "/"),
 					resource.TestCheckResourceAttr(name, "queueing_status_code", "200"),
+					resource.TestCheckResourceAttr(name, "enabled_origin_commands.0", "revoke"),
 				),
 			},
 		},
@@ -148,6 +149,8 @@ resource "cloudflare_waiting_room" "%[1]s" {
   }
 
   queueing_status_code      = 200
+
+  enabled_origin_commands   = ["revoke"]
 
   depends_on = [cloudflare_record.%[1]s-shop-1, cloudflare_record.%[1]s-shop-2]
 }

@@ -35,6 +35,10 @@ var waitingRoomQueueingMethod = []string{
 	"reject",
 }
 
+var waitingRoomOriginCommands = []string{
+	"revoke",
+}
+
 func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		consts.ZoneIDSchemaKey: {
@@ -176,6 +180,16 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Type:        schema.TypeInt,
 			Optional:    true,
 			Default:     200,
+		},
+
+		"enabled_origin_commands": {
+			Description: fmt.Sprintf("The list of enabled origin commands for the waiting room. %s", renderAvailableDocumentationValuesStringSlice(waitingRoomOriginCommands)),
+			Type:        schema.TypeList,
+			Optional:    true,
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringInSlice(waitingRoomQueueingMethod, false),
+			},
 		},
 	}
 }
