@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
@@ -80,10 +81,10 @@ func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 		data = &env.Result
 	} else {
-		dataFindOneByCreatedOn, errs := data.FindOneBy.CreatedOn.ValueRFC3339Time()
-		resp.Diagnostics.Append(errs...)
-		dataFindOneByModifiedOn, errs := data.FindOneBy.ModifiedOn.ValueRFC3339Time()
-		resp.Diagnostics.Append(errs...)
+		dataFindOneByCreatedOn, err := time.Parse(time.RFC3339, data.FindOneBy.CreatedOn.ValueString())
+		resp.Diagnostics.AddError("failed to parse time", err.Error())
+		dataFindOneByModifiedOn, err := time.Parse(time.RFC3339, data.FindOneBy.ModifiedOn.ValueString())
+		resp.Diagnostics.AddError("failed to parse time", err.Error())
 		if resp.Diagnostics.HasError() {
 			return
 		}

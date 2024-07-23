@@ -3,8 +3,6 @@
 package custom_hostname
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,14 +26,14 @@ type CustomHostnamesDataSourceModel struct {
 type CustomHostnamesItemsDataSourceModel struct {
 	ID                        types.String                                                  `tfsdk:"id" json:"id,computed"`
 	Hostname                  types.String                                                  `tfsdk:"hostname" json:"hostname,computed"`
-	CreatedAt                 timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at"`
+	CreatedAt                 types.String                                                  `tfsdk:"created_at" json:"created_at"`
 	CustomMetadata            *CustomHostnamesItemsCustomMetadataDataSourceModel            `tfsdk:"custom_metadata" json:"custom_metadata"`
 	CustomOriginServer        types.String                                                  `tfsdk:"custom_origin_server" json:"custom_origin_server"`
 	CustomOriginSNI           types.String                                                  `tfsdk:"custom_origin_sni" json:"custom_origin_sni"`
 	OwnershipVerification     *CustomHostnamesItemsOwnershipVerificationDataSourceModel     `tfsdk:"ownership_verification" json:"ownership_verification"`
 	OwnershipVerificationHTTP *CustomHostnamesItemsOwnershipVerificationHTTPDataSourceModel `tfsdk:"ownership_verification_http" json:"ownership_verification_http"`
 	Status                    types.String                                                  `tfsdk:"status" json:"status"`
-	VerificationErrors        *[]jsontypes.Normalized                                       `tfsdk:"verification_errors" json:"verification_errors"`
+	VerificationErrors        *[]types.String                                               `tfsdk:"verification_errors" json:"verification_errors"`
 }
 
 type CustomHostnamesItemsCustomMetadataDataSourceModel struct {

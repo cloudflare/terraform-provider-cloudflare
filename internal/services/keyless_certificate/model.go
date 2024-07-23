@@ -3,8 +3,6 @@
 package keyless_certificate
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,9 +20,9 @@ type KeylessCertificateModel struct {
 	Certificate  types.String                   `tfsdk:"certificate" json:"certificate"`
 	BundleMethod types.String                   `tfsdk:"bundle_method" json:"bundle_method"`
 	Enabled      types.Bool                     `tfsdk:"enabled" json:"enabled"`
-	CreatedOn    timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn   timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed"`
-	Permissions  *[]jsontypes.Normalized        `tfsdk:"permissions" json:"permissions,computed"`
+	CreatedOn    types.String                   `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn   types.String                   `tfsdk:"modified_on" json:"modified_on,computed"`
+	Permissions  *[]types.String                `tfsdk:"permissions" json:"permissions,computed"`
 	Status       types.String                   `tfsdk:"status" json:"status,computed"`
 }
 
