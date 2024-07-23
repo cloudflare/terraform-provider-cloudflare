@@ -9,6 +9,9 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     `application_id = $id` as $app_id => . where { $app_id <: within `resource "cloudflare_access_policy" $_ { $_ }` },
     `precedence = $p` as $precedence => . where { $precedence <: within `resource "cloudflare_access_policy" $_ { $_ }` },
 
+    // cloudflare_access_service_token
+    `min_days_for_renewal = $days` as $renewal => . where { $renewal <: within `resource "cloudflare_access_service_token" $_ { $_ }` },
+
     // cloudflare_zone
     `account_id = $id` => `account = {
       id = $id
