@@ -94,6 +94,27 @@ terraform_cloudflare_v5()
   }
   ```
 
+## cloudflare_access_service_token
+
+- `min_days_for_renewal` is no longer used. If you would like similar functionality, you can use `duration = "forever"` instead.
+
+  Before
+  ```hcl
+  resource "cloudflare_access_service_token" "example" {
+    account_id           = "f037e56e89293a057740de681ac9abbe"
+    name                 = "CI/CD app renewed"
+    min_days_for_renewal = 30
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_access_service_token" "example" {
+    account_id = "f037e56e89293a057740de681ac9abbe"
+    name       = "CI/CD app renewed"
+  }
+  ```
+
 ## cloudflare_access_rule
 ## cloudflare_address_map
 ## cloudflare_api_shield
@@ -135,7 +156,6 @@ terraform_cloudflare_v5()
 ## cloudflare_waiting_room_rules
 ## cloudflare_worker_script
 ## cloudflare_zone_lockdown
-
 ## cloudflare_zone
 
 - `account_id` is now an `account` object with the `id` attribute inside.
