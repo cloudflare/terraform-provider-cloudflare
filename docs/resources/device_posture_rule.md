@@ -64,7 +64,7 @@ Optional:
 - `certificate_id` (String) The UUID of a Cloudflare managed certificate.
 - `check_disks` (Set of String) Specific volume(s) to check for encryption.
 - `cn` (String) The common name for a certificate.
-- `compliance_status` (String) The workspace one device compliance status. Available values: `compliant`, `noncompliant`.
+- `compliance_status` (String) The workspace one or intune device compliance status. Available values: (supported by workspace one and intune) `compliant`, `noncompliant`, (supported only by intune) "unknown", "conflict", "error", "ingraceperiod".
 - `connection_id` (String) The workspace one connection id.
 - `count_operator` (String) The count comparison operator for kolide. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `domain` (String) The domain that the client must join.

@@ -141,13 +141,13 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 					"connection_id": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The workspace one connection id.",
+						Description: "The workspace one or intune connection id.",
 					},
 					"compliance_status": {
 						Type:         schema.TypeString,
 						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"compliant", "noncompliant"}, true),
-						Description:  fmt.Sprintf("The workspace one device compliance status. %s", renderAvailableDocumentationValuesStringSlice([]string{"compliant", "noncompliant"})),
+						ValidateFunc: validation.StringInSlice([]string{"compliant", "noncompliant", "unknown", "conflict", "error", "ingraceperiod"}, true),
+						Description:  fmt.Sprintf("The workspace one or intune device compliance status. 'compliant' and 'noncompliant' are values supported by both providers. 'unknown', 'conflict', 'error', 'ingraceperiod' values are only supported by intune. %s", renderAvailableDocumentationValuesStringSlice([]string{"compliant", "noncompliant", "unknown", "conflict", "error", "ingraceperiod"})),
 					},
 					"os_distro_name": {
 						Type:        schema.TypeString,
