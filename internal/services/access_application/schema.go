@@ -498,6 +498,67 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 					},
 				},
 			},
+			"app_launcher_logo_url": schema.StringAttribute{
+				Description: "The image URL of the logo shown in the App Launcher header.",
+				Optional:    true,
+			},
+			"bg_color": schema.StringAttribute{
+				Description: "The background color of the App Launcher page.",
+				Optional:    true,
+			},
+			"footer_links": schema.ListNestedAttribute{
+				Description: "The links in the App Launcher footer.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Description: "The hypertext in the footer link.",
+							Required:    true,
+						},
+						"url": schema.StringAttribute{
+							Description: "the hyperlink in the footer link.",
+							Required:    true,
+						},
+					},
+				},
+			},
+			"header_bg_color": schema.StringAttribute{
+				Description: "The background color of the App Launcher header.",
+				Optional:    true,
+			},
+			"landing_page_design": schema.SingleNestedAttribute{
+				Description: "The design of the App Launcher landing page shown to users when they log in.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"button_color": schema.StringAttribute{
+						Description: "The background color of the log in button on the landing page.",
+						Optional:    true,
+					},
+					"button_text_color": schema.StringAttribute{
+						Description: "The color of the text in the log in button on the landing page.",
+						Optional:    true,
+					},
+					"image_url": schema.StringAttribute{
+						Description: "The URL of the image shown on the landing page.",
+						Optional:    true,
+					},
+					"message": schema.StringAttribute{
+						Description: "The message shown on the landing page.",
+						Optional:    true,
+					},
+					"title": schema.StringAttribute{
+						Description: "The title shown on the landing page.",
+						Computed:    true,
+						Default:     stringdefault.StaticString("Welcome!"),
+					},
+				},
+			},
+			"skip_app_launcher_login_page": schema.BoolAttribute{
+				Description: "Determines when to skip the App Launcher landing page.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 		},
 	}
 }
