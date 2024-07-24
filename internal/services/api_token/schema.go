@@ -86,6 +86,10 @@ func (r APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest
 					},
 				},
 			},
+			"expires_on": schema.StringAttribute{
+				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
+				Optional:    true,
+			},
 			"not_before": schema.StringAttribute{
 				Description: "The time before which the token MUST NOT be accepted for processing.",
 				Optional:    true,

@@ -22,7 +22,7 @@ type AccessMutualTLSCertificatesItemsDataSourceModel struct {
 	ID                  types.String      `tfsdk:"id" json:"id"`
 	AssociatedHostnames *[]types.String   `tfsdk:"associated_hostnames" json:"associated_hostnames"`
 	CreatedAt           timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
-	ExpiresOn           timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed"`
+	ExpiresOn           timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on"`
 	Fingerprint         types.String      `tfsdk:"fingerprint" json:"fingerprint"`
 	Name                types.String      `tfsdk:"name" json:"name"`
 	UpdatedAt           timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
