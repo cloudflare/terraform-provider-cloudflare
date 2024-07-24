@@ -21,8 +21,8 @@ type AccessServiceTokensDataSourceModel struct {
 type AccessServiceTokensItemsDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" json:"id"`
 	ClientID  types.String      `tfsdk:"client_id" json:"client_id"`
-	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
+	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	Duration  types.String      `tfsdk:"duration" json:"duration"`
 	Name      types.String      `tfsdk:"name" json:"name"`
-	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
 }

@@ -73,7 +73,6 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"decision": schema.StringAttribute{
 				Description: "The action Access will take if a user matches this policy.",
@@ -728,7 +727,6 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

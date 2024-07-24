@@ -21,7 +21,7 @@ type CustomHostnameDataSourceModel struct {
 	CustomHostnameID          types.String                                            `tfsdk:"custom_hostname_id" path:"custom_hostname_id"`
 	ID                        types.String                                            `tfsdk:"id" json:"id,computed"`
 	Hostname                  types.String                                            `tfsdk:"hostname" json:"hostname,computed"`
-	CreatedAt                 timetypes.RFC3339                                       `tfsdk:"created_at" json:"created_at"`
+	CreatedAt                 timetypes.RFC3339                                       `tfsdk:"created_at" json:"created_at,computed"`
 	CustomMetadata            *CustomHostnameCustomMetadataDataSourceModel            `tfsdk:"custom_metadata" json:"custom_metadata"`
 	CustomOriginServer        types.String                                            `tfsdk:"custom_origin_server" json:"custom_origin_server"`
 	CustomOriginSNI           types.String                                            `tfsdk:"custom_origin_sni" json:"custom_origin_sni"`

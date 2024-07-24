@@ -18,7 +18,7 @@ type AccessCustomPageModel struct {
 	Name       types.String      `tfsdk:"name" json:"name"`
 	Type       types.String      `tfsdk:"type" json:"type"`
 	AppCount   types.Int64       `tfsdk:"app_count" json:"app_count"`
-	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
 	UID        types.String      `tfsdk:"uid" json:"uid"`
-	UpdatedAt  timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at"`
+	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt  timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
 }

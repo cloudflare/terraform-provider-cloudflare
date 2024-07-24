@@ -21,24 +21,24 @@ type AddressMapDataSourceModel struct {
 	ID           types.String                             `tfsdk:"id" json:"id"`
 	CanDelete    types.Bool                               `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                               `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
-	CreatedAt    timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at"`
+	CreatedAt    timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed"`
 	DefaultSNI   types.String                             `tfsdk:"default_sni" json:"default_sni"`
 	Description  types.String                             `tfsdk:"description" json:"description"`
 	Enabled      types.Bool                               `tfsdk:"enabled" json:"enabled,computed"`
 	IPs          *[]*AddressMapIPsDataSourceModel         `tfsdk:"ips" json:"ips"`
 	Memberships  *[]*AddressMapMembershipsDataSourceModel `tfsdk:"memberships" json:"memberships"`
-	ModifiedAt   timetypes.RFC3339                        `tfsdk:"modified_at" json:"modified_at"`
+	ModifiedAt   timetypes.RFC3339                        `tfsdk:"modified_at" json:"modified_at,computed"`
 	FindOneBy    *AddressMapFindOneByDataSourceModel      `tfsdk:"find_one_by"`
 }
 
 type AddressMapIPsDataSourceModel struct {
-	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
+	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	IP        types.String      `tfsdk:"ip" json:"ip"`
 }
 
 type AddressMapMembershipsDataSourceModel struct {
 	CanDelete  types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
-	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
+	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	Identifier types.String      `tfsdk:"identifier" json:"identifier"`
 	Kind       types.String      `tfsdk:"kind" json:"kind"`
 }
