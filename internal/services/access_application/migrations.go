@@ -325,7 +325,7 @@ func (r AccessApplicationResource) UpgradeState(ctx context.Context) map[int64]r
 								Optional:    true,
 							},
 							"created_at": schema.StringAttribute{
-								Optional: true,
+								Computed: true,
 							},
 							"custom_attributes": schema.SingleNestedAttribute{
 								Optional: true,
@@ -401,7 +401,7 @@ func (r AccessApplicationResource) UpgradeState(ctx context.Context) map[int64]r
 								Optional:    true,
 							},
 							"updated_at": schema.StringAttribute{
-								Optional: true,
+								Computed: true,
 							},
 							"access_token_lifetime": schema.StringAttribute{
 								Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",

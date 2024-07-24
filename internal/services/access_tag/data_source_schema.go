@@ -34,11 +34,9 @@ func (r AccessTagDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

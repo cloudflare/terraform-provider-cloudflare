@@ -21,7 +21,7 @@ type TeamsRuleDataSourceModel struct {
 	RuleID        types.String                          `tfsdk:"rule_id" path:"rule_id"`
 	ID            types.String                          `tfsdk:"id" json:"id"`
 	Action        types.String                          `tfsdk:"action" json:"action"`
-	CreatedAt     timetypes.RFC3339                     `tfsdk:"created_at" json:"created_at"`
+	CreatedAt     timetypes.RFC3339                     `tfsdk:"created_at" json:"created_at,computed"`
 	DeletedAt     timetypes.RFC3339                     `tfsdk:"deleted_at" json:"deleted_at,computed"`
 	Description   types.String                          `tfsdk:"description" json:"description"`
 	DevicePosture types.String                          `tfsdk:"device_posture" json:"device_posture"`
@@ -33,7 +33,7 @@ type TeamsRuleDataSourceModel struct {
 	RuleSettings  *TeamsRuleRuleSettingsDataSourceModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *TeamsRuleScheduleDataSourceModel     `tfsdk:"schedule" json:"schedule"`
 	Traffic       types.String                          `tfsdk:"traffic" json:"traffic"`
-	UpdatedAt     timetypes.RFC3339                     `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt     timetypes.RFC3339                     `tfsdk:"updated_at" json:"updated_at,computed"`
 	FindOneBy     *TeamsRuleFindOneByDataSourceModel    `tfsdk:"find_one_by"`
 }
 

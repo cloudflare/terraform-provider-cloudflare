@@ -32,7 +32,6 @@ func (r TeamsLocationDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"dns_destination_ips_id": schema.StringAttribute{
 				Description: "The identifier of the pair of IPv4 addresses assigned to this location.",
@@ -179,7 +178,6 @@ func (r TeamsLocationDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

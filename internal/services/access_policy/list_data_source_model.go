@@ -24,7 +24,7 @@ type AccessPoliciesItemsDataSourceModel struct {
 	ID                           types.String                                         `tfsdk:"id" json:"id"`
 	ApprovalGroups               *[]*AccessPoliciesItemsApprovalGroupsDataSourceModel `tfsdk:"approval_groups" json:"approval_groups"`
 	ApprovalRequired             types.Bool                                           `tfsdk:"approval_required" json:"approval_required,computed"`
-	CreatedAt                    timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at"`
+	CreatedAt                    timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed"`
 	Decision                     types.String                                         `tfsdk:"decision" json:"decision"`
 	Exclude                      *[]*AccessPoliciesItemsExcludeDataSourceModel        `tfsdk:"exclude" json:"exclude"`
 	Include                      *[]*AccessPoliciesItemsIncludeDataSourceModel        `tfsdk:"include" json:"include"`
@@ -34,7 +34,7 @@ type AccessPoliciesItemsDataSourceModel struct {
 	PurposeJustificationRequired types.Bool                                           `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
 	Require                      *[]*AccessPoliciesItemsRequireDataSourceModel        `tfsdk:"require" json:"require"`
 	SessionDuration              types.String                                         `tfsdk:"session_duration" json:"session_duration,computed"`
-	UpdatedAt                    timetypes.RFC3339                                    `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt                    timetypes.RFC3339                                    `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessPoliciesItemsApprovalGroupsDataSourceModel struct {

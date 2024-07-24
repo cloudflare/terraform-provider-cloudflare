@@ -21,13 +21,13 @@ type AccessGroupsDataSourceModel struct {
 
 type AccessGroupsItemsDataSourceModel struct {
 	ID        types.String                                  `tfsdk:"id" json:"id"`
-	CreatedAt timetypes.RFC3339                             `tfsdk:"created_at" json:"created_at"`
+	CreatedAt timetypes.RFC3339                             `tfsdk:"created_at" json:"created_at,computed"`
 	Exclude   *[]*AccessGroupsItemsExcludeDataSourceModel   `tfsdk:"exclude" json:"exclude"`
 	Include   *[]*AccessGroupsItemsIncludeDataSourceModel   `tfsdk:"include" json:"include"`
 	IsDefault *[]*AccessGroupsItemsIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default"`
 	Name      types.String                                  `tfsdk:"name" json:"name"`
 	Require   *[]*AccessGroupsItemsRequireDataSourceModel   `tfsdk:"require" json:"require"`
-	UpdatedAt timetypes.RFC3339                             `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt timetypes.RFC3339                             `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessGroupsItemsExcludeDataSourceModel struct {
