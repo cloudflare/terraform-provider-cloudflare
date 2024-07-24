@@ -47,6 +47,43 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareTeamsList_BasicWithDescription(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_teams_list.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareTeamsListDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsListConfigBasicWithDescription(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "DOMAIN"),
+					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "items.#", "1"),
+					resource.TestCheckResourceAttr(name, "items_with_description.#", "2"),
+					resource.TestCheckResourceAttr(name, "items.0", "abcdef.com"),
+					resource.TestCheckResourceAttr(name, "items_with_description.0.value", "abcd.com"),
+					resource.TestCheckResourceAttr(name, "items_with_description.0.description", "test"),
+					resource.TestCheckResourceAttr(name, "items_with_description.1.value", "abcdefghijk.com"),
+					resource.TestCheckResourceAttr(name, "items_with_description.1.description", "test-2"),
+				),
+			},
+		},
+	})
+}
 func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -114,6 +151,19 @@ resource "cloudflare_teams_list" "%[1]s" {
 	description = "My description"
 	type        = "SERIAL"
 	items       = ["asdf-1234", "asdf-5678"]
+}
+`, rnd, accountID)
+}
+
+func testAccCloudflareTeamsListConfigBasicWithDescription(rnd, accountID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[1]s" {
+	account_id             = "%[2]s"
+	name                   = "%[1]s"
+	description            = "My description"
+	type                   = "DOMAIN"
+	items                  = [ "abcdef.com"]
+    items_with_description = [{"value" : "abcd.com", "description": "test"},  {"value" : "abcdefghijk.com", "description": "test-2"}]
 }
 `, rnd, accountID)
 }

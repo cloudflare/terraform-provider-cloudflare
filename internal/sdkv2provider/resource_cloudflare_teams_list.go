@@ -35,20 +35,27 @@ func resourceCloudflareTeamsList() *schema.Resource {
 func resourceCloudflareTeamsListCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 
+	accountID := d.Get(consts.AccountIDSchemaKey).(string)
+
 	newTeamsList := cloudflare.CreateTeamsListParams{
 		Name:        d.Get("name").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 	}
 
-	itemValues := d.Get("items").(*schema.Set).List()
-	for _, v := range itemValues {
-		newTeamsList.Items = append(newTeamsList.Items, cloudflare.TeamsListItem{Value: v.(string)})
+	itemsWithoutDescription := d.Get("items").(*schema.Set).List()
+	itemsWithDescriptionValues := d.Get("items_with_description").(*schema.Set).List()
+	allItems := append([]interface{}{}, itemsWithoutDescription...)
+	allItems = append(allItems, itemsWithDescriptionValues...)
+	for _, v := range allItems {
+		item, err := convertItemCFTeamsListItems(v)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("error creating Teams List for account %q: %w", accountID, err))
+		}
+		newTeamsList.Items = append(newTeamsList.Items, *item)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams List from struct: %+v", newTeamsList))
-
-	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
 	identifier := cloudflare.AccountIdentifier(accountID)
 	list, err := client.CreateTeamsList(ctx, identifier, newTeamsList)
@@ -89,7 +96,14 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(fmt.Errorf("error finding Teams List %q: %w", d.Id(), err))
 	}
 
-	d.Set("items", convertListItemsToSchema(listItems))
+	itemsWithoutDescription, itemsWithDescription := convertListItemsToSchema(listItems)
+	// items with description and without description are processed in separate attributes,
+	// so customers may mix and match these two formats instead of forcing them to adopt one style
+	// The provider will stitch these fields together before processing
+	// this was done to avoid having to specify all items in object format(which is clunky),
+	// since terraform can not implement mixed types atm.
+	d.Set("items", itemsWithoutDescription)
+	d.Set("items_with_description", itemsWithDescription)
 
 	return nil
 }
@@ -192,13 +206,33 @@ func setListItemDiff(patchList *cloudflare.PatchTeamsListParams, oldItems, newIt
 	}
 }
 
-func convertListItemsToSchema(listItems []cloudflare.TeamsListItem) []string {
-	itemValues := []string{}
+func convertItemCFTeamsListItems(item any) (*cloudflare.TeamsListItem, error) {
+	switch item.(type) {
+	case string:
+		return &cloudflare.TeamsListItem{Description: "", Value: item.(string)}, nil
+	case map[string]interface{}:
+		return &cloudflare.TeamsListItem{Description: item.(map[string]interface{})["description"].(string), Value: item.(map[string]interface{})["value"].(string)}, nil
+	}
+
+	return nil, fmt.Errorf("invalid list item `%v`. Should be string OR {\"description\": .., \"value\": ..} object", item)
+}
+
+// this method returns array of list items without any description and map of items with description
+// and value separate.
+func convertListItemsToSchema(listItems []cloudflare.TeamsListItem) ([]string, []map[string]string) {
+	itemValuesWithDescription := []map[string]string{}
+	itemValuesWithoutDescription := []string{}
 	// The API returns items in reverse order so we iterate backwards for correct ordering.
 	for i := len(listItems) - 1; i >= 0; i-- {
 		item := listItems[i]
-		itemValues = append(itemValues, item.Value)
+		if item.Description != "" {
+			itemValuesWithDescription = append(itemValuesWithDescription,
+				map[string]string{"value": item.Value, "description": item.Description},
+			)
+		} else {
+			itemValuesWithoutDescription = append(itemValuesWithoutDescription, item.Value)
+		}
 	}
 
-	return itemValues
+	return itemValuesWithoutDescription, itemValuesWithDescription
 }
