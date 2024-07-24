@@ -48,7 +48,6 @@ func (r AccessCustomPagesDataSource) Schema(ctx context.Context, req datasource.
 						},
 						"created_at": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 						"uid": schema.StringAttribute{
 							Description: "UUID",
@@ -57,7 +56,6 @@ func (r AccessCustomPagesDataSource) Schema(ctx context.Context, req datasource.
 						},
 						"updated_at": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 					},
 				},

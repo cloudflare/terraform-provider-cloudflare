@@ -31,8 +31,8 @@ type TunnelRoutesDataSourceModel struct {
 type TunnelRoutesItemsDataSourceModel struct {
 	ID                 types.String      `tfsdk:"id" json:"id"`
 	Comment            types.String      `tfsdk:"comment" json:"comment"`
-	CreatedAt          timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
-	DeletedAt          timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at"`
+	CreatedAt          timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	DeletedAt          timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed"`
 	Network            types.String      `tfsdk:"network" json:"network"`
 	TunType            types.String      `tfsdk:"tun_type" json:"tun_type"`
 	TunnelID           types.String      `tfsdk:"tunnel_id" json:"tunnel_id"`

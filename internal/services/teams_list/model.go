@@ -24,7 +24,7 @@ type TeamsListModel struct {
 }
 
 type TeamsListItemsModel struct {
-	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
+	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	Description types.String      `tfsdk:"description" json:"description"`
 	Value       types.String      `tfsdk:"value" json:"value"`
 }

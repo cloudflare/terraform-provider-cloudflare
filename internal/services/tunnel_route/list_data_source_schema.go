@@ -95,12 +95,10 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 						"created_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was created.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"deleted_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"network": schema.StringAttribute{
 							Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",

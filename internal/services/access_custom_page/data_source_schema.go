@@ -47,7 +47,6 @@ func (r AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"uid": schema.StringAttribute{
 				Description: "UUID",
@@ -56,7 +55,6 @@ func (r AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.S
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

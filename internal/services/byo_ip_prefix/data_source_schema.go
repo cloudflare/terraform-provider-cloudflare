@@ -37,7 +37,6 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 			"advertised_modified_at": schema.StringAttribute{
 				Description: "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"approved": schema.StringAttribute{
 				Description: "Approval state of the prefix (P = pending, V = active).",
@@ -56,7 +55,6 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of the prefix.",
@@ -70,7 +68,6 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 			},
 			"modified_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"on_demand_enabled": schema.BoolAttribute{
 				Description: "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",

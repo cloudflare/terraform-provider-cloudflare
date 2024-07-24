@@ -20,14 +20,14 @@ type ByoIPPrefixDataSourceModel struct {
 	PrefixID             types.String                         `tfsdk:"prefix_id" path:"prefix_id"`
 	ID                   types.String                         `tfsdk:"id" json:"id"`
 	Advertised           types.Bool                           `tfsdk:"advertised" json:"advertised"`
-	AdvertisedModifiedAt timetypes.RFC3339                    `tfsdk:"advertised_modified_at" json:"advertised_modified_at"`
+	AdvertisedModifiedAt timetypes.RFC3339                    `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed"`
 	Approved             types.String                         `tfsdk:"approved" json:"approved"`
 	ASN                  types.Int64                          `tfsdk:"asn" json:"asn"`
 	CIDR                 types.String                         `tfsdk:"cidr" json:"cidr"`
-	CreatedAt            timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at"`
+	CreatedAt            timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed"`
 	Description          types.String                         `tfsdk:"description" json:"description"`
 	LOADocumentID        types.String                         `tfsdk:"loa_document_id" json:"loa_document_id"`
-	ModifiedAt           timetypes.RFC3339                    `tfsdk:"modified_at" json:"modified_at"`
+	ModifiedAt           timetypes.RFC3339                    `tfsdk:"modified_at" json:"modified_at,computed"`
 	OnDemandEnabled      types.Bool                           `tfsdk:"on_demand_enabled" json:"on_demand_enabled"`
 	OnDemandLocked       types.Bool                           `tfsdk:"on_demand_locked" json:"on_demand_locked"`
 	FindOneBy            *ByoIPPrefixFindOneByDataSourceModel `tfsdk:"find_one_by"`

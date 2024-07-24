@@ -47,7 +47,6 @@ func (r TeamsListsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						},
 						"created_at": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 						"description": schema.StringAttribute{
 							Description: "The description of the list.",
@@ -69,7 +68,6 @@ func (r TeamsListsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						},
 						"updated_at": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 					},
 				},
