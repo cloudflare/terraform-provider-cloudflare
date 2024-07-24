@@ -41,7 +41,7 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *
 		Name:        d.Get("name").(string),
 		Certificate: d.Get("certificate").(string),
 	}
-	newAccessMutualTLSCertificate.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames"))
+	newAccessMutualTLSCertificate.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames").(*schema.Set).List())
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Mutual TLS certificate from struct: %+v", newAccessMutualTLSCertificate))
 
@@ -94,7 +94,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *
 		ID:   d.Id(),
 		Name: d.Get("name").(string),
 	}
-	updatedAccessMutualTLSCert.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames"))
+	updatedAccessMutualTLSCert.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames").(*schema.Set).List())
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Mutal TLS Certificate from struct: %+v", updatedAccessMutualTLSCert))
 
