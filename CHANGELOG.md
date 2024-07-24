@@ -1,4 +1,6 @@
-## 4.38.0 (Unreleased)
+## 4.39.0 (Unreleased)
+
+## 4.38.0 (July 24th, 2024)
 
 FEATURES:
 
