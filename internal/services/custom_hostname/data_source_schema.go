@@ -38,7 +38,6 @@ func (r CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sch
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the hostname was created.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"custom_metadata": schema.SingleNestedAttribute{
 				Description: "These are per-hostname (customer) settings.",

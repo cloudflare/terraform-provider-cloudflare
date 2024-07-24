@@ -50,7 +50,7 @@ func (r TeamsListResource) UpgradeState(ctx context.Context) map[int64]resource.
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"created_at": schema.StringAttribute{
-									Optional: true,
+									Computed: true,
 								},
 								"description": schema.StringAttribute{
 									Description: "The description of the list item, if present",

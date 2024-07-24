@@ -47,16 +47,16 @@ func (r AccessCustomPageResource) UpgradeState(ctx context.Context) map[int64]re
 						Description: "Number of apps the custom page is assigned to.",
 						Optional:    true,
 					},
-					"created_at": schema.StringAttribute{
-						Optional: true,
-					},
 					"uid": schema.StringAttribute{
 						Description:   "UUID",
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
+					"created_at": schema.StringAttribute{
+						Computed: true,
+					},
 					"updated_at": schema.StringAttribute{
-						Optional: true,
+						Computed: true,
 					},
 				},
 			},

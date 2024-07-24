@@ -56,7 +56,7 @@ func (r AddressMapResource) UpgradeState(ctx context.Context) map[int64]resource
 									Computed:    true,
 								},
 								"created_at": schema.StringAttribute{
-									Optional: true,
+									Computed: true,
 								},
 								"identifier": schema.StringAttribute{
 									Description: "The identifier for the membership (eg. a zone or account tag).",

@@ -40,7 +40,6 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"deleted_at": schema.StringAttribute{
 				Description: "Date of deletion, if any.",
@@ -414,7 +413,6 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,

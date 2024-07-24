@@ -39,7 +39,6 @@ func (r AccessGroupsDataSource) Schema(ctx context.Context, req datasource.Schem
 						},
 						"created_at": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 						"exclude": schema.ListNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules.",
@@ -876,7 +875,6 @@ func (r AccessGroupsDataSource) Schema(ctx context.Context, req datasource.Schem
 						},
 						"updated_at": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 					},
 				},
