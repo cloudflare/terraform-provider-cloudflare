@@ -100,7 +100,8 @@ func resourceCloudflareTeamsListRead(ctx context.Context, d *schema.ResourceData
 	// items with description and without description are processed in separate attributes,
 	// so customers may mix and match these two formats instead of forcing them to adopt one style
 	// The provider will stitch these fields together before processing
-	// this was done to avoid having to specify all items in object format(which is clunky), since terraform can not implement mixed types atm
+	// this was done to avoid having to specify all items in object format(which is clunky), 
+	// since terraform can not implement mixed types atm.
 	d.Set("items", itemsWithoutDescription)
 	d.Set("items_with_description", itemsWithDescription)
 
@@ -216,7 +217,8 @@ func convertItemCFTeamsListItems(item any) (*cloudflare.TeamsListItem, error) {
 	return nil, fmt.Errorf("invalid list item `%v`. Should be string OR {\"description\": .., \"value\": ..} object", item)
 }
 
-// this method returns array of list items without any description and map of items with description and value separate
+// this method returns array of list items without any description and map of items with description 
+// and value separate.
 func convertListItemsToSchema(listItems []cloudflare.TeamsListItem) ([]string, []map[string]string) {
 	itemValuesWithDescription := []map[string]string{}
 	itemValuesWithoutDescription := []string{}
