@@ -17,6 +17,7 @@ type APITokenModel struct {
 	Name      types.String              `tfsdk:"name" json:"name"`
 	Policies  *[]*APITokenPoliciesModel `tfsdk:"policies" json:"policies"`
 	Condition *APITokenConditionModel   `tfsdk:"condition" json:"condition"`
+	ExpiresOn timetypes.RFC3339         `tfsdk:"expires_on" json:"expires_on"`
 	NotBefore timetypes.RFC3339         `tfsdk:"not_before" json:"not_before"`
 	Status    types.String              `tfsdk:"status" json:"status"`
 	Value     types.String              `tfsdk:"value" json:"value,computed"`
