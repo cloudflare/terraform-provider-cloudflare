@@ -28,7 +28,7 @@ func (r AccessTagResource) UpgradeState(ctx context.Context) map[int64]resource.
 					},
 					"name": schema.StringAttribute{
 						Description:   "The name of the tag",
-						Required:      true,
+						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"app_count": schema.Int64Attribute{
