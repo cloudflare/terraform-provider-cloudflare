@@ -28,6 +28,7 @@ type DeviceSettingsPolicyModel struct {
 	ServiceModeV2       *DeviceSettingsPolicyServiceModeV2Model `tfsdk:"service_mode_v2" json:"service_mode_v2"`
 	SupportURL          types.String                            `tfsdk:"support_url" json:"support_url"`
 	SwitchLocked        types.Bool                              `tfsdk:"switch_locked" json:"switch_locked"`
+	TunnelProtocol      types.String                            `tfsdk:"tunnel_protocol" json:"tunnel_protocol"`
 	LANAllowMinutes     types.Float64                           `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes"`
 	LANAllowSubnetSize  types.Float64                           `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size"`
 }

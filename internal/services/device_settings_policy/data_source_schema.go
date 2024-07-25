@@ -189,6 +189,10 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 					},
 				},
 			},
+			"tunnel_protocol": schema.StringAttribute{
+				Description: "Determines which tunnel protocol to use.",
+				Optional:    true,
+			},
 			"find_one_by": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
