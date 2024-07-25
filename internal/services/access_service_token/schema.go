@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
@@ -35,7 +36,9 @@ func (r AccessServiceTokenResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"duration": schema.StringAttribute{
 				Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
+				Computed:    true,
 				Optional:    true,
+				Default:     stringdefault.StaticString("8760h"),
 			},
 			"client_id": schema.StringAttribute{
 				Description: "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",

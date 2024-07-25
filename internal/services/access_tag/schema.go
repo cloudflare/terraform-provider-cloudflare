@@ -26,7 +26,7 @@ func (r AccessTagResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 			"name": schema.StringAttribute{
 				Description:   "The name of the tag",
-				Required:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"app_count": schema.Int64Attribute{
