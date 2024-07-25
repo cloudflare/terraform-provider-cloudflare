@@ -93,6 +93,10 @@ func (r DeviceSettingsPolicyResource) Schema(ctx context.Context, req resource.S
 				Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
 				Optional:    true,
 			},
+			"tunnel_protocol": schema.StringAttribute{
+				Description: "Determines which tunnel protocol to use.",
+				Optional:    true,
+			},
 			"lan_allow_minutes": schema.Float64Attribute{
 				Description:   "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
 				Optional:      true,

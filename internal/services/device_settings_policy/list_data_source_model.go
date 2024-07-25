@@ -42,6 +42,7 @@ type DeviceSettingsPoliciesItemsDataSourceModel struct {
 	SupportURL          types.String                                                  `tfsdk:"support_url" json:"support_url"`
 	SwitchLocked        types.Bool                                                    `tfsdk:"switch_locked" json:"switch_locked"`
 	TargetTests         *[]*DeviceSettingsPoliciesItemsTargetTestsDataSourceModel     `tfsdk:"target_tests" json:"target_tests"`
+	TunnelProtocol      types.String                                                  `tfsdk:"tunnel_protocol" json:"tunnel_protocol"`
 }
 
 type DeviceSettingsPoliciesItemsExcludeDataSourceModel struct {

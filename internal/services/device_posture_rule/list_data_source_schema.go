@@ -142,6 +142,35 @@ func (r DevicePostureRulesDataSource) Schema(ctx context.Context, req datasource
 									Computed:    true,
 									Optional:    true,
 								},
+								"check_private_key": schema.BoolAttribute{
+									Description: "Confirm the certificate was not imported from another device. We recommend keeping this enabled unless the certificate was deployed without a private key.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"extended_key_usage": schema.ListAttribute{
+									Description: "List of values indicating purposes for which the certificate public key can be used",
+									Computed:    true,
+									Optional:    true,
+									ElementType: types.StringType,
+								},
+								"locations": schema.SingleNestedAttribute{
+									Computed: true,
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"paths": schema.ListAttribute{
+											Description: "List of paths to check for client certificate on linux.",
+											Computed:    true,
+											Optional:    true,
+											ElementType: types.StringType,
+										},
+										"trust_stores": schema.ListAttribute{
+											Description: "List of trust stores to check for client certificate.",
+											Computed:    true,
+											Optional:    true,
+											ElementType: types.StringType,
+										},
+									},
+								},
 								"compliance_status": schema.StringAttribute{
 									Description: "Compliance Status",
 									Computed:    true,
@@ -286,7 +315,7 @@ func (r DevicePostureRulesDataSource) Schema(ctx context.Context, req datasource
 							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
+								stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
 							},
 						},
 					},

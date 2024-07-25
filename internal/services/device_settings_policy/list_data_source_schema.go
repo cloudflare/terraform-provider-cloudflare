@@ -221,6 +221,11 @@ func (r DeviceSettingsPoliciesDataSource) Schema(ctx context.Context, req dataso
 								},
 							},
 						},
+						"tunnel_protocol": schema.StringAttribute{
+							Description: "Determines which tunnel protocol to use.",
+							Computed:    true,
+							Optional:    true,
+						},
 					},
 				},
 			},

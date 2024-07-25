@@ -34,7 +34,7 @@ func (r DevicePostureRuleResource) Schema(ctx context.Context, req resource.Sche
 				Description: "The type of device posture rule.",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
+					stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
 				},
 			},
 			"description": schema.StringAttribute{
@@ -123,6 +123,30 @@ func (r DevicePostureRuleResource) Schema(ctx context.Context, req resource.Sche
 					"cn": schema.StringAttribute{
 						Description: "Common Name that is protected by the certificate",
 						Optional:    true,
+					},
+					"check_private_key": schema.BoolAttribute{
+						Description: "Confirm the certificate was not imported from another device. We recommend keeping this enabled unless the certificate was deployed without a private key.",
+						Optional:    true,
+					},
+					"extended_key_usage": schema.ListAttribute{
+						Description: "List of values indicating purposes for which the certificate public key can be used",
+						Optional:    true,
+						ElementType: types.StringType,
+					},
+					"locations": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"paths": schema.ListAttribute{
+								Description: "List of paths to check for client certificate on linux.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"trust_stores": schema.ListAttribute{
+								Description: "List of trust stores to check for client certificate.",
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+						},
 					},
 					"compliance_status": schema.StringAttribute{
 						Description: "Compliance Status",
