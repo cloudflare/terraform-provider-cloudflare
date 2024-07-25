@@ -29,6 +29,23 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 		Description: heredoc.Doc(
 			"Provides a Cloudflare worker script resource. In order for a script to be active, you'll also need to setup a `cloudflare_worker_route`.",
 		),
+		DeprecationMessage: "`cloudflare_worker_script` is now deprecated and will be removed in the next major version. Use `cloudflare_workers_script` instead.",
+	}
+}
+
+func resourceCloudflareWorkersScript() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareWorkerScriptSchema(),
+		CreateContext: resourceCloudflareWorkerScriptCreate,
+		ReadContext:   resourceCloudflareWorkerScriptRead,
+		UpdateContext: resourceCloudflareWorkerScriptUpdate,
+		DeleteContext: resourceCloudflareWorkerScriptDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareWorkerScriptImport,
+		},
+		Description: heredoc.Doc(
+			"Provides a Cloudflare worker script resource. In order for a script to be active, you'll also need to setup a `cloudflare_worker_route`.",
+		),
 	}
 }
 

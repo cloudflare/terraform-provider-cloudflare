@@ -1,4 +1,4 @@
-package workers_for_platforms_test
+package workers_for_platforms_dispatch_namespace_deprecated_test
 
 import (
 	"context"

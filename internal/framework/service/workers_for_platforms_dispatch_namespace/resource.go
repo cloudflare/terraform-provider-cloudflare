@@ -1,4 +1,4 @@
-package workers_for_platforms
+package workers_for_platforms_dispatch_namespace
 
 import (
 	"context"
@@ -13,23 +13,23 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &WorkersForPlatformsResource{}
-var _ resource.ResourceWithImportState = &WorkersForPlatformsResource{}
+var _ resource.Resource = &WorkersForPlatformsDispatchNamespaceResource{}
+var _ resource.ResourceWithImportState = &WorkersForPlatformsDispatchNamespaceResource{}
 
 func NewResource() resource.Resource {
-	return &WorkersForPlatformsResource{}
+	return &WorkersForPlatformsDispatchNamespaceResource{}
 }
 
-// WorkersForPlatformsResource defines the resource implementation.
-type WorkersForPlatformsResource struct {
+// WorkersForPlatformsDispatchNamespaceResource defines the resource implementation.
+type WorkersForPlatformsDispatchNamespaceResource struct {
 	client *muxclient.Client
 }
 
-func (r *WorkersForPlatformsResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_workers_for_platforms_namespace"
+func (r *WorkersForPlatformsDispatchNamespaceResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_workers_for_platforms_dispatch_namespace"
 }
 
-func (r *WorkersForPlatformsResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *WorkersForPlatformsDispatchNamespaceResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (r *WorkersForPlatformsResource) Configure(ctx context.Context, req resourc
 	r.client = client
 }
 
-func (r *WorkersForPlatformsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *WorkersForPlatformsNamespaceModel
+func (r *WorkersForPlatformsDispatchNamespaceResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *WorkersForPlatformsDispatchNamespaceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -71,8 +71,8 @@ func (r *WorkersForPlatformsResource) Create(ctx context.Context, req resource.C
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersForPlatformsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *WorkersForPlatformsNamespaceModel
+func (r *WorkersForPlatformsDispatchNamespaceResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *WorkersForPlatformsDispatchNamespaceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -90,8 +90,8 @@ func (r *WorkersForPlatformsResource) Read(ctx context.Context, req resource.Rea
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersForPlatformsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *WorkersForPlatformsNamespaceModel
+func (r *WorkersForPlatformsDispatchNamespaceResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *WorkersForPlatformsDispatchNamespaceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -102,8 +102,8 @@ func (r *WorkersForPlatformsResource) Update(ctx context.Context, req resource.U
 	resp.Diagnostics.AddError("failed to update Workers for Platforms namespace", "Not implemented")
 }
 
-func (r *WorkersForPlatformsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *WorkersForPlatformsNamespaceModel
+func (r *WorkersForPlatformsDispatchNamespaceResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *WorkersForPlatformsDispatchNamespaceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -119,7 +119,7 @@ func (r *WorkersForPlatformsResource) Delete(ctx context.Context, req resource.D
 	}
 }
 
-func (r *WorkersForPlatformsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *WorkersForPlatformsDispatchNamespaceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	idparts := strings.Split(req.ID, "/")
 	if len(idparts) != 2 {
 		resp.Diagnostics.AddError("error importing Workers for Platforms namespace", "invalid ID specified. Please specify the ID as \"account_id/name\"")

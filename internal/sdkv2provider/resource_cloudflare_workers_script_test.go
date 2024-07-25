@@ -34,7 +34,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 
 	var script cloudflare.WorkerScript
 	rnd := generateRandomResourceName()
-	name := "cloudflare_worker_script." + rnd
+	name := "cloudflare_workers_script." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -79,7 +79,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 
 	var script cloudflare.WorkerScript
 	rnd := generateRandomResourceName()
-	name := "cloudflare_worker_script." + rnd
+	name := "cloudflare_workers_script." + rnd
 	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
 	r2AccesKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
 
@@ -173,7 +173,7 @@ func testAccCheckCloudflareWorkerScriptCreateBucket(t *testing.T, rnd string) {
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptInitial(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[1]s" {
+resource "cloudflare_workers_script" "%[1]s" {
   account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
@@ -182,7 +182,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 
 func testAccCheckCloudflareWorkerScriptConfigMultiScriptUpdate(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[1]s" {
+resource "cloudflare_workers_script" "%[1]s" {
   account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
@@ -201,13 +201,13 @@ resource "cloudflare_queue" "%[1]s" {
 	name = "%[1]s"
 }
 
-resource "cloudflare_worker_script" "%[1]s-service" {
+resource "cloudflare_workers_script" "%[1]s-service" {
 	account_id = "%[4]s"
 	name    = "%[1]s-service"
 	content = "%[2]s"
 }
 
-resource "cloudflare_worker_script" "%[1]s" {
+resource "cloudflare_workers_script" "%[1]s" {
   account_id = "%[4]s"
   name    = "%[1]s"
   content = "%[2]s"
@@ -239,7 +239,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 
   service_binding {
 	name = "MY_SERVICE_BINDING"
-    service = cloudflare_worker_script.%[1]s-service.name
+    service = cloudflare_workers_script.%[1]s-service.name
     environment = "production"
   }
 
@@ -262,7 +262,7 @@ func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyI
 		dataset          = "workers_trace_events"
 	}
 
-resource "cloudflare_worker_script" "%[1]s" {
+resource "cloudflare_workers_script" "%[1]s" {
   account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
@@ -307,7 +307,7 @@ func testAccCheckCloudflareWorkerScriptExists(n string, script *cloudflare.Worke
 			return fmt.Errorf("Worker Script not found")
 		}
 
-		name := strings.Replace(n, "cloudflare_worker_script.", "", -1)
+		name := strings.Replace(n, "cloudflare_workers_script.", "", -1)
 		foundBindings, err := getWorkerScriptBindings(context.Background(), accountID, name, nil, client)
 		if err != nil {
 			return fmt.Errorf("cannot list script bindings: %w", err)
@@ -328,7 +328,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_script" {
+		if rs.Type != "cloudflare_workers_script" {
 			continue
 		}
 
