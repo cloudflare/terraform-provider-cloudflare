@@ -3,6 +3,7 @@
 package d1_database
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,8 +21,8 @@ type D1DatabasesDataSourceModel struct {
 }
 
 type D1DatabasesItemsDataSourceModel struct {
-	CreatedAt types.String `tfsdk:"created_at" json:"created_at,computed"`
-	Name      types.String `tfsdk:"name" json:"name"`
-	UUID      types.String `tfsdk:"uuid" json:"uuid"`
-	Version   types.String `tfsdk:"version" json:"version"`
+	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	Name      types.String      `tfsdk:"name" json:"name"`
+	UUID      types.String      `tfsdk:"uuid" json:"uuid,computed"`
+	Version   types.String      `tfsdk:"version" json:"version"`
 }
