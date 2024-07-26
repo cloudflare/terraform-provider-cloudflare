@@ -1,20 +1,20 @@
 ---
-page_title: "cloudflare_workers_for_platforms_namespace Resource - Cloudflare"
+page_title: "cloudflare_workers_for_platforms_dispatch_namespace Resource - Cloudflare"
 subcategory: ""
 description: |-
   The Workers for Platforms https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/ resource allows you
-  to manage Cloudflare Workers for Platforms namespaces.
+  to manage Cloudflare Workers for Platforms dispatch namespaces.
 ---
 
-# cloudflare_workers_for_platforms_namespace (Resource)
+# cloudflare_workers_for_platforms_dispatch_namespace (Resource)
 
 The [Workers for Platforms](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/) resource allows you
-to manage Cloudflare Workers for Platforms namespaces.
+to manage Cloudflare Workers for Platforms dispatch namespaces.
 
 ## Example Usage
 
 ```terraform
-resource "cloudflare_workers_for_platforms_namespace" "example" {
+resource "cloudflare_workers_for_platforms_dispatch_namespace" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "example-namespace"
 }
@@ -44,5 +44,5 @@ resource "cloudflare_workers_script" "customer_worker_1" {
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_workers_for_platforms_namespace.example <account_id>/<namespace_name>
+$ terraform import cloudflare_workers_for_platforms_dispatch_namespace.example <account_id>/<namespace_name>
 ```
