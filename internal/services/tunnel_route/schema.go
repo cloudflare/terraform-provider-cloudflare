@@ -28,10 +28,6 @@ func (r TunnelRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
 				Required:    true,
 			},
-			"tunnel_id": schema.StringAttribute{
-				Description: "UUID of the tunnel.",
-				Required:    true,
-			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the route.",
 				Optional:    true,
@@ -46,6 +42,10 @@ func (r TunnelRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 			},
 			"deleted_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
+				Computed:    true,
+			},
+			"tunnel_id": schema.StringAttribute{
+				Description: "UUID of the tunnel.",
 				Computed:    true,
 			},
 		},

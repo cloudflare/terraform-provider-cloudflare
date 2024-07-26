@@ -5,7 +5,6 @@ package pages_project
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -13,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -69,7 +69,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						ElementType: types.StringType,
 					},
 					"build_config": schema.StringAttribute{
 						Computed: true,
@@ -199,7 +199,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
 								Optional:    true,
-								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+								ElementType: types.StringType,
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -441,7 +441,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
 								Optional:    true,
-								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+								ElementType: types.StringType,
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -644,7 +644,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						ElementType: types.StringType,
 					},
 					"build_config": schema.StringAttribute{
 						Computed: true,
@@ -739,7 +739,7 @@ func (r PagesProjectResource) Schema(ctx context.Context, req resource.SchemaReq
 			"domains": schema.ListAttribute{
 				Description: "A list of associated custom domains for the project.",
 				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+				ElementType: types.StringType,
 			},
 			"source": schema.StringAttribute{
 				Computed: true,

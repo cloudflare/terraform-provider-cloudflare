@@ -5,7 +5,6 @@ package access_application
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -103,9 +102,6 @@ func (r AccessApplicationResource) UpgradeState(ctx context.Context) map[int64]r
 							"max_age": schema.Float64Attribute{
 								Description: "The maximum number of seconds the results of a preflight request can be cached.",
 								Optional:    true,
-								Validators: []validator.Float64{
-									float64validator.Between(-1, 86400),
-								},
 							},
 						},
 					},

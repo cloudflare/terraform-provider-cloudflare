@@ -66,6 +66,7 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	res := new(http.Response)
+	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
 		api_gateway.ConfigurationUpdateParams{
@@ -80,11 +81,12 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -146,6 +148,7 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	res := new(http.Response)
+	env := APIShieldResultEnvelope{*data}
 	_, err = r.client.APIGateway.Configurations.Update(
 		ctx,
 		api_gateway.ConfigurationUpdateParams{
@@ -160,33 +163,16 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *APIShieldResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-
-}
-
-func (r *APIShieldResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+	// TODO: implement not supported warning
 }

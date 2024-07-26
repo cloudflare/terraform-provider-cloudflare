@@ -3,7 +3,6 @@
 package page_rule
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,7 +21,7 @@ type PageRuleModel struct {
 }
 
 type PageRuleActionsModel struct {
-	ModifiedOn timetypes.RFC3339          `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn types.String               `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name       types.String               `tfsdk:"name" json:"name"`
 	Value      *PageRuleActionsValueModel `tfsdk:"value" json:"value"`
 }
