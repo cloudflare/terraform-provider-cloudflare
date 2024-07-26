@@ -1,4 +1,4 @@
-resource "cloudflare_workers_for_platforms_namespace" "example" {
+resource "cloudflare_workers_for_platforms_dispatch_namespace" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "example-namespace"
 }
