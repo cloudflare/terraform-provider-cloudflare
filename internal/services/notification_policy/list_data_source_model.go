@@ -19,15 +19,16 @@ type NotificationPoliciesDataSourceModel struct {
 }
 
 type NotificationPoliciesItemsDataSourceModel struct {
-	ID          types.String                                     `tfsdk:"id" json:"id,computed"`
-	AlertType   types.String                                     `tfsdk:"alert_type" json:"alert_type"`
-	Created     timetypes.RFC3339                                `tfsdk:"created" json:"created,computed"`
-	Description types.String                                     `tfsdk:"description" json:"description"`
-	Enabled     types.Bool                                       `tfsdk:"enabled" json:"enabled,computed"`
-	Filters     *NotificationPoliciesItemsFiltersDataSourceModel `tfsdk:"filters" json:"filters"`
-	Mechanisms  map[string]*[]jsontypes.Normalized               `tfsdk:"mechanisms" json:"mechanisms"`
-	Modified    timetypes.RFC3339                                `tfsdk:"modified" json:"modified,computed"`
-	Name        types.String                                     `tfsdk:"name" json:"name"`
+	ID            types.String                                     `tfsdk:"id" json:"id,computed"`
+	AlertInterval types.String                                     `tfsdk:"alert_interval" json:"alert_interval"`
+	AlertType     types.String                                     `tfsdk:"alert_type" json:"alert_type"`
+	Created       timetypes.RFC3339                                `tfsdk:"created" json:"created,computed"`
+	Description   types.String                                     `tfsdk:"description" json:"description"`
+	Enabled       types.Bool                                       `tfsdk:"enabled" json:"enabled,computed"`
+	Filters       *NotificationPoliciesItemsFiltersDataSourceModel `tfsdk:"filters" json:"filters"`
+	Mechanisms    map[string]*[]jsontypes.Normalized               `tfsdk:"mechanisms" json:"mechanisms"`
+	Modified      timetypes.RFC3339                                `tfsdk:"modified" json:"modified,computed"`
+	Name          types.String                                     `tfsdk:"name" json:"name"`
 }
 
 type NotificationPoliciesItemsFiltersDataSourceModel struct {

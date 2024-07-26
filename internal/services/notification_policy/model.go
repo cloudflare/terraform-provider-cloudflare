@@ -13,19 +13,20 @@ type NotificationPolicyResultEnvelope struct {
 }
 
 type NotificationPolicyModel struct {
-	ID          types.String                        `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                        `tfsdk:"account_id" path:"account_id"`
-	AlertType   types.String                        `tfsdk:"alert_type" json:"alert_type"`
-	Enabled     types.Bool                          `tfsdk:"enabled" json:"enabled"`
-	Mechanisms  map[string]*[]jsontypes.Normalized  `tfsdk:"mechanisms" json:"mechanisms"`
-	Name        types.String                        `tfsdk:"name" json:"name"`
-	Description types.String                        `tfsdk:"description" json:"description"`
-	Filters     *NotificationPolicyFiltersModel     `tfsdk:"filters" json:"filters"`
-	Errors      *[]*NotificationPolicyErrorsModel   `tfsdk:"errors" json:"errors,computed"`
-	Messages    *[]*NotificationPolicyMessagesModel `tfsdk:"messages" json:"messages,computed"`
-	Success     types.Bool                          `tfsdk:"success" json:"success,computed"`
-	Created     timetypes.RFC3339                   `tfsdk:"created" json:"created,computed"`
-	Modified    timetypes.RFC3339                   `tfsdk:"modified" json:"modified,computed"`
+	ID            types.String                        `tfsdk:"id" json:"id,computed"`
+	AccountID     types.String                        `tfsdk:"account_id" path:"account_id"`
+	AlertType     types.String                        `tfsdk:"alert_type" json:"alert_type"`
+	Enabled       types.Bool                          `tfsdk:"enabled" json:"enabled"`
+	Mechanisms    map[string]*[]jsontypes.Normalized  `tfsdk:"mechanisms" json:"mechanisms"`
+	Name          types.String                        `tfsdk:"name" json:"name"`
+	AlertInterval types.String                        `tfsdk:"alert_interval" json:"alert_interval"`
+	Description   types.String                        `tfsdk:"description" json:"description"`
+	Filters       *NotificationPolicyFiltersModel     `tfsdk:"filters" json:"filters"`
+	Errors        *[]*NotificationPolicyErrorsModel   `tfsdk:"errors" json:"errors,computed"`
+	Messages      *[]*NotificationPolicyMessagesModel `tfsdk:"messages" json:"messages,computed"`
+	Success       types.Bool                          `tfsdk:"success" json:"success,computed"`
+	Created       timetypes.RFC3339                   `tfsdk:"created" json:"created,computed"`
+	Modified      timetypes.RFC3339                   `tfsdk:"modified" json:"modified,computed"`
 }
 
 type NotificationPolicyFiltersModel struct {
