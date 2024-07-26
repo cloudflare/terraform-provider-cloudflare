@@ -26,7 +26,7 @@ func resourceCloudflareRecord() *schema.Resource {
 			StateContext: resourceCloudflareRecordImport,
 		},
 		Description:   heredoc.Doc(`Provides a Cloudflare record resource.`),
-		SchemaVersion: 2,
+		SchemaVersion: 3,
 		Schema:        resourceCloudflareRecordSchema(),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Second),
@@ -37,6 +37,11 @@ func resourceCloudflareRecord() *schema.Resource {
 				Type:    resourceCloudflareRecordV1().CoreConfigSchema().ImpliedType(),
 				Upgrade: resourceCloudflareRecordStateUpgradeV2,
 				Version: 1,
+			},
+			{
+				Type:    resourceCloudflareRecordV2().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareRecordStateUpgradeV3,
+				Version: 2,
 			},
 		},
 	}
