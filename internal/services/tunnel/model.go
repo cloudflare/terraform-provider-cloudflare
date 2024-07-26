@@ -3,7 +3,6 @@
 package tunnel
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,8 +16,8 @@ type TunnelModel struct {
 	Name         types.String               `tfsdk:"name" json:"name"`
 	TunnelSecret types.String               `tfsdk:"tunnel_secret" json:"tunnel_secret"`
 	Connections  *[]*TunnelConnectionsModel `tfsdk:"connections" json:"connections,computed"`
-	CreatedAt    timetypes.RFC3339          `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt    timetypes.RFC3339          `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	CreatedAt    types.String               `tfsdk:"created_at" json:"created_at,computed"`
+	DeletedAt    types.String               `tfsdk:"deleted_at" json:"deleted_at,computed"`
 }
 
 type TunnelConnectionsModel struct {
