@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_access_application: improve validation logic for zone level reusable policies
+```
+
+```release-note:enhancement
+resource/cloudflare_access_group: improve validation logic for zone level reusable policies
+```

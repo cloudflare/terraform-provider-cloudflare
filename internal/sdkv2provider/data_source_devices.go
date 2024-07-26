@@ -47,6 +47,7 @@ func dataResourceCloudflareDevicesRead(ctx context.Context, d *schema.ResourceDa
 			"os_distro_name":     device.OSDistroName,
 			"os_distro_revision": device.OsDistroRevision,
 			"os_version":         device.OSVersion,
+			"os_version_extra":   device.OSVersionExtra,
 			"revoked_at":         device.RevokedAt,
 			"serial_number":      device.SerialNumber,
 			"updated":            device.Updated,

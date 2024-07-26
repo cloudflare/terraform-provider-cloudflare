@@ -386,6 +386,14 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					Optional:    true,
 					Description: "Target host to alert on for dos.",
 				},
+				"target_ip": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Target ip to alert on for dos in CIDR notation.",
+				},
 				"packets_per_second": {
 					Type: schema.TypeSet,
 					Elem: &schema.Schema{
@@ -505,6 +513,14 @@ func notificationPolicyFilterSchema() *schema.Schema {
 					},
 					Optional:    true,
 					Description: "Tunnel IDs to alert on.",
+				},
+				"tunnel_name": {
+					Type: schema.TypeSet,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional:    true,
+					Description: "Tunnel Names to alert on.",
 				},
 			},
 		},

@@ -135,6 +135,15 @@ var originsElem = &schema.Resource{
 			Description: "The IP address (IPv4 or IPv6) of the origin, or the publicly addressable hostname.",
 		},
 
+		"virtual_network_id": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
+		},
+
 		"weight": {
 			Type:         schema.TypeFloat,
 			Optional:     true,

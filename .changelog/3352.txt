@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: Fix bug requiring explicit account_id or zone_id
+```

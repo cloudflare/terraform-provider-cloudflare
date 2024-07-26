@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -20,7 +20,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_d1_database", &resource.Sweeper{
 		Name: "cloudflare_d1_database",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			if err != nil {
@@ -28,7 +28,7 @@ func init() {
 			}
 
 			ctx := context.Background()
-			databases, _, err := client.ListD1Databases(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListD1DatabasesParams{})
+			databases, _, err := client.ListD1Databases(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListD1DatabasesParams{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch R2 buckets: %w", err)
 			}
@@ -40,7 +40,7 @@ func init() {
 					continue
 				}
 
-				err := client.DeleteD1Database(ctx, cloudflare.AccountIdentifier(accountID), database.UUID)
+				err := client.DeleteD1Database(ctx, cfv1.AccountIdentifier(accountID), database.UUID)
 				if err != nil {
 					return fmt.Errorf("failed to delete D1 database %q: %w", database.Name, err)
 				}
@@ -65,7 +65,7 @@ func TestAccCloudflareD1Database_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttr(resourceName, "version", "beta"),
+					resource.TestCheckResourceAttr(resourceName, "version", "production"),
 				),
 			},
 			{

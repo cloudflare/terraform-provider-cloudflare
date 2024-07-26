@@ -6,7 +6,7 @@ resource "cloudflare_api_token" "logpush_r2_token" {
   name = "logpush_r2_token"
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["Workers R2 Storage Write"],
+      data.cloudflare_api_token_permission_groups.all.account["Workers R2 Storage Write"],
     ]
     resources = {
       "com.cloudflare.api.account.*" = "*"
@@ -45,6 +45,7 @@ data "aws_s3_bucket_object" "challenge_file" {
 }
 
 resource "cloudflare_logpush_job" "example_job" {
+  depends_on          = [cloudflare_logpush_ownership_challenge.ownership_challenge]
   enabled             = true
   zone_id             = "0da42c8d2132a9ddaf714f9e7c920711"
   name                = "My-logpush-job"

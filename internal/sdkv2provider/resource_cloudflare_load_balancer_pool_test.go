@@ -152,6 +152,52 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastConnections(t *testing
 	})
 }
 
+func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
+	//
+	// Note: We need to first set up a valid vnet that covers the address "192.0.2.1" or the LB API will complain with:
+	// --> "virtual_network_id does not belong to tunnel route that covers origin IP: validation failed".
+	//
+
+	// multiple instances of this config would conflict but we only use it once
+	t.Parallel()
+	testStartTime := time.Now().UTC()
+
+	var tunnelVirtualNetwork cloudflare.TunnelVirtualNetwork
+	var loadBalancerPool cloudflare.LoadBalancerPool
+
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	vnetResID := generateRandomResourceName()
+	tunnelResID := generateRandomResourceName()
+	tunnelRouteResID := generateRandomResourceName()
+	poolResID := generateRandomResourceName()
+
+	vnetName := "cloudflare_tunnel_virtual_network." + vnetResID
+	poolName := "cloudflare_load_balancer_pool." + poolResID
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareLoadBalancerPoolDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareLoadBalancerPoolConfigVirtualNetworkID(accountID, vnetResID, tunnelResID, tunnelRouteResID, poolResID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareTunnelVirtualNetworkExists(vnetName, &tunnelVirtualNetwork),
+					testAccCheckCloudflareLoadBalancerPoolExists(poolName, &loadBalancerPool),
+					// check that virtual network ID is the same on the virtual network and load balancer pool
+					testAccCheckCloudflareLoadBalancerPoolVirtualNetworkMatch(vnetName, poolName),
+					// dont check that specified values are set, this will be evident by lack of plan diff
+					// some values will get empty values
+					resource.TestCheckResourceAttr(poolName, "check_regions.#", "0"),
+					resource.TestCheckResourceAttr(poolName, "header.#", "0"),
+					// also expect api to generate some values
+					testAccCheckCloudflareLoadBalancerPoolDates(poolName, &loadBalancerPool, testStartTime),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	t.Parallel()
 	var loadBalancerPool cloudflare.LoadBalancerPool
@@ -283,6 +329,42 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 		return nil
 	}
 }
+func testAccCheckCloudflareLoadBalancerPoolVirtualNetworkMatch(vnetName, poolName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		// fetch virtual network and pool and make sure they both reference the same virtual network ID
+		var tunnelVirtualNetwork cloudflare.TunnelVirtualNetwork
+		var loadBalancerPool cloudflare.LoadBalancerPool
+
+		if err := testAccCheckCloudflareTunnelVirtualNetworkExists(vnetName, &tunnelVirtualNetwork)(s); err != nil {
+			return err
+		}
+
+		if err := testAccCheckCloudflareLoadBalancerPoolExists(poolName, &loadBalancerPool)(s); err != nil {
+			return err
+		}
+
+		tunnelVnet := tunnelVirtualNetwork.ID
+		if tunnelVnet == "" {
+			return fmt.Errorf("No Tunnel Virtual Network ID set")
+		}
+
+		originVnet := loadBalancerPool.Origins[0].VirtualNetworkID
+		if originVnet == "" {
+			return fmt.Errorf("No Origin Virtual Network ID set")
+		}
+
+		if tunnelVnet != originVnet {
+			return fmt.Errorf("Tunnel Virtual Network %q does not match Origin Virtual Network %q", tunnelVnet, originVnet)
+		}
+
+		// inspect the pool's terraform attribute directly and make sure it matches
+		if err := resource.TestCheckResourceAttr(poolName, "origins.0.virtual_network_id", tunnelVnet)(s); err != nil {
+			return err
+		}
+
+		return nil
+	}
+}
 
 func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *cloudflare.LoadBalancerPool, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -371,6 +453,42 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
     policy = "least_connections"
   }
 }`, id, accountID)
+}
+
+func testAccCheckCloudflareLoadBalancerPoolConfigVirtualNetworkID(accountID, vnetResID, tunnelResID, tunnelRouteResID, poolResID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_tunnel_virtual_network" "%[2]s" {
+	account_id = "%[1]s"
+	name       = "my-tf-vnet-for-pool-%[2]s"
+	comment     = "test"
+}
+
+resource "cloudflare_tunnel" "%[3]s" {
+	account_id = "%[1]s"
+	name       = "my-tf-tunnel-for-pool-%[3]s"
+	secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
+}
+
+resource "cloudflare_tunnel_route" "%[4]s" {
+    account_id = "%[1]s"
+    network = "192.0.2.1/32"
+    virtual_network_id = cloudflare_tunnel_virtual_network.%[2]s.id
+    tunnel_id = cloudflare_tunnel.%[3]s.id
+    comment = "test"
+}
+
+resource "cloudflare_load_balancer_pool" "%[5]s" {
+  account_id = "%[1]s"
+  name = "my-tf-pool-with-vnet-%[5]s"
+  latitude = 12.3
+  longitude = 55
+  origins {
+    name = "example-1"
+    address = "192.0.2.1"
+    virtual_network_id = cloudflare_tunnel_route.%[4]s.virtual_network_id
+    enabled = true
+  }
+}`, accountID, vnetResID, tunnelResID, tunnelRouteResID, poolResID)
 }
 
 func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id, headerValue, accountID string) string {

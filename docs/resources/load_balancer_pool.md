@@ -91,6 +91,7 @@ Optional:
 
 - `enabled` (Boolean) Whether this origin is enabled. Disabled origins will not receive traffic and are excluded from health checks. Defaults to `true`.
 - `header` (Block Set) HTTP request headers. (see [below for nested schema](#nestedblock--origins--header))
+- `virtual_network_id` (String) The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.
 - `weight` (Number) The weight (0.01 - 1.00) of this origin, relative to other origins in the pool. Equal values mean equal weighting. A weight of 0 means traffic will not be sent to this origin, but health is still checked. When [`origin_steering.policy="least_outstanding_requests"`](#policy), weight is used to scale the origin's outstanding requests. When [`origin_steering.policy="least_connections"`](#policy), weight is used to scale the origin's open connections. Defaults to `1`.
 
 <a id="nestedblock--origins--header"></a>

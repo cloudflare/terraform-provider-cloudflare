@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
@@ -27,10 +27,10 @@ func (v sbfmDeprecationWarningValidator) ValidateString(ctx context.Context, req
 		return
 	}
 
-	if req.ConfigValue.ValueString() == string(cloudflare.RulesetPhaseHTTPRequestSBFM) {
+	if req.ConfigValue.ValueString() == string(cfv1.RulesetPhaseHTTPRequestSBFM) {
 		resp.Diagnostics.AddAttributeWarning(
 			req.Path,
-			fmt.Sprintf(`%q phase will soon be deprecated in the "cloudflare_ruleset" resource`, string(cloudflare.RulesetPhaseHTTPRequestSBFM)),
+			fmt.Sprintf(`%q phase will soon be deprecated in the "cloudflare_ruleset" resource`, string(cfv1.RulesetPhaseHTTPRequestSBFM)),
 			v.Description(ctx),
 		)
 

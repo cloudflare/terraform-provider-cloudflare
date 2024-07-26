@@ -141,6 +141,7 @@ func resourceCloudflareDLPProfileRead(ctx context.Context, d *schema.ResourceDat
 		d.Set("description", dlpProfile.Description)
 	}
 	d.Set("allowed_match_count", dlpProfile.AllowedMatchCount)
+	d.Set("ocr_enabled", dlpProfile.OCREnabled)
 	if dlpProfile.ContextAwareness != nil {
 		d.Set("context_awareness", []interface{}{dlpContextAwarenessToSchema(*dlpProfile.ContextAwareness)})
 	}
@@ -162,6 +163,7 @@ func resourceCloudflareDLPProfileCreate(ctx context.Context, d *schema.ResourceD
 		Type:              d.Get("type").(string),
 		Description:       d.Get("description").(string),
 		AllowedMatchCount: d.Get("allowed_match_count").(int),
+		OCREnabled:        cloudflare.BoolPtr(d.Get("ocr_enabled").(bool)),
 	}
 
 	if contextAwarenessSchema, ok := d.GetOk("context_awareness.0"); ok {
@@ -202,6 +204,7 @@ func resourceCloudflareDLPProfileUpdate(ctx context.Context, d *schema.ResourceD
 		Name:              d.Get("name").(string),
 		Type:              d.Get("type").(string),
 		AllowedMatchCount: d.Get("allowed_match_count").(int),
+		OCREnabled:        cloudflare.BoolPtr(d.Get("ocr_enabled").(bool)),
 	}
 	updatedDLPProfile.Description, _ = d.Get("description").(string)
 	if contextAwarenessSchema, ok := d.GetOk("context_awareness.0"); ok {

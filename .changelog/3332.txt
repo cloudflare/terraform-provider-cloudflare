@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: force recreation if SaaS app `auth_type` is changed
+```

@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,7 +22,7 @@ func NewResource() resource.Resource {
 
 // R2BucketResource defines the resource implementation.
 type R2BucketResource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *R2BucketResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -33,12 +34,12 @@ func (r *R2BucketResource) Configure(ctx context.Context, req resource.Configure
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -56,8 +57,8 @@ func (r *R2BucketResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	r2Bucket, err := r.client.CreateR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
-		cloudflare.CreateR2BucketParameters{
+	r2Bucket, err := r.client.V1.CreateR2Bucket(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()),
+		cfv1.CreateR2BucketParameters{
 			Name:         data.Name.ValueString(),
 			LocationHint: data.Location.ValueString(),
 		},
@@ -81,7 +82,7 @@ func (r *R2BucketResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	r2Bucket, err := r.client.GetR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	r2Bucket, err := r.client.V1.GetR2Bucket(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("failed reading R2 bucket", err.Error())
 		return
@@ -113,7 +114,7 @@ func (r *R2BucketResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	err := r.client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	err := r.client.V1.DeleteR2Bucket(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("failed to delete R2 bucket", err.Error())

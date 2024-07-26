@@ -53,6 +53,7 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		OptionsPreflightBypass:   cloudflare.BoolPtr(d.Get("options_preflight_bypass").(bool)),
 	}
 
 	if _, ok := d.GetOk("allow_authenticate_via_warp"); ok {
@@ -86,6 +87,11 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 	if value, ok := d.GetOk("tags"); ok {
 		newAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		newAccessApplication.SCIMConfig = convertSCIMConfigSchemaToStruct(d)
+	}
+
 	if appType == "app_launcher" {
 		newAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
 			LogoURL:               d.Get("app_launcher_logo_url").(string),
@@ -102,6 +108,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 			footerLinks := convertFooterLinksSchemaToStruct(d)
 			newAccessApplication.AccessAppLauncherCustomization.FooterLinks = footerLinks
 		}
+	}
+
+	if policies, ok := d.GetOk("policies"); ok {
+		newAccessApplication.Policies = expandInterfaceToStringList(policies)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Application from struct: %+v", newAccessApplication))
@@ -161,7 +171,13 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("name", accessApplication.Name)
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
-	d.Set("domain", accessApplication.Domain)
+	if _, domainWasSet := d.GetOk("domain"); domainWasSet {
+		// Only set the domain if it was set in the configuration, as apps can be created without a domain
+		// if they define a non-empty self_hosted_domains array
+		d.Set("domain", accessApplication.Domain)
+	} else {
+		d.Set("domain", nil)
+	}
 	d.Set("type", accessApplication.Type)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
@@ -181,6 +197,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("header_bg_color", accessApplication.AccessAppLauncherCustomization.HeaderBackgroundColor)
 	d.Set("app_launcher_logo_url", accessApplication.AccessAppLauncherCustomization.LogoURL)
 	d.Set("allow_authenticate_via_warp", accessApplication.AllowAuthenticateViaWarp)
+	d.Set("options_preflight_bypass", accessApplication.OptionsPreflightBypass)
 
 	if _, ok := d.GetOk("footer_links"); ok {
 		footerLinks := convertFooterLinksStructToSchema(d, accessApplication.AccessAppLauncherCustomization.FooterLinks)
@@ -210,6 +227,20 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
 	}
 
+	scimConfig := convertScimConfigStructToSchema(accessApplication.SCIMConfig)
+
+	if scimConfigErr := d.Set("scim_config", scimConfig); scimConfigErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Application SCIM configuration: %w", scimConfigErr))
+	}
+
+	if _, ok := d.GetOk("policies"); ok {
+		policyIDs := make([]string, len(accessApplication.Policies))
+		for i := range accessApplication.Policies {
+			policyIDs[i] = accessApplication.Policies[i].ID
+		}
+		d.Set("policies", policyIDs)
+	}
+
 	return nil
 }
 
@@ -235,6 +266,7 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		SkipInterstitial:         cloudflare.BoolPtr(d.Get("skip_interstitial").(bool)),
 		AppLauncherVisible:       cloudflare.BoolPtr(d.Get("app_launcher_visible").(bool)),
 		ServiceAuth401Redirect:   cloudflare.BoolPtr(d.Get("service_auth_401_redirect").(bool)),
+		OptionsPreflightBypass:   cloudflare.BoolPtr(d.Get("options_preflight_bypass").(bool)),
 	}
 
 	if _, ok := d.GetOk("allow_authenticate_via_warp"); ok {
@@ -257,6 +289,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		updatedAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
+	if d.HasChange("policies") {
+		policies := expandInterfaceToStringList(d.Get("policies"))
+		updatedAccessApplication.Policies = &policies
+	}
+
 	if _, ok := d.GetOk("cors_headers"); ok {
 		CORSConfig, err := convertCORSSchemaToStruct(d)
 		if err != nil {
@@ -273,6 +310,11 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	if value, ok := d.GetOk("tags"); ok {
 		updatedAccessApplication.Tags = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
+
+	if _, ok := d.GetOk("scim_config"); ok {
+		updatedAccessApplication.SCIMConfig = convertSCIMConfigSchemaToStruct(d)
+	}
+
 	if appType == "app_launcher" {
 		updatedAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
 			LogoURL:               d.Get("app_launcher_logo_url").(string),

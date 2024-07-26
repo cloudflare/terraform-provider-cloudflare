@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -98,10 +99,22 @@ func resourceCloudflareHostnameTLSSettingDelete(ctx context.Context, d *schema.R
 		Hostname: hostname,
 	}
 
-	_, err := client.DeleteHostnameTLSSetting(ctx, zoneIDrc, deleteParams)
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("error deleting hostname tls setting hostname %q in zone %q: %w", hostname, zoneID, err))
+	retry := retry.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *retry.RetryError {
+		_, err := client.DeleteHostnameTLSSetting(ctx, zoneIDrc, deleteParams)
+		if err != nil {
+			if strings.Contains(err.Error(), "resource while in pending deployment state") {
+				return retry.RetryableError(fmt.Errorf("waiting for hostname TLS setting to move out of pending state"))
+			} else {
+				return retry.NonRetryableError(fmt.Errorf("error deleting hostname TLS setting hostname %q in zone %q: %w", hostname, zoneID, err))
+			}
+		}
+		return nil
+	})
+
+	if retry != nil {
+		return diag.FromErr(retry)
 	}
+
 	return nil
 }
 

@@ -17,7 +17,7 @@ import (
 func init() {
 	resource.AddTestSweepers("cloudflare_access_group", &resource.Sweeper{
 		Name: "cloudflare_access_group",
-		F:    testSweepCloudflareAccessApplications,
+		F:    testSweepCloudflareAccessGroups,
 	})
 }
 
@@ -181,6 +181,37 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+
+	rnd2 := generateRandomResourceName()
+	emailListName := fmt.Sprintf("cloudflare_teams_list.%s", rnd2)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigEmailList(rnd, rnd2, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &accessGroup),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttrSet(name, "include.0.email_list.0"),
+
+					// Check that the email list is destroyed
+					resource.TestCheckResourceAttr(emailListName, "name", rnd2),
+					resource.TestCheckResourceAttr(emailListName, "type", "EMAIL"),
+					resource.TestCheckResourceAttr(emailListName, "items.0", "test@example.com"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
@@ -257,6 +288,9 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "include.0.email_domain.0", "example.com"),
 					resource.TestCheckResourceAttr(name, "exclude.0.email.0", email),
 					resource.TestCheckResourceAttr(name, "require.0.email.0", email),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.0", "common"),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.1", "name"),
+					resource.TestCheckNoResourceAttr(name, "include.0.common_name.0"),
 				),
 			},
 		},
@@ -389,6 +423,39 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.T) {
+	var before, after cloudflare.AccessGroup
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessGroupConfigBasicWithCommonName(rnd, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &before),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessGroupConfigBasicWithCommonNames(rnd, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareAccessGroupExists(name, cloudflare.AccountIdentifier(accountID), &after),
+					testAccCheckCloudflareAccessGroupIDUnchanged(&before, &after),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.0", "common"),
+					resource.TestCheckResourceAttr(name, "include.0.common_names.1", "name"),
+					resource.TestCheckNoResourceAttr(name, "include.0.common_name.0"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessGroupConfigBasic(resourceName string, email string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
 resource "cloudflare_access_group" "%[1]s" {
@@ -483,6 +550,7 @@ resource "cloudflare_access_group" "%[1]s" {
   include {
     email = ["%[3]s"]
 	email_domain = ["example.com"]
+	common_names = ["common", "name"]
   }
 
   require {
@@ -550,6 +618,49 @@ resource "cloudflare_access_group" "%[2]s" {
     }
   }
 }`, accountID, rnd, authCtxID, authCtxACID)
+}
+
+func testAccCloudflareAccessGroupConfigBasicWithCommonName(resourceName string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_group" "%[1]s" {
+  %[2]s_id = "%[3]s"
+  name     = "%[1]s"
+
+  include {
+    common_name = "common"
+  }
+}`, resourceName, identifier.Type, identifier.Identifier)
+}
+
+func testAccCloudflareAccessGroupConfigBasicWithCommonNames(resourceName string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_access_group" "%[1]s" {
+  %[2]s_id = "%[3]s"
+  name     = "%[1]s"
+
+  include {
+    common_names = ["common", "name"]
+  }
+}`, resourceName, identifier.Type, identifier.Identifier)
+}
+
+func testAccCloudflareAccessGroupConfigEmailList(resourceName string, emailListName string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_teams_list" "%[2]s" {
+  %[3]s_id    = "%[4]s"
+	name        = "%[2]s"
+	type        = "EMAIL"
+	description = "Email list test for %[1]s"
+	items       = [ "test@example.com" ]
+}
+resource "cloudflare_access_group" "%[1]s" {
+  %[3]s_id = "%[4]s"
+  name     = "%[1]s"
+
+  include {
+		email_list = [cloudflare_teams_list.%[2]s.id]
+  }
+}`, resourceName, emailListName, identifier.Type, identifier.Identifier)
 }
 
 func testAccCheckCloudflareAccessGroupExists(n string, accessIdentifier *cloudflare.ResourceContainer, accessGroup *cloudflare.AccessGroup) resource.TestCheckFunc {

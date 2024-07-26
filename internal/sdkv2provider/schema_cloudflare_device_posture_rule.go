@@ -122,6 +122,11 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "The operating system semantic version.",
 					},
+					"os_version_extra": {
+						Type:        schema.TypeString,
+						Optional:    true,
+						Description: "Extra version value following the operating system semantic version.",
+					},
 					"operator": {
 						Type:         schema.TypeString,
 						Optional:     true,

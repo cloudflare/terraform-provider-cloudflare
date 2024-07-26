@@ -20,7 +20,7 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	var domain cloudflare.WorkersDomain
 	rnd := generateRandomResourceName()
-	name := "cloudflare_worker_domain." + rnd
+	name := "cloudflare_workers_domain." + rnd
 	hostname := rnd + "." + zoneName
 
 	resource.Test(t, resource.TestCase{
@@ -96,18 +96,18 @@ func testAccCheckCloudflareWorkerDomainExists(resourceName string, domain *cloud
 
 func testAccCheckCloudflareWorkerDomainAttach(rnd, accountID string, hostname string, zoneID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_worker_script" "%[1]s-script" {
+resource "cloudflare_workers_script" "%[1]s-script" {
   account_id = "%[3]s"
   name = "%[1]s"
   content = "%[2]s"
 }
 
-resource "cloudflare_worker_domain" "%[1]s" {
+resource "cloudflare_workers_domain" "%[1]s" {
 	zone_id = "%[5]s"
 	account_id = "%[3]s"
 	hostname = "%[4]s"
 	service = "%[1]s"
-	depends_on = [cloudflare_worker_script.%[1]s-script]
+	depends_on = [cloudflare_workers_script.%[1]s-script]
 }`, rnd, scriptContent, accountID, hostname, zoneID)
 }
 
@@ -115,7 +115,7 @@ func testAccCheckCloudflareWorkerDomainDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_domain" {
+		if rs.Type != "cloudflare_workers_domain" {
 			continue
 		}
 

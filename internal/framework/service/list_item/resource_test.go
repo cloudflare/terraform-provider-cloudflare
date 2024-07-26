@@ -3,13 +3,14 @@ package list_item_test
 import (
 	"context"
 	"fmt"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"os"
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -19,7 +20,7 @@ func TestAccCloudflareListItem_Basic(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -44,7 +45,7 @@ func TestAccCloudflareListItem_MultipleItems(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -77,7 +78,7 @@ func TestAccCloudflareListItem_Update(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var listItem cloudflare.ListItem
+	var listItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -127,7 +128,7 @@ func TestAccCloudflareListItem_ASN(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -152,7 +153,7 @@ func TestAccCloudflareListItem_Hostname(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -179,7 +180,7 @@ func TestAccCloudflareListItem_Redirect(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_list_item.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var ListItem cloudflare.ListItem
+	var ListItem cfv1.ListItem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -225,7 +226,7 @@ func testAccCheckCloudflareIPListItem(ID, name, comment, accountID string) strin
     account_id = "%[4]s"
 	list_id    = cloudflare_list.%[2]s.id
 	ip         = "192.0.2.1"
-  } 
+  }
 `, ID, name, comment, accountID)
 }
 
@@ -267,7 +268,7 @@ func testAccCheckCloudflareIPListItemMultipleEntries(ID, name, comment, accountI
   } `, ID, name, comment, accountID)
 }
 
-func testAccCheckCloudflareListItemExists(n string, name string, listItem *cloudflare.ListItem) resource.TestCheckFunc {
+func testAccCheckCloudflareListItemExists(n string, name string, listItem *cfv1.ListItem) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 		listRS := s.RootModule().Resources["cloudflare_list."+name]
@@ -281,11 +282,11 @@ func testAccCheckCloudflareListItemExists(n string, name string, listItem *cloud
 			return fmt.Errorf("no List ID is set")
 		}
 
-		client, err := acctest.SharedClient()
+		client, err := acctest.SharedV1Client()
 		if err != nil {
 			return fmt.Errorf("error establishing client: %w", err)
 		}
-		foundList, err := client.GetListItem(context.Background(), cloudflare.AccountIdentifier(accountID), listRS.Primary.ID, rs.Primary.ID)
+		foundList, err := client.GetListItem(context.Background(), cfv1.AccountIdentifier(accountID), listRS.Primary.ID, rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -368,4 +369,113 @@ func testAccCheckCloudflareHostnameRedirectItem(ID, name, comment, accountID str
 		status_code = 301
 	}
   } `, ID, name, comment, accountID)
+}
+
+func TestAccCloudflareListItem_RedirectWithOverlappingSourceURL(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)
+	secondResource := fmt.Sprintf("cloudflare_list_item.%s_2", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Account(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstResource, "redirect.#", "1"),
+					resource.TestCheckResourceAttr(firstResource, "redirect.0.source_url", "www.site1.com/"),
+					resource.TestCheckResourceAttr(firstResource, "redirect.0.target_url", "https://example.com"),
+					resource.TestCheckResourceAttr(firstResource, "redirect.0.status_code", "301"),
+
+					resource.TestCheckResourceAttr(secondResource, "redirect.#", "1"),
+					resource.TestCheckResourceAttr(secondResource, "redirect.0.source_url", "www.site1.com/test"),
+					resource.TestCheckResourceAttr(secondResource, "redirect.0.target_url", "https://cloudflare.com"),
+					resource.TestCheckResourceAttr(secondResource, "redirect.0.status_code", "301"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "redirect"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_1" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	redirect {
+		source_url = "www.site1.com/"
+		target_url = "https://example.com"
+		status_code = 301
+	}
+  }
+
+  resource "cloudflare_list_item" "%[1]s_2" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	redirect {
+		source_url = "www.site1.com/test"
+		target_url = "https://cloudflare.com"
+		status_code = 301
+	}
+  }
+  `, ID, name, comment, accountID)
+}
+
+func TestAccCloudflareListItem_IPWithOverlappingPrefix(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)
+	secondResource := fmt.Sprintf("cloudflare_list_item.%s_2", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Account(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameIPWithOverlappingPrefix(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstResource, "ip", "192.0.2.10"),
+					resource.TestCheckResourceAttr(secondResource, "ip", "192.0.2.1"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareHostnameIPWithOverlappingPrefix(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "ip"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_1" {
+    account_id = "%[4]s"
+    list_id    = cloudflare_list.%[2]s.id
+    ip         = "192.0.2.10"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_2" {
+    account_id = "%[4]s"
+    list_id    = cloudflare_list.%[2]s.id
+    ip         = "192.0.2.1"
+  }
+  `, ID, name, comment, accountID)
 }

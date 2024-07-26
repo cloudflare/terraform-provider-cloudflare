@@ -36,6 +36,7 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "client_default", "false"),
+					resource.TestCheckResourceAttr(name, "ecs_support", "false"),
 				),
 			},
 		},

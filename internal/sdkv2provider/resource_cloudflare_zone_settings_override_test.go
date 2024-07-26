@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"reflect"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -217,4 +219,71 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		zero_rtt = "off"
 	}
 }`, rnd, zoneID)
+}
+
+func TestAccCloudflareZoneSettingsOverride_NEL(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_settings_override." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareZoneSettingsOverrideNEL(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareZoneSettings(name),
+					resource.TestCheckResourceAttr(name, "settings.0.nel.0.enabled", "true"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareZoneSettingsOverrideNEL(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zone_settings_override" "%[1]s" {
+  zone_id = "%[2]s"
+  settings {
+    nel {
+      enabled = true
+	}
+  }
+}`, rnd, zoneID)
+}
+
+func TestCloudflareZoneSettingsOverrideStateUpgradeV0(t *testing.T) {
+	v0 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"mobile_redirect": map[string]interface{}{
+				"mobile_subdomain": "",
+				"status":           "",
+				"strip_uri":        true,
+			},
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"mobile_redirect": map[string]interface{}{
+				"mobile_subdomain": "",
+				"status":           "",
+				"strip_uri":        true,
+			},
+			"other_thing": "foo",
+		}},
+	}
+
+	expectedV1 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+	}
+
+	actualV1, err := resourceCloudflareZoneSettingsOverrideStateUpgradeV1(context.Background(), v0, nil)
+	require.NoError(t, err)
+
+	require.Equal(t, expectedV1, actualV1)
 }

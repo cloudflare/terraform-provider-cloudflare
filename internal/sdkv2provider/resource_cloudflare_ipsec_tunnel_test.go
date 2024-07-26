@@ -43,6 +43,7 @@ func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "health_check_rate", "mid"),
 					resource.TestCheckResourceAttr(name, "psk", "asdf1234"),
 					resource.TestCheckResourceAttr(name, "allowNullCipher", "false"),
+					resource.TestCheckResourceAttr(name, "replay_protection", "true"),
 				),
 			},
 		},
@@ -153,5 +154,6 @@ func testAccCheckCloudflareIPsecTunnelSimple(ID, description, accountID, psk str
 	health_check_rate = "mid"
 	psk = "%[4]s"
 	allow_null_cipher = false
+	replay_protection = true
   }`, ID, description, accountID, psk)
 }

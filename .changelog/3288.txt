@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/cloudflare_access_policy: added support for reusable policies
+```
+
+```release-note:enhancement
+resource/cloudflare_access_application: added support for 'policies' argument
+```

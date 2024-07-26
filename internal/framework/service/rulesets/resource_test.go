@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -22,7 +22,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_ruleset", &resource.Sweeper{
 		Name: "cloudflare_ruleset",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -31,24 +31,24 @@ func init() {
 			}
 
 			ctx := context.Background()
-			accountRulesets, err := client.ListRulesets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListRulesetsParams{})
+			accountRulesets, err := client.ListRulesets(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListRulesetsParams{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch rulesets: %w", err)
 			}
 
 			for _, ruleset := range accountRulesets {
 				if ruleset.Kind != "managed" {
-					err := client.DeleteRuleset(ctx, cloudflare.AccountIdentifier(accountID), ruleset.ID)
+					err := client.DeleteRuleset(ctx, cfv1.AccountIdentifier(accountID), ruleset.ID)
 					if err != nil {
 						return fmt.Errorf("failed to delete ruleset %q: %w", ruleset.ID, err)
 					}
 				}
 			}
 
-			zoneRulesets, _ := client.ListRulesets(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListRulesetsParams{})
+			zoneRulesets, _ := client.ListRulesets(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListRulesetsParams{})
 			for _, ruleset := range zoneRulesets {
 				if ruleset.Kind != "managed" {
-					err := client.DeleteRuleset(ctx, cloudflare.ZoneIdentifier(zoneID), ruleset.ID)
+					err := client.DeleteRuleset(ctx, cfv1.ZoneIdentifier(zoneID), ruleset.ID)
 					if err != nil {
 						return fmt.Errorf("failed to delete ruleset %q: %w", ruleset.ID, err)
 					}
@@ -2160,6 +2160,8 @@ func TestAccCloudflareRuleset_Config(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.ssl", "off"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.sxg", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.hotlink_protection", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.disable_rum", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.fonts", "true"),
 				),
 			},
 		},
@@ -4465,6 +4467,8 @@ func testAccCloudflareRulesetConfigAllEnabled(rnd, accountID, zoneID string) str
 		bic = true
 		disable_apps = true
 		disable_zaraz = true
+		disable_rum = true
+		fonts = true
 		disable_railgun = true
 		email_obfuscation = true
 		mirage = true

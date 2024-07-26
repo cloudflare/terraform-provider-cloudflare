@@ -47,6 +47,7 @@ Read-Only:
 - `os_distro_name` (String)
 - `os_distro_revision` (String)
 - `os_version` (String)
+- `os_version_extra` (String)
 - `revoked_at` (String)
 - `serial_number` (String)
 - `updated` (String)

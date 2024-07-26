@@ -33,8 +33,8 @@ func resourceCloudflareAccessOrganizationSchema() map[string]*schema.Schema {
 		},
 		"name": {
 			Type:        schema.TypeString,
-			Optional:    true,
 			Description: "The name of your Zero Trust organization.",
+			Required:    true,
 		},
 		"is_ui_read_only": {
 			Type:        schema.TypeBool,

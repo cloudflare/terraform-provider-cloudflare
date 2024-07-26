@@ -93,6 +93,21 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
 				),
 			},
+			{
+				Config: testAccCheckCloudflareManagedHeadersRemovedHeader(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.id", "add_true_client_ip_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.0.enabled", "true"),
+
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.id", "add_security_headers"),
+					resource.TestCheckResourceAttr(resourceName, "managed_response_headers.0.enabled", "true"),
+				),
+			},
 		},
 	})
 }
@@ -108,6 +123,22 @@ func testAccCheckCloudflareManagedHeaders(rnd, zoneID string) string {
 
 	managed_request_headers {
 		id = "add_visitor_location_headers"
+		enabled = true
+	}
+
+	managed_response_headers {
+		id = "add_security_headers"
+		enabled = true
+	}
+  }`, rnd, zoneID)
+}
+
+func testAccCheckCloudflareManagedHeadersRemovedHeader(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_managed_headers" "%[1]s" {
+	zone_id  = "%[2]s"
+	managed_request_headers {
+		id = "add_true_client_ip_headers"
 		enabled = true
 	}
 

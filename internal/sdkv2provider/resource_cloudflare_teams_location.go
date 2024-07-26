@@ -68,6 +68,9 @@ func resourceCloudflareTeamsLocationRead(ctx context.Context, d *schema.Resource
 	if err := d.Set("client_default", location.ClientDefault); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing Location client default"))
 	}
+	if err := d.Set("ecs_support", location.ECSSupport); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing Location ecs support"))
+	}
 
 	return nil
 }
@@ -84,6 +87,7 @@ func resourceCloudflareTeamsLocationCreate(ctx context.Context, d *schema.Resour
 		Name:          d.Get("name").(string),
 		Networks:      networks,
 		ClientDefault: d.Get("client_default").(bool),
+		ECSSupport:    cloudflare.BoolPtr(d.Get("ecs_support").(bool)),
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Teams Location from struct: %+v", newTeamLocation))
@@ -107,6 +111,7 @@ func resourceCloudflareTeamsLocationUpdate(ctx context.Context, d *schema.Resour
 		ID:            d.Id(),
 		Name:          d.Get("name").(string),
 		ClientDefault: d.Get("client_default").(bool),
+		ECSSupport:    cloudflare.BoolPtr(d.Get("ecs_support").(bool)),
 		Networks:      networks,
 	}
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Teams Location from struct: %+v", updatedTeamsLocation))

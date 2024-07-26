@@ -29,6 +29,10 @@ resource "cloudflare_access_application" "staging_app" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
+  policies                  = [
+      cloudflare_access_policy.example_1.id,
+      cloudflare_access_policy.example_2.id
+  ]
 }
 
 # With CORS configuration
@@ -38,6 +42,10 @@ resource "cloudflare_access_application" "staging_app" {
   domain           = "staging.example.com"
   type             = "self_hosted"
   session_duration = "24h"
+  policies         = [
+      cloudflare_access_policy.example_1.id,
+      cloudflare_access_policy.example_2.id
+  ]
   cors_headers {
     allowed_methods   = ["GET", "POST", "OPTIONS"]
     allowed_origins   = ["https://example.com"]
@@ -71,8 +79,11 @@ resource "cloudflare_access_application" "staging_app" {
 - `landing_page_design` (Block List, Max: 1) The landing page design of the app launcher. (see [below for nested schema](#nestedblock--landing_page_design))
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
 - `name` (String) Friendly name of the Access Application.
+- `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set. Defaults to `false`.
+- `policies` (List of String) The policies associated with the application, in ascending order of precedence. Warning: Do not use this field while you still have this application ID referenced as `application_id` in any `cloudflare_access_policy` resource, as it can result in an inconsistent state.
 - `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
+- `scim_config` (Block List, Max: 1) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedblock--scim_config))
 - `self_hosted_domains` (Set of String) List of domains that access will secure. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`.
 - `service_auth_401_redirect` (Boolean) Option to return a 401 status code in service authentication rules on failed requests. Defaults to `false`.
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`. Defaults to `24h`.
@@ -127,16 +138,21 @@ Optional:
 
 Optional:
 
+- `access_token_lifetime` (String) The lifetime of the Access Token after creation. Valid units are `m` and `h`. Must be greater than or equal to 1m and less than or equal to 24h.
+- `allow_pkce_without_client_secret` (Boolean) Allow PKCE flow without a client secret.
 - `app_launcher_url` (String) The URL where this applications tile redirects users.
-- `auth_type` (String)
+- `auth_type` (String) **Modifying this attribute will force creation of a new resource.**
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
 - `custom_attribute` (Block List) Custom attribute mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_attribute))
+- `custom_claim` (Block List) Custom claim mapped from IDPs. (see [below for nested schema](#nestedblock--saas_app--custom_claim))
 - `default_relay_state` (String) The relay state used if not provided by the identity provider.
 - `grant_types` (Set of String) The OIDC flows supported by this application.
 - `group_filter_regex` (String) A regex to filter Cloudflare groups returned in ID token and userinfo endpoint.
+- `hybrid_and_implicit_options` (Block List, Max: 1) Hybrid and Implicit Flow options. (see [below for nested schema](#nestedblock--saas_app--hybrid_and_implicit_options))
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application.
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
 - `redirect_uris` (Set of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens.
+- `refresh_token_options` (Block List) Refresh token grant options. (see [below for nested schema](#nestedblock--saas_app--refresh_token_options))
 - `saml_attribute_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.
 - `scopes` (Set of String) Define the user information shared with access.
 - `sp_entity_id` (String) A globally unique name for an identity or service provider.
@@ -169,6 +185,113 @@ Optional:
 Required:
 
 - `name` (String) The name of the attribute as provided by the IDP.
+
+Optional:
+
+- `name_by_idp` (Map of String) A mapping from IdP ID to claim name.
+
+
+
+<a id="nestedblock--saas_app--custom_claim"></a>
+### Nested Schema for `saas_app.custom_claim`
+
+Required:
+
+- `source` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--saas_app--custom_claim--source))
+
+Optional:
+
+- `name` (String) The name of the attribute as provided to the SaaS app.
+- `required` (Boolean) True if the attribute must be always present.
+- `scope` (String) The scope of the claim.
+
+<a id="nestedblock--saas_app--custom_claim--source"></a>
+### Nested Schema for `saas_app.custom_claim.source`
+
+Required:
+
+- `name` (String) The name of the attribute as provided by the IDP.
+
+Optional:
+
+- `name_by_idp` (Map of String) A mapping from IdP ID to claim name.
+
+
+
+<a id="nestedblock--saas_app--hybrid_and_implicit_options"></a>
+### Nested Schema for `saas_app.hybrid_and_implicit_options`
+
+Optional:
+
+- `return_access_token_from_authorization_endpoint` (Boolean) If true, the authorization endpoint will return an access token.
+- `return_id_token_from_authorization_endpoint` (Boolean) If true, the authorization endpoint will return an id token.
+
+
+<a id="nestedblock--saas_app--refresh_token_options"></a>
+### Nested Schema for `saas_app.refresh_token_options`
+
+Optional:
+
+- `lifetime` (String) How long a refresh token will be valid for after creation. Valid units are `m`, `h` and `d`. Must be longer than 1m.
+
+
+
+<a id="nestedblock--scim_config"></a>
+### Nested Schema for `scim_config`
+
+Required:
+
+- `idp_uid` (String) The UID of the IdP to use as the source for SCIM resources to provision to this application.
+- `remote_uri` (String) The base URI for the application's SCIM-compatible API.
+
+Optional:
+
+- `authentication` (Block List, Max: 1) Attributes for configuring HTTP Basic, OAuth Bearer token, or OAuth 2 authentication schemes for SCIM provisioning to an application. (see [below for nested schema](#nestedblock--scim_config--authentication))
+- `deactivate_on_delete` (Boolean) If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.
+- `enabled` (Boolean) Whether SCIM provisioning is turned on for this application.
+- `mappings` (Block List) A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned. (see [below for nested schema](#nestedblock--scim_config--mappings))
+
+<a id="nestedblock--scim_config--authentication"></a>
+### Nested Schema for `scim_config.authentication`
+
+Required:
+
+- `scheme` (String) The authentication scheme to use when making SCIM requests to this application.
+
+Optional:
+
+- `authorization_url` (String) URL used to generate the auth code used during token generation. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service. Required when using `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `password` (String) Required when using `scim_config.0.authentication.0.user`. Conflicts with `scim_config.0.authentication.0.token`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
+- `scopes` (Set of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `token` (String) Token used to authenticate with the remote SCIM service. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
+- `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service. Required when using `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.client_id`. Conflicts with `scim_config.0.authentication.0.user`, `scim_config.0.authentication.0.password`, `scim_config.0.authentication.0.token`.
+- `user` (String) User name used to authenticate with the remote SCIM service. Required when using `scim_config.0.authentication.0.password`. Conflicts with `scim_config.0.authentication.0.token`, `scim_config.0.authentication.0.client_id`, `scim_config.0.authentication.0.client_secret`, `scim_config.0.authentication.0.authorization_url`, `scim_config.0.authentication.0.token_url`, `scim_config.0.authentication.0.scopes`.
+
+
+<a id="nestedblock--scim_config--mappings"></a>
+### Nested Schema for `scim_config.mappings`
+
+Required:
+
+- `schema` (String) Which SCIM resource type this mapping applies to.
+
+Optional:
+
+- `enabled` (Boolean) Whether or not this mapping is enabled.
+- `filter` (String) A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.
+- `operations` (Block List, Max: 1) Whether or not this mapping applies to creates, updates, or deletes. (see [below for nested schema](#nestedblock--scim_config--mappings--operations))
+- `transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.
+
+<a id="nestedblock--scim_config--mappings--operations"></a>
+### Nested Schema for `scim_config.mappings.operations`
+
+Optional:
+
+- `create` (Boolean) Whether or not this mapping applies to create (POST) operations.
+- `delete` (Boolean) Whether or not this mapping applies to DELETE operations.
+- `update` (Boolean) Whether or not this mapping applies to update (PATCH/PUT) operations.
 
 ## Import
 

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
-
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -25,7 +25,7 @@ func NewResource() resource.Resource {
 
 // HyperdriveConfigResource defines the resource implementation for hyperdrive configs.
 type HyperdriveConfigResource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *HyperdriveConfigResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -37,12 +37,12 @@ func (r *HyperdriveConfigResource) Configure(ctx context.Context, req resource.C
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -64,10 +64,10 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 
 	config := buildHyperdriveConfigFromModel(data, caching)
 
-	createHyperdriveConfig, err := r.client.CreateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
-		cloudflare.CreateHyperdriveConfigParams{
+	createHyperdriveConfig, err := r.client.V1.CreateHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()),
+		cfv1.CreateHyperdriveConfigParams{
 			Name: config.Name,
-			Origin: cloudflare.HyperdriveConfigOrigin{
+			Origin: cfv1.HyperdriveConfigOrigin{
 				Database: config.Origin.Database,
 				Password: config.Origin.Password,
 				Host:     config.Origin.Host,
@@ -75,7 +75,7 @@ func (r *HyperdriveConfigResource) Create(ctx context.Context, req resource.Crea
 				Scheme:   config.Origin.Scheme,
 				User:     config.Origin.User,
 			},
-			Caching: cloudflare.HyperdriveConfigCaching{
+			Caching: cfv1.HyperdriveConfigCaching{
 				Disabled: config.Caching.Disabled,
 			},
 		})
@@ -100,7 +100,7 @@ func (r *HyperdriveConfigResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	config, err := r.client.GetHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	config, err := r.client.V1.GetHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading hyperdrive config", err.Error())
@@ -127,9 +127,10 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 
 	config := buildHyperdriveConfigFromModel(data, caching)
 
-	updatedConfig, err := r.client.UpdateHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateHyperdriveConfigParams{
-		Name: config.Name,
-		Origin: cloudflare.HyperdriveConfigOrigin{
+	updatedConfig, err := r.client.V1.UpdateHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), cfv1.UpdateHyperdriveConfigParams{
+		Name:         config.Name,
+		HyperdriveID: config.ID,
+		Origin: cfv1.HyperdriveConfigOrigin{
 			Database: config.Origin.Database,
 			Password: config.Origin.Password,
 			Host:     config.Origin.Host,
@@ -137,7 +138,7 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 			Scheme:   config.Origin.Scheme,
 			User:     config.Origin.User,
 		},
-		Caching: cloudflare.HyperdriveConfigCaching{
+		Caching: cfv1.HyperdriveConfigCaching{
 			Disabled: config.Caching.Disabled,
 		},
 	})
@@ -163,7 +164,7 @@ func (r *HyperdriveConfigResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	err := r.client.DeleteHyperdriveConfig(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	err := r.client.V1.DeleteHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Error deleting hyperdrive config", err.Error())
 	}
@@ -178,10 +179,11 @@ func (r *HyperdriveConfigResource) ImportState(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)
 }
 
-func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel, caching *HyperdriveConfigCachingModel) cloudflare.HyperdriveConfig {
-	built := cloudflare.HyperdriveConfig{
+func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel, caching *HyperdriveConfigCachingModel) cfv1.HyperdriveConfig {
+	built := cfv1.HyperdriveConfig{
+		ID:   config.ID.ValueString(),
 		Name: config.Name.ValueString(),
-		Origin: cloudflare.HyperdriveConfigOrigin{
+		Origin: cfv1.HyperdriveConfigOrigin{
 			Database: config.Origin.Database.ValueString(),
 			Password: config.Origin.Password.ValueString(),
 			Host:     config.Origin.Host.ValueString(),
@@ -197,16 +199,16 @@ func buildHyperdriveConfigFromModel(config *HyperdriveConfigModel, caching *Hype
 		built.Origin.User = config.Origin.User.ValueString()
 	}
 
-	built.Caching = cloudflare.HyperdriveConfigCaching{}
+	built.Caching = cfv1.HyperdriveConfigCaching{}
 
 	if caching != nil && !caching.Disabled.IsNull() {
-		built.Caching.Disabled = cloudflare.BoolPtr(caching.Disabled.ValueBool())
+		built.Caching.Disabled = cfv1.BoolPtr(caching.Disabled.ValueBool())
 	}
 
 	return built
 }
 
-func buildHyperdriveConfigModelFromHyperdriveConfig(ctx context.Context, data *HyperdriveConfigModel, config cloudflare.HyperdriveConfig) (*HyperdriveConfigModel, diag.Diagnostics) {
+func buildHyperdriveConfigModelFromHyperdriveConfig(ctx context.Context, data *HyperdriveConfigModel, config cfv1.HyperdriveConfig) (*HyperdriveConfigModel, diag.Diagnostics) {
 	var scheme = flatteners.String("postgres")
 	if data.Origin != nil {
 		scheme = data.Origin.Scheme

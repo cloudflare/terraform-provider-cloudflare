@@ -8,7 +8,7 @@ resource "cloudflare_api_token" "api_token_create" {
 
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["API Tokens Write"],
+      data.cloudflare_api_token_permission_groups.all.user["API Tokens Write"],
     ]
     resources = {
       "com.cloudflare.api.user.${var.user_id}" = "*"
@@ -35,7 +35,7 @@ resource "cloudflare_api_token" "logs_account_all" {
 
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["Access: Audit Logs Read"],
+      data.cloudflare_api_token_permission_groups.all.account["Access: Audit Logs Read"],
     ]
     resources = {
       "com.cloudflare.api.account.*" = "*"
@@ -49,7 +49,7 @@ resource "cloudflare_api_token" "logs_account" {
 
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["Access: Audit Logs Read"],
+      data.cloudflare_api_token_permission_groups.all.account["Access: Audit Logs Read"],
     ]
     resources = {
       "com.cloudflare.api.account.${var.account_id}" = "*"
@@ -66,8 +66,8 @@ resource "cloudflare_api_token" "dns_tls_edit" {
 
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
-      data.cloudflare_api_token_permission_groups.all.permissions["SSL and Certificates Write"],
+      data.cloudflare_api_token_permission_groups.all.zone["DNS Write"],
+      data.cloudflare_api_token_permission_groups.all.zone["SSL and Certificates Write"],
     ]
     resources = {
       "com.cloudflare.api.account.zone.${var.zone_id}" = "*"
@@ -82,7 +82,7 @@ resource "cloudflare_api_token" "dns_tls_edit_all_except_one" {
   # include all zones
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
+      data.cloudflare_api_token_permission_groups.all.zone["DNS Write"],
     ]
     resources = {
       "com.cloudflare.api.account.zone.*" = "*"
@@ -92,7 +92,7 @@ resource "cloudflare_api_token" "dns_tls_edit_all_except_one" {
   # exclude (deny) specific zone
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
+      data.cloudflare_api_token_permission_groups.all.zone["DNS Write"],
     ]
     resources = {
       "com.cloudflare.api.account.zone.${var.zone_id}" = "*"
@@ -109,7 +109,7 @@ resource "cloudflare_api_token" "dns_edit_all_account" {
   # include all zones from specific account
   policy {
     permission_groups = [
-      data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
+      data.cloudflare_api_token_permission_groups.all.zone["DNS Write"],
     ]
     resources = {
       "com.cloudflare.api.account.${var.account_id}" = jsonencode({

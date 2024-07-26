@@ -6,7 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	cfv2 "github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -77,14 +79,23 @@ func TestAccSkipForDefaultAccount(t *testing.T, reason string) {
 	}
 }
 
-// sharedClient returns a common Cloudflare client setup needed for the
+// SharedV1Client returns a common Cloudflare V1 client setup needed for the
 // sweeper functions.
-func SharedClient() (*cloudflare.API, error) {
-	client, err := cloudflare.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
+func SharedV1Client() (*cfv1.API, error) {
+	client, err := cfv1.New(os.Getenv("CLOUDFLARE_API_KEY"), os.Getenv("CLOUDFLARE_EMAIL"))
 
 	if err != nil {
 		return client, err
 	}
 
 	return client, nil
+}
+
+// SharedV2Client returns a common Cloudflare V2 client setup needed for the
+// sweeper functions.
+func SharedV2Client() *cfv2.Client {
+	return cfv2.NewClient(
+		option.WithAPIKey("CLOUDFLARE_API_KEY"),
+		option.WithAPIEmail("CLOUDFLARE_EMAIL"),
+	)
 }

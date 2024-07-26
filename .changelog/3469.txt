@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: Fix bug that was not cleaning the API when removing all ids from the 'policies' list
+```

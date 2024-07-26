@@ -5,13 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -25,7 +26,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_r2_bucket", &resource.Sweeper{
 		Name: "cloudflare_r2_bucket",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 			accessKeyId := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
@@ -44,7 +45,7 @@ func init() {
 			}
 
 			ctx := context.Background()
-			buckets, err := client.ListR2Buckets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListR2BucketsParams{})
+			buckets, err := client.ListR2Buckets(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListR2BucketsParams{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch R2 buckets: %w", err)
 			}
@@ -89,7 +90,7 @@ func init() {
 					}
 				}
 
-				err = client.DeleteR2Bucket(ctx, cloudflare.AccountIdentifier(accountID), bucket.Name)
+				err = client.DeleteR2Bucket(ctx, cfv1.AccountIdentifier(accountID), bucket.Name)
 				if err != nil {
 					return fmt.Errorf("failed to delete R2 bucket %q: %w", bucket.Name, err)
 				}
@@ -147,6 +148,22 @@ func TestAccCloudflareR2Bucket_Minimum(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareR2Bucket_InvalidLocation(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccCheckCloudflareR2BucketInvalidLocation(rnd, accountID),
+				ExpectError: regexp.MustCompile("Error: Invalid Attribute Value Match"),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareR2BucketMinimum(rnd, accountID string) string {
 	return fmt.Sprintf(`
   resource "cloudflare_r2_bucket" "%[1]s" {
@@ -161,5 +178,14 @@ func testAccCheckCloudflareR2BucketBasic(rnd, accountID string) string {
     account_id = "%[2]s"
     name       = "%[1]s"
 	location   = "ENAM"
+  }`, rnd, accountID)
+}
+
+func testAccCheckCloudflareR2BucketInvalidLocation(rnd, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_r2_bucket" "%[1]s" {
+    account_id = "%[2]s"
+    name       = "%[1]s"
+	location   = "foo"
   }`, rnd, accountID)
 }

@@ -29,6 +29,23 @@ func resourceCloudflareWorkerScript() *schema.Resource {
 		Description: heredoc.Doc(
 			"Provides a Cloudflare worker script resource. In order for a script to be active, you'll also need to setup a `cloudflare_worker_route`.",
 		),
+		DeprecationMessage: "`cloudflare_worker_script` is now deprecated and will be removed in the next major version. Use `cloudflare_workers_script` instead.",
+	}
+}
+
+func resourceCloudflareWorkersScript() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareWorkerScriptSchema(),
+		CreateContext: resourceCloudflareWorkerScriptCreate,
+		ReadContext:   resourceCloudflareWorkerScriptRead,
+		UpdateContext: resourceCloudflareWorkerScriptUpdate,
+		DeleteContext: resourceCloudflareWorkerScriptDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareWorkerScriptImport,
+		},
+		Description: heredoc.Doc(
+			"Provides a Cloudflare worker script resource. In order for a script to be active, you'll also need to setup a `cloudflare_worker_route`.",
+		),
 	}
 }
 
@@ -433,8 +450,11 @@ func resourceCloudflareWorkerScriptDelete(ctx context.Context, d *schema.Resourc
 
 	tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Worker Script from struct: %+v", &scriptData.Params))
 
+	dispatchNamespace := d.Get("dispatch_namespace").(string)
+
 	err = client.DeleteWorker(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.DeleteWorkerParams{
-		ScriptName: scriptData.Params.ScriptName,
+		ScriptName:        scriptData.Params.ScriptName,
+		DispatchNamespace: &dispatchNamespace,
 	})
 	if err != nil {
 		// If the resource is already deleted, we should return without an error

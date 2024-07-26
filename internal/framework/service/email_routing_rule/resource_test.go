@@ -6,10 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -22,7 +21,7 @@ func init() {
 	resource.AddTestSweepers("cloudflare_email_routing_rule", &resource.Sweeper{
 		Name: "cloudflare_email_routing_rule",
 		F: func(region string) error {
-			client, err := acctest.SharedClient()
+			client, err := acctest.SharedV1Client()
 			zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 			if err != nil {
@@ -30,7 +29,7 @@ func init() {
 			}
 
 			ctx := context.Background()
-			rules, _, err := client.ListEmailRoutingRules(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListEmailRoutingRulesParameters{})
+			rules, _, err := client.ListEmailRoutingRules(ctx, cfv1.ZoneIdentifier(zoneID), cfv1.ListEmailRoutingRulesParameters{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch email routing rules: %w", err)
 			}
@@ -39,7 +38,7 @@ func init() {
 				for _, matchers := range rule.Matchers {
 					// you cannot delete a catch all rule
 					if matchers.Type != "all" {
-						_, err := client.DeleteEmailRoutingRule(ctx, cloudflare.ZoneIdentifier(zoneID), rule.Tag)
+						_, err := client.DeleteEmailRoutingRule(ctx, cfv1.ZoneIdentifier(zoneID), rule.Tag)
 						if err != nil {
 							return fmt.Errorf("failed to delete email routing rule %q: %w", rule.Name, err)
 						}

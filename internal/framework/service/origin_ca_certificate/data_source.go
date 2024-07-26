@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudflare/cloudflare-go"
-
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,7 +17,7 @@ func NewDataSource() datasource.DataSource {
 }
 
 type CloudflareOriginCACertificateDataSource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *CloudflareOriginCACertificateDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -30,12 +29,12 @@ func (r *CloudflareOriginCACertificateDataSource) Configure(ctx context.Context,
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -51,7 +50,7 @@ func (r *CloudflareOriginCACertificateDataSource) Read(ctx context.Context, req 
 		return
 	}
 
-	cert, err := r.client.GetOriginCACertificate(ctx, data.ID.ValueString())
+	cert, err := r.client.V1.GetOriginCACertificate(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("failed to fetch Origin CA: %w", err.Error())
 		return

@@ -61,6 +61,13 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 				Type: schema.TypeString,
 			},
 		},
+		"email_list": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
 		"ip": {
 			Type:        schema.TypeList,
 			Description: "An IPv4 or IPv6 CIDR block.",
@@ -237,7 +244,6 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 		"external_evaluation": {
 			Type:     schema.TypeList,
 			Optional: true,
-			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"evaluate_url": {
@@ -276,6 +282,14 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					},
 				},
 			},
+		},
+		"common_names": {
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			Description: "Overflow field if you need to have multiple common_name rules in a single policy.  Use in place of the singular common_name field.",
 		},
 	},
 }

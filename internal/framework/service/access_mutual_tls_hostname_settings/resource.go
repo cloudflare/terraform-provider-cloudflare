@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -22,7 +23,7 @@ func NewResource() resource.Resource {
 }
 
 type AccessMutualTLSHostnameSettingsResource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *AccessMutualTLSHostnameSettingsResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -34,12 +35,12 @@ func (r *AccessMutualTLSHostnameSettingsResource) Configure(ctx context.Context,
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -80,7 +81,7 @@ func (r *AccessMutualTLSHostnameSettingsResource) Read(ctx context.Context, req 
 
 	identifier := getIdentifier(data)
 
-	accessMutualTLSHostnameSettings, err := r.client.GetAccessMutualTLSHostnameSettings(ctx, identifier)
+	accessMutualTLSHostnameSettings, err := r.client.V1.GetAccessMutualTLSHostnameSettings(ctx, identifier)
 	if err != nil {
 		resp.Diagnostics.AddError("error reading Access Mutual TLS Hostname Settings", err.Error())
 		return
@@ -92,8 +93,8 @@ func (r *AccessMutualTLSHostnameSettingsResource) Read(ctx context.Context, req 
 // Helper function used by both Update and Create
 // We take the difference in hostnames between state and plan to determine which hostnames to delete.
 // Those hostnames are updated with empty settings to delete them.
-func (r *AccessMutualTLSHostnameSettingsResource) update(ctx context.Context, data *AccessMutualTLSHostnameSettingsModel, identifier *cloudflare.ResourceContainer) ([]cloudflare.AccessMutualTLSHostnameSettings, error) {
-	currentSettings, err := r.client.GetAccessMutualTLSHostnameSettings(ctx, identifier)
+func (r *AccessMutualTLSHostnameSettingsResource) update(ctx context.Context, data *AccessMutualTLSHostnameSettingsModel, identifier *cfv1.ResourceContainer) ([]cfv1.AccessMutualTLSHostnameSettings, error) {
+	currentSettings, err := r.client.V1.GetAccessMutualTLSHostnameSettings(ctx, identifier)
 	if err != nil {
 		return nil, fmt.Errorf("error finding Access Mutual TLS Hostname Settings: %w", err)
 	}
@@ -102,12 +103,12 @@ func (r *AccessMutualTLSHostnameSettingsResource) update(ctx context.Context, da
 		currentHostnames[setting.Hostname] = struct{}{}
 	}
 
-	updatedSettings := make([]cloudflare.AccessMutualTLSHostnameSettings, 0)
+	updatedSettings := make([]cfv1.AccessMutualTLSHostnameSettings, 0)
 	updatedHostnames := make(map[string]struct{})
 
 	settings := data.Settings
 	for _, setting := range settings {
-		updatedSetting := cloudflare.AccessMutualTLSHostnameSettings{
+		updatedSetting := cfv1.AccessMutualTLSHostnameSettings{
 			Hostname:                    setting.Hostname.ValueString(),
 			ChinaNetwork:                setting.ChinaNetwork.ValueBoolPointer(),
 			ClientCertificateForwarding: setting.ClientCertificateForwarding.ValueBoolPointer(),
@@ -119,19 +120,19 @@ func (r *AccessMutualTLSHostnameSettingsResource) update(ctx context.Context, da
 	for hostname := range currentHostnames {
 		if _, ok := updatedHostnames[hostname]; !ok {
 			// Hostname has been removed
-			updatedSettings = append(updatedSettings, cloudflare.AccessMutualTLSHostnameSettings{
+			updatedSettings = append(updatedSettings, cfv1.AccessMutualTLSHostnameSettings{
 				Hostname: hostname,
 			})
 		}
 	}
 
-	updatedAccessMutualTLSHostnameSettings := cloudflare.UpdateAccessMutualTLSHostnameSettingsParams{
+	updatedAccessMutualTLSHostnameSettings := cfv1.UpdateAccessMutualTLSHostnameSettingsParams{
 		Settings: updatedSettings,
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Mutal TLS Hostname Settings from struct: %+v", updatedAccessMutualTLSHostnameSettings))
 
-	resultUpdatedSettings, err := r.client.UpdateAccessMutualTLSHostnameSettings(ctx, identifier, updatedAccessMutualTLSHostnameSettings)
+	resultUpdatedSettings, err := r.client.V1.UpdateAccessMutualTLSHostnameSettings(ctx, identifier, updatedAccessMutualTLSHostnameSettings)
 	if err != nil {
 		return nil, fmt.Errorf("error updating Access Mutual TLS Hostname Settings for %s %q: %w", identifier.Level, identifier.Identifier, err)
 	}
@@ -165,25 +166,25 @@ func (r *AccessMutualTLSHostnameSettingsResource) Delete(ctx context.Context, re
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	identifier := getIdentifier(data)
 
-	currentSettings, err := r.client.GetAccessMutualTLSHostnameSettings(ctx, identifier)
+	currentSettings, err := r.client.V1.GetAccessMutualTLSHostnameSettings(ctx, identifier)
 	if err != nil {
 		resp.Diagnostics.AddError("error finding Access Mutual TLS Hostname Settings", err.Error())
 		return
 	}
-	updatedSettings := make([]cloudflare.AccessMutualTLSHostnameSettings, 0)
+	updatedSettings := make([]cfv1.AccessMutualTLSHostnameSettings, 0)
 	for _, setting := range currentSettings {
-		updatedSetting := cloudflare.AccessMutualTLSHostnameSettings{
+		updatedSetting := cfv1.AccessMutualTLSHostnameSettings{
 			Hostname: setting.Hostname,
 		}
 		updatedSettings = append(updatedSettings, updatedSetting)
 	}
 
 	// To actually delete the settings we issue an update for the changed hostnames with all fields set to false
-	deletedSettings := cloudflare.UpdateAccessMutualTLSHostnameSettingsParams{
+	deletedSettings := cfv1.UpdateAccessMutualTLSHostnameSettingsParams{
 		Settings: updatedSettings,
 	}
 
-	_, err = r.client.UpdateAccessMutualTLSHostnameSettings(ctx, identifier, deletedSettings)
+	_, err = r.client.V1.UpdateAccessMutualTLSHostnameSettings(ctx, identifier, deletedSettings)
 	if err != nil {
 		resp.Diagnostics.AddError(fmt.Sprintf("error removing Access Mutual TLS Hostname Settings for %s %q", identifier.Level, identifier.Identifier), err.Error())
 		return
@@ -215,7 +216,7 @@ func (r *AccessMutualTLSHostnameSettingsResource) ImportState(ctx context.Contex
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(schemaIdentifierName), identifierID)...)
 }
 
-func buildAccessMutualTLSHostnameSettingsModel(settings []cloudflare.AccessMutualTLSHostnameSettings, zoneID, accountID basetypes.StringValue) *AccessMutualTLSHostnameSettingsModel {
+func buildAccessMutualTLSHostnameSettingsModel(settings []cfv1.AccessMutualTLSHostnameSettings, zoneID, accountID basetypes.StringValue) *AccessMutualTLSHostnameSettingsModel {
 	model := &AccessMutualTLSHostnameSettingsModel{
 		ZoneID:    zoneID,
 		AccountID: accountID,
@@ -223,22 +224,22 @@ func buildAccessMutualTLSHostnameSettingsModel(settings []cloudflare.AccessMutua
 	for _, setting := range settings {
 		model.Settings = append(model.Settings, Settings{
 			Hostname:                    types.StringValue(setting.Hostname),
-			ChinaNetwork:                types.BoolValue(cloudflare.Bool(setting.ChinaNetwork)),
-			ClientCertificateForwarding: types.BoolValue(cloudflare.Bool(setting.ClientCertificateForwarding)),
+			ChinaNetwork:                types.BoolValue(cfv1.Bool(setting.ChinaNetwork)),
+			ClientCertificateForwarding: types.BoolValue(cfv1.Bool(setting.ClientCertificateForwarding)),
 		})
 	}
 	return model
 }
 
-func getIdentifier(data *AccessMutualTLSHostnameSettingsModel) *cloudflare.ResourceContainer {
+func getIdentifier(data *AccessMutualTLSHostnameSettingsModel) *cfv1.ResourceContainer {
 	accountID := data.AccountID
 	zoneID := data.ZoneID
 
-	var identifier *cloudflare.ResourceContainer
+	var identifier *cfv1.ResourceContainer
 	if accountID.ValueString() != "" {
-		identifier = cloudflare.AccountIdentifier(accountID.ValueString())
+		identifier = cfv1.AccountIdentifier(accountID.ValueString())
 	} else {
-		identifier = cloudflare.ZoneIdentifier(zoneID.ValueString())
+		identifier = cfv1.ZoneIdentifier(zoneID.ValueString())
 	}
 
 	return identifier

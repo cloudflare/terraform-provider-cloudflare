@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_hyperdrive_config: Fix 'HyperdriveID' not included in Update call
+```

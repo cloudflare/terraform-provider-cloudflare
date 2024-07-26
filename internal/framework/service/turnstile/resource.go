@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/expanders"
-
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/flatteners"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -25,7 +25,7 @@ func NewResource() resource.Resource {
 
 // TurnstileWidgetResource defines the resource implementation for challenge widgets.
 type TurnstileWidgetResource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *TurnstileWidgetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -37,12 +37,12 @@ func (r *TurnstileWidgetResource) Configure(ctx context.Context, req resource.Co
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -62,8 +62,8 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 
 	widget := buildChallengeWidgetFromModel(ctx, data)
 
-	createWidget, err := r.client.CreateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
-		cloudflare.CreateTurnstileWidgetParams{
+	createWidget, err := r.client.V1.CreateTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()),
+		cfv1.CreateTurnstileWidgetParams{
 			OffLabel:     widget.OffLabel,
 			Name:         widget.Name,
 			Domains:      widget.Domains,
@@ -73,6 +73,7 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 		})
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating challenge widget", err.Error())
+		return
 	}
 
 	data = buildChallengeModelFromWidget(
@@ -92,10 +93,11 @@ func (r *TurnstileWidgetResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	widget, err := r.client.GetTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	widget, err := r.client.V1.GetTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading challenge widget", err.Error())
+		return
 	}
 
 	data = buildChallengeModelFromWidget(
@@ -117,7 +119,7 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 
 	widget := buildChallengeWidgetFromModel(ctx, data)
 
-	updatedWidget, err := r.client.UpdateTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), cloudflare.UpdateTurnstileWidgetParams{
+	updatedWidget, err := r.client.V1.UpdateTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), cfv1.UpdateTurnstileWidgetParams{
 		SiteKey:      widget.SiteKey,
 		OffLabel:     widget.OffLabel,
 		Name:         widget.Name,
@@ -129,6 +131,7 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading challenge widget", err.Error())
+		return
 	}
 
 	data = buildChallengeModelFromWidget(
@@ -148,9 +151,10 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	err := r.client.DeleteTurnstileWidget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	err := r.client.V1.DeleteTurnstileWidget(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Error deleting challenge widget", err.Error())
+		return
 	}
 }
 
@@ -158,13 +162,14 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 	idParts := strings.Split(req.ID, "/")
 	if len(idParts) != 2 {
 		resp.Diagnostics.AddError("Error importing challenge widget", "Invalid ID specified. Please specify the ID as \"accounts_id/sitekey\"")
+		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("account_id"), idParts[0])...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[1])...)
 }
 
-func buildChallengeWidgetFromModel(ctx context.Context, widget *TurnstileWidgetModel) cloudflare.TurnstileWidget {
-	built := cloudflare.TurnstileWidget{
+func buildChallengeWidgetFromModel(ctx context.Context, widget *TurnstileWidgetModel) cfv1.TurnstileWidget {
+	built := cfv1.TurnstileWidget{
 		SiteKey:      widget.ID.ValueString(),
 		Name:         widget.Name.ValueString(),
 		BotFightMode: widget.BotFightMode.ValueBool(),
@@ -177,7 +182,7 @@ func buildChallengeWidgetFromModel(ctx context.Context, widget *TurnstileWidgetM
 	return built
 }
 
-func buildChallengeModelFromWidget(accountID types.String, widget cloudflare.TurnstileWidget) *TurnstileWidgetModel {
+func buildChallengeModelFromWidget(accountID types.String, widget cfv1.TurnstileWidget) *TurnstileWidgetModel {
 	built := TurnstileWidgetModel{
 		AccountID:    accountID,
 		ID:           flatteners.String(widget.SiteKey),

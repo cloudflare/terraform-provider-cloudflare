@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,7 +22,7 @@ func NewResource() resource.Resource {
 
 // EmailRoutingAddressResource defines the resource implementation.
 type EmailRoutingAddressResource struct {
-	client *cloudflare.API
+	client *muxclient.Client
 }
 
 func (r *EmailRoutingAddressResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -33,12 +34,12 @@ func (r *EmailRoutingAddressResource) Configure(ctx context.Context, req resourc
 		return
 	}
 
-	client, ok := req.ProviderData.(*cloudflare.API)
+	client, ok := req.ProviderData.(*muxclient.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"unexpected resource configure type",
-			fmt.Sprintf("Expected *cloudflare.API, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *muxclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -56,8 +57,8 @@ func (r *EmailRoutingAddressResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	emailAddress, err := r.client.CreateEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()),
-		cloudflare.CreateEmailRoutingAddressParameters{
+	emailAddress, err := r.client.V1.CreateEmailRoutingDestinationAddress(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()),
+		cfv1.CreateEmailRoutingAddressParameters{
 			Email: data.Email.ValueString(),
 		},
 	)
@@ -78,7 +79,7 @@ func (r *EmailRoutingAddressResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	emailAddress, err := r.client.GetEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.Tag.ValueString())
+	emailAddress, err := r.client.V1.GetEmailRoutingDestinationAddress(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.Tag.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("failed reading email routing destination address", err.Error())
 		return
@@ -108,7 +109,7 @@ func (r *EmailRoutingAddressResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	_, err := r.client.DeleteEmailRoutingDestinationAddress(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.Tag.ValueString())
+	_, err := r.client.V1.DeleteEmailRoutingDestinationAddress(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), data.Tag.ValueString())
 
 	if err != nil {
 		resp.Diagnostics.AddError("failed to delete email routing destination address", err.Error())
@@ -116,7 +117,7 @@ func (r *EmailRoutingAddressResource) Delete(ctx context.Context, req resource.D
 	}
 }
 
-func buildEmailRoutingAddressModel(accountID types.String, address cloudflare.EmailRoutingDestinationAddress) *EmailRoutingAddressModel {
+func buildEmailRoutingAddressModel(accountID types.String, address cfv1.EmailRoutingDestinationAddress) *EmailRoutingAddressModel {
 	var verifiedTime string
 	verified := address.Verified
 	if verified == nil {
