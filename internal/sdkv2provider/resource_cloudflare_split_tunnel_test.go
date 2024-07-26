@@ -105,6 +105,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips        = false
+	tunnel_protocol           = "wireguard"
 }
 
 resource "cloudflare_split_tunnel" "%[1]s" {

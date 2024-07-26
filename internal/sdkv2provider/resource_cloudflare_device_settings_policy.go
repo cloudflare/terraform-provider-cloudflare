@@ -181,6 +181,9 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 	if err := d.Set("exclude_office_ips", policy.ExcludeOfficeIps); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing exclude_office_ips"))
 	}
+	if err := d.Set("tunnel_protocol", policy.TunnelProtocol); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing tunnel_protocol"))
+	}
 	// ignore setting forbidden fields for default policies
 	if policy.Name != nil {
 		if err := d.Set("name", policy.Name); err != nil {
@@ -270,6 +273,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 			Port: d.Get("service_mode_v2_port").(int),
 		},
 		ExcludeOfficeIps: cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
+		TunnelProtocol:   cloudflare.StringPtr(d.Get("tunnel_protocol").(string)),
 	}
 
 	name := d.Get("name").(string)

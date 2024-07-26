@@ -154,6 +154,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	switch_locked             = true
 	exclude_office_ips		  = false
 	description               = "%[1]s"
+	tunnel_protocol           = "wireguard"
 }
 
 resource "cloudflare_fallback_domain" "%[1]s" {
