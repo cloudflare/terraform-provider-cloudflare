@@ -108,7 +108,7 @@ func testAccCloudflareWaitingRoom(resourceName, waitingRoomName, zoneID, domain,
 	resource "cloudflare_record" "%[1]s-shop-1" {
 		zone_id = "%[3]s"
 		name = "shop1"
-		value = "192.168.0.10"
+		content = "192.168.0.10"
 		type = "A"
 		ttl = 3600
 	}
@@ -116,7 +116,7 @@ func testAccCloudflareWaitingRoom(resourceName, waitingRoomName, zoneID, domain,
 	resource "cloudflare_record" "%[1]s-shop-2" {
 		zone_id = "%[3]s"
 		name = "shop2"
-		value = "192.168.0.11"
+		content = "192.168.0.11"
 		type = "A"
 		ttl = 3600
 	}
