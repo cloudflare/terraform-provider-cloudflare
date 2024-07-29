@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestAccCloudflareCustomHostnameFallbackOrigin(t *testing.T) {
+func TestAccCloudflareCustomHostname_FallbackOrigin(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
 	// fallback endpoint does not yet support the API tokens for updates and it
 	// results in state error messages.
@@ -50,7 +50,7 @@ resource "cloudflare_custom_hostname_fallback_origin" "%[2]s" {
 resource "cloudflare_record" "%[2]s" {
   zone_id = "%[1]s"
   name    = "fallback-origin.%[2]s.%[4]s"
-  value   = "example.com"
+  content = "example.com"
   type    = "CNAME"
   proxied = true
   ttl     = 1
@@ -58,7 +58,7 @@ resource "cloudflare_record" "%[2]s" {
 }`, zoneID, rnd, subdomain, domain)
 }
 
-func TestAccCloudflareCustomHostnameFallbackOriginUpdate(t *testing.T) {
+func TestAccCloudflareCustomHostname_FallbackOriginUpdate(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the custom hostname
 	// fallback endpoint does not yet support the API tokens for updates and it
 	// results in state error messages.
