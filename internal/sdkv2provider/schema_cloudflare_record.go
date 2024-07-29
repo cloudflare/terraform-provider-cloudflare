@@ -50,6 +50,16 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			ConflictsWith:    []string{"data"},
 			DiffSuppressFunc: suppressTrailingDots,
 			Description:      "The value of the record.",
+			Deprecated:       "`value` is deprecated in favour of `content` and will be removed in the next major release.",
+		},
+
+		"content": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Computed:         true,
+			ConflictsWith:    []string{"data"},
+			DiffSuppressFunc: suppressTrailingDots,
+			Description:      "The content of the record.",
 		},
 
 		"data": {

@@ -26,7 +26,7 @@ func resourceCloudflareRecord() *schema.Resource {
 			StateContext: resourceCloudflareRecordImport,
 		},
 		Description:   heredoc.Doc(`Provides a Cloudflare record resource.`),
-		SchemaVersion: 2,
+		SchemaVersion: 3,
 		Schema:        resourceCloudflareRecordSchema(),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Second),
@@ -37,6 +37,11 @@ func resourceCloudflareRecord() *schema.Resource {
 				Type:    resourceCloudflareRecordV1().CoreConfigSchema().ImpliedType(),
 				Upgrade: resourceCloudflareRecordStateUpgradeV2,
 				Version: 1,
+			},
+			{
+				Type:    resourceCloudflareRecordV2().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareRecordStateUpgradeV3,
+				Version: 2,
 			},
 		},
 	}
@@ -61,6 +66,11 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		newRecord.Content = value.(string)
 	}
 
+	content, contentOk := d.GetOk("content")
+	if contentOk {
+		newRecord.Content = content.(string)
+	}
+
 	data, dataOk := d.GetOk("data")
 	tflog.Debug(ctx, fmt.Sprintf("Data found in config: %#v", data))
 
@@ -81,9 +91,9 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		newRecord.Data = newDataMap
 	}
 
-	if valueOk == dataOk {
+	if contentOk == dataOk {
 		return diag.FromErr(fmt.Errorf(
-			"either 'value' (present: %t) or 'data' (present: %t) must be provided",
+			"either 'content' (present: %t) or 'data' (present: %t) must be provided",
 			valueOk, dataOk))
 	}
 
@@ -235,6 +245,7 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 	d.Set("hostname", record.Name)
 	d.Set("type", record.Type)
 	d.Set("value", record.Content)
+	d.Set("content", record.Content)
 	d.Set("ttl", record.TTL)
 	d.Set("proxied", record.Proxied)
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
@@ -259,12 +270,23 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 func resourceCloudflareRecordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*cloudflare.API)
 	zoneID := d.Get(consts.ZoneIDSchemaKey).(string)
+	var contentValue string
+
+	value, valueOk := d.GetOk("value")
+	if valueOk {
+		contentValue = value.(string)
+	}
+
+	content, contentOk := d.GetOk("content")
+	if contentOk {
+		contentValue = content.(string)
+	}
 
 	updateRecord := cloudflare.UpdateDNSRecordParams{
 		ID:      d.Id(),
 		Type:    d.Get("type").(string),
 		Name:    d.Get("name").(string),
-		Content: d.Get("value").(string),
+		Content: contentValue,
 	}
 
 	data, dataOk := d.GetOk("data")
