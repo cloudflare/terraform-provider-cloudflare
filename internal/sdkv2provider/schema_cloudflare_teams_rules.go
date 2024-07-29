@@ -322,6 +322,11 @@ var teamsBisoAdminControls = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "Disable upload.",
 	},
+	"disable_clipboard_redirection": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Disable clipboard redirection.",
+	},
 }
 
 var teamsCheckSessionSettings = map[string]*schema.Schema{
