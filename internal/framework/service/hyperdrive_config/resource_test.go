@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
@@ -52,14 +53,21 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	databaseName := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME")
+	databaseHostname := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME")
+	databasePort := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT")
+	port, _ := strconv.Atoi(databasePort)
+	databaseUser := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER")
+	databasePassword := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD")
+
 	resourceName := "cloudflare_hyperdrive_config." + rnd
 
 	var origin = cfv1.HyperdriveConfigOrigin{
-		Database: "database",
-		Host:     "host.example.com",
-		Port:     5432,
+		Database: databaseName,
+		Host:     databaseHostname,
+		Port:     port,
 		Scheme:   "postgres",
-		User:     "user",
+		User:     databaseUser,
 	}
 
 	var disabled = true
@@ -69,7 +77,10 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Hyperdrive(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -77,19 +88,19 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 					rnd,
 					accountID,
 					rnd,
-					"password",
+					databasePassword,
 					origin,
 					caching,
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
-					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
+					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
 					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
-					resource.TestCheckResourceAttr(resourceName, "origin.user", "user"),
-					resource.TestCheckResourceAttr(resourceName, "origin.password", "password"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", databaseUser),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", databasePassword),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.access_client_id"),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.access_client_secret"),
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "true"),
@@ -113,14 +124,20 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	databaseName := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME")
+	databaseHostname := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME")
+	databasePort := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT")
+	port, _ := strconv.Atoi(databasePort)
+	databaseUser := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER")
+	databasePassword := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD")
 	resourceName := "cloudflare_hyperdrive_config." + rnd
 
 	var origin = cfv1.HyperdriveConfigOrigin{
-		Database: "database",
-		Host:     "host.example.com",
-		Port:     5432,
+		Database: databaseName,
+		Host:     databaseHostname,
+		Port:     port,
 		Scheme:   "postgres",
-		User:     "user",
+		User:     databaseUser,
 	}
 
 	var disabled = false
@@ -132,7 +149,10 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Hyperdrive(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -140,19 +160,19 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 					rnd,
 					accountID,
 					rnd,
-					"password",
+					databasePassword,
 					origin,
 					caching,
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
-					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
+					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
 					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
-					resource.TestCheckResourceAttr(resourceName, "origin.user", "user"),
-					resource.TestCheckResourceAttr(resourceName, "origin.password", "password"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", databaseUser),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", databasePassword),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.access_client_id"),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.access_client_secret"),
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
@@ -174,15 +194,23 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	databaseName := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME")
+	databaseHostname := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME")
+	databaseUser := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER")
+	databasePassword := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD")
+	accessClientID := os.Getenv("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_ID")
+	accessClientSecret := os.Getenv("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_SECRET")
 	resourceName := "cloudflare_hyperdrive_config." + rnd
 
 	var origin = cfv1.HyperdriveConfigOriginWithSecrets{
-		HyperdriveConfigOrigin: cfv1.HyperdriveConfigOrigin{Database: "database",
-			Host:           "host.example.com",
+		HyperdriveConfigOrigin: cfv1.HyperdriveConfigOrigin{
+			Database:       databaseName,
+			Host:           databaseHostname,
 			Scheme:         "postgres",
-			User:           "user",
-			AccessClientID: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.access"},
-		AccessClientSecret: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+			User:           databaseUser,
+			AccessClientID: accessClientID,
+		},
+		AccessClientSecret: accessClientSecret,
 	}
 
 	var disabled = true
@@ -192,7 +220,10 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_HyperdriveWithAccess(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -200,21 +231,21 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 					rnd,
 					accountID,
 					rnd,
-					"password",
+					databasePassword,
 					origin,
 					caching,
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
-					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.port"),
 					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
-					resource.TestCheckResourceAttr(resourceName, "origin.user", "user"),
-					resource.TestCheckResourceAttr(resourceName, "origin.password", "password"),
-					resource.TestCheckResourceAttr(resourceName, "origin.access_client_id", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.access"),
-					resource.TestCheckResourceAttr(resourceName, "origin.access_client_secret", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", databaseUser),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", databasePassword),
+					resource.TestCheckResourceAttr(resourceName, "origin.access_client_id", accessClientID),
+					resource.TestCheckResourceAttr(resourceName, "origin.access_client_secret", accessClientSecret),
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "true"),
 				),
 			},
@@ -234,18 +265,27 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	databaseName := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME")
+	databaseHostname := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME")
+	databasePort := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT")
+	port, _ := strconv.Atoi(databasePort)
+	databaseUser := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER")
+	databasePassword := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD")
 	resourceName := "cloudflare_hyperdrive_config." + rnd
 
 	var origin = cfv1.HyperdriveConfigOrigin{
-		Database: "database",
-		Host:     "host.example.com",
-		Port:     5432,
+		Database: databaseName,
+		Host:     databaseHostname,
+		Port:     port,
 		Scheme:   "postgres",
-		User:     "user",
+		User:     databaseUser,
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_Hyperdrive(t)
+		},
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
@@ -253,18 +293,18 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 					rnd,
 					accountID,
 					rnd,
-					"password",
+					databasePassword,
 					origin,
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
-					resource.TestCheckResourceAttr(resourceName, "origin.database", "database"),
-					resource.TestCheckResourceAttr(resourceName, "origin.host", "host.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "origin.port", "5432"),
+					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
+					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
+					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
 					resource.TestCheckResourceAttr(resourceName, "origin.scheme", "postgres"),
-					resource.TestCheckResourceAttr(resourceName, "origin.user", "user"),
-					resource.TestCheckResourceAttr(resourceName, "origin.password", "password"),
+					resource.TestCheckResourceAttr(resourceName, "origin.user", databaseUser),
+					resource.TestCheckResourceAttr(resourceName, "origin.password", databasePassword),
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
 				),
 			},
