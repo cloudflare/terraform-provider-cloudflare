@@ -100,7 +100,7 @@ func (r *HyperdriveConfigResource) Schema(ctx context.Context, req resource.Sche
 						Computed:            true,
 					},
 					"max_age": schema.Int64Attribute{
-						MarkdownDescription: "Disable caching for this Hyperdrive configuration.",
+						MarkdownDescription: "Configure the `max_age` value of this Hyperdrive configuration.",
 						Optional:            true,
 						Validators: []validator.Int64{
 							int64validator.AtLeast(0),
