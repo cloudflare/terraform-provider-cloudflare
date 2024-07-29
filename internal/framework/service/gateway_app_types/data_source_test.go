@@ -12,10 +12,6 @@ import (
 func TestAccCloudflareGatewayAppTypes_DataSource(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	if accountID == "" {
-		t.Fatal("CLOUDFLARE_ACCOUNT_ID must be set for acceptance tests")
-	}
-
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
