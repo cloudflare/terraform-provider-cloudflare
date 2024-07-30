@@ -82,7 +82,7 @@ func (r AccessIdentityProviderResource) Schema(ctx context.Context, req resource
 			},
 			"id": schema.StringAttribute{
 				Description:   "UUID",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"scim_config": schema.SingleNestedAttribute{

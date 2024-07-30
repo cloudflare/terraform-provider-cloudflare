@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -22,11 +23,11 @@ func (r ZoneCacheVariantsResource) UpgradeState(ctx context.Context) map[int64]r
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "ID of the zone setting.",
-						Required:    true,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("variants"),
 						},
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"zone_id": schema.StringAttribute{
 						Description:   "Identifier",
@@ -93,6 +94,7 @@ func (r ZoneCacheVariantsResource) UpgradeState(ctx context.Context) map[int64]r
 								ElementType: types.StringType,
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "last time this setting was modified.",

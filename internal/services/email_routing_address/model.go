@@ -12,7 +12,7 @@ type EmailRoutingAddressResultEnvelope struct {
 }
 
 type EmailRoutingAddressModel struct {
-	ID                types.String      `tfsdk:"id" json:"id"`
+	ID                types.String      `tfsdk:"id" json:"id,computed"`
 	AccountIdentifier types.String      `tfsdk:"account_identifier" path:"account_identifier"`
 	Email             types.String      `tfsdk:"email" json:"email"`
 	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`

@@ -22,14 +22,14 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "Name of the project.",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"account_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
-					"project_name": schema.StringAttribute{
-						Description:   "Name of the project.",
-						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"build_config": schema.SingleNestedAttribute{
@@ -790,17 +790,13 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 					},
 					"name": schema.StringAttribute{
 						Description:   "Name of the project.",
-						Optional:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"production_branch": schema.StringAttribute{
 						Description:   "Production branch of the project. Used to identify production deployments.",
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
-					"id": schema.StringAttribute{
-						Description: "Id of the project.",
-						Computed:    true,
 					},
 					"created_on": schema.StringAttribute{
 						Description: "When the project was created.",

@@ -45,7 +45,7 @@ func (r RecordResource) UpgradeState(ctx context.Context) map[int64]resource.Sta
 					},
 					"id": schema.StringAttribute{
 						Description:   "Identifier",
-						Optional:      true,
+						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"comment": schema.StringAttribute{

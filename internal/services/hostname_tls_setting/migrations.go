@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -38,8 +39,9 @@ func (r HostnameTLSSettingResource) UpgradeState(ctx context.Context) map[int64]
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"value": schema.Float64Attribute{
-						Description: "The tls setting value.",
-						Required:    true,
+						Description:   "The tls setting value.",
+						Required:      true,
+						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 					},
 					"created_at": schema.StringAttribute{
 						Description: "This is the time the tls setting was originally created for this hostname.",
@@ -47,7 +49,8 @@ func (r HostnameTLSSettingResource) UpgradeState(ctx context.Context) map[int64]
 						CustomType:  timetypes.RFC3339Type{},
 					},
 					"status": schema.StringAttribute{
-						Computed: true,
+						Description: "Deployment status for the given tls setting.",
+						Computed:    true,
 					},
 					"updated_at": schema.StringAttribute{
 						Description: "This is the time the tls setting was updated.",

@@ -34,6 +34,7 @@ func (r APIShieldOperationSchemaValidationSettingsResource) UpgradeState(ctx con
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("log", "block", "none"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},

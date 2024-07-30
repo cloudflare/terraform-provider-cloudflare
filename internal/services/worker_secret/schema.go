@@ -32,12 +32,14 @@ func (r WorkerSecretResource) Schema(ctx context.Context, req resource.SchemaReq
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of this secret, this is what will be to access it inside the Worker.",
-				Optional:    true,
+				Description:   "The name of this secret, this is what will be to access it inside the Worker.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"text": schema.StringAttribute{
-				Description: "The value of the secret.",
-				Optional:    true,
+				Description:   "The value of the secret.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of secret to put.",
@@ -45,6 +47,7 @@ func (r WorkerSecretResource) Schema(ctx context.Context, req resource.SchemaReq
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("secret_text"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -35,6 +36,7 @@ func (r ManagedHeadersResource) UpgradeState(ctx context.Context) map[int64]reso
 								},
 							},
 						},
+						PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 					},
 					"managed_response_headers": schema.ListNestedAttribute{
 						Required: true,
@@ -50,6 +52,7 @@ func (r ManagedHeadersResource) UpgradeState(ctx context.Context) map[int64]reso
 								},
 							},
 						},
+						PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 					},
 				},
 			},

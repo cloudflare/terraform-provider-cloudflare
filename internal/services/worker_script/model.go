@@ -13,7 +13,7 @@ type WorkerScriptResultEnvelope struct {
 }
 
 type WorkerScriptModel struct {
-	ID            types.String                       `tfsdk:"id" json:"id"`
+	ID            types.String                       `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                       `tfsdk:"account_id" path:"account_id"`
 	ScriptName    types.String                       `tfsdk:"script_name" path:"script_name"`
 	AnyPartName   *[]types.String                    `tfsdk:"any_part_name" json:"<any part name>"`

@@ -16,13 +16,14 @@ func (r WorkersForPlatformsNamespaceResource) Schema(ctx context.Context, req re
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "API Resource UUID tag.",
-				Computed:    true,
+				Description:   "API Resource UUID tag.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"namespace_id": schema.StringAttribute{
 				Description:   "API Resource UUID tag.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -30,8 +31,9 @@ func (r WorkersForPlatformsNamespaceResource) Schema(ctx context.Context, req re
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of the dispatch namespace",
-				Optional:    true,
+				Description:   "The name of the dispatch namespace",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_by": schema.StringAttribute{
 				Description: "Identifier",

@@ -22,8 +22,8 @@ func (r CertificatePackResource) UpgradeState(ctx context.Context) map[int64]res
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description:   "Identifier",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"zone_id": schema.StringAttribute{
 						Description:   "Identifier",

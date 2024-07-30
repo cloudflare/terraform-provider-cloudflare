@@ -22,12 +22,14 @@ func (r URLNormalizationSettingsResource) UpgradeState(ctx context.Context) map[
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"scope": schema.StringAttribute{
-						Description: "The scope of the URL normalization.",
-						Optional:    true,
+						Description:   "The scope of the URL normalization.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"type": schema.StringAttribute{
-						Description: "The type of URL normalization performed by Cloudflare.",
-						Optional:    true,
+						Description:   "The type of URL normalization performed by Cloudflare.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},

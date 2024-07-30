@@ -29,6 +29,7 @@ func (r ArgoSmartRoutingResource) UpgradeState(ctx context.Context) map[int64]re
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},
