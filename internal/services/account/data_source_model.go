@@ -17,7 +17,7 @@ type AccountResultListDataSourceEnvelope struct {
 
 type AccountDataSourceModel struct {
 	AccountID jsontypes.Normalized             `tfsdk:"account_id" path:"account_id"`
-	FindOneBy *AccountFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter    *AccountFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type AccountFindOneByDataSourceModel struct {

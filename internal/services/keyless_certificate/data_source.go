@@ -58,7 +58,7 @@ func (r *KeylessCertificateDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := KeylessCertificateResultDataSourceEnvelope{*data}
 		_, err := r.client.KeylessCertificates.Get(
@@ -86,7 +86,7 @@ func (r *KeylessCertificateDataSource) Read(ctx context.Context, req datasource.
 		env := KeylessCertificateResultListDataSourceEnvelope{items}
 
 		page, err := r.client.KeylessCertificates.List(ctx, keyless_certificates.KeylessCertificateListParams{
-			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -7,15 +7,15 @@ import (
 )
 
 type CertificatePacksResultListDataSourceEnvelope struct {
-	Result *[]*CertificatePacksItemsDataSourceModel `json:"result,computed"`
+	Result *[]*CertificatePacksResultDataSourceModel `json:"result,computed"`
 }
 
 type CertificatePacksDataSourceModel struct {
-	ZoneID   types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	Status   types.String                             `tfsdk:"status" query:"status"`
-	MaxItems types.Int64                              `tfsdk:"max_items"`
-	Items    *[]*CertificatePacksItemsDataSourceModel `tfsdk:"items"`
+	ZoneID   types.String                              `tfsdk:"zone_id" path:"zone_id"`
+	Status   types.String                              `tfsdk:"status" query:"status"`
+	MaxItems types.Int64                               `tfsdk:"max_items"`
+	Result   *[]*CertificatePacksResultDataSourceModel `tfsdk:"result"`
 }
 
-type CertificatePacksItemsDataSourceModel struct {
+type CertificatePacksResultDataSourceModel struct {
 }

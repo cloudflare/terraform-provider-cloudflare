@@ -5,6 +5,7 @@ package hostname_tls_setting
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -43,6 +44,7 @@ func (r HostnameTLSSettingResource) UpgradeState(ctx context.Context) map[int64]
 					"created_at": schema.StringAttribute{
 						Description: "This is the time the tls setting was originally created for this hostname.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"status": schema.StringAttribute{
 						Computed: true,
@@ -50,6 +52,7 @@ func (r HostnameTLSSettingResource) UpgradeState(ctx context.Context) map[int64]
 					"updated_at": schema.StringAttribute{
 						Description: "This is the time the tls setting was updated.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 				},
 			},

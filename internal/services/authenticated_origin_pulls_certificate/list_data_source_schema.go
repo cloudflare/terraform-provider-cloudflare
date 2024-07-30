@@ -5,6 +5,7 @@ package authenticated_origin_pulls_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -25,7 +26,7 @@ func (r AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Conte
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -43,6 +44,7 @@ func (r AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Conte
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate from the authority expires.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"issuer": schema.StringAttribute{
 							Description: "The certificate authority that issued the certificate.",
@@ -64,6 +66,7 @@ func (r AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Conte
 							Description: "This is the time the certificate was uploaded.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

@@ -5,6 +5,7 @@ package notification_policy_webhooks
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -25,7 +26,7 @@ func (r NotificationPolicyWebhooksListDataSource) Schema(ctx context.Context, re
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -37,14 +38,17 @@ func (r NotificationPolicyWebhooksListDataSource) Schema(ctx context.Context, re
 						"created_at": schema.StringAttribute{
 							Description: "Timestamp of when the webhook destination was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"last_failure": schema.StringAttribute{
 							Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"last_success": schema.StringAttribute{
 							Description: "Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the webhook destination. This will be included in the request body when you receive a webhook notification.",

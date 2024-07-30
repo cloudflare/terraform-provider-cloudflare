@@ -5,6 +5,7 @@ package teams_location
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -22,7 +23,7 @@ func (r TeamsLocationsDataSource) Schema(ctx context.Context, req datasource.Sch
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -37,7 +38,8 @@ func (r TeamsLocationsDataSource) Schema(ctx context.Context, req datasource.Sch
 							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"dns_destination_ips_id": schema.StringAttribute{
 							Description: "The identifier of the pair of IPv4 addresses assigned to this location.",
@@ -183,7 +185,8 @@ func (r TeamsLocationsDataSource) Schema(ctx context.Context, req datasource.Sch
 							},
 						},
 						"updated_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

@@ -30,7 +30,7 @@ type ByoIPPrefixDataSourceModel struct {
 	ModifiedAt           timetypes.RFC3339                    `tfsdk:"modified_at" json:"modified_at,computed"`
 	OnDemandEnabled      types.Bool                           `tfsdk:"on_demand_enabled" json:"on_demand_enabled"`
 	OnDemandLocked       types.Bool                           `tfsdk:"on_demand_locked" json:"on_demand_locked"`
-	FindOneBy            *ByoIPPrefixFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter               *ByoIPPrefixFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type ByoIPPrefixFindOneByDataSourceModel struct {

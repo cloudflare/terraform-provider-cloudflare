@@ -25,7 +25,7 @@ type DevicePostureRuleDataSourceModel struct {
 	Name        types.String                               `tfsdk:"name" json:"name"`
 	Schedule    types.String                               `tfsdk:"schedule" json:"schedule"`
 	Type        types.String                               `tfsdk:"type" json:"type"`
-	FindOneBy   *DevicePostureRuleFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter      *DevicePostureRuleFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type DevicePostureRuleInputDataSourceModel struct {

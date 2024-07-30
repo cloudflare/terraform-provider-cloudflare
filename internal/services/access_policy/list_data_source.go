@@ -61,10 +61,10 @@ func (r *AccessPoliciesDataSource) Read(ctx context.Context, req datasource.Read
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	items := &[]*AccessPoliciesItemsDataSourceModel{}
+	items := &[]*AccessPoliciesResultDataSourceModel{}
 	env := AccessPoliciesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessPoliciesItemsDataSourceModel{}
+	acc := []*AccessPoliciesResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Access.Applications.Policies.List(
 		ctx,
@@ -95,7 +95,7 @@ func (r *AccessPoliciesDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

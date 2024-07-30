@@ -8,17 +8,17 @@ import (
 )
 
 type AccessMutualTLSCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*AccessMutualTLSCertificatesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccessMutualTLSCertificatesResultDataSourceModel `json:"result,computed"`
 }
 
 type AccessMutualTLSCertificatesDataSourceModel struct {
-	AccountID types.String                                        `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                        `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                                         `tfsdk:"max_items"`
-	Items     *[]*AccessMutualTLSCertificatesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                         `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                         `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                          `tfsdk:"max_items"`
+	Result    *[]*AccessMutualTLSCertificatesResultDataSourceModel `tfsdk:"result"`
 }
 
-type AccessMutualTLSCertificatesItemsDataSourceModel struct {
+type AccessMutualTLSCertificatesResultDataSourceModel struct {
 	ID                  types.String      `tfsdk:"id" json:"id"`
 	AssociatedHostnames *[]types.String   `tfsdk:"associated_hostnames" json:"associated_hostnames"`
 	CreatedAt           timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`

@@ -25,7 +25,7 @@ type AuthenticatedOriginPullsCertificateDataSourceModel struct {
 	Signature     types.String                                                 `tfsdk:"signature" json:"signature"`
 	Status        types.String                                                 `tfsdk:"status" json:"status"`
 	UploadedOn    timetypes.RFC3339                                            `tfsdk:"uploaded_on" json:"uploaded_on"`
-	FindOneBy     *AuthenticatedOriginPullsCertificateFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter        *AuthenticatedOriginPullsCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type AuthenticatedOriginPullsCertificateFindOneByDataSourceModel struct {

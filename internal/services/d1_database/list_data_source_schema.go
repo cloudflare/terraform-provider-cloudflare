@@ -5,6 +5,7 @@ package d1_database
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -45,7 +46,7 @@ func (r D1DatabasesDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -53,6 +54,7 @@ func (r D1DatabasesDataSource) Schema(ctx context.Context, req datasource.Schema
 						"created_at": schema.StringAttribute{
 							Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Computed: true,

@@ -58,7 +58,7 @@ func (r *WorkerScriptDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		_, err := r.client.Workers.Scripts.Get(
 			ctx,
@@ -84,7 +84,7 @@ func (r *WorkerScriptDataSource) Read(ctx context.Context, req datasource.ReadRe
 		env := WorkerScriptResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Workers.Scripts.List(ctx, workers.ScriptListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

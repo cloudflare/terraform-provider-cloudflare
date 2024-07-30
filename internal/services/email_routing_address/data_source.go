@@ -58,7 +58,7 @@ func (r *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := EmailRoutingAddressResultDataSourceEnvelope{*data}
 		_, err := r.client.EmailRouting.Addresses.Get(
@@ -85,12 +85,12 @@ func (r *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 
 		page, err := r.client.EmailRouting.Addresses.List(
 			ctx,
-			data.FindOneBy.AccountIdentifier.ValueString(),
+			data.Filter.AccountIdentifier.ValueString(),
 			email_routing.AddressListParams{
-				Direction: cloudflare.F(email_routing.AddressListParamsDirection(data.FindOneBy.Direction.ValueString())),
-				Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-				PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
-				Verified:  cloudflare.F(email_routing.AddressListParamsVerified(data.FindOneBy.Verified.ValueBool())),
+				Direction: cloudflare.F(email_routing.AddressListParamsDirection(data.Filter.Direction.ValueString())),
+				Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
+				PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
+				Verified:  cloudflare.F(email_routing.AddressListParamsVerified(data.Filter.Verified.ValueBool())),
 			},
 		)
 		if err != nil {

@@ -58,7 +58,7 @@ func (r *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := RateLimitResultDataSourceEnvelope{*data}
 		_, err := r.client.RateLimits.Get(
@@ -85,10 +85,10 @@ func (r *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 		page, err := r.client.RateLimits.List(
 			ctx,
-			data.FindOneBy.ZoneIdentifier.ValueString(),
+			data.Filter.ZoneIdentifier.ValueString(),
 			rate_limits.RateLimitListParams{
-				Page:    cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-				PerPage: cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+				Page:    cloudflare.F(data.Filter.Page.ValueFloat64()),
+				PerPage: cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 			},
 		)
 		if err != nil {

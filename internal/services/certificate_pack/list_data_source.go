@@ -54,10 +54,10 @@ func (r *CertificatePacksDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	items := &[]*CertificatePacksItemsDataSourceModel{}
+	items := &[]*CertificatePacksResultDataSourceModel{}
 	env := CertificatePacksResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*CertificatePacksItemsDataSourceModel{}
+	acc := []*CertificatePacksResultDataSourceModel{}
 
 	page, err := r.client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -87,7 +87,7 @@ func (r *CertificatePacksDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

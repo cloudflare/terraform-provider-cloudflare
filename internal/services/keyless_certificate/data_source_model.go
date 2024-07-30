@@ -29,7 +29,7 @@ type KeylessCertificateDataSourceModel struct {
 	Port                 types.Float64                               `tfsdk:"port" json:"port,computed"`
 	Status               types.String                                `tfsdk:"status" json:"status,computed"`
 	Tunnel               *KeylessCertificateTunnelDataSourceModel    `tfsdk:"tunnel" json:"tunnel"`
-	FindOneBy            *KeylessCertificateFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter               *KeylessCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type KeylessCertificateTunnelDataSourceModel struct {

@@ -25,7 +25,7 @@ type WebAnalyticsSiteDataSourceModel struct {
 	SiteTag     types.String                              `tfsdk:"site_tag" json:"site_tag"`
 	SiteToken   types.String                              `tfsdk:"site_token" json:"site_token"`
 	Snippet     types.String                              `tfsdk:"snippet" json:"snippet"`
-	FindOneBy   *WebAnalyticsSiteFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter      *WebAnalyticsSiteFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type WebAnalyticsSiteRulesDataSourceModel struct {

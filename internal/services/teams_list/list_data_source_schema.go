@@ -5,6 +5,7 @@ package teams_list
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -31,7 +32,7 @@ func (r TeamsListsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -46,7 +47,8 @@ func (r TeamsListsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "The description of the list.",
@@ -67,7 +69,8 @@ func (r TeamsListsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 							},
 						},
 						"updated_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

@@ -25,7 +25,7 @@ type WorkersForPlatformsNamespaceDataSourceModel struct {
 	NamespaceID       types.String                                          `tfsdk:"namespace_id" json:"namespace_id"`
 	NamespaceName     types.String                                          `tfsdk:"namespace_name" json:"namespace_name"`
 	ScriptCount       types.Int64                                           `tfsdk:"script_count" json:"script_count"`
-	FindOneBy         *WorkersForPlatformsNamespaceFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter            *WorkersForPlatformsNamespaceFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type WorkersForPlatformsNamespaceFindOneByDataSourceModel struct {

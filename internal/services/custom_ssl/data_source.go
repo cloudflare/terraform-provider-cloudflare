@@ -58,7 +58,7 @@ func (r *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := CustomSSLResultDataSourceEnvelope{*data}
 		_, err := r.client.CustomCertificates.Get(
@@ -86,11 +86,11 @@ func (r *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 		env := CustomSSLResultListDataSourceEnvelope{items}
 
 		page, err := r.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
-			ZoneID:  cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
-			Match:   cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.FindOneBy.Match.ValueString())),
-			Page:    cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-			PerPage: cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
-			Status:  cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(data.FindOneBy.Status.ValueString())),
+			ZoneID:  cloudflare.F(data.Filter.ZoneID.ValueString()),
+			Match:   cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Filter.Match.ValueString())),
+			Page:    cloudflare.F(data.Filter.Page.ValueFloat64()),
+			PerPage: cloudflare.F(data.Filter.PerPage.ValueFloat64()),
+			Status:  cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(data.Filter.Status.ValueString())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

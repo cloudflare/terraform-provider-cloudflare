@@ -5,6 +5,7 @@ package waiting_room
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -178,10 +179,12 @@ func (r WaitingRoomResource) UpgradeState(ctx context.Context) map[int64]resourc
 						Default:     booldefault.StaticBool(false),
 					},
 					"created_on": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"modified_on": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"next_event_prequeue_start_time": schema.StringAttribute{
 						Description: "An ISO 8601 timestamp that marks when the next event will begin queueing.",

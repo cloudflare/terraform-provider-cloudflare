@@ -54,10 +54,10 @@ func (r *EmailRoutingRulesDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	items := &[]*EmailRoutingRulesItemsDataSourceModel{}
+	items := &[]*EmailRoutingRulesResultDataSourceModel{}
 	env := EmailRoutingRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*EmailRoutingRulesItemsDataSourceModel{}
+	acc := []*EmailRoutingRulesResultDataSourceModel{}
 
 	page, err := r.client.EmailRouting.Rules.List(
 		ctx,
@@ -92,7 +92,7 @@ func (r *EmailRoutingRulesDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

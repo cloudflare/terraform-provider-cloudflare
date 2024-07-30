@@ -8,20 +8,20 @@ import (
 )
 
 type APIShieldSchemasResultListDataSourceEnvelope struct {
-	Result *[]*APIShieldSchemasItemsDataSourceModel `json:"result,computed"`
+	Result *[]*APIShieldSchemasResultDataSourceModel `json:"result,computed"`
 }
 
 type APIShieldSchemasDataSourceModel struct {
-	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	OmitSource        types.Bool                               `tfsdk:"omit_source" query:"omit_source"`
-	Page              types.Int64                              `tfsdk:"page" query:"page"`
-	PerPage           types.Int64                              `tfsdk:"per_page" query:"per_page"`
-	ValidationEnabled types.Bool                               `tfsdk:"validation_enabled" query:"validation_enabled"`
-	MaxItems          types.Int64                              `tfsdk:"max_items"`
-	Items             *[]*APIShieldSchemasItemsDataSourceModel `tfsdk:"items"`
+	ZoneID            types.String                              `tfsdk:"zone_id" path:"zone_id"`
+	OmitSource        types.Bool                                `tfsdk:"omit_source" query:"omit_source"`
+	Page              types.Int64                               `tfsdk:"page" query:"page"`
+	PerPage           types.Int64                               `tfsdk:"per_page" query:"per_page"`
+	ValidationEnabled types.Bool                                `tfsdk:"validation_enabled" query:"validation_enabled"`
+	MaxItems          types.Int64                               `tfsdk:"max_items"`
+	Result            *[]*APIShieldSchemasResultDataSourceModel `tfsdk:"result"`
 }
 
-type APIShieldSchemasItemsDataSourceModel struct {
+type APIShieldSchemasResultDataSourceModel struct {
 	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
 	Name              types.String      `tfsdk:"name" json:"name,computed"`

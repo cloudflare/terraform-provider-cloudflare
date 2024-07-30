@@ -18,7 +18,7 @@ type PagesDomainDataSourceModel struct {
 	AccountID   types.String                         `tfsdk:"account_id" path:"account_id"`
 	ProjectName types.String                         `tfsdk:"project_name" path:"project_name"`
 	DomainName  types.String                         `tfsdk:"domain_name" path:"domain_name"`
-	FindOneBy   *PagesDomainFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter      *PagesDomainFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type PagesDomainFindOneByDataSourceModel struct {

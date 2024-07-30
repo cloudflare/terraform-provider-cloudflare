@@ -5,6 +5,7 @@ package address_map
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -56,7 +57,8 @@ func (r AddressMapResource) UpgradeState(ctx context.Context) map[int64]resource
 									Computed:    true,
 								},
 								"created_at": schema.StringAttribute{
-									Computed: true,
+									Computed:   true,
+									CustomType: timetypes.RFC3339Type{},
 								},
 								"identifier": schema.StringAttribute{
 									Description: "The identifier for the membership (eg. a zone or account tag).",
@@ -86,10 +88,12 @@ func (r AddressMapResource) UpgradeState(ctx context.Context) map[int64]resource
 						Computed:    true,
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"modified_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 				},
 			},

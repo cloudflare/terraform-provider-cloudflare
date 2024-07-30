@@ -54,10 +54,10 @@ func (r *AccessCustomPagesDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	items := &[]*AccessCustomPagesItemsDataSourceModel{}
+	items := &[]*AccessCustomPagesResultDataSourceModel{}
 	env := AccessCustomPagesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessCustomPagesItemsDataSourceModel{}
+	acc := []*AccessCustomPagesResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Access.CustomPages.List(ctx, zero_trust.AccessCustomPageListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *AccessCustomPagesDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

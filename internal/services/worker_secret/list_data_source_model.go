@@ -7,18 +7,18 @@ import (
 )
 
 type WorkerSecretsResultListDataSourceEnvelope struct {
-	Result *[]*WorkerSecretsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*WorkerSecretsResultDataSourceModel `json:"result,computed"`
 }
 
 type WorkerSecretsDataSourceModel struct {
-	AccountID         types.String                          `tfsdk:"account_id" path:"account_id"`
-	DispatchNamespace types.String                          `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
-	ScriptName        types.String                          `tfsdk:"script_name" path:"script_name"`
-	MaxItems          types.Int64                           `tfsdk:"max_items"`
-	Items             *[]*WorkerSecretsItemsDataSourceModel `tfsdk:"items"`
+	AccountID         types.String                           `tfsdk:"account_id" path:"account_id"`
+	DispatchNamespace types.String                           `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
+	ScriptName        types.String                           `tfsdk:"script_name" path:"script_name"`
+	MaxItems          types.Int64                            `tfsdk:"max_items"`
+	Result            *[]*WorkerSecretsResultDataSourceModel `tfsdk:"result"`
 }
 
-type WorkerSecretsItemsDataSourceModel struct {
+type WorkerSecretsResultDataSourceModel struct {
 	Name types.String `tfsdk:"name" json:"name"`
 	Type types.String `tfsdk:"type" json:"type"`
 }

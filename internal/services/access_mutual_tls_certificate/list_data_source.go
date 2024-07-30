@@ -61,10 +61,10 @@ func (r *AccessMutualTLSCertificatesDataSource) Read(ctx context.Context, req da
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	items := &[]*AccessMutualTLSCertificatesItemsDataSourceModel{}
+	items := &[]*AccessMutualTLSCertificatesResultDataSourceModel{}
 	env := AccessMutualTLSCertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessMutualTLSCertificatesItemsDataSourceModel{}
+	acc := []*AccessMutualTLSCertificatesResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Access.Certificates.List(ctx, params)
 	if err != nil {
@@ -91,7 +91,7 @@ func (r *AccessMutualTLSCertificatesDataSource) Read(ctx context.Context, req da
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -35,7 +35,7 @@ type AccessPolicyDataSourceModel struct {
 	Require                      *[]*AccessPolicyRequireDataSourceModel        `tfsdk:"require" json:"require"`
 	SessionDuration              types.String                                  `tfsdk:"session_duration" json:"session_duration,computed"`
 	UpdatedAt                    timetypes.RFC3339                             `tfsdk:"updated_at" json:"updated_at,computed"`
-	FindOneBy                    *AccessPolicyFindOneByDataSourceModel         `tfsdk:"find_one_by"`
+	Filter                       *AccessPolicyFindOneByDataSourceModel         `tfsdk:"filter"`
 }
 
 type AccessPolicyApprovalGroupsDataSourceModel struct {

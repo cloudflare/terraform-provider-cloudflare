@@ -60,10 +60,10 @@ func (r *TunnelRoutesDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	items := &[]*TunnelRoutesItemsDataSourceModel{}
+	items := &[]*TunnelRoutesResultDataSourceModel{}
 	env := TunnelRoutesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*TunnelRoutesItemsDataSourceModel{}
+	acc := []*TunnelRoutesResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Networks.Routes.List(ctx, zero_trust.NetworkRouteListParams{
 		AccountID:        cloudflare.F(data.AccountID.ValueString()),
@@ -103,7 +103,7 @@ func (r *TunnelRoutesDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -58,7 +58,7 @@ func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := ZoneLockdownResultDataSourceEnvelope{*data}
 		_, err := r.client.Firewall.Lockdowns.Get(
@@ -80,9 +80,9 @@ func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 		data = &env.Result
 	} else {
-		dataFindOneByCreatedOn, errs := data.FindOneBy.CreatedOn.ValueRFC3339Time()
+		dataFilterCreatedOn, errs := data.Filter.CreatedOn.ValueRFC3339Time()
 		resp.Diagnostics.Append(errs...)
-		dataFindOneByModifiedOn, errs := data.FindOneBy.ModifiedOn.ValueRFC3339Time()
+		dataFilterModifiedOn, errs := data.Filter.ModifiedOn.ValueRFC3339Time()
 		resp.Diagnostics.Append(errs...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -93,19 +93,19 @@ func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 		page, err := r.client.Firewall.Lockdowns.List(
 			ctx,
-			data.FindOneBy.ZoneIdentifier.ValueString(),
+			data.Filter.ZoneIdentifier.ValueString(),
 			firewall.LockdownListParams{
-				CreatedOn:         cloudflare.F(dataFindOneByCreatedOn),
-				Description:       cloudflare.F(data.FindOneBy.Description.ValueString()),
-				DescriptionSearch: cloudflare.F(data.FindOneBy.DescriptionSearch.ValueString()),
-				IP:                cloudflare.F(data.FindOneBy.IP.ValueString()),
-				IPRangeSearch:     cloudflare.F(data.FindOneBy.IPRangeSearch.ValueString()),
-				IPSearch:          cloudflare.F(data.FindOneBy.IPSearch.ValueString()),
-				ModifiedOn:        cloudflare.F(dataFindOneByModifiedOn),
-				Page:              cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-				PerPage:           cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
-				Priority:          cloudflare.F(data.FindOneBy.Priority.ValueFloat64()),
-				URISearch:         cloudflare.F(data.FindOneBy.URISearch.ValueString()),
+				CreatedOn:         cloudflare.F(dataFilterCreatedOn),
+				Description:       cloudflare.F(data.Filter.Description.ValueString()),
+				DescriptionSearch: cloudflare.F(data.Filter.DescriptionSearch.ValueString()),
+				IP:                cloudflare.F(data.Filter.IP.ValueString()),
+				IPRangeSearch:     cloudflare.F(data.Filter.IPRangeSearch.ValueString()),
+				IPSearch:          cloudflare.F(data.Filter.IPSearch.ValueString()),
+				ModifiedOn:        cloudflare.F(dataFilterModifiedOn),
+				Page:              cloudflare.F(data.Filter.Page.ValueFloat64()),
+				PerPage:           cloudflare.F(data.Filter.PerPage.ValueFloat64()),
+				Priority:          cloudflare.F(data.Filter.Priority.ValueFloat64()),
+				URISearch:         cloudflare.F(data.Filter.URISearch.ValueString()),
 			},
 		)
 		if err != nil {

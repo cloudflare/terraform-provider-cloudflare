@@ -8,17 +8,17 @@ import (
 )
 
 type AccessServiceTokensResultListDataSourceEnvelope struct {
-	Result *[]*AccessServiceTokensItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccessServiceTokensResultDataSourceModel `json:"result,computed"`
 }
 
 type AccessServiceTokensDataSourceModel struct {
-	AccountID types.String                                `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                                 `tfsdk:"max_items"`
-	Items     *[]*AccessServiceTokensItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                 `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                 `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                  `tfsdk:"max_items"`
+	Result    *[]*AccessServiceTokensResultDataSourceModel `tfsdk:"result"`
 }
 
-type AccessServiceTokensItemsDataSourceModel struct {
+type AccessServiceTokensResultDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" json:"id"`
 	ClientID  types.String      `tfsdk:"client_id" json:"client_id"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`

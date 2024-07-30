@@ -5,6 +5,7 @@ package tunnel_route
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -29,6 +30,7 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 			"existed_at": schema.StringAttribute{
 				Description: "If provided, include only tunnels that were created (and not deleted) before this time.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"is_deleted": schema.BoolAttribute{
 				Description: "If `true`, only include deleted routes. If `false`, exclude deleted routes. If empty, all routes will be included.",
@@ -77,7 +79,7 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -95,10 +97,12 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 						"created_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"deleted_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"network": schema.StringAttribute{
 							Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",

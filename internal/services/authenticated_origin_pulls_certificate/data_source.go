@@ -58,7 +58,7 @@ func (r *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := AuthenticatedOriginPullsCertificateResultDataSourceEnvelope{*data}
 		_, err := r.client.OriginTLSClientAuth.Get(
@@ -86,7 +86,7 @@ func (r *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 		env := AuthenticatedOriginPullsCertificateResultListDataSourceEnvelope{items}
 
 		page, err := r.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
-			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

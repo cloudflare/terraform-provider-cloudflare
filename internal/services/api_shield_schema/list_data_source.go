@@ -54,10 +54,10 @@ func (r *APIShieldSchemasDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	items := &[]*APIShieldSchemasItemsDataSourceModel{}
+	items := &[]*APIShieldSchemasResultDataSourceModel{}
 	env := APIShieldSchemasResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*APIShieldSchemasItemsDataSourceModel{}
+	acc := []*APIShieldSchemasResultDataSourceModel{}
 
 	page, err := r.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
 		ZoneID:            cloudflare.F(data.ZoneID.ValueString()),
@@ -90,7 +90,7 @@ func (r *APIShieldSchemasDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

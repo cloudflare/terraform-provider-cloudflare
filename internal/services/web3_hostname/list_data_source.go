@@ -53,10 +53,10 @@ func (r *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*Web3HostnamesItemsDataSourceModel{}
+	items := &[]*Web3HostnamesResultDataSourceModel{}
 	env := Web3HostnamesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*Web3HostnamesItemsDataSourceModel{}
+	acc := []*Web3HostnamesResultDataSourceModel{}
 
 	page, err := r.client.Web3.Hostnames.List(ctx, data.ZoneIdentifier.ValueString())
 	if err != nil {
@@ -83,7 +83,7 @@ func (r *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -58,7 +58,7 @@ func (r *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := NotificationPolicyResultDataSourceEnvelope{*data}
 		_, err := r.client.Alerting.Policies.Get(
@@ -86,7 +86,7 @@ func (r *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.
 		env := NotificationPolicyResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Alerting.Policies.List(ctx, alerting.PolicyListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

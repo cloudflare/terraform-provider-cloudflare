@@ -54,10 +54,10 @@ func (r *WaitingRoomRulesListDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	items := &[]*WaitingRoomRulesListItemsDataSourceModel{}
+	items := &[]*WaitingRoomRulesListResultDataSourceModel{}
 	env := WaitingRoomRulesListResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WaitingRoomRulesListItemsDataSourceModel{}
+	acc := []*WaitingRoomRulesListResultDataSourceModel{}
 
 	page, err := r.client.WaitingRooms.Rules.List(
 		ctx,
@@ -90,7 +90,7 @@ func (r *WaitingRoomRulesListDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -58,7 +58,7 @@ func (r *APIShieldSchemaDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := APIShieldSchemaResultDataSourceEnvelope{*data}
 		_, err := r.client.APIGateway.UserSchemas.Get(
@@ -86,11 +86,11 @@ func (r *APIShieldSchemaDataSource) Read(ctx context.Context, req datasource.Rea
 		env := APIShieldSchemaResultListDataSourceEnvelope{items}
 
 		page, err := r.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
-			ZoneID:            cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
-			OmitSource:        cloudflare.F(data.FindOneBy.OmitSource.ValueBool()),
-			Page:              cloudflare.F(data.FindOneBy.Page.ValueInt64()),
-			PerPage:           cloudflare.F(data.FindOneBy.PerPage.ValueInt64()),
-			ValidationEnabled: cloudflare.F(data.FindOneBy.ValidationEnabled.ValueBool()),
+			ZoneID:            cloudflare.F(data.Filter.ZoneID.ValueString()),
+			OmitSource:        cloudflare.F(data.Filter.OmitSource.ValueBool()),
+			Page:              cloudflare.F(data.Filter.Page.ValueInt64()),
+			PerPage:           cloudflare.F(data.Filter.PerPage.ValueInt64()),
+			ValidationEnabled: cloudflare.F(data.Filter.ValidationEnabled.ValueBool()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -23,7 +23,7 @@ type TunnelDataSourceModel struct {
 	CreatedAt   timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at"`
 	Name        types.String                         `tfsdk:"name" json:"name"`
 	DeletedAt   timetypes.RFC3339                    `tfsdk:"deleted_at" json:"deleted_at"`
-	FindOneBy   *TunnelFindOneByDataSourceModel      `tfsdk:"find_one_by"`
+	Filter      *TunnelFindOneByDataSourceModel      `tfsdk:"filter"`
 }
 
 type TunnelConnectionsDataSourceModel struct {

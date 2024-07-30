@@ -54,10 +54,10 @@ func (r *TunnelVirtualNetworksDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	items := &[]*TunnelVirtualNetworksItemsDataSourceModel{}
+	items := &[]*TunnelVirtualNetworksResultDataSourceModel{}
 	env := TunnelVirtualNetworksResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*TunnelVirtualNetworksItemsDataSourceModel{}
+	acc := []*TunnelVirtualNetworksResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Networks.VirtualNetworks.List(ctx, zero_trust.NetworkVirtualNetworkListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -90,7 +90,7 @@ func (r *TunnelVirtualNetworksDataSource) Read(ctx context.Context, req datasour
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

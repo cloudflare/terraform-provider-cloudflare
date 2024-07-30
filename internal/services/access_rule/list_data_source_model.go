@@ -7,7 +7,7 @@ import (
 )
 
 type AccessRulesResultListDataSourceEnvelope struct {
-	Result *[]*AccessRulesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccessRulesResultDataSourceModel `json:"result,computed"`
 }
 
 type AccessRulesDataSourceModel struct {
@@ -20,7 +20,7 @@ type AccessRulesDataSourceModel struct {
 	Page          types.Float64                            `tfsdk:"page" query:"page"`
 	PerPage       types.Float64                            `tfsdk:"per_page" query:"per_page"`
 	MaxItems      types.Int64                              `tfsdk:"max_items"`
-	Items         *[]*AccessRulesItemsDataSourceModel      `tfsdk:"items"`
+	Result        *[]*AccessRulesResultDataSourceModel     `tfsdk:"result"`
 }
 
 type AccessRulesEgsPaginationDataSourceModel struct {
@@ -40,5 +40,5 @@ type AccessRulesFiltersDataSourceModel struct {
 	Notes               types.String `tfsdk:"notes" json:"notes"`
 }
 
-type AccessRulesItemsDataSourceModel struct {
+type AccessRulesResultDataSourceModel struct {
 }

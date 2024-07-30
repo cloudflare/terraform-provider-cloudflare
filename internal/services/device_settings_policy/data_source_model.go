@@ -42,7 +42,7 @@ type DeviceSettingsPolicyDataSourceModel struct {
 	SwitchLocked        types.Bool                                             `tfsdk:"switch_locked" json:"switch_locked"`
 	TargetTests         *[]*DeviceSettingsPolicyTargetTestsDataSourceModel     `tfsdk:"target_tests" json:"target_tests"`
 	TunnelProtocol      types.String                                           `tfsdk:"tunnel_protocol" json:"tunnel_protocol"`
-	FindOneBy           *DeviceSettingsPolicyFindOneByDataSourceModel          `tfsdk:"find_one_by"`
+	Filter              *DeviceSettingsPolicyFindOneByDataSourceModel          `tfsdk:"filter"`
 }
 
 type DeviceSettingsPolicyExcludeDataSourceModel struct {

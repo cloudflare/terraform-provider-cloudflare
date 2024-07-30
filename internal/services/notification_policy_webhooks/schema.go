@@ -5,6 +5,8 @@ package notification_policy_webhooks
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -75,17 +77,42 @@ func (r NotificationPolicyWebhooksResource) Schema(ctx context.Context, req reso
 				Description: "Whether the API call was successful",
 				Computed:    true,
 			},
+			"result_info": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[NotificationPolicyWebhooksResultInfoModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"count": schema.Float64Attribute{
+						Description: "Total number of results for the requested service",
+						Optional:    true,
+					},
+					"page": schema.Float64Attribute{
+						Description: "Current page within paginated list of results",
+						Optional:    true,
+					},
+					"per_page": schema.Float64Attribute{
+						Description: "Number of results per page of results",
+						Optional:    true,
+					},
+					"total_count": schema.Float64Attribute{
+						Description: "Total results available without any search parameters",
+						Optional:    true,
+					},
+				},
+			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the webhook destination was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"last_failure": schema.StringAttribute{
 				Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"last_success": schema.StringAttribute{
 				Description: "Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"type": schema.StringAttribute{
 				Description: "Type of webhook endpoint.",

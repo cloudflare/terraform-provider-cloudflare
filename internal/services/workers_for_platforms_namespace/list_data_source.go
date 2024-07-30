@@ -54,10 +54,10 @@ func (r *WorkersForPlatformsNamespacesDataSource) Read(ctx context.Context, req 
 		return
 	}
 
-	items := &[]*WorkersForPlatformsNamespacesItemsDataSourceModel{}
+	items := &[]*WorkersForPlatformsNamespacesResultDataSourceModel{}
 	env := WorkersForPlatformsNamespacesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WorkersForPlatformsNamespacesItemsDataSourceModel{}
+	acc := []*WorkersForPlatformsNamespacesResultDataSourceModel{}
 
 	page, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *WorkersForPlatformsNamespacesDataSource) Read(ctx context.Context, req 
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -5,6 +5,7 @@ package waiting_room_event
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -38,7 +39,7 @@ func (r WaitingRoomEventsDataSource) Schema(ctx context.Context, req datasource.
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -48,7 +49,8 @@ func (r WaitingRoomEventsDataSource) Schema(ctx context.Context, req datasource.
 							Optional: true,
 						},
 						"created_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"custom_page_html": schema.StringAttribute{
 							Description: "If set, the event will override the waiting room's `custom_page_html` property while it is active. If null, the event will inherit it.",
@@ -75,7 +77,8 @@ func (r WaitingRoomEventsDataSource) Schema(ctx context.Context, req datasource.
 							Optional:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Description: "A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.",

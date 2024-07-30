@@ -54,7 +54,7 @@ func (r UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req dataso
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{

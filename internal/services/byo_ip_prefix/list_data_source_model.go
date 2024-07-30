@@ -8,16 +8,16 @@ import (
 )
 
 type ByoIPPrefixesResultListDataSourceEnvelope struct {
-	Result *[]*ByoIPPrefixesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*ByoIPPrefixesResultDataSourceModel `json:"result,computed"`
 }
 
 type ByoIPPrefixesDataSourceModel struct {
-	AccountID types.String                          `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                           `tfsdk:"max_items"`
-	Items     *[]*ByoIPPrefixesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                           `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                            `tfsdk:"max_items"`
+	Result    *[]*ByoIPPrefixesResultDataSourceModel `tfsdk:"result"`
 }
 
-type ByoIPPrefixesItemsDataSourceModel struct {
+type ByoIPPrefixesResultDataSourceModel struct {
 	ID                   types.String      `tfsdk:"id" json:"id"`
 	AccountID            types.String      `tfsdk:"account_id" json:"account_id"`
 	Advertised           types.Bool        `tfsdk:"advertised" json:"advertised"`

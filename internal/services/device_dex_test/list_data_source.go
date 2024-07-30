@@ -54,10 +54,10 @@ func (r *DeviceDEXTestsDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	items := &[]*DeviceDEXTestsItemsDataSourceModel{}
+	items := &[]*DeviceDEXTestsResultDataSourceModel{}
 	env := DeviceDEXTestsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*DeviceDEXTestsItemsDataSourceModel{}
+	acc := []*DeviceDEXTestsResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Devices.DEXTests.List(ctx, zero_trust.DeviceDEXTestListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *DeviceDEXTestsDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

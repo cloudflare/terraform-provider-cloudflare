@@ -5,7 +5,9 @@ package custom_hostname
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -142,6 +144,44 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the hostname was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"ownership_verification": schema.SingleNestedAttribute{
+				Description: "This is a record which can be placed to activate a hostname.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameOwnershipVerificationModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"name": schema.StringAttribute{
+						Description: "DNS Name for record.",
+						Optional:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "DNS Record type.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("txt"),
+						},
+					},
+					"value": schema.StringAttribute{
+						Description: "Content for the record.",
+						Optional:    true,
+					},
+				},
+			},
+			"ownership_verification_http": schema.SingleNestedAttribute{
+				Description: "This presents the token to be served by the given http url to activate a hostname.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameOwnershipVerificationHTTPModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"http_body": schema.StringAttribute{
+						Description: "Token to be served.",
+						Optional:    true,
+					},
+					"http_url": schema.StringAttribute{
+						Description: "The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.",
+						Optional:    true,
+					},
+				},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the hostname's activation.",

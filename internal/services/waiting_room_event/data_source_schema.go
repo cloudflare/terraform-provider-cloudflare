@@ -5,6 +5,7 @@ package waiting_room_event
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -32,7 +33,8 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 				Optional: true,
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"custom_page_html": schema.StringAttribute{
 				Description: "If set, the event will override the waiting room's `custom_page_html` property while it is active. If null, the event will inherit it.",
@@ -59,7 +61,8 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 				Optional:    true,
 			},
 			"modified_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.",
@@ -108,7 +111,7 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 					int64validator.Between(200, 2147483647),
 				},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{

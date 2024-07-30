@@ -21,7 +21,7 @@ type FilterDataSourceModel struct {
 	Expression     types.String                    `tfsdk:"expression" json:"expression"`
 	Paused         types.Bool                      `tfsdk:"paused" json:"paused"`
 	Ref            types.String                    `tfsdk:"ref" json:"ref"`
-	FindOneBy      *FilterFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter         *FilterFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type FilterFindOneByDataSourceModel struct {

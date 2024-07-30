@@ -58,7 +58,7 @@ func (r *AddressMapDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := AddressMapResultDataSourceEnvelope{*data}
 		_, err := r.client.Addressing.AddressMaps.Get(
@@ -86,7 +86,7 @@ func (r *AddressMapDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		env := AddressMapResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Addressing.AddressMaps.List(ctx, addressing.AddressMapListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -54,10 +54,10 @@ func (r *WorkerSecretsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*WorkerSecretsItemsDataSourceModel{}
+	items := &[]*WorkerSecretsResultDataSourceModel{}
 	env := WorkerSecretsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WorkerSecretsItemsDataSourceModel{}
+	acc := []*WorkerSecretsResultDataSourceModel{}
 
 	page, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
 		ctx,
@@ -91,7 +91,7 @@ func (r *WorkerSecretsDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

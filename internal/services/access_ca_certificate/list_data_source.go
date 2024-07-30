@@ -61,10 +61,10 @@ func (r *AccessCACertificatesDataSource) Read(ctx context.Context, req datasourc
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	items := &[]*AccessCACertificatesItemsDataSourceModel{}
+	items := &[]*AccessCACertificatesResultDataSourceModel{}
 	env := AccessCACertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessCACertificatesItemsDataSourceModel{}
+	acc := []*AccessCACertificatesResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Access.Applications.CAs.List(ctx, params)
 	if err != nil {
@@ -91,7 +91,7 @@ func (r *AccessCACertificatesDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

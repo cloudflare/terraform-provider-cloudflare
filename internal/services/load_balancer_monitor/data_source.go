@@ -58,7 +58,7 @@ func (r *LoadBalancerMonitorDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := LoadBalancerMonitorResultDataSourceEnvelope{*data}
 		_, err := r.client.LoadBalancers.Monitors.Get(
@@ -86,7 +86,7 @@ func (r *LoadBalancerMonitorDataSource) Read(ctx context.Context, req datasource
 		env := LoadBalancerMonitorResultListDataSourceEnvelope{items}
 
 		page, err := r.client.LoadBalancers.Monitors.List(ctx, load_balancers.MonitorListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

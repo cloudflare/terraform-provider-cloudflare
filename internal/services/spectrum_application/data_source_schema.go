@@ -26,7 +26,7 @@ func (r SpectrumApplicationDataSource) Schema(ctx context.Context, req datasourc
 				Description: "Application identifier.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone": schema.StringAttribute{

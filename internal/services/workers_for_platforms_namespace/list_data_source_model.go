@@ -8,16 +8,16 @@ import (
 )
 
 type WorkersForPlatformsNamespacesResultListDataSourceEnvelope struct {
-	Result *[]*WorkersForPlatformsNamespacesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*WorkersForPlatformsNamespacesResultDataSourceModel `json:"result,computed"`
 }
 
 type WorkersForPlatformsNamespacesDataSourceModel struct {
-	AccountID types.String                                          `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                           `tfsdk:"max_items"`
-	Items     *[]*WorkersForPlatformsNamespacesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                           `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                            `tfsdk:"max_items"`
+	Result    *[]*WorkersForPlatformsNamespacesResultDataSourceModel `tfsdk:"result"`
 }
 
-type WorkersForPlatformsNamespacesItemsDataSourceModel struct {
+type WorkersForPlatformsNamespacesResultDataSourceModel struct {
 	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by"`
 	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedBy    types.String      `tfsdk:"modified_by" json:"modified_by"`

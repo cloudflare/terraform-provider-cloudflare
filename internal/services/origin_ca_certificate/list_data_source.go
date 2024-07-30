@@ -54,10 +54,10 @@ func (r *OriginCACertificatesDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	items := &[]*OriginCACertificatesItemsDataSourceModel{}
+	items := &[]*OriginCACertificatesResultDataSourceModel{}
 	env := OriginCACertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*OriginCACertificatesItemsDataSourceModel{}
+	acc := []*OriginCACertificatesResultDataSourceModel{}
 
 	page, err := r.client.OriginCACertificates.List(ctx, origin_ca_certificates.OriginCACertificateListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -86,7 +86,7 @@ func (r *OriginCACertificatesDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

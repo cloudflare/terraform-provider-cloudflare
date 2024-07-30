@@ -58,7 +58,7 @@ func (r *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := D1DatabaseResultDataSourceEnvelope{*data}
 		_, err := r.client.D1.Database.Get(
@@ -86,10 +86,10 @@ func (r *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		env := D1DatabaseResultListDataSourceEnvelope{items}
 
 		page, err := r.client.D1.Database.List(ctx, d1.DatabaseListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
-			Name:      cloudflare.F(data.FindOneBy.Name.ValueString()),
-			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
+			Name:      cloudflare.F(data.Filter.Name.ValueString()),
+			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

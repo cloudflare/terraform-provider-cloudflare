@@ -29,7 +29,7 @@ func (r ListItemDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 				Description: "The unique ID of the item in the List.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

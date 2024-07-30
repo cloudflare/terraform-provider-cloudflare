@@ -58,7 +58,7 @@ func (r *DeviceSettingsPolicyDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := DeviceSettingsPolicyResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Devices.Policies.Get(
@@ -86,7 +86,7 @@ func (r *DeviceSettingsPolicyDataSource) Read(ctx context.Context, req datasourc
 		env := DeviceSettingsPolicyResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Devices.Policies.List(ctx, zero_trust.DevicePolicyListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

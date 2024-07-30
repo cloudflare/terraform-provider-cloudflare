@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -79,10 +80,12 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was last modified.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"permissions": schema.ListAttribute{
 				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",

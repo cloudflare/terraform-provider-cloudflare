@@ -5,6 +5,7 @@ package regional_hostname
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -27,12 +28,13 @@ func (r RegionalHostnameDataSource) Schema(ctx context.Context, req datasource.S
 			"created_on": schema.StringAttribute{
 				Description: "When the regional hostname was created",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"region_key": schema.StringAttribute{
 				Description: "Identifying key for the region",
 				Computed:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{

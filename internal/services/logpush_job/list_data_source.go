@@ -61,10 +61,10 @@ func (r *LogpushJobsDataSource) Read(ctx context.Context, req datasource.ReadReq
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	items := &[]*LogpushJobsItemsDataSourceModel{}
+	items := &[]*LogpushJobsResultDataSourceModel{}
 	env := LogpushJobsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*LogpushJobsItemsDataSourceModel{}
+	acc := []*LogpushJobsResultDataSourceModel{}
 
 	page, err := r.client.Logpush.Jobs.List(ctx, params)
 	if err != nil {
@@ -91,7 +91,7 @@ func (r *LogpushJobsDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -5,6 +5,7 @@ package device_dex_test
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -22,11 +23,33 @@ func (r DeviceDEXTestsDataSource) Schema(ctx context.Context, req datasource.Sch
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"data": schema.SingleNestedAttribute{
+							Description: "The configuration object which contains the details for the WARP client to conduct the test.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[DeviceDEXTestsDataDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"host": schema.StringAttribute{
+									Description: "The desired endpoint to test.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"kind": schema.StringAttribute{
+									Description: "The type of test.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"method": schema.StringAttribute{
+									Description: "The HTTP request method type.",
+									Computed:    true,
+									Optional:    true,
+								},
+							},
+						},
 						"enabled": schema.BoolAttribute{
 							Description: "Determines whether or not the test is active.",
 							Computed:    true,

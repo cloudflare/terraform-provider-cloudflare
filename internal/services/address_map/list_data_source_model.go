@@ -8,16 +8,16 @@ import (
 )
 
 type AddressMapsResultListDataSourceEnvelope struct {
-	Result *[]*AddressMapsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AddressMapsResultDataSourceModel `json:"result,computed"`
 }
 
 type AddressMapsDataSourceModel struct {
-	AccountID types.String                        `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                         `tfsdk:"max_items"`
-	Items     *[]*AddressMapsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                         `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                          `tfsdk:"max_items"`
+	Result    *[]*AddressMapsResultDataSourceModel `tfsdk:"result"`
 }
 
-type AddressMapsItemsDataSourceModel struct {
+type AddressMapsResultDataSourceModel struct {
 	ID           types.String      `tfsdk:"id" json:"id"`
 	CanDelete    types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool        `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`

@@ -58,7 +58,7 @@ func (r *AccessPolicyDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := AccessPolicyResultDataSourceEnvelope{*data}
 		params := zero_trust.AccessApplicationPolicyGetParams{}
@@ -101,7 +101,7 @@ func (r *AccessPolicyDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 		page, err := r.client.ZeroTrust.Access.Applications.Policies.List(
 			ctx,
-			data.FindOneBy.AppID.ValueString(),
+			data.Filter.AppID.ValueString(),
 			params,
 		)
 		if err != nil {

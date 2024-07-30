@@ -9,391 +9,391 @@ import (
 )
 
 type AccessGroupsResultListDataSourceEnvelope struct {
-	Result *[]*AccessGroupsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccessGroupsResultDataSourceModel `json:"result,computed"`
 }
 
 type AccessGroupsDataSourceModel struct {
-	AccountID types.String                         `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                         `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                          `tfsdk:"max_items"`
-	Items     *[]*AccessGroupsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                          `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                          `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                           `tfsdk:"max_items"`
+	Result    *[]*AccessGroupsResultDataSourceModel `tfsdk:"result"`
 }
 
-type AccessGroupsItemsDataSourceModel struct {
-	ID        types.String                                  `tfsdk:"id" json:"id"`
-	CreatedAt timetypes.RFC3339                             `tfsdk:"created_at" json:"created_at,computed"`
-	Exclude   *[]*AccessGroupsItemsExcludeDataSourceModel   `tfsdk:"exclude" json:"exclude"`
-	Include   *[]*AccessGroupsItemsIncludeDataSourceModel   `tfsdk:"include" json:"include"`
-	IsDefault *[]*AccessGroupsItemsIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default"`
-	Name      types.String                                  `tfsdk:"name" json:"name"`
-	Require   *[]*AccessGroupsItemsRequireDataSourceModel   `tfsdk:"require" json:"require"`
-	UpdatedAt timetypes.RFC3339                             `tfsdk:"updated_at" json:"updated_at,computed"`
+type AccessGroupsResultDataSourceModel struct {
+	ID        types.String                             `tfsdk:"id" json:"id"`
+	CreatedAt timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed"`
+	Exclude   *[]*AccessGroupsExcludeDataSourceModel   `tfsdk:"exclude" json:"exclude"`
+	Include   *[]*AccessGroupsIncludeDataSourceModel   `tfsdk:"include" json:"include"`
+	IsDefault *[]*AccessGroupsIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default"`
+	Name      types.String                             `tfsdk:"name" json:"name"`
+	Require   *[]*AccessGroupsRequireDataSourceModel   `tfsdk:"require" json:"require"`
+	UpdatedAt timetypes.RFC3339                        `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
-type AccessGroupsItemsExcludeDataSourceModel struct {
-	Email                *AccessGroupsItemsExcludeEmailDataSourceModel              `tfsdk:"email" json:"email"`
-	EmailList            *AccessGroupsItemsExcludeEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
-	EmailDomain          *AccessGroupsItemsExcludeEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             jsontypes.Normalized                                       `tfsdk:"everyone" json:"everyone"`
-	IP                   *AccessGroupsItemsExcludeIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
-	IPList               *AccessGroupsItemsExcludeIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          jsontypes.Normalized                                       `tfsdk:"certificate" json:"certificate"`
-	Group                *AccessGroupsItemsExcludeGroupDataSourceModel              `tfsdk:"group" json:"group"`
-	AzureAD              *AccessGroupsItemsExcludeAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
-	GitHubOrganization   *AccessGroupsItemsExcludeGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
-	GSuite               *AccessGroupsItemsExcludeGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
-	Okta                 *AccessGroupsItemsExcludeOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
-	SAML                 *AccessGroupsItemsExcludeSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
-	ServiceToken         *AccessGroupsItemsExcludeServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken jsontypes.Normalized                                       `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
-	ExternalEvaluation   *AccessGroupsItemsExcludeExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
-	Geo                  *AccessGroupsItemsExcludeGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
-	AuthMethod           *AccessGroupsItemsExcludeAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
-	DevicePosture        *AccessGroupsItemsExcludeDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
+type AccessGroupsExcludeDataSourceModel struct {
+	Email                *AccessGroupsExcludeEmailDataSourceModel              `tfsdk:"email" json:"email"`
+	EmailList            *AccessGroupsExcludeEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
+	EmailDomain          *AccessGroupsExcludeEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
+	Everyone             jsontypes.Normalized                                  `tfsdk:"everyone" json:"everyone"`
+	IP                   *AccessGroupsExcludeIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
+	IPList               *AccessGroupsExcludeIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
+	Certificate          jsontypes.Normalized                                  `tfsdk:"certificate" json:"certificate"`
+	Group                *AccessGroupsExcludeGroupDataSourceModel              `tfsdk:"group" json:"group"`
+	AzureAD              *AccessGroupsExcludeAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
+	GitHubOrganization   *AccessGroupsExcludeGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
+	GSuite               *AccessGroupsExcludeGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
+	Okta                 *AccessGroupsExcludeOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
+	SAML                 *AccessGroupsExcludeSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
+	ServiceToken         *AccessGroupsExcludeServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                  `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	ExternalEvaluation   *AccessGroupsExcludeExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
+	Geo                  *AccessGroupsExcludeGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
+	AuthMethod           *AccessGroupsExcludeAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
+	DevicePosture        *AccessGroupsExcludeDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
 }
 
-type AccessGroupsItemsExcludeEmailDataSourceModel struct {
+type AccessGroupsExcludeEmailDataSourceModel struct {
 	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsExcludeEmailListDataSourceModel struct {
+type AccessGroupsExcludeEmailListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsExcludeEmailDomainDataSourceModel struct {
+type AccessGroupsExcludeEmailDomainDataSourceModel struct {
 	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
-type AccessGroupsItemsExcludeIPDataSourceModel struct {
+type AccessGroupsExcludeIPDataSourceModel struct {
 	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
-type AccessGroupsItemsExcludeIPListDataSourceModel struct {
+type AccessGroupsExcludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsExcludeGroupDataSourceModel struct {
+type AccessGroupsExcludeGroupDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsExcludeAzureADDataSourceModel struct {
+type AccessGroupsExcludeAzureADDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
-type AccessGroupsItemsExcludeGitHubOrganizationDataSourceModel struct {
+type AccessGroupsExcludeGitHubOrganizationDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
-type AccessGroupsItemsExcludeGSuiteDataSourceModel struct {
+type AccessGroupsExcludeGSuiteDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsExcludeOktaDataSourceModel struct {
+type AccessGroupsExcludeOktaDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsExcludeSAMLDataSourceModel struct {
+type AccessGroupsExcludeSAMLDataSourceModel struct {
 	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
 	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
-type AccessGroupsItemsExcludeServiceTokenDataSourceModel struct {
+type AccessGroupsExcludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
-type AccessGroupsItemsExcludeExternalEvaluationDataSourceModel struct {
+type AccessGroupsExcludeExternalEvaluationDataSourceModel struct {
 	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
 	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
-type AccessGroupsItemsExcludeGeoDataSourceModel struct {
+type AccessGroupsExcludeGeoDataSourceModel struct {
 	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
-type AccessGroupsItemsExcludeAuthMethodDataSourceModel struct {
+type AccessGroupsExcludeAuthMethodDataSourceModel struct {
 	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
-type AccessGroupsItemsExcludeDevicePostureDataSourceModel struct {
+type AccessGroupsExcludeDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }
 
-type AccessGroupsItemsIncludeDataSourceModel struct {
-	Email                *AccessGroupsItemsIncludeEmailDataSourceModel              `tfsdk:"email" json:"email"`
-	EmailList            *AccessGroupsItemsIncludeEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
-	EmailDomain          *AccessGroupsItemsIncludeEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             jsontypes.Normalized                                       `tfsdk:"everyone" json:"everyone"`
-	IP                   *AccessGroupsItemsIncludeIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
-	IPList               *AccessGroupsItemsIncludeIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          jsontypes.Normalized                                       `tfsdk:"certificate" json:"certificate"`
-	Group                *AccessGroupsItemsIncludeGroupDataSourceModel              `tfsdk:"group" json:"group"`
-	AzureAD              *AccessGroupsItemsIncludeAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
-	GitHubOrganization   *AccessGroupsItemsIncludeGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
-	GSuite               *AccessGroupsItemsIncludeGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
-	Okta                 *AccessGroupsItemsIncludeOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
-	SAML                 *AccessGroupsItemsIncludeSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
-	ServiceToken         *AccessGroupsItemsIncludeServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken jsontypes.Normalized                                       `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
-	ExternalEvaluation   *AccessGroupsItemsIncludeExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
-	Geo                  *AccessGroupsItemsIncludeGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
-	AuthMethod           *AccessGroupsItemsIncludeAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
-	DevicePosture        *AccessGroupsItemsIncludeDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
+type AccessGroupsIncludeDataSourceModel struct {
+	Email                *AccessGroupsIncludeEmailDataSourceModel              `tfsdk:"email" json:"email"`
+	EmailList            *AccessGroupsIncludeEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
+	EmailDomain          *AccessGroupsIncludeEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
+	Everyone             jsontypes.Normalized                                  `tfsdk:"everyone" json:"everyone"`
+	IP                   *AccessGroupsIncludeIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
+	IPList               *AccessGroupsIncludeIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
+	Certificate          jsontypes.Normalized                                  `tfsdk:"certificate" json:"certificate"`
+	Group                *AccessGroupsIncludeGroupDataSourceModel              `tfsdk:"group" json:"group"`
+	AzureAD              *AccessGroupsIncludeAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
+	GitHubOrganization   *AccessGroupsIncludeGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
+	GSuite               *AccessGroupsIncludeGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
+	Okta                 *AccessGroupsIncludeOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
+	SAML                 *AccessGroupsIncludeSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
+	ServiceToken         *AccessGroupsIncludeServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                  `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	ExternalEvaluation   *AccessGroupsIncludeExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
+	Geo                  *AccessGroupsIncludeGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
+	AuthMethod           *AccessGroupsIncludeAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
+	DevicePosture        *AccessGroupsIncludeDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
 }
 
-type AccessGroupsItemsIncludeEmailDataSourceModel struct {
+type AccessGroupsIncludeEmailDataSourceModel struct {
 	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsIncludeEmailListDataSourceModel struct {
+type AccessGroupsIncludeEmailListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsIncludeEmailDomainDataSourceModel struct {
+type AccessGroupsIncludeEmailDomainDataSourceModel struct {
 	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
-type AccessGroupsItemsIncludeIPDataSourceModel struct {
+type AccessGroupsIncludeIPDataSourceModel struct {
 	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
-type AccessGroupsItemsIncludeIPListDataSourceModel struct {
+type AccessGroupsIncludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsIncludeGroupDataSourceModel struct {
+type AccessGroupsIncludeGroupDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsIncludeAzureADDataSourceModel struct {
+type AccessGroupsIncludeAzureADDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
-type AccessGroupsItemsIncludeGitHubOrganizationDataSourceModel struct {
+type AccessGroupsIncludeGitHubOrganizationDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
-type AccessGroupsItemsIncludeGSuiteDataSourceModel struct {
+type AccessGroupsIncludeGSuiteDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsIncludeOktaDataSourceModel struct {
+type AccessGroupsIncludeOktaDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsIncludeSAMLDataSourceModel struct {
+type AccessGroupsIncludeSAMLDataSourceModel struct {
 	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
 	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
-type AccessGroupsItemsIncludeServiceTokenDataSourceModel struct {
+type AccessGroupsIncludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
-type AccessGroupsItemsIncludeExternalEvaluationDataSourceModel struct {
+type AccessGroupsIncludeExternalEvaluationDataSourceModel struct {
 	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
 	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
-type AccessGroupsItemsIncludeGeoDataSourceModel struct {
+type AccessGroupsIncludeGeoDataSourceModel struct {
 	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
-type AccessGroupsItemsIncludeAuthMethodDataSourceModel struct {
+type AccessGroupsIncludeAuthMethodDataSourceModel struct {
 	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
-type AccessGroupsItemsIncludeDevicePostureDataSourceModel struct {
+type AccessGroupsIncludeDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }
 
-type AccessGroupsItemsIsDefaultDataSourceModel struct {
-	Email                *AccessGroupsItemsIsDefaultEmailDataSourceModel              `tfsdk:"email" json:"email"`
-	EmailList            *AccessGroupsItemsIsDefaultEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
-	EmailDomain          *AccessGroupsItemsIsDefaultEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             jsontypes.Normalized                                         `tfsdk:"everyone" json:"everyone"`
-	IP                   *AccessGroupsItemsIsDefaultIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
-	IPList               *AccessGroupsItemsIsDefaultIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          jsontypes.Normalized                                         `tfsdk:"certificate" json:"certificate"`
-	Group                *AccessGroupsItemsIsDefaultGroupDataSourceModel              `tfsdk:"group" json:"group"`
-	AzureAD              *AccessGroupsItemsIsDefaultAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
-	GitHubOrganization   *AccessGroupsItemsIsDefaultGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
-	GSuite               *AccessGroupsItemsIsDefaultGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
-	Okta                 *AccessGroupsItemsIsDefaultOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
-	SAML                 *AccessGroupsItemsIsDefaultSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
-	ServiceToken         *AccessGroupsItemsIsDefaultServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken jsontypes.Normalized                                         `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
-	ExternalEvaluation   *AccessGroupsItemsIsDefaultExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
-	Geo                  *AccessGroupsItemsIsDefaultGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
-	AuthMethod           *AccessGroupsItemsIsDefaultAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
-	DevicePosture        *AccessGroupsItemsIsDefaultDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
+type AccessGroupsIsDefaultDataSourceModel struct {
+	Email                *AccessGroupsIsDefaultEmailDataSourceModel              `tfsdk:"email" json:"email"`
+	EmailList            *AccessGroupsIsDefaultEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
+	EmailDomain          *AccessGroupsIsDefaultEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
+	Everyone             jsontypes.Normalized                                    `tfsdk:"everyone" json:"everyone"`
+	IP                   *AccessGroupsIsDefaultIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
+	IPList               *AccessGroupsIsDefaultIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
+	Certificate          jsontypes.Normalized                                    `tfsdk:"certificate" json:"certificate"`
+	Group                *AccessGroupsIsDefaultGroupDataSourceModel              `tfsdk:"group" json:"group"`
+	AzureAD              *AccessGroupsIsDefaultAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
+	GitHubOrganization   *AccessGroupsIsDefaultGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
+	GSuite               *AccessGroupsIsDefaultGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
+	Okta                 *AccessGroupsIsDefaultOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
+	SAML                 *AccessGroupsIsDefaultSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
+	ServiceToken         *AccessGroupsIsDefaultServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                    `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	ExternalEvaluation   *AccessGroupsIsDefaultExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
+	Geo                  *AccessGroupsIsDefaultGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
+	AuthMethod           *AccessGroupsIsDefaultAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
+	DevicePosture        *AccessGroupsIsDefaultDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
 }
 
-type AccessGroupsItemsIsDefaultEmailDataSourceModel struct {
+type AccessGroupsIsDefaultEmailDataSourceModel struct {
 	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsIsDefaultEmailListDataSourceModel struct {
+type AccessGroupsIsDefaultEmailListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsIsDefaultEmailDomainDataSourceModel struct {
+type AccessGroupsIsDefaultEmailDomainDataSourceModel struct {
 	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
-type AccessGroupsItemsIsDefaultIPDataSourceModel struct {
+type AccessGroupsIsDefaultIPDataSourceModel struct {
 	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
-type AccessGroupsItemsIsDefaultIPListDataSourceModel struct {
+type AccessGroupsIsDefaultIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsIsDefaultGroupDataSourceModel struct {
+type AccessGroupsIsDefaultGroupDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsIsDefaultAzureADDataSourceModel struct {
+type AccessGroupsIsDefaultAzureADDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
-type AccessGroupsItemsIsDefaultGitHubOrganizationDataSourceModel struct {
+type AccessGroupsIsDefaultGitHubOrganizationDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
-type AccessGroupsItemsIsDefaultGSuiteDataSourceModel struct {
+type AccessGroupsIsDefaultGSuiteDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsIsDefaultOktaDataSourceModel struct {
+type AccessGroupsIsDefaultOktaDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsIsDefaultSAMLDataSourceModel struct {
+type AccessGroupsIsDefaultSAMLDataSourceModel struct {
 	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
 	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
-type AccessGroupsItemsIsDefaultServiceTokenDataSourceModel struct {
+type AccessGroupsIsDefaultServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
-type AccessGroupsItemsIsDefaultExternalEvaluationDataSourceModel struct {
+type AccessGroupsIsDefaultExternalEvaluationDataSourceModel struct {
 	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
 	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
-type AccessGroupsItemsIsDefaultGeoDataSourceModel struct {
+type AccessGroupsIsDefaultGeoDataSourceModel struct {
 	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
-type AccessGroupsItemsIsDefaultAuthMethodDataSourceModel struct {
+type AccessGroupsIsDefaultAuthMethodDataSourceModel struct {
 	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
-type AccessGroupsItemsIsDefaultDevicePostureDataSourceModel struct {
+type AccessGroupsIsDefaultDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }
 
-type AccessGroupsItemsRequireDataSourceModel struct {
-	Email                *AccessGroupsItemsRequireEmailDataSourceModel              `tfsdk:"email" json:"email"`
-	EmailList            *AccessGroupsItemsRequireEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
-	EmailDomain          *AccessGroupsItemsRequireEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             jsontypes.Normalized                                       `tfsdk:"everyone" json:"everyone"`
-	IP                   *AccessGroupsItemsRequireIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
-	IPList               *AccessGroupsItemsRequireIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          jsontypes.Normalized                                       `tfsdk:"certificate" json:"certificate"`
-	Group                *AccessGroupsItemsRequireGroupDataSourceModel              `tfsdk:"group" json:"group"`
-	AzureAD              *AccessGroupsItemsRequireAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
-	GitHubOrganization   *AccessGroupsItemsRequireGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
-	GSuite               *AccessGroupsItemsRequireGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
-	Okta                 *AccessGroupsItemsRequireOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
-	SAML                 *AccessGroupsItemsRequireSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
-	ServiceToken         *AccessGroupsItemsRequireServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken jsontypes.Normalized                                       `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
-	ExternalEvaluation   *AccessGroupsItemsRequireExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
-	Geo                  *AccessGroupsItemsRequireGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
-	AuthMethod           *AccessGroupsItemsRequireAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
-	DevicePosture        *AccessGroupsItemsRequireDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
+type AccessGroupsRequireDataSourceModel struct {
+	Email                *AccessGroupsRequireEmailDataSourceModel              `tfsdk:"email" json:"email"`
+	EmailList            *AccessGroupsRequireEmailListDataSourceModel          `tfsdk:"email_list" json:"email_list"`
+	EmailDomain          *AccessGroupsRequireEmailDomainDataSourceModel        `tfsdk:"email_domain" json:"email_domain"`
+	Everyone             jsontypes.Normalized                                  `tfsdk:"everyone" json:"everyone"`
+	IP                   *AccessGroupsRequireIPDataSourceModel                 `tfsdk:"ip" json:"ip"`
+	IPList               *AccessGroupsRequireIPListDataSourceModel             `tfsdk:"ip_list" json:"ip_list"`
+	Certificate          jsontypes.Normalized                                  `tfsdk:"certificate" json:"certificate"`
+	Group                *AccessGroupsRequireGroupDataSourceModel              `tfsdk:"group" json:"group"`
+	AzureAD              *AccessGroupsRequireAzureADDataSourceModel            `tfsdk:"azure_ad" json:"azureAD"`
+	GitHubOrganization   *AccessGroupsRequireGitHubOrganizationDataSourceModel `tfsdk:"github_organization" json:"github-organization"`
+	GSuite               *AccessGroupsRequireGSuiteDataSourceModel             `tfsdk:"gsuite" json:"gsuite"`
+	Okta                 *AccessGroupsRequireOktaDataSourceModel               `tfsdk:"okta" json:"okta"`
+	SAML                 *AccessGroupsRequireSAMLDataSourceModel               `tfsdk:"saml" json:"saml"`
+	ServiceToken         *AccessGroupsRequireServiceTokenDataSourceModel       `tfsdk:"service_token" json:"service_token"`
+	AnyValidServiceToken jsontypes.Normalized                                  `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
+	ExternalEvaluation   *AccessGroupsRequireExternalEvaluationDataSourceModel `tfsdk:"external_evaluation" json:"external_evaluation"`
+	Geo                  *AccessGroupsRequireGeoDataSourceModel                `tfsdk:"geo" json:"geo"`
+	AuthMethod           *AccessGroupsRequireAuthMethodDataSourceModel         `tfsdk:"auth_method" json:"auth_method"`
+	DevicePosture        *AccessGroupsRequireDevicePostureDataSourceModel      `tfsdk:"device_posture" json:"device_posture"`
 }
 
-type AccessGroupsItemsRequireEmailDataSourceModel struct {
+type AccessGroupsRequireEmailDataSourceModel struct {
 	Email types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsRequireEmailListDataSourceModel struct {
+type AccessGroupsRequireEmailListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsRequireEmailDomainDataSourceModel struct {
+type AccessGroupsRequireEmailDomainDataSourceModel struct {
 	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
-type AccessGroupsItemsRequireIPDataSourceModel struct {
+type AccessGroupsRequireIPDataSourceModel struct {
 	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
-type AccessGroupsItemsRequireIPListDataSourceModel struct {
+type AccessGroupsRequireIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsRequireGroupDataSourceModel struct {
+type AccessGroupsRequireGroupDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
 }
 
-type AccessGroupsItemsRequireAzureADDataSourceModel struct {
+type AccessGroupsRequireAzureADDataSourceModel struct {
 	ID           types.String `tfsdk:"id" json:"id,computed"`
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
-type AccessGroupsItemsRequireGitHubOrganizationDataSourceModel struct {
+type AccessGroupsRequireGitHubOrganizationDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
-type AccessGroupsItemsRequireGSuiteDataSourceModel struct {
+type AccessGroupsRequireGSuiteDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsRequireOktaDataSourceModel struct {
+type AccessGroupsRequireOktaDataSourceModel struct {
 	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
-type AccessGroupsItemsRequireSAMLDataSourceModel struct {
+type AccessGroupsRequireSAMLDataSourceModel struct {
 	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
 	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
-type AccessGroupsItemsRequireServiceTokenDataSourceModel struct {
+type AccessGroupsRequireServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
-type AccessGroupsItemsRequireExternalEvaluationDataSourceModel struct {
+type AccessGroupsRequireExternalEvaluationDataSourceModel struct {
 	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
 	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
 }
 
-type AccessGroupsItemsRequireGeoDataSourceModel struct {
+type AccessGroupsRequireGeoDataSourceModel struct {
 	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed"`
 }
 
-type AccessGroupsItemsRequireAuthMethodDataSourceModel struct {
+type AccessGroupsRequireAuthMethodDataSourceModel struct {
 	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed"`
 }
 
-type AccessGroupsItemsRequireDevicePostureDataSourceModel struct {
+type AccessGroupsRequireDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
 }

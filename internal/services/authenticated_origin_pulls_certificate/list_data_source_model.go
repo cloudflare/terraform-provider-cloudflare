@@ -8,16 +8,16 @@ import (
 )
 
 type AuthenticatedOriginPullsCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*AuthenticatedOriginPullsCertificatesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AuthenticatedOriginPullsCertificatesResultDataSourceModel `json:"result,computed"`
 }
 
 type AuthenticatedOriginPullsCertificatesDataSourceModel struct {
-	ZoneID   types.String                                                 `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems types.Int64                                                  `tfsdk:"max_items"`
-	Items    *[]*AuthenticatedOriginPullsCertificatesItemsDataSourceModel `tfsdk:"items"`
+	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems types.Int64                                                   `tfsdk:"max_items"`
+	Result   *[]*AuthenticatedOriginPullsCertificatesResultDataSourceModel `tfsdk:"result"`
 }
 
-type AuthenticatedOriginPullsCertificatesItemsDataSourceModel struct {
+type AuthenticatedOriginPullsCertificatesResultDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id"`
 	Certificate types.String      `tfsdk:"certificate" json:"certificate"`
 	ExpiresOn   timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed"`

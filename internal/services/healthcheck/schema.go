@@ -5,6 +5,7 @@ package healthcheck
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -166,14 +167,16 @@ func (r HealthcheckResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Default:     stringdefault.StaticString("HTTP"),
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"failure_reason": schema.StringAttribute{
 				Description: "The current failure reason if status is unhealthy.",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
 				Description: "The current status of the origin server according to the health check.",

@@ -8,16 +8,16 @@ import (
 )
 
 type RegionalHostnamesResultListDataSourceEnvelope struct {
-	Result *[]*RegionalHostnamesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*RegionalHostnamesResultDataSourceModel `json:"result,computed"`
 }
 
 type RegionalHostnamesDataSourceModel struct {
-	ZoneID   types.String                              `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems types.Int64                               `tfsdk:"max_items"`
-	Items    *[]*RegionalHostnamesItemsDataSourceModel `tfsdk:"items"`
+	ZoneID   types.String                               `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems types.Int64                                `tfsdk:"max_items"`
+	Result   *[]*RegionalHostnamesResultDataSourceModel `tfsdk:"result"`
 }
 
-type RegionalHostnamesItemsDataSourceModel struct {
+type RegionalHostnamesResultDataSourceModel struct {
 	CreatedOn timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
 	Hostname  types.String      `tfsdk:"hostname" json:"hostname,computed"`
 	RegionKey types.String      `tfsdk:"region_key" json:"region_key,computed"`

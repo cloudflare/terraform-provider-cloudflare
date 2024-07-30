@@ -38,7 +38,7 @@ type LoadBalancerMonitorDataSourceModel struct {
 	Retries         types.Int64                                  `tfsdk:"retries" json:"retries,computed"`
 	Timeout         types.Int64                                  `tfsdk:"timeout" json:"timeout,computed"`
 	Type            types.String                                 `tfsdk:"type" json:"type,computed"`
-	FindOneBy       *LoadBalancerMonitorFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter          *LoadBalancerMonitorFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type LoadBalancerMonitorFindOneByDataSourceModel struct {

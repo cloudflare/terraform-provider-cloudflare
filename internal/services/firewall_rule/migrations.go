@@ -5,6 +5,7 @@ package firewall_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -40,6 +41,36 @@ func (r FirewallRuleResource) UpgradeState(ctx context.Context) map[int64]resour
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass"),
+						},
+					},
+					"filter": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[FirewallRuleFilterModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"id": schema.StringAttribute{
+								Description: "The unique identifier of the filter.",
+								Computed:    true,
+							},
+							"description": schema.StringAttribute{
+								Description: "An informative summary of the filter.",
+								Optional:    true,
+							},
+							"expression": schema.StringAttribute{
+								Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
+								Optional:    true,
+							},
+							"paused": schema.BoolAttribute{
+								Description: "When true, indicates that the filter is currently paused.",
+								Optional:    true,
+							},
+							"ref": schema.StringAttribute{
+								Description: "A short reference tag. Allows you to select related filters.",
+								Optional:    true,
+							},
+							"deleted": schema.BoolAttribute{
+								Description: "When true, indicates that the firewall rule was deleted.",
+								Optional:    true,
+							},
 						},
 					},
 					"paused": schema.BoolAttribute{

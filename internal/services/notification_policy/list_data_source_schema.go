@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -27,7 +28,7 @@ func (r NotificationPoliciesDataSource) Schema(ctx context.Context, req datasour
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -50,7 +51,8 @@ func (r NotificationPoliciesDataSource) Schema(ctx context.Context, req datasour
 							},
 						},
 						"created": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "Optional description for the Notification policy.",
@@ -317,7 +319,8 @@ func (r NotificationPoliciesDataSource) Schema(ctx context.Context, req datasour
 							},
 						},
 						"modified": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Description: "Name of the policy.",

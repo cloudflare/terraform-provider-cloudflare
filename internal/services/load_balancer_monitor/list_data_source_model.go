@@ -9,16 +9,16 @@ import (
 )
 
 type LoadBalancerMonitorsResultListDataSourceEnvelope struct {
-	Result *[]*LoadBalancerMonitorsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*LoadBalancerMonitorsResultDataSourceModel `json:"result,computed"`
 }
 
 type LoadBalancerMonitorsDataSourceModel struct {
-	AccountID types.String                                 `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                  `tfsdk:"max_items"`
-	Items     *[]*LoadBalancerMonitorsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                   `tfsdk:"max_items"`
+	Result    *[]*LoadBalancerMonitorsResultDataSourceModel `tfsdk:"result"`
 }
 
-type LoadBalancerMonitorsItemsDataSourceModel struct {
+type LoadBalancerMonitorsResultDataSourceModel struct {
 	ID              types.String         `tfsdk:"id" json:"id"`
 	AllowInsecure   types.Bool           `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
 	ConsecutiveDown types.Int64          `tfsdk:"consecutive_down" json:"consecutive_down,computed"`

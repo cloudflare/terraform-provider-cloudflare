@@ -9,16 +9,16 @@ import (
 )
 
 type OriginCACertificatesResultListDataSourceEnvelope struct {
-	Result *[]*OriginCACertificatesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*OriginCACertificatesResultDataSourceModel `json:"result,computed"`
 }
 
 type OriginCACertificatesDataSourceModel struct {
-	ZoneID   types.String                                 `tfsdk:"zone_id" query:"zone_id"`
-	MaxItems types.Int64                                  `tfsdk:"max_items"`
-	Items    *[]*OriginCACertificatesItemsDataSourceModel `tfsdk:"items"`
+	ZoneID   types.String                                  `tfsdk:"zone_id" query:"zone_id"`
+	MaxItems types.Int64                                   `tfsdk:"max_items"`
+	Result   *[]*OriginCACertificatesResultDataSourceModel `tfsdk:"result"`
 }
 
-type OriginCACertificatesItemsDataSourceModel struct {
+type OriginCACertificatesResultDataSourceModel struct {
 	Csr               types.String            `tfsdk:"csr" json:"csr,computed"`
 	Hostnames         *[]jsontypes.Normalized `tfsdk:"hostnames" json:"hostnames,computed"`
 	RequestType       types.String            `tfsdk:"request_type" json:"request_type,computed"`

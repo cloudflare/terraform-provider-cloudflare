@@ -5,6 +5,7 @@ package load_balancer_pool
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -31,7 +32,7 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -47,7 +48,8 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 							ElementType: types.StringType,
 						},
 						"created_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "A human-readable description of the pool.",
@@ -57,6 +59,7 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 						"disabled_at": schema.StringAttribute{
 							Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
@@ -112,7 +115,8 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"monitor": schema.StringAttribute{
 							Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
@@ -196,6 +200,7 @@ func (r LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource.
 									"disabled_at": schema.StringAttribute{
 										Description: "This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.",
 										Computed:    true,
+										CustomType:  timetypes.RFC3339Type{},
 									},
 									"enabled": schema.BoolAttribute{
 										Description: "Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.",

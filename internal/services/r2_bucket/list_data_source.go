@@ -54,10 +54,10 @@ func (r *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	items := &[]*R2BucketsItemsDataSourceModel{}
+	items := &[]*R2BucketsResultDataSourceModel{}
 	env := R2BucketsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*R2BucketsItemsDataSourceModel{}
+	acc := []*R2BucketsResultDataSourceModel{}
 
 	page, err := r.client.R2.Buckets.List(ctx, r2.BucketListParams{
 		AccountID:    cloudflare.F(data.AccountID.ValueString()),
@@ -92,7 +92,7 @@ func (r *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

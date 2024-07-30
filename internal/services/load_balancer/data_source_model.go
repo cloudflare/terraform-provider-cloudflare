@@ -40,7 +40,7 @@ type LoadBalancerDataSourceModel struct {
 	SessionAffinityTTL        types.Float64                                         `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl"`
 	SteeringPolicy            types.String                                          `tfsdk:"steering_policy" json:"steering_policy,computed"`
 	TTL                       types.Float64                                         `tfsdk:"ttl" json:"ttl"`
-	FindOneBy                 *LoadBalancerFindOneByDataSourceModel                 `tfsdk:"find_one_by"`
+	Filter                    *LoadBalancerFindOneByDataSourceModel                 `tfsdk:"filter"`
 }
 
 type LoadBalancerAdaptiveRoutingDataSourceModel struct {

@@ -54,10 +54,10 @@ func (r *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	items := &[]*RateLimitsItemsDataSourceModel{}
+	items := &[]*RateLimitsResultDataSourceModel{}
 	env := RateLimitsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*RateLimitsItemsDataSourceModel{}
+	acc := []*RateLimitsResultDataSourceModel{}
 
 	page, err := r.client.RateLimits.List(
 		ctx,
@@ -91,7 +91,7 @@ func (r *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

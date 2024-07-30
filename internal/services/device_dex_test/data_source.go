@@ -58,7 +58,7 @@ func (r *DeviceDEXTestDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := DeviceDEXTestResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
@@ -86,7 +86,7 @@ func (r *DeviceDEXTestDataSource) Read(ctx context.Context, req datasource.ReadR
 		env := DeviceDEXTestResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Devices.DEXTests.List(ctx, zero_trust.DeviceDEXTestListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

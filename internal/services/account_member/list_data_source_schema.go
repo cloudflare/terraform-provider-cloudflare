@@ -5,6 +5,7 @@ package account_member
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -64,7 +65,7 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -193,6 +194,35 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
+							},
+						},
+						"user": schema.SingleNestedAttribute{
+							Description: "Details of the user associated to the membership.",
+							Computed:    true,
+							CustomType:  customfield.NewNestedObjectType[AccountMembersUserDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"email": schema.StringAttribute{
+									Description: "The contact email address of the user.",
+									Computed:    true,
+								},
+								"id": schema.StringAttribute{
+									Description: "Identifier",
+									Computed:    true,
+								},
+								"first_name": schema.StringAttribute{
+									Description: "User's first name",
+									Computed:    true,
+									Optional:    true,
+								},
+								"last_name": schema.StringAttribute{
+									Description: "User's last name",
+									Computed:    true,
+									Optional:    true,
+								},
+								"two_factor_authentication_enabled": schema.BoolAttribute{
+									Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
+									Computed:    true,
+								},
 							},
 						},
 					},

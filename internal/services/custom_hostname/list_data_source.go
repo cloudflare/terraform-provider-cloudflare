@@ -54,10 +54,10 @@ func (r *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	items := &[]*CustomHostnamesItemsDataSourceModel{}
+	items := &[]*CustomHostnamesResultDataSourceModel{}
 	env := CustomHostnamesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*CustomHostnamesItemsDataSourceModel{}
+	acc := []*CustomHostnamesResultDataSourceModel{}
 
 	page, err := r.client.CustomHostnames.List(ctx, custom_hostnames.CustomHostnameListParams{
 		ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
@@ -93,7 +93,7 @@ func (r *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

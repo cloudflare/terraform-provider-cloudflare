@@ -54,10 +54,10 @@ func (r *LoadBalancersDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*LoadBalancersItemsDataSourceModel{}
+	items := &[]*LoadBalancersResultDataSourceModel{}
 	env := LoadBalancersResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*LoadBalancersItemsDataSourceModel{}
+	acc := []*LoadBalancersResultDataSourceModel{}
 
 	page, err := r.client.LoadBalancers.List(ctx, load_balancers.LoadBalancerListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -86,7 +86,7 @@ func (r *LoadBalancersDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

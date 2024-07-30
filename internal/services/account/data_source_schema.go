@@ -21,7 +21,7 @@ func (r AccountDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			"account_id": schema.StringAttribute{
 				Optional: true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{

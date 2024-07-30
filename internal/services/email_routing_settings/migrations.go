@@ -5,6 +5,7 @@ package email_routing_settings
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -32,6 +33,7 @@ func (r EmailRoutingSettingsResource) UpgradeState(ctx context.Context) map[int6
 					"created": schema.StringAttribute{
 						Description: "The date and time the settings have been created.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "State of the zone settings for Email Routing.",
@@ -41,6 +43,7 @@ func (r EmailRoutingSettingsResource) UpgradeState(ctx context.Context) map[int6
 					"modified": schema.StringAttribute{
 						Description: "The date and time the settings have been modified.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"name": schema.StringAttribute{
 						Description: "Domain of your zone.",

@@ -5,6 +5,7 @@ package gre_tunnel
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -130,6 +131,7 @@ func (r GRETunnelResource) Schema(ctx context.Context, req resource.SchemaReques
 						"created_on": schema.StringAttribute{
 							Description: "The date and time the tunnel was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "An optional description of the GRE tunnel.",
@@ -180,6 +182,7 @@ func (r GRETunnelResource) Schema(ctx context.Context, req resource.SchemaReques
 						"modified_on": schema.StringAttribute{
 							Description: "The date and time the tunnel was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"mtu": schema.Int64Attribute{
 							Description: "Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.",

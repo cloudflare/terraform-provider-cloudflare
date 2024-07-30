@@ -25,7 +25,7 @@ type AccessCustomPageDataSourceModel struct {
 	CreatedAt    timetypes.RFC3339                         `tfsdk:"created_at" json:"created_at,computed"`
 	UID          types.String                              `tfsdk:"uid" json:"uid"`
 	UpdatedAt    timetypes.RFC3339                         `tfsdk:"updated_at" json:"updated_at,computed"`
-	FindOneBy    *AccessCustomPageFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter       *AccessCustomPageFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type AccessCustomPageFindOneByDataSourceModel struct {

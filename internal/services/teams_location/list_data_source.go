@@ -54,10 +54,10 @@ func (r *TeamsLocationsDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	items := &[]*TeamsLocationsItemsDataSourceModel{}
+	items := &[]*TeamsLocationsResultDataSourceModel{}
 	env := TeamsLocationsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*TeamsLocationsItemsDataSourceModel{}
+	acc := []*TeamsLocationsResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Gateway.Locations.List(ctx, zero_trust.GatewayLocationListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *TeamsLocationsDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

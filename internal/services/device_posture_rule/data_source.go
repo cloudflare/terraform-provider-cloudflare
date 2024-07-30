@@ -58,7 +58,7 @@ func (r *DevicePostureRuleDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := DevicePostureRuleResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Devices.Posture.Get(
@@ -86,7 +86,7 @@ func (r *DevicePostureRuleDataSource) Read(ctx context.Context, req datasource.R
 		env := DevicePostureRuleResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Devices.Posture.List(ctx, zero_trust.DevicePostureListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

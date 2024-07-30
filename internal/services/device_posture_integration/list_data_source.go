@@ -54,10 +54,10 @@ func (r *DevicePostureIntegrationsDataSource) Read(ctx context.Context, req data
 		return
 	}
 
-	items := &[]*DevicePostureIntegrationsItemsDataSourceModel{}
+	items := &[]*DevicePostureIntegrationsResultDataSourceModel{}
 	env := DevicePostureIntegrationsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*DevicePostureIntegrationsItemsDataSourceModel{}
+	acc := []*DevicePostureIntegrationsResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Devices.Posture.Integrations.List(ctx, zero_trust.DevicePostureIntegrationListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *DevicePostureIntegrationsDataSource) Read(ctx context.Context, req data
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

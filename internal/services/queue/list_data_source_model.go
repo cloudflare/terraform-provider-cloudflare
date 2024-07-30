@@ -8,16 +8,16 @@ import (
 )
 
 type QueuesResultListDataSourceEnvelope struct {
-	Result *[]*QueuesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*QueuesResultDataSourceModel `json:"result,computed"`
 }
 
 type QueuesDataSourceModel struct {
-	AccountID types.String                   `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                    `tfsdk:"max_items"`
-	Items     *[]*QueuesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                    `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                     `tfsdk:"max_items"`
+	Result    *[]*QueuesResultDataSourceModel `tfsdk:"result"`
 }
 
-type QueuesItemsDataSourceModel struct {
+type QueuesResultDataSourceModel struct {
 	Consumers           jsontypes.Normalized `tfsdk:"consumers" json:"consumers,computed"`
 	ConsumersTotalCount jsontypes.Normalized `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           jsontypes.Normalized `tfsdk:"created_on" json:"created_on,computed"`

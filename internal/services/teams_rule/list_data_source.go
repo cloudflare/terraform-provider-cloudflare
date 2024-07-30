@@ -54,10 +54,10 @@ func (r *TeamsRulesDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	items := &[]*TeamsRulesItemsDataSourceModel{}
+	items := &[]*TeamsRulesResultDataSourceModel{}
 	env := TeamsRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*TeamsRulesItemsDataSourceModel{}
+	acc := []*TeamsRulesResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Gateway.Rules.List(ctx, zero_trust.GatewayRuleListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *TeamsRulesDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -5,6 +5,7 @@ package turnstile_widget
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -42,6 +43,7 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 			"created_on": schema.StringAttribute{
 				Description: "When the widget was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"domains": schema.ListAttribute{
 				Computed:    true,
@@ -57,6 +59,7 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 			"modified_on": schema.StringAttribute{
 				Description: "When the widget was modified.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
@@ -77,7 +80,7 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 				Description: "Secret key for this widget.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

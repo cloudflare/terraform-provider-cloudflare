@@ -54,10 +54,10 @@ func (r *WorkerScriptsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*WorkerScriptsItemsDataSourceModel{}
+	items := &[]*WorkerScriptsResultDataSourceModel{}
 	env := WorkerScriptsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WorkerScriptsItemsDataSourceModel{}
+	acc := []*WorkerScriptsResultDataSourceModel{}
 
 	page, err := r.client.Workers.Scripts.List(ctx, workers.ScriptListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *WorkerScriptsDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -58,7 +58,7 @@ func (r *WorkersForPlatformsNamespaceDataSource) Read(ctx context.Context, req d
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := WorkersForPlatformsNamespaceResultDataSourceEnvelope{*data}
 		_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
@@ -86,7 +86,7 @@ func (r *WorkersForPlatformsNamespaceDataSource) Read(ctx context.Context, req d
 		env := WorkersForPlatformsNamespaceResultListDataSourceEnvelope{items}
 
 		page, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

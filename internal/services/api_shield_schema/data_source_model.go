@@ -24,7 +24,7 @@ type APIShieldSchemaDataSourceModel struct {
 	Name              types.String                             `tfsdk:"name" json:"name,computed"`
 	Source            types.String                             `tfsdk:"source" json:"source"`
 	ValidationEnabled types.Bool                               `tfsdk:"validation_enabled" json:"validation_enabled"`
-	FindOneBy         *APIShieldSchemaFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter            *APIShieldSchemaFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type APIShieldSchemaFindOneByDataSourceModel struct {

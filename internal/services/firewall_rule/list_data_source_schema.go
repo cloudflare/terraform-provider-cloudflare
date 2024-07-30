@@ -5,6 +5,7 @@ package firewall_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,7 +60,7 @@ func (r FirewallRulesDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -73,6 +74,41 @@ func (r FirewallRulesDataSource) Schema(ctx context.Context, req datasource.Sche
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass"),
+							},
+						},
+						"filter": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[FirewallRulesFilterDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Description: "The unique identifier of the filter.",
+									Computed:    true,
+								},
+								"description": schema.StringAttribute{
+									Description: "An informative summary of the filter.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"expression": schema.StringAttribute{
+									Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
+									Computed:    true,
+									Optional:    true,
+								},
+								"paused": schema.BoolAttribute{
+									Description: "When true, indicates that the filter is currently paused.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"ref": schema.StringAttribute{
+									Description: "A short reference tag. Allows you to select related filters.",
+									Computed:    true,
+									Optional:    true,
+								},
+								"deleted": schema.BoolAttribute{
+									Description: "When true, indicates that the firewall rule was deleted.",
+									Computed:    true,
+									Optional:    true,
+								},
 							},
 						},
 						"paused": schema.BoolAttribute{

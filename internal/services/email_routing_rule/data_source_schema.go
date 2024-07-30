@@ -98,7 +98,7 @@ func (r EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
 				Computed:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_identifier": schema.StringAttribute{

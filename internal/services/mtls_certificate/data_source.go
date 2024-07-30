@@ -58,7 +58,7 @@ func (r *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := MTLSCertificateResultDataSourceEnvelope{*data}
 		_, err := r.client.MTLSCertificates.Get(
@@ -86,7 +86,7 @@ func (r *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.Rea
 		env := MTLSCertificateResultListDataSourceEnvelope{items}
 
 		page, err := r.client.MTLSCertificates.List(ctx, mtls_certificates.MTLSCertificateListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

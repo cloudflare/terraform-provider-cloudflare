@@ -58,7 +58,7 @@ func (r *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req dat
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := NotificationPolicyWebhooksResultDataSourceEnvelope{*data}
 		_, err := r.client.Alerting.Destinations.Webhooks.Get(
@@ -86,7 +86,7 @@ func (r *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req dat
 		env := NotificationPolicyWebhooksResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Alerting.Destinations.Webhooks.List(ctx, alerting.DestinationWebhookListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

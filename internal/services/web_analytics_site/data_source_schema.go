@@ -5,6 +5,7 @@ package web_analytics_site
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -32,7 +33,8 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "A list of rules.",
@@ -46,7 +48,8 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 							Optional:    true,
 						},
 						"created": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"host": schema.StringAttribute{
 							Description: "The hostname the rule will be applied to.",
@@ -116,7 +119,7 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 				Computed:    true,
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

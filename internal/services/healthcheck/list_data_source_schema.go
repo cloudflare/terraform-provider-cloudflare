@@ -5,6 +5,7 @@ package healthcheck
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -36,7 +37,7 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -65,7 +66,8 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "A human-readable description of the health check.",
@@ -130,7 +132,8 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",

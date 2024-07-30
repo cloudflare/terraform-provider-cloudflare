@@ -54,10 +54,10 @@ func (r *WebAnalyticsSitesDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	items := &[]*WebAnalyticsSitesItemsDataSourceModel{}
+	items := &[]*WebAnalyticsSitesResultDataSourceModel{}
 	env := WebAnalyticsSitesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WebAnalyticsSitesItemsDataSourceModel{}
+	acc := []*WebAnalyticsSitesResultDataSourceModel{}
 
 	page, err := r.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -89,7 +89,7 @@ func (r *WebAnalyticsSitesDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
