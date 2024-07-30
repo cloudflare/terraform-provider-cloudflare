@@ -290,6 +290,8 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 }
 
 func TestAccCloudflareDevicePostureRule_Intune(t *testing.T) {
+	skipForDefaultAccount(t, "Assertion requires active Intune license.")
+
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -297,9 +299,13 @@ func TestAccCloudflareDevicePostureRule_Intune(t *testing.T) {
 		t.Setenv("CLOUDFLARE_API_TOKEN", "")
 	}
 
+	if v := os.Getenv("CLOUDFLARE_DEVICE_POSTURE_INTUNE_CONNECTION_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_DEVICE_POSTURE_INTUNE_CONNECTION_ID must be set for this acceptance test")
+	}
+
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
-	connectionID := "54bd2a16-ab0f-46a7-8d8b-31776c21fcb9"
+	connectionID := os.Getenv("CLOUDFLARE_DEVICE_POSTURE_INTUNE_CONNECTION_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
