@@ -58,7 +58,7 @@ func (r *ByoIPPrefixDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := ByoIPPrefixResultDataSourceEnvelope{*data}
 		_, err := r.client.Addressing.Prefixes.Get(
@@ -86,7 +86,7 @@ func (r *ByoIPPrefixDataSource) Read(ctx context.Context, req datasource.ReadReq
 		env := ByoIPPrefixResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Addressing.Prefixes.List(ctx, addressing.PrefixListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

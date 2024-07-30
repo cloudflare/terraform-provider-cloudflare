@@ -54,10 +54,10 @@ func (r *WorkersKVNamespacesDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	items := &[]*WorkersKVNamespacesItemsDataSourceModel{}
+	items := &[]*WorkersKVNamespacesResultDataSourceModel{}
 	env := WorkersKVNamespacesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WorkersKVNamespacesItemsDataSourceModel{}
+	acc := []*WorkersKVNamespacesResultDataSourceModel{}
 
 	page, err := r.client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -90,7 +90,7 @@ func (r *WorkersKVNamespacesDataSource) Read(ctx context.Context, req datasource
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

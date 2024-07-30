@@ -5,7 +5,10 @@ package zone_lockdown
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -27,9 +30,30 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				Optional:    true,
 			},
+			"configurations": schema.SingleNestedAttribute{
+				Description: "A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZoneLockdownConfigurationsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"target": schema.StringAttribute{
+						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("ip", "ip_range"),
+						},
+					},
+					"value": schema.StringAttribute{
+						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
+			},
 			"created_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the rule.",
@@ -38,6 +62,7 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was last modified.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"paused": schema.BoolAttribute{
 				Description: "When true, indicates that the rule is currently paused.",
@@ -48,7 +73,7 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				ElementType: types.StringType,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_identifier": schema.StringAttribute{
@@ -58,6 +83,7 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 					"created_on": schema.StringAttribute{
 						Description: "The timestamp of when the rule was created.",
 						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"description": schema.StringAttribute{
 						Description: "A string to search for in the description of existing rules.",
@@ -82,6 +108,7 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 					"modified_on": schema.StringAttribute{
 						Description: "The timestamp of when the rule was last modified.",
 						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"page": schema.Float64Attribute{
 						Description: "Page number of paginated results.",

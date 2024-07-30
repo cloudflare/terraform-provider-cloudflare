@@ -5,6 +5,7 @@ package waiting_room_rules
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -28,7 +29,7 @@ func (r WaitingRoomRulesListDataSource) Schema(ctx context.Context, req datasour
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -60,7 +61,8 @@ func (r WaitingRoomRulesListDataSource) Schema(ctx context.Context, req datasour
 							Optional:    true,
 						},
 						"last_updated": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"version": schema.StringAttribute{
 							Description: "The version of the rule.",

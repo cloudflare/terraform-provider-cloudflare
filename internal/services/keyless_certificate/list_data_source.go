@@ -54,10 +54,10 @@ func (r *KeylessCertificatesDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	items := &[]*KeylessCertificatesItemsDataSourceModel{}
+	items := &[]*KeylessCertificatesResultDataSourceModel{}
 	env := KeylessCertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*KeylessCertificatesItemsDataSourceModel{}
+	acc := []*KeylessCertificatesResultDataSourceModel{}
 
 	page, err := r.client.KeylessCertificates.List(ctx, keyless_certificates.KeylessCertificateListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -86,7 +86,7 @@ func (r *KeylessCertificatesDataSource) Read(ctx context.Context, req datasource
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

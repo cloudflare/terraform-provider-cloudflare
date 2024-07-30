@@ -5,6 +5,7 @@ package account_member
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -153,7 +154,36 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
 				},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"user": schema.SingleNestedAttribute{
+				Description: "Details of the user associated to the membership.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountMemberUserDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"email": schema.StringAttribute{
+						Description: "The contact email address of the user.",
+						Computed:    true,
+					},
+					"id": schema.StringAttribute{
+						Description: "Identifier",
+						Computed:    true,
+					},
+					"first_name": schema.StringAttribute{
+						Description: "User's first name",
+						Computed:    true,
+						Optional:    true,
+					},
+					"last_name": schema.StringAttribute{
+						Description: "User's last name",
+						Computed:    true,
+						Optional:    true,
+					},
+					"two_factor_authentication_enabled": schema.BoolAttribute{
+						Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
+						Computed:    true,
+					},
+				},
+			},
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

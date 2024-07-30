@@ -5,7 +5,9 @@ package pages_project
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -79,6 +81,36 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 							"created_on": schema.StringAttribute{
 								Description: "When the deployment was created.",
 								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"deployment_trigger": schema.SingleNestedAttribute{
+								Description: "Info about what caused the deployment.",
+								Computed:    true,
+								CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentDeploymentTriggerModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"metadata": schema.SingleNestedAttribute{
+										Description: "Additional info about the trigger.",
+										Optional:    true,
+										Attributes: map[string]schema.Attribute{
+											"branch": schema.StringAttribute{
+												Description: "Where the trigger happened.",
+												Computed:    true,
+											},
+											"commit_hash": schema.StringAttribute{
+												Description: "Hash of the deployment trigger commit.",
+												Computed:    true,
+											},
+											"commit_message": schema.StringAttribute{
+												Description: "Message of the deployment trigger commit.",
+												Computed:    true,
+											},
+										},
+									},
+									"type": schema.StringAttribute{
+										Description: "What caused the deployment.",
+										Computed:    true,
+									},
+								},
 							},
 							"env_vars": schema.StringAttribute{
 								Description: "A dict of env variables to build this deploy.",
@@ -98,6 +130,7 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 							"modified_on": schema.StringAttribute{
 								Description: "When the deployment was last modified.",
 								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
 							},
 							"project_id": schema.StringAttribute{
 								Description: "Id of the project.",
@@ -122,6 +155,7 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 										"ended_on": schema.StringAttribute{
 											Description: "When the stage ended.",
 											Computed:    true,
+											CustomType:  timetypes.RFC3339Type{},
 										},
 										"name": schema.StringAttribute{
 											Description: "The current build stage.",
@@ -130,6 +164,7 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 										"started_on": schema.StringAttribute{
 											Description: "When the stage started.",
 											Computed:    true,
+											CustomType:  timetypes.RFC3339Type{},
 										},
 										"status": schema.StringAttribute{
 											Description: "State of the current stage.",
@@ -654,6 +689,36 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 							"created_on": schema.StringAttribute{
 								Description: "When the deployment was created.",
 								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"deployment_trigger": schema.SingleNestedAttribute{
+								Description: "Info about what caused the deployment.",
+								Computed:    true,
+								CustomType:  customfield.NewNestedObjectType[PagesProjectLatestDeploymentDeploymentTriggerModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"metadata": schema.SingleNestedAttribute{
+										Description: "Additional info about the trigger.",
+										Optional:    true,
+										Attributes: map[string]schema.Attribute{
+											"branch": schema.StringAttribute{
+												Description: "Where the trigger happened.",
+												Computed:    true,
+											},
+											"commit_hash": schema.StringAttribute{
+												Description: "Hash of the deployment trigger commit.",
+												Computed:    true,
+											},
+											"commit_message": schema.StringAttribute{
+												Description: "Message of the deployment trigger commit.",
+												Computed:    true,
+											},
+										},
+									},
+									"type": schema.StringAttribute{
+										Description: "What caused the deployment.",
+										Computed:    true,
+									},
+								},
 							},
 							"env_vars": schema.StringAttribute{
 								Description: "A dict of env variables to build this deploy.",
@@ -673,6 +738,7 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 							"modified_on": schema.StringAttribute{
 								Description: "When the deployment was last modified.",
 								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
 							},
 							"project_id": schema.StringAttribute{
 								Description: "Id of the project.",
@@ -697,6 +763,7 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 										"ended_on": schema.StringAttribute{
 											Description: "When the stage ended.",
 											Computed:    true,
+											CustomType:  timetypes.RFC3339Type{},
 										},
 										"name": schema.StringAttribute{
 											Description: "The current build stage.",
@@ -705,6 +772,7 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 										"started_on": schema.StringAttribute{
 											Description: "When the stage started.",
 											Computed:    true,
+											CustomType:  timetypes.RFC3339Type{},
 										},
 										"status": schema.StringAttribute{
 											Description: "State of the current stage.",
@@ -737,6 +805,7 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 					"created_on": schema.StringAttribute{
 						Description: "When the project was created.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"domains": schema.ListAttribute{
 						Description: "A list of associated custom domains for the project.",

@@ -8,20 +8,20 @@ import (
 )
 
 type TunnelVirtualNetworksResultListDataSourceEnvelope struct {
-	Result *[]*TunnelVirtualNetworksItemsDataSourceModel `json:"result,computed"`
+	Result *[]*TunnelVirtualNetworksResultDataSourceModel `json:"result,computed"`
 }
 
 type TunnelVirtualNetworksDataSourceModel struct {
-	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
-	ID        types.String                                  `tfsdk:"id" query:"id"`
-	IsDefault types.Bool                                    `tfsdk:"is_default" query:"is_default"`
-	IsDeleted types.Bool                                    `tfsdk:"is_deleted" query:"is_deleted"`
-	Name      types.String                                  `tfsdk:"name" query:"name"`
-	MaxItems  types.Int64                                   `tfsdk:"max_items"`
-	Items     *[]*TunnelVirtualNetworksItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                   `tfsdk:"account_id" path:"account_id"`
+	ID        types.String                                   `tfsdk:"id" query:"id"`
+	IsDefault types.Bool                                     `tfsdk:"is_default" query:"is_default"`
+	IsDeleted types.Bool                                     `tfsdk:"is_deleted" query:"is_deleted"`
+	Name      types.String                                   `tfsdk:"name" query:"name"`
+	MaxItems  types.Int64                                    `tfsdk:"max_items"`
+	Result    *[]*TunnelVirtualNetworksResultDataSourceModel `tfsdk:"result"`
 }
 
-type TunnelVirtualNetworksItemsDataSourceModel struct {
+type TunnelVirtualNetworksResultDataSourceModel struct {
 	ID               types.String      `tfsdk:"id" json:"id,computed"`
 	Comment          types.String      `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt        timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`

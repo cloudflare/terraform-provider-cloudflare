@@ -5,6 +5,7 @@ package load_balancer_monitor
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -25,7 +26,7 @@ func (r LoadBalancerMonitorsDataSource) Schema(ctx context.Context, req datasour
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -47,7 +48,8 @@ func (r LoadBalancerMonitorsDataSource) Schema(ctx context.Context, req datasour
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "Object description.",
@@ -81,7 +83,8 @@ func (r LoadBalancerMonitorsDataSource) Schema(ctx context.Context, req datasour
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"path": schema.StringAttribute{
 							Description: "The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.",

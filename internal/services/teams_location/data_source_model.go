@@ -31,7 +31,7 @@ type TeamsLocationDataSourceModel struct {
 	Name                  types.String                             `tfsdk:"name" json:"name"`
 	Networks              *[]*TeamsLocationNetworksDataSourceModel `tfsdk:"networks" json:"networks"`
 	UpdatedAt             timetypes.RFC3339                        `tfsdk:"updated_at" json:"updated_at,computed"`
-	FindOneBy             *TeamsLocationFindOneByDataSourceModel   `tfsdk:"find_one_by"`
+	Filter                *TeamsLocationFindOneByDataSourceModel   `tfsdk:"filter"`
 }
 
 type TeamsLocationEndpointsDataSourceModel struct {

@@ -58,7 +58,7 @@ func (r *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := HyperdriveConfigResultDataSourceEnvelope{*data}
 		_, err := r.client.Hyperdrive.Configs.Get(
@@ -86,7 +86,7 @@ func (r *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.Re
 		env := HyperdriveConfigResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Hyperdrive.Configs.List(ctx, hyperdrive.ConfigListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

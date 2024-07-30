@@ -28,7 +28,7 @@ type AddressMapDataSourceModel struct {
 	IPs          *[]*AddressMapIPsDataSourceModel         `tfsdk:"ips" json:"ips"`
 	Memberships  *[]*AddressMapMembershipsDataSourceModel `tfsdk:"memberships" json:"memberships"`
 	ModifiedAt   timetypes.RFC3339                        `tfsdk:"modified_at" json:"modified_at,computed"`
-	FindOneBy    *AddressMapFindOneByDataSourceModel      `tfsdk:"find_one_by"`
+	Filter       *AddressMapFindOneByDataSourceModel      `tfsdk:"filter"`
 }
 
 type AddressMapIPsDataSourceModel struct {

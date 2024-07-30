@@ -58,7 +58,7 @@ func (r *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := EmailRoutingRuleResultDataSourceEnvelope{*data}
 		_, err := r.client.EmailRouting.Rules.Get(
@@ -85,11 +85,11 @@ func (r *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.Re
 
 		page, err := r.client.EmailRouting.Rules.List(
 			ctx,
-			data.FindOneBy.ZoneIdentifier.ValueString(),
+			data.Filter.ZoneIdentifier.ValueString(),
 			email_routing.RuleListParams{
-				Enabled: cloudflare.F(email_routing.RuleListParamsEnabled(data.FindOneBy.Enabled.ValueBool())),
-				Page:    cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-				PerPage: cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+				Enabled: cloudflare.F(email_routing.RuleListParamsEnabled(data.Filter.Enabled.ValueBool())),
+				Page:    cloudflare.F(data.Filter.Page.ValueFloat64()),
+				PerPage: cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 			},
 		)
 		if err != nil {

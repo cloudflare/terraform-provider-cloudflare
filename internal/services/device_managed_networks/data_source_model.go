@@ -20,7 +20,7 @@ type DeviceManagedNetworksDataSourceModel struct {
 	Config    *DeviceManagedNetworksConfigDataSourceModel    `tfsdk:"config" json:"config"`
 	Name      types.String                                   `tfsdk:"name" json:"name"`
 	Type      types.String                                   `tfsdk:"type" json:"type"`
-	FindOneBy *DeviceManagedNetworksFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter    *DeviceManagedNetworksFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type DeviceManagedNetworksConfigDataSourceModel struct {

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -26,7 +27,7 @@ func (r KeylessCertificatesDataSource) Schema(ctx context.Context, req datasourc
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -38,6 +39,7 @@ func (r KeylessCertificatesDataSource) Schema(ctx context.Context, req datasourc
 						"created_on": schema.StringAttribute{
 							Description: "When the Keyless SSL was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether or not the Keyless SSL is on or off.",
@@ -50,6 +52,7 @@ func (r KeylessCertificatesDataSource) Schema(ctx context.Context, req datasourc
 						"modified_on": schema.StringAttribute{
 							Description: "When the Keyless SSL was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Description: "The keyless SSL name.",

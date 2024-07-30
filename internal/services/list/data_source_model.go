@@ -25,7 +25,7 @@ type ListDataSourceModel struct {
 	NumItems              types.Float64                 `tfsdk:"num_items" json:"num_items"`
 	Description           types.String                  `tfsdk:"description" json:"description"`
 	NumReferencingFilters types.Float64                 `tfsdk:"num_referencing_filters" json:"num_referencing_filters"`
-	FindOneBy             *ListFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter                *ListFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type ListFindOneByDataSourceModel struct {

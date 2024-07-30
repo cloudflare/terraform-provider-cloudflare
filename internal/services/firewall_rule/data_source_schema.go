@@ -69,47 +69,6 @@ func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"zone_identifier": schema.StringAttribute{
-						Description: "Identifier",
-						Required:    true,
-					},
-					"id": schema.StringAttribute{
-						Description: "The unique identifier of the firewall rule.",
-						Optional:    true,
-					},
-					"action": schema.StringAttribute{
-						Description: "The action to search for. Must be an exact match.",
-						Optional:    true,
-					},
-					"description": schema.StringAttribute{
-						Description: "A case-insensitive string to find in the description.",
-						Optional:    true,
-					},
-					"page": schema.Float64Attribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.AtLeast(1),
-						},
-					},
-					"paused": schema.BoolAttribute{
-						Description: "When true, indicates that the firewall rule is currently paused.",
-						Optional:    true,
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "Number of firewall rules per page.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(5, 100),
-						},
-					},
-				},
-			},
 		},
 	}
 }

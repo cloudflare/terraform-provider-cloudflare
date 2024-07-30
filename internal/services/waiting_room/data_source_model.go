@@ -42,7 +42,7 @@ type WaitingRoomDataSourceModel struct {
 	SessionDuration            types.Int64                                    `tfsdk:"session_duration" json:"session_duration,computed"`
 	Suspended                  types.Bool                                     `tfsdk:"suspended" json:"suspended,computed"`
 	TotalActiveUsers           types.Int64                                    `tfsdk:"total_active_users" json:"total_active_users"`
-	FindOneBy                  *WaitingRoomFindOneByDataSourceModel           `tfsdk:"find_one_by"`
+	Filter                     *WaitingRoomFindOneByDataSourceModel           `tfsdk:"filter"`
 }
 
 type WaitingRoomAdditionalRoutesDataSourceModel struct {

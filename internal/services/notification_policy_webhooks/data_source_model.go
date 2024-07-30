@@ -26,7 +26,7 @@ type NotificationPolicyWebhooksDataSourceModel struct {
 	Secret      types.String                                        `tfsdk:"secret" json:"secret"`
 	Type        types.String                                        `tfsdk:"type" json:"type"`
 	URL         types.String                                        `tfsdk:"url" json:"url"`
-	FindOneBy   *NotificationPolicyWebhooksFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter      *NotificationPolicyWebhooksFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type NotificationPolicyWebhooksFindOneByDataSourceModel struct {

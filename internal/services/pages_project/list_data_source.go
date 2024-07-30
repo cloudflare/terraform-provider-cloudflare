@@ -54,10 +54,10 @@ func (r *PagesProjectsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*PagesProjectsItemsDataSourceModel{}
+	items := &[]*PagesProjectsResultDataSourceModel{}
 	env := PagesProjectsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*PagesProjectsItemsDataSourceModel{}
+	acc := []*PagesProjectsResultDataSourceModel{}
 
 	page, err := r.client.Pages.Projects.List(ctx, pages.ProjectListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *PagesProjectsDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

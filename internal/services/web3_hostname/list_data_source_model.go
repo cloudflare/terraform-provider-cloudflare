@@ -8,16 +8,16 @@ import (
 )
 
 type Web3HostnamesResultListDataSourceEnvelope struct {
-	Result *[]*Web3HostnamesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*Web3HostnamesResultDataSourceModel `json:"result,computed"`
 }
 
 type Web3HostnamesDataSourceModel struct {
-	ZoneIdentifier types.String                          `tfsdk:"zone_identifier" path:"zone_identifier"`
-	MaxItems       types.Int64                           `tfsdk:"max_items"`
-	Items          *[]*Web3HostnamesItemsDataSourceModel `tfsdk:"items"`
+	ZoneIdentifier types.String                           `tfsdk:"zone_identifier" path:"zone_identifier"`
+	MaxItems       types.Int64                            `tfsdk:"max_items"`
+	Result         *[]*Web3HostnamesResultDataSourceModel `tfsdk:"result"`
 }
 
-type Web3HostnamesItemsDataSourceModel struct {
+type Web3HostnamesResultDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
 	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
 	Description types.String      `tfsdk:"description" json:"description"`

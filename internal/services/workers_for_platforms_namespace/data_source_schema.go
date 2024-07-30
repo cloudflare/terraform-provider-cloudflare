@@ -5,6 +5,7 @@ package workers_for_platforms_namespace
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -31,6 +32,7 @@ func (r WorkersForPlatformsNamespaceDataSource) Schema(ctx context.Context, req 
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_by": schema.StringAttribute{
 				Description: "Identifier",
@@ -40,6 +42,7 @@ func (r WorkersForPlatformsNamespaceDataSource) Schema(ctx context.Context, req 
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"namespace_id": schema.StringAttribute{
 				Description: "API Resource UUID tag.",
@@ -56,7 +59,7 @@ func (r WorkersForPlatformsNamespaceDataSource) Schema(ctx context.Context, req 
 				Computed:    true,
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

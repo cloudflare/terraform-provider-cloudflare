@@ -7,15 +7,15 @@ import (
 )
 
 type AccessApplicationsResultListDataSourceEnvelope struct {
-	Result *[]*AccessApplicationsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccessApplicationsResultDataSourceModel `json:"result,computed"`
 }
 
 type AccessApplicationsDataSourceModel struct {
-	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                               `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                                `tfsdk:"max_items"`
-	Items     *[]*AccessApplicationsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                 `tfsdk:"max_items"`
+	Result    *[]*AccessApplicationsResultDataSourceModel `tfsdk:"result"`
 }
 
-type AccessApplicationsItemsDataSourceModel struct {
+type AccessApplicationsResultDataSourceModel struct {
 }

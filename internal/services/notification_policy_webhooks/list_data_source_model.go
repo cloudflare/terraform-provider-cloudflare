@@ -8,16 +8,16 @@ import (
 )
 
 type NotificationPolicyWebhooksListResultListDataSourceEnvelope struct {
-	Result *[]*NotificationPolicyWebhooksListItemsDataSourceModel `json:"result,computed"`
+	Result *[]*NotificationPolicyWebhooksListResultDataSourceModel `json:"result,computed"`
 }
 
 type NotificationPolicyWebhooksListDataSourceModel struct {
-	AccountID types.String                                           `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                            `tfsdk:"max_items"`
-	Items     *[]*NotificationPolicyWebhooksListItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                            `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                             `tfsdk:"max_items"`
+	Result    *[]*NotificationPolicyWebhooksListResultDataSourceModel `tfsdk:"result"`
 }
 
-type NotificationPolicyWebhooksListItemsDataSourceModel struct {
+type NotificationPolicyWebhooksListResultDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
 	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	LastFailure timetypes.RFC3339 `tfsdk:"last_failure" json:"last_failure,computed"`

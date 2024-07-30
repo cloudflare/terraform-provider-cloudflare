@@ -58,7 +58,7 @@ func (r *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := FilterResultDataSourceEnvelope{*data}
 		_, err := r.client.Filters.Get(
@@ -85,15 +85,15 @@ func (r *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 		page, err := r.client.Filters.List(
 			ctx,
-			data.FindOneBy.ZoneIdentifier.ValueString(),
+			data.Filter.ZoneIdentifier.ValueString(),
 			filters.FilterListParams{
-				ID:          cloudflare.F(data.FindOneBy.ID.ValueString()),
-				Description: cloudflare.F(data.FindOneBy.Description.ValueString()),
-				Expression:  cloudflare.F(data.FindOneBy.Expression.ValueString()),
-				Page:        cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-				Paused:      cloudflare.F(data.FindOneBy.Paused.ValueBool()),
-				PerPage:     cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
-				Ref:         cloudflare.F(data.FindOneBy.Ref.ValueString()),
+				ID:          cloudflare.F(data.Filter.ID.ValueString()),
+				Description: cloudflare.F(data.Filter.Description.ValueString()),
+				Expression:  cloudflare.F(data.Filter.Expression.ValueString()),
+				Page:        cloudflare.F(data.Filter.Page.ValueFloat64()),
+				Paused:      cloudflare.F(data.Filter.Paused.ValueBool()),
+				PerPage:     cloudflare.F(data.Filter.PerPage.ValueFloat64()),
+				Ref:         cloudflare.F(data.Filter.Ref.ValueString()),
 			},
 		)
 		if err != nil {

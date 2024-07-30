@@ -54,10 +54,10 @@ func (r *PagesDomainsDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	items := &[]*PagesDomainsItemsDataSourceModel{}
+	items := &[]*PagesDomainsResultDataSourceModel{}
 	env := PagesDomainsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*PagesDomainsItemsDataSourceModel{}
+	acc := []*PagesDomainsResultDataSourceModel{}
 
 	page, err := r.client.Pages.Projects.Domains.List(
 		ctx,
@@ -90,7 +90,7 @@ func (r *PagesDomainsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

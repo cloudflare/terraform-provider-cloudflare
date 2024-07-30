@@ -58,7 +58,7 @@ func (r *AccessTagDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := AccessTagResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Access.Tags.Get(
@@ -86,7 +86,7 @@ func (r *AccessTagDataSource) Read(ctx context.Context, req datasource.ReadReque
 		env := AccessTagResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Access.Tags.List(ctx, zero_trust.AccessTagListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

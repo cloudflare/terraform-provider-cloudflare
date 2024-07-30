@@ -21,7 +21,7 @@ type R2BucketDataSourceModel struct {
 	Location     types.String                      `tfsdk:"location" json:"location"`
 	Name         types.String                      `tfsdk:"name" json:"name"`
 	StorageClass types.String                      `tfsdk:"storage_class" json:"storage_class,computed"`
-	FindOneBy    *R2BucketFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter       *R2BucketFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type R2BucketFindOneByDataSourceModel struct {

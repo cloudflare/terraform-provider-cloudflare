@@ -8,16 +8,16 @@ import (
 )
 
 type FallbackDomainsResultListDataSourceEnvelope struct {
-	Result *[]*FallbackDomainsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*FallbackDomainsResultDataSourceModel `json:"result,computed"`
 }
 
 type FallbackDomainsDataSourceModel struct {
-	AccountID types.String                            `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                             `tfsdk:"max_items"`
-	Items     *[]*FallbackDomainsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                             `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                              `tfsdk:"max_items"`
+	Result    *[]*FallbackDomainsResultDataSourceModel `tfsdk:"result"`
 }
 
-type FallbackDomainsItemsDataSourceModel struct {
+type FallbackDomainsResultDataSourceModel struct {
 	Suffix      types.String            `tfsdk:"suffix" json:"suffix,computed"`
 	Description types.String            `tfsdk:"description" json:"description"`
 	DNSServer   *[]jsontypes.Normalized `tfsdk:"dns_server" json:"dns_server"`

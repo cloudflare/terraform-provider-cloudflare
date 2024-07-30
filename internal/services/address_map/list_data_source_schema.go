@@ -5,6 +5,7 @@ package address_map
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -23,7 +24,7 @@ func (r AddressMapsDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -42,7 +43,8 @@ func (r AddressMapsDataSource) Schema(ctx context.Context, req datasource.Schema
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"default_sni": schema.StringAttribute{
 							Description: "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
@@ -59,7 +61,8 @@ func (r AddressMapsDataSource) Schema(ctx context.Context, req datasource.Schema
 							Computed:    true,
 						},
 						"modified_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

@@ -3,6 +3,7 @@
 package account_member
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,13 +17,14 @@ type AccountMemberResultListDataSourceEnvelope struct {
 }
 
 type AccountMemberDataSourceModel struct {
-	AccountID types.String                             `tfsdk:"account_id" path:"account_id"`
-	MemberID  types.String                             `tfsdk:"member_id" path:"member_id"`
-	ID        types.String                             `tfsdk:"id" json:"id,computed"`
-	Policies  *[]*AccountMemberPoliciesDataSourceModel `tfsdk:"policies" json:"policies"`
-	Roles     *[]*AccountMemberRolesDataSourceModel    `tfsdk:"roles" json:"roles"`
-	Status    types.String                             `tfsdk:"status" json:"status,computed"`
-	FindOneBy *AccountMemberFindOneByDataSourceModel   `tfsdk:"find_one_by"`
+	AccountID types.String                                               `tfsdk:"account_id" path:"account_id"`
+	MemberID  types.String                                               `tfsdk:"member_id" path:"member_id"`
+	ID        types.String                                               `tfsdk:"id" json:"id,computed"`
+	Policies  *[]*AccountMemberPoliciesDataSourceModel                   `tfsdk:"policies" json:"policies"`
+	Roles     *[]*AccountMemberRolesDataSourceModel                      `tfsdk:"roles" json:"roles"`
+	Status    types.String                                               `tfsdk:"status" json:"status,computed"`
+	User      customfield.NestedObject[AccountMemberUserDataSourceModel] `tfsdk:"user" json:"user,computed"`
+	Filter    *AccountMemberFindOneByDataSourceModel                     `tfsdk:"filter"`
 }
 
 type AccountMemberPoliciesDataSourceModel struct {
@@ -59,6 +61,14 @@ type AccountMemberRolesDataSourceModel struct {
 	Description types.String    `tfsdk:"description" json:"description,computed"`
 	Name        types.String    `tfsdk:"name" json:"name,computed"`
 	Permissions *[]types.String `tfsdk:"permissions" json:"permissions,computed"`
+}
+
+type AccountMemberUserDataSourceModel struct {
+	Email                          types.String `tfsdk:"email" json:"email,computed"`
+	ID                             types.String `tfsdk:"id" json:"id,computed"`
+	FirstName                      types.String `tfsdk:"first_name" json:"first_name"`
+	LastName                       types.String `tfsdk:"last_name" json:"last_name"`
+	TwoFactorAuthenticationEnabled types.Bool   `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
 }
 
 type AccountMemberFindOneByDataSourceModel struct {

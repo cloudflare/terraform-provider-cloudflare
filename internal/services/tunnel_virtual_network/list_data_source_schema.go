@@ -5,6 +5,7 @@ package tunnel_virtual_network
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -39,7 +40,7 @@ func (r TunnelVirtualNetworksDataSource) Schema(ctx context.Context, req datasou
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -55,6 +56,7 @@ func (r TunnelVirtualNetworksDataSource) Schema(ctx context.Context, req datasou
 						"created_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"is_default_network": schema.BoolAttribute{
 							Description: "If `true`, this virtual network is the default for the account.",
@@ -67,6 +69,7 @@ func (r TunnelVirtualNetworksDataSource) Schema(ctx context.Context, req datasou
 						"deleted_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

@@ -5,6 +5,7 @@ package dlp_custom_profile
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -156,7 +157,8 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 									Computed:    true,
 								},
 								"created_at": schema.StringAttribute{
-									Computed: true,
+									Computed:   true,
+									CustomType: timetypes.RFC3339Type{},
 								},
 								"enabled": schema.BoolAttribute{
 									Description: "Whether the entry is enabled or not.",
@@ -188,7 +190,8 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 									Optional:    true,
 								},
 								"updated_at": schema.StringAttribute{
-									Computed: true,
+									Computed:   true,
+									CustomType: timetypes.RFC3339Type{},
 								},
 							},
 						},
@@ -222,7 +225,8 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 						Computed:    true,
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of the profile.",
@@ -232,7 +236,8 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 						},
 					},
 					"updated_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 				},
 			},

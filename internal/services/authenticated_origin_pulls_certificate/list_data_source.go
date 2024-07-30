@@ -54,10 +54,10 @@ func (r *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 		return
 	}
 
-	items := &[]*AuthenticatedOriginPullsCertificatesItemsDataSourceModel{}
+	items := &[]*AuthenticatedOriginPullsCertificatesResultDataSourceModel{}
 	env := AuthenticatedOriginPullsCertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AuthenticatedOriginPullsCertificatesItemsDataSourceModel{}
+	acc := []*AuthenticatedOriginPullsCertificatesResultDataSourceModel{}
 
 	page, err := r.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -86,7 +86,7 @@ func (r *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

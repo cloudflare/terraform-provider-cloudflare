@@ -3,6 +3,7 @@
 package notification_policy
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -13,20 +14,21 @@ type NotificationPolicyResultEnvelope struct {
 }
 
 type NotificationPolicyModel struct {
-	ID            types.String                        `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                        `tfsdk:"account_id" path:"account_id"`
-	AlertType     types.String                        `tfsdk:"alert_type" json:"alert_type"`
-	Enabled       types.Bool                          `tfsdk:"enabled" json:"enabled"`
-	Mechanisms    map[string]*[]jsontypes.Normalized  `tfsdk:"mechanisms" json:"mechanisms"`
-	Name          types.String                        `tfsdk:"name" json:"name"`
-	AlertInterval types.String                        `tfsdk:"alert_interval" json:"alert_interval"`
-	Description   types.String                        `tfsdk:"description" json:"description"`
-	Filters       *NotificationPolicyFiltersModel     `tfsdk:"filters" json:"filters"`
-	Errors        *[]*NotificationPolicyErrorsModel   `tfsdk:"errors" json:"errors,computed"`
-	Messages      *[]*NotificationPolicyMessagesModel `tfsdk:"messages" json:"messages,computed"`
-	Success       types.Bool                          `tfsdk:"success" json:"success,computed"`
-	Created       timetypes.RFC3339                   `tfsdk:"created" json:"created,computed"`
-	Modified      timetypes.RFC3339                   `tfsdk:"modified" json:"modified,computed"`
+	ID            types.String                                                `tfsdk:"id" json:"id,computed"`
+	AccountID     types.String                                                `tfsdk:"account_id" path:"account_id"`
+	AlertType     types.String                                                `tfsdk:"alert_type" json:"alert_type"`
+	Enabled       types.Bool                                                  `tfsdk:"enabled" json:"enabled"`
+	Mechanisms    map[string]*[]jsontypes.Normalized                          `tfsdk:"mechanisms" json:"mechanisms"`
+	Name          types.String                                                `tfsdk:"name" json:"name"`
+	AlertInterval types.String                                                `tfsdk:"alert_interval" json:"alert_interval"`
+	Description   types.String                                                `tfsdk:"description" json:"description"`
+	Filters       *NotificationPolicyFiltersModel                             `tfsdk:"filters" json:"filters"`
+	Errors        *[]*NotificationPolicyErrorsModel                           `tfsdk:"errors" json:"errors,computed"`
+	Messages      *[]*NotificationPolicyMessagesModel                         `tfsdk:"messages" json:"messages,computed"`
+	Success       types.Bool                                                  `tfsdk:"success" json:"success,computed"`
+	ResultInfo    customfield.NestedObject[NotificationPolicyResultInfoModel] `tfsdk:"result_info" json:"result_info,computed"`
+	Created       timetypes.RFC3339                                           `tfsdk:"created" json:"created,computed"`
+	Modified      timetypes.RFC3339                                           `tfsdk:"modified" json:"modified,computed"`
 }
 
 type NotificationPolicyFiltersModel struct {
@@ -80,4 +82,11 @@ type NotificationPolicyErrorsModel struct {
 type NotificationPolicyMessagesModel struct {
 	Code    types.Int64  `tfsdk:"code" json:"code"`
 	Message types.String `tfsdk:"message" json:"message"`
+}
+
+type NotificationPolicyResultInfoModel struct {
+	Count      types.Float64 `tfsdk:"count" json:"count"`
+	Page       types.Float64 `tfsdk:"page" json:"page"`
+	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
+	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
 }

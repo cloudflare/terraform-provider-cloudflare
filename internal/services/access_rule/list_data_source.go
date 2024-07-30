@@ -79,10 +79,10 @@ func (r *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	items := &[]*AccessRulesItemsDataSourceModel{}
+	items := &[]*AccessRulesResultDataSourceModel{}
 	env := AccessRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessRulesItemsDataSourceModel{}
+	acc := []*AccessRulesResultDataSourceModel{}
 
 	page, err := r.client.Firewall.AccessRules.List(ctx, params)
 	if err != nil {
@@ -109,7 +109,7 @@ func (r *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

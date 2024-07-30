@@ -5,6 +5,7 @@ package tunnel
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -28,6 +29,7 @@ func (r TunnelsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			"existed_at": schema.StringAttribute{
 				Description: "If provided, include only tunnels that were created (and not deleted) before this time.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"include_prefix": schema.StringAttribute{
 				Optional: true,
@@ -71,16 +73,18 @@ func (r TunnelsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Optional:    true,
 			},
 			"was_active_at": schema.StringAttribute{
-				Optional: true,
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"was_inactive_at": schema.StringAttribute{
-				Optional: true,
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{

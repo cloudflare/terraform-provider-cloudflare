@@ -5,6 +5,8 @@ package web_analytics_site
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -42,7 +44,8 @@ func (r WebAnalyticsSiteResource) Schema(ctx context.Context, req resource.Schem
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "A list of rules.",
@@ -54,7 +57,8 @@ func (r WebAnalyticsSiteResource) Schema(ctx context.Context, req resource.Schem
 							Optional:    true,
 						},
 						"created": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"host": schema.StringAttribute{
 							Description: "The hostname the rule will be applied to.",
@@ -76,6 +80,27 @@ func (r WebAnalyticsSiteResource) Schema(ctx context.Context, req resource.Schem
 						"priority": schema.Float64Attribute{
 							Optional: true,
 						},
+					},
+				},
+			},
+			"ruleset": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[WebAnalyticsSiteRulesetModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "The Web Analytics ruleset identifier.",
+						Optional:    true,
+					},
+					"enabled": schema.BoolAttribute{
+						Description: "Whether the ruleset is enabled.",
+						Optional:    true,
+					},
+					"zone_name": schema.StringAttribute{
+						Optional: true,
+					},
+					"zone_tag": schema.StringAttribute{
+						Description: "The zone identifier.",
+						Optional:    true,
 					},
 				},
 			},

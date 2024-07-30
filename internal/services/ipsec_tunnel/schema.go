@@ -5,6 +5,7 @@ package ipsec_tunnel
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -127,6 +128,7 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"created_on": schema.StringAttribute{
 							Description: "The date and time the tunnel was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"customer_endpoint": schema.StringAttribute{
 							Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
@@ -139,6 +141,7 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"modified_on": schema.StringAttribute{
 							Description: "The date and time the tunnel was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"psk_metadata": schema.SingleNestedAttribute{
 							Description: "The PSK metadata that includes when the PSK was generated.",
@@ -147,6 +150,7 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 								"last_generated_on": schema.StringAttribute{
 									Description: "The date and time the tunnel was last modified.",
 									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
 								},
 							},
 						},

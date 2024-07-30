@@ -20,7 +20,7 @@ type HyperdriveConfigDataSourceModel struct {
 	Caching      *HyperdriveConfigCachingDataSourceModel   `tfsdk:"caching" json:"caching"`
 	Name         types.String                              `tfsdk:"name" json:"name"`
 	Origin       *HyperdriveConfigOriginDataSourceModel    `tfsdk:"origin" json:"origin"`
-	FindOneBy    *HyperdriveConfigFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter       *HyperdriveConfigFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type HyperdriveConfigCachingDataSourceModel struct {

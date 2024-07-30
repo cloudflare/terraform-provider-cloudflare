@@ -5,6 +5,7 @@ package access_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -35,7 +36,7 @@ func (r AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sch
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -77,7 +78,8 @@ func (r AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sch
 							Computed:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"decision": schema.StringAttribute{
 							Description: "The action Access will take if a user matches this policy.",
@@ -731,7 +733,8 @@ func (r AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sch
 							Computed:    true,
 						},
 						"updated_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

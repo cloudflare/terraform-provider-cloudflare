@@ -58,7 +58,7 @@ func (r *TeamsRuleDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := TeamsRuleResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Gateway.Rules.Get(
@@ -86,7 +86,7 @@ func (r *TeamsRuleDataSource) Read(ctx context.Context, req datasource.ReadReque
 		env := TeamsRuleResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Gateway.Rules.List(ctx, zero_trust.GatewayRuleListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

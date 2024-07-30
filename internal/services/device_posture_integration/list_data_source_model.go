@@ -7,24 +7,24 @@ import (
 )
 
 type DevicePostureIntegrationsResultListDataSourceEnvelope struct {
-	Result *[]*DevicePostureIntegrationsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*DevicePostureIntegrationsResultDataSourceModel `json:"result,computed"`
 }
 
 type DevicePostureIntegrationsDataSourceModel struct {
-	AccountID types.String                                      `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                       `tfsdk:"max_items"`
-	Items     *[]*DevicePostureIntegrationsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                       `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                        `tfsdk:"max_items"`
+	Result    *[]*DevicePostureIntegrationsResultDataSourceModel `tfsdk:"result"`
 }
 
-type DevicePostureIntegrationsItemsDataSourceModel struct {
-	ID       types.String                                         `tfsdk:"id" json:"id"`
-	Config   *DevicePostureIntegrationsItemsConfigDataSourceModel `tfsdk:"config" json:"config"`
-	Interval types.String                                         `tfsdk:"interval" json:"interval"`
-	Name     types.String                                         `tfsdk:"name" json:"name"`
-	Type     types.String                                         `tfsdk:"type" json:"type"`
+type DevicePostureIntegrationsResultDataSourceModel struct {
+	ID       types.String                                    `tfsdk:"id" json:"id"`
+	Config   *DevicePostureIntegrationsConfigDataSourceModel `tfsdk:"config" json:"config"`
+	Interval types.String                                    `tfsdk:"interval" json:"interval"`
+	Name     types.String                                    `tfsdk:"name" json:"name"`
+	Type     types.String                                    `tfsdk:"type" json:"type"`
 }
 
-type DevicePostureIntegrationsItemsConfigDataSourceModel struct {
+type DevicePostureIntegrationsConfigDataSourceModel struct {
 	APIURL   types.String `tfsdk:"api_url" json:"api_url,computed"`
 	AuthURL  types.String `tfsdk:"auth_url" json:"auth_url,computed"`
 	ClientID types.String `tfsdk:"client_id" json:"client_id,computed"`

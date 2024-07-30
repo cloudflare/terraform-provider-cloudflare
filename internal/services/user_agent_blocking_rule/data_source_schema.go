@@ -58,7 +58,7 @@ func (r UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req datasou
 				Description: "When true, indicates that the rule is currently paused.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_identifier": schema.StringAttribute{

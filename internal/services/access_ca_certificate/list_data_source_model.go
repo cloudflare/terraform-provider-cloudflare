@@ -7,17 +7,17 @@ import (
 )
 
 type AccessCACertificatesResultListDataSourceEnvelope struct {
-	Result *[]*AccessCACertificatesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccessCACertificatesResultDataSourceModel `json:"result,computed"`
 }
 
 type AccessCACertificatesDataSourceModel struct {
-	AccountID types.String                                 `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                 `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                                  `tfsdk:"max_items"`
-	Items     *[]*AccessCACertificatesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                  `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                   `tfsdk:"max_items"`
+	Result    *[]*AccessCACertificatesResultDataSourceModel `tfsdk:"result"`
 }
 
-type AccessCACertificatesItemsDataSourceModel struct {
+type AccessCACertificatesResultDataSourceModel struct {
 	ID        types.String `tfsdk:"id" json:"id,computed"`
 	AUD       types.String `tfsdk:"aud" json:"aud,computed"`
 	PublicKey types.String `tfsdk:"public_key" json:"public_key,computed"`

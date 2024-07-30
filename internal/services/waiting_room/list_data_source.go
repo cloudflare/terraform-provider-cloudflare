@@ -54,10 +54,10 @@ func (r *WaitingRoomsDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	items := &[]*WaitingRoomsItemsDataSourceModel{}
+	items := &[]*WaitingRoomsResultDataSourceModel{}
 	env := WaitingRoomsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WaitingRoomsItemsDataSourceModel{}
+	acc := []*WaitingRoomsResultDataSourceModel{}
 
 	page, err := r.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
 		ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
@@ -88,7 +88,7 @@ func (r *WaitingRoomsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

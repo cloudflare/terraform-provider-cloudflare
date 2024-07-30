@@ -193,7 +193,7 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 				Description: "Determines which tunnel protocol to use.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

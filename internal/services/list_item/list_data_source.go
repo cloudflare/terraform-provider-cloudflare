@@ -54,10 +54,10 @@ func (r *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	items := &[]*ListItemsItemsDataSourceModel{}
+	items := &[]*ListItemsResultDataSourceModel{}
 	env := ListItemsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ListItemsItemsDataSourceModel{}
+	acc := []*ListItemsResultDataSourceModel{}
 
 	page, err := r.client.Rules.Lists.Items.List(
 		ctx,
@@ -93,7 +93,7 @@ func (r *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

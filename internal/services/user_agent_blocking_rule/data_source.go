@@ -58,7 +58,7 @@ func (r *UserAgentBlockingRuleDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := UserAgentBlockingRuleResultDataSourceEnvelope{*data}
 		_, err := r.client.Firewall.UARules.Get(
@@ -85,13 +85,13 @@ func (r *UserAgentBlockingRuleDataSource) Read(ctx context.Context, req datasour
 
 		page, err := r.client.Firewall.UARules.List(
 			ctx,
-			data.FindOneBy.ZoneIdentifier.ValueString(),
+			data.Filter.ZoneIdentifier.ValueString(),
 			firewall.UARuleListParams{
-				Description:       cloudflare.F(data.FindOneBy.Description.ValueString()),
-				DescriptionSearch: cloudflare.F(data.FindOneBy.DescriptionSearch.ValueString()),
-				Page:              cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-				PerPage:           cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
-				UASearch:          cloudflare.F(data.FindOneBy.UASearch.ValueString()),
+				Description:       cloudflare.F(data.Filter.Description.ValueString()),
+				DescriptionSearch: cloudflare.F(data.Filter.DescriptionSearch.ValueString()),
+				Page:              cloudflare.F(data.Filter.Page.ValueFloat64()),
+				PerPage:           cloudflare.F(data.Filter.PerPage.ValueFloat64()),
+				UASearch:          cloudflare.F(data.Filter.UASearch.ValueString()),
 			},
 		)
 		if err != nil {

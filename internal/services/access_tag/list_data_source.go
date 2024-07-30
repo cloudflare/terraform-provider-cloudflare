@@ -54,10 +54,10 @@ func (r *AccessTagsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	items := &[]*AccessTagsItemsDataSourceModel{}
+	items := &[]*AccessTagsResultDataSourceModel{}
 	env := AccessTagsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessTagsItemsDataSourceModel{}
+	acc := []*AccessTagsResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Access.Tags.List(ctx, zero_trust.AccessTagListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *AccessTagsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

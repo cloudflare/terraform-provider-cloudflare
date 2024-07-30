@@ -54,10 +54,10 @@ func (r *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	items := &[]*APITokensItemsDataSourceModel{}
+	items := &[]*APITokensResultDataSourceModel{}
 	env := APITokensResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*APITokensItemsDataSourceModel{}
+	acc := []*APITokensResultDataSourceModel{}
 
 	page, err := r.client.User.Tokens.List(ctx, user.TokenListParams{
 		Direction: cloudflare.F(user.TokenListParamsDirection(data.Direction.ValueString())),
@@ -88,7 +88,7 @@ func (r *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

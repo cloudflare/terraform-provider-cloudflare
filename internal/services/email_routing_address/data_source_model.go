@@ -24,7 +24,7 @@ type EmailRoutingAddressDataSourceModel struct {
 	Modified                     timetypes.RFC3339                            `tfsdk:"modified" json:"modified,computed"`
 	Tag                          types.String                                 `tfsdk:"tag" json:"tag,computed"`
 	Verified                     timetypes.RFC3339                            `tfsdk:"verified" json:"verified,computed"`
-	FindOneBy                    *EmailRoutingAddressFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter                       *EmailRoutingAddressFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type EmailRoutingAddressFindOneByDataSourceModel struct {

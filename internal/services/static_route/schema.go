@@ -5,6 +5,7 @@ package static_route
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -84,6 +85,7 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"created_on": schema.StringAttribute{
 							Description: "When the route was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "An optional human provided description of the static route.",
@@ -92,6 +94,7 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"modified_on": schema.StringAttribute{
 							Description: "When the route was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"scope": schema.SingleNestedAttribute{
 							Description: "Used only for ECMP routes.",

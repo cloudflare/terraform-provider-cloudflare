@@ -22,7 +22,7 @@ type DevicePostureIntegrationDataSourceModel struct {
 	Interval      types.String                                      `tfsdk:"interval" json:"interval"`
 	Name          types.String                                      `tfsdk:"name" json:"name"`
 	Type          types.String                                      `tfsdk:"type" json:"type"`
-	FindOneBy     *DevicePostureIntegrationFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter        *DevicePostureIntegrationFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type DevicePostureIntegrationConfigDataSourceModel struct {

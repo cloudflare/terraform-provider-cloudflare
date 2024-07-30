@@ -8,29 +8,29 @@ import (
 )
 
 type WebAnalyticsSitesResultListDataSourceEnvelope struct {
-	Result *[]*WebAnalyticsSitesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*WebAnalyticsSitesResultDataSourceModel `json:"result,computed"`
 }
 
 type WebAnalyticsSitesDataSourceModel struct {
-	AccountID types.String                              `tfsdk:"account_id" path:"account_id"`
-	OrderBy   types.String                              `tfsdk:"order_by" query:"order_by"`
-	Page      types.Float64                             `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                             `tfsdk:"per_page" query:"per_page"`
-	MaxItems  types.Int64                               `tfsdk:"max_items"`
-	Items     *[]*WebAnalyticsSitesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
+	OrderBy   types.String                               `tfsdk:"order_by" query:"order_by"`
+	Page      types.Float64                              `tfsdk:"page" query:"page"`
+	PerPage   types.Float64                              `tfsdk:"per_page" query:"per_page"`
+	MaxItems  types.Int64                                `tfsdk:"max_items"`
+	Result    *[]*WebAnalyticsSitesResultDataSourceModel `tfsdk:"result"`
 }
 
-type WebAnalyticsSitesItemsDataSourceModel struct {
-	AutoInstall types.Bool                                     `tfsdk:"auto_install" json:"auto_install"`
-	Created     timetypes.RFC3339                              `tfsdk:"created" json:"created,computed"`
-	Rules       *[]*WebAnalyticsSitesItemsRulesDataSourceModel `tfsdk:"rules" json:"rules"`
-	Ruleset     *WebAnalyticsSitesItemsRulesetDataSourceModel  `tfsdk:"ruleset" json:"ruleset"`
-	SiteTag     types.String                                   `tfsdk:"site_tag" json:"site_tag"`
-	SiteToken   types.String                                   `tfsdk:"site_token" json:"site_token"`
-	Snippet     types.String                                   `tfsdk:"snippet" json:"snippet"`
+type WebAnalyticsSitesResultDataSourceModel struct {
+	AutoInstall types.Bool                                `tfsdk:"auto_install" json:"auto_install"`
+	Created     timetypes.RFC3339                         `tfsdk:"created" json:"created,computed"`
+	Rules       *[]*WebAnalyticsSitesRulesDataSourceModel `tfsdk:"rules" json:"rules"`
+	Ruleset     *WebAnalyticsSitesRulesetDataSourceModel  `tfsdk:"ruleset" json:"ruleset"`
+	SiteTag     types.String                              `tfsdk:"site_tag" json:"site_tag"`
+	SiteToken   types.String                              `tfsdk:"site_token" json:"site_token"`
+	Snippet     types.String                              `tfsdk:"snippet" json:"snippet"`
 }
 
-type WebAnalyticsSitesItemsRulesDataSourceModel struct {
+type WebAnalyticsSitesRulesDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" json:"id"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
 	Host      types.String      `tfsdk:"host" json:"host"`
@@ -40,7 +40,7 @@ type WebAnalyticsSitesItemsRulesDataSourceModel struct {
 	Priority  types.Float64     `tfsdk:"priority" json:"priority"`
 }
 
-type WebAnalyticsSitesItemsRulesetDataSourceModel struct {
+type WebAnalyticsSitesRulesetDataSourceModel struct {
 	ID       types.String `tfsdk:"id" json:"id"`
 	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled"`
 	ZoneName types.String `tfsdk:"zone_name" json:"zone_name"`

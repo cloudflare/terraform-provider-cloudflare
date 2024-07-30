@@ -7,21 +7,21 @@ import (
 )
 
 type WorkerDomainsResultListDataSourceEnvelope struct {
-	Result *[]*WorkerDomainsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*WorkerDomainsResultDataSourceModel `json:"result,computed"`
 }
 
 type WorkerDomainsDataSourceModel struct {
-	AccountID   types.String                          `tfsdk:"account_id" path:"account_id"`
-	Environment types.String                          `tfsdk:"environment" query:"environment"`
-	Hostname    types.String                          `tfsdk:"hostname" query:"hostname"`
-	Service     types.String                          `tfsdk:"service" query:"service"`
-	ZoneID      types.String                          `tfsdk:"zone_id" query:"zone_id"`
-	ZoneName    types.String                          `tfsdk:"zone_name" query:"zone_name"`
-	MaxItems    types.Int64                           `tfsdk:"max_items"`
-	Items       *[]*WorkerDomainsItemsDataSourceModel `tfsdk:"items"`
+	AccountID   types.String                           `tfsdk:"account_id" path:"account_id"`
+	Environment types.String                           `tfsdk:"environment" query:"environment"`
+	Hostname    types.String                           `tfsdk:"hostname" query:"hostname"`
+	Service     types.String                           `tfsdk:"service" query:"service"`
+	ZoneID      types.String                           `tfsdk:"zone_id" query:"zone_id"`
+	ZoneName    types.String                           `tfsdk:"zone_name" query:"zone_name"`
+	MaxItems    types.Int64                            `tfsdk:"max_items"`
+	Result      *[]*WorkerDomainsResultDataSourceModel `tfsdk:"result"`
 }
 
-type WorkerDomainsItemsDataSourceModel struct {
+type WorkerDomainsResultDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id"`
 	Environment types.String `tfsdk:"environment" json:"environment"`
 	Hostname    types.String `tfsdk:"hostname" json:"hostname"`

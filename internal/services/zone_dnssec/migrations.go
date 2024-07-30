@@ -5,6 +5,7 @@ package zone_dnssec
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -73,6 +74,7 @@ func (r ZoneDNSSECResource) UpgradeState(ctx context.Context) map[int64]resource
 					"modified_on": schema.StringAttribute{
 						Description: "When DNSSEC was last modified.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"public_key": schema.StringAttribute{
 						Description: "Public key for DS record.",

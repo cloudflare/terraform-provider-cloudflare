@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -27,7 +28,7 @@ func (r OriginCACertificatesDataSource) Schema(ctx context.Context, req datasour
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -67,6 +68,7 @@ func (r OriginCACertificatesDataSource) Schema(ctx context.Context, req datasour
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate will expire.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

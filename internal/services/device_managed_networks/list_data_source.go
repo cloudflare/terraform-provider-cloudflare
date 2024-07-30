@@ -54,10 +54,10 @@ func (r *DeviceManagedNetworksListDataSource) Read(ctx context.Context, req data
 		return
 	}
 
-	items := &[]*DeviceManagedNetworksListItemsDataSourceModel{}
+	items := &[]*DeviceManagedNetworksListResultDataSourceModel{}
 	env := DeviceManagedNetworksListResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*DeviceManagedNetworksListItemsDataSourceModel{}
+	acc := []*DeviceManagedNetworksListResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.Devices.Networks.List(ctx, zero_trust.DeviceNetworkListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *DeviceManagedNetworksListDataSource) Read(ctx context.Context, req data
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -27,7 +27,7 @@ func (r PagesDomainDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Name of the domain.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

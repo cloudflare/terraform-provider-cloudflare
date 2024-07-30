@@ -44,7 +44,7 @@ func (r FilterDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Computed:    true,
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_identifier": schema.StringAttribute{

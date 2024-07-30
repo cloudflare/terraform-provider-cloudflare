@@ -8,16 +8,16 @@ import (
 )
 
 type MTLSCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*MTLSCertificatesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*MTLSCertificatesResultDataSourceModel `json:"result,computed"`
 }
 
 type MTLSCertificatesDataSourceModel struct {
-	AccountID types.String                             `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                              `tfsdk:"max_items"`
-	Items     *[]*MTLSCertificatesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                              `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                               `tfsdk:"max_items"`
+	Result    *[]*MTLSCertificatesResultDataSourceModel `tfsdk:"result"`
 }
 
-type MTLSCertificatesItemsDataSourceModel struct {
+type MTLSCertificatesResultDataSourceModel struct {
 	ID           types.String      `tfsdk:"id" json:"id"`
 	CA           types.Bool        `tfsdk:"ca" json:"ca"`
 	Certificates types.String      `tfsdk:"certificates" json:"certificates"`

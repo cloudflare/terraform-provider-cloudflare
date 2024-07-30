@@ -58,7 +58,7 @@ func (r *LoadBalancerDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := LoadBalancerResultDataSourceEnvelope{*data}
 		_, err := r.client.LoadBalancers.Get(
@@ -86,7 +86,7 @@ func (r *LoadBalancerDataSource) Read(ctx context.Context, req datasource.ReadRe
 		env := LoadBalancerResultListDataSourceEnvelope{items}
 
 		page, err := r.client.LoadBalancers.List(ctx, load_balancers.LoadBalancerListParams{
-			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

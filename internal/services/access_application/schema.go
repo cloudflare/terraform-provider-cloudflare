@@ -5,6 +5,7 @@ package access_application
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -323,7 +324,8 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 						Optional:    true,
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"custom_attributes": schema.SingleNestedAttribute{
 						Optional: true,
@@ -399,7 +401,8 @@ func (r AccessApplicationResource) Schema(ctx context.Context, req resource.Sche
 						Optional:    true,
 					},
 					"updated_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"access_token_lifetime": schema.StringAttribute{
 						Description: "The lifetime of the OIDC Access Token after creation. Valid units are m,h. Must be greater than or equal to 1m and less than or equal to 24h.",

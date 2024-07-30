@@ -24,7 +24,7 @@ type RateLimitDataSourceModel struct {
 	Match          *RateLimitMatchDataSourceModel     `tfsdk:"match" json:"match"`
 	Period         types.Float64                      `tfsdk:"period" json:"period"`
 	Threshold      types.Float64                      `tfsdk:"threshold" json:"threshold"`
-	FindOneBy      *RateLimitFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter         *RateLimitFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type RateLimitActionDataSourceModel struct {

@@ -9,19 +9,19 @@ import (
 )
 
 type WaitingRoomEventsResultListDataSourceEnvelope struct {
-	Result *[]*WaitingRoomEventsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*WaitingRoomEventsResultDataSourceModel `json:"result,computed"`
 }
 
 type WaitingRoomEventsDataSourceModel struct {
-	ZoneID        types.String                              `tfsdk:"zone_id" path:"zone_id"`
-	WaitingRoomID types.String                              `tfsdk:"waiting_room_id" path:"waiting_room_id"`
-	Page          jsontypes.Normalized                      `tfsdk:"page" query:"page"`
-	PerPage       jsontypes.Normalized                      `tfsdk:"per_page" query:"per_page"`
-	MaxItems      types.Int64                               `tfsdk:"max_items"`
-	Items         *[]*WaitingRoomEventsItemsDataSourceModel `tfsdk:"items"`
+	ZoneID        types.String                               `tfsdk:"zone_id" path:"zone_id"`
+	WaitingRoomID types.String                               `tfsdk:"waiting_room_id" path:"waiting_room_id"`
+	Page          jsontypes.Normalized                       `tfsdk:"page" query:"page"`
+	PerPage       jsontypes.Normalized                       `tfsdk:"per_page" query:"per_page"`
+	MaxItems      types.Int64                                `tfsdk:"max_items"`
+	Result        *[]*WaitingRoomEventsResultDataSourceModel `tfsdk:"result"`
 }
 
-type WaitingRoomEventsItemsDataSourceModel struct {
+type WaitingRoomEventsResultDataSourceModel struct {
 	ID                    types.String      `tfsdk:"id" json:"id"`
 	CreatedOn             timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
 	CustomPageHTML        types.String      `tfsdk:"custom_page_html" json:"custom_page_html"`

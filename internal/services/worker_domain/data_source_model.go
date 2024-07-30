@@ -23,7 +23,7 @@ type WorkerDomainDataSourceModel struct {
 	Service     types.String                          `tfsdk:"service" json:"service"`
 	ZoneID      types.String                          `tfsdk:"zone_id" json:"zone_id"`
 	ZoneName    types.String                          `tfsdk:"zone_name" json:"zone_name"`
-	FindOneBy   *WorkerDomainFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter      *WorkerDomainFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type WorkerDomainFindOneByDataSourceModel struct {

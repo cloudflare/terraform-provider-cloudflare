@@ -58,7 +58,7 @@ func (r *FallbackDomainDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := FallbackDomainResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Devices.Policies.FallbackDomains.Get(
@@ -86,7 +86,7 @@ func (r *FallbackDomainDataSource) Read(ctx context.Context, req datasource.Read
 		env := FallbackDomainResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, zero_trust.DevicePolicyFallbackDomainListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -175,7 +175,7 @@ func (r RateLimitDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					float64validator.AtLeast(1),
 				},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_identifier": schema.StringAttribute{

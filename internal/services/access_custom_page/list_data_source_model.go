@@ -8,16 +8,16 @@ import (
 )
 
 type AccessCustomPagesResultListDataSourceEnvelope struct {
-	Result *[]*AccessCustomPagesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccessCustomPagesResultDataSourceModel `json:"result,computed"`
 }
 
 type AccessCustomPagesDataSourceModel struct {
-	AccountID types.String                              `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                               `tfsdk:"max_items"`
-	Items     *[]*AccessCustomPagesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                `tfsdk:"max_items"`
+	Result    *[]*AccessCustomPagesResultDataSourceModel `tfsdk:"result"`
 }
 
-type AccessCustomPagesItemsDataSourceModel struct {
+type AccessCustomPagesResultDataSourceModel struct {
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
 	Type      types.String      `tfsdk:"type" json:"type,computed"`
 	AppCount  types.Int64       `tfsdk:"app_count" json:"app_count"`

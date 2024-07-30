@@ -34,7 +34,7 @@ type TeamsRuleDataSourceModel struct {
 	Schedule      *TeamsRuleScheduleDataSourceModel     `tfsdk:"schedule" json:"schedule"`
 	Traffic       types.String                          `tfsdk:"traffic" json:"traffic"`
 	UpdatedAt     timetypes.RFC3339                     `tfsdk:"updated_at" json:"updated_at,computed"`
-	FindOneBy     *TeamsRuleFindOneByDataSourceModel    `tfsdk:"find_one_by"`
+	Filter        *TeamsRuleFindOneByDataSourceModel    `tfsdk:"filter"`
 }
 
 type TeamsRuleRuleSettingsDataSourceModel struct {

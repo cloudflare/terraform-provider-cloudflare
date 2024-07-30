@@ -5,9 +5,11 @@ package account_member
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -87,6 +89,34 @@ func (r AccountMemberResource) UpgradeState(ctx context.Context) map[int64]resou
 						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
+						},
+					},
+					"user": schema.SingleNestedAttribute{
+						Description: "Details of the user associated to the membership.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[AccountMemberUserModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"email": schema.StringAttribute{
+								Description: "The contact email address of the user.",
+								Required:    true,
+							},
+							"id": schema.StringAttribute{
+								Description: "Identifier",
+								Computed:    true,
+							},
+							"first_name": schema.StringAttribute{
+								Description: "User's first name",
+								Optional:    true,
+							},
+							"last_name": schema.StringAttribute{
+								Description: "User's last name",
+								Optional:    true,
+							},
+							"two_factor_authentication_enabled": schema.BoolAttribute{
+								Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
+								Computed:    true,
+								Default:     booldefault.StaticBool(false),
+							},
 						},
 					},
 				},

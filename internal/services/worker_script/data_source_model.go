@@ -7,10 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type WorkerScriptResultDataSourceEnvelope struct {
-	Result WorkerScriptDataSourceModel `json:"result,computed"`
-}
-
 type WorkerScriptResultListDataSourceEnvelope struct {
 	Result *[]*WorkerScriptDataSourceModel `json:"result,computed"`
 }
@@ -26,7 +22,7 @@ type WorkerScriptDataSourceModel struct {
 	PlacementMode types.String                                 `tfsdk:"placement_mode" json:"placement_mode"`
 	TailConsumers *[]*WorkerScriptTailConsumersDataSourceModel `tfsdk:"tail_consumers" json:"tail_consumers"`
 	UsageModel    types.String                                 `tfsdk:"usage_model" json:"usage_model"`
-	FindOneBy     *WorkerScriptFindOneByDataSourceModel        `tfsdk:"find_one_by"`
+	Filter        *WorkerScriptFindOneByDataSourceModel        `tfsdk:"filter"`
 }
 
 type WorkerScriptTailConsumersDataSourceModel struct {

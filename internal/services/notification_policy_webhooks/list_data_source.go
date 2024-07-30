@@ -54,10 +54,10 @@ func (r *NotificationPolicyWebhooksListDataSource) Read(ctx context.Context, req
 		return
 	}
 
-	items := &[]*NotificationPolicyWebhooksListItemsDataSourceModel{}
+	items := &[]*NotificationPolicyWebhooksListResultDataSourceModel{}
 	env := NotificationPolicyWebhooksListResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*NotificationPolicyWebhooksListItemsDataSourceModel{}
+	acc := []*NotificationPolicyWebhooksListResultDataSourceModel{}
 
 	page, err := r.client.Alerting.Destinations.Webhooks.List(ctx, alerting.DestinationWebhookListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *NotificationPolicyWebhooksListDataSource) Read(ctx context.Context, req
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

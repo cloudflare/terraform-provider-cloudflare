@@ -21,7 +21,7 @@ type UserAgentBlockingRuleDataSourceModel struct {
 	Description    types.String                                       `tfsdk:"description" json:"description"`
 	Mode           types.String                                       `tfsdk:"mode" json:"mode"`
 	Paused         types.Bool                                         `tfsdk:"paused" json:"paused"`
-	FindOneBy      *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"find_one_by"`
+	Filter         *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
 }
 
 type UserAgentBlockingRuleConfigurationDataSourceModel struct {

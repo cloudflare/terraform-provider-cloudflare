@@ -7,17 +7,17 @@ import (
 )
 
 type AccountsResultListDataSourceEnvelope struct {
-	Result *[]*AccountsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*AccountsResultDataSourceModel `json:"result,computed"`
 }
 
 type AccountsDataSourceModel struct {
-	Direction types.String                     `tfsdk:"direction" query:"direction"`
-	Name      types.String                     `tfsdk:"name" query:"name"`
-	Page      types.Float64                    `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                    `tfsdk:"per_page" query:"per_page"`
-	MaxItems  types.Int64                      `tfsdk:"max_items"`
-	Items     *[]*AccountsItemsDataSourceModel `tfsdk:"items"`
+	Direction types.String                      `tfsdk:"direction" query:"direction"`
+	Name      types.String                      `tfsdk:"name" query:"name"`
+	Page      types.Float64                     `tfsdk:"page" query:"page"`
+	PerPage   types.Float64                     `tfsdk:"per_page" query:"per_page"`
+	MaxItems  types.Int64                       `tfsdk:"max_items"`
+	Result    *[]*AccountsResultDataSourceModel `tfsdk:"result"`
 }
 
-type AccountsItemsDataSourceModel struct {
+type AccountsResultDataSourceModel struct {
 }

@@ -5,6 +5,7 @@ package teams_proxy_endpoint
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +36,16 @@ func (r TeamsProxyEndpointResource) UpgradeState(ctx context.Context) map[int64]
 						Required:    true,
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"subdomain": schema.StringAttribute{
 						Description: "The subdomain to be used as the destination in the proxy client.",
 						Computed:    true,
 					},
 					"updated_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 				},
 			},

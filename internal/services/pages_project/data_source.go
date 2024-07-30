@@ -58,7 +58,7 @@ func (r *PagesProjectDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := PagesProjectResultDataSourceEnvelope{*data}
 		_, err := r.client.Pages.Projects.Get(
@@ -86,7 +86,7 @@ func (r *PagesProjectDataSource) Read(ctx context.Context, req datasource.ReadRe
 		env := PagesProjectResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Pages.Projects.List(ctx, pages.ProjectListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

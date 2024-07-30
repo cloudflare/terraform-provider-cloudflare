@@ -29,7 +29,7 @@ type NotificationPolicyDataSourceModel struct {
 	Mechanisms    map[string]*[]jsontypes.Normalized          `tfsdk:"mechanisms" json:"mechanisms"`
 	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed"`
 	Name          types.String                                `tfsdk:"name" json:"name"`
-	FindOneBy     *NotificationPolicyFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter        *NotificationPolicyFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type NotificationPolicyFiltersDataSourceModel struct {

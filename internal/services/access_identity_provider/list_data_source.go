@@ -61,10 +61,10 @@ func (r *AccessIdentityProvidersDataSource) Read(ctx context.Context, req dataso
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	items := &[]*AccessIdentityProvidersItemsDataSourceModel{}
+	items := &[]*AccessIdentityProvidersResultDataSourceModel{}
 	env := AccessIdentityProvidersResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessIdentityProvidersItemsDataSourceModel{}
+	acc := []*AccessIdentityProvidersResultDataSourceModel{}
 
 	page, err := r.client.ZeroTrust.IdentityProviders.List(ctx, params)
 	if err != nil {
@@ -91,7 +91,7 @@ func (r *AccessIdentityProvidersDataSource) Read(ctx context.Context, req dataso
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -54,10 +54,10 @@ func (r *HyperdriveConfigsDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	items := &[]*HyperdriveConfigsItemsDataSourceModel{}
+	items := &[]*HyperdriveConfigsResultDataSourceModel{}
 	env := HyperdriveConfigsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*HyperdriveConfigsItemsDataSourceModel{}
+	acc := []*HyperdriveConfigsResultDataSourceModel{}
 
 	page, err := r.client.Hyperdrive.Configs.List(ctx, hyperdrive.ConfigListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *HyperdriveConfigsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

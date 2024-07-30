@@ -5,6 +5,7 @@ package mtls_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -23,7 +24,7 @@ func (r MTLSCertificatesDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -46,6 +47,7 @@ func (r MTLSCertificatesDataSource) Schema(ctx context.Context, req datasource.S
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate expires.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"issuer": schema.StringAttribute{
 							Description: "The certificate authority that issued the certificate.",
@@ -68,6 +70,7 @@ func (r MTLSCertificatesDataSource) Schema(ctx context.Context, req datasource.S
 							Description: "This is the time the certificate was uploaded.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

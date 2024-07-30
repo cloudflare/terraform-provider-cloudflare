@@ -54,10 +54,10 @@ func (r *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 		return
 	}
 
-	items := &[]*UserAgentBlockingRulesItemsDataSourceModel{}
+	items := &[]*UserAgentBlockingRulesResultDataSourceModel{}
 	env := UserAgentBlockingRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*UserAgentBlockingRulesItemsDataSourceModel{}
+	acc := []*UserAgentBlockingRulesResultDataSourceModel{}
 
 	page, err := r.client.Firewall.UARules.List(
 		ctx,
@@ -94,7 +94,7 @@ func (r *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

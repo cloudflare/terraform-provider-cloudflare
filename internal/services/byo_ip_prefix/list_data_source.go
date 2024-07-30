@@ -54,10 +54,10 @@ func (r *ByoIPPrefixesDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*ByoIPPrefixesItemsDataSourceModel{}
+	items := &[]*ByoIPPrefixesResultDataSourceModel{}
 	env := ByoIPPrefixesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ByoIPPrefixesItemsDataSourceModel{}
+	acc := []*ByoIPPrefixesResultDataSourceModel{}
 
 	page, err := r.client.Addressing.Prefixes.List(ctx, addressing.PrefixListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *ByoIPPrefixesDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

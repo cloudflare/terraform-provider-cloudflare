@@ -54,10 +54,10 @@ func (r *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	items := &[]*NotificationPoliciesItemsDataSourceModel{}
+	items := &[]*NotificationPoliciesResultDataSourceModel{}
 	env := NotificationPoliciesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*NotificationPoliciesItemsDataSourceModel{}
+	acc := []*NotificationPoliciesResultDataSourceModel{}
 
 	page, err := r.client.Alerting.Policies.List(ctx, alerting.PolicyListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

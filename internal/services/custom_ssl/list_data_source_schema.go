@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,7 +60,7 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -78,6 +79,7 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate from the authority expires.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"hosts": schema.ListAttribute{
 							Computed:    true,
@@ -90,6 +92,7 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						"modified_on": schema.StringAttribute{
 							Description: "When the certificate was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"priority": schema.Float64Attribute{
 							Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
@@ -109,6 +112,7 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						"uploaded_on": schema.StringAttribute{
 							Description: "When the certificate was uploaded to Cloudflare.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"zone_id": schema.StringAttribute{
 							Description: "Identifier",
@@ -139,6 +143,7 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 								"created_on": schema.StringAttribute{
 									Description: "When the Keyless SSL was created.",
 									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
 								},
 								"enabled": schema.BoolAttribute{
 									Description: "Whether or not the Keyless SSL is on or off.",
@@ -151,6 +156,7 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 								"modified_on": schema.StringAttribute{
 									Description: "When the Keyless SSL was last modified.",
 									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
 								},
 								"name": schema.StringAttribute{
 									Description: "The keyless SSL name.",

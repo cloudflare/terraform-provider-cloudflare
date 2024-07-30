@@ -21,7 +21,7 @@ type FallbackDomainDataSourceModel struct {
 	Suffix      types.String                            `tfsdk:"suffix" json:"suffix"`
 	Description types.String                            `tfsdk:"description" json:"description"`
 	DNSServer   *[]jsontypes.Normalized                 `tfsdk:"dns_server" json:"dns_server"`
-	FindOneBy   *FallbackDomainFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter      *FallbackDomainFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type FallbackDomainFindOneByDataSourceModel struct {

@@ -5,6 +5,7 @@ package tunnel
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -55,6 +56,7 @@ func (r TunnelDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was created.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "A user-friendly name for a tunnel.",
@@ -63,8 +65,9 @@ func (r TunnelDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			"deleted_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
@@ -77,6 +80,7 @@ func (r TunnelDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 					"existed_at": schema.StringAttribute{
 						Description: "If provided, include only tunnels that were created (and not deleted) before this time.",
 						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"include_prefix": schema.StringAttribute{
 						Optional: true,
@@ -120,10 +124,12 @@ func (r TunnelDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 						Optional:    true,
 					},
 					"was_active_at": schema.StringAttribute{
-						Optional: true,
+						Optional:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"was_inactive_at": schema.StringAttribute{
-						Optional: true,
+						Optional:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 				},
 			},

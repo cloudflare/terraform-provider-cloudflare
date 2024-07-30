@@ -5,6 +5,7 @@ package api_shield_schema
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -31,7 +32,8 @@ func (r APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.Sc
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"kind": schema.StringAttribute{
 				Description: "Kind of schema",
@@ -54,7 +56,7 @@ func (r APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.Sc
 				Computed:    true,
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{
