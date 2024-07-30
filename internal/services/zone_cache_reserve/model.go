@@ -12,7 +12,7 @@ type ZoneCacheReserveResultEnvelope struct {
 }
 
 type ZoneCacheReserveModel struct {
-	ID         types.String      `tfsdk:"id" json:"id"`
+	ID         types.String      `tfsdk:"id" json:"id,computed"`
 	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id"`
 	Value      types.String      `tfsdk:"value" json:"value"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`

@@ -25,12 +25,14 @@ func (r AuthenticatedOriginPullsCertificateResource) Schema(ctx context.Context,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"certificate": schema.StringAttribute{
-				Description: "The zone's leaf certificate.",
-				Required:    true,
+				Description:   "The zone's leaf certificate.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"private_key": schema.StringAttribute{
-				Description: "The zone's private key.",
-				Required:    true,
+				Description:   "The zone's private key.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}

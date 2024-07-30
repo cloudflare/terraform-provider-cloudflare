@@ -29,6 +29,7 @@ func (r APIShieldSchemaValidationSettingsResource) UpgradeState(ctx context.Cont
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("none", "log", "block"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"validation_override_mitigation_action": schema.StringAttribute{
 						Description: "When set, this overrides both zone level and operation level mitigation actions.\n\n  - `none` will skip running schema validation entirely for the request\n  - `null` indicates that no override is in place\n\nTo clear any override, use the special value `disable_override` or `null`\n",
@@ -36,6 +37,7 @@ func (r APIShieldSchemaValidationSettingsResource) UpgradeState(ctx context.Cont
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("none", "disable_override"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},

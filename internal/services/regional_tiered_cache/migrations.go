@@ -22,11 +22,11 @@ func (r RegionalTieredCacheResource) UpgradeState(ctx context.Context) map[int64
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "ID of the zone setting.",
-						Required:    true,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("tc_regional"),
 						},
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"zone_id": schema.StringAttribute{
 						Description:   "Identifier",
@@ -40,7 +40,8 @@ func (r RegionalTieredCacheResource) UpgradeState(ctx context.Context) map[int64
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("on", "off"),
 						},
-						Default: stringdefault.StaticString("off"),
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Default:       stringdefault.StaticString("off"),
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "last time this setting was modified.",

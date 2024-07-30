@@ -32,6 +32,7 @@ func (r APIShieldOperationSchemaValidationSettingsResource) Schema(ctx context.C
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("log", "block", "none"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}

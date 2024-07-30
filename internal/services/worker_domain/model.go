@@ -11,7 +11,7 @@ type WorkerDomainResultEnvelope struct {
 }
 
 type WorkerDomainModel struct {
-	ID          types.String `tfsdk:"id" json:"id"`
+	ID          types.String `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
 	Environment types.String `tfsdk:"environment" json:"environment"`
 	Hostname    types.String `tfsdk:"hostname" json:"hostname"`

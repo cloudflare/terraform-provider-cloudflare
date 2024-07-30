@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -17,8 +18,8 @@ func (r MTLSCertificateResource) Schema(ctx context.Context, req resource.Schema
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -26,20 +27,24 @@ func (r MTLSCertificateResource) Schema(ctx context.Context, req resource.Schema
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ca": schema.BoolAttribute{
-				Description: "Indicates whether the certificate is a CA or leaf certificate.",
-				Required:    true,
+				Description:   "Indicates whether the certificate is a CA or leaf certificate.",
+				Required:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
 			"certificates": schema.StringAttribute{
-				Description: "The uploaded root CA certificate.",
-				Required:    true,
+				Description:   "The uploaded root CA certificate.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "Optional unique name for the certificate. Only used for human readability.",
-				Optional:    true,
+				Description:   "Optional unique name for the certificate. Only used for human readability.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"private_key": schema.StringAttribute{
-				Description: "The private key for the certificate",
-				Optional:    true,
+				Description:   "The private key for the certificate",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate expires.",

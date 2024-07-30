@@ -19,8 +19,8 @@ func (r EmailRoutingAddressResource) UpgradeState(ctx context.Context) map[int64
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description:   "Destination address identifier.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"account_identifier": schema.StringAttribute{
 						Description:   "Identifier",
@@ -28,8 +28,9 @@ func (r EmailRoutingAddressResource) UpgradeState(ctx context.Context) map[int64
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"email": schema.StringAttribute{
-						Description: "The contact email address of the user.",
-						Required:    true,
+						Description:   "The contact email address of the user.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"created": schema.StringAttribute{
 						Description: "The date and time the destination address has been created.",

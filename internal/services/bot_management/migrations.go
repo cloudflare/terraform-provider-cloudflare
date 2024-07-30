@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -24,16 +25,19 @@ func (r BotManagementResource) UpgradeState(ctx context.Context) map[int64]resou
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"enable_js": schema.BoolAttribute{
-						Description: "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
-						Optional:    true,
+						Description:   "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 					},
 					"fight_mode": schema.BoolAttribute{
-						Description: "Whether to enable Bot Fight Mode.",
-						Optional:    true,
+						Description:   "Whether to enable Bot Fight Mode.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 					},
 					"optimize_wordpress": schema.BoolAttribute{
-						Description: "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
-						Optional:    true,
+						Description:   "Whether to optimize Super Bot Fight Mode protections for Wordpress.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 					},
 					"sbfm_definitely_automated": schema.StringAttribute{
 						Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.",
@@ -41,10 +45,12 @@ func (r BotManagementResource) UpgradeState(ctx context.Context) map[int64]resou
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("allow", "block", "managed_challenge"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"sbfm_static_resource_protection": schema.BoolAttribute{
-						Description: "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.\n",
-						Optional:    true,
+						Description:   "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.\n",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 					},
 					"sbfm_verified_bots": schema.StringAttribute{
 						Description: "Super Bot Fight Mode (SBFM) action to take on verified bots requests.",
@@ -52,6 +58,7 @@ func (r BotManagementResource) UpgradeState(ctx context.Context) map[int64]resou
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("allow", "block"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"sbfm_likely_automated": schema.StringAttribute{
 						Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.",
@@ -59,14 +66,17 @@ func (r BotManagementResource) UpgradeState(ctx context.Context) map[int64]resou
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("allow", "block", "managed_challenge"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"auto_update_model": schema.BoolAttribute{
-						Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
-						Optional:    true,
+						Description:   "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 					},
 					"suppress_session_score": schema.BoolAttribute{
-						Description: "Whether to disable tracking the highest bot score for a session in the Bot Management cookie.",
-						Optional:    true,
+						Description:   "Whether to disable tracking the highest bot score for a session in the Bot Management cookie.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 					},
 				},
 			},
