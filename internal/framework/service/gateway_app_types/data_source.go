@@ -51,8 +51,7 @@ func (d *CloudflareGatewayAppTypesDataSource) Read(ctx context.Context, req data
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	}
 
-	// Use client.V2.ZeroTrust.Gateway.AppTypes.ListAutoPaging to retrieve app types
-	iter := zero_trust.NewGatewayAppTypeService(d.client.V2.Options...).ListAutoPaging(ctx, params)
+	iter := d.client.V2.ZeroTrust.Gateway.AppTypes.ListAutoPaging(ctx, params)
 	var appTypes []GatewayAppTypeModel
 
 	for iter.Next() {
