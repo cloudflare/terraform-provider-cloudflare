@@ -247,6 +247,11 @@ var proxySchema = map[string]*schema.Schema{
 		Required:    true,
 		Description: "Whether virtual IP (CGNAT) is enabled account wide and will override existing local interface IP for ZT clients.",
 	},
+	"disable_for_time": {
+		Type:        schema.TypeInt,
+		Required:    true,
+		Description: "Sets the time limit in seconds that a user can use an override code to bypass WARP",
+	},
 }
 
 var loggingSchema = map[string]*schema.Schema{
