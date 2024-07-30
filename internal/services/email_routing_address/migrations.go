@@ -5,6 +5,7 @@ package email_routing_address
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -33,10 +34,12 @@ func (r EmailRoutingAddressResource) UpgradeState(ctx context.Context) map[int64
 					"created": schema.StringAttribute{
 						Description: "The date and time the destination address has been created.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"modified": schema.StringAttribute{
 						Description: "The date and time the destination address was last modified.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"tag": schema.StringAttribute{
 						Description: "Destination address tag. (Deprecated, replaced by destination address identifier)",
@@ -45,6 +48,7 @@ func (r EmailRoutingAddressResource) UpgradeState(ctx context.Context) map[int64
 					"verified": schema.StringAttribute{
 						Description: "The date and time the destination address has been verified. Null means not verified yet.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 				},
 			},

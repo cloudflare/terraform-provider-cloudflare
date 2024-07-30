@@ -60,7 +60,7 @@ func (r ListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				Description: "The number of [filters](/operations/filters-list-filters) referencing the list.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

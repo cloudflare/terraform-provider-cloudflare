@@ -18,6 +18,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/tidwall/sjson"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 var explicitJsonNull = []byte("null")
@@ -319,6 +321,28 @@ func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 				return nil, nil
 			} else {
 				return []byte(fmt.Sprint(tfPlan.ValueBool())), nil
+			}
+		}
+	}
+
+	if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
+		structType := t.Field(0).Type
+		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
+			var tfPlan = plan.Interface().(basetypes.ObjectValuable)
+			var tfState = state.Interface().(basetypes.ObjectValuable)
+			if tfState.IsNull() && tfPlan.IsNull() {
+				return nil, nil
+			} else if tfPlan.IsNull() {
+				return explicitJsonNull, nil
+			} else if tfPlan.IsUnknown() {
+				return nil, nil
+			} else {
+				if tfState.IsNull() || tfState.IsUnknown() {
+					state = plan
+				}
+				planStruct, _ := plan.Interface().(customfield.NestedObjectLike).ValueAny(context.TODO())
+				stateStruct, _ := state.Interface().(customfield.NestedObjectLike).ValueAny(context.TODO())
+				return e.newStructTypeEncoder(structType)(reflect.ValueOf(planStruct).Elem(), reflect.ValueOf(stateStruct).Elem())
 			}
 		}
 	}

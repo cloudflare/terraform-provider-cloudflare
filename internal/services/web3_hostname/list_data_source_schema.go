@@ -5,6 +5,7 @@ package web3_hostname
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -25,7 +26,7 @@ func (r Web3HostnamesDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -35,7 +36,8 @@ func (r Web3HostnamesDataSource) Schema(ctx context.Context, req datasource.Sche
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "An optional description of the hostname.",
@@ -48,7 +50,8 @@ func (r Web3HostnamesDataSource) Schema(ctx context.Context, req datasource.Sche
 							Optional:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Description: "The hostname that will point to the target gateway via CNAME.",

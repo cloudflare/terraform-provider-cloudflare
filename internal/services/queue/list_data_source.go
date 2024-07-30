@@ -54,10 +54,10 @@ func (r *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	items := &[]*QueuesItemsDataSourceModel{}
+	items := &[]*QueuesResultDataSourceModel{}
 	env := QueuesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*QueuesItemsDataSourceModel{}
+	acc := []*QueuesResultDataSourceModel{}
 
 	page, err := r.client.Queues.List(ctx, queues.QueueListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

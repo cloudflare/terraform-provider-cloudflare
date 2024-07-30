@@ -5,6 +5,7 @@ package load_balancer_pool
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -49,6 +50,7 @@ func (r LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]re
 								"disabled_at": schema.StringAttribute{
 									Description: "This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.",
 									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
 								},
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.",
@@ -220,14 +222,17 @@ func (r LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]re
 						ElementType: types.StringType,
 					},
 					"created_on": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"disabled_at": schema.StringAttribute{
 						Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"modified_on": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 				},
 			},

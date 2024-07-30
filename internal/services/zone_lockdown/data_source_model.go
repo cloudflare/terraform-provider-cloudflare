@@ -3,6 +3,7 @@
 package zone_lockdown
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,14 +17,20 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 }
 
 type ZoneLockdownDataSourceModel struct {
-	ZoneIdentifier types.String                          `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                          `tfsdk:"id" path:"id"`
-	CreatedOn      timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed"`
-	Description    types.String                          `tfsdk:"description" json:"description,computed"`
-	ModifiedOn     timetypes.RFC3339                     `tfsdk:"modified_on" json:"modified_on,computed"`
-	Paused         types.Bool                            `tfsdk:"paused" json:"paused,computed"`
-	URLs           *[]types.String                       `tfsdk:"urls" json:"urls,computed"`
-	FindOneBy      *ZoneLockdownFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	ZoneIdentifier types.String                                                        `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ID             types.String                                                        `tfsdk:"id" path:"id"`
+	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
+	CreatedOn      timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed"`
+	Description    types.String                                                        `tfsdk:"description" json:"description,computed"`
+	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed"`
+	Paused         types.Bool                                                          `tfsdk:"paused" json:"paused,computed"`
+	URLs           *[]types.String                                                     `tfsdk:"urls" json:"urls,computed"`
+	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
+}
+
+type ZoneLockdownConfigurationsDataSourceModel struct {
+	Target types.String `tfsdk:"target" json:"target"`
+	Value  types.String `tfsdk:"value" json:"value"`
 }
 
 type ZoneLockdownFindOneByDataSourceModel struct {

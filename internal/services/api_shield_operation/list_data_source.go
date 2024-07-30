@@ -66,10 +66,10 @@ func (r *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	items := &[]*APIShieldOperationsItemsDataSourceModel{}
+	items := &[]*APIShieldOperationsResultDataSourceModel{}
 	env := APIShieldOperationsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*APIShieldOperationsItemsDataSourceModel{}
+	acc := []*APIShieldOperationsResultDataSourceModel{}
 
 	page, err := r.client.APIGateway.Discovery.Operations.List(ctx, api_gateway.DiscoveryOperationListParams{
 		ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
@@ -108,7 +108,7 @@ func (r *APIShieldOperationsDataSource) Read(ctx context.Context, req datasource
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

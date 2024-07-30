@@ -51,7 +51,7 @@ func (r R2BucketDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 					stringvalidator.OneOfCaseInsensitive("Standard", "InfrequentAccess"),
 				},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

@@ -21,7 +21,7 @@ func (r APITokenDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 			"token_id": schema.StringAttribute{
 				Optional: true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{

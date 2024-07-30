@@ -29,7 +29,7 @@ func (r AccessRuleDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{

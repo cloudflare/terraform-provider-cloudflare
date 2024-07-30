@@ -5,6 +5,7 @@ package device_dex_test
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -21,6 +22,28 @@ func (r DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.Sche
 			"dex_test_id": schema.StringAttribute{
 				Description: "API UUID.",
 				Optional:    true,
+			},
+			"data": schema.SingleNestedAttribute{
+				Description: "The configuration object which contains the details for the WARP client to conduct the test.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[DeviceDEXTestDataDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"host": schema.StringAttribute{
+						Description: "The desired endpoint to test.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"kind": schema.StringAttribute{
+						Description: "The type of test.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"method": schema.StringAttribute{
+						Description: "The HTTP request method type.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Determines whether or not the test is active.",
@@ -67,7 +90,7 @@ func (r DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.Sche
 				Computed: true,
 				Optional: true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

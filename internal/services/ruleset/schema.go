@@ -5,6 +5,7 @@ package ruleset
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,6 +62,7 @@ func (r RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						"last_updated": schema.StringAttribute{
 							Description: "The timestamp of when the rule was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"version": schema.StringAttribute{
 							Description: "The version of the rule.",
@@ -149,6 +151,7 @@ func (r RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"last_updated": schema.StringAttribute{
 				Description: "The timestamp of when the ruleset was last modified.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"version": schema.StringAttribute{
 				Description: "The version of the ruleset.",

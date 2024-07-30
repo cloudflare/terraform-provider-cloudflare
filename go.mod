@@ -4,11 +4,13 @@ go 1.19
 
 require (
 	github.com/cloudflare/cloudflare-go/v2 v2.4.0
+	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-framework v1.9.0
 	github.com/hashicorp/terraform-plugin-framework-jsontypes v0.1.0
 	github.com/hashicorp/terraform-plugin-framework-timetypes v0.4.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.12.0
+	github.com/hashicorp/terraform-plugin-go v0.23.0
 	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5
@@ -37,7 +39,6 @@ require (
 	github.com/hashicorp/hc-install v0.6.1 // indirect
 	github.com/hashicorp/terraform-exec v0.19.0 // indirect
 	github.com/hashicorp/terraform-json v0.18.0 // indirect
-	github.com/hashicorp/terraform-plugin-go v0.23.0 // indirect
 	github.com/hashicorp/terraform-registry-address v0.2.3 // indirect
 	github.com/hashicorp/terraform-svchost v0.1.1 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect

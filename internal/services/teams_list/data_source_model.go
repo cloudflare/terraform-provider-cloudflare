@@ -25,7 +25,7 @@ type TeamsListDataSourceModel struct {
 	Name        types.String                       `tfsdk:"name" json:"name"`
 	Type        types.String                       `tfsdk:"type" json:"type"`
 	UpdatedAt   timetypes.RFC3339                  `tfsdk:"updated_at" json:"updated_at,computed"`
-	FindOneBy   *TeamsListFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter      *TeamsListFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type TeamsListFindOneByDataSourceModel struct {

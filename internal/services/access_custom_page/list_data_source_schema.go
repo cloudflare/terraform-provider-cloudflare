@@ -5,6 +5,7 @@ package access_custom_page
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -25,7 +26,7 @@ func (r AccessCustomPagesDataSource) Schema(ctx context.Context, req datasource.
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -47,7 +48,8 @@ func (r AccessCustomPagesDataSource) Schema(ctx context.Context, req datasource.
 							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"uid": schema.StringAttribute{
 							Description: "UUID",
@@ -55,7 +57,8 @@ func (r AccessCustomPagesDataSource) Schema(ctx context.Context, req datasource.
 							Optional:    true,
 						},
 						"updated_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

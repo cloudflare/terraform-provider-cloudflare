@@ -61,10 +61,10 @@ func (r *RulesetsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	items := &[]*RulesetsItemsDataSourceModel{}
+	items := &[]*RulesetsResultDataSourceModel{}
 	env := RulesetsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*RulesetsItemsDataSourceModel{}
+	acc := []*RulesetsResultDataSourceModel{}
 
 	page, err := r.client.Rulesets.List(ctx, params)
 	if err != nil {
@@ -91,7 +91,7 @@ func (r *RulesetsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

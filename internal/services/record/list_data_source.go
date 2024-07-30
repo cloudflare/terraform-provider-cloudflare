@@ -55,10 +55,10 @@ func (r *RecordsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	items := &[]*RecordsItemsDataSourceModel{}
+	items := &[]*RecordsResultDataSourceModel{}
 	env := RecordsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*RecordsItemsDataSourceModel{}
+	acc := []*RecordsResultDataSourceModel{}
 
 	page, err := r.client.DNS.Records.List(ctx, dns.RecordListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -114,7 +114,7 @@ func (r *RecordsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

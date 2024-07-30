@@ -54,10 +54,10 @@ func (r *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	items := &[]*MTLSCertificatesItemsDataSourceModel{}
+	items := &[]*MTLSCertificatesResultDataSourceModel{}
 	env := MTLSCertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*MTLSCertificatesItemsDataSourceModel{}
+	acc := []*MTLSCertificatesResultDataSourceModel{}
 
 	page, err := r.client.MTLSCertificates.List(ctx, mtls_certificates.MTLSCertificateListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

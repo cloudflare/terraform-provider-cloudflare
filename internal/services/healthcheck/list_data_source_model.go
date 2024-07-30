@@ -9,39 +9,39 @@ import (
 )
 
 type HealthchecksResultListDataSourceEnvelope struct {
-	Result *[]*HealthchecksItemsDataSourceModel `json:"result,computed"`
+	Result *[]*HealthchecksResultDataSourceModel `json:"result,computed"`
 }
 
 type HealthchecksDataSourceModel struct {
-	ZoneID   types.String                         `tfsdk:"zone_id" path:"zone_id"`
-	Page     jsontypes.Normalized                 `tfsdk:"page" query:"page"`
-	PerPage  jsontypes.Normalized                 `tfsdk:"per_page" query:"per_page"`
-	MaxItems types.Int64                          `tfsdk:"max_items"`
-	Items    *[]*HealthchecksItemsDataSourceModel `tfsdk:"items"`
+	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id"`
+	Page     jsontypes.Normalized                  `tfsdk:"page" query:"page"`
+	PerPage  jsontypes.Normalized                  `tfsdk:"per_page" query:"per_page"`
+	MaxItems types.Int64                           `tfsdk:"max_items"`
+	Result   *[]*HealthchecksResultDataSourceModel `tfsdk:"result"`
 }
 
-type HealthchecksItemsDataSourceModel struct {
-	ID                   types.String                                `tfsdk:"id" json:"id,computed"`
-	Address              types.String                                `tfsdk:"address" json:"address"`
-	CheckRegions         *[]types.String                             `tfsdk:"check_regions" json:"check_regions"`
-	ConsecutiveFails     types.Int64                                 `tfsdk:"consecutive_fails" json:"consecutive_fails,computed"`
-	ConsecutiveSuccesses types.Int64                                 `tfsdk:"consecutive_successes" json:"consecutive_successes,computed"`
-	CreatedOn            timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed"`
-	Description          types.String                                `tfsdk:"description" json:"description"`
-	FailureReason        types.String                                `tfsdk:"failure_reason" json:"failure_reason,computed"`
-	HTTPConfig           *HealthchecksItemsHTTPConfigDataSourceModel `tfsdk:"http_config" json:"http_config"`
-	Interval             types.Int64                                 `tfsdk:"interval" json:"interval,computed"`
-	ModifiedOn           timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed"`
-	Name                 types.String                                `tfsdk:"name" json:"name"`
-	Retries              types.Int64                                 `tfsdk:"retries" json:"retries,computed"`
-	Status               types.String                                `tfsdk:"status" json:"status,computed"`
-	Suspended            types.Bool                                  `tfsdk:"suspended" json:"suspended,computed"`
-	TCPConfig            *HealthchecksItemsTCPConfigDataSourceModel  `tfsdk:"tcp_config" json:"tcp_config"`
-	Timeout              types.Int64                                 `tfsdk:"timeout" json:"timeout,computed"`
-	Type                 types.String                                `tfsdk:"type" json:"type,computed"`
+type HealthchecksResultDataSourceModel struct {
+	ID                   types.String                           `tfsdk:"id" json:"id,computed"`
+	Address              types.String                           `tfsdk:"address" json:"address"`
+	CheckRegions         *[]types.String                        `tfsdk:"check_regions" json:"check_regions"`
+	ConsecutiveFails     types.Int64                            `tfsdk:"consecutive_fails" json:"consecutive_fails,computed"`
+	ConsecutiveSuccesses types.Int64                            `tfsdk:"consecutive_successes" json:"consecutive_successes,computed"`
+	CreatedOn            timetypes.RFC3339                      `tfsdk:"created_on" json:"created_on,computed"`
+	Description          types.String                           `tfsdk:"description" json:"description"`
+	FailureReason        types.String                           `tfsdk:"failure_reason" json:"failure_reason,computed"`
+	HTTPConfig           *HealthchecksHTTPConfigDataSourceModel `tfsdk:"http_config" json:"http_config"`
+	Interval             types.Int64                            `tfsdk:"interval" json:"interval,computed"`
+	ModifiedOn           timetypes.RFC3339                      `tfsdk:"modified_on" json:"modified_on,computed"`
+	Name                 types.String                           `tfsdk:"name" json:"name"`
+	Retries              types.Int64                            `tfsdk:"retries" json:"retries,computed"`
+	Status               types.String                           `tfsdk:"status" json:"status,computed"`
+	Suspended            types.Bool                             `tfsdk:"suspended" json:"suspended,computed"`
+	TCPConfig            *HealthchecksTCPConfigDataSourceModel  `tfsdk:"tcp_config" json:"tcp_config"`
+	Timeout              types.Int64                            `tfsdk:"timeout" json:"timeout,computed"`
+	Type                 types.String                           `tfsdk:"type" json:"type,computed"`
 }
 
-type HealthchecksItemsHTTPConfigDataSourceModel struct {
+type HealthchecksHTTPConfigDataSourceModel struct {
 	AllowInsecure   types.Bool                 `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
 	ExpectedBody    types.String               `tfsdk:"expected_body" json:"expected_body"`
 	ExpectedCodes   *[]types.String            `tfsdk:"expected_codes" json:"expected_codes"`
@@ -52,7 +52,7 @@ type HealthchecksItemsHTTPConfigDataSourceModel struct {
 	Port            types.Int64                `tfsdk:"port" json:"port,computed"`
 }
 
-type HealthchecksItemsTCPConfigDataSourceModel struct {
+type HealthchecksTCPConfigDataSourceModel struct {
 	Method types.String `tfsdk:"method" json:"method,computed"`
 	Port   types.Int64  `tfsdk:"port" json:"port,computed"`
 }

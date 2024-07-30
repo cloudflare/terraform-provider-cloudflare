@@ -5,6 +5,7 @@ package load_balancer
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -417,10 +418,12 @@ func (r LoadBalancerResource) Schema(ctx context.Context, req resource.SchemaReq
 				Default:     booldefault.StaticBool(true),
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

@@ -54,10 +54,10 @@ func (r *D1DatabasesDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	items := &[]*D1DatabasesItemsDataSourceModel{}
+	items := &[]*D1DatabasesResultDataSourceModel{}
 	env := D1DatabasesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*D1DatabasesItemsDataSourceModel{}
+	acc := []*D1DatabasesResultDataSourceModel{}
 
 	page, err := r.client.D1.Database.List(ctx, d1.DatabaseListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -89,7 +89,7 @@ func (r *D1DatabasesDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

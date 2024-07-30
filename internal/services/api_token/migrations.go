@@ -5,6 +5,7 @@ package api_token
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -91,10 +92,12 @@ func (r APITokenResource) UpgradeState(ctx context.Context) map[int64]resource.S
 					"expires_on": schema.StringAttribute{
 						Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
 						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"not_before": schema.StringAttribute{
 						Description: "The time before which the token MUST NOT be accepted for processing.",
 						Optional:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"status": schema.StringAttribute{
 						Description: "Status of the token.",

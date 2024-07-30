@@ -5,6 +5,7 @@ package mtls_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -43,6 +44,7 @@ func (r MTLSCertificateResource) Schema(ctx context.Context, req resource.Schema
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate expires.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
@@ -59,10 +61,12 @@ func (r MTLSCertificateResource) Schema(ctx context.Context, req resource.Schema
 			"updated_at": schema.StringAttribute{
 				Description: "This is the time the certificate was updated.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"uploaded_on": schema.StringAttribute{
 				Description: "This is the time the certificate was uploaded.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

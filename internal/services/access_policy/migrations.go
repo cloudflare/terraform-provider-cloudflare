@@ -5,6 +5,7 @@ package access_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -671,10 +672,12 @@ func (r AccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resour
 						Default:     stringdefault.StaticString("24h"),
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"updated_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 				},
 			},

@@ -5,6 +5,7 @@ package byo_ip_prefix
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -23,7 +24,7 @@ func (r ByoIPPrefixesDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -46,6 +47,7 @@ func (r ByoIPPrefixesDataSource) Schema(ctx context.Context, req datasource.Sche
 						"advertised_modified_at": schema.StringAttribute{
 							Description: "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"approved": schema.StringAttribute{
 							Description: "Approval state of the prefix (P = pending, V = active).",
@@ -63,7 +65,8 @@ func (r ByoIPPrefixesDataSource) Schema(ctx context.Context, req datasource.Sche
 							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"description": schema.StringAttribute{
 							Description: "Description of the prefix.",
@@ -76,7 +79,8 @@ func (r ByoIPPrefixesDataSource) Schema(ctx context.Context, req datasource.Sche
 							Optional:    true,
 						},
 						"modified_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"on_demand_enabled": schema.BoolAttribute{
 							Description: "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",

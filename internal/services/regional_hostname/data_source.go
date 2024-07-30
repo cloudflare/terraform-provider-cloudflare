@@ -58,7 +58,7 @@ func (r *RegionalHostnameDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := RegionalHostnameResultDataSourceEnvelope{*data}
 		_, err := r.client.Addressing.RegionalHostnames.Get(
@@ -86,7 +86,7 @@ func (r *RegionalHostnameDataSource) Read(ctx context.Context, req datasource.Re
 		env := RegionalHostnameResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Addressing.RegionalHostnames.List(ctx, addressing.RegionalHostnameListParams{
-			ZoneID: cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -58,7 +58,7 @@ func (r *TeamsLocationDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := TeamsLocationResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Gateway.Locations.Get(
@@ -86,7 +86,7 @@ func (r *TeamsLocationDataSource) Read(ctx context.Context, req datasource.ReadR
 		env := TeamsLocationResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Gateway.Locations.List(ctx, zero_trust.GatewayLocationListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

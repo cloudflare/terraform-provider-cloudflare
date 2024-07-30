@@ -58,7 +58,7 @@ func (r *WaitingRoomEventDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := WaitingRoomEventResultDataSourceEnvelope{*data}
 		_, err := r.client.WaitingRooms.Events.Get(
@@ -88,11 +88,11 @@ func (r *WaitingRoomEventDataSource) Read(ctx context.Context, req datasource.Re
 
 		page, err := r.client.WaitingRooms.Events.List(
 			ctx,
-			data.FindOneBy.WaitingRoomID.ValueString(),
+			data.Filter.WaitingRoomID.ValueString(),
 			waiting_rooms.EventListParams{
-				ZoneID:  cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
-				Page:    cloudflare.F[any](data.FindOneBy.Page.ValueString()),
-				PerPage: cloudflare.F[any](data.FindOneBy.PerPage.ValueString()),
+				ZoneID:  cloudflare.F(data.Filter.ZoneID.ValueString()),
+				Page:    cloudflare.F[any](data.Filter.Page.ValueString()),
+				PerPage: cloudflare.F[any](data.Filter.PerPage.ValueString()),
 			},
 		)
 		if err != nil {

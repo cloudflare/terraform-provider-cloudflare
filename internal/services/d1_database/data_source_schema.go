@@ -5,6 +5,7 @@ package d1_database
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -27,6 +28,7 @@ func (r D1DatabaseDataSource) Schema(ctx context.Context, req datasource.SchemaR
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"file_size": schema.Float64Attribute{
 				Description: "The D1 database's size, in bytes.",
@@ -46,7 +48,7 @@ func (r D1DatabaseDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Computed: true,
 				Optional: true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

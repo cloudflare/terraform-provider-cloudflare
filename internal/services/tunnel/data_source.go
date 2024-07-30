@@ -58,7 +58,7 @@ func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := TunnelResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Tunnels.Get(
@@ -82,11 +82,11 @@ func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		}
 		data = &env.Result
 	} else {
-		dataFindOneByExistedAt, errs := data.FindOneBy.ExistedAt.ValueRFC3339Time()
+		dataFilterExistedAt, errs := data.Filter.ExistedAt.ValueRFC3339Time()
 		resp.Diagnostics.Append(errs...)
-		dataFindOneByWasActiveAt, errs := data.FindOneBy.WasActiveAt.ValueRFC3339Time()
+		dataFilterWasActiveAt, errs := data.Filter.WasActiveAt.ValueRFC3339Time()
 		resp.Diagnostics.Append(errs...)
-		dataFindOneByWasInactiveAt, errs := data.FindOneBy.WasInactiveAt.ValueRFC3339Time()
+		dataFilterWasInactiveAt, errs := data.Filter.WasInactiveAt.ValueRFC3339Time()
 		resp.Diagnostics.Append(errs...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -96,19 +96,19 @@ func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		env := TunnelResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
-			AccountID:     cloudflare.F(data.FindOneBy.AccountID.ValueString()),
-			ExcludePrefix: cloudflare.F(data.FindOneBy.ExcludePrefix.ValueString()),
-			ExistedAt:     cloudflare.F(dataFindOneByExistedAt),
-			IncludePrefix: cloudflare.F(data.FindOneBy.IncludePrefix.ValueString()),
-			IsDeleted:     cloudflare.F(data.FindOneBy.IsDeleted.ValueBool()),
-			Name:          cloudflare.F(data.FindOneBy.Name.ValueString()),
-			Page:          cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-			PerPage:       cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
-			Status:        cloudflare.F(zero_trust.TunnelListParamsStatus(data.FindOneBy.Status.ValueString())),
-			TunTypes:      cloudflare.F(data.FindOneBy.TunTypes.ValueString()),
-			UUID:          cloudflare.F(data.FindOneBy.UUID.ValueString()),
-			WasActiveAt:   cloudflare.F(dataFindOneByWasActiveAt),
-			WasInactiveAt: cloudflare.F(dataFindOneByWasInactiveAt),
+			AccountID:     cloudflare.F(data.Filter.AccountID.ValueString()),
+			ExcludePrefix: cloudflare.F(data.Filter.ExcludePrefix.ValueString()),
+			ExistedAt:     cloudflare.F(dataFilterExistedAt),
+			IncludePrefix: cloudflare.F(data.Filter.IncludePrefix.ValueString()),
+			IsDeleted:     cloudflare.F(data.Filter.IsDeleted.ValueBool()),
+			Name:          cloudflare.F(data.Filter.Name.ValueString()),
+			Page:          cloudflare.F(data.Filter.Page.ValueFloat64()),
+			PerPage:       cloudflare.F(data.Filter.PerPage.ValueFloat64()),
+			Status:        cloudflare.F(zero_trust.TunnelListParamsStatus(data.Filter.Status.ValueString())),
+			TunTypes:      cloudflare.F(data.Filter.TunTypes.ValueString()),
+			UUID:          cloudflare.F(data.Filter.UUID.ValueString()),
+			WasActiveAt:   cloudflare.F(dataFilterWasActiveAt),
+			WasInactiveAt: cloudflare.F(dataFilterWasInactiveAt),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

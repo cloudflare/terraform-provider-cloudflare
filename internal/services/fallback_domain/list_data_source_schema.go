@@ -23,7 +23,7 @@ func (r FallbackDomainsDataSource) Schema(ctx context.Context, req datasource.Sc
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{

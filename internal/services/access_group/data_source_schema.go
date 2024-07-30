@@ -5,6 +5,7 @@ package access_group
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -33,7 +34,8 @@ func (r AccessGroupDataSource) Schema(ctx context.Context, req datasource.Schema
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules.",
@@ -869,7 +871,8 @@ func (r AccessGroupDataSource) Schema(ctx context.Context, req datasource.Schema
 				},
 			},
 			"updated_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

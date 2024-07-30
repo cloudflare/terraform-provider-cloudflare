@@ -54,10 +54,10 @@ func (r *FirewallRulesDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*FirewallRulesItemsDataSourceModel{}
+	items := &[]*FirewallRulesResultDataSourceModel{}
 	env := FirewallRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*FirewallRulesItemsDataSourceModel{}
+	acc := []*FirewallRulesResultDataSourceModel{}
 
 	page, err := r.client.Firewall.Rules.List(
 		ctx,
@@ -95,7 +95,7 @@ func (r *FirewallRulesDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

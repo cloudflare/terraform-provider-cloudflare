@@ -54,10 +54,10 @@ func (r *RegionalHostnamesDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	items := &[]*RegionalHostnamesItemsDataSourceModel{}
+	items := &[]*RegionalHostnamesResultDataSourceModel{}
 	env := RegionalHostnamesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*RegionalHostnamesItemsDataSourceModel{}
+	acc := []*RegionalHostnamesResultDataSourceModel{}
 
 	page, err := r.client.Addressing.RegionalHostnames.List(ctx, addressing.RegionalHostnameListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -86,7 +86,7 @@ func (r *RegionalHostnamesDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

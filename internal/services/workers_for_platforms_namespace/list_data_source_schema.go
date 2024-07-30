@@ -5,6 +5,7 @@ package workers_for_platforms_namespace
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -23,7 +24,7 @@ func (r WorkersForPlatformsNamespacesDataSource) Schema(ctx context.Context, req
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -36,6 +37,7 @@ func (r WorkersForPlatformsNamespacesDataSource) Schema(ctx context.Context, req
 						"created_on": schema.StringAttribute{
 							Description: "When the script was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"modified_by": schema.StringAttribute{
 							Description: "Identifier",
@@ -45,6 +47,7 @@ func (r WorkersForPlatformsNamespacesDataSource) Schema(ctx context.Context, req
 						"modified_on": schema.StringAttribute{
 							Description: "When the script was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"namespace_id": schema.StringAttribute{
 							Description: "API Resource UUID tag.",

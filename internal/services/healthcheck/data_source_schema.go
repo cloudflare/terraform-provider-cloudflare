@@ -5,6 +5,7 @@ package healthcheck
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -50,7 +51,8 @@ func (r HealthcheckDataSource) Schema(ctx context.Context, req datasource.Schema
 				Computed:    true,
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
 				Description: "A human-readable description of the health check.",
@@ -115,7 +117,8 @@ func (r HealthcheckDataSource) Schema(ctx context.Context, req datasource.Schema
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
@@ -163,7 +166,7 @@ func (r HealthcheckDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "The protocol to use for the health check. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'.",
 				Computed:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{

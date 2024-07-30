@@ -58,7 +58,7 @@ func (r *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := WebAnalyticsSiteResultDataSourceEnvelope{*data}
 		_, err := r.client.RUM.SiteInfo.Get(
@@ -86,10 +86,10 @@ func (r *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 		env := WebAnalyticsSiteResultListDataSourceEnvelope{items}
 
 		page, err := r.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
-			OrderBy:   cloudflare.F(rum.SiteInfoListParamsOrderBy(data.FindOneBy.OrderBy.ValueString())),
-			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
+			OrderBy:   cloudflare.F(rum.SiteInfoListParamsOrderBy(data.Filter.OrderBy.ValueString())),
+			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

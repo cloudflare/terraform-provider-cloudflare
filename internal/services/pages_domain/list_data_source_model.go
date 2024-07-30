@@ -7,15 +7,15 @@ import (
 )
 
 type PagesDomainsResultListDataSourceEnvelope struct {
-	Result *[]*PagesDomainsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*PagesDomainsResultDataSourceModel `json:"result,computed"`
 }
 
 type PagesDomainsDataSourceModel struct {
-	AccountID   types.String                         `tfsdk:"account_id" path:"account_id"`
-	ProjectName types.String                         `tfsdk:"project_name" path:"project_name"`
-	MaxItems    types.Int64                          `tfsdk:"max_items"`
-	Items       *[]*PagesDomainsItemsDataSourceModel `tfsdk:"items"`
+	AccountID   types.String                          `tfsdk:"account_id" path:"account_id"`
+	ProjectName types.String                          `tfsdk:"project_name" path:"project_name"`
+	MaxItems    types.Int64                           `tfsdk:"max_items"`
+	Result      *[]*PagesDomainsResultDataSourceModel `tfsdk:"result"`
 }
 
-type PagesDomainsItemsDataSourceModel struct {
+type PagesDomainsResultDataSourceModel struct {
 }

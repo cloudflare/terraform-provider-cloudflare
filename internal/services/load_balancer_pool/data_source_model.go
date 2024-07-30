@@ -36,7 +36,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	NotificationFilter *LoadBalancerPoolNotificationFilterDataSourceModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringDataSourceModel     `tfsdk:"origin_steering" json:"origin_steering"`
 	Origins            *[]*LoadBalancerPoolOriginsDataSourceModel         `tfsdk:"origins" json:"origins"`
-	FindOneBy          *LoadBalancerPoolFindOneByDataSourceModel          `tfsdk:"find_one_by"`
+	Filter             *LoadBalancerPoolFindOneByDataSourceModel          `tfsdk:"filter"`
 }
 
 type LoadBalancerPoolLoadSheddingDataSourceModel struct {

@@ -54,10 +54,10 @@ func (r *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	items := &[]*TurnstileWidgetsItemsDataSourceModel{}
+	items := &[]*TurnstileWidgetsResultDataSourceModel{}
 	env := TurnstileWidgetsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*TurnstileWidgetsItemsDataSourceModel{}
+	acc := []*TurnstileWidgetsResultDataSourceModel{}
 
 	page, err := r.client.Challenges.Widgets.List(ctx, challenges.WidgetListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -90,7 +90,7 @@ func (r *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

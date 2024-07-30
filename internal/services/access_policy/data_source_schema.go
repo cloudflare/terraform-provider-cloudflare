@@ -5,6 +5,7 @@ package access_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -72,7 +73,8 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"decision": schema.StringAttribute{
 				Description: "The action Access will take if a user matches this policy.",
@@ -726,9 +728,10 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 			},
 			"updated_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"app_id": schema.StringAttribute{

@@ -5,6 +5,7 @@ package worker_script
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -23,7 +24,7 @@ func (r WorkerScriptsDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -35,6 +36,7 @@ func (r WorkerScriptsDataSource) Schema(ctx context.Context, req datasource.Sche
 						"created_on": schema.StringAttribute{
 							Description: "When the script was created.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"etag": schema.StringAttribute{
 							Description: "Hashed script content, can be used in a If-None-Match header when updating.",
@@ -48,6 +50,7 @@ func (r WorkerScriptsDataSource) Schema(ctx context.Context, req datasource.Sche
 						"modified_on": schema.StringAttribute{
 							Description: "When the script was last modified.",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"placement_mode": schema.StringAttribute{
 							Description: "Specifies the placement mode for the Worker (e.g. 'smart').",

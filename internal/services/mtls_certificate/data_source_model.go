@@ -27,7 +27,7 @@ type MTLSCertificateDataSourceModel struct {
 	SerialNumber      types.String                             `tfsdk:"serial_number" json:"serial_number,computed"`
 	Signature         types.String                             `tfsdk:"signature" json:"signature,computed"`
 	UploadedOn        timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on"`
-	FindOneBy         *MTLSCertificateFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter            *MTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type MTLSCertificateFindOneByDataSourceModel struct {

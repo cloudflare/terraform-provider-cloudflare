@@ -58,7 +58,7 @@ func (r *TeamsListDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := TeamsListResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Gateway.Lists.Get(
@@ -86,8 +86,8 @@ func (r *TeamsListDataSource) Read(ctx context.Context, req datasource.ReadReque
 		env := TeamsListResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
-			Type:      cloudflare.F(zero_trust.GatewayListListParamsType(data.FindOneBy.Type.ValueString())),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
+			Type:      cloudflare.F(zero_trust.GatewayListListParamsType(data.Filter.Type.ValueString())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

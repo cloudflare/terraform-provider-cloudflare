@@ -58,7 +58,7 @@ func (r *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := WaitingRoomResultDataSourceEnvelope{*data}
 		_, err := r.client.WaitingRooms.Get(
@@ -86,9 +86,9 @@ func (r *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadReq
 		env := WaitingRoomResultListDataSourceEnvelope{items}
 
 		page, err := r.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
-			ZoneID:  cloudflare.F(data.FindOneBy.ZoneID.ValueString()),
-			Page:    cloudflare.F[any](data.FindOneBy.Page.ValueString()),
-			PerPage: cloudflare.F[any](data.FindOneBy.PerPage.ValueString()),
+			ZoneID:  cloudflare.F(data.Filter.ZoneID.ValueString()),
+			Page:    cloudflare.F[any](data.Filter.Page.ValueString()),
+			PerPage: cloudflare.F[any](data.Filter.PerPage.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

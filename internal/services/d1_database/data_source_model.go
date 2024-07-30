@@ -24,7 +24,7 @@ type D1DatabaseDataSourceModel struct {
 	NumTables  types.Float64                       `tfsdk:"num_tables" json:"num_tables"`
 	UUID       types.String                        `tfsdk:"uuid" json:"uuid,computed"`
 	Version    types.String                        `tfsdk:"version" json:"version"`
-	FindOneBy  *D1DatabaseFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter     *D1DatabaseFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type D1DatabaseFindOneByDataSourceModel struct {

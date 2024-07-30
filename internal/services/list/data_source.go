@@ -58,7 +58,7 @@ func (r *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := ListResultDataSourceEnvelope{*data}
 		_, err := r.client.Rules.Lists.Get(
@@ -86,7 +86,7 @@ func (r *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		env := ListResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Rules.Lists.List(ctx, rules.ListListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

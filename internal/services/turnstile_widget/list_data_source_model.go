@@ -8,20 +8,20 @@ import (
 )
 
 type TurnstileWidgetsResultListDataSourceEnvelope struct {
-	Result *[]*TurnstileWidgetsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*TurnstileWidgetsResultDataSourceModel `json:"result,computed"`
 }
 
 type TurnstileWidgetsDataSourceModel struct {
-	AccountID types.String                             `tfsdk:"account_id" path:"account_id"`
-	Direction types.String                             `tfsdk:"direction" query:"direction"`
-	Order     types.String                             `tfsdk:"order" query:"order"`
-	Page      types.Float64                            `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                            `tfsdk:"per_page" query:"per_page"`
-	MaxItems  types.Int64                              `tfsdk:"max_items"`
-	Items     *[]*TurnstileWidgetsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                              `tfsdk:"account_id" path:"account_id"`
+	Direction types.String                              `tfsdk:"direction" query:"direction"`
+	Order     types.String                              `tfsdk:"order" query:"order"`
+	Page      types.Float64                             `tfsdk:"page" query:"page"`
+	PerPage   types.Float64                             `tfsdk:"per_page" query:"per_page"`
+	MaxItems  types.Int64                               `tfsdk:"max_items"`
+	Result    *[]*TurnstileWidgetsResultDataSourceModel `tfsdk:"result"`
 }
 
-type TurnstileWidgetsItemsDataSourceModel struct {
+type TurnstileWidgetsResultDataSourceModel struct {
 	BotFightMode   types.Bool        `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String      `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`

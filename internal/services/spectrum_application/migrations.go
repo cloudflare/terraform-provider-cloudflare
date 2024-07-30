@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -148,10 +149,12 @@ func (r SpectrumApplicationResource) UpgradeState(ctx context.Context) map[int64
 					"created_on": schema.StringAttribute{
 						Description: "When the Application was created.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "When the Application was last modified.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 				},
 			},

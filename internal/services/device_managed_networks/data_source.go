@@ -58,7 +58,7 @@ func (r *DeviceManagedNetworksDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := DeviceManagedNetworksResultDataSourceEnvelope{*data}
 		_, err := r.client.ZeroTrust.Devices.Networks.Get(
@@ -86,7 +86,7 @@ func (r *DeviceManagedNetworksDataSource) Read(ctx context.Context, req datasour
 		env := DeviceManagedNetworksResultListDataSourceEnvelope{items}
 
 		page, err := r.client.ZeroTrust.Devices.Networks.List(ctx, zero_trust.DeviceNetworkListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

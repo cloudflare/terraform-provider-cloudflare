@@ -5,6 +5,7 @@ package web_analytics_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -48,7 +49,8 @@ func (r WebAnalyticsRuleResource) UpgradeState(ctx context.Context) map[int64]re
 						ElementType: types.StringType,
 					},
 					"created": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"priority": schema.Float64Attribute{
 						Computed: true,

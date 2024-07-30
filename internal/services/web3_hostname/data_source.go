@@ -57,7 +57,7 @@ func (r *Web3HostnameDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := Web3HostnameResultDataSourceEnvelope{*data}
 		_, err := r.client.Web3.Hostnames.Get(
@@ -82,7 +82,7 @@ func (r *Web3HostnameDataSource) Read(ctx context.Context, req datasource.ReadRe
 		items := &[]*Web3HostnameDataSourceModel{}
 		env := Web3HostnameResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Web3.Hostnames.List(ctx, data.FindOneBy.ZoneIdentifier.ValueString())
+		page, err := r.client.Web3.Hostnames.List(ctx, data.Filter.ZoneIdentifier.ValueString())
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

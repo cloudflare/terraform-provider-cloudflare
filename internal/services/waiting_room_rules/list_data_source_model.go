@@ -8,17 +8,17 @@ import (
 )
 
 type WaitingRoomRulesListResultListDataSourceEnvelope struct {
-	Result *[]*WaitingRoomRulesListItemsDataSourceModel `json:"result,computed"`
+	Result *[]*WaitingRoomRulesListResultDataSourceModel `json:"result,computed"`
 }
 
 type WaitingRoomRulesListDataSourceModel struct {
-	ZoneID        types.String                                 `tfsdk:"zone_id" path:"zone_id"`
-	WaitingRoomID types.String                                 `tfsdk:"waiting_room_id" path:"waiting_room_id"`
-	MaxItems      types.Int64                                  `tfsdk:"max_items"`
-	Items         *[]*WaitingRoomRulesListItemsDataSourceModel `tfsdk:"items"`
+	ZoneID        types.String                                  `tfsdk:"zone_id" path:"zone_id"`
+	WaitingRoomID types.String                                  `tfsdk:"waiting_room_id" path:"waiting_room_id"`
+	MaxItems      types.Int64                                   `tfsdk:"max_items"`
+	Result        *[]*WaitingRoomRulesListResultDataSourceModel `tfsdk:"result"`
 }
 
-type WaitingRoomRulesListItemsDataSourceModel struct {
+type WaitingRoomRulesListResultDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id"`
 	Action      types.String      `tfsdk:"action" json:"action"`
 	Description types.String      `tfsdk:"description" json:"description,computed"`

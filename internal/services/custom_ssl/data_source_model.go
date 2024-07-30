@@ -32,7 +32,7 @@ type CustomSSLDataSourceModel struct {
 	GeoRestrictions     *CustomSSLGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions"`
 	KeylessServer       *CustomSSLKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server"`
 	Policy              types.String                             `tfsdk:"policy" json:"policy"`
-	FindOneBy           *CustomSSLFindOneByDataSourceModel       `tfsdk:"find_one_by"`
+	Filter              *CustomSSLFindOneByDataSourceModel       `tfsdk:"filter"`
 }
 
 type CustomSSLGeoRestrictionsDataSourceModel struct {

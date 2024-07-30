@@ -54,10 +54,10 @@ func (r *LoadBalancerMonitorsDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	items := &[]*LoadBalancerMonitorsItemsDataSourceModel{}
+	items := &[]*LoadBalancerMonitorsResultDataSourceModel{}
 	env := LoadBalancerMonitorsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*LoadBalancerMonitorsItemsDataSourceModel{}
+	acc := []*LoadBalancerMonitorsResultDataSourceModel{}
 
 	page, err := r.client.LoadBalancers.Monitors.List(ctx, load_balancers.MonitorListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *LoadBalancerMonitorsDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -5,6 +5,7 @@ package byo_ip_prefix
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
@@ -53,16 +54,19 @@ func (r ByoIPPrefixResource) UpgradeState(ctx context.Context) map[int64]resourc
 					"advertised_modified_at": schema.StringAttribute{
 						Description: "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"approved": schema.StringAttribute{
 						Description: "Approval state of the prefix (P = pending, V = active).",
 						Computed:    true,
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"modified_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"on_demand_enabled": schema.BoolAttribute{
 						Description: "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",

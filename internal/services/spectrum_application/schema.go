@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -146,10 +147,12 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 			"created_on": schema.StringAttribute{
 				Description: "When the Application was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the Application was last modified.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

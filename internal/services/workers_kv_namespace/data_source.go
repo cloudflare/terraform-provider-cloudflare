@@ -58,7 +58,7 @@ func (r *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := WorkersKVNamespaceResultDataSourceEnvelope{*data}
 		_, err := r.client.KV.Namespaces.Get(
@@ -86,11 +86,11 @@ func (r *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 		env := WorkersKVNamespaceResultListDataSourceEnvelope{items}
 
 		page, err := r.client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
-			Direction: cloudflare.F(kv.NamespaceListParamsDirection(data.FindOneBy.Direction.ValueString())),
-			Order:     cloudflare.F(kv.NamespaceListParamsOrder(data.FindOneBy.Order.ValueString())),
-			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
+			Direction: cloudflare.F(kv.NamespaceListParamsDirection(data.Filter.Direction.ValueString())),
+			Order:     cloudflare.F(kv.NamespaceListParamsOrder(data.Filter.Order.ValueString())),
+			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

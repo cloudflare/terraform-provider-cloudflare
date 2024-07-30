@@ -1,6 +1,7 @@
 package apijson
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"strings"
@@ -12,21 +13,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/tidwall/gjson"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 func P[T any](v T) *T { return &v }
 
 type TfsdkStructs struct {
-	BoolValue     types.Bool           `tfsdk:"bool_value" json:"bool_value"`
-	StringValue   types.String         `tfsdk:"string_value" json:"string_value"`
-	Data          *EmbeddedTfsdkStruct `tfsdk:"data" json:"data"`
-	FloatValue    types.Float64        `tfsdk:"float_value" json:"float_value"`
-	OptionalArray *[]types.String      `tfsdk:"optional_array" json:"optional_array"`
+	BoolValue     types.Bool                                    `tfsdk:"bool_value" json:"bool_value"`
+	StringValue   types.String                                  `tfsdk:"string_value" json:"string_value"`
+	Data          *EmbeddedTfsdkStruct                          `tfsdk:"data" json:"data"`
+	DataObject    customfield.NestedObject[EmbeddedTfsdkStruct] `tfsdk:"data_object" json:"data_object"`
+	FloatValue    types.Float64                                 `tfsdk:"float_value" json:"float_value"`
+	OptionalArray *[]types.String                               `tfsdk:"optional_array" json:"optional_array"`
 }
 
 type EmbeddedTfsdkStruct struct {
-	EmbeddedString types.String `tfsdk:"embedded_string" json:"embedded_string"`
-	EmbeddedInt    types.Int64  `tfsdk:"embedded_int" json:"embedded_int"`
+	EmbeddedString types.String                                 `tfsdk:"embedded_string" json:"embedded_string"`
+	EmbeddedInt    types.Int64                                  `tfsdk:"embedded_int" json:"embedded_int"`
+	DataObject     customfield.NestedObject[DoubleNestedStruct] `tfsdk:"data_object" json:"data_object"`
+}
+
+type DoubleNestedStruct struct {
+	NestedInt types.Int64 `tfsdk:"nested_int" json:"nested_int"`
 }
 
 type Primitives struct {
@@ -363,7 +372,7 @@ var tests = map[string]struct {
 	"tfsdk_dynamic_int":        {"5", types.DynamicValue(types.Int64Value(5))},
 
 	"embedded_tfsdk_struct": {
-		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
+		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"data_object":{"data_object":{"nested_int":19},"embedded_int":18,"embedded_string":"embedded_data_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
 		TfsdkStructs{
 			BoolValue:     types.BoolValue(true),
 			StringValue:   types.StringValue("string_value"),
@@ -373,6 +382,13 @@ var tests = map[string]struct {
 				EmbeddedString: types.StringValue("embedded_string_value"),
 				EmbeddedInt:    types.Int64Value(17),
 			},
+			DataObject: customfield.NewObjectMust(context.TODO(), &EmbeddedTfsdkStruct{
+				EmbeddedString: types.StringValue("embedded_data_string_value"),
+				EmbeddedInt:    types.Int64Value(18),
+				DataObject: customfield.NewObjectMust(context.TODO(), &DoubleNestedStruct{
+					NestedInt: types.Int64Value(19),
+				}),
+			}),
 		},
 	},
 

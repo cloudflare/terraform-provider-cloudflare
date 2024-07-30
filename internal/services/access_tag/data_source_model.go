@@ -22,7 +22,7 @@ type AccessTagDataSourceModel struct {
 	AppCount  types.Int64                        `tfsdk:"app_count" json:"app_count"`
 	CreatedAt timetypes.RFC3339                  `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt timetypes.RFC3339                  `tfsdk:"updated_at" json:"updated_at,computed"`
-	FindOneBy *AccessTagFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter    *AccessTagFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type AccessTagFindOneByDataSourceModel struct {

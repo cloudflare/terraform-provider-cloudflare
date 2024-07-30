@@ -25,7 +25,7 @@ type QueueDataSourceModel struct {
 	Producers           jsontypes.Normalized           `tfsdk:"producers" json:"producers,computed"`
 	ProducersTotalCount jsontypes.Normalized           `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
 	QueueName           types.String                   `tfsdk:"queue_name" json:"queue_name"`
-	FindOneBy           *QueueFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter              *QueueFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type QueueFindOneByDataSourceModel struct {

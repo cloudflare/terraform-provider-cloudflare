@@ -37,7 +37,7 @@ type HealthcheckDataSourceModel struct {
 	TCPConfig            *HealthcheckTCPConfigDataSourceModel  `tfsdk:"tcp_config" json:"tcp_config"`
 	Timeout              types.Int64                           `tfsdk:"timeout" json:"timeout,computed"`
 	Type                 types.String                          `tfsdk:"type" json:"type,computed"`
-	FindOneBy            *HealthcheckFindOneByDataSourceModel  `tfsdk:"find_one_by"`
+	Filter               *HealthcheckFindOneByDataSourceModel  `tfsdk:"filter"`
 }
 
 type HealthcheckHTTPConfigDataSourceModel struct {

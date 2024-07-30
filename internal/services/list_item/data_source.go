@@ -58,7 +58,7 @@ func (r *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := ListItemResultDataSourceEnvelope{*data}
 		_, err := r.client.Rules.Lists.Items.Get(
@@ -86,12 +86,12 @@ func (r *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 		page, err := r.client.Rules.Lists.Items.List(
 			ctx,
-			data.FindOneBy.ListID.ValueString(),
+			data.Filter.ListID.ValueString(),
 			rules.ListItemListParams{
-				AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
-				Cursor:    cloudflare.F(data.FindOneBy.Cursor.ValueString()),
-				PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueInt64()),
-				Search:    cloudflare.F(data.FindOneBy.Search.ValueString()),
+				AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
+				Cursor:    cloudflare.F(data.Filter.Cursor.ValueString()),
+				PerPage:   cloudflare.F(data.Filter.PerPage.ValueInt64()),
+				Search:    cloudflare.F(data.Filter.Search.ValueString()),
 			},
 		)
 		if err != nil {

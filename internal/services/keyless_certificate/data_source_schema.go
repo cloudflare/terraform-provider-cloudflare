@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -33,6 +34,7 @@ func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether or not the Keyless SSL is on or off.",
@@ -45,6 +47,7 @@ func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource
 			"modified_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was last modified.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",
@@ -81,7 +84,7 @@ func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource
 					},
 				},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{

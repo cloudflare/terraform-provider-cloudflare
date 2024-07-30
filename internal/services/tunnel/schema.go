@@ -5,6 +5,7 @@ package tunnel
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -55,10 +56,12 @@ func (r TunnelResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"deleted_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

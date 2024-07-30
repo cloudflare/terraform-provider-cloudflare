@@ -24,7 +24,7 @@ type EmailRoutingRuleDataSourceModel struct {
 	Name           types.String                                `tfsdk:"name" json:"name"`
 	Priority       types.Float64                               `tfsdk:"priority" json:"priority,computed"`
 	Tag            types.String                                `tfsdk:"tag" json:"tag,computed"`
-	FindOneBy      *EmailRoutingRuleFindOneByDataSourceModel   `tfsdk:"find_one_by"`
+	Filter         *EmailRoutingRuleFindOneByDataSourceModel   `tfsdk:"filter"`
 }
 
 type EmailRoutingRuleActionsDataSourceModel struct {

@@ -8,17 +8,17 @@ import (
 )
 
 type TeamsListsResultListDataSourceEnvelope struct {
-	Result *[]*TeamsListsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*TeamsListsResultDataSourceModel `json:"result,computed"`
 }
 
 type TeamsListsDataSourceModel struct {
-	AccountID types.String                       `tfsdk:"account_id" path:"account_id"`
-	Type      types.String                       `tfsdk:"type" query:"type"`
-	MaxItems  types.Int64                        `tfsdk:"max_items"`
-	Items     *[]*TeamsListsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                        `tfsdk:"account_id" path:"account_id"`
+	Type      types.String                        `tfsdk:"type" query:"type"`
+	MaxItems  types.Int64                         `tfsdk:"max_items"`
+	Result    *[]*TeamsListsResultDataSourceModel `tfsdk:"result"`
 }
 
-type TeamsListsItemsDataSourceModel struct {
+type TeamsListsResultDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id"`
 	ListCount   types.Float64     `tfsdk:"list_count" json:"count,computed"`
 	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`

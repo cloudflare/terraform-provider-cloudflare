@@ -5,6 +5,7 @@ package access_service_token
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -27,7 +28,7 @@ func (r AccessServiceTokensDataSource) Schema(ctx context.Context, req datasourc
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -43,7 +44,8 @@ func (r AccessServiceTokensDataSource) Schema(ctx context.Context, req datasourc
 							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"duration": schema.StringAttribute{
 							Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
@@ -55,7 +57,8 @@ func (r AccessServiceTokensDataSource) Schema(ctx context.Context, req datasourc
 							Optional:    true,
 						},
 						"updated_at": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},

@@ -5,6 +5,7 @@ package workers_for_platforms_namespace
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -41,6 +42,7 @@ func (r WorkersForPlatformsNamespaceResource) UpgradeState(ctx context.Context) 
 					"created_on": schema.StringAttribute{
 						Description: "When the script was created.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"modified_by": schema.StringAttribute{
 						Description: "Identifier",
@@ -49,6 +51,7 @@ func (r WorkersForPlatformsNamespaceResource) UpgradeState(ctx context.Context) 
 					"modified_on": schema.StringAttribute{
 						Description: "When the script was last modified.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"namespace_name": schema.StringAttribute{
 						Description: "Name of the Workers for Platforms dispatch namespace.",

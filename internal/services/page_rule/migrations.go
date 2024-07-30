@@ -5,6 +5,7 @@ package page_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -38,6 +39,7 @@ func (r PageRuleResource) UpgradeState(ctx context.Context) map[int64]resource.S
 								"modified_on": schema.StringAttribute{
 									Description: "The timestamp of when the override was last modified.",
 									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
 								},
 								"name": schema.StringAttribute{
 									Description: "The type of route.",

@@ -7,16 +7,16 @@ import (
 )
 
 type ListsResultListDataSourceEnvelope struct {
-	Result *[]*ListsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*ListsResultDataSourceModel `json:"result,computed"`
 }
 
 type ListsDataSourceModel struct {
-	AccountID types.String                  `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                   `tfsdk:"max_items"`
-	Items     *[]*ListsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                   `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                    `tfsdk:"max_items"`
+	Result    *[]*ListsResultDataSourceModel `tfsdk:"result"`
 }
 
-type ListsItemsDataSourceModel struct {
+type ListsResultDataSourceModel struct {
 	ID                    types.String  `tfsdk:"id" json:"id,computed"`
 	CreatedOn             types.String  `tfsdk:"created_on" json:"created_on,computed"`
 	Kind                  types.String  `tfsdk:"kind" json:"kind,computed"`

@@ -5,6 +5,7 @@ package access_mutual_tls_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -40,11 +41,13 @@ func (r AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req da
 				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"expires_on": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"fingerprint": schema.StringAttribute{
 				Description: "The MD5 fingerprint of the certificate.",
@@ -57,7 +60,8 @@ func (r AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req da
 				Optional:    true,
 			},
 			"updated_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

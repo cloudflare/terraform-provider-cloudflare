@@ -5,6 +5,7 @@ package regional_hostname
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -23,7 +24,7 @@ func (r RegionalHostnamesDataSource) Schema(ctx context.Context, req datasource.
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -31,6 +32,7 @@ func (r RegionalHostnamesDataSource) Schema(ctx context.Context, req datasource.
 						"created_on": schema.StringAttribute{
 							Description: "When the regional hostname was created",
 							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 						"hostname": schema.StringAttribute{
 							Description: "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",

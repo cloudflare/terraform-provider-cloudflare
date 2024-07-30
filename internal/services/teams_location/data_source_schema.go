@@ -5,6 +5,7 @@ package teams_location
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -31,7 +32,8 @@ func (r TeamsLocationDataSource) Schema(ctx context.Context, req datasource.Sche
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"dns_destination_ips_id": schema.StringAttribute{
 				Description: "The identifier of the pair of IPv4 addresses assigned to this location.",
@@ -177,9 +179,10 @@ func (r TeamsLocationDataSource) Schema(ctx context.Context, req datasource.Sche
 				},
 			},
 			"updated_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

@@ -58,7 +58,7 @@ func (r *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := ZoneResultDataSourceEnvelope{*data}
 		_, err := r.client.Zones.Get(
@@ -86,16 +86,16 @@ func (r *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 
 		page, err := r.client.Zones.List(ctx, zones.ZoneListParams{
 			Account: cloudflare.F(zones.ZoneListParamsAccount{
-				ID:   cloudflare.F(data.FindOneBy.Account.ID.ValueString()),
-				Name: cloudflare.F(data.FindOneBy.Account.Name.ValueString()),
+				ID:   cloudflare.F(data.Filter.Account.ID.ValueString()),
+				Name: cloudflare.F(data.Filter.Account.Name.ValueString()),
 			}),
-			Direction: cloudflare.F(zones.ZoneListParamsDirection(data.FindOneBy.Direction.ValueString())),
-			Match:     cloudflare.F(zones.ZoneListParamsMatch(data.FindOneBy.Match.ValueString())),
-			Name:      cloudflare.F(data.FindOneBy.Name.ValueString()),
-			Order:     cloudflare.F(zones.ZoneListParamsOrder(data.FindOneBy.Order.ValueString())),
-			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
-			Status:    cloudflare.F(zones.ZoneListParamsStatus(data.FindOneBy.Status.ValueString())),
+			Direction: cloudflare.F(zones.ZoneListParamsDirection(data.Filter.Direction.ValueString())),
+			Match:     cloudflare.F(zones.ZoneListParamsMatch(data.Filter.Match.ValueString())),
+			Name:      cloudflare.F(data.Filter.Name.ValueString()),
+			Order:     cloudflare.F(zones.ZoneListParamsOrder(data.Filter.Order.ValueString())),
+			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
+			Status:    cloudflare.F(zones.ZoneListParamsStatus(data.Filter.Status.ValueString())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

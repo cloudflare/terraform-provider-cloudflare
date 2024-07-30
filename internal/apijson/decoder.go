@@ -17,6 +17,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/tidwall/gjson"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 )
 
 // decoders is a synchronized map with roughly the following type:
@@ -408,6 +410,32 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				return nil
 			}
 			return fmt.Errorf("cannot deserialize ListValue")
+		}
+	}
+
+	if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
+		structType := t.Field(0).Type
+		decoderFunc := d.newStructTypeDecoder(structType)
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			objectValue := value.Interface().(customfield.NestedObjectLike)
+			if node.Type == gjson.Null {
+				nullValue := objectValue.NullValue(context.TODO())
+				value.Set(reflect.ValueOf(nullValue))
+				return nil
+			}
+
+			structValue := reflect.New(structType)
+			if !objectValue.IsNull() && !objectValue.IsUnknown() {
+				objPtr, _ := objectValue.ValueAny(context.TODO())
+				structValue = reflect.ValueOf(objPtr)
+			}
+			err := decoderFunc(node, structValue.Elem(), state)
+			if err != nil {
+				return err
+			}
+			updated := objectValue.KnownValue(context.TODO(), structValue.Interface())
+			value.Set(reflect.ValueOf(updated))
+			return nil
 		}
 	}
 

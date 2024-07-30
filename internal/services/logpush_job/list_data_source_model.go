@@ -8,35 +8,35 @@ import (
 )
 
 type LogpushJobsResultListDataSourceEnvelope struct {
-	Result *[]*LogpushJobsItemsDataSourceModel `json:"result,computed"`
+	Result *[]*LogpushJobsResultDataSourceModel `json:"result,computed"`
 }
 
 type LogpushJobsDataSourceModel struct {
-	AccountID types.String                        `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                        `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                         `tfsdk:"max_items"`
-	Items     *[]*LogpushJobsItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                         `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                         `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                          `tfsdk:"max_items"`
+	Result    *[]*LogpushJobsResultDataSourceModel `tfsdk:"result"`
 }
 
-type LogpushJobsItemsDataSourceModel struct {
-	ID                       types.Int64                                   `tfsdk:"id" json:"id"`
-	Dataset                  types.String                                  `tfsdk:"dataset" json:"dataset"`
-	DestinationConf          types.String                                  `tfsdk:"destination_conf" json:"destination_conf"`
-	Enabled                  types.Bool                                    `tfsdk:"enabled" json:"enabled"`
-	ErrorMessage             timetypes.RFC3339                             `tfsdk:"error_message" json:"error_message"`
-	Frequency                types.String                                  `tfsdk:"frequency" json:"frequency,computed"`
-	Kind                     types.String                                  `tfsdk:"kind" json:"kind"`
-	LastComplete             timetypes.RFC3339                             `tfsdk:"last_complete" json:"last_complete"`
-	LastError                timetypes.RFC3339                             `tfsdk:"last_error" json:"last_error"`
-	LogpullOptions           types.String                                  `tfsdk:"logpull_options" json:"logpull_options"`
-	MaxUploadBytes           types.Int64                                   `tfsdk:"max_upload_bytes" json:"max_upload_bytes"`
-	MaxUploadIntervalSeconds types.Int64                                   `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`
-	MaxUploadRecords         types.Int64                                   `tfsdk:"max_upload_records" json:"max_upload_records,computed"`
-	Name                     types.String                                  `tfsdk:"name" json:"name"`
-	OutputOptions            *LogpushJobsItemsOutputOptionsDataSourceModel `tfsdk:"output_options" json:"output_options"`
+type LogpushJobsResultDataSourceModel struct {
+	ID                       types.Int64                              `tfsdk:"id" json:"id"`
+	Dataset                  types.String                             `tfsdk:"dataset" json:"dataset"`
+	DestinationConf          types.String                             `tfsdk:"destination_conf" json:"destination_conf"`
+	Enabled                  types.Bool                               `tfsdk:"enabled" json:"enabled"`
+	ErrorMessage             timetypes.RFC3339                        `tfsdk:"error_message" json:"error_message"`
+	Frequency                types.String                             `tfsdk:"frequency" json:"frequency,computed"`
+	Kind                     types.String                             `tfsdk:"kind" json:"kind"`
+	LastComplete             timetypes.RFC3339                        `tfsdk:"last_complete" json:"last_complete"`
+	LastError                timetypes.RFC3339                        `tfsdk:"last_error" json:"last_error"`
+	LogpullOptions           types.String                             `tfsdk:"logpull_options" json:"logpull_options"`
+	MaxUploadBytes           types.Int64                              `tfsdk:"max_upload_bytes" json:"max_upload_bytes"`
+	MaxUploadIntervalSeconds types.Int64                              `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`
+	MaxUploadRecords         types.Int64                              `tfsdk:"max_upload_records" json:"max_upload_records,computed"`
+	Name                     types.String                             `tfsdk:"name" json:"name"`
+	OutputOptions            *LogpushJobsOutputOptionsDataSourceModel `tfsdk:"output_options" json:"output_options"`
 }
 
-type LogpushJobsItemsOutputOptionsDataSourceModel struct {
+type LogpushJobsOutputOptionsDataSourceModel struct {
 	BatchPrefix     types.String    `tfsdk:"batch_prefix" json:"batch_prefix,computed"`
 	BatchSuffix     types.String    `tfsdk:"batch_suffix" json:"batch_suffix,computed"`
 	Cve2021_4428    types.Bool      `tfsdk:"cve_2021_4428" json:"CVE-2021-4428,computed"`

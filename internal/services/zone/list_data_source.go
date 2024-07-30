@@ -54,10 +54,10 @@ func (r *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	items := &[]*ZonesItemsDataSourceModel{}
+	items := &[]*ZonesResultDataSourceModel{}
 	env := ZonesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ZonesItemsDataSourceModel{}
+	acc := []*ZonesResultDataSourceModel{}
 
 	page, err := r.client.Zones.List(ctx, zones.ZoneListParams{
 		Account: cloudflare.F(zones.ZoneListParamsAccount{
@@ -96,7 +96,7 @@ func (r *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

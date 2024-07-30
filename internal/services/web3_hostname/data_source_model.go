@@ -26,7 +26,7 @@ type Web3HostnameDataSourceModel struct {
 	Name           types.String                          `tfsdk:"name" json:"name,computed"`
 	Status         types.String                          `tfsdk:"status" json:"status,computed"`
 	Target         types.String                          `tfsdk:"target" json:"target"`
-	FindOneBy      *Web3HostnameFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter         *Web3HostnameFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type Web3HostnameFindOneByDataSourceModel struct {

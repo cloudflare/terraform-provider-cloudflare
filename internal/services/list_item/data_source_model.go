@@ -18,7 +18,7 @@ type ListItemDataSourceModel struct {
 	AccountIdentifier types.String                      `tfsdk:"account_identifier" path:"account_identifier"`
 	ListID            types.String                      `tfsdk:"list_id" path:"list_id"`
 	ItemID            types.String                      `tfsdk:"item_id" path:"item_id"`
-	FindOneBy         *ListItemFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter            *ListItemFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type ListItemFindOneByDataSourceModel struct {

@@ -58,7 +58,7 @@ func (r *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := SpectrumApplicationResultDataSourceEnvelope{*data}
 		_, err := r.client.Spectrum.Apps.Get(
@@ -85,12 +85,12 @@ func (r *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource
 
 		page, err := r.client.Spectrum.Apps.List(
 			ctx,
-			data.FindOneBy.Zone.ValueString(),
+			data.Filter.Zone.ValueString(),
 			spectrum.AppListParams{
-				Direction: cloudflare.F(spectrum.AppListParamsDirection(data.FindOneBy.Direction.ValueString())),
-				Order:     cloudflare.F(spectrum.AppListParamsOrder(data.FindOneBy.Order.ValueString())),
-				Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-				PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+				Direction: cloudflare.F(spectrum.AppListParamsDirection(data.Filter.Direction.ValueString())),
+				Order:     cloudflare.F(spectrum.AppListParamsOrder(data.Filter.Order.ValueString())),
+				Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
+				PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 			},
 		)
 		if err != nil {

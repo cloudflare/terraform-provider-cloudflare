@@ -5,7 +5,9 @@ package notification_policy
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -304,11 +306,35 @@ func (r NotificationPolicyResource) Schema(ctx context.Context, req resource.Sch
 				Description: "Whether the API call was successful",
 				Computed:    true,
 			},
+			"result_info": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[NotificationPolicyResultInfoModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"count": schema.Float64Attribute{
+						Description: "Total number of results for the requested service",
+						Optional:    true,
+					},
+					"page": schema.Float64Attribute{
+						Description: "Current page within paginated list of results",
+						Optional:    true,
+					},
+					"per_page": schema.Float64Attribute{
+						Description: "Number of results per page of results",
+						Optional:    true,
+					},
+					"total_count": schema.Float64Attribute{
+						Description: "Total results available without any search parameters",
+						Optional:    true,
+					},
+				},
+			},
 			"created": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"modified": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

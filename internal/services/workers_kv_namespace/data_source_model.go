@@ -20,7 +20,7 @@ type WorkersKVNamespaceDataSourceModel struct {
 	ID                  types.String                                `tfsdk:"id" json:"id,computed"`
 	Title               types.String                                `tfsdk:"title" json:"title,computed"`
 	SupportsURLEncoding types.Bool                                  `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
-	FindOneBy           *WorkersKVNamespaceFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter              *WorkersKVNamespaceFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type WorkersKVNamespaceFindOneByDataSourceModel struct {

@@ -5,6 +5,7 @@ package authenticated_origin_pulls
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -59,10 +60,12 @@ func (r AuthenticatedOriginPullsResource) Schema(ctx context.Context, req resour
 			"cert_updated_at": schema.StringAttribute{
 				Description: "The time when the certificate was updated.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"cert_uploaded_on": schema.StringAttribute{
 				Description: "The time when the certificate was uploaded.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"certificate": schema.StringAttribute{
 				Description: "The hostname certificate.",
@@ -71,6 +74,7 @@ func (r AuthenticatedOriginPullsResource) Schema(ctx context.Context, req resour
 			"created_at": schema.StringAttribute{
 				Description: "The time when the certificate was created.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.",
@@ -79,6 +83,7 @@ func (r AuthenticatedOriginPullsResource) Schema(ctx context.Context, req resour
 			"expires_on": schema.StringAttribute{
 				Description: "The date when the certificate expires.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
@@ -102,6 +107,7 @@ func (r AuthenticatedOriginPullsResource) Schema(ctx context.Context, req resour
 			"updated_at": schema.StringAttribute{
 				Description: "The time when the certificate was updated.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

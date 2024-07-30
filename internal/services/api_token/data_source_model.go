@@ -16,8 +16,8 @@ type APITokenResultListDataSourceEnvelope struct {
 }
 
 type APITokenDataSourceModel struct {
-	TokenID   jsontypes.Normalized              `tfsdk:"token_id" path:"token_id"`
-	FindOneBy *APITokenFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	TokenID jsontypes.Normalized              `tfsdk:"token_id" path:"token_id"`
+	Filter  *APITokenFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type APITokenFindOneByDataSourceModel struct {

@@ -9,29 +9,29 @@ import (
 )
 
 type NotificationPoliciesResultListDataSourceEnvelope struct {
-	Result *[]*NotificationPoliciesItemsDataSourceModel `json:"result,computed"`
+	Result *[]*NotificationPoliciesResultDataSourceModel `json:"result,computed"`
 }
 
 type NotificationPoliciesDataSourceModel struct {
-	AccountID types.String                                 `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                  `tfsdk:"max_items"`
-	Items     *[]*NotificationPoliciesItemsDataSourceModel `tfsdk:"items"`
+	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                   `tfsdk:"max_items"`
+	Result    *[]*NotificationPoliciesResultDataSourceModel `tfsdk:"result"`
 }
 
-type NotificationPoliciesItemsDataSourceModel struct {
-	ID            types.String                                     `tfsdk:"id" json:"id,computed"`
-	AlertInterval types.String                                     `tfsdk:"alert_interval" json:"alert_interval"`
-	AlertType     types.String                                     `tfsdk:"alert_type" json:"alert_type"`
-	Created       timetypes.RFC3339                                `tfsdk:"created" json:"created,computed"`
-	Description   types.String                                     `tfsdk:"description" json:"description"`
-	Enabled       types.Bool                                       `tfsdk:"enabled" json:"enabled,computed"`
-	Filters       *NotificationPoliciesItemsFiltersDataSourceModel `tfsdk:"filters" json:"filters"`
-	Mechanisms    map[string]*[]jsontypes.Normalized               `tfsdk:"mechanisms" json:"mechanisms"`
-	Modified      timetypes.RFC3339                                `tfsdk:"modified" json:"modified,computed"`
-	Name          types.String                                     `tfsdk:"name" json:"name"`
+type NotificationPoliciesResultDataSourceModel struct {
+	ID            types.String                                `tfsdk:"id" json:"id,computed"`
+	AlertInterval types.String                                `tfsdk:"alert_interval" json:"alert_interval"`
+	AlertType     types.String                                `tfsdk:"alert_type" json:"alert_type"`
+	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed"`
+	Description   types.String                                `tfsdk:"description" json:"description"`
+	Enabled       types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
+	Filters       *NotificationPoliciesFiltersDataSourceModel `tfsdk:"filters" json:"filters"`
+	Mechanisms    map[string]*[]jsontypes.Normalized          `tfsdk:"mechanisms" json:"mechanisms"`
+	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed"`
+	Name          types.String                                `tfsdk:"name" json:"name"`
 }
 
-type NotificationPoliciesItemsFiltersDataSourceModel struct {
+type NotificationPoliciesFiltersDataSourceModel struct {
 	Actions                      *[]types.String `tfsdk:"actions" json:"actions"`
 	AffectedASNs                 *[]types.String `tfsdk:"affected_asns" json:"affected_asns"`
 	AffectedComponents           *[]types.String `tfsdk:"affected_components" json:"affected_components"`

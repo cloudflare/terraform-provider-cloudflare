@@ -58,7 +58,7 @@ func (r *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := PagesDomainResultDataSourceEnvelope{*data}
 		_, err := r.client.Pages.Projects.Domains.Get(
@@ -88,9 +88,9 @@ func (r *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 		page, err := r.client.Pages.Projects.Domains.List(
 			ctx,
-			data.FindOneBy.ProjectName.ValueString(),
+			data.Filter.ProjectName.ValueString(),
 			pages.ProjectDomainListParams{
-				AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
+				AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 			},
 		)
 		if err != nil {

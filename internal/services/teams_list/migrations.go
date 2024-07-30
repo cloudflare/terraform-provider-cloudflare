@@ -5,6 +5,7 @@ package teams_list
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -50,7 +51,8 @@ func (r TeamsListResource) UpgradeState(ctx context.Context) map[int64]resource.
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"created_at": schema.StringAttribute{
-									Computed: true,
+									Computed:   true,
+									CustomType: timetypes.RFC3339Type{},
 								},
 								"description": schema.StringAttribute{
 									Description: "The description of the list item, if present",
@@ -65,10 +67,12 @@ func (r TeamsListResource) UpgradeState(ctx context.Context) map[int64]resource.
 						PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 					},
 					"created_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"updated_at": schema.StringAttribute{
-						Computed: true,
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 					"list_count": schema.Float64Attribute{
 						Description: "The number of items in the list.",

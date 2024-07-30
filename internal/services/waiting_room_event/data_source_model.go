@@ -36,7 +36,7 @@ type WaitingRoomEventDataSourceModel struct {
 	ShuffleAtEventStart   types.Bool                                `tfsdk:"shuffle_at_event_start" json:"shuffle_at_event_start,computed"`
 	Suspended             types.Bool                                `tfsdk:"suspended" json:"suspended,computed"`
 	TotalActiveUsers      types.Int64                               `tfsdk:"total_active_users" json:"total_active_users"`
-	FindOneBy             *WaitingRoomEventFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter                *WaitingRoomEventFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type WaitingRoomEventFindOneByDataSourceModel struct {

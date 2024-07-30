@@ -62,10 +62,10 @@ func (r *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*ZoneLockdownsItemsDataSourceModel{}
+	items := &[]*ZoneLockdownsResultDataSourceModel{}
 	env := ZoneLockdownsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ZoneLockdownsItemsDataSourceModel{}
+	acc := []*ZoneLockdownsResultDataSourceModel{}
 
 	page, err := r.client.Firewall.Lockdowns.List(
 		ctx,
@@ -108,7 +108,7 @@ func (r *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

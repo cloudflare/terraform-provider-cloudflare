@@ -54,10 +54,10 @@ func (r *AddressMapsDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	items := &[]*AddressMapsItemsDataSourceModel{}
+	items := &[]*AddressMapsResultDataSourceModel{}
 	env := AddressMapsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AddressMapsItemsDataSourceModel{}
+	acc := []*AddressMapsResultDataSourceModel{}
 
 	page, err := r.client.Addressing.AddressMaps.List(ctx, addressing.AddressMapListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
@@ -86,7 +86,7 @@ func (r *AddressMapsDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

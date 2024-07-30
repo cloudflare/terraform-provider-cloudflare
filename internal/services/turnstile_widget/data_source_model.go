@@ -28,7 +28,7 @@ type TurnstileWidgetDataSourceModel struct {
 	Offlabel       types.Bool                               `tfsdk:"offlabel" json:"offlabel,computed"`
 	Region         types.String                             `tfsdk:"region" json:"region,computed"`
 	Secret         types.String                             `tfsdk:"secret" json:"secret"`
-	FindOneBy      *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter         *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type TurnstileWidgetFindOneByDataSourceModel struct {

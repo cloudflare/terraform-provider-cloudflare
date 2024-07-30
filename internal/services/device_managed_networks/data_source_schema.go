@@ -54,7 +54,7 @@ func (r DeviceManagedNetworksDataSource) Schema(ctx context.Context, req datasou
 					stringvalidator.OneOfCaseInsensitive("tls"),
 				},
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

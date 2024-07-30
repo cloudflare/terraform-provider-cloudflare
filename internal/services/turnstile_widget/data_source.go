@@ -58,7 +58,7 @@ func (r *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	if data.FindOneBy == nil {
+	if data.Filter == nil {
 		res := new(http.Response)
 		env := TurnstileWidgetResultDataSourceEnvelope{*data}
 		_, err := r.client.Challenges.Widgets.Get(
@@ -86,11 +86,11 @@ func (r *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 		env := TurnstileWidgetResultListDataSourceEnvelope{items}
 
 		page, err := r.client.Challenges.Widgets.List(ctx, challenges.WidgetListParams{
-			AccountID: cloudflare.F(data.FindOneBy.AccountID.ValueString()),
-			Direction: cloudflare.F(challenges.WidgetListParamsDirection(data.FindOneBy.Direction.ValueString())),
-			Order:     cloudflare.F(challenges.WidgetListParamsOrder(data.FindOneBy.Order.ValueString())),
-			Page:      cloudflare.F(data.FindOneBy.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.FindOneBy.PerPage.ValueFloat64()),
+			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
+			Direction: cloudflare.F(challenges.WidgetListParamsDirection(data.Filter.Direction.ValueString())),
+			Order:     cloudflare.F(challenges.WidgetListParamsOrder(data.Filter.Order.ValueString())),
+			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
+			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

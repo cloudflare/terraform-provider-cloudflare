@@ -5,6 +5,7 @@ package teams_account
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -161,7 +162,8 @@ func (r TeamsAccountResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed:    true,
 							},
 							"updated_at": schema.StringAttribute{
-								Computed: true,
+								Computed:   true,
+								CustomType: timetypes.RFC3339Type{},
 							},
 						},
 					},
@@ -208,10 +210,12 @@ func (r TeamsAccountResource) Schema(ctx context.Context, req resource.SchemaReq
 				},
 			},
 			"created_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"updated_at": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

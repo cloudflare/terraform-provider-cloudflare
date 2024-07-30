@@ -25,7 +25,7 @@ type OriginCACertificateDataSourceModel struct {
 	ID                types.String                                 `tfsdk:"id" json:"id"`
 	Certificate       types.String                                 `tfsdk:"certificate" json:"certificate"`
 	ExpiresOn         timetypes.RFC3339                            `tfsdk:"expires_on" json:"expires_on"`
-	FindOneBy         *OriginCACertificateFindOneByDataSourceModel `tfsdk:"find_one_by"`
+	Filter            *OriginCACertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type OriginCACertificateFindOneByDataSourceModel struct {

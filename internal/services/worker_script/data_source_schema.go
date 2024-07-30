@@ -5,6 +5,7 @@ package worker_script
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -30,6 +31,7 @@ func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.Schem
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"etag": schema.StringAttribute{
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
@@ -42,6 +44,7 @@ func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.Schem
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"placement_mode": schema.StringAttribute{
 				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
@@ -73,7 +76,7 @@ func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{

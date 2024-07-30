@@ -26,7 +26,7 @@ func (r RecordDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -44,6 +45,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate from the authority expires.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"hosts": schema.ListAttribute{
 				Optional:    true,
@@ -56,6 +58,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			"modified_on": schema.StringAttribute{
 				Description: "When the certificate was last modified.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"priority": schema.Float64Attribute{
 				Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
@@ -76,6 +79,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			"uploaded_on": schema.StringAttribute{
 				Description: "When the certificate was uploaded to Cloudflare.",
 				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"geo_restrictions": schema.SingleNestedAttribute{
 				Description: "Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance.",
@@ -100,6 +104,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					"created_on": schema.StringAttribute{
 						Description: "When the Keyless SSL was created.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether or not the Keyless SSL is on or off.",
@@ -112,6 +117,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					"modified_on": schema.StringAttribute{
 						Description: "When the Keyless SSL was last modified.",
 						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
 					},
 					"name": schema.StringAttribute{
 						Description: "The keyless SSL name.",
@@ -154,7 +160,7 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.",
 				Optional:    true,
 			},
-			"find_one_by": schema.SingleNestedAttribute{
+			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"zone_id": schema.StringAttribute{

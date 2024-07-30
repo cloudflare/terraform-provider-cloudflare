@@ -54,10 +54,10 @@ func (r *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	items := &[]*HealthchecksItemsDataSourceModel{}
+	items := &[]*HealthchecksResultDataSourceModel{}
 	env := HealthchecksResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*HealthchecksItemsDataSourceModel{}
+	acc := []*HealthchecksResultDataSourceModel{}
 
 	page, err := r.client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
 		ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
@@ -88,7 +88,7 @@ func (r *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	acc = acc[:maxItems]
-	data.Items = &acc
+	data.Result = &acc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

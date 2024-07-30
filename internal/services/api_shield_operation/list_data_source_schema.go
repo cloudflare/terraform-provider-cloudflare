@@ -5,6 +5,8 @@ package api_shield_operation
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -89,7 +91,7 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
 			},
-			"items": schema.ListNestedAttribute{
+			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
@@ -107,7 +109,8 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 							Computed:    true,
 						},
 						"last_updated": schema.StringAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 						"method": schema.StringAttribute{
 							Description: "The HTTP method used to access the endpoint.",
@@ -126,6 +129,30 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("review", "saved", "ignored"),
+							},
+						},
+						"features": schema.SingleNestedAttribute{
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[APIShieldOperationsFeaturesDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"traffic_stats": schema.SingleNestedAttribute{
+									Computed: true,
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"last_updated": schema.StringAttribute{
+											Computed:   true,
+											CustomType: timetypes.RFC3339Type{},
+										},
+										"period_seconds": schema.Int64Attribute{
+											Description: "The period in seconds these statistics were computed over",
+											Computed:    true,
+										},
+										"requests": schema.Float64Attribute{
+											Description: "The average number of requests seen during this period",
+											Computed:    true,
+										},
+									},
+								},
 							},
 						},
 					},

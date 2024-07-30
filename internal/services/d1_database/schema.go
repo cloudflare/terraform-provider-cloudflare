@@ -5,6 +5,7 @@ package d1_database
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -41,6 +42,7 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"version": schema.StringAttribute{
 				Computed: true,
