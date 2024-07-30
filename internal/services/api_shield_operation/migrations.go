@@ -34,6 +34,7 @@ func (r APIShieldOperationResource) UpgradeState(ctx context.Context) map[int64]
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("review", "ignored"),
 						},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},

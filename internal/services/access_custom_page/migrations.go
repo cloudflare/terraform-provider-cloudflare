@@ -50,7 +50,7 @@ func (r AccessCustomPageResource) UpgradeState(ctx context.Context) map[int64]re
 					},
 					"uid": schema.StringAttribute{
 						Description:   "UUID",
-						Optional:      true,
+						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"created_at": schema.StringAttribute{

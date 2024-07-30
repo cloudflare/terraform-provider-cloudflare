@@ -14,15 +14,14 @@ type PagesProjectResultEnvelope struct {
 }
 
 type PagesProjectModel struct {
+	ID                  types.String                          `tfsdk:"id" json:"-,computed"`
 	AccountID           types.String                          `tfsdk:"account_id" path:"account_id"`
-	ProjectName         types.String                          `tfsdk:"project_name" path:"project_name"`
 	BuildConfig         *PagesProjectBuildConfigModel         `tfsdk:"build_config" json:"build_config"`
 	CanonicalDeployment *PagesProjectCanonicalDeploymentModel `tfsdk:"canonical_deployment" json:"canonical_deployment"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsModel   `tfsdk:"deployment_configs" json:"deployment_configs"`
 	LatestDeployment    *PagesProjectLatestDeploymentModel    `tfsdk:"latest_deployment" json:"latest_deployment"`
 	Name                types.String                          `tfsdk:"name" json:"name"`
 	ProductionBranch    types.String                          `tfsdk:"production_branch" json:"production_branch"`
-	ID                  types.String                          `tfsdk:"id" json:"id,computed"`
 	CreatedOn           timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed"`
 	Domains             *[]jsontypes.Normalized               `tfsdk:"domains" json:"domains,computed"`
 	Source              jsontypes.Normalized                  `tfsdk:"source" json:"source,computed"`

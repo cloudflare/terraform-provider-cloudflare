@@ -22,8 +22,9 @@ func (r CustomHostnameFallbackOriginResource) UpgradeState(ctx context.Context) 
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"origin": schema.StringAttribute{
-						Description: "Your origin hostname that requests to your custom hostnames will be sent to.",
-						Required:    true,
+						Description:   "Your origin hostname that requests to your custom hostnames will be sent to.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},

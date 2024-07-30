@@ -22,8 +22,8 @@ func (r EmailRoutingSettingsResource) UpgradeState(ctx context.Context) map[int6
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description:   "Email Routing settings identifier.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"zone_identifier": schema.StringAttribute{
 						Description:   "Identifier",

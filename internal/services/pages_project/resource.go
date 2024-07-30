@@ -87,6 +87,7 @@ func (r *PagesProjectResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -104,7 +105,7 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 	env := PagesProjectResultEnvelope{*data}
 	_, err := r.client.Pages.Projects.Get(
 		ctx,
-		data.ProjectName.ValueString(),
+		data.Name.ValueString(),
 		pages.ProjectGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -122,6 +123,7 @@ func (r *PagesProjectResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,7 +154,7 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 	env := PagesProjectResultEnvelope{*data}
 	_, err = r.client.Pages.Projects.Edit(
 		ctx,
-		data.ProjectName.ValueString(),
+		data.Name.ValueString(),
 		pages.ProjectEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -171,6 +173,7 @@ func (r *PagesProjectResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -186,7 +189,7 @@ func (r *PagesProjectResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	_, err := r.client.Pages.Projects.Delete(
 		ctx,
-		data.ProjectName.ValueString(),
+		data.Name.ValueString(),
 		pages.ProjectDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -196,6 +199,7 @@ func (r *PagesProjectResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

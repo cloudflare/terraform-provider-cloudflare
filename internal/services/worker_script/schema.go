@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -21,8 +23,8 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The id of the script in the Workers system. Usually the script name.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -35,9 +37,10 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"any_part_name": schema.ListAttribute{
-				Description: "A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.",
-				Optional:    true,
-				ElementType: types.StringType,
+				Description:   "A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.",
+				Optional:      true,
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Description: "JSON encoded metadata about the uploaded parts and Worker configuration.",
@@ -227,10 +230,12 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 						Optional:    true,
 					},
 				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"message": schema.StringAttribute{
-				Description: "Rollback message to be associated with this deployment. Only parsed when query param `\"rollback_to\"` is present.",
-				Optional:    true,
+				Description:   "Rollback message to be associated with this deployment. Only parsed when query param `\"rollback_to\"` is present.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",

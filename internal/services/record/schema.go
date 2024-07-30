@@ -43,7 +43,7 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			},
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"comment": schema.StringAttribute{

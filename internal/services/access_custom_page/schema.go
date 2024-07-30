@@ -48,7 +48,7 @@ func (r AccessCustomPageResource) Schema(ctx context.Context, req resource.Schem
 			},
 			"uid": schema.StringAttribute{
 				Description:   "UUID",
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{

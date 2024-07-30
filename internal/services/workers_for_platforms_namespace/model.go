@@ -13,7 +13,7 @@ type WorkersForPlatformsNamespaceResultEnvelope struct {
 
 type WorkersForPlatformsNamespaceModel struct {
 	ID            types.String      `tfsdk:"id" json:"-,computed"`
-	NamespaceID   types.String      `tfsdk:"namespace_id" json:"namespace_id"`
+	NamespaceID   types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
 	AccountID     types.String      `tfsdk:"account_id" path:"account_id"`
 	Name          types.String      `tfsdk:"name" json:"name"`
 	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by,computed"`

@@ -30,12 +30,14 @@ func (r WorkersKVResource) Schema(ctx context.Context, req resource.SchemaReques
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"metadata": schema.StringAttribute{
-				Description: "Arbitrary JSON to be associated with a key/value pair.",
-				Required:    true,
+				Description:   "Arbitrary JSON to be associated with a key/value pair.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.StringAttribute{
-				Description: "A byte sequence to be stored, up to 25 MiB in length.",
-				Required:    true,
+				Description:   "A byte sequence to be stored, up to 25 MiB in length.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}

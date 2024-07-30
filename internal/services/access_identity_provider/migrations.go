@@ -84,7 +84,7 @@ func (r AccessIdentityProviderResource) UpgradeState(ctx context.Context) map[in
 					},
 					"id": schema.StringAttribute{
 						Description:   "UUID",
-						Optional:      true,
+						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"scim_config": schema.SingleNestedAttribute{

@@ -27,6 +27,7 @@ func (r ArgoSmartRoutingResource) Schema(ctx context.Context, req resource.Schem
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}

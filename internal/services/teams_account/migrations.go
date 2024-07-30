@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
@@ -210,6 +211,7 @@ func (r TeamsAccountResource) UpgradeState(ctx context.Context) map[int64]resour
 								},
 							},
 						},
+						PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 					},
 					"created_at": schema.StringAttribute{
 						Computed:   true,
