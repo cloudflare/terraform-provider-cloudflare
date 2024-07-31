@@ -101,6 +101,7 @@ func (r RecordsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			},
 			"proxied": schema.BoolAttribute{
 				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"search": schema.StringAttribute{

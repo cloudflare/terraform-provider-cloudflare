@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -52,10 +53,13 @@ func (r RecordResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			},
 			"proxied": schema.BoolAttribute{
 				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+				Computed:    true,
 				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"tags": schema.ListAttribute{
 				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
+				Computed:    true,
 				Optional:    true,
 				ElementType: types.StringType,
 			},
