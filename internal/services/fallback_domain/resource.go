@@ -88,6 +88,7 @@ func (r *FallbackDomainResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -123,6 +124,7 @@ func (r *FallbackDomainResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -172,6 +174,7 @@ func (r *FallbackDomainResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 	data = &env.Result
+	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

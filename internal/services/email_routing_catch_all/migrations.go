@@ -9,8 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -23,14 +21,14 @@ func (r EmailRoutingCatchAllResource) UpgradeState(ctx context.Context) map[int6
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description:   "Routing rule identifier.",
+						Description:   "Identifier",
 						Computed:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"zone_identifier": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"actions": schema.ListNestedAttribute{
 						Description: "List actions for the catch-all routing rule.",
@@ -50,7 +48,6 @@ func (r EmailRoutingCatchAllResource) UpgradeState(ctx context.Context) map[int6
 								},
 							},
 						},
-						PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 					},
 					"matchers": schema.ListNestedAttribute{
 						Description: "List of matchers for the catch-all routing rule.",
@@ -66,19 +63,16 @@ func (r EmailRoutingCatchAllResource) UpgradeState(ctx context.Context) map[int6
 								},
 							},
 						},
-						PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 					},
 					"enabled": schema.BoolAttribute{
-						Description:   "Routing rule status.",
-						Computed:      true,
-						Optional:      true,
-						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
-						Default:       booldefault.StaticBool(true),
+						Description: "Routing rule status.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(true),
 					},
 					"name": schema.StringAttribute{
-						Description:   "Routing rule name.",
-						Optional:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Description: "Routing rule name.",
+						Optional:    true,
 					},
 					"tag": schema.StringAttribute{
 						Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",

@@ -11,7 +11,7 @@ type DLPPredefinedProfileResultEnvelope struct {
 }
 
 type DLPPredefinedProfileModel struct {
-	ID                types.String                               `tfsdk:"id" json:"id,computed"`
+	ID                types.String                               `tfsdk:"id" json:"-,computed"`
 	AccountID         types.String                               `tfsdk:"account_id" path:"account_id"`
 	ProfileID         types.String                               `tfsdk:"profile_id" path:"profile_id"`
 	AllowedMatchCount types.Float64                              `tfsdk:"allowed_match_count" json:"allowed_match_count"`

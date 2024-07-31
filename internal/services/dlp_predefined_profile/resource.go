@@ -86,6 +86,7 @@ func (r *DLPPredefinedProfileResource) Create(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -103,7 +104,7 @@ func (r *DLPPredefinedProfileResource) Read(ctx context.Context, req resource.Re
 	env := DLPPredefinedProfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Profiles.Predefined.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.ProfileID.ValueString(),
 		zero_trust.DLPProfilePredefinedGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -121,6 +122,7 @@ func (r *DLPPredefinedProfileResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 	data = &env.Result
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -150,7 +152,7 @@ func (r *DLPPredefinedProfileResource) Update(ctx context.Context, req resource.
 	res := new(http.Response)
 	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.Update(
 		ctx,
-		data.ID.ValueString(),
+		data.ProfileID.ValueString(),
 		zero_trust.DLPProfilePredefinedUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -168,6 +170,7 @@ func (r *DLPPredefinedProfileResource) Update(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

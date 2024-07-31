@@ -16,6 +16,11 @@ func (r WorkersKVResource) UpgradeState(ctx context.Context) map[int64]resource.
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"account_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
@@ -29,17 +34,15 @@ func (r WorkersKVResource) UpgradeState(ctx context.Context) map[int64]resource.
 					"key_name": schema.StringAttribute{
 						Description:   "A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"metadata": schema.StringAttribute{
-						Description:   "Arbitrary JSON to be associated with a key/value pair.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Description: "Arbitrary JSON to be associated with a key/value pair.",
+						Required:    true,
 					},
 					"value": schema.StringAttribute{
-						Description:   "A byte sequence to be stored, up to 25 MiB in length.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Description: "A byte sequence to be stored, up to 25 MiB in length.",
+						Required:    true,
 					},
 				},
 			},

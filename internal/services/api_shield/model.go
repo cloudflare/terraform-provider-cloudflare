@@ -11,6 +11,7 @@ type APIShieldResultEnvelope struct {
 }
 
 type APIShieldModel struct {
+	ID                    types.String                            `tfsdk:"id" json:"-,computed"`
 	ZoneID                types.String                            `tfsdk:"zone_id" path:"zone_id"`
 	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics"`
 	Errors                *[]*APIShieldErrorsModel                `tfsdk:"errors" json:"errors,computed"`
