@@ -5,6 +5,7 @@ package firewall_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -33,42 +34,16 @@ func (r FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaReq
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"action": schema.SingleNestedAttribute{
-				Description: "The action to perform when the threshold of matched traffic within the configured period is exceeded.",
-				Required:    true,
-				Attributes: map[string]schema.Attribute{
-					"mode": schema.StringAttribute{
-						Description: "The action to perform.",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("simulate", "ban", "challenge", "js_challenge", "managed_challenge"),
-						},
-					},
-					"response": schema.SingleNestedAttribute{
-						Description: "A custom content type and reponse to return when the threshold is exceeded. The custom response configured in this object will override the custom error for the zone. This object is optional.\nNotes: If you omit this object, Cloudflare will use the default HTML error page. If \"mode\" is \"challenge\", \"managed_challenge\", or \"js_challenge\", Cloudflare will use the zone challenge pages and you should not provide the \"response\" object.",
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"body": schema.StringAttribute{
-								Description: "The response body to return. The value must conform to the configured content type.",
-								Optional:    true,
-							},
-							"content_type": schema.StringAttribute{
-								Description: "The content type of the body. Must be one of the following: `text/plain`, `text/xml`, or `application/json`.",
-								Optional:    true,
-							},
-						},
-					},
-					"timeout": schema.Float64Attribute{
-						Description: "The time in seconds during which Cloudflare will perform the mitigation action. Must be an integer value greater than or equal to the period.\nNotes: If \"mode\" is \"challenge\", \"managed_challenge\", or \"js_challenge\", Cloudflare will use the zone's Challenge Passage time and you should not provide this value.",
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(1, 86400),
-						},
-					},
+			"action": schema.StringAttribute{
+				Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass"),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{
-				Required: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[FirewallRuleFilterModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "The unique identifier of the filter.",
@@ -88,6 +63,10 @@ func (r FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaReq
 					},
 					"ref": schema.StringAttribute{
 						Description: "A short reference tag. Allows you to select related filters.",
+						Optional:    true,
+					},
+					"deleted": schema.BoolAttribute{
+						Description: "When true, indicates that the firewall rule was deleted.",
 						Optional:    true,
 					},
 				},
