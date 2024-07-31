@@ -254,6 +254,9 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
 				Computed:    true,
 			},
+			"startup_time_ms": schema.Int64Attribute{
+				Computed: true,
+			},
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
 				Computed:    true,
