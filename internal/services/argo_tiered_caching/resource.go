@@ -87,6 +87,7 @@ func (r *ArgoTieredCachingResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -105,7 +106,7 @@ func (r *ArgoTieredCachingResource) Read(ctx context.Context, req resource.ReadR
 	_, err := r.client.Argo.TieredCaching.Get(
 		ctx,
 		argo.TieredCachingGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -121,6 +122,7 @@ func (r *ArgoTieredCachingResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,7 +154,7 @@ func (r *ArgoTieredCachingResource) Update(ctx context.Context, req resource.Upd
 	_, err = r.client.Argo.TieredCaching.Edit(
 		ctx,
 		argo.TieredCachingEditParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -169,6 +171,7 @@ func (r *ArgoTieredCachingResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

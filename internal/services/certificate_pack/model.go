@@ -11,7 +11,7 @@ type CertificatePackResultEnvelope struct {
 }
 
 type CertificatePackModel struct {
-	ID                   types.String    `tfsdk:"id" json:"id,computed"`
+	ID                   types.String    `tfsdk:"id" json:"-,computed"`
 	ZoneID               types.String    `tfsdk:"zone_id" path:"zone_id"`
 	CertificatePackID    types.String    `tfsdk:"certificate_pack_id" path:"certificate_pack_id"`
 	CertificateAuthority types.String    `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
