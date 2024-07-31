@@ -17,17 +17,17 @@ description: |-
 
 - `account_id` (String) Identifier
 - `app_count` (Number) The number of applications that have this tag
-- `created_at` (String)
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `tag_name` (String) The name of the tag
-- `updated_at` (String)
 
 ### Read-Only
 
+- `created_at` (String)
 - `name` (String) The name of the tag
+- `updated_at` (String)
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

@@ -34,18 +34,27 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Read-Only:
 
+- `configurations` (Attributes) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--result--configurations))
 - `created_on` (String) The timestamp of when the rule was created.
 - `description` (String) An informative summary of the rule.
 - `id` (String) The unique identifier of the Zone Lockdown rule.
 - `modified_on` (String) The timestamp of when the rule was last modified.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
 - `urls` (List of String) The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
+
+<a id="nestedatt--result--configurations"></a>
+### Nested Schema for `result.configurations`
+
+Optional:
+
+- `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.
+- `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.
 
 

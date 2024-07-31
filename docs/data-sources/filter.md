@@ -17,14 +17,14 @@ description: |-
 
 - `description` (String) An informative summary of the filter.
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The unique identifier of the filter.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
 - `zone_identifier` (String) Identifier
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

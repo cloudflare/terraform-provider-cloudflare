@@ -34,6 +34,10 @@ resource "cloudflare_worker_secret" "my_secret" {
 - `text` (String) The value of the secret.
 - `type` (String) The type of secret to put.
 
+### Read-Only
+
+- `id` (String) Name of the script, used in URLs and route configuration.
+
 ## Import
 
 Import is supported using the following syntax:

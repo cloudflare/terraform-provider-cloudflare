@@ -18,15 +18,15 @@ description: |-
 - `account_id` (String)
 - `domain_id` (String) Identifer of the Worker Domain.
 - `environment` (String) Worker environment associated with the zone and hostname.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `hostname` (String) Hostname of the Worker Domain.
 - `id` (String) Identifer of the Worker Domain.
 - `service` (String) Worker service associated with the zone and hostname.
 - `zone_id` (String) Identifier of the zone.
 - `zone_name` (String) Name of the zone.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

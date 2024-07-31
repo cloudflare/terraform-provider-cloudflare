@@ -38,6 +38,46 @@ resource "cloudflare_api_shield_schema" "petstore_schema" {
 ### Read-Only
 
 - `created_at` (String)
+- `schema` (Attributes) (see [below for nested schema](#nestedatt--schema))
 - `source` (String) Source of the schema
+- `upload_details` (Attributes) (see [below for nested schema](#nestedatt--upload_details))
+
+<a id="nestedatt--schema"></a>
+### Nested Schema for `schema`
+
+Required:
+
+- `kind` (String) Kind of schema
+- `name` (String) Name of the schema
+- `schema_id` (String) UUID
+
+Optional:
+
+- `source` (String) Source of the schema
+- `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
+
+Read-Only:
+
+- `created_at` (String)
+
+
+<a id="nestedatt--upload_details"></a>
+### Nested Schema for `upload_details`
+
+Optional:
+
+- `warnings` (Attributes List) Diagnostic warning events that occurred during processing. These events are non-critical errors found within the schema. (see [below for nested schema](#nestedatt--upload_details--warnings))
+
+<a id="nestedatt--upload_details--warnings"></a>
+### Nested Schema for `upload_details.warnings`
+
+Required:
+
+- `code` (Number) Code that identifies the event that occurred.
+
+Optional:
+
+- `locations` (List of String) JSONPath location(s) in the schema where these events were encountered.  See [https://goessner.net/articles/JsonPath/](https://goessner.net/articles/JsonPath/) for JSONPath specification.
+- `message` (String) Diagnostic message that describes the event.
 
 

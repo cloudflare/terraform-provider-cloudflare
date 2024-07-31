@@ -42,4 +42,8 @@ A special value of of `none` will skip running schema validation entirely for th
 
 To clear any override, use the special value `disable_override` or `null`
 
+### Read-Only
+
+- `id` (String) Identifier
+
 

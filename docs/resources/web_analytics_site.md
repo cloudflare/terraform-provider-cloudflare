@@ -36,6 +36,7 @@ resource "cloudflare_web_analytics_site" "example" {
 - `created` (String)
 - `id` (String) The Web Analytics site identifier.
 - `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--rules))
+- `ruleset` (Attributes) (see [below for nested schema](#nestedatt--ruleset))
 - `site_tag` (String) The Web Analytics site identifier.
 - `site_token` (String) The Web Analytics site token.
 - `snippet` (String) Encoded JavaScript snippet.
@@ -55,6 +56,17 @@ Optional:
 Read-Only:
 
 - `created` (String)
+
+
+<a id="nestedatt--ruleset"></a>
+### Nested Schema for `ruleset`
+
+Optional:
+
+- `enabled` (Boolean) Whether the ruleset is enabled.
+- `id` (String) The Web Analytics ruleset identifier.
+- `zone_name` (String)
+- `zone_tag` (String) The zone identifier.
 
 ## Import
 

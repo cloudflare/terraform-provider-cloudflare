@@ -23,10 +23,10 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
@@ -39,24 +39,25 @@ Optional:
 - `description` (String) A description of the policy.
 - `disable_auto_fallback` (Boolean) If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.
 - `enabled` (Boolean) Whether the policy will be applied to matching devices.
-- `exclude` (Attributes List) (see [below for nested schema](#nestedatt--items--exclude))
+- `exclude` (Attributes List) (see [below for nested schema](#nestedatt--result--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
-- `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--items--fallback_domains))
+- `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--result--fallback_domains))
 - `gateway_unique_id` (String)
-- `include` (Attributes List) (see [below for nested schema](#nestedatt--items--include))
+- `include` (Attributes List) (see [below for nested schema](#nestedatt--result--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
 - `lan_allow_subnet_size` (Number) The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.
 - `match` (String) The wirefilter expression to match devices.
 - `name` (String) The name of the device settings profile.
 - `policy_id` (String) Device ID.
 - `precedence` (Number) The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.
-- `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--items--service_mode_v2))
+- `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--result--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
-- `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--items--target_tests))
+- `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--result--target_tests))
+- `tunnel_protocol` (String) Determines which tunnel protocol to use.
 
-<a id="nestedatt--items--exclude"></a>
-### Nested Schema for `items.exclude`
+<a id="nestedatt--result--exclude"></a>
+### Nested Schema for `result.exclude`
 
 Optional:
 
@@ -68,8 +69,8 @@ Read-Only:
 - `description` (String) A description of the Split Tunnel item, displayed in the client UI.
 
 
-<a id="nestedatt--items--fallback_domains"></a>
-### Nested Schema for `items.fallback_domains`
+<a id="nestedatt--result--fallback_domains"></a>
+### Nested Schema for `result.fallback_domains`
 
 Optional:
 
@@ -81,8 +82,8 @@ Read-Only:
 - `suffix` (String) The domain suffix to match when resolving locally.
 
 
-<a id="nestedatt--items--include"></a>
-### Nested Schema for `items.include`
+<a id="nestedatt--result--include"></a>
+### Nested Schema for `result.include`
 
 Optional:
 
@@ -94,8 +95,8 @@ Read-Only:
 - `description` (String) A description of the split tunnel item, displayed in the client UI.
 
 
-<a id="nestedatt--items--service_mode_v2"></a>
-### Nested Schema for `items.service_mode_v2`
+<a id="nestedatt--result--service_mode_v2"></a>
+### Nested Schema for `result.service_mode_v2`
 
 Optional:
 
@@ -103,8 +104,8 @@ Optional:
 - `port` (Number) The port number when used with proxy mode.
 
 
-<a id="nestedatt--items--target_tests"></a>
-### Nested Schema for `items.target_tests`
+<a id="nestedatt--result--target_tests"></a>
+### Nested Schema for `result.target_tests`
 
 Optional:
 

@@ -15,13 +15,13 @@ description: |-
 
 ### Required
 
-- `id` (String) The identifier of the caching setting
 - `value` (String) Enables Tiered Caching.
 - `zone_id` (String) Identifier
 
 ### Read-Only
 
 - `editable` (Boolean) Whether the setting is editable
+- `id` (String) Identifier
 - `modified_on` (String) The time when the setting was last modified
 
 

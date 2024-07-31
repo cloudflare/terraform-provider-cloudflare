@@ -28,6 +28,7 @@ resource "cloudflare_zone_hold" "example" {
 
 - `hold` (Boolean)
 - `hold_after` (String)
+- `id` (String) Identifier
 - `include_subdomains` (String)
 
 ## Import

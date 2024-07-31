@@ -31,30 +31,31 @@ data "cloudflare_device_posture_rules" "example" {
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `description` (String) The description of the device posture rule.
 - `expiration` (String) Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.
 - `id` (String) API UUID.
-- `input` (Attributes) The value to be checked against. (see [below for nested schema](#nestedatt--items--input))
-- `match` (Attributes List) The conditions that the client must match to run the rule. (see [below for nested schema](#nestedatt--items--match))
+- `input` (Attributes) The value to be checked against. (see [below for nested schema](#nestedatt--result--input))
+- `match` (Attributes List) The conditions that the client must match to run the rule. (see [below for nested schema](#nestedatt--result--match))
 - `name` (String) The name of the device posture rule.
 - `schedule` (String) Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.
 - `type` (String) The type of device posture rule.
 
-<a id="nestedatt--items--input"></a>
-### Nested Schema for `items.input`
+<a id="nestedatt--result--input"></a>
+### Nested Schema for `result.input`
 
 Optional:
 
 - `active_threats` (Number) The Number of active threats.
 - `certificate_id` (String) UUID of Cloudflare managed certificate.
-- `check_disks` (String) List of volume names to be checked for encryption.
+- `check_disks` (List of String) List of volume names to be checked for encryption.
+- `check_private_key` (Boolean) Confirm the certificate was not imported from another device. We recommend keeping this enabled unless the certificate was deployed without a private key.
 - `cn` (String) Common Name that is protected by the certificate
 - `compliance_status` (String) Compliance Status
 - `connection_id` (String) Posture Integration ID.
@@ -63,11 +64,13 @@ Optional:
 - `eid_last_seen` (String) For more details on eid last seen, refer to the Tanium documentation.
 - `enabled` (Boolean) Enabled
 - `exists` (Boolean) Whether or not file exists
+- `extended_key_usage` (List of String) List of values indicating purposes for which the certificate public key can be used
 - `id` (String) List ID.
 - `infected` (Boolean) Whether device is infected.
 - `is_active` (Boolean) Whether device is active.
 - `issue_count` (String) The Number of Issues.
 - `last_seen` (String) For more details on last seen, please refer to the Crowdstrike documentation.
+- `locations` (Attributes) (see [below for nested schema](#nestedatt--result--input--locations))
 - `network_status` (String) Network status of device.
 - `operating_system` (String) Operating system
 - `operator` (String) operator
@@ -88,9 +91,18 @@ Optional:
 - `version` (String) Version of OS
 - `version_operator` (String) Version Operator
 
+<a id="nestedatt--result--input--locations"></a>
+### Nested Schema for `result.input.locations`
 
-<a id="nestedatt--items--match"></a>
-### Nested Schema for `items.match`
+Optional:
+
+- `paths` (List of String) List of paths to check for client certificate on linux.
+- `trust_stores` (List of String) List of trust stores to check for client certificate.
+
+
+
+<a id="nestedatt--result--match"></a>
+### Nested Schema for `result.match`
 
 Optional:
 

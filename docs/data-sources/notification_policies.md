@@ -23,16 +23,17 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
+- `alert_interval` (String) Optional specification of how often to re-alert from the same incident, not support on all alert types.
 - `alert_type` (String) Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.
 - `description` (String) Optional description for the Notification policy.
-- `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--items--filters))
+- `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--result--filters))
 - `mechanisms` (Map of List of String) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
 - `name` (String) Name of the policy.
 
@@ -43,18 +44,18 @@ Read-Only:
 - `id` (String) The unique identifier of a notification policy
 - `modified` (String)
 
-<a id="nestedatt--items--filters"></a>
-### Nested Schema for `items.filters`
+<a id="nestedatt--result--filters"></a>
+### Nested Schema for `result.filters`
 
 Optional:
 
 - `actions` (List of String) Usage depends on specific alert type
 - `affected_asns` (List of String) Used for configuring radar_notification
-- `affected_components` (List of String) Used for configuring incident_alert. A list of identifiers for each component to monitor.
+- `affected_components` (List of String) Used for configuring incident_alert
 - `affected_locations` (List of String) Used for configuring radar_notification
 - `airport_code` (List of String) Used for configuring maintenance_event_notification
 - `alert_trigger_preferences` (List of String) Usage depends on specific alert type
-- `alert_trigger_preferences_value` (List of String) Used for configuring magic_tunnel_health_check_event
+- `alert_trigger_preferences_value` (List of String) Usage depends on specific alert type
 - `enabled` (List of String) Used for configuring load_balancing_pool_enablement_alert
 - `environment` (List of String) Used for configuring pages_event_alert
 - `event` (List of String) Used for configuring pages_event_alert
@@ -85,7 +86,7 @@ Optional:
 - `target_zone_name` (List of String) Used for configuring advanced_ddos_attack_l7_alert
 - `traffic_exclusions` (List of String) Used for configuring traffic_anomalies_alert
 - `tunnel_id` (List of String) Used for configuring tunnel_health_event
-- `tunnel_name` (List of String) Used for configuring magic_tunnel_health_check_event
+- `tunnel_name` (List of String) Usage depends on specific alert type
 - `where` (List of String) Usage depends on specific alert type
 - `zones` (List of String) Usage depends on specific alert type
 

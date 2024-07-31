@@ -74,13 +74,13 @@ Required:
 Optional:
 
 - `description` (String) An optional human provided description of the static route.
+- `id` (String) Identifier
 - `scope` (Attributes) Used only for ECMP routes. (see [below for nested schema](#nestedatt--routes--scope))
 - `weight` (Number) Optional weight of the ECMP scope - if provided.
 
 Read-Only:
 
 - `created_on` (String) When the route was created.
-- `id` (String) Identifier
 - `modified_on` (String) When the route was last modified.
 
 <a id="nestedatt--routes--scope"></a>

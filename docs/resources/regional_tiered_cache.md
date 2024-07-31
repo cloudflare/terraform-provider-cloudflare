@@ -22,7 +22,6 @@ resource "cloudflare_regional_tiered_cache" "example" {
 
 ### Required
 
-- `id` (String) ID of the zone setting.
 - `zone_id` (String) Identifier
 
 ### Optional
@@ -31,6 +30,7 @@ resource "cloudflare_regional_tiered_cache" "example" {
 
 ### Read-Only
 
+- `id` (String) Identifier
 - `modified_on` (String) last time this setting was modified.
 
 ## Import

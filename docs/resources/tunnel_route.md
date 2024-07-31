@@ -43,6 +43,7 @@ resource "cloudflare_tunnel_route" "example" {
 
 - `account_id` (String) Cloudflare account ID
 - `network` (String) The private IPv4 or IPv6 range connected by the route, in CIDR notation.
+- `tunnel_id` (String) UUID of the tunnel.
 
 ### Optional
 
@@ -54,7 +55,6 @@ resource "cloudflare_tunnel_route" "example" {
 - `created_at` (String) Timestamp of when the resource was created.
 - `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
 - `id` (String) UUID of the route.
-- `tunnel_id` (String) UUID of the tunnel.
 
 ## Import
 

@@ -29,10 +29,10 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
@@ -44,7 +44,23 @@ Optional:
 Read-Only:
 
 - `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--result--filter))
 - `id` (String) The unique identifier of the firewall rule.
 - `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
+
+<a id="nestedatt--result--filter"></a>
+### Nested Schema for `result.filter`
+
+Optional:
+
+- `deleted` (Boolean) When true, indicates that the firewall rule was deleted.
+- `description` (String) An informative summary of the filter.
+- `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
+- `paused` (Boolean) When true, indicates that the filter is currently paused.
+- `ref` (String) A short reference tag. Allows you to select related filters.
+
+Read-Only:
+
+- `id` (String) The unique identifier of the filter.
 
 

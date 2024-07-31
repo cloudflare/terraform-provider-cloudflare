@@ -23,29 +23,29 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `adaptive_routing` (Attributes) Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin. (see [below for nested schema](#nestedatt--items--adaptive_routing))
+- `adaptive_routing` (Attributes) Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin. (see [below for nested schema](#nestedatt--result--adaptive_routing))
 - `country_pools` (String) A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.
 - `default_pools` (List of String) A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.
 - `description` (String) Object description.
 - `fallback_pool` (String) The pool ID to use when all other pools are detected as unhealthy.
 - `id` (String)
-- `location_strategy` (Attributes) Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected. (see [below for nested schema](#nestedatt--items--location_strategy))
+- `location_strategy` (Attributes) Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected. (see [below for nested schema](#nestedatt--result--location_strategy))
 - `name` (String) The DNS hostname to associate with your Load Balancer. If this hostname already exists as a DNS record in Cloudflare's DNS, the Load Balancer will take precedence and the DNS record will not be used.
 - `pop_pools` (String) (Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.
 - `random_steering` (Attributes) Configures pool weights.
 - `steering_policy="random"`: A random pool is selected with probability proportional to pool weights.
 - `steering_policy="least_outstanding_requests"`: Use pool weights to scale each pool's outstanding requests.
-- `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--items--random_steering))
+- `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--result--random_steering))
 - `region_pools` (String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
-- `rules` (Attributes List) BETA Field Not General Access: A list of rules for this load balancer to execute. (see [below for nested schema](#nestedatt--items--rules))
-- `session_affinity_attributes` (Attributes) Configures attributes for session affinity. (see [below for nested schema](#nestedatt--items--session_affinity_attributes))
+- `rules` (Attributes List) BETA Field Not General Access: A list of rules for this load balancer to execute. (see [below for nested schema](#nestedatt--result--rules))
+- `session_affinity_attributes` (Attributes) Configures attributes for session affinity. (see [below for nested schema](#nestedatt--result--session_affinity_attributes))
 - `session_affinity_ttl` (Number) Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are:
 - `"cookie"` / `"ip_cookie"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800].
 - `"header"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.
@@ -71,16 +71,16 @@ Read-Only:
 - `"least_connections"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.
 - `""`: Will map to `"geo"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`.
 
-<a id="nestedatt--items--adaptive_routing"></a>
-### Nested Schema for `items.adaptive_routing`
+<a id="nestedatt--result--adaptive_routing"></a>
+### Nested Schema for `result.adaptive_routing`
 
 Read-Only:
 
 - `failover_across_pools` (Boolean) Extends zero-downtime failover of requests to healthy origins from alternate pools, when no healthy alternate exists in the same pool, according to the failover order defined by traffic and origin steering. When set false (the default) zero-downtime failover will only occur between origins within the same pool. See `session_affinity_attributes` for control over when sessions are broken or reassigned.
 
 
-<a id="nestedatt--items--location_strategy"></a>
-### Nested Schema for `items.location_strategy`
+<a id="nestedatt--result--location_strategy"></a>
+### Nested Schema for `result.location_strategy`
 
 Read-Only:
 
@@ -94,8 +94,8 @@ Read-Only:
 - `"geo"`: Prefer ECS only when `steering_policy="geo"`.
 
 
-<a id="nestedatt--items--random_steering"></a>
-### Nested Schema for `items.random_steering`
+<a id="nestedatt--result--random_steering"></a>
+### Nested Schema for `result.random_steering`
 
 Optional:
 
@@ -106,15 +106,15 @@ Read-Only:
 - `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map.
 
 
-<a id="nestedatt--items--rules"></a>
-### Nested Schema for `items.rules`
+<a id="nestedatt--result--rules"></a>
+### Nested Schema for `result.rules`
 
 Optional:
 
 - `condition` (String) The condition expressions to evaluate. If the condition evaluates to true, the overrides or fixed_response in this rule will be applied. An empty condition is always true. For more details on condition expressions, please see https://developers.cloudflare.com/load-balancing/understand-basics/load-balancing-rules/expressions.
-- `fixed_response` (Attributes) A collection of fields used to directly respond to the eyeball instead of routing to a pool. If a fixed_response is supplied the rule will be marked as terminates. (see [below for nested schema](#nestedatt--items--rules--fixed_response))
+- `fixed_response` (Attributes) A collection of fields used to directly respond to the eyeball instead of routing to a pool. If a fixed_response is supplied the rule will be marked as terminates. (see [below for nested schema](#nestedatt--result--rules--fixed_response))
 - `name` (String) Name of this rule. Only used for human readability.
-- `overrides` (Attributes) A collection of overrides to apply to the load balancer when this rule's condition is true. All fields are optional. (see [below for nested schema](#nestedatt--items--rules--overrides))
+- `overrides` (Attributes) A collection of overrides to apply to the load balancer when this rule's condition is true. All fields are optional. (see [below for nested schema](#nestedatt--result--rules--overrides))
 
 Read-Only:
 
@@ -122,8 +122,8 @@ Read-Only:
 - `priority` (Number) The order in which rules should be executed in relation to each other. Lower values are executed first. Values do not need to be sequential. If no value is provided for any rule the array order of the rules field will be used to assign a priority.
 - `terminates` (Boolean) If this rule's condition is true, this causes rule evaluation to stop after processing this rule.
 
-<a id="nestedatt--items--rules--fixed_response"></a>
-### Nested Schema for `items.rules.fixed_response`
+<a id="nestedatt--result--rules--fixed_response"></a>
+### Nested Schema for `result.rules.fixed_response`
 
 Optional:
 
@@ -133,23 +133,23 @@ Optional:
 - `status_code` (Number) The http status code to respond with.
 
 
-<a id="nestedatt--items--rules--overrides"></a>
-### Nested Schema for `items.rules.overrides`
+<a id="nestedatt--result--rules--overrides"></a>
+### Nested Schema for `result.rules.overrides`
 
 Optional:
 
-- `adaptive_routing` (Attributes) Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin. (see [below for nested schema](#nestedatt--items--rules--overrides--adaptive_routing))
+- `adaptive_routing` (Attributes) Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin. (see [below for nested schema](#nestedatt--result--rules--overrides--adaptive_routing))
 - `country_pools` (String) A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.
 - `default_pools` (List of String) A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.
 - `fallback_pool` (String) The pool ID to use when all other pools are detected as unhealthy.
-- `location_strategy` (Attributes) Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected. (see [below for nested schema](#nestedatt--items--rules--overrides--location_strategy))
+- `location_strategy` (Attributes) Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected. (see [below for nested schema](#nestedatt--result--rules--overrides--location_strategy))
 - `pop_pools` (String) (Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.
 - `random_steering` (Attributes) Configures pool weights.
 - `steering_policy="random"`: A random pool is selected with probability proportional to pool weights.
 - `steering_policy="least_outstanding_requests"`: Use pool weights to scale each pool's outstanding requests.
-- `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--items--rules--overrides--random_steering))
+- `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--result--rules--overrides--random_steering))
 - `region_pools` (String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
-- `session_affinity_attributes` (Attributes) Configures attributes for session affinity. (see [below for nested schema](#nestedatt--items--rules--overrides--session_affinity_attributes))
+- `session_affinity_attributes` (Attributes) Configures attributes for session affinity. (see [below for nested schema](#nestedatt--result--rules--overrides--session_affinity_attributes))
 - `session_affinity_ttl` (Number) Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are:
 - `"cookie"` / `"ip_cookie"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800].
 - `"header"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.
@@ -171,16 +171,16 @@ Read-Only:
 - `"least_connections"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.
 - `""`: Will map to `"geo"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`.
 
-<a id="nestedatt--items--rules--overrides--adaptive_routing"></a>
-### Nested Schema for `items.rules.overrides.steering_policy`
+<a id="nestedatt--result--rules--overrides--adaptive_routing"></a>
+### Nested Schema for `result.rules.overrides.steering_policy`
 
 Read-Only:
 
 - `failover_across_pools` (Boolean) Extends zero-downtime failover of requests to healthy origins from alternate pools, when no healthy alternate exists in the same pool, according to the failover order defined by traffic and origin steering. When set false (the default) zero-downtime failover will only occur between origins within the same pool. See `session_affinity_attributes` for control over when sessions are broken or reassigned.
 
 
-<a id="nestedatt--items--rules--overrides--location_strategy"></a>
-### Nested Schema for `items.rules.overrides.steering_policy`
+<a id="nestedatt--result--rules--overrides--location_strategy"></a>
+### Nested Schema for `result.rules.overrides.steering_policy`
 
 Read-Only:
 
@@ -194,8 +194,8 @@ Read-Only:
 - `"geo"`: Prefer ECS only when `steering_policy="geo"`.
 
 
-<a id="nestedatt--items--rules--overrides--random_steering"></a>
-### Nested Schema for `items.rules.overrides.steering_policy`
+<a id="nestedatt--result--rules--overrides--random_steering"></a>
+### Nested Schema for `result.rules.overrides.steering_policy`
 
 Optional:
 
@@ -206,8 +206,8 @@ Read-Only:
 - `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map.
 
 
-<a id="nestedatt--items--rules--overrides--session_affinity_attributes"></a>
-### Nested Schema for `items.rules.overrides.steering_policy`
+<a id="nestedatt--result--rules--overrides--session_affinity_attributes"></a>
+### Nested Schema for `result.rules.overrides.steering_policy`
 
 Optional:
 
@@ -229,8 +229,8 @@ Read-Only:
 
 
 
-<a id="nestedatt--items--session_affinity_attributes"></a>
-### Nested Schema for `items.session_affinity_attributes`
+<a id="nestedatt--result--session_affinity_attributes"></a>
+### Nested Schema for `result.session_affinity_attributes`
 
 Optional:
 

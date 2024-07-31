@@ -18,7 +18,7 @@ description: |-
 - `account_id` (String) Identifier
 - `description` (String) Object description.
 - `expected_body` (String) A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `header` (String) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
 - `monitor_id` (String)
 - `probe_zone` (String) Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.
@@ -41,8 +41,8 @@ description: |-
 - `timeout` (Number) The timeout (in seconds) before marking the health check as failed.
 - `type` (String) The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS', 'TCP', 'ICMP-PING', 'UDP-ICMP', and 'SMTP'.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

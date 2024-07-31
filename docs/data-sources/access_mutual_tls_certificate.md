@@ -16,14 +16,17 @@ description: |-
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `associated_hostnames` (String) The hostnames of the applications that will use this certificate.
+- `associated_hostnames` (List of String) The hostnames of the applications that will use this certificate.
 - `certificate_id` (String) UUID
-- `created_at` (String)
 - `expires_on` (String)
 - `fingerprint` (String) The MD5 fingerprint of the certificate.
 - `id` (String) The ID of the application that will use this certificate.
 - `name` (String) The name of the certificate.
-- `updated_at` (String)
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+
+### Read-Only
+
+- `created_at` (String)
+- `updated_at` (String)
 
 

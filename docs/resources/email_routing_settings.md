@@ -22,13 +22,13 @@ resource "cloudflare_email_routing_settings" "my_zone" {
 
 ### Required
 
-- `id` (String) Email Routing settings identifier.
 - `zone_identifier` (String) Identifier
 
 ### Read-Only
 
 - `created` (String) The date and time the settings have been created.
 - `enabled` (Boolean) State of the zone settings for Email Routing.
+- `id` (String) Identifier
 - `modified` (String) The date and time the settings have been modified.
 - `name` (String) Domain of your zone.
 - `skip_wizard` (Boolean) Flag to check if the user skipped the configuration wizard.

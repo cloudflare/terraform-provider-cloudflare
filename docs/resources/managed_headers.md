@@ -36,6 +36,10 @@ resource "cloudflare_managed_headers" "example" {
 - `managed_response_headers` (Attributes List) (see [below for nested schema](#nestedatt--managed_response_headers))
 - `zone_id` (String) Identifier
 
+### Read-Only
+
+- `id` (String) Identifier
+
 <a id="nestedatt--managed_request_headers"></a>
 ### Nested Schema for `managed_request_headers`
 

@@ -27,15 +27,15 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `geo_restrictions` (Attributes) Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance. (see [below for nested schema](#nestedatt--items--geo_restrictions))
-- `keyless_server` (Attributes) (see [below for nested schema](#nestedatt--items--keyless_server))
+- `geo_restrictions` (Attributes) Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance. (see [below for nested schema](#nestedatt--result--geo_restrictions))
+- `keyless_server` (Attributes) (see [below for nested schema](#nestedatt--result--keyless_server))
 - `policy` (String) Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.
 
 Read-Only:
@@ -52,20 +52,20 @@ Read-Only:
 - `uploaded_on` (String) When the certificate was uploaded to Cloudflare.
 - `zone_id` (String) Identifier
 
-<a id="nestedatt--items--geo_restrictions"></a>
-### Nested Schema for `items.geo_restrictions`
+<a id="nestedatt--result--geo_restrictions"></a>
+### Nested Schema for `result.geo_restrictions`
 
 Optional:
 
 - `label` (String)
 
 
-<a id="nestedatt--items--keyless_server"></a>
-### Nested Schema for `items.keyless_server`
+<a id="nestedatt--result--keyless_server"></a>
+### Nested Schema for `result.keyless_server`
 
 Optional:
 
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--items--keyless_server--tunnel))
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--result--keyless_server--tunnel))
 
 Read-Only:
 
@@ -79,8 +79,8 @@ Read-Only:
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
 
-<a id="nestedatt--items--keyless_server--tunnel"></a>
-### Nested Schema for `items.keyless_server.tunnel`
+<a id="nestedatt--result--keyless_server--tunnel"></a>
+### Nested Schema for `result.keyless_server.tunnel`
 
 Read-Only:
 

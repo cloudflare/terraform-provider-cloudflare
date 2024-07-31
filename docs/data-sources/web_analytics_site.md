@@ -17,7 +17,7 @@ description: |-
 
 - `account_id` (String) Identifier
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--rules))
 - `ruleset` (Attributes) (see [below for nested schema](#nestedatt--ruleset))
 - `site_id` (String) Identifier
@@ -29,8 +29,8 @@ description: |-
 
 - `created` (String)
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -52,7 +52,7 @@ Optional:
 - `id` (String) The Web Analytics rule identifier.
 - `inclusive` (Boolean) Whether the rule includes or excludes traffic from being measured.
 - `is_paused` (Boolean) Whether the rule is paused or not.
-- `paths` (String) The paths the rule will be applied to.
+- `paths` (List of String) The paths the rule will be applied to.
 - `priority` (Number)
 
 Read-Only:

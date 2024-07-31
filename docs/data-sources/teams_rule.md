@@ -17,12 +17,11 @@ description: |-
 
 - `account_id` (String)
 - `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
-- `created_at` (String)
 - `description` (String) The description of the rule.
 - `device_posture` (String) The wirefilter expression used for device posture check matching.
 - `enabled` (Boolean) True if the rule is enabled.
-- `filters` (String) The protocol or layer to evaluate the traffic, identity, and device posture expressions.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+- `filters` (List of String) The protocol or layer to evaluate the traffic, identity, and device posture expressions.
 - `id` (String) The API resource UUID.
 - `identity` (String) The wirefilter expression used for identity matching.
 - `name` (String) The name of the rule.
@@ -31,14 +30,15 @@ description: |-
 - `rule_settings` (Attributes) Additional settings that modify the rule's action. (see [below for nested schema](#nestedatt--rule_settings))
 - `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--schedule))
 - `traffic` (String) The wirefilter expression used for traffic matching.
-- `updated_at` (String)
 
 ### Read-Only
 
+- `created_at` (String)
 - `deleted_at` (String) Date of deletion, if any.
+- `updated_at` (String)
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -67,7 +67,7 @@ Optional:
 - `l4override` (Attributes) Send matching traffic to the supplied destination IP address and port. (see [below for nested schema](#nestedatt--rule_settings--l4override))
 - `notification_settings` (Attributes) Configure a notification to display on the user's device when this rule is matched. (see [below for nested schema](#nestedatt--rule_settings--notification_settings))
 - `override_host` (String) Override matching DNS queries with a hostname.
-- `override_ips` (String) Override matching DNS queries with an IP or set of IPs.
+- `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
 - `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--rule_settings--payload_log))
 - `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when dns_resolvers are specified. Only valid when a rule's action is set to 'resolve'.
 - `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--rule_settings--untrusted_cert))

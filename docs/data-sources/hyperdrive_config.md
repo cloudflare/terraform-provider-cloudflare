@@ -17,7 +17,7 @@ description: |-
 
 - `account_id` (String) Identifier
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--caching))
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `hyperdrive_id` (String) Identifier
 - `name` (String)
 - `origin` (Attributes) (see [below for nested schema](#nestedatt--origin))
@@ -32,8 +32,8 @@ Optional:
 - `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. (Default: 15)
 
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -43,11 +43,15 @@ Required:
 <a id="nestedatt--origin"></a>
 ### Nested Schema for `origin`
 
+Optional:
+
+- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
+
 Read-Only:
 
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 - `user` (String) The user of your origin database.
 

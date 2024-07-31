@@ -21,16 +21,16 @@ description: |-
 
 - `max_items` (Number) Max items to fetch, default: 1000
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
-- `page` (String) Page number of paginated results.
-- `per_page` (String) Maximum number of results per page.
+- `page` (Number) Page number of paginated results.
+- `per_page` (Number) Maximum number of results per page.
 - `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
@@ -42,6 +42,6 @@ Read-Only:
 - `created_at` (String)
 - `kind` (String) Kind of schema
 - `name` (String) Name of the schema
-- `schema_id` (String) UUID identifier
+- `schema_id` (String) UUID
 
 

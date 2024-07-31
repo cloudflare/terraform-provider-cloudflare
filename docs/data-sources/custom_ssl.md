@@ -18,9 +18,9 @@ description: |-
 - `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
 - `custom_certificate_id` (String) Identifier
 - `expires_on` (String) When the certificate from the authority expires.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `geo_restrictions` (Attributes) Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance. (see [below for nested schema](#nestedatt--geo_restrictions))
-- `hosts` (String)
+- `hosts` (List of String)
 - `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
 - `keyless_server` (Attributes) (see [below for nested schema](#nestedatt--keyless_server))
@@ -32,8 +32,8 @@ description: |-
 - `uploaded_on` (String) When the certificate was uploaded to Cloudflare.
 - `zone_id` (String) Identifier
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

@@ -27,7 +27,7 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
 <a id="nestedatt--egs_pagination"></a>
 ### Nested Schema for `egs_pagination`
@@ -60,7 +60,7 @@ Notes: You can search for a single IPv4 address, an IP address range with a subn
 Notes: For example, the string 'attack' would match IP Access rules with notes 'Attack 26/02' and 'Attack 27/02'. The search is case insensitive.
 
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 

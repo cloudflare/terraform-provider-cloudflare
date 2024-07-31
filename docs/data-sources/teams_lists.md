@@ -24,22 +24,22 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `created_at` (String)
 - `description` (String) The description of the list.
 - `id` (String) API Resource UUID tag.
 - `name` (String) The name of the list.
 - `type` (String) The type of list.
-- `updated_at` (String)
 
 Read-Only:
 
+- `created_at` (String)
 - `list_count` (Number) The number of items in the list.
+- `updated_at` (String)
 
 

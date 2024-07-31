@@ -25,6 +25,10 @@ resource "cloudflare_custom_hostname_fallback_origin" "example" {
 - `origin` (String) Your origin hostname that requests to your custom hostnames will be sent to.
 - `zone_id` (String) Identifier
 
+### Read-Only
+
+- `id` (String) Identifier
+
 ## Import
 
 Import is supported using the following syntax:

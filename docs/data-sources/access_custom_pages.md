@@ -23,21 +23,21 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `app_count` (Number) Number of apps the custom page is assigned to.
-- `created_at` (String)
 - `uid` (String) UUID
-- `updated_at` (String)
 
 Read-Only:
 
+- `created_at` (String)
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
+- `updated_at` (String)
 
 

@@ -23,22 +23,22 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `ca` (Boolean) Indicates whether the certificate is a CA or leaf certificate.
 - `certificates` (String) The uploaded root CA certificate.
+- `id` (String) Identifier
 - `name` (String) Optional unique name for the certificate. Only used for human readability.
 - `uploaded_on` (String) This is the time the certificate was uploaded.
 
 Read-Only:
 
 - `expires_on` (String) When the certificate expires.
-- `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
 - `serial_number` (String) The certificate serial number.
 - `signature` (String) The type of hash used for the certificate.

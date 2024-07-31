@@ -17,11 +17,11 @@ description: |-
 
 - `account_id` (String) Identifier
 - `domain_name` (String) Name of the domain.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `project_name` (String) Name of the project.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

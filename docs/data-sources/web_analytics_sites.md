@@ -26,16 +26,16 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
-- `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--items--rules))
-- `ruleset` (Attributes) (see [below for nested schema](#nestedatt--items--ruleset))
+- `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--result--rules))
+- `ruleset` (Attributes) (see [below for nested schema](#nestedatt--result--ruleset))
 - `site_tag` (String) The Web Analytics site identifier.
 - `site_token` (String) The Web Analytics site token.
 - `snippet` (String) Encoded JavaScript snippet.
@@ -44,8 +44,8 @@ Read-Only:
 
 - `created` (String)
 
-<a id="nestedatt--items--rules"></a>
-### Nested Schema for `items.rules`
+<a id="nestedatt--result--rules"></a>
+### Nested Schema for `result.rules`
 
 Optional:
 
@@ -61,8 +61,8 @@ Read-Only:
 - `created` (String)
 
 
-<a id="nestedatt--items--ruleset"></a>
-### Nested Schema for `items.ruleset`
+<a id="nestedatt--result--ruleset"></a>
+### Nested Schema for `result.ruleset`
 
 Optional:
 

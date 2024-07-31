@@ -28,7 +28,10 @@ resource "cloudflare_d1_database" "example" {
 
 - `account_id` (String) Account identifier tag.
 - `name` (String)
-- `uuid` (String)
+
+### Optional
+
+- `primary_location_hint` (String) Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.
 
 ### Read-Only
 
@@ -36,6 +39,7 @@ resource "cloudflare_d1_database" "example" {
 - `file_size` (Number) The D1 database's size, in bytes.
 - `id` (String) The ID of this resource.
 - `num_tables` (Number)
+- `uuid` (String)
 - `version` (String)
 
 ## Import

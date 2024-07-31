@@ -49,11 +49,12 @@ Required:
 
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `user` (String) The user of your origin database.
 
 Optional:
 
+- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 
 

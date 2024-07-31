@@ -15,20 +15,21 @@ description: |-
 
 ### Optional
 
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The unique identifier of the Zone Lockdown rule.
 - `zone_identifier` (String) Identifier
 
 ### Read-Only
 
+- `configurations` (Attributes) A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations. (see [below for nested schema](#nestedatt--configurations))
 - `created_on` (String) The timestamp of when the rule was created.
 - `description` (String) An informative summary of the rule.
 - `modified_on` (String) The timestamp of when the rule was last modified.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
-- `urls` (String) The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
+- `urls` (List of String) The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -47,5 +48,14 @@ Optional:
 - `per_page` (Number) The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.
 - `priority` (Number) The priority of the rule to control the processing order. A lower number indicates higher priority. If not provided, any rules with a configured priority will be processed before rules without a priority.
 - `uri_search` (String) A single URI to search for in the list of URLs of existing rules.
+
+
+<a id="nestedatt--configurations"></a>
+### Nested Schema for `configurations`
+
+Optional:
+
+- `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.
+- `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.
 
 

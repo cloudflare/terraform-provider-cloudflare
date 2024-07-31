@@ -18,4 +18,8 @@ description: |-
 - `account_id` (String) Identifier
 - `key_rotation_interval_days` (Number) The number of days between key rotations.
 
+### Read-Only
+
+- `id` (String) Identifier
+
 

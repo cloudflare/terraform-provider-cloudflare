@@ -70,6 +70,7 @@ resource "cloudflare_notification_policy" "example" {
 
 ### Optional
 
+- `alert_interval` (String) Optional specification of how often to re-alert from the same incident, not support on all alert types.
 - `description` (String) Optional description for the Notification policy.
 - `enabled` (Boolean) Whether or not the Notification policy is enabled.
 - `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--filters))
@@ -81,6 +82,7 @@ resource "cloudflare_notification_policy" "example" {
 - `id` (String) UUID
 - `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
 - `modified` (String)
+- `result_info` (Attributes) (see [below for nested schema](#nestedatt--result_info))
 - `success` (Boolean) Whether the API call was successful
 
 <a id="nestedatt--filters"></a>
@@ -90,11 +92,11 @@ Optional:
 
 - `actions` (List of String) Usage depends on specific alert type
 - `affected_asns` (List of String) Used for configuring radar_notification
-- `affected_components` (List of String) Used for configuring incident_alert. A list of identifiers for each component to monitor.
+- `affected_components` (List of String) Used for configuring incident_alert
 - `affected_locations` (List of String) Used for configuring radar_notification
 - `airport_code` (List of String) Used for configuring maintenance_event_notification
 - `alert_trigger_preferences` (List of String) Usage depends on specific alert type
-- `alert_trigger_preferences_value` (List of String) Used for configuring magic_tunnel_health_check_event
+- `alert_trigger_preferences_value` (List of String) Usage depends on specific alert type
 - `enabled` (List of String) Used for configuring load_balancing_pool_enablement_alert
 - `environment` (List of String) Used for configuring pages_event_alert
 - `event` (List of String) Used for configuring pages_event_alert
@@ -125,7 +127,7 @@ Optional:
 - `target_zone_name` (List of String) Used for configuring advanced_ddos_attack_l7_alert
 - `traffic_exclusions` (List of String) Used for configuring traffic_anomalies_alert
 - `tunnel_id` (List of String) Used for configuring tunnel_health_event
-- `tunnel_name` (List of String) Used for configuring magic_tunnel_health_check_event
+- `tunnel_name` (List of String) Usage depends on specific alert type
 - `where` (List of String) Usage depends on specific alert type
 - `zones` (List of String) Usage depends on specific alert type
 
@@ -146,6 +148,17 @@ Required:
 
 - `code` (Number)
 - `message` (String)
+
+
+<a id="nestedatt--result_info"></a>
+### Nested Schema for `result_info`
+
+Optional:
+
+- `count` (Number) Total number of results for the requested service
+- `page` (Number) Current page within paginated list of results
+- `per_page` (Number) Number of results per page of results
+- `total_count` (Number) Total results available without any search parameters
 
 ## Import
 

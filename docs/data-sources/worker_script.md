@@ -18,7 +18,7 @@ description: |-
 - `account_id` (String) Identifier
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The id of the script in the Workers system. Usually the script name.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.
@@ -27,8 +27,8 @@ description: |-
 - `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--tail_consumers))
 - `usage_model` (String) Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

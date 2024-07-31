@@ -24,7 +24,7 @@ resource "cloudflare_api_shield_operation" "example" {
 
 ### Required
 
-- `operation_id` (String) UUID identifier
+- `operation_id` (String) UUID
 - `zone_id` (String) Identifier
 
 ### Optional
@@ -32,5 +32,9 @@ resource "cloudflare_api_shield_operation" "example" {
 - `state` (String) Mark state of operation in API Discovery
   * `review` - Mark operation as for review
   * `ignored` - Mark operation as ignored
+
+### Read-Only
+
+- `id` (String) UUID
 
 

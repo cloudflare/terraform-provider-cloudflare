@@ -69,13 +69,13 @@ resource "cloudflare_access_identity_provider" "okta" {
 ### Required
 
 - `config` (Attributes) The configuration parameters for the identity provider. To view the required parameters for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/). (see [below for nested schema](#nestedatt--config))
+- `id` (String) UUID
 - `name` (String) The name of the identity provider, shown to users on the login page.
 - `type` (String) The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
 
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `id` (String) UUID
 - `scim_config` (Attributes) The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider. (see [below for nested schema](#nestedatt--scim_config))
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 

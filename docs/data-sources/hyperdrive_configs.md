@@ -23,19 +23,19 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `caching` (Attributes) (see [below for nested schema](#nestedatt--items--caching))
+- `caching` (Attributes) (see [below for nested schema](#nestedatt--result--caching))
 - `name` (String)
-- `origin` (Attributes) (see [below for nested schema](#nestedatt--items--origin))
+- `origin` (Attributes) (see [below for nested schema](#nestedatt--result--origin))
 
-<a id="nestedatt--items--caching"></a>
-### Nested Schema for `items.caching`
+<a id="nestedatt--result--caching"></a>
+### Nested Schema for `result.caching`
 
 Optional:
 
@@ -44,14 +44,18 @@ Optional:
 - `stale_while_revalidate` (Number) When present, indicates the number of seconds cache may serve the response after it becomes stale. (Default: 15)
 
 
-<a id="nestedatt--items--origin"></a>
-### Nested Schema for `items.origin`
+<a id="nestedatt--result--origin"></a>
+### Nested Schema for `result.origin`
+
+Optional:
+
+- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 
 Read-Only:
 
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 - `user` (String) The user of your origin database.
 

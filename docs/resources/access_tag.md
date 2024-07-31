@@ -18,14 +18,11 @@ description: |-
 - `account_id` (String) Identifier
 - `name` (String) The name of the tag
 
-### Optional
-
-- `created_at` (String)
-- `updated_at` (String)
-
 ### Read-Only
 
 - `app_count` (Number) The number of applications that have this tag
+- `created_at` (String)
 - `id` (String) The name of the tag
+- `updated_at` (String)
 
 

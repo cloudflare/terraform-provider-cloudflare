@@ -39,7 +39,7 @@ resource "cloudflare_spectrum_application" "example" {
 
 - `dns` (Attributes) The name and type of DNS record for the Spectrum application. (see [below for nested schema](#nestedatt--dns))
 - `origin_dns` (Attributes) The name and type of DNS record for the Spectrum application. (see [below for nested schema](#nestedatt--origin_dns))
-- `origin_port` (String) The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `"1000-2000"`.
+- `origin_port` (Dynamic) The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `"1000-2000"`.
 Notes: If specifying a port range, the number of ports in the range must match the number of ports specified in the "protocol" field.
 - `protocol` (String) The port configuration at Cloudflare’s edge. May specify a single port, for example `"tcp/1000"`, or a range of ports, for example `"tcp/1000-2000"`.
 - `zone` (String) Identifier
@@ -86,7 +86,7 @@ Optional:
 Optional:
 
 - `connectivity` (String) The IP versions supported for inbound connections on Spectrum anycast IPs.
-- `ips` (String) The array of customer owned IPs we broadcast via anycast for this hostname and application.
+- `ips` (List of String) The array of customer owned IPs we broadcast via anycast for this hostname and application.
 - `type` (String) The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.
 
 ## Import

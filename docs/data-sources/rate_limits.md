@@ -25,18 +25,18 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `action` (Attributes) The action to perform when the threshold of matched traffic within the configured period is exceeded. (see [below for nested schema](#nestedatt--items--action))
-- `bypass` (Attributes List) Criteria specifying when the current rate limit should be bypassed. You can specify that the rate limit should not apply to one or more URLs. (see [below for nested schema](#nestedatt--items--bypass))
+- `action` (Attributes) The action to perform when the threshold of matched traffic within the configured period is exceeded. (see [below for nested schema](#nestedatt--result--action))
+- `bypass` (Attributes List) Criteria specifying when the current rate limit should be bypassed. You can specify that the rate limit should not apply to one or more URLs. (see [below for nested schema](#nestedatt--result--bypass))
 - `description` (String) An informative summary of the rate limit. This value is sanitized and any tags will be removed.
 - `disabled` (Boolean) When true, indicates that the rate limit is currently disabled.
-- `match` (Attributes) Determines which traffic the rate limit counts towards the threshold. (see [below for nested schema](#nestedatt--items--match))
+- `match` (Attributes) Determines which traffic the rate limit counts towards the threshold. (see [below for nested schema](#nestedatt--result--match))
 - `period` (Number) The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.
 - `threshold` (Number) The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.
 
@@ -44,19 +44,19 @@ Read-Only:
 
 - `id` (String) The unique identifier of the rate limit.
 
-<a id="nestedatt--items--action"></a>
-### Nested Schema for `items.action`
+<a id="nestedatt--result--action"></a>
+### Nested Schema for `result.action`
 
 Optional:
 
 - `mode` (String) The action to perform.
 - `response` (Attributes) A custom content type and reponse to return when the threshold is exceeded. The custom response configured in this object will override the custom error for the zone. This object is optional.
-Notes: If you omit this object, Cloudflare will use the default HTML error page. If "mode" is "challenge", "managed_challenge", or "js_challenge", Cloudflare will use the zone challenge pages and you should not provide the "response" object. (see [below for nested schema](#nestedatt--items--action--response))
+Notes: If you omit this object, Cloudflare will use the default HTML error page. If "mode" is "challenge", "managed_challenge", or "js_challenge", Cloudflare will use the zone challenge pages and you should not provide the "response" object. (see [below for nested schema](#nestedatt--result--action--response))
 - `timeout` (Number) The time in seconds during which Cloudflare will perform the mitigation action. Must be an integer value greater than or equal to the period.
 Notes: If "mode" is "challenge", "managed_challenge", or "js_challenge", Cloudflare will use the zone's Challenge Passage time and you should not provide this value.
 
-<a id="nestedatt--items--action--response"></a>
-### Nested Schema for `items.action.response`
+<a id="nestedatt--result--action--response"></a>
+### Nested Schema for `result.action.response`
 
 Optional:
 
@@ -65,8 +65,8 @@ Optional:
 
 
 
-<a id="nestedatt--items--bypass"></a>
-### Nested Schema for `items.bypass`
+<a id="nestedatt--result--bypass"></a>
+### Nested Schema for `result.bypass`
 
 Optional:
 
@@ -74,17 +74,17 @@ Optional:
 - `value` (String) The URL to bypass.
 
 
-<a id="nestedatt--items--match"></a>
-### Nested Schema for `items.match`
+<a id="nestedatt--result--match"></a>
+### Nested Schema for `result.match`
 
 Optional:
 
-- `headers` (Attributes List) (see [below for nested schema](#nestedatt--items--match--headers))
-- `request` (Attributes) (see [below for nested schema](#nestedatt--items--match--request))
-- `response` (Attributes) (see [below for nested schema](#nestedatt--items--match--response))
+- `headers` (Attributes List) (see [below for nested schema](#nestedatt--result--match--headers))
+- `request` (Attributes) (see [below for nested schema](#nestedatt--result--match--request))
+- `response` (Attributes) (see [below for nested schema](#nestedatt--result--match--response))
 
-<a id="nestedatt--items--match--headers"></a>
-### Nested Schema for `items.match.headers`
+<a id="nestedatt--result--match--headers"></a>
+### Nested Schema for `result.match.headers`
 
 Optional:
 
@@ -93,8 +93,8 @@ Optional:
 - `value` (String) The value of the response header, which must match exactly.
 
 
-<a id="nestedatt--items--match--request"></a>
-### Nested Schema for `items.match.request`
+<a id="nestedatt--result--match--request"></a>
+### Nested Schema for `result.match.request`
 
 Optional:
 
@@ -103,8 +103,8 @@ Optional:
 - `url` (String) The URL pattern to match, composed of a host and a path such as `example.org/path*`. Normalization is applied before the pattern is matched. `*` wildcards are expanded to match applicable traffic. Query strings are not matched. Set the value to `*` to match all traffic to your zone.
 
 
-<a id="nestedatt--items--match--response"></a>
-### Nested Schema for `items.match.response`
+<a id="nestedatt--result--match--response"></a>
+### Nested Schema for `result.match.response`
 
 Optional:
 

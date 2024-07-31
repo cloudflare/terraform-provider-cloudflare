@@ -23,11 +23,11 @@ data "cloudflare_record" "example" {
 ### Optional
 
 - `dns_record_id` (String) Identifier
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `zone_id` (String) Identifier
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -35,7 +35,7 @@ Required:
 
 Optional:
 
-- `comment` (Attributes) (see [below for nested schema](#nestedatt--find_one_by--comment))
+- `comment` (Attributes) (see [below for nested schema](#nestedatt--filter--comment))
 - `content` (String) DNS record content.
 - `direction` (String) Direction to order DNS records in.
 - `match` (String) Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.
@@ -45,12 +45,12 @@ Optional:
 - `per_page` (Number) Number of DNS records per page.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
 - `search` (String) Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.
-- `tag` (Attributes) (see [below for nested schema](#nestedatt--find_one_by--tag))
+- `tag` (Attributes) (see [below for nested schema](#nestedatt--filter--tag))
 - `tag_match` (String) Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.
 - `type` (String) Record type.
 
-<a id="nestedatt--find_one_by--comment"></a>
-### Nested Schema for `find_one_by.comment`
+<a id="nestedatt--filter--comment"></a>
+### Nested Schema for `filter.comment`
 
 Optional:
 
@@ -62,8 +62,8 @@ Optional:
 - `startswith` (String) Prefix of the DNS record comment. Comment filters are case-insensitive.
 
 
-<a id="nestedatt--find_one_by--tag"></a>
-### Nested Schema for `find_one_by.tag`
+<a id="nestedatt--filter--tag"></a>
+### Nested Schema for `filter.tag`
 
 Optional:
 

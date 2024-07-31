@@ -46,9 +46,12 @@ resource "cloudflare_teams_list" "example" {
 
 Optional:
 
-- `created_at` (String)
 - `description` (String) The description of the list item, if present
 - `value` (String) The value of the item in a list.
+
+Read-Only:
+
+- `created_at` (String)
 
 ## Import
 

@@ -26,15 +26,15 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--items--actions))
-- `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--items--matchers))
+- `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--result--actions))
+- `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--result--matchers))
 - `name` (String) Routing rule name.
 
 Read-Only:
@@ -44,8 +44,8 @@ Read-Only:
 - `priority` (Number) Priority of the routing rule.
 - `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 
-<a id="nestedatt--items--actions"></a>
-### Nested Schema for `items.actions`
+<a id="nestedatt--result--actions"></a>
+### Nested Schema for `result.actions`
 
 Read-Only:
 
@@ -53,8 +53,8 @@ Read-Only:
 - `value` (List of String)
 
 
-<a id="nestedatt--items--matchers"></a>
-### Nested Schema for `items.matchers`
+<a id="nestedatt--result--matchers"></a>
+### Nested Schema for `result.matchers`
 
 Read-Only:
 

@@ -73,6 +73,10 @@ resource "cloudflare_fallback_domain" "example" {
 - `description` (String) A description of the fallback domain, displayed in the client UI.
 - `dns_server` (List of String) A list of IP addresses to handle domain resolution.
 
+### Read-Only
+
+- `id` (String) Device ID.
+
 ## Import
 
 Import is supported using the following syntax:

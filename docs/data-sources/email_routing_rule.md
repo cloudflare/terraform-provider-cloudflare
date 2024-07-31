@@ -16,7 +16,7 @@ description: |-
 ### Optional
 
 - `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
 - `name` (String) Routing rule name.
 - `rule_identifier` (String) Routing rule identifier.
@@ -35,11 +35,11 @@ description: |-
 Read-Only:
 
 - `type` (String) Type of supported action.
-- `value` (String)
+- `value` (List of String)
 
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

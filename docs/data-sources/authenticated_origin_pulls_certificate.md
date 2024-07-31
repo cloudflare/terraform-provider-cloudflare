@@ -18,7 +18,7 @@ description: |-
 - `certificate` (String) The zone's leaf certificate.
 - `certificate_id` (String) Identifier
 - `expires_on` (String) When the certificate from the authority expires.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
 - `signature` (String) The type of hash used for the certificate.
@@ -26,8 +26,8 @@ description: |-
 - `uploaded_on` (String) This is the time the certificate was uploaded.
 - `zone_id` (String) Identifier
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

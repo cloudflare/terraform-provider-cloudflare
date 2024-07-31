@@ -16,31 +16,31 @@ description: |-
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `identifier` (String)
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Optional:
 
 - `direction` (String) The direction used to sort returned rules.
-- `egs_pagination` (Attributes) (see [below for nested schema](#nestedatt--find_one_by--egs_pagination))
-- `filters` (Attributes) (see [below for nested schema](#nestedatt--find_one_by--filters))
+- `egs_pagination` (Attributes) (see [below for nested schema](#nestedatt--filter--egs_pagination))
+- `filters` (Attributes) (see [below for nested schema](#nestedatt--filter--filters))
 - `order` (String) The field used to sort returned rules.
 - `page` (Number) Requested page within paginated list of results.
 - `per_page` (Number) Maximum number of results requested.
 
-<a id="nestedatt--find_one_by--egs_pagination"></a>
-### Nested Schema for `find_one_by.egs_pagination`
+<a id="nestedatt--filter--egs_pagination"></a>
+### Nested Schema for `filter.egs_pagination`
 
 Optional:
 
-- `json` (Attributes) (see [below for nested schema](#nestedatt--find_one_by--egs_pagination--json))
+- `json` (Attributes) (see [below for nested schema](#nestedatt--filter--egs_pagination--json))
 
-<a id="nestedatt--find_one_by--egs_pagination--json"></a>
-### Nested Schema for `find_one_by.egs_pagination.json`
+<a id="nestedatt--filter--egs_pagination--json"></a>
+### Nested Schema for `filter.egs_pagination.json`
 
 Optional:
 
@@ -49,8 +49,8 @@ Optional:
 
 
 
-<a id="nestedatt--find_one_by--filters"></a>
-### Nested Schema for `find_one_by.filters`
+<a id="nestedatt--filter--filters"></a>
+### Nested Schema for `filter.filters`
 
 Optional:
 

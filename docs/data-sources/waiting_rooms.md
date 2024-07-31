@@ -25,15 +25,15 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `additional_routes` (Attributes List) Only available for the Waiting Room Advanced subscription. Additional hostname and path combinations to which this waiting room will be applied. There is an implied wildcard at the end of the path. The hostname and path combination must be unique to this and all other waiting rooms. (see [below for nested schema](#nestedatt--items--additional_routes))
-- `cookie_attributes` (Attributes) Configures cookie attributes for the waiting room cookie. This encrypted cookie stores a user's status in the waiting room, such as queue position. (see [below for nested schema](#nestedatt--items--cookie_attributes))
+- `additional_routes` (Attributes List) Only available for the Waiting Room Advanced subscription. Additional hostname and path combinations to which this waiting room will be applied. There is an implied wildcard at the end of the path. The hostname and path combination must be unique to this and all other waiting rooms. (see [below for nested schema](#nestedatt--result--additional_routes))
+- `cookie_attributes` (Attributes) Configures cookie attributes for the waiting room cookie. This encrypted cookie stores a user's status in the waiting room, such as queue position. (see [below for nested schema](#nestedatt--result--cookie_attributes))
 - `cookie_suffix` (String) Appends a '_' + a custom suffix to the end of Cloudflare Waiting Room's cookie name(__cf_waitingroom). If `cookie_suffix` is "abcd", the cookie name will be `__cf_waitingroom_abcd`. This field is required if using `additional_routes`.
 - `host` (String) The host name to which the waiting room will be applied (no wildcards). Please do not include the scheme (http:// or https://). The host and path combination must be unique.
 - `id` (String)
@@ -158,8 +158,8 @@ If `json_response_enabled` is **true** and the request hits the waiting room, an
 - `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. If a user is not seen by Cloudflare again in that time period, they will be treated as a new user that visits the route.
 - `suspended` (Boolean) Suspends or allows traffic going to the waiting room. If set to `true`, the traffic will not go to the waiting room.
 
-<a id="nestedatt--items--additional_routes"></a>
-### Nested Schema for `items.additional_routes`
+<a id="nestedatt--result--additional_routes"></a>
+### Nested Schema for `result.additional_routes`
 
 Optional:
 
@@ -170,8 +170,8 @@ Read-Only:
 - `path` (String) Sets the path within the host to enable the waiting room on. The waiting room will be enabled for all subpaths as well. If there are two waiting rooms on the same subpath, the waiting room for the most specific path will be chosen. Wildcards and query parameters are not supported.
 
 
-<a id="nestedatt--items--cookie_attributes"></a>
-### Nested Schema for `items.cookie_attributes`
+<a id="nestedatt--result--cookie_attributes"></a>
+### Nested Schema for `result.cookie_attributes`
 
 Read-Only:
 

@@ -35,6 +35,10 @@ resource "cloudflare_workers_kv" "example" {
 - `namespace_id` (String) Namespace identifier tag.
 - `value` (String) A byte sequence to be stored, up to 25 MiB in length.
 
+### Read-Only
+
+- `id` (String) A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.
+
 ## Import
 
 Import is supported using the following syntax:

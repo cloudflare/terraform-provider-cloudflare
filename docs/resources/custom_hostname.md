@@ -39,6 +39,8 @@ resource "cloudflare_custom_hostname" "example" {
 
 - `created_at` (String) This is the time the hostname was created.
 - `id` (String) Identifier
+- `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification))
+- `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--ownership_verification_http))
 - `status` (String) Status of the hostname's activation.
 - `verification_errors` (List of String) These are errors that were encountered while trying to activate a hostname.
 
@@ -75,6 +77,25 @@ Optional:
 Optional:
 
 - `key` (String) Unique metadata for this hostname.
+
+
+<a id="nestedatt--ownership_verification"></a>
+### Nested Schema for `ownership_verification`
+
+Optional:
+
+- `name` (String) DNS Name for record.
+- `type` (String) DNS Record type.
+- `value` (String) Content for the record.
+
+
+<a id="nestedatt--ownership_verification_http"></a>
+### Nested Schema for `ownership_verification_http`
+
+Optional:
+
+- `http_body` (String) Token to be served.
+- `http_url` (String) The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.
 
 ## Import
 

@@ -15,13 +15,13 @@ description: |-
 
 ### Required
 
+- `id` (String) ID of the zone setting.
 - `setting_id` (String) Setting name
 - `zone_id` (String) Identifier
 
 ### Optional
 
 - `enabled` (Boolean) ssl-recommender enrollment setting.
-- `id` (String) ID of the zone setting.
 - `value` (String) Current value of the zone setting.
 
 

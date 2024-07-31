@@ -18,7 +18,7 @@ description: |-
 - `account_identifier` (String) Identifier
 - `destination_address_identifier` (String) Destination address identifier.
 - `email` (String) The contact email address of the user.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
@@ -28,8 +28,8 @@ description: |-
 - `tag` (String) Destination address tag. (Deprecated, replaced by destination address identifier)
 - `verified` (String) The date and time the destination address has been verified. Null means not verified yet.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

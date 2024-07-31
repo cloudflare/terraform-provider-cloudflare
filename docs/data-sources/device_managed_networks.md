@@ -17,7 +17,7 @@ description: |-
 
 - `account_id` (String)
 - `config` (Attributes) The configuration object containing information for the WARP client to detect the managed network. (see [below for nested schema](#nestedatt--config))
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `name` (String) The name of the device managed network. This name must be unique.
 - `network_id` (String) API UUID.
 - `type` (String) The type of device managed network.
@@ -34,8 +34,8 @@ Read-Only:
 - `tls_sockaddr` (String) A network address of the form "host:port" that the WARP client will use to detect the presence of a TLS host.
 
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

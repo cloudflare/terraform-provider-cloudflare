@@ -23,16 +23,16 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `placement_mode` (String) Specifies the placement mode for the Worker (e.g. 'smart').
-- `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--items--tail_consumers))
+- `tail_consumers` (Attributes List) List of Workers that will consume logs from the attached Worker. (see [below for nested schema](#nestedatt--result--tail_consumers))
 - `usage_model` (String) Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').
 
 Read-Only:
@@ -42,8 +42,8 @@ Read-Only:
 - `id` (String) The id of the script in the Workers system. Usually the script name.
 - `modified_on` (String) When the script was last modified.
 
-<a id="nestedatt--items--tail_consumers"></a>
-### Nested Schema for `items.tail_consumers`
+<a id="nestedatt--result--tail_consumers"></a>
+### Nested Schema for `result.tail_consumers`
 
 Optional:
 

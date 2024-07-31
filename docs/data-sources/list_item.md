@@ -16,12 +16,12 @@ description: |-
 ### Optional
 
 - `account_identifier` (String) Identifier
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `item_id` (String) The unique ID of the item in the List.
 - `list_id` (String) The unique ID of the list.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

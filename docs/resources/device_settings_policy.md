@@ -60,6 +60,7 @@ resource "cloudflare_device_settings_policy" "developer_warp_policy" {
 - `service_mode_v2` (Attributes) (see [below for nested schema](#nestedatt--service_mode_v2))
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
+- `tunnel_protocol` (String) Determines which tunnel protocol to use.
 
 <a id="nestedatt--service_mode_v2"></a>
 ### Nested Schema for `service_mode_v2`
