@@ -27,7 +27,7 @@ func (r QueueDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			"consumers": schema.StringAttribute{
 				Computed: true,
 			},
-			"consumers_total_count": schema.StringAttribute{
+			"consumers_total_count": schema.Float64Attribute{
 				Computed: true,
 			},
 			"created_on": schema.StringAttribute{
@@ -39,7 +39,7 @@ func (r QueueDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			"producers": schema.StringAttribute{
 				Computed: true,
 			},
-			"producers_total_count": schema.StringAttribute{
+			"producers_total_count": schema.Float64Attribute{
 				Computed: true,
 			},
 			"queue_name": schema.StringAttribute{
