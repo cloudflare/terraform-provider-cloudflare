@@ -87,6 +87,7 @@ func (r *AccessKeysConfigurationResource) Create(ctx context.Context, req resour
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -121,6 +122,7 @@ func (r *AccessKeysConfigurationResource) Read(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -169,6 +171,7 @@ func (r *AccessKeysConfigurationResource) Update(ctx context.Context, req resour
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -9,11 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -25,7 +21,7 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 			"id": schema.StringAttribute{
 				Description:   "The ID for this profile",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -35,7 +31,7 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 			"profile_id": schema.StringAttribute{
 				Description:   "The ID for this profile",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"allowed_match_count": schema.Float64Attribute{
 				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
@@ -44,8 +40,7 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 				Validators: []validator.Float64{
 					float64validator.Between(0, 1000),
 				},
-				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
-				Default:       float64default.StaticFloat64(0),
+				Default: float64default.StaticFloat64(0),
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -66,7 +61,6 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"entries": schema.ListNestedAttribute{
 				Description: "The entries for this profile.",
@@ -83,12 +77,10 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"ocr_enabled": schema.BoolAttribute{
-				Description:   "If true, scan images via OCR to determine if any text present matches filters.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+				Description: "If true, scan images via OCR to determine if any text present matches filters.",
+				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the profile.",

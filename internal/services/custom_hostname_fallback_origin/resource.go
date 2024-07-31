@@ -87,6 +87,7 @@ func (r *CustomHostnameFallbackOriginResource) Create(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -121,6 +122,7 @@ func (r *CustomHostnameFallbackOriginResource) Read(ctx context.Context, req res
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -169,6 +171,7 @@ func (r *CustomHostnameFallbackOriginResource) Update(ctx context.Context, req r
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -193,6 +196,7 @@ func (r *CustomHostnameFallbackOriginResource) Delete(ctx context.Context, req r
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

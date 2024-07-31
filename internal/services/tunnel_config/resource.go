@@ -88,6 +88,7 @@ func (r *TunnelConfigResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -123,6 +124,7 @@ func (r *TunnelConfigResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
+	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -172,6 +174,7 @@ func (r *TunnelConfigResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.TunnelID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -16,6 +16,11 @@ import (
 func (r APIShieldOperationSchemaValidationSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "UUID",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -24,7 +29,7 @@ func (r APIShieldOperationSchemaValidationSettingsResource) Schema(ctx context.C
 			"operation_id": schema.StringAttribute{
 				Description:   "UUID",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"mitigation_action": schema.StringAttribute{
 				Description: "When set, this applies a mitigation action to this operation\n\n  - `log` log request when request does not conform to schema for this operation\n  - `block` deny access to the site when request does not conform to schema for this operation\n  - `none` will skip mitigation for this operation\n  - `null` indicates that no operation level mitigation is in place, see Zone Level Schema Validation Settings for mitigation action that will be applied\n",
@@ -32,7 +37,6 @@ func (r APIShieldOperationSchemaValidationSettingsResource) Schema(ctx context.C
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("log", "block", "none"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}

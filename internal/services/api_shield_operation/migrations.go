@@ -18,6 +18,11 @@ func (r APIShieldOperationResource) UpgradeState(ctx context.Context) map[int64]
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "UUID",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"zone_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
@@ -26,7 +31,7 @@ func (r APIShieldOperationResource) UpgradeState(ctx context.Context) map[int64]
 					"operation_id": schema.StringAttribute{
 						Description:   "UUID",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"state": schema.StringAttribute{
 						Description: "Mark state of operation in API Discovery\n  * `review` - Mark operation as for review\n  * `ignored` - Mark operation as ignored\n",
@@ -34,7 +39,6 @@ func (r APIShieldOperationResource) UpgradeState(ctx context.Context) map[int64]
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("review", "ignored"),
 						},
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 				},
 			},

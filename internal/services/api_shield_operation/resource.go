@@ -88,6 +88,7 @@ func (r *APIShieldOperationResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	data = &env.Result
+	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -141,6 +142,7 @@ func (r *APIShieldOperationResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	data = &env.Result
+	data.ID = data.OperationID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

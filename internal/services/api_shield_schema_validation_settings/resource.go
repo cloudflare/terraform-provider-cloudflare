@@ -85,6 +85,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Create(ctx context.Context, 
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -117,6 +118,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Read(ctx context.Context, re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -163,6 +165,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Update(ctx context.Context, 
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

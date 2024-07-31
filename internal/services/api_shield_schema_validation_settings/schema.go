@@ -16,10 +16,15 @@ import (
 func (r APIShieldSchemaValidationSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"validation_default_mitigation_action": schema.StringAttribute{
 				Description: "The default mitigation action used when there is no mitigation action defined on the operation\n\nMitigation actions are as follows:\n\n  * `log` - log request when request does not conform to schema\n  * `block` - deny access to the site when request does not conform to schema\n\nA special value of of `none` will skip running schema validation entirely for the request when there is no mitigation action defined on the operation\n",
@@ -27,7 +32,6 @@ func (r APIShieldSchemaValidationSettingsResource) Schema(ctx context.Context, r
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("none", "log", "block"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"validation_override_mitigation_action": schema.StringAttribute{
 				Description: "When set, this overrides both zone level and operation level mitigation actions.\n\n  - `none` will skip running schema validation entirely for the request\n  - `null` indicates that no override is in place\n\nTo clear any override, use the special value `disable_override` or `null`\n",
@@ -35,7 +39,6 @@ func (r APIShieldSchemaValidationSettingsResource) Schema(ctx context.Context, r
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("none", "disable_override"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}
