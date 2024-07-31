@@ -16,6 +16,11 @@ import (
 func (r WorkerSecretResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Name of the script, used in URLs and route configuration.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -29,17 +34,15 @@ func (r WorkerSecretResource) Schema(ctx context.Context, req resource.SchemaReq
 			"script_name": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description:   "The name of this secret, this is what will be to access it inside the Worker.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The name of this secret, this is what will be to access it inside the Worker.",
+				Optional:    true,
 			},
 			"text": schema.StringAttribute{
-				Description:   "The value of the secret.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The value of the secret.",
+				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of secret to put.",
@@ -47,7 +50,6 @@ func (r WorkerSecretResource) Schema(ctx context.Context, req resource.SchemaReq
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("secret_text"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 		},
 	}

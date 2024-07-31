@@ -89,6 +89,7 @@ func (r *WorkerSecretResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -143,6 +144,7 @@ func (r *WorkerSecretResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

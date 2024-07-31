@@ -87,6 +87,7 @@ func (r *WorkerDomainResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -104,7 +105,7 @@ func (r *WorkerDomainResource) Read(ctx context.Context, req resource.ReadReques
 	env := WorkerDomainResultEnvelope{*data}
 	_, err := r.client.Workers.Domains.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.Hostname.ValueString(),
 		workers.DomainGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -122,6 +123,7 @@ func (r *WorkerDomainResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -153,7 +155,7 @@ func (r *WorkerDomainResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Workers.Domains.Update(
 		ctx,
 		workers.DomainUpdateParams{
-			AccountID: cloudflare.F(data.ID.ValueString()),
+			AccountID: cloudflare.F(data.Hostname.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -170,6 +172,7 @@ func (r *WorkerDomainResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -185,7 +188,7 @@ func (r *WorkerDomainResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	err := r.client.Workers.Domains.Delete(
 		ctx,
-		data.ID.ValueString(),
+		data.Hostname.ValueString(),
 		workers.DomainDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -195,6 +198,7 @@ func (r *WorkerDomainResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
