@@ -14,20 +14,23 @@ import (
 func (r URLNormalizationSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"scope": schema.StringAttribute{
-				Description:   "The scope of the URL normalization.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The scope of the URL normalization.",
+				Optional:    true,
 			},
 			"type": schema.StringAttribute{
-				Description:   "The type of URL normalization performed by Cloudflare.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "The type of URL normalization performed by Cloudflare.",
+				Optional:    true,
 			},
 		},
 	}

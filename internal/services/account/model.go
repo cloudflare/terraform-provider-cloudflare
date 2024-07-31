@@ -12,6 +12,7 @@ type AccountResultEnvelope struct {
 }
 
 type AccountModel struct {
+	ID        jsontypes.Normalized  `tfsdk:"id" json:"-,computed"`
 	AccountID jsontypes.Normalized  `tfsdk:"account_id" path:"account_id"`
 	Name      types.String          `tfsdk:"name" json:"name"`
 	Settings  *AccountSettingsModel `tfsdk:"settings" json:"settings"`

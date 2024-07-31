@@ -9,10 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -21,13 +18,15 @@ func (r AccountResource) UpgradeState(ctx context.Context) map[int64]resource.St
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Computed: true,
+					},
 					"account_id": schema.StringAttribute{
 						Required: true,
 					},
 					"name": schema.StringAttribute{
-						Description:   "Account name",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Description: "Account name",
+						Required:    true,
 					},
 					"settings": schema.SingleNestedAttribute{
 						Description: "Account settings",
@@ -59,7 +58,6 @@ func (r AccountResource) UpgradeState(ctx context.Context) map[int64]resource.St
 								Default:     booldefault.StaticBool(false),
 							},
 						},
-						PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 					},
 				},
 			},

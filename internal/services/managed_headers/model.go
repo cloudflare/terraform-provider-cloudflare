@@ -7,6 +7,7 @@ import (
 )
 
 type ManagedHeadersModel struct {
+	ID                     types.String                                  `tfsdk:"id" json:"-,computed"`
 	ZoneID                 types.String                                  `tfsdk:"zone_id" path:"zone_id"`
 	ManagedRequestHeaders  *[]*ManagedHeadersManagedRequestHeadersModel  `tfsdk:"managed_request_headers" json:"managed_request_headers"`
 	ManagedResponseHeaders *[]*ManagedHeadersManagedResponseHeadersModel `tfsdk:"managed_response_headers" json:"managed_response_headers"`
