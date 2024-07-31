@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccessMutualTLSHostnameSettingsResource{}
+var _ resource.ResourceWithModifyPlan = &AccessMutualTLSHostnameSettingsResource{}
 
 func NewResource() resource.Resource {
 	return &AccessMutualTLSHostnameSettingsResource{}

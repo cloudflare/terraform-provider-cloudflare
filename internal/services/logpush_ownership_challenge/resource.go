@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &LogpushOwnershipChallengeResource{}
+var _ resource.ResourceWithModifyPlan = &LogpushOwnershipChallengeResource{}
 
 func NewResource() resource.Resource {
 	return &LogpushOwnershipChallengeResource{}

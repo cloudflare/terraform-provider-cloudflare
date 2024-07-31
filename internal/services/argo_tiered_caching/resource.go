@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ArgoTieredCachingResource{}
+var _ resource.ResourceWithModifyPlan = &ArgoTieredCachingResource{}
 
 func NewResource() resource.Resource {
 	return &ArgoTieredCachingResource{}

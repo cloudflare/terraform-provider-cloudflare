@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &URLNormalizationSettingsResource{}
+var _ resource.ResourceWithModifyPlan = &URLNormalizationSettingsResource{}
 
 func NewResource() resource.Resource {
 	return &URLNormalizationSettingsResource{}

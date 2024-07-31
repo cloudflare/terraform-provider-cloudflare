@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccountResource{}
+var _ resource.ResourceWithModifyPlan = &AccountResource{}
 
 func NewResource() resource.Resource {
 	return &AccountResource{}

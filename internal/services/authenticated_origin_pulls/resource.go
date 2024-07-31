@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AuthenticatedOriginPullsResource{}
+var _ resource.ResourceWithModifyPlan = &AuthenticatedOriginPullsResource{}
 
 func NewResource() resource.Resource {
 	return &AuthenticatedOriginPullsResource{}

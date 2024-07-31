@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ArgoSmartRoutingResource{}
+var _ resource.ResourceWithModifyPlan = &ArgoSmartRoutingResource{}
 
 func NewResource() resource.Resource {
 	return &ArgoSmartRoutingResource{}
