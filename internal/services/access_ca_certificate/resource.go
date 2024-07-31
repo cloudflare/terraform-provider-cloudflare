@@ -94,6 +94,7 @@ func (r *AccessCACertificateResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	data = &env.Result
+	data.ID = data.AppID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -135,6 +136,7 @@ func (r *AccessCACertificateResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data = &env.Result
+	data.ID = data.AppID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -190,6 +192,7 @@ func (r *AccessCACertificateResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	data = &env.Result
+	data.ID = data.AppID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -221,6 +224,7 @@ func (r *AccessCACertificateResource) Delete(ctx context.Context, req resource.D
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.AppID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

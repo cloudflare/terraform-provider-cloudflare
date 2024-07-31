@@ -87,6 +87,7 @@ func (r *RegionalTieredCacheResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -105,7 +106,7 @@ func (r *RegionalTieredCacheResource) Read(ctx context.Context, req resource.Rea
 	_, err := r.client.Cache.RegionalTieredCache.Get(
 		ctx,
 		cache.RegionalTieredCacheGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -121,6 +122,7 @@ func (r *RegionalTieredCacheResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,7 +154,7 @@ func (r *RegionalTieredCacheResource) Update(ctx context.Context, req resource.U
 	_, err = r.client.Cache.RegionalTieredCache.Edit(
 		ctx,
 		cache.RegionalTieredCacheEditParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -169,6 +171,7 @@ func (r *RegionalTieredCacheResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

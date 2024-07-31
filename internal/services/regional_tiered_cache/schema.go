@@ -19,17 +19,14 @@ func (r RegionalTieredCacheResource) Schema(ctx context.Context, req resource.Sc
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "ID of the zone setting.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("tc_regional"),
-				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.StringAttribute{
 				Description: "Value of the Regional Tiered Cache zone setting.",
@@ -38,8 +35,7 @@ func (r RegionalTieredCacheResource) Schema(ctx context.Context, req resource.Sc
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-				Default:       stringdefault.StaticString("off"),
+				Default: stringdefault.StaticString("off"),
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "last time this setting was modified.",

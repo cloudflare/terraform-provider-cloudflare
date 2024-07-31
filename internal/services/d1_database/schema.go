@@ -21,10 +21,6 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"uuid": schema.StringAttribute{
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
 				Required:      true,
@@ -32,7 +28,7 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 			},
 			"name": schema.StringAttribute{
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"primary_location_hint": schema.StringAttribute{
 				Description: "Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.",
@@ -40,12 +36,14 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("wnam", "enam", "weur", "eeur", "apac", "oc"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"uuid": schema.StringAttribute{
+				Computed: true,
 			},
 			"version": schema.StringAttribute{
 				Computed: true,

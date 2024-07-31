@@ -88,6 +88,7 @@ func (r *ObservatoryScheduledTestResource) Create(ctx context.Context, req resou
 		return
 	}
 	data = &env.Result
+	data.ID = data.URL
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -123,6 +124,7 @@ func (r *ObservatoryScheduledTestResource) Read(ctx context.Context, req resourc
 		return
 	}
 	data = &env.Result
+	data.ID = data.URL
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -172,6 +174,7 @@ func (r *ObservatoryScheduledTestResource) Update(ctx context.Context, req resou
 		return
 	}
 	data = &env.Result
+	data.ID = data.URL
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -197,6 +200,7 @@ func (r *ObservatoryScheduledTestResource) Delete(ctx context.Context, req resou
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.URL
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

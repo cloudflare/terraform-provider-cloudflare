@@ -87,6 +87,7 @@ func (r *ZoneCacheVariantsResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -105,7 +106,7 @@ func (r *ZoneCacheVariantsResource) Read(ctx context.Context, req resource.ReadR
 	_, err := r.client.Cache.Variants.Get(
 		ctx,
 		cache.VariantGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -121,6 +122,7 @@ func (r *ZoneCacheVariantsResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,7 +154,7 @@ func (r *ZoneCacheVariantsResource) Update(ctx context.Context, req resource.Upd
 	_, err = r.client.Cache.Variants.Edit(
 		ctx,
 		cache.VariantEditParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -169,6 +171,7 @@ func (r *ZoneCacheVariantsResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -185,7 +188,7 @@ func (r *ZoneCacheVariantsResource) Delete(ctx context.Context, req resource.Del
 	_, err := r.client.Cache.Variants.Delete(
 		ctx,
 		cache.VariantDeleteParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,6 +196,7 @@ func (r *ZoneCacheVariantsResource) Delete(ctx context.Context, req resource.Del
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
