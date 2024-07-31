@@ -11,6 +11,7 @@ type BotManagementResultEnvelope struct {
 }
 
 type BotManagementModel struct {
+	ID                           types.String `tfsdk:"id" json:"-,computed"`
 	ZoneID                       types.String `tfsdk:"zone_id" path:"zone_id"`
 	EnableJS                     types.Bool   `tfsdk:"enable_js" json:"enable_js"`
 	FightMode                    types.Bool   `tfsdk:"fight_mode" json:"fight_mode"`

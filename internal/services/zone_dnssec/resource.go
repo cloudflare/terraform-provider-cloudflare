@@ -87,6 +87,7 @@ func (r *ZoneDNSSECResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -121,6 +122,7 @@ func (r *ZoneDNSSECResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -169,6 +171,7 @@ func (r *ZoneDNSSECResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -193,6 +196,7 @@ func (r *ZoneDNSSECResource) Delete(ctx context.Context, req resource.DeleteRequ
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
