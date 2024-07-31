@@ -39,7 +39,7 @@ func (r CertificatePackResource) UpgradeState(ctx context.Context) map[int64]res
 						Description: "Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
+							stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt", "ssl_com"),
 						},
 					},
 					"cloudflare_branding": schema.BoolAttribute{
