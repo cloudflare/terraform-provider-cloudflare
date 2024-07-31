@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WorkerCronTriggerResource{}
+var _ resource.ResourceWithModifyPlan = &WorkerCronTriggerResource{}
 
 func NewResource() resource.Resource {
 	return &WorkerCronTriggerResource{}
