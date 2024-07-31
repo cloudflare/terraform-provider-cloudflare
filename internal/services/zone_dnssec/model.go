@@ -12,6 +12,7 @@ type ZoneDNSSECResultEnvelope struct {
 }
 
 type ZoneDNSSECModel struct {
+	ID                types.String      `tfsdk:"id" json:"-,computed"`
 	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id"`
 	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer"`
 	DNSSECPresigned   types.Bool        `tfsdk:"dnssec_presigned" json:"dnssec_presigned"`

@@ -16,10 +16,15 @@ func (r ZoneHoldResource) UpgradeState(ctx context.Context) map[int64]resource.S
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "Identifier",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"zone_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"hold": schema.BoolAttribute{
 						Computed: true,
