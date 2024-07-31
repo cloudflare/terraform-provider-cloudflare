@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccessKeysConfigurationResource{}
+var _ resource.ResourceWithModifyPlan = &AccessKeysConfigurationResource{}
 
 func NewResource() resource.Resource {
 	return &AccessKeysConfigurationResource{}

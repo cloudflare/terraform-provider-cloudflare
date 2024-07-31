@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &BotManagementResource{}
+var _ resource.ResourceWithModifyPlan = &BotManagementResource{}
 
 func NewResource() resource.Resource {
 	return &BotManagementResource{}
