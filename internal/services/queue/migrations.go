@@ -40,13 +40,13 @@ func (r QueueResource) UpgradeState(ctx context.Context) map[int64]resource.Stat
 					"consumers": schema.StringAttribute{
 						Computed: true,
 					},
-					"consumers_total_count": schema.StringAttribute{
+					"consumers_total_count": schema.Float64Attribute{
 						Computed: true,
 					},
 					"producers": schema.StringAttribute{
 						Computed: true,
 					},
-					"producers_total_count": schema.StringAttribute{
+					"producers_total_count": schema.Float64Attribute{
 						Computed: true,
 					},
 				},
