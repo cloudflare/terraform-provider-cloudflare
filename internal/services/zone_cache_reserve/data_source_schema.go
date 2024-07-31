@@ -22,7 +22,7 @@ func (r ZoneCacheReserveDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Identifier",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
+			"zone_setting_id": schema.StringAttribute{
 				Description: "ID of the zone setting.",
 				Optional:    true,
 				Validators: []validator.String{
