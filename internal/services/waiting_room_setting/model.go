@@ -11,6 +11,7 @@ type WaitingRoomSettingResultEnvelope struct {
 }
 
 type WaitingRoomSettingModel struct {
+	ID                        types.String `tfsdk:"id" json:"-,computed"`
 	ZoneID                    types.String `tfsdk:"zone_id" path:"zone_id"`
 	SearchEngineCrawlerBypass types.Bool   `tfsdk:"search_engine_crawler_bypass" json:"search_engine_crawler_bypass"`
 }

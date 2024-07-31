@@ -89,6 +89,7 @@ func (r *HostnameTLSSettingResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -106,7 +107,7 @@ func (r *HostnameTLSSettingResource) Read(ctx context.Context, req resource.Read
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
-		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
+		hostnames.SettingTLSGetParamsSettingID(data.Hostname.ValueString()),
 		hostnames.SettingTLSGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -124,6 +125,7 @@ func (r *HostnameTLSSettingResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -174,6 +176,7 @@ func (r *HostnameTLSSettingResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	data = &env.Result
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -200,6 +203,7 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Hostname
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

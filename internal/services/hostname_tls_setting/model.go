@@ -12,6 +12,7 @@ type HostnameTLSSettingResultEnvelope struct {
 }
 
 type HostnameTLSSettingModel struct {
+	ID        types.String      `tfsdk:"id" json:"-,computed"`
 	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id"`
 	SettingID types.String      `tfsdk:"setting_id" path:"setting_id"`
 	Hostname  types.String      `tfsdk:"hostname" path:"hostname"`

@@ -86,6 +86,7 @@ func (r *LogpullRetentionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,6 +119,7 @@ func (r *LogpullRetentionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -165,6 +167,7 @@ func (r *LogpullRetentionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

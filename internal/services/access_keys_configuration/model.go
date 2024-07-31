@@ -11,6 +11,7 @@ type AccessKeysConfigurationResultEnvelope struct {
 }
 
 type AccessKeysConfigurationModel struct {
+	ID                      types.String  `tfsdk:"id" json:"-,computed"`
 	AccountID               types.String  `tfsdk:"account_id" path:"account_id"`
 	KeyRotationIntervalDays types.Float64 `tfsdk:"key_rotation_interval_days" json:"key_rotation_interval_days"`
 }

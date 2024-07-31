@@ -89,6 +89,7 @@ func (r *WorkersKVResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -123,6 +124,7 @@ func (r *WorkersKVResource) Read(ctx context.Context, req resource.ReadRequest, 
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -173,6 +175,7 @@ func (r *WorkersKVResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	data = &env.Result
+	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -199,6 +202,7 @@ func (r *WorkersKVResource) Delete(ctx context.Context, req resource.DeleteReque
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

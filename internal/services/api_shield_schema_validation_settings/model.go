@@ -7,6 +7,7 @@ import (
 )
 
 type APIShieldSchemaValidationSettingsModel struct {
+	ID                                 types.String `tfsdk:"id" json:"-,computed"`
 	ZoneID                             types.String `tfsdk:"zone_id" path:"zone_id"`
 	ValidationDefaultMitigationAction  types.String `tfsdk:"validation_default_mitigation_action" json:"validation_default_mitigation_action"`
 	ValidationOverrideMitigationAction types.String `tfsdk:"validation_override_mitigation_action" json:"validation_override_mitigation_action"`

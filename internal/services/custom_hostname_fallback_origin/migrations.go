@@ -16,15 +16,19 @@ func (r CustomHostnameFallbackOriginResource) UpgradeState(ctx context.Context) 
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "Identifier",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"zone_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"origin": schema.StringAttribute{
-						Description:   "Your origin hostname that requests to your custom hostnames will be sent to.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						Description: "Your origin hostname that requests to your custom hostnames will be sent to.",
+						Required:    true,
 					},
 				},
 			},

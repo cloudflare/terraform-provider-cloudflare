@@ -87,6 +87,7 @@ func (r *WaitingRoomSettingResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -121,6 +122,7 @@ func (r *WaitingRoomSettingResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -169,6 +171,7 @@ func (r *WaitingRoomSettingResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -87,6 +87,7 @@ func (r *TeamsAccountResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -121,6 +122,7 @@ func (r *TeamsAccountResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -169,6 +171,7 @@ func (r *TeamsAccountResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

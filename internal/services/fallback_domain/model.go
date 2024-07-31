@@ -12,6 +12,7 @@ type FallbackDomainResultEnvelope struct {
 }
 
 type FallbackDomainModel struct {
+	ID          types.String            `tfsdk:"id" json:"-,computed"`
 	AccountID   types.String            `tfsdk:"account_id" path:"account_id"`
 	PolicyID    types.String            `tfsdk:"policy_id" path:"policy_id"`
 	Suffix      types.String            `tfsdk:"suffix" json:"suffix"`

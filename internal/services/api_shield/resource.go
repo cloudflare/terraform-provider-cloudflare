@@ -85,6 +85,7 @@ func (r *APIShieldResource) Create(ctx context.Context, req resource.CreateReque
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -119,6 +120,7 @@ func (r *APIShieldResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -165,6 +167,7 @@ func (r *APIShieldResource) Update(ctx context.Context, req resource.UpdateReque
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

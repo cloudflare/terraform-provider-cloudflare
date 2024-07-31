@@ -86,6 +86,7 @@ func (r *EmailRoutingSettingsResource) Create(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -103,7 +104,7 @@ func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.Re
 	env := EmailRoutingSettingsResultEnvelope{*data}
 	_, err := r.client.EmailRouting.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.ZoneIdentifier.ValueString(),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -118,6 +119,7 @@ func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -148,7 +150,7 @@ func (r *EmailRoutingSettingsResource) Update(ctx context.Context, req resource.
 	env := EmailRoutingSettingsResultEnvelope{*data}
 	_, err = r.client.EmailRouting.Enable(
 		ctx,
-		data.ID.ValueString(),
+		data.ZoneIdentifier.ValueString(),
 		email_routing.EmailRoutingEnableParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -165,6 +167,7 @@ func (r *EmailRoutingSettingsResource) Update(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -180,7 +183,7 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 
 	_, err := r.client.EmailRouting.Disable(
 		ctx,
-		data.ID.ValueString(),
+		data.ZoneIdentifier.ValueString(),
 		email_routing.EmailRoutingDisableParams{},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -188,6 +191,7 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
