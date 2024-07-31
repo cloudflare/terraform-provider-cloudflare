@@ -24,6 +24,7 @@ type WorkerScriptModel struct {
 	Logpush       types.Bool                         `tfsdk:"logpush" json:"logpush,computed"`
 	ModifiedOn    timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed"`
 	PlacementMode types.String                       `tfsdk:"placement_mode" json:"placement_mode,computed"`
+	StartupTimeMs types.Int64                        `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	TailConsumers *[]*WorkerScriptTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 	UsageModel    types.String                       `tfsdk:"usage_model" json:"usage_model,computed"`
 }

@@ -256,6 +256,9 @@ func (r WorkerScriptResource) UpgradeState(ctx context.Context) map[int64]resour
 						Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
 						Computed:    true,
 					},
+					"startup_time_ms": schema.Int64Attribute{
+						Computed: true,
+					},
 					"tail_consumers": schema.ListNestedAttribute{
 						Description: "List of Workers that will consume logs from the attached Worker.",
 						Computed:    true,
