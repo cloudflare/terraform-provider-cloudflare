@@ -48,7 +48,7 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 						Description: "The Certificate Authority that will issue the certificate",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("digicert", "google", "lets_encrypt"),
+							stringvalidator.OneOfCaseInsensitive("digicert", "google", "lets_encrypt", "ssl_com"),
 						},
 					},
 					"custom_certificate": schema.StringAttribute{
