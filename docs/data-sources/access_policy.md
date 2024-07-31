@@ -18,32 +18,32 @@ description: |-
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `app_id` (String) UUID
 - `approval_groups` (Attributes List) Administrators who can approve a temporary authentication request. (see [below for nested schema](#nestedatt--approval_groups))
-- `created_at` (String)
 - `decision` (String) The action Access will take if a user matches this policy.
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The UUID of the policy
 - `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--include))
 - `name` (String) The name of the Access policy.
 - `policy_id` (String) UUID
 - `purpose_justification_prompt` (String) A custom message that will appear on the purpose justification screen.
 - `require` (Attributes List) Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--require))
-- `updated_at` (String)
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 ### Read-Only
 
 - `approval_required` (Boolean) Requires the user to request access from an administrator at the start of each session.
+- `created_at` (String)
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.
 - `purpose_justification_required` (Boolean) Require users to enter a justification when they log in to the application.
 - `session_duration` (String) The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
+- `updated_at` (String)
 
 <a id="nestedatt--approval_groups"></a>
 ### Nested Schema for `approval_groups`
 
 Optional:
 
-- `email_addresses` (String) A list of emails that can approve the access request.
+- `email_addresses` (List of String) A list of emails that can approve the access request.
 - `email_list_uuid` (String) The UUID of an re-usable email list.
 
 Read-Only:
@@ -211,8 +211,8 @@ Read-Only:
 
 
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

@@ -25,11 +25,15 @@ resource "cloudflare_api_shield" "example" {
 
 ### Required
 
+- `auth_id_characteristics` (Attributes List) (see [below for nested schema](#nestedatt--auth_id_characteristics))
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
-- `auth_id_characteristics` (Attributes List) (see [below for nested schema](#nestedatt--auth_id_characteristics))
+- `errors` (Attributes List) (see [below for nested schema](#nestedatt--errors))
+- `id` (String) Identifier
+- `messages` (Attributes List) (see [below for nested schema](#nestedatt--messages))
+- `success` (Boolean) Whether the API call was successful
 
 <a id="nestedatt--auth_id_characteristics"></a>
 ### Nested Schema for `auth_id_characteristics`
@@ -38,5 +42,23 @@ Required:
 
 - `name` (String) The name of the characteristic field, i.e., the header or cookie name.
 - `type` (String) The type of characteristic.
+
+
+<a id="nestedatt--errors"></a>
+### Nested Schema for `errors`
+
+Required:
+
+- `code` (Number)
+- `message` (String)
+
+
+<a id="nestedatt--messages"></a>
+### Nested Schema for `messages`
+
+Required:
+
+- `code` (Number)
+- `message` (String)
 
 

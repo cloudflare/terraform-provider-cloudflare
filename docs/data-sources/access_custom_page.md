@@ -17,20 +17,20 @@ description: |-
 
 - `account_id` (String) Identifier
 - `app_count` (Number) Number of apps the custom page is assigned to.
-- `created_at` (String)
 - `custom_html` (String) Custom page HTML.
 - `custom_page_id` (String) UUID
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `uid` (String) UUID
-- `updated_at` (String)
 
 ### Read-Only
 
+- `created_at` (String)
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
+- `updated_at` (String)
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

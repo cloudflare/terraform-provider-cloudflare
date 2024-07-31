@@ -16,10 +16,9 @@ description: |-
 ### Optional
 
 - `description` (String) An informative summary of the firewall rule.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
 - `path_id` (String) The unique identifier of the firewall rule.
 - `priority` (Number) The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.
-- `products` (String)
+- `products` (List of String)
 - `query_id` (String) The unique identifier of the firewall rule.
 - `ref` (String) A short reference tag. Allows you to select related firewall rules.
 - `zone_identifier` (String) Identifier
@@ -29,21 +28,5 @@ description: |-
 - `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
 - `id` (String) The unique identifier of the firewall rule.
 - `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
-
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
-
-Required:
-
-- `zone_identifier` (String) Identifier
-
-Optional:
-
-- `action` (String) The action to search for. Must be an exact match.
-- `description` (String) A case-insensitive string to find in the description.
-- `id` (String) The unique identifier of the firewall rule.
-- `page` (Number) Page number of paginated results.
-- `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
-- `per_page` (Number) Number of firewall rules per page.
 
 

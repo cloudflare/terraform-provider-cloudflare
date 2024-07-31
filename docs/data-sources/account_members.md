@@ -28,36 +28,37 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--items--policies))
-- `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--items--roles))
+- `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--result--policies))
+- `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--result--roles))
 
 Read-Only:
 
 - `id` (String) Membership identifier tag.
 - `status` (String) A member's status in the account.
+- `user` (Attributes) Details of the user associated to the membership. (see [below for nested schema](#nestedatt--result--user))
 
-<a id="nestedatt--items--policies"></a>
-### Nested Schema for `items.policies`
+<a id="nestedatt--result--policies"></a>
+### Nested Schema for `result.policies`
 
 Optional:
 
 - `access` (String) Allow or deny operations against the resources.
-- `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--items--policies--permission_groups))
-- `resource_groups` (Attributes List) A list of resource groups that the policy applies to. (see [below for nested schema](#nestedatt--items--policies--resource_groups))
+- `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--result--policies--permission_groups))
+- `resource_groups` (Attributes List) A list of resource groups that the policy applies to. (see [below for nested schema](#nestedatt--result--policies--resource_groups))
 
 Read-Only:
 
 - `id` (String) Policy identifier.
 
-<a id="nestedatt--items--policies--permission_groups"></a>
-### Nested Schema for `items.policies.permission_groups`
+<a id="nestedatt--result--policies--permission_groups"></a>
+### Nested Schema for `result.policies.permission_groups`
 
 Optional:
 
@@ -69,8 +70,8 @@ Read-Only:
 - `name` (String) Name of the group.
 
 
-<a id="nestedatt--items--policies--resource_groups"></a>
-### Nested Schema for `items.policies.resource_groups`
+<a id="nestedatt--result--policies--resource_groups"></a>
+### Nested Schema for `result.policies.resource_groups`
 
 Optional:
 
@@ -80,18 +81,18 @@ Read-Only:
 
 - `id` (String) Identifier of the group.
 - `name` (String) Name of the resource group.
-- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--items--policies--resource_groups--scope))
+- `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--result--policies--resource_groups--scope))
 
-<a id="nestedatt--items--policies--resource_groups--scope"></a>
-### Nested Schema for `items.policies.resource_groups.scope`
+<a id="nestedatt--result--policies--resource_groups--scope"></a>
+### Nested Schema for `result.policies.resource_groups.scope`
 
 Read-Only:
 
 - `key` (String) This is a combination of pre-defined resource name and identifier (like Account ID etc.)
-- `objects` (Attributes List) A list of scope objects for additional context. (see [below for nested schema](#nestedatt--items--policies--resource_groups--scope--objects))
+- `objects` (Attributes List) A list of scope objects for additional context. (see [below for nested schema](#nestedatt--result--policies--resource_groups--scope--objects))
 
-<a id="nestedatt--items--policies--resource_groups--scope--objects"></a>
-### Nested Schema for `items.policies.resource_groups.scope.objects`
+<a id="nestedatt--result--policies--resource_groups--scope--objects"></a>
+### Nested Schema for `result.policies.resource_groups.scope.objects`
 
 Read-Only:
 
@@ -101,8 +102,8 @@ Read-Only:
 
 
 
-<a id="nestedatt--items--roles"></a>
-### Nested Schema for `items.roles`
+<a id="nestedatt--result--roles"></a>
+### Nested Schema for `result.roles`
 
 Read-Only:
 
@@ -110,5 +111,20 @@ Read-Only:
 - `id` (String) Role identifier tag.
 - `name` (String) Role Name.
 - `permissions` (List of String) Access permissions for this User.
+
+
+<a id="nestedatt--result--user"></a>
+### Nested Schema for `result.user`
+
+Optional:
+
+- `first_name` (String) User's first name
+- `last_name` (String) User's last name
+
+Read-Only:
+
+- `email` (String) The contact email address of the user.
+- `id` (String) Identifier
+- `two_factor_authentication_enabled` (Boolean) Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.
 
 

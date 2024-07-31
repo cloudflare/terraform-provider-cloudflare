@@ -23,15 +23,14 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `action` (String) The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.
-- `created_at` (String)
 - `description` (String) The description of the rule.
 - `device_posture` (String) The wirefilter expression used for device posture check matching.
 - `enabled` (Boolean) True if the rule is enabled.
@@ -40,52 +39,53 @@ Optional:
 - `identity` (String) The wirefilter expression used for identity matching.
 - `name` (String) The name of the rule.
 - `precedence` (Number) Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value.
-- `rule_settings` (Attributes) Additional settings that modify the rule's action. (see [below for nested schema](#nestedatt--items--rule_settings))
-- `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--items--schedule))
+- `rule_settings` (Attributes) Additional settings that modify the rule's action. (see [below for nested schema](#nestedatt--result--rule_settings))
+- `schedule` (Attributes) The schedule for activating DNS policies. This does not apply to HTTP or network policies. (see [below for nested schema](#nestedatt--result--schedule))
 - `traffic` (String) The wirefilter expression used for traffic matching.
-- `updated_at` (String)
 
 Read-Only:
 
+- `created_at` (String)
 - `deleted_at` (String) Date of deletion, if any.
+- `updated_at` (String)
 
-<a id="nestedatt--items--rule_settings"></a>
-### Nested Schema for `items.rule_settings`
+<a id="nestedatt--result--rule_settings"></a>
+### Nested Schema for `result.rule_settings`
 
 Optional:
 
 - `add_headers` (String) Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).
 - `allow_child_bypass` (Boolean) Set by parent MSP accounts to enable their children to bypass this rule.
-- `audit_ssh` (Attributes) Settings for the Audit SSH action. (see [below for nested schema](#nestedatt--items--rule_settings--audit_ssh))
-- `biso_admin_controls` (Attributes) Configure how browser isolation behaves. (see [below for nested schema](#nestedatt--items--rule_settings--biso_admin_controls))
+- `audit_ssh` (Attributes) Settings for the Audit SSH action. (see [below for nested schema](#nestedatt--result--rule_settings--audit_ssh))
+- `biso_admin_controls` (Attributes) Configure how browser isolation behaves. (see [below for nested schema](#nestedatt--result--rule_settings--biso_admin_controls))
 - `block_page_enabled` (Boolean) Enable the custom block page.
 - `block_reason` (String) The text describing why this block occurred, displayed on the custom block page (if enabled).
 - `bypass_parent_rule` (Boolean) Set by children MSP accounts to bypass their parent's rules.
-- `check_session` (Attributes) Configure how session check behaves. (see [below for nested schema](#nestedatt--items--rule_settings--check_session))
-- `dns_resolvers` (Attributes) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--items--rule_settings--dns_resolvers))
-- `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. (see [below for nested schema](#nestedatt--items--rule_settings--egress))
+- `check_session` (Attributes) Configure how session check behaves. (see [below for nested schema](#nestedatt--result--rule_settings--check_session))
+- `dns_resolvers` (Attributes) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin. Only valid when a rule's action is set to 'resolve'. (see [below for nested schema](#nestedatt--result--rule_settings--dns_resolvers))
+- `egress` (Attributes) Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. (see [below for nested schema](#nestedatt--result--rule_settings--egress))
 - `ignore_cname_category_matches` (Boolean) Set to true, to ignore the category matches at CNAME domains in a response. If unchecked, the categories in this rule will be checked against all the CNAME domain categories in a response.
 - `insecure_disable_dnssec_validation` (Boolean) INSECURE - disable DNSSEC validation (for Allow actions).
 - `ip_categories` (Boolean) Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names.
 - `ip_indicator_feeds` (Boolean) Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names.
-- `l4override` (Attributes) Send matching traffic to the supplied destination IP address and port. (see [below for nested schema](#nestedatt--items--rule_settings--l4override))
-- `notification_settings` (Attributes) Configure a notification to display on the user's device when this rule is matched. (see [below for nested schema](#nestedatt--items--rule_settings--notification_settings))
+- `l4override` (Attributes) Send matching traffic to the supplied destination IP address and port. (see [below for nested schema](#nestedatt--result--rule_settings--l4override))
+- `notification_settings` (Attributes) Configure a notification to display on the user's device when this rule is matched. (see [below for nested schema](#nestedatt--result--rule_settings--notification_settings))
 - `override_host` (String) Override matching DNS queries with a hostname.
 - `override_ips` (List of String) Override matching DNS queries with an IP or set of IPs.
-- `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--items--rule_settings--payload_log))
+- `payload_log` (Attributes) Configure DLP payload logging. (see [below for nested schema](#nestedatt--result--rule_settings--payload_log))
 - `resolve_dns_through_cloudflare` (Boolean) Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when dns_resolvers are specified. Only valid when a rule's action is set to 'resolve'.
-- `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--items--rule_settings--untrusted_cert))
+- `untrusted_cert` (Attributes) Configure behavior when an upstream cert is invalid or an SSL error occurs. (see [below for nested schema](#nestedatt--result--rule_settings--untrusted_cert))
 
-<a id="nestedatt--items--rule_settings--audit_ssh"></a>
-### Nested Schema for `items.rule_settings.audit_ssh`
+<a id="nestedatt--result--rule_settings--audit_ssh"></a>
+### Nested Schema for `result.rule_settings.audit_ssh`
 
 Optional:
 
 - `command_logging` (Boolean) Enable to turn on SSH command logging.
 
 
-<a id="nestedatt--items--rule_settings--biso_admin_controls"></a>
-### Nested Schema for `items.rule_settings.biso_admin_controls`
+<a id="nestedatt--result--rule_settings--biso_admin_controls"></a>
+### Nested Schema for `result.rule_settings.biso_admin_controls`
 
 Optional:
 
@@ -96,8 +96,8 @@ Optional:
 - `du` (Boolean) Set to false to enable uploading.
 
 
-<a id="nestedatt--items--rule_settings--check_session"></a>
-### Nested Schema for `items.rule_settings.check_session`
+<a id="nestedatt--result--rule_settings--check_session"></a>
+### Nested Schema for `result.rule_settings.check_session`
 
 Optional:
 
@@ -105,16 +105,16 @@ Optional:
 - `enforce` (Boolean) Set to true to enable session enforcement.
 
 
-<a id="nestedatt--items--rule_settings--dns_resolvers"></a>
-### Nested Schema for `items.rule_settings.dns_resolvers`
+<a id="nestedatt--result--rule_settings--dns_resolvers"></a>
+### Nested Schema for `result.rule_settings.dns_resolvers`
 
 Optional:
 
-- `ipv4` (Attributes List) (see [below for nested schema](#nestedatt--items--rule_settings--dns_resolvers--ipv4))
-- `ipv6` (Attributes List) (see [below for nested schema](#nestedatt--items--rule_settings--dns_resolvers--ipv6))
+- `ipv4` (Attributes List) (see [below for nested schema](#nestedatt--result--rule_settings--dns_resolvers--ipv4))
+- `ipv6` (Attributes List) (see [below for nested schema](#nestedatt--result--rule_settings--dns_resolvers--ipv6))
 
-<a id="nestedatt--items--rule_settings--dns_resolvers--ipv4"></a>
-### Nested Schema for `items.rule_settings.dns_resolvers.ipv6`
+<a id="nestedatt--result--rule_settings--dns_resolvers--ipv4"></a>
+### Nested Schema for `result.rule_settings.dns_resolvers.ipv6`
 
 Optional:
 
@@ -127,8 +127,8 @@ Read-Only:
 - `ip` (String) IPv4 address of upstream resolver.
 
 
-<a id="nestedatt--items--rule_settings--dns_resolvers--ipv6"></a>
-### Nested Schema for `items.rule_settings.dns_resolvers.ipv6`
+<a id="nestedatt--result--rule_settings--dns_resolvers--ipv6"></a>
+### Nested Schema for `result.rule_settings.dns_resolvers.ipv6`
 
 Optional:
 
@@ -142,8 +142,8 @@ Read-Only:
 
 
 
-<a id="nestedatt--items--rule_settings--egress"></a>
-### Nested Schema for `items.rule_settings.egress`
+<a id="nestedatt--result--rule_settings--egress"></a>
+### Nested Schema for `result.rule_settings.egress`
 
 Optional:
 
@@ -152,8 +152,8 @@ Optional:
 - `ipv6` (String) The IPv6 range to be used for egress.
 
 
-<a id="nestedatt--items--rule_settings--l4override"></a>
-### Nested Schema for `items.rule_settings.l4override`
+<a id="nestedatt--result--rule_settings--l4override"></a>
+### Nested Schema for `result.rule_settings.l4override`
 
 Optional:
 
@@ -161,8 +161,8 @@ Optional:
 - `port` (Number) A port number to use for TCP/UDP overrides.
 
 
-<a id="nestedatt--items--rule_settings--notification_settings"></a>
-### Nested Schema for `items.rule_settings.notification_settings`
+<a id="nestedatt--result--rule_settings--notification_settings"></a>
+### Nested Schema for `result.rule_settings.notification_settings`
 
 Optional:
 
@@ -171,16 +171,16 @@ Optional:
 - `support_url` (String) Optional URL to direct users to additional information. If not set, the notification will open a block page.
 
 
-<a id="nestedatt--items--rule_settings--payload_log"></a>
-### Nested Schema for `items.rule_settings.payload_log`
+<a id="nestedatt--result--rule_settings--payload_log"></a>
+### Nested Schema for `result.rule_settings.payload_log`
 
 Optional:
 
 - `enabled` (Boolean) Set to true to enable DLP payload logging for this rule.
 
 
-<a id="nestedatt--items--rule_settings--untrusted_cert"></a>
-### Nested Schema for `items.rule_settings.untrusted_cert`
+<a id="nestedatt--result--rule_settings--untrusted_cert"></a>
+### Nested Schema for `result.rule_settings.untrusted_cert`
 
 Optional:
 
@@ -188,8 +188,8 @@ Optional:
 
 
 
-<a id="nestedatt--items--schedule"></a>
-### Nested Schema for `items.schedule`
+<a id="nestedatt--result--schedule"></a>
+### Nested Schema for `result.schedule`
 
 Optional:
 

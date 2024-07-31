@@ -18,7 +18,7 @@ description: |-
 - `account_id` (String) Account ID
 - `bucket_name` (String) Name of the bucket
 - `creation_date` (String) Creation timestamp
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `location` (String) Location of the bucket
 - `name` (String) Name of the bucket
 
@@ -26,8 +26,8 @@ description: |-
 
 - `storage_class` (String) Storage class for newly uploaded objects, unless specified otherwise.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

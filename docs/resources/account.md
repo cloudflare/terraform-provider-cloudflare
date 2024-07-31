@@ -30,6 +30,10 @@ resource "cloudflare_account" "example" {
 
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
 
+### Read-Only
+
+- `id` (String) The ID of this resource.
+
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`
 

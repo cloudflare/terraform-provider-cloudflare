@@ -23,20 +23,20 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `config` (Attributes) The configuration object containing information for the WARP client to detect the managed network. (see [below for nested schema](#nestedatt--items--config))
+- `config` (Attributes) The configuration object containing information for the WARP client to detect the managed network. (see [below for nested schema](#nestedatt--result--config))
 - `name` (String) The name of the device managed network. This name must be unique.
 - `network_id` (String) API UUID.
 - `type` (String) The type of device managed network.
 
-<a id="nestedatt--items--config"></a>
-### Nested Schema for `items.config`
+<a id="nestedatt--result--config"></a>
+### Nested Schema for `result.config`
 
 Optional:
 

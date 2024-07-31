@@ -23,19 +23,19 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `app_count` (Number) The number of applications that have this tag
-- `created_at` (String)
-- `updated_at` (String)
 
 Read-Only:
 
+- `created_at` (String)
 - `name` (String) The name of the tag
+- `updated_at` (String)
 
 

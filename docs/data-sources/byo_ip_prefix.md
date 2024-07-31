@@ -17,22 +17,25 @@ description: |-
 
 - `account_id` (String) Identifier
 - `advertised` (Boolean) Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.
-- `advertised_modified_at` (String) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
 - `approved` (String) Approval state of the prefix (P = pending, V = active).
 - `asn` (Number) Autonomous System Number (ASN) the prefix will be advertised under.
 - `cidr` (String) IP Prefix in Classless Inter-Domain Routing format.
-- `created_at` (String)
 - `description` (String) Description of the prefix.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) Identifier
 - `loa_document_id` (String) Identifier for the uploaded LOA document.
-- `modified_at` (String)
 - `on_demand_enabled` (Boolean) Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.
 - `on_demand_locked` (Boolean) Whether advertisement status of the prefix is locked, meaning it cannot be changed.
 - `prefix_id` (String) Identifier
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+### Read-Only
+
+- `advertised_modified_at` (String) Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.
+- `created_at` (String)
+- `modified_at` (String)
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

@@ -25,19 +25,19 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `address` (String) The hostname or IP address of the origin server to run health checks on.
 - `check_regions` (List of String) A list of regions from which to run health checks. Null means Cloudflare will pick a default region.
 - `description` (String) A human-readable description of the health check.
-- `http_config` (Attributes) Parameters specific to an HTTP or HTTPS health check. (see [below for nested schema](#nestedatt--items--http_config))
+- `http_config` (Attributes) Parameters specific to an HTTP or HTTPS health check. (see [below for nested schema](#nestedatt--result--http_config))
 - `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.
-- `tcp_config` (Attributes) Parameters specific to TCP health check. (see [below for nested schema](#nestedatt--items--tcp_config))
+- `tcp_config` (Attributes) Parameters specific to TCP health check. (see [below for nested schema](#nestedatt--result--tcp_config))
 
 Read-Only:
 
@@ -54,8 +54,8 @@ Read-Only:
 - `timeout` (Number) The timeout (in seconds) before marking the health check as failed.
 - `type` (String) The protocol to use for the health check. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'.
 
-<a id="nestedatt--items--http_config"></a>
-### Nested Schema for `items.http_config`
+<a id="nestedatt--result--http_config"></a>
+### Nested Schema for `result.http_config`
 
 Optional:
 
@@ -72,8 +72,8 @@ Read-Only:
 - `port` (Number) Port number to connect to for the health check. Defaults to 80 if type is HTTP or 443 if type is HTTPS.
 
 
-<a id="nestedatt--items--tcp_config"></a>
-### Nested Schema for `items.tcp_config`
+<a id="nestedatt--result--tcp_config"></a>
+### Nested Schema for `result.tcp_config`
 
 Read-Only:
 

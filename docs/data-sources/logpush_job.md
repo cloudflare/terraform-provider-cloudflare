@@ -42,7 +42,7 @@ description: |-
 
 Optional:
 
-- `field_names` (String) List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.
+- `field_names` (List of String) List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.
 
 Read-Only:
 

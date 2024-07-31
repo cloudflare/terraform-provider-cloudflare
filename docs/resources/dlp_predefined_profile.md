@@ -16,7 +16,6 @@ description: |-
 ### Required
 
 - `account_id` (String) Identifier
-- `id` (String) The ID for this profile
 - `profile_id` (String) The ID for this profile
 
 ### Optional
@@ -28,6 +27,7 @@ description: |-
 
 ### Read-Only
 
+- `id` (String) The ID for this profile
 - `name` (String) The name of the profile.
 - `type` (String) The type of the profile.
 

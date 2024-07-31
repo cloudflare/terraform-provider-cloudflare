@@ -28,7 +28,6 @@ resource "cloudflare_mtls_certificate" "example" {
 - `account_id` (String) Identifier
 - `ca` (Boolean) Indicates whether the certificate is a CA or leaf certificate.
 - `certificates` (String) The uploaded root CA certificate.
-- `id` (String) Identifier
 
 ### Optional
 
@@ -38,6 +37,7 @@ resource "cloudflare_mtls_certificate" "example" {
 ### Read-Only
 
 - `expires_on` (String) When the certificate expires.
+- `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
 - `serial_number` (String) The certificate serial number.
 - `signature` (String) The type of hash used for the certificate.

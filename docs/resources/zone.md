@@ -47,11 +47,13 @@ active
 (positive integer) or last expired (negative integer) for the
 domain. If development mode has never been enabled, this value is 0.
 - `id` (String) Identifier
+- `meta` (Attributes) Metadata about the zone (see [below for nested schema](#nestedatt--meta))
 - `modified_on` (String) When the zone was last modified
 - `name_servers` (List of String) The name servers Cloudflare assigns to a zone
 - `original_dnshost` (String) DNS host at the time of switching to Cloudflare
 - `original_name_servers` (List of String) Original name servers before moving to Cloudflare
 - `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare
+- `owner` (Attributes) The owner of the zone (see [below for nested schema](#nestedatt--owner))
 
 <a id="nestedatt--account"></a>
 ### Nested Schema for `account`
@@ -67,6 +69,30 @@ Optional:
 Optional:
 
 - `id` (String) Identifier
+
+
+<a id="nestedatt--meta"></a>
+### Nested Schema for `meta`
+
+Optional:
+
+- `cdn_only` (Boolean) The zone is only configured for CDN
+- `custom_certificate_quota` (Number) Number of Custom Certificates the zone can have
+- `dns_only` (Boolean) The zone is only configured for DNS
+- `foundation_dns` (Boolean) The zone is setup with Foundation DNS
+- `page_rule_quota` (Number) Number of Page Rules a zone can have
+- `phishing_detected` (Boolean) The zone has been flagged for phishing
+- `step` (Number)
+
+
+<a id="nestedatt--owner"></a>
+### Nested Schema for `owner`
+
+Optional:
+
+- `id` (String) Identifier
+- `name` (String) Name of the owner
+- `type` (String) The type of owner
 
 ## Import
 

@@ -15,7 +15,7 @@ description: |-
 
 ### Optional
 
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
 - `schema_id` (String)
 - `source` (String) Source of the schema
@@ -28,8 +28,8 @@ description: |-
 - `kind` (String) Kind of schema
 - `name` (String) Name of the schema
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -38,8 +38,8 @@ Required:
 Optional:
 
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
-- `page` (String) Page number of paginated results.
-- `per_page` (String) Maximum number of results per page.
+- `page` (Number) Page number of paginated results.
+- `per_page` (Number) Maximum number of results per page.
 - `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 
 

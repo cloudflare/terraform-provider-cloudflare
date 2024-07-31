@@ -16,7 +16,6 @@ description: |-
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `created_at` (String)
 - `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--exclude))
 - `group_id` (String) UUID
 - `id` (String) UUID
@@ -24,8 +23,12 @@ description: |-
 - `is_default` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--is_default))
 - `name` (String) The name of the Access group.
 - `require` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--require))
-- `updated_at` (String)
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+
+### Read-Only
+
+- `created_at` (String)
+- `updated_at` (String)
 
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`

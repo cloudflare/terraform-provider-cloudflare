@@ -27,12 +27,12 @@ resource "cloudflare_worker_domain" "example" {
 - `account_id` (String)
 - `environment` (String) Worker environment associated with the zone and hostname.
 - `hostname` (String) Hostname of the Worker Domain.
-- `id` (String) Identifer of the Worker Domain.
 - `service` (String) Worker service associated with the zone and hostname.
 - `zone_id` (String) Identifier of the zone.
 
 ### Read-Only
 
+- `id` (String) Hostname of the Worker Domain.
 - `zone_name` (String) Name of the zone.
 
 ## Import

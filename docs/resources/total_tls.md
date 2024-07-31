@@ -32,6 +32,7 @@ resource "cloudflare_total_tls" "example" {
 
 ### Read-Only
 
+- `id` (String) Identifier
 - `validity_days` (Number) The validity period in days for the certificates ordered via Total TLS.
 
 ## Import

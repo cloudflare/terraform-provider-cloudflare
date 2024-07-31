@@ -17,13 +17,13 @@ description: |-
 
 - `account_id` (String)
 - `description` (String) A description of the fallback domain, displayed in the client UI.
-- `dns_server` (String) A list of IP addresses to handle domain resolution.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `dns_server` (List of String) A list of IP addresses to handle domain resolution.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `policy_id` (String) Device ID.
 - `suffix` (String) The domain suffix to match when resolving locally.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

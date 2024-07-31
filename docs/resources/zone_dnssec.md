@@ -51,6 +51,7 @@ See [Cloudflare as Secondary](https://developers.cloudflare.com/dns/zone-setups/
 - `digest_type` (String) Coded type for digest algorithm.
 - `ds` (String) Full DS record.
 - `flags` (Number) Flag for DNSSEC record.
+- `id` (String) Identifier
 - `key_tag` (Number) Code for key tag.
 - `key_type` (String) Algorithm key type.
 - `modified_on` (String) When DNSSEC was last modified.

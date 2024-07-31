@@ -24,11 +24,11 @@ resource "cloudflare_email_routing_address" "example" {
 
 - `account_identifier` (String) Identifier
 - `email` (String) The contact email address of the user.
-- `id` (String) Destination address identifier.
 
 ### Read-Only
 
 - `created` (String) The date and time the destination address has been created.
+- `id` (String) Destination address identifier.
 - `modified` (String) The date and time the destination address was last modified.
 - `tag` (String) Destination address tag. (Deprecated, replaced by destination address identifier)
 - `verified` (String) The date and time the destination address has been verified. Null means not verified yet.

@@ -206,6 +206,7 @@ resource "cloudflare_pages_project" "deployment_configs" {
 ### Required
 
 - `account_id` (String) Identifier
+- `name` (String) Name of the project.
 
 ### Optional
 
@@ -213,15 +214,13 @@ resource "cloudflare_pages_project" "deployment_configs" {
 - `canonical_deployment` (Attributes) (see [below for nested schema](#nestedatt--canonical_deployment))
 - `deployment_configs` (Attributes) Configs for deployments in a project. (see [below for nested schema](#nestedatt--deployment_configs))
 - `latest_deployment` (Attributes) (see [below for nested schema](#nestedatt--latest_deployment))
-- `name` (String) Name of the project.
 - `production_branch` (String) Production branch of the project. Used to identify production deployments.
-- `project_name` (String) Name of the project.
 
 ### Read-Only
 
 - `created_on` (String) When the project was created.
 - `domains` (List of String) A list of associated custom domains for the project.
-- `id` (String) Id of the project.
+- `id` (String) Name of the project.
 - `source` (String)
 - `subdomain` (String) The Cloudflare subdomain associated with the project.
 
@@ -246,6 +245,7 @@ Read-Only:
 - `aliases` (List of String) A list of alias URLs pointing to this deployment.
 - `build_config` (String)
 - `created_on` (String) When the deployment was created.
+- `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--canonical_deployment--deployment_trigger))
 - `env_vars` (String) A dict of env variables to build this deploy.
 - `environment` (String) Type of deploy.
 - `id` (String) Id of the deployment.
@@ -258,6 +258,28 @@ Read-Only:
 - `source` (String)
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--canonical_deployment--stages))
 - `url` (String) The live URL to view this deployment.
+
+<a id="nestedatt--canonical_deployment--deployment_trigger"></a>
+### Nested Schema for `canonical_deployment.deployment_trigger`
+
+Optional:
+
+- `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--canonical_deployment--deployment_trigger--metadata))
+
+Read-Only:
+
+- `type` (String) What caused the deployment.
+
+<a id="nestedatt--canonical_deployment--deployment_trigger--metadata"></a>
+### Nested Schema for `canonical_deployment.deployment_trigger.metadata`
+
+Read-Only:
+
+- `branch` (String) Where the trigger happened.
+- `commit_hash` (String) Hash of the deployment trigger commit.
+- `commit_message` (String) Message of the deployment trigger commit.
+
+
 
 <a id="nestedatt--canonical_deployment--stages"></a>
 ### Nested Schema for `canonical_deployment.stages`
@@ -761,6 +783,7 @@ Read-Only:
 - `aliases` (List of String) A list of alias URLs pointing to this deployment.
 - `build_config` (String)
 - `created_on` (String) When the deployment was created.
+- `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--latest_deployment--deployment_trigger))
 - `env_vars` (String) A dict of env variables to build this deploy.
 - `environment` (String) Type of deploy.
 - `id` (String) Id of the deployment.
@@ -773,6 +796,28 @@ Read-Only:
 - `source` (String)
 - `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--latest_deployment--stages))
 - `url` (String) The live URL to view this deployment.
+
+<a id="nestedatt--latest_deployment--deployment_trigger"></a>
+### Nested Schema for `latest_deployment.deployment_trigger`
+
+Optional:
+
+- `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--latest_deployment--deployment_trigger--metadata))
+
+Read-Only:
+
+- `type` (String) What caused the deployment.
+
+<a id="nestedatt--latest_deployment--deployment_trigger--metadata"></a>
+### Nested Schema for `latest_deployment.deployment_trigger.metadata`
+
+Read-Only:
+
+- `branch` (String) Where the trigger happened.
+- `commit_hash` (String) Hash of the deployment trigger commit.
+- `commit_message` (String) Message of the deployment trigger commit.
+
+
 
 <a id="nestedatt--latest_deployment--stages"></a>
 ### Nested Schema for `latest_deployment.stages`

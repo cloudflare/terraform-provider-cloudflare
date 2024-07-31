@@ -43,6 +43,7 @@ resource "cloudflare_record" "_sip_tls" {
 
 ### Required
 
+- `id` (String) Identifier
 - `name` (String) DNS record name (or @ for the zone apex) in Punycode.
 - `type` (String) Record type.
 - `zone_id` (String) Identifier
@@ -52,10 +53,9 @@ resource "cloudflare_record" "_sip_tls" {
 - `comment` (String) Comments or notes about the DNS record. This field has no effect on DNS responses.
 - `content` (String) A valid IPv4 address.
 - `data` (Attributes) Components of a CAA record. (see [below for nested schema](#nestedatt--data))
-- `id` (String) Identifier
 - `priority` (Number) Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.
 - `proxied` (Boolean) Whether the record is receiving the performance and security benefits of Cloudflare.
-- `tags` (String) Custom tags for the DNS record. This field has no effect on DNS responses.
+- `tags` (List of String) Custom tags for the DNS record. This field has no effect on DNS responses.
 - `ttl` (Number) Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.
 
 <a id="nestedatt--data"></a>
@@ -69,7 +69,7 @@ Optional:
 - `digest` (String) Digest.
 - `digest_type` (Number) Digest Type.
 - `fingerprint` (String) fingerprint.
-- `flags` (String) Flags for the CAA record.
+- `flags` (Dynamic) Flags for the CAA record.
 - `key_tag` (Number) Key Tag.
 - `lat_degrees` (Number) Degrees of latitude.
 - `lat_direction` (String) Latitude direction.

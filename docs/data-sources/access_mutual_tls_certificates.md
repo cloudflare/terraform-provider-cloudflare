@@ -21,19 +21,22 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `associated_hostnames` (List of String) The hostnames of the applications that will use this certificate.
-- `created_at` (String)
 - `expires_on` (String)
 - `fingerprint` (String) The MD5 fingerprint of the certificate.
 - `id` (String) The ID of the application that will use this certificate.
 - `name` (String) The name of the certificate.
+
+Read-Only:
+
+- `created_at` (String)
 - `updated_at` (String)
 
 

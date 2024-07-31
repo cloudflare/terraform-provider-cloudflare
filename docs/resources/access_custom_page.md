@@ -28,16 +28,16 @@ resource "cloudflare_access_custom_page" "example" {
 - `custom_html` (String) Custom page HTML.
 - `name` (String) Custom page name.
 - `type` (String) Custom page type.
+- `uid` (String) UUID
 
 ### Optional
 
 - `app_count` (Number) Number of apps the custom page is assigned to.
-- `created_at` (String)
-- `uid` (String) UUID
-- `updated_at` (String)
 
 ### Read-Only
 
+- `created_at` (String)
 - `id` (String) UUID
+- `updated_at` (String)
 
 

@@ -61,13 +61,13 @@ resource "cloudflare_address_map" "example" {
 
 Optional:
 
-- `created_at` (String)
 - `identifier` (String) The identifier for the membership (eg. a zone or account tag).
 - `kind` (String) The type of the membership.
 
 Read-Only:
 
 - `can_delete` (Boolean) Controls whether the membership can be deleted via the API or not.
+- `created_at` (String)
 
 ## Import
 

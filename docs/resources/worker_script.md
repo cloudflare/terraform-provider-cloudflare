@@ -66,12 +66,11 @@ resource "cloudflare_worker_script" "my_script" {
 ### Required
 
 - `account_id` (String) Identifier
-- `id` (String) The id of the script in the Workers system. Usually the script name.
 - `script_name` (String) Name of the script, used in URLs and route configuration.
 
 ### Optional
 
-- `any_part_name` (String) A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.
+- `any_part_name` (List of String) A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.
 - `message` (String) Rollback message to be associated with this deployment. Only parsed when query param `"rollback_to"` is present.
 - `metadata` (Attributes) JSON encoded metadata about the uploaded parts and Worker configuration. (see [below for nested schema](#nestedatt--metadata))
 
@@ -79,6 +78,7 @@ resource "cloudflare_worker_script" "my_script" {
 
 - `created_on` (String) When the script was created.
 - `etag` (String) Hashed script content, can be used in a If-None-Match header when updating.
+- `id` (String) Name of the script, used in URLs and route configuration.
 - `logpush` (Boolean) Whether Logpush is turned on for the Worker.
 - `modified_on` (String) When the script was last modified.
 - `placement_mode` (String) Specifies the placement mode for the Worker (e.g. 'smart').
@@ -109,8 +109,8 @@ Optional:
 
 Optional:
 
-- `deleted_classes` (String) A list of classes to delete Durable Object namespaces from.
-- `new_classes` (String) A list of classes to create Durable Object namespaces from.
+- `deleted_classes` (List of String) A list of classes to delete Durable Object namespaces from.
+- `new_classes` (List of String) A list of classes to create Durable Object namespaces from.
 - `new_tag` (String) Tag to set as the latest migration tag.
 - `old_tag` (String) Tag used to verify against the latest migration tag for this Worker. If they don't match, the upload is rejected.
 - `renamed_classes` (Attributes List) A list of classes with Durable Object namespaces that were renamed. (see [below for nested schema](#nestedatt--metadata--migrations--renamed_classes))

@@ -89,6 +89,7 @@ resource "cloudflare_teams_account" "example" {
 ### Read-Only
 
 - `created_at` (String)
+- `id` (String) The ID of this resource.
 - `updated_at` (String)
 
 <a id="nestedatt--settings"></a>
@@ -175,7 +176,7 @@ Optional:
 
 Required:
 
-- `id` (String) UUID of certificate to be used for interception.
+- `id` (String) UUID of certificate to be used for interception. Certificate must be active on the edge.
 
 
 <a id="nestedatt--settings--custom_certificate"></a>

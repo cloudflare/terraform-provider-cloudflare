@@ -16,9 +16,9 @@ description: |-
 ### Optional
 
 - `account_id` (String) Identifier
-- `check_regions` (String) A list of regions from which to run health checks. Null means every Cloudflare data center.
+- `check_regions` (List of String) A list of regions from which to run health checks. Null means every Cloudflare data center.
 - `description` (String) A human-readable description of the pool.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `latitude` (Number) The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.
 - `load_shedding` (Attributes) Configures load shedding policies and percentages for the pool. (see [below for nested schema](#nestedatt--load_shedding))
 - `longitude` (Number) The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.
@@ -39,8 +39,8 @@ description: |-
 - `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
 - `modified_on` (String)
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -130,6 +130,6 @@ Read-Only:
 
 Optional:
 
-- `host` (String) The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.
+- `host` (List of String) The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.
 
 

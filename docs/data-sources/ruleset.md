@@ -44,7 +44,7 @@ Optional:
 
 Read-Only:
 
-- `categories` (String) The categories of the rule.
+- `categories` (List of String) The categories of the rule.
 - `description` (String) An informative description of the rule.
 - `enabled` (Boolean) Whether the rule should be executed.
 - `last_updated` (String) The timestamp of when the rule was last modified.

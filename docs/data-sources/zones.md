@@ -82,7 +82,7 @@ data "cloudflare_zones" "example" {
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
 <a id="nestedatt--account"></a>
 ### Nested Schema for `account`
@@ -101,8 +101,8 @@ Optional:
   * `contains_case_sensitive`
 
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
@@ -110,6 +110,7 @@ Optional:
 
 Read-Only:
 
+- `account` (Attributes) The account the zone belongs to (see [below for nested schema](#nestedatt--result--account))
 - `activated_on` (String) The last time proof of ownership was detected and the zone was made
 active
 - `created_on` (String) When the zone was created
@@ -117,11 +118,45 @@ active
 (positive integer) or last expired (negative integer) for the
 domain. If development mode has never been enabled, this value is 0.
 - `id` (String) Identifier
+- `meta` (Attributes) Metadata about the zone (see [below for nested schema](#nestedatt--result--meta))
 - `modified_on` (String) When the zone was last modified
 - `name` (String) The domain name
 - `name_servers` (List of String) The name servers Cloudflare assigns to a zone
 - `original_dnshost` (String) DNS host at the time of switching to Cloudflare
 - `original_name_servers` (List of String) Original name servers before moving to Cloudflare
 - `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare
+- `owner` (Attributes) The owner of the zone (see [below for nested schema](#nestedatt--result--owner))
+
+<a id="nestedatt--result--account"></a>
+### Nested Schema for `result.account`
+
+Optional:
+
+- `id` (String) Identifier
+- `name` (String) The name of the account
+
+
+<a id="nestedatt--result--meta"></a>
+### Nested Schema for `result.meta`
+
+Optional:
+
+- `cdn_only` (Boolean) The zone is only configured for CDN
+- `custom_certificate_quota` (Number) Number of Custom Certificates the zone can have
+- `dns_only` (Boolean) The zone is only configured for DNS
+- `foundation_dns` (Boolean) The zone is setup with Foundation DNS
+- `page_rule_quota` (Number) Number of Page Rules a zone can have
+- `phishing_detected` (Boolean) The zone has been flagged for phishing
+- `step` (Number)
+
+
+<a id="nestedatt--result--owner"></a>
+### Nested Schema for `result.owner`
+
+Optional:
+
+- `id` (String) Identifier
+- `name` (String) Name of the owner
+- `type` (String) The type of owner
 
 

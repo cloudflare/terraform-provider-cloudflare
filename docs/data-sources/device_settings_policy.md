@@ -28,7 +28,7 @@ description: |-
 - `exclude` (Attributes List) (see [below for nested schema](#nestedatt--exclude))
 - `exclude_office_ips` (Boolean) Whether to add Microsoft IPs to Split Tunnel exclusions.
 - `fallback_domains` (Attributes List) (see [below for nested schema](#nestedatt--fallback_domains))
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `gateway_unique_id` (String)
 - `include` (Attributes List) (see [below for nested schema](#nestedatt--include))
 - `lan_allow_minutes` (Number) The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.
@@ -41,6 +41,7 @@ description: |-
 - `support_url` (String) The URL to launch when the Send Feedback button is clicked.
 - `switch_locked` (Boolean) Whether to allow the user to turn off the WARP switch and disconnect the client.
 - `target_tests` (Attributes List) (see [below for nested schema](#nestedatt--target_tests))
+- `tunnel_protocol` (String) Determines which tunnel protocol to use.
 
 <a id="nestedatt--exclude"></a>
 ### Nested Schema for `exclude`
@@ -68,8 +69,8 @@ Read-Only:
 - `suffix` (String) The domain suffix to match when resolving locally.
 
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

@@ -23,14 +23,14 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--items--tunnel))
+- `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--result--tunnel))
 
 Read-Only:
 
@@ -44,8 +44,8 @@ Read-Only:
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
 
-<a id="nestedatt--items--tunnel"></a>
-### Nested Schema for `items.tunnel`
+<a id="nestedatt--result--tunnel"></a>
+### Nested Schema for `result.tunnel`
 
 Read-Only:
 

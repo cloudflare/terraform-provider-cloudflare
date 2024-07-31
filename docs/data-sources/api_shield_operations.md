@@ -29,8 +29,8 @@ description: |-
 - `origin` (String) Filter results to only include discovery results sourced from a particular discovery engine
   * `ML` - Discovered operations that were sourced using ML API Discovery
   * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery
-- `page` (String) Page number of paginated results.
-- `per_page` (String) Maximum number of results per page.
+- `page` (Number) Page number of paginated results.
+- `per_page` (Number) Maximum number of results per page.
 - `state` (String) Filter results to only include discovery results in a particular state. States are as follows
   * `review` - Discovered operations that are not saved into API Shield Endpoint Management
   * `saved` - Discovered operations that are already saved into API Shield Endpoint Management
@@ -38,16 +38,17 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Read-Only:
 
 - `endpoint` (String) The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.
+- `features` (Attributes) (see [below for nested schema](#nestedatt--result--features))
 - `host` (String) RFC3986-compliant host.
-- `id` (String) UUID identifier
+- `id` (String) UUID
 - `last_updated` (String)
 - `method` (String) The HTTP method used to access the endpoint.
 - `origin` (List of String) API discovery engine(s) that discovered this operation
@@ -55,5 +56,21 @@ Read-Only:
   * `review` - Operation is not saved into API Shield Endpoint Management
   * `saved` - Operation is saved into API Shield Endpoint Management
   * `ignored` - Operation is marked as ignored
+
+<a id="nestedatt--result--features"></a>
+### Nested Schema for `result.features`
+
+Optional:
+
+- `traffic_stats` (Attributes) (see [below for nested schema](#nestedatt--result--features--traffic_stats))
+
+<a id="nestedatt--result--features--traffic_stats"></a>
+### Nested Schema for `result.features.traffic_stats`
+
+Read-Only:
+
+- `last_updated` (String)
+- `period_seconds` (Number) The period in seconds these statistics were computed over
+- `requests` (Number) The average number of requests seen during this period
 
 

@@ -57,17 +57,22 @@ resource "cloudflare_access_application" "staging_app" {
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `allow_authenticate_via_warp` (Boolean) When set to true, users can authenticate to this application using their WARP session.  When set to false this application will always require direct IdP authentication. This setting always overrides the organization setting for WARP authentication.
-- `allowed_idps` (String) The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.
+- `allowed_idps` (List of String) The identity providers your users can select when connecting to this application. Defaults to all IdPs configured in your account.
+- `app_launcher_logo_url` (String) The image URL of the logo shown in the App Launcher header.
 - `app_launcher_visible` (Boolean) Displays the application in the App Launcher.
 - `auto_redirect_to_identity` (Boolean) When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.
+- `bg_color` (String) The background color of the App Launcher page.
 - `cors_headers` (Attributes) (see [below for nested schema](#nestedatt--cors_headers))
 - `custom_deny_message` (String) The custom error message shown to a user when they are denied access to the application.
 - `custom_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing identity-based rules.
 - `custom_non_identity_deny_url` (String) The custom URL a user is redirected to when they are denied access to the application when failing non-identity rules.
-- `custom_pages` (String) The custom pages that will be displayed when applicable for this application
+- `custom_pages` (List of String) The custom pages that will be displayed when applicable for this application
 - `domain` (String) The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.
 - `enable_binding_cookie` (Boolean) Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.
+- `footer_links` (Attributes List) The links in the App Launcher footer. (see [below for nested schema](#nestedatt--footer_links))
+- `header_bg_color` (String) The background color of the App Launcher header.
 - `http_only_cookie_attribute` (Boolean) Enables the HttpOnly cookie attribute, which increases security against XSS attacks.
+- `landing_page_design` (Attributes) The design of the App Launcher landing page shown to users when they log in. (see [below for nested schema](#nestedatt--landing_page_design))
 - `logo_url` (String) The image URL for the logo shown in the App Launcher dashboard.
 - `name` (String) The name of the application.
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set.
@@ -76,11 +81,12 @@ resource "cloudflare_access_application" "staging_app" {
 - `saas_app` (Attributes) (see [below for nested schema](#nestedatt--saas_app))
 - `same_site_cookie_attribute` (String) Sets the SameSite cookie setting, which provides increased security against CSRF attacks.
 - `scim_config` (Attributes) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedatt--scim_config))
-- `self_hosted_domains` (String) List of domains that Access will secure.
+- `self_hosted_domains` (List of String) List of domains that Access will secure.
 - `service_auth_401_redirect` (Boolean) Returns a 401 status code when the request is blocked by a Service Auth policy.
 - `session_duration` (String) The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.
+- `skip_app_launcher_login_page` (Boolean) Determines when to skip the App Launcher landing page.
 - `skip_interstitial` (Boolean) Enables automatic authentication through cloudflared.
-- `tags` (String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
+- `tags` (List of String) The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.
 - `type` (String) The application type.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
@@ -97,10 +103,34 @@ Optional:
 - `allow_all_methods` (Boolean) Allows all HTTP request methods.
 - `allow_all_origins` (Boolean) Allows all origins.
 - `allow_credentials` (Boolean) When set to `true`, includes credentials (cookies, authorization headers, or TLS client certificates) with requests.
-- `allowed_headers` (String) Allowed HTTP request headers.
-- `allowed_methods` (String) Allowed HTTP request methods.
-- `allowed_origins` (String) Allowed origins.
+- `allowed_headers` (List of String) Allowed HTTP request headers.
+- `allowed_methods` (List of String) Allowed HTTP request methods.
+- `allowed_origins` (List of String) Allowed origins.
 - `max_age` (Number) The maximum number of seconds the results of a preflight request can be cached.
+
+
+<a id="nestedatt--footer_links"></a>
+### Nested Schema for `footer_links`
+
+Required:
+
+- `name` (String) The hypertext in the footer link.
+- `url` (String) the hyperlink in the footer link.
+
+
+<a id="nestedatt--landing_page_design"></a>
+### Nested Schema for `landing_page_design`
+
+Optional:
+
+- `button_color` (String) The background color of the log in button on the landing page.
+- `button_text_color` (String) The color of the text in the log in button on the landing page.
+- `image_url` (String) The URL of the image shown on the landing page.
+- `message` (String) The message shown on the landing page.
+
+Read-Only:
+
+- `title` (String) The title shown on the landing page.
 
 
 <a id="nestedatt--policies"></a>
@@ -124,23 +154,26 @@ Optional:
 - `client_id` (String) The application client id
 - `client_secret` (String) The application client secret, only returned on POST request.
 - `consumer_service_url` (String) The service provider's endpoint that is responsible for receiving and parsing a SAML assertion.
-- `created_at` (String)
 - `custom_attributes` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_attributes))
 - `custom_claims` (Attributes) (see [below for nested schema](#nestedatt--saas_app--custom_claims))
 - `default_relay_state` (String) The URL that the user will be redirected to after a successful login for IDP initiated logins.
-- `grant_types` (String) The OIDC flows supported by this application
+- `grant_types` (List of String) The OIDC flows supported by this application
 - `group_filter_regex` (String) A regex to filter Cloudflare groups returned in ID token and userinfo endpoint
 - `hybrid_and_implicit_options` (Attributes) (see [below for nested schema](#nestedatt--saas_app--hybrid_and_implicit_options))
 - `idp_entity_id` (String) The unique identifier for your SaaS application.
 - `name_id_format` (String) The format of the name identifier sent to the SaaS application.
 - `name_id_transform_jsonata` (String) A [JSONata](https://jsonata.org/) expression that transforms an application's user identities into a NameID value for its SAML assertion. This expression should evaluate to a singular string. The output of this expression can override the `name_id_format` setting.
 - `public_key` (String) The Access public certificate that will be used to verify your identity.
-- `redirect_uris` (String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens
+- `redirect_uris` (List of String) The permitted URL's for Cloudflare to return Authorization codes and Access/ID tokens
 - `refresh_token_options` (Attributes) (see [below for nested schema](#nestedatt--saas_app--refresh_token_options))
 - `saml_attribute_transform_jsonata` (String) A [JSONata] (https://jsonata.org/) expression that transforms an application's user identities into attribute assertions in the SAML response. The expression can transform id, email, name, and groups values. It can also transform fields listed in the saml_attributes or oidc_fields of the identity provider used to authenticate. The output of this expression must be a JSON object.
-- `scopes` (String) Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled
+- `scopes` (List of String) Define the user information shared with access, "offline_access" scope will be automatically enabled if refresh tokens are enabled
 - `sp_entity_id` (String) A globally unique name for an identity or service provider.
 - `sso_endpoint` (String) The endpoint where your SaaS application will send login requests.
+
+Read-Only:
+
+- `created_at` (String)
 - `updated_at` (String)
 
 <a id="nestedatt--saas_app--custom_attributes"></a>
@@ -230,7 +263,7 @@ Optional:
 - `client_id` (String) Client ID used to authenticate when generating a token for authenticating with the remote SCIM service.
 - `client_secret` (String) Secret used to authenticate when generating a token for authenticating with the remove SCIM service.
 - `password` (String) Password used to authenticate with the remote SCIM service.
-- `scopes` (String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
+- `scopes` (List of String) The authorization scopes to request when generating the token used to authenticate with the remove SCIM service.
 - `token` (String) Token used to authenticate with the remote SCIM service.
 - `token_url` (String) URL used to generate the token used to authenticate with the remote SCIM service.
 - `user` (String) User name used to authenticate with the remote SCIM service.

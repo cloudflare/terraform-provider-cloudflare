@@ -20,7 +20,7 @@ description: |-
 - `event_end_time` (String) An ISO 8601 timestamp that marks the end of the event.
 - `event_id` (String)
 - `event_start_time` (String) An ISO 8601 timestamp that marks the start of the event. At this time, queued users will be processed with the event's configuration. The start time must be at least one minute before `event_end_time`.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `name` (String) A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.
 - `new_users_per_minute` (Number) If set, the event will override the waiting room's `new_users_per_minute` property while it is active. If null, the event will inherit it. This can only be set if the event's `total_active_users` property is also set.
 - `prequeue_start_time` (String) An ISO 8601 timestamp that marks when to begin queueing all users before the event starts. The prequeue must start at least five minutes before `event_start_time`.
@@ -39,8 +39,8 @@ description: |-
 - `shuffle_at_event_start` (Boolean) If enabled, users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. This is useful for situations when many users will join the event prequeue at the same time and you want to shuffle them to ensure fairness. Naturally, it makes the most sense to enable this feature when the `queueing_method` during the event respects ordering such as **fifo**, or else the shuffling may be unnecessary.
 - `suspended` (Boolean) Suspends or allows an event. If set to `true`, the event is ignored and traffic will be handled based on the waiting room configuration.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

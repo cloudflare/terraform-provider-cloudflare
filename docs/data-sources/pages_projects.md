@@ -23,16 +23,17 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Read-Only:
 
 - `aliases` (List of String) A list of alias URLs pointing to this deployment.
 - `build_config` (String)
 - `created_on` (String) When the deployment was created.
+- `deployment_trigger` (Attributes) Info about what caused the deployment. (see [below for nested schema](#nestedatt--result--deployment_trigger))
 - `env_vars` (String) A dict of env variables to build this deploy.
 - `environment` (String) Type of deploy.
 - `id` (String) Id of the deployment.
@@ -43,11 +44,33 @@ Read-Only:
 - `project_name` (String) Name of the project.
 - `short_id` (String) Short Id (8 character) of the deployment.
 - `source` (String)
-- `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--items--stages))
+- `stages` (Attributes List) List of past stages. (see [below for nested schema](#nestedatt--result--stages))
 - `url` (String) The live URL to view this deployment.
 
-<a id="nestedatt--items--stages"></a>
-### Nested Schema for `items.stages`
+<a id="nestedatt--result--deployment_trigger"></a>
+### Nested Schema for `result.deployment_trigger`
+
+Optional:
+
+- `metadata` (Attributes) Additional info about the trigger. (see [below for nested schema](#nestedatt--result--deployment_trigger--metadata))
+
+Read-Only:
+
+- `type` (String) What caused the deployment.
+
+<a id="nestedatt--result--deployment_trigger--metadata"></a>
+### Nested Schema for `result.deployment_trigger.metadata`
+
+Read-Only:
+
+- `branch` (String) Where the trigger happened.
+- `commit_hash` (String) Hash of the deployment trigger commit.
+- `commit_message` (String) Message of the deployment trigger commit.
+
+
+
+<a id="nestedatt--result--stages"></a>
+### Nested Schema for `result.stages`
 
 Optional:
 

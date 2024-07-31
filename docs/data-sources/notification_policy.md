@@ -16,11 +16,12 @@ description: |-
 ### Optional
 
 - `account_id` (String) The account id
+- `alert_interval` (String) Optional specification of how often to re-alert from the same incident, not support on all alert types.
 - `alert_type` (String) Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.
 - `description` (String) Optional description for the Notification policy.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--filters))
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
-- `mechanisms` (String) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
+- `mechanisms` (Map of List of String) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
 - `name` (String) Name of the policy.
 - `policy_id` (String) The unique identifier of a notification policy
 
@@ -31,58 +32,58 @@ description: |-
 - `id` (String) The unique identifier of a notification policy
 - `modified` (String)
 
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Required:
+
+- `account_id` (String) The account id
+
+
 <a id="nestedatt--filters"></a>
 ### Nested Schema for `filters`
 
 Optional:
 
-- `actions` (String) Usage depends on specific alert type
-- `affected_asns` (String) Used for configuring radar_notification
-- `affected_components` (String) Used for configuring incident_alert. A list of identifiers for each component to monitor.
-- `affected_locations` (String) Used for configuring radar_notification
-- `airport_code` (String) Used for configuring maintenance_event_notification
-- `alert_trigger_preferences` (String) Usage depends on specific alert type
-- `alert_trigger_preferences_value` (String) Used for configuring magic_tunnel_health_check_event
-- `enabled` (String) Used for configuring load_balancing_pool_enablement_alert
-- `environment` (String) Used for configuring pages_event_alert
-- `event` (String) Used for configuring pages_event_alert
-- `event_source` (String) Used for configuring load_balancing_health_alert
-- `event_type` (String) Usage depends on specific alert type
-- `group_by` (String) Usage depends on specific alert type
-- `health_check_id` (String) Used for configuring health_check_status_notification
-- `incident_impact` (String) Used for configuring incident_alert
-- `input_id` (String) Used for configuring stream_live_notifications
-- `limit` (String) Used for configuring billing_usage_alert
-- `logo_tag` (String) Used for configuring logo_match_alert
-- `megabits_per_second` (String) Used for configuring advanced_ddos_attack_l4_alert
-- `new_health` (String) Used for configuring load_balancing_health_alert
-- `new_status` (String) Used for configuring tunnel_health_event
-- `packets_per_second` (String) Used for configuring advanced_ddos_attack_l4_alert
-- `pool_id` (String) Usage depends on specific alert type
-- `product` (String) Used for configuring billing_usage_alert
-- `project_id` (String) Used for configuring pages_event_alert
-- `protocol` (String) Used for configuring advanced_ddos_attack_l4_alert
-- `query_tag` (String) Usage depends on specific alert type
-- `requests_per_second` (String) Used for configuring advanced_ddos_attack_l7_alert
-- `selectors` (String) Usage depends on specific alert type
-- `services` (String) Used for configuring clickhouse_alert_fw_ent_anomaly
-- `slo` (String) Usage depends on specific alert type
-- `status` (String) Used for configuring health_check_status_notification
-- `target_hostname` (String) Used for configuring advanced_ddos_attack_l7_alert
-- `target_ip` (String) Used for configuring advanced_ddos_attack_l4_alert
-- `target_zone_name` (String) Used for configuring advanced_ddos_attack_l7_alert
-- `traffic_exclusions` (String) Used for configuring traffic_anomalies_alert
-- `tunnel_id` (String) Used for configuring tunnel_health_event
-- `tunnel_name` (String) Used for configuring magic_tunnel_health_check_event
-- `where` (String) Usage depends on specific alert type
-- `zones` (String) Usage depends on specific alert type
-
-
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
-
-Required:
-
-- `account_id` (String) The account id
+- `actions` (List of String) Usage depends on specific alert type
+- `affected_asns` (List of String) Used for configuring radar_notification
+- `affected_components` (List of String) Used for configuring incident_alert
+- `affected_locations` (List of String) Used for configuring radar_notification
+- `airport_code` (List of String) Used for configuring maintenance_event_notification
+- `alert_trigger_preferences` (List of String) Usage depends on specific alert type
+- `alert_trigger_preferences_value` (List of String) Usage depends on specific alert type
+- `enabled` (List of String) Used for configuring load_balancing_pool_enablement_alert
+- `environment` (List of String) Used for configuring pages_event_alert
+- `event` (List of String) Used for configuring pages_event_alert
+- `event_source` (List of String) Used for configuring load_balancing_health_alert
+- `event_type` (List of String) Usage depends on specific alert type
+- `group_by` (List of String) Usage depends on specific alert type
+- `health_check_id` (List of String) Used for configuring health_check_status_notification
+- `incident_impact` (List of String) Used for configuring incident_alert
+- `input_id` (List of String) Used for configuring stream_live_notifications
+- `limit` (List of String) Used for configuring billing_usage_alert
+- `logo_tag` (List of String) Used for configuring logo_match_alert
+- `megabits_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
+- `new_health` (List of String) Used for configuring load_balancing_health_alert
+- `new_status` (List of String) Used for configuring tunnel_health_event
+- `packets_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
+- `pool_id` (List of String) Usage depends on specific alert type
+- `product` (List of String) Used for configuring billing_usage_alert
+- `project_id` (List of String) Used for configuring pages_event_alert
+- `protocol` (List of String) Used for configuring advanced_ddos_attack_l4_alert
+- `query_tag` (List of String) Usage depends on specific alert type
+- `requests_per_second` (List of String) Used for configuring advanced_ddos_attack_l7_alert
+- `selectors` (List of String) Usage depends on specific alert type
+- `services` (List of String) Used for configuring clickhouse_alert_fw_ent_anomaly
+- `slo` (List of String) Usage depends on specific alert type
+- `status` (List of String) Used for configuring health_check_status_notification
+- `target_hostname` (List of String) Used for configuring advanced_ddos_attack_l7_alert
+- `target_ip` (List of String) Used for configuring advanced_ddos_attack_l4_alert
+- `target_zone_name` (List of String) Used for configuring advanced_ddos_attack_l7_alert
+- `traffic_exclusions` (List of String) Used for configuring traffic_anomalies_alert
+- `tunnel_id` (List of String) Used for configuring tunnel_health_event
+- `tunnel_name` (List of String) Usage depends on specific alert type
+- `where` (List of String) Usage depends on specific alert type
+- `zones` (List of String) Usage depends on specific alert type
 
 

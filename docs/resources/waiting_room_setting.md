@@ -23,4 +23,8 @@ description: |-
 Verified search engine crawlers will not be tracked or counted by the waiting room system,
 and will not appear in waiting room analytics.
 
+### Read-Only
+
+- `id` (String) Identifier
+
 

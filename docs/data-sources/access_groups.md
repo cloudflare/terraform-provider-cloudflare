@@ -21,57 +21,60 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
+
+- `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--result--exclude))
+- `id` (String) UUID
+- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--result--include))
+- `is_default` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--is_default))
+- `name` (String) The name of the Access group.
+- `require` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--result--require))
+
+Read-Only:
 
 - `created_at` (String)
-- `exclude` (Attributes List) Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules. (see [below for nested schema](#nestedatt--items--exclude))
-- `id` (String) UUID
-- `include` (Attributes List) Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules. (see [below for nested schema](#nestedatt--items--include))
-- `is_default` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--items--is_default))
-- `name` (String) The name of the Access group.
-- `require` (Attributes List) Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules. (see [below for nested schema](#nestedatt--items--require))
 - `updated_at` (String)
 
-<a id="nestedatt--items--exclude"></a>
-### Nested Schema for `items.exclude`
+<a id="nestedatt--result--exclude"></a>
+### Nested Schema for `result.exclude`
 
 Optional:
 
 - `any_valid_service_token` (String) An empty object which matches on all service tokens.
-- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--auth_method))
-- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--azure_ad))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--azure_ad))
 - `certificate` (String)
-- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--device_posture))
-- `email` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--email))
-- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--email_domain))
-- `email_list` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--email_list))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--email_list))
 - `everyone` (String) An empty object which matches on all users.
-- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--external_evaluation))
-- `geo` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--geo))
-- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--github_organization))
-- `group` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--group))
-- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--gsuite))
-- `ip` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--ip))
-- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--ip_list))
-- `okta` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--okta))
-- `saml` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--saml))
-- `service_token` (Attributes) (see [below for nested schema](#nestedatt--items--exclude--service_token))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--ip_list))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--exclude--service_token))
 
-<a id="nestedatt--items--exclude--auth_method"></a>
-### Nested Schema for `items.exclude.auth_method`
+<a id="nestedatt--result--exclude--auth_method"></a>
+### Nested Schema for `result.exclude.auth_method`
 
 Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
 
-<a id="nestedatt--items--exclude--azure_ad"></a>
-### Nested Schema for `items.exclude.azure_ad`
+<a id="nestedatt--result--exclude--azure_ad"></a>
+### Nested Schema for `result.exclude.azure_ad`
 
 Read-Only:
 
@@ -79,40 +82,40 @@ Read-Only:
 - `id` (String) The ID of an Azure group.
 
 
-<a id="nestedatt--items--exclude--device_posture"></a>
-### Nested Schema for `items.exclude.device_posture`
+<a id="nestedatt--result--exclude--device_posture"></a>
+### Nested Schema for `result.exclude.device_posture`
 
 Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
 
-<a id="nestedatt--items--exclude--email"></a>
-### Nested Schema for `items.exclude.email`
+<a id="nestedatt--result--exclude--email"></a>
+### Nested Schema for `result.exclude.email`
 
 Read-Only:
 
 - `email` (String) The email of the user.
 
 
-<a id="nestedatt--items--exclude--email_domain"></a>
-### Nested Schema for `items.exclude.email_domain`
+<a id="nestedatt--result--exclude--email_domain"></a>
+### Nested Schema for `result.exclude.email_domain`
 
 Read-Only:
 
 - `domain` (String) The email domain to match.
 
 
-<a id="nestedatt--items--exclude--email_list"></a>
-### Nested Schema for `items.exclude.email_list`
+<a id="nestedatt--result--exclude--email_list"></a>
+### Nested Schema for `result.exclude.email_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
 
-<a id="nestedatt--items--exclude--external_evaluation"></a>
-### Nested Schema for `items.exclude.external_evaluation`
+<a id="nestedatt--result--exclude--external_evaluation"></a>
+### Nested Schema for `result.exclude.external_evaluation`
 
 Read-Only:
 
@@ -120,16 +123,16 @@ Read-Only:
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
 
 
-<a id="nestedatt--items--exclude--geo"></a>
-### Nested Schema for `items.exclude.geo`
+<a id="nestedatt--result--exclude--geo"></a>
+### Nested Schema for `result.exclude.geo`
 
 Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
 
-<a id="nestedatt--items--exclude--github_organization"></a>
-### Nested Schema for `items.exclude.github_organization`
+<a id="nestedatt--result--exclude--github_organization"></a>
+### Nested Schema for `result.exclude.github_organization`
 
 Read-Only:
 
@@ -137,16 +140,16 @@ Read-Only:
 - `name` (String) The name of the organization.
 
 
-<a id="nestedatt--items--exclude--group"></a>
-### Nested Schema for `items.exclude.group`
+<a id="nestedatt--result--exclude--group"></a>
+### Nested Schema for `result.exclude.group`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
 
-<a id="nestedatt--items--exclude--gsuite"></a>
-### Nested Schema for `items.exclude.gsuite`
+<a id="nestedatt--result--exclude--gsuite"></a>
+### Nested Schema for `result.exclude.gsuite`
 
 Read-Only:
 
@@ -154,24 +157,24 @@ Read-Only:
 - `email` (String) The email of the Google Workspace group.
 
 
-<a id="nestedatt--items--exclude--ip"></a>
-### Nested Schema for `items.exclude.ip`
+<a id="nestedatt--result--exclude--ip"></a>
+### Nested Schema for `result.exclude.ip`
 
 Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
 
-<a id="nestedatt--items--exclude--ip_list"></a>
-### Nested Schema for `items.exclude.ip_list`
+<a id="nestedatt--result--exclude--ip_list"></a>
+### Nested Schema for `result.exclude.ip_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
 
-<a id="nestedatt--items--exclude--okta"></a>
-### Nested Schema for `items.exclude.okta`
+<a id="nestedatt--result--exclude--okta"></a>
+### Nested Schema for `result.exclude.okta`
 
 Read-Only:
 
@@ -179,8 +182,8 @@ Read-Only:
 - `email` (String) The email of the Okta group.
 
 
-<a id="nestedatt--items--exclude--saml"></a>
-### Nested Schema for `items.exclude.saml`
+<a id="nestedatt--result--exclude--saml"></a>
+### Nested Schema for `result.exclude.saml`
 
 Read-Only:
 
@@ -188,8 +191,8 @@ Read-Only:
 - `attribute_value` (String) The SAML attribute value to look for.
 
 
-<a id="nestedatt--items--exclude--service_token"></a>
-### Nested Schema for `items.exclude.service_token`
+<a id="nestedatt--result--exclude--service_token"></a>
+### Nested Schema for `result.exclude.service_token`
 
 Read-Only:
 
@@ -197,41 +200,41 @@ Read-Only:
 
 
 
-<a id="nestedatt--items--include"></a>
-### Nested Schema for `items.include`
+<a id="nestedatt--result--include"></a>
+### Nested Schema for `result.include`
 
 Optional:
 
 - `any_valid_service_token` (String) An empty object which matches on all service tokens.
-- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--items--include--auth_method))
-- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--items--include--azure_ad))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--include--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--include--azure_ad))
 - `certificate` (String)
-- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--items--include--device_posture))
-- `email` (Attributes) (see [below for nested schema](#nestedatt--items--include--email))
-- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--items--include--email_domain))
-- `email_list` (Attributes) (see [below for nested schema](#nestedatt--items--include--email_list))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--include--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--result--include--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--include--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--include--email_list))
 - `everyone` (String) An empty object which matches on all users.
-- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--items--include--external_evaluation))
-- `geo` (Attributes) (see [below for nested schema](#nestedatt--items--include--geo))
-- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--items--include--github_organization))
-- `group` (Attributes) (see [below for nested schema](#nestedatt--items--include--group))
-- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--items--include--gsuite))
-- `ip` (Attributes) (see [below for nested schema](#nestedatt--items--include--ip))
-- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--items--include--ip_list))
-- `okta` (Attributes) (see [below for nested schema](#nestedatt--items--include--okta))
-- `saml` (Attributes) (see [below for nested schema](#nestedatt--items--include--saml))
-- `service_token` (Attributes) (see [below for nested schema](#nestedatt--items--include--service_token))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--include--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--result--include--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--include--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--result--include--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--include--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--include--ip_list))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--result--include--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--result--include--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--include--service_token))
 
-<a id="nestedatt--items--include--auth_method"></a>
-### Nested Schema for `items.include.auth_method`
+<a id="nestedatt--result--include--auth_method"></a>
+### Nested Schema for `result.include.auth_method`
 
 Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
 
-<a id="nestedatt--items--include--azure_ad"></a>
-### Nested Schema for `items.include.azure_ad`
+<a id="nestedatt--result--include--azure_ad"></a>
+### Nested Schema for `result.include.azure_ad`
 
 Read-Only:
 
@@ -239,40 +242,40 @@ Read-Only:
 - `id` (String) The ID of an Azure group.
 
 
-<a id="nestedatt--items--include--device_posture"></a>
-### Nested Schema for `items.include.device_posture`
+<a id="nestedatt--result--include--device_posture"></a>
+### Nested Schema for `result.include.device_posture`
 
 Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
 
-<a id="nestedatt--items--include--email"></a>
-### Nested Schema for `items.include.email`
+<a id="nestedatt--result--include--email"></a>
+### Nested Schema for `result.include.email`
 
 Read-Only:
 
 - `email` (String) The email of the user.
 
 
-<a id="nestedatt--items--include--email_domain"></a>
-### Nested Schema for `items.include.email_domain`
+<a id="nestedatt--result--include--email_domain"></a>
+### Nested Schema for `result.include.email_domain`
 
 Read-Only:
 
 - `domain` (String) The email domain to match.
 
 
-<a id="nestedatt--items--include--email_list"></a>
-### Nested Schema for `items.include.email_list`
+<a id="nestedatt--result--include--email_list"></a>
+### Nested Schema for `result.include.email_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
 
-<a id="nestedatt--items--include--external_evaluation"></a>
-### Nested Schema for `items.include.external_evaluation`
+<a id="nestedatt--result--include--external_evaluation"></a>
+### Nested Schema for `result.include.external_evaluation`
 
 Read-Only:
 
@@ -280,16 +283,16 @@ Read-Only:
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
 
 
-<a id="nestedatt--items--include--geo"></a>
-### Nested Schema for `items.include.geo`
+<a id="nestedatt--result--include--geo"></a>
+### Nested Schema for `result.include.geo`
 
 Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
 
-<a id="nestedatt--items--include--github_organization"></a>
-### Nested Schema for `items.include.github_organization`
+<a id="nestedatt--result--include--github_organization"></a>
+### Nested Schema for `result.include.github_organization`
 
 Read-Only:
 
@@ -297,16 +300,16 @@ Read-Only:
 - `name` (String) The name of the organization.
 
 
-<a id="nestedatt--items--include--group"></a>
-### Nested Schema for `items.include.group`
+<a id="nestedatt--result--include--group"></a>
+### Nested Schema for `result.include.group`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
 
-<a id="nestedatt--items--include--gsuite"></a>
-### Nested Schema for `items.include.gsuite`
+<a id="nestedatt--result--include--gsuite"></a>
+### Nested Schema for `result.include.gsuite`
 
 Read-Only:
 
@@ -314,24 +317,24 @@ Read-Only:
 - `email` (String) The email of the Google Workspace group.
 
 
-<a id="nestedatt--items--include--ip"></a>
-### Nested Schema for `items.include.ip`
+<a id="nestedatt--result--include--ip"></a>
+### Nested Schema for `result.include.ip`
 
 Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
 
-<a id="nestedatt--items--include--ip_list"></a>
-### Nested Schema for `items.include.ip_list`
+<a id="nestedatt--result--include--ip_list"></a>
+### Nested Schema for `result.include.ip_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
 
-<a id="nestedatt--items--include--okta"></a>
-### Nested Schema for `items.include.okta`
+<a id="nestedatt--result--include--okta"></a>
+### Nested Schema for `result.include.okta`
 
 Read-Only:
 
@@ -339,8 +342,8 @@ Read-Only:
 - `email` (String) The email of the Okta group.
 
 
-<a id="nestedatt--items--include--saml"></a>
-### Nested Schema for `items.include.saml`
+<a id="nestedatt--result--include--saml"></a>
+### Nested Schema for `result.include.saml`
 
 Read-Only:
 
@@ -348,8 +351,8 @@ Read-Only:
 - `attribute_value` (String) The SAML attribute value to look for.
 
 
-<a id="nestedatt--items--include--service_token"></a>
-### Nested Schema for `items.include.service_token`
+<a id="nestedatt--result--include--service_token"></a>
+### Nested Schema for `result.include.service_token`
 
 Read-Only:
 
@@ -357,41 +360,41 @@ Read-Only:
 
 
 
-<a id="nestedatt--items--is_default"></a>
-### Nested Schema for `items.is_default`
+<a id="nestedatt--result--is_default"></a>
+### Nested Schema for `result.is_default`
 
 Optional:
 
 - `any_valid_service_token` (String) An empty object which matches on all service tokens.
-- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--auth_method))
-- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--azure_ad))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--azure_ad))
 - `certificate` (String)
-- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--device_posture))
-- `email` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--email))
-- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--email_domain))
-- `email_list` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--email_list))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--email_list))
 - `everyone` (String) An empty object which matches on all users.
-- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--external_evaluation))
-- `geo` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--geo))
-- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--github_organization))
-- `group` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--group))
-- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--gsuite))
-- `ip` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--ip))
-- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--ip_list))
-- `okta` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--okta))
-- `saml` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--saml))
-- `service_token` (Attributes) (see [below for nested schema](#nestedatt--items--is_default--service_token))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--ip_list))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--is_default--service_token))
 
-<a id="nestedatt--items--is_default--auth_method"></a>
-### Nested Schema for `items.is_default.auth_method`
+<a id="nestedatt--result--is_default--auth_method"></a>
+### Nested Schema for `result.is_default.auth_method`
 
 Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
 
-<a id="nestedatt--items--is_default--azure_ad"></a>
-### Nested Schema for `items.is_default.azure_ad`
+<a id="nestedatt--result--is_default--azure_ad"></a>
+### Nested Schema for `result.is_default.azure_ad`
 
 Read-Only:
 
@@ -399,40 +402,40 @@ Read-Only:
 - `id` (String) The ID of an Azure group.
 
 
-<a id="nestedatt--items--is_default--device_posture"></a>
-### Nested Schema for `items.is_default.device_posture`
+<a id="nestedatt--result--is_default--device_posture"></a>
+### Nested Schema for `result.is_default.device_posture`
 
 Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
 
-<a id="nestedatt--items--is_default--email"></a>
-### Nested Schema for `items.is_default.email`
+<a id="nestedatt--result--is_default--email"></a>
+### Nested Schema for `result.is_default.email`
 
 Read-Only:
 
 - `email` (String) The email of the user.
 
 
-<a id="nestedatt--items--is_default--email_domain"></a>
-### Nested Schema for `items.is_default.email_domain`
+<a id="nestedatt--result--is_default--email_domain"></a>
+### Nested Schema for `result.is_default.email_domain`
 
 Read-Only:
 
 - `domain` (String) The email domain to match.
 
 
-<a id="nestedatt--items--is_default--email_list"></a>
-### Nested Schema for `items.is_default.email_list`
+<a id="nestedatt--result--is_default--email_list"></a>
+### Nested Schema for `result.is_default.email_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
 
-<a id="nestedatt--items--is_default--external_evaluation"></a>
-### Nested Schema for `items.is_default.external_evaluation`
+<a id="nestedatt--result--is_default--external_evaluation"></a>
+### Nested Schema for `result.is_default.external_evaluation`
 
 Read-Only:
 
@@ -440,16 +443,16 @@ Read-Only:
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
 
 
-<a id="nestedatt--items--is_default--geo"></a>
-### Nested Schema for `items.is_default.geo`
+<a id="nestedatt--result--is_default--geo"></a>
+### Nested Schema for `result.is_default.geo`
 
 Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
 
-<a id="nestedatt--items--is_default--github_organization"></a>
-### Nested Schema for `items.is_default.github_organization`
+<a id="nestedatt--result--is_default--github_organization"></a>
+### Nested Schema for `result.is_default.github_organization`
 
 Read-Only:
 
@@ -457,16 +460,16 @@ Read-Only:
 - `name` (String) The name of the organization.
 
 
-<a id="nestedatt--items--is_default--group"></a>
-### Nested Schema for `items.is_default.group`
+<a id="nestedatt--result--is_default--group"></a>
+### Nested Schema for `result.is_default.group`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
 
-<a id="nestedatt--items--is_default--gsuite"></a>
-### Nested Schema for `items.is_default.gsuite`
+<a id="nestedatt--result--is_default--gsuite"></a>
+### Nested Schema for `result.is_default.gsuite`
 
 Read-Only:
 
@@ -474,24 +477,24 @@ Read-Only:
 - `email` (String) The email of the Google Workspace group.
 
 
-<a id="nestedatt--items--is_default--ip"></a>
-### Nested Schema for `items.is_default.ip`
+<a id="nestedatt--result--is_default--ip"></a>
+### Nested Schema for `result.is_default.ip`
 
 Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
 
-<a id="nestedatt--items--is_default--ip_list"></a>
-### Nested Schema for `items.is_default.ip_list`
+<a id="nestedatt--result--is_default--ip_list"></a>
+### Nested Schema for `result.is_default.ip_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
 
-<a id="nestedatt--items--is_default--okta"></a>
-### Nested Schema for `items.is_default.okta`
+<a id="nestedatt--result--is_default--okta"></a>
+### Nested Schema for `result.is_default.okta`
 
 Read-Only:
 
@@ -499,8 +502,8 @@ Read-Only:
 - `email` (String) The email of the Okta group.
 
 
-<a id="nestedatt--items--is_default--saml"></a>
-### Nested Schema for `items.is_default.saml`
+<a id="nestedatt--result--is_default--saml"></a>
+### Nested Schema for `result.is_default.saml`
 
 Read-Only:
 
@@ -508,8 +511,8 @@ Read-Only:
 - `attribute_value` (String) The SAML attribute value to look for.
 
 
-<a id="nestedatt--items--is_default--service_token"></a>
-### Nested Schema for `items.is_default.service_token`
+<a id="nestedatt--result--is_default--service_token"></a>
+### Nested Schema for `result.is_default.service_token`
 
 Read-Only:
 
@@ -517,41 +520,41 @@ Read-Only:
 
 
 
-<a id="nestedatt--items--require"></a>
-### Nested Schema for `items.require`
+<a id="nestedatt--result--require"></a>
+### Nested Schema for `result.require`
 
 Optional:
 
 - `any_valid_service_token` (String) An empty object which matches on all service tokens.
-- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--items--require--auth_method))
-- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--items--require--azure_ad))
+- `auth_method` (Attributes) (see [below for nested schema](#nestedatt--result--require--auth_method))
+- `azure_ad` (Attributes) (see [below for nested schema](#nestedatt--result--require--azure_ad))
 - `certificate` (String)
-- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--items--require--device_posture))
-- `email` (Attributes) (see [below for nested schema](#nestedatt--items--require--email))
-- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--items--require--email_domain))
-- `email_list` (Attributes) (see [below for nested schema](#nestedatt--items--require--email_list))
+- `device_posture` (Attributes) (see [below for nested schema](#nestedatt--result--require--device_posture))
+- `email` (Attributes) (see [below for nested schema](#nestedatt--result--require--email))
+- `email_domain` (Attributes) (see [below for nested schema](#nestedatt--result--require--email_domain))
+- `email_list` (Attributes) (see [below for nested schema](#nestedatt--result--require--email_list))
 - `everyone` (String) An empty object which matches on all users.
-- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--items--require--external_evaluation))
-- `geo` (Attributes) (see [below for nested schema](#nestedatt--items--require--geo))
-- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--items--require--github_organization))
-- `group` (Attributes) (see [below for nested schema](#nestedatt--items--require--group))
-- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--items--require--gsuite))
-- `ip` (Attributes) (see [below for nested schema](#nestedatt--items--require--ip))
-- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--items--require--ip_list))
-- `okta` (Attributes) (see [below for nested schema](#nestedatt--items--require--okta))
-- `saml` (Attributes) (see [below for nested schema](#nestedatt--items--require--saml))
-- `service_token` (Attributes) (see [below for nested schema](#nestedatt--items--require--service_token))
+- `external_evaluation` (Attributes) (see [below for nested schema](#nestedatt--result--require--external_evaluation))
+- `geo` (Attributes) (see [below for nested schema](#nestedatt--result--require--geo))
+- `github_organization` (Attributes) (see [below for nested schema](#nestedatt--result--require--github_organization))
+- `group` (Attributes) (see [below for nested schema](#nestedatt--result--require--group))
+- `gsuite` (Attributes) (see [below for nested schema](#nestedatt--result--require--gsuite))
+- `ip` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip))
+- `ip_list` (Attributes) (see [below for nested schema](#nestedatt--result--require--ip_list))
+- `okta` (Attributes) (see [below for nested schema](#nestedatt--result--require--okta))
+- `saml` (Attributes) (see [below for nested schema](#nestedatt--result--require--saml))
+- `service_token` (Attributes) (see [below for nested schema](#nestedatt--result--require--service_token))
 
-<a id="nestedatt--items--require--auth_method"></a>
-### Nested Schema for `items.require.auth_method`
+<a id="nestedatt--result--require--auth_method"></a>
+### Nested Schema for `result.require.auth_method`
 
 Read-Only:
 
 - `auth_method` (String) The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.
 
 
-<a id="nestedatt--items--require--azure_ad"></a>
-### Nested Schema for `items.require.azure_ad`
+<a id="nestedatt--result--require--azure_ad"></a>
+### Nested Schema for `result.require.azure_ad`
 
 Read-Only:
 
@@ -559,40 +562,40 @@ Read-Only:
 - `id` (String) The ID of an Azure group.
 
 
-<a id="nestedatt--items--require--device_posture"></a>
-### Nested Schema for `items.require.device_posture`
+<a id="nestedatt--result--require--device_posture"></a>
+### Nested Schema for `result.require.device_posture`
 
 Read-Only:
 
 - `integration_uid` (String) The ID of a device posture integration.
 
 
-<a id="nestedatt--items--require--email"></a>
-### Nested Schema for `items.require.email`
+<a id="nestedatt--result--require--email"></a>
+### Nested Schema for `result.require.email`
 
 Read-Only:
 
 - `email` (String) The email of the user.
 
 
-<a id="nestedatt--items--require--email_domain"></a>
-### Nested Schema for `items.require.email_domain`
+<a id="nestedatt--result--require--email_domain"></a>
+### Nested Schema for `result.require.email_domain`
 
 Read-Only:
 
 - `domain` (String) The email domain to match.
 
 
-<a id="nestedatt--items--require--email_list"></a>
-### Nested Schema for `items.require.email_list`
+<a id="nestedatt--result--require--email_list"></a>
+### Nested Schema for `result.require.email_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created email list.
 
 
-<a id="nestedatt--items--require--external_evaluation"></a>
-### Nested Schema for `items.require.external_evaluation`
+<a id="nestedatt--result--require--external_evaluation"></a>
+### Nested Schema for `result.require.external_evaluation`
 
 Read-Only:
 
@@ -600,16 +603,16 @@ Read-Only:
 - `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
 
 
-<a id="nestedatt--items--require--geo"></a>
-### Nested Schema for `items.require.geo`
+<a id="nestedatt--result--require--geo"></a>
+### Nested Schema for `result.require.geo`
 
 Read-Only:
 
 - `country_code` (String) The country code that should be matched.
 
 
-<a id="nestedatt--items--require--github_organization"></a>
-### Nested Schema for `items.require.github_organization`
+<a id="nestedatt--result--require--github_organization"></a>
+### Nested Schema for `result.require.github_organization`
 
 Read-Only:
 
@@ -617,16 +620,16 @@ Read-Only:
 - `name` (String) The name of the organization.
 
 
-<a id="nestedatt--items--require--group"></a>
-### Nested Schema for `items.require.group`
+<a id="nestedatt--result--require--group"></a>
+### Nested Schema for `result.require.group`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created Access group.
 
 
-<a id="nestedatt--items--require--gsuite"></a>
-### Nested Schema for `items.require.gsuite`
+<a id="nestedatt--result--require--gsuite"></a>
+### Nested Schema for `result.require.gsuite`
 
 Read-Only:
 
@@ -634,24 +637,24 @@ Read-Only:
 - `email` (String) The email of the Google Workspace group.
 
 
-<a id="nestedatt--items--require--ip"></a>
-### Nested Schema for `items.require.ip`
+<a id="nestedatt--result--require--ip"></a>
+### Nested Schema for `result.require.ip`
 
 Read-Only:
 
 - `ip` (String) An IPv4 or IPv6 CIDR block.
 
 
-<a id="nestedatt--items--require--ip_list"></a>
-### Nested Schema for `items.require.ip_list`
+<a id="nestedatt--result--require--ip_list"></a>
+### Nested Schema for `result.require.ip_list`
 
 Read-Only:
 
 - `id` (String) The ID of a previously created IP list.
 
 
-<a id="nestedatt--items--require--okta"></a>
-### Nested Schema for `items.require.okta`
+<a id="nestedatt--result--require--okta"></a>
+### Nested Schema for `result.require.okta`
 
 Read-Only:
 
@@ -659,8 +662,8 @@ Read-Only:
 - `email` (String) The email of the Okta group.
 
 
-<a id="nestedatt--items--require--saml"></a>
-### Nested Schema for `items.require.saml`
+<a id="nestedatt--result--require--saml"></a>
+### Nested Schema for `result.require.saml`
 
 Read-Only:
 
@@ -668,8 +671,8 @@ Read-Only:
 - `attribute_value` (String) The SAML attribute value to look for.
 
 
-<a id="nestedatt--items--require--service_token"></a>
-### Nested Schema for `items.require.service_token`
+<a id="nestedatt--result--require--service_token"></a>
+### Nested Schema for `result.require.service_token`
 
 Read-Only:
 

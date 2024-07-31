@@ -26,7 +26,7 @@ data "cloudflare_tunnel" "example" {
 - `connections` (Attributes List) The tunnel connections between your origin and Cloudflare's edge. (see [below for nested schema](#nestedatt--connections))
 - `created_at` (String) Timestamp of when the resource was created.
 - `deleted_at` (String) Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) UUID of the tunnel.
 - `name` (String) A user-friendly name for a tunnel.
 - `tunnel_id` (String) UUID of the tunnel.
@@ -44,8 +44,8 @@ Read-Only:
 - `uuid` (String) UUID of the Cloudflare Tunnel connection.
 
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

@@ -44,7 +44,7 @@ resource "cloudflare_access_ca_certificate" "another_example" {
 
 ### Read-Only
 
-- `id` (String) The ID of the CA.
+- `id` (String) UUID
 
 ## Import
 

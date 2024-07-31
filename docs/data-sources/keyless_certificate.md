@@ -15,7 +15,7 @@ description: |-
 
 ### Optional
 
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `keyless_certificate_id` (String) Identifier
 - `tunnel` (Attributes) Configuration for using Keyless SSL through a Cloudflare Tunnel (see [below for nested schema](#nestedatt--tunnel))
 - `zone_id` (String) Identifier
@@ -28,12 +28,12 @@ description: |-
 - `id` (String) Keyless certificate identifier tag.
 - `modified_on` (String) When the Keyless SSL was last modified.
 - `name` (String) The keyless SSL name.
-- `permissions` (String) Available permissions for the Keyless SSL for the current user requesting the item.
+- `permissions` (List of String) Available permissions for the Keyless SSL for the current user requesting the item.
 - `port` (Number) The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.
 - `status` (String) Status of the Keyless SSL.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

@@ -32,12 +32,13 @@ resource "cloudflare_account_member" "example" {
 ### Optional
 
 - `policies` (Attributes List) Array of policies associated with this member. (see [below for nested schema](#nestedatt--policies))
-- `roles` (String) Array of roles associated with this member.
+- `roles` (List of String) Array of roles associated with this member.
 
 ### Read-Only
 
 - `id` (String) Membership identifier tag.
 - `status` (String) A member's status in the account.
+- `user` (Attributes) Details of the user associated to the membership. (see [below for nested schema](#nestedatt--user))
 
 <a id="nestedatt--policies"></a>
 ### Nested Schema for `policies`
@@ -66,6 +67,25 @@ Required:
 Required:
 
 - `id` (String) Identifier of the group.
+
+
+
+<a id="nestedatt--user"></a>
+### Nested Schema for `user`
+
+Required:
+
+- `email` (String) The contact email address of the user.
+
+Optional:
+
+- `first_name` (String) User's first name
+- `last_name` (String) User's last name
+
+Read-Only:
+
+- `id` (String) Identifier
+- `two_factor_authentication_enabled` (Boolean) Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.
 
 ## Import
 

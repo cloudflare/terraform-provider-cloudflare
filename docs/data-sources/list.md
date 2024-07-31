@@ -25,7 +25,7 @@ data "cloudflare_list" "example" {
 - `account_id` (String) Identifier
 - `created_on` (String) The RFC 3339 timestamp of when the list was created.
 - `description` (String) An informative summary of the list.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The unique ID of the list.
 - `kind` (String) The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).
 - `list_id` (String) The unique ID of the list.
@@ -34,8 +34,8 @@ data "cloudflare_list" "example" {
 - `num_items` (Number) The number of items in the list.
 - `num_referencing_filters` (Number) The number of [filters](/operations/filters-list-filters) referencing the list.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

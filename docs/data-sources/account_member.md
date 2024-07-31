@@ -16,7 +16,7 @@ description: |-
 ### Optional
 
 - `account_id` (String) Account identifier tag.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `member_id` (String) Membership identifier tag.
 - `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--policies))
 - `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--roles))
@@ -25,9 +25,10 @@ description: |-
 
 - `id` (String) Membership identifier tag.
 - `status` (String) A member's status in the account.
+- `user` (Attributes) Details of the user associated to the membership. (see [below for nested schema](#nestedatt--user))
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -108,6 +109,21 @@ Read-Only:
 - `description` (String) Description of role's permissions.
 - `id` (String) Role identifier tag.
 - `name` (String) Role Name.
-- `permissions` (String) Access permissions for this User.
+- `permissions` (List of String) Access permissions for this User.
+
+
+<a id="nestedatt--user"></a>
+### Nested Schema for `user`
+
+Optional:
+
+- `first_name` (String) User's first name
+- `last_name` (String) User's last name
+
+Read-Only:
+
+- `email` (String) The contact email address of the user.
+- `id` (String) Identifier
+- `two_factor_authentication_enabled` (Boolean) Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.
 
 

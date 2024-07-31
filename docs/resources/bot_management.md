@@ -43,6 +43,10 @@ Note: Static resource protection can also result in legitimate traffic being blo
 - `sbfm_verified_bots` (String) Super Bot Fight Mode (SBFM) action to take on verified bots requests.
 - `suppress_session_score` (Boolean) Whether to disable tracking the highest bot score for a session in the Bot Management cookie.
 
+### Read-Only
+
+- `id` (String) Identifier
+
 ## Import
 
 Import is supported using the following syntax:

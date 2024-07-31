@@ -33,10 +33,10 @@ data "cloudflare_load_balancer_pools" "example" {
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
@@ -44,14 +44,14 @@ Optional:
 - `description` (String) A human-readable description of the pool.
 - `id` (String)
 - `latitude` (Number) The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.
-- `load_shedding` (Attributes) Configures load shedding policies and percentages for the pool. (see [below for nested schema](#nestedatt--items--load_shedding))
+- `load_shedding` (Attributes) Configures load shedding policies and percentages for the pool. (see [below for nested schema](#nestedatt--result--load_shedding))
 - `longitude` (Number) The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.
 - `monitor` (String) The ID of the Monitor to use for checking the health of origins within this pool.
 - `name` (String) A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.
 - `notification_email` (String) This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
-- `notification_filter` (Attributes) Filter pool and origin health notifications by resource type or health status. Use null to reset. (see [below for nested schema](#nestedatt--items--notification_filter))
-- `origin_steering` (Attributes) Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity. (see [below for nested schema](#nestedatt--items--origin_steering))
-- `origins` (Attributes List) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--items--origins))
+- `notification_filter` (Attributes) Filter pool and origin health notifications by resource type or health status. Use null to reset. (see [below for nested schema](#nestedatt--result--notification_filter))
+- `origin_steering` (Attributes) Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity. (see [below for nested schema](#nestedatt--result--origin_steering))
+- `origins` (Attributes List) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--result--origins))
 
 Read-Only:
 
@@ -61,8 +61,8 @@ Read-Only:
 - `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
 - `modified_on` (String)
 
-<a id="nestedatt--items--load_shedding"></a>
-### Nested Schema for `items.load_shedding`
+<a id="nestedatt--result--load_shedding"></a>
+### Nested Schema for `result.load_shedding`
 
 Read-Only:
 
@@ -72,28 +72,16 @@ Read-Only:
 - `session_policy` (String) Only the hash policy is supported for existing sessions (to avoid exponential decay).
 
 
-<a id="nestedatt--items--notification_filter"></a>
-### Nested Schema for `items.notification_filter`
+<a id="nestedatt--result--notification_filter"></a>
+### Nested Schema for `result.notification_filter`
 
 Optional:
 
-- `origin` (Attributes) Filter options for a particular resource type (pool or origin). Use null to reset. (see [below for nested schema](#nestedatt--items--notification_filter--origin))
-- `pool` (Attributes) Filter options for a particular resource type (pool or origin). Use null to reset. (see [below for nested schema](#nestedatt--items--notification_filter--pool))
+- `origin` (Attributes) Filter options for a particular resource type (pool or origin). Use null to reset. (see [below for nested schema](#nestedatt--result--notification_filter--origin))
+- `pool` (Attributes) Filter options for a particular resource type (pool or origin). Use null to reset. (see [below for nested schema](#nestedatt--result--notification_filter--pool))
 
-<a id="nestedatt--items--notification_filter--origin"></a>
-### Nested Schema for `items.notification_filter.origin`
-
-Optional:
-
-- `healthy` (Boolean) If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).
-
-Read-Only:
-
-- `disable` (Boolean) If set true, disable notifications for this type of resource (pool or origin).
-
-
-<a id="nestedatt--items--notification_filter--pool"></a>
-### Nested Schema for `items.notification_filter.pool`
+<a id="nestedatt--result--notification_filter--origin"></a>
+### Nested Schema for `result.notification_filter.origin`
 
 Optional:
 
@@ -104,9 +92,21 @@ Read-Only:
 - `disable` (Boolean) If set true, disable notifications for this type of resource (pool or origin).
 
 
+<a id="nestedatt--result--notification_filter--pool"></a>
+### Nested Schema for `result.notification_filter.pool`
 
-<a id="nestedatt--items--origin_steering"></a>
-### Nested Schema for `items.origin_steering`
+Optional:
+
+- `healthy` (Boolean) If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).
+
+Read-Only:
+
+- `disable` (Boolean) If set true, disable notifications for this type of resource (pool or origin).
+
+
+
+<a id="nestedatt--result--origin_steering"></a>
+### Nested Schema for `result.origin_steering`
 
 Read-Only:
 
@@ -117,13 +117,13 @@ Read-Only:
 - `"least_connections"`: Select an origin by taking into consideration origin weights, as well as each origin's number of open connections. Origins with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.
 
 
-<a id="nestedatt--items--origins"></a>
-### Nested Schema for `items.origins`
+<a id="nestedatt--result--origins"></a>
+### Nested Schema for `result.origins`
 
 Optional:
 
 - `address` (String) The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.
-- `header` (Attributes) The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'. (see [below for nested schema](#nestedatt--items--origins--header))
+- `header` (Attributes) The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'. (see [below for nested schema](#nestedatt--result--origins--header))
 - `name` (String) A human-identifiable name for the origin.
 - `virtual_network_id` (String) The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.
 
@@ -135,8 +135,8 @@ Read-Only:
 - `origin_steering.policy="least_outstanding_requests"`: Use weight to scale the origin's outstanding requests.
 - `origin_steering.policy="least_connections"`: Use weight to scale the origin's open connections.
 
-<a id="nestedatt--items--origins--header"></a>
-### Nested Schema for `items.origins.header`
+<a id="nestedatt--result--origins--header"></a>
+### Nested Schema for `result.origins.header`
 
 Optional:
 

@@ -18,18 +18,18 @@ description: |-
 - `account_id` (String) Account identifier tag.
 - `database_id` (String)
 - `file_size` (Number) The D1 database's size, in bytes.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `name` (String)
 - `num_tables` (Number)
-- `uuid` (String)
 - `version` (String)
 
 ### Read-Only
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
+- `uuid` (String)
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 

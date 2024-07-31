@@ -18,4 +18,8 @@ description: |-
 - `value` (String) Enables Argo Smart Routing.
 - `zone_id` (String) Identifier
 
+### Read-Only
+
+- `id` (String) Identifier
+
 

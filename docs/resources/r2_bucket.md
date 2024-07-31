@@ -29,14 +29,13 @@ resource "cloudflare_r2_bucket" "example" {
 
 ### Optional
 
-- `location_hint` (String) Location of the bucket
+- `location` (String) Location of the bucket
 - `storage_class` (String) Storage class for newly uploaded objects, unless specified otherwise.
 
 ### Read-Only
 
 - `creation_date` (String) Creation timestamp
 - `id` (String) Name of the bucket
-- `location` (String) Location of the bucket
 
 ## Import
 

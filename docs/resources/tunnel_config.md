@@ -80,6 +80,10 @@ resource "cloudflare_tunnel_config" "example_config" {
 
 - `config` (Attributes) The tunnel configuration and ingress rules. (see [below for nested schema](#nestedatt--config))
 
+### Read-Only
+
+- `id` (String) UUID of the tunnel.
+
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
 

@@ -28,14 +28,14 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
-- `configuration` (Attributes) The configuration object for the current rule. (see [below for nested schema](#nestedatt--items--configuration))
+- `configuration` (Attributes) The configuration object for the current rule. (see [below for nested schema](#nestedatt--result--configuration))
 - `description` (String) An informative summary of the rule.
 - `mode` (String) The action to apply to a matched request.
 - `paused` (Boolean) When true, indicates that the rule is currently paused.
@@ -44,8 +44,8 @@ Read-Only:
 
 - `id` (String) The unique identifier of the User Agent Blocking rule.
 
-<a id="nestedatt--items--configuration"></a>
-### Nested Schema for `items.configuration`
+<a id="nestedatt--result--configuration"></a>
+### Nested Schema for `result.configuration`
 
 Optional:
 

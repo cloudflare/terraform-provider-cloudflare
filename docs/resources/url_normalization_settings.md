@@ -30,4 +30,8 @@ resource "cloudflare_url_normalization_settings" "example" {
 - `scope` (String) The scope of the URL normalization.
 - `type` (String) The type of URL normalization performed by Cloudflare.
 
+### Read-Only
+
+- `id` (String) Identifier
+
 

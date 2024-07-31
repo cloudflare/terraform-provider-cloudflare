@@ -21,18 +21,21 @@ description: |-
 
 ### Read-Only
 
-- `items` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--items))
+- `result` (Attributes List) The items returned by the data source (see [below for nested schema](#nestedatt--result))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--result"></a>
+### Nested Schema for `result`
 
 Optional:
 
 - `client_id` (String) The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.
-- `created_at` (String)
-- `duration` (String) The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).
 - `id` (String) The ID of the service token.
 - `name` (String) The name of the service token.
+
+Read-Only:
+
+- `created_at` (String)
+- `duration` (String) The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).
 - `updated_at` (String)
 
 

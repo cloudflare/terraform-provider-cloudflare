@@ -16,9 +16,9 @@ description: |-
 ### Optional
 
 - `address` (String) The hostname or IP address of the origin server to run health checks on.
-- `check_regions` (String) A list of regions from which to run health checks. Null means Cloudflare will pick a default region.
+- `check_regions` (List of String) A list of regions from which to run health checks. Null means Cloudflare will pick a default region.
 - `description` (String) A human-readable description of the health check.
-- `find_one_by` (Attributes) (see [below for nested schema](#nestedatt--find_one_by))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `healthcheck_id` (String) Identifier
 - `http_config` (Attributes) Parameters specific to an HTTP or HTTPS health check. (see [below for nested schema](#nestedatt--http_config))
 - `name` (String) A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.
@@ -40,8 +40,8 @@ description: |-
 - `timeout` (Number) The timeout (in seconds) before marking the health check as failed.
 - `type` (String) The protocol to use for the health check. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'.
 
-<a id="nestedatt--find_one_by"></a>
-### Nested Schema for `find_one_by`
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
 
 Required:
 
@@ -59,8 +59,8 @@ Optional:
 Optional:
 
 - `expected_body` (String) A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy.
-- `expected_codes` (String) The expected HTTP response codes (e.g. "200") or code ranges (e.g. "2xx" for all codes starting with 2) of the health check.
-- `header` (String) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.
+- `expected_codes` (List of String) The expected HTTP response codes (e.g. "200") or code ranges (e.g. "2xx" for all codes starting with 2) of the health check.
+- `header` (Map of List of String) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.
 
 Read-Only:
 
