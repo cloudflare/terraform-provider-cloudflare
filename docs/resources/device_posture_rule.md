@@ -64,8 +64,8 @@ Optional:
 - `certificate_id` (String) The UUID of a Cloudflare managed certificate.
 - `check_disks` (Set of String) Specific volume(s) to check for encryption.
 - `cn` (String) The common name for a certificate.
-- `compliance_status` (String) The workspace one device compliance status. Available values: `compliant`, `noncompliant`.
-- `connection_id` (String) The workspace one connection id.
+- `compliance_status` (String) The workspace one or intune device compliance status. `compliant` and `noncompliant` are values supported by both providers. `unknown`, `conflict`, `error`, `ingraceperiod` values are only supported by intune. Available values: `compliant`, `noncompliant`, `unknown`, `conflict`, `error`, `ingraceperiod`.
+- `connection_id` (String) The workspace one or intune connection id.
 - `count_operator` (String) The count comparison operator for kolide. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `domain` (String) The domain that the client must join.
 - `eid_last_seen` (String) The datetime a device last seen in RFC 3339 format from Tanium.
