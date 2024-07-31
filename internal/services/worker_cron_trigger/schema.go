@@ -14,6 +14,11 @@ import (
 func (r WorkerCronTriggerResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Name of the script, used in URLs and route configuration.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -22,7 +27,7 @@ func (r WorkerCronTriggerResource) Schema(ctx context.Context, req resource.Sche
 			"script_name": schema.StringAttribute{
 				Description:   "Name of the script, used in URLs and route configuration.",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"schedules": schema.ListNestedAttribute{
 				Computed: true,

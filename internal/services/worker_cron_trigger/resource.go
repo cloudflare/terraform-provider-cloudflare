@@ -88,6 +88,7 @@ func (r *WorkerCronTriggerResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -123,6 +124,7 @@ func (r *WorkerCronTriggerResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -172,6 +174,7 @@ func (r *WorkerCronTriggerResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
