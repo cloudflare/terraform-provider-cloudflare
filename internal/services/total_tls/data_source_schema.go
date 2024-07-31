@@ -26,14 +26,14 @@ func (r TotalTLSDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 				Description: "The Certificate Authority that Total TLS certificates will be issued through.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
+					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt", "ssl_com"),
 				},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "If enabled, Total TLS will order a hostname specific TLS certificate for any proxied A, AAAA, or CNAME record in your zone.",
 				Optional:    true,
 			},
-			"validity_days": schema.Int64Attribute{
+			"validity_period": schema.Int64Attribute{
 				Description: "The validity period in days for the certificates ordered via Total TLS.",
 				Optional:    true,
 				Validators: []validator.Int64{

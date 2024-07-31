@@ -50,7 +50,7 @@ func (r CustomHostnameResource) UpgradeState(ctx context.Context) map[int64]reso
 								Description: "The Certificate Authority that will issue the certificate",
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("digicert", "google", "lets_encrypt"),
+									stringvalidator.OneOfCaseInsensitive("digicert", "google", "lets_encrypt", "ssl_com"),
 								},
 							},
 							"custom_certificate": schema.StringAttribute{
