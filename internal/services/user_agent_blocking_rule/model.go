@@ -11,13 +11,6 @@ type UserAgentBlockingRuleResultEnvelope struct {
 }
 
 type UserAgentBlockingRuleModel struct {
-	ZoneIdentifier types.String                             `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                             `tfsdk:"id" path:"id"`
-	Configuration  *UserAgentBlockingRuleConfigurationModel `tfsdk:"configuration" json:"configuration"`
-	Mode           types.String                             `tfsdk:"mode" json:"mode"`
-}
-
-type UserAgentBlockingRuleConfigurationModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ID             types.String `tfsdk:"id" path:"id"`
 }
