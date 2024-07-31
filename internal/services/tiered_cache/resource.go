@@ -87,6 +87,7 @@ func (r *TieredCacheResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -105,7 +106,7 @@ func (r *TieredCacheResource) Read(ctx context.Context, req resource.ReadRequest
 	_, err := r.client.Cache.SmartTieredCache.Get(
 		ctx,
 		cache.SmartTieredCacheGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -121,6 +122,7 @@ func (r *TieredCacheResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,7 +154,7 @@ func (r *TieredCacheResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.Cache.SmartTieredCache.Edit(
 		ctx,
 		cache.SmartTieredCacheEditParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -169,6 +171,7 @@ func (r *TieredCacheResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	data = &env.Result
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -185,7 +188,7 @@ func (r *TieredCacheResource) Delete(ctx context.Context, req resource.DeleteReq
 	_, err := r.client.Cache.SmartTieredCache.Delete(
 		ctx,
 		cache.SmartTieredCacheDeleteParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -193,6 +196,7 @@ func (r *TieredCacheResource) Delete(ctx context.Context, req resource.DeleteReq
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

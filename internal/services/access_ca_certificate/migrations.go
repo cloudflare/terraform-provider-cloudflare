@@ -16,10 +16,15 @@ func (r AccessCACertificateResource) UpgradeState(ctx context.Context) map[int64
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "UUID",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"app_id": schema.StringAttribute{
 						Description:   "UUID",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"account_id": schema.StringAttribute{
 						Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -30,10 +35,6 @@ func (r AccessCACertificateResource) UpgradeState(ctx context.Context) map[int64
 						Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
-					"id": schema.StringAttribute{
-						Description: "The ID of the CA.",
-						Computed:    true,
 					},
 				},
 			},

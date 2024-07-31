@@ -20,6 +20,11 @@ func (r ObservatoryScheduledTestResource) UpgradeState(ctx context.Context) map[
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "A URL.",
+						Computed:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"zone_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
@@ -28,7 +33,7 @@ func (r ObservatoryScheduledTestResource) UpgradeState(ctx context.Context) map[
 					"url": schema.StringAttribute{
 						Description:   "A URL.",
 						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"schedule": schema.SingleNestedAttribute{
 						Description: "The test schedule.",

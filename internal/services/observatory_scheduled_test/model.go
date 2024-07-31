@@ -13,6 +13,7 @@ type ObservatoryScheduledTestResultEnvelope struct {
 }
 
 type ObservatoryScheduledTestModel struct {
+	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
 	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id"`
 	URL       types.String                                                    `tfsdk:"url" path:"url"`
 	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed"`
