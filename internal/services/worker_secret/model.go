@@ -11,6 +11,7 @@ type WorkerSecretResultEnvelope struct {
 }
 
 type WorkerSecretModel struct {
+	ID                types.String `tfsdk:"id" json:"-,computed"`
 	AccountID         types.String `tfsdk:"account_id" path:"account_id"`
 	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
 	ScriptName        types.String `tfsdk:"script_name" path:"script_name"`

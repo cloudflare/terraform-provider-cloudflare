@@ -88,6 +88,7 @@ func (r *WorkerScriptResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -104,7 +105,7 @@ func (r *WorkerScriptResource) Read(ctx context.Context, req resource.ReadReques
 	res := new(http.Response)
 	_, err := r.client.Workers.Scripts.Get(
 		ctx,
-		data.ID.ValueString(),
+		data.ScriptName.ValueString(),
 		workers.ScriptGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -121,6 +122,7 @@ func (r *WorkerScriptResource) Read(ctx context.Context, req resource.ReadReques
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -151,7 +153,7 @@ func (r *WorkerScriptResource) Update(ctx context.Context, req resource.UpdateRe
 	env := WorkerScriptResultEnvelope{*data}
 	_, err = r.client.Workers.Scripts.Update(
 		ctx,
-		data.ID.ValueString(),
+		data.ScriptName.ValueString(),
 		workers.ScriptUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -170,6 +172,7 @@ func (r *WorkerScriptResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -185,7 +188,7 @@ func (r *WorkerScriptResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	err := r.client.Workers.Scripts.Delete(
 		ctx,
-		data.ID.ValueString(),
+		data.ScriptName.ValueString(),
 		workers.ScriptDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -195,6 +198,7 @@ func (r *WorkerScriptResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
