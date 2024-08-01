@@ -265,7 +265,7 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 			input.TotalScore = totalScore.(int)
 		}
 		if checkPrivateKey, ok := d.GetOk("input.0.check_private_key"); ok {
-			input.CheckPrivateKey = checkPrivateKey.(bool)
+			input.CheckPrivateKey = cloudflare.BoolPtr(checkPrivateKey.(bool))
 		}
 		if extendedKeyUsage, ok := d.GetOk("input.0.extended_key_usage"); ok {
 			values := extendedKeyUsage.(*schema.Set).List()
