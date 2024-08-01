@@ -1048,6 +1048,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 					resource.TestCheckResourceAttr(name, "footer_links.#", "1"),
 					resource.TestCheckResourceAttr(name, "footer_links.0.name", "footer link"),
 					resource.TestCheckResourceAttr(name, "footer_links.0.url", "https://www.cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "skip_app_launcher_login_page", "false"),
 				),
 			},
 		},
