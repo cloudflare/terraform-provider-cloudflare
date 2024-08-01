@@ -124,12 +124,23 @@ func resourceCloudflareTeamsAccountSchema() map[string]*schema.Schema {
 			},
 		},
 		"custom_certificate": {
+			Type:          schema.TypeList,
+			MaxItems:      1,
+			Optional:      true,
+			Description:   "Configuration for custom certificates / BYO-PKI.",
+			Deprecated:    "Use `certificate` instead. Continuing to use custom_certificate may result in inconsistent configuration.",
+			ConflictsWith: []string{"certificate"},
+			Elem: &schema.Resource{
+				Schema: customCertificateSchema,
+			},
+		},
+		"certificate": {
 			Type:        schema.TypeList,
 			MaxItems:    1,
 			Optional:    true,
-			Description: "Configuration for custom certificates / BYO-PKI.",
+			Description: "Configuration for TLS interception certificate. This will be required starting Feb 2025.",
 			Elem: &schema.Resource{
-				Schema: customCertificateSchema,
+				Schema: certificateSettingSchema,
 			},
 		},
 	}
@@ -350,5 +361,13 @@ var customCertificateSchema = map[string]*schema.Schema{
 	"updated_at": {
 		Type:     schema.TypeString,
 		Computed: true,
+	},
+}
+
+var certificateSettingSchema = map[string]*schema.Schema{
+	"id": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "ID of certificate for TLS interception.",
 	},
 }

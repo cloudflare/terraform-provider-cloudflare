@@ -21,7 +21,7 @@ import (
 const (
 	MAXIMUM_NUMBER_OF_ENTITIES_REACHED_SUMMARY = "You've attempted to add a new %[1]s to the `terraform-plugin-sdkv2` which is no longer considered suitable for use."
 	MAXIMUM_NUMBER_OF_ENTITIES_REACHED_DETAIL  = "Due the number of known internal issues with `terraform-plugin-sdkv2` (most notably handling of zero values), we are no longer recommending using it and instead, advise using `terraform-plugin-framework` exclusively. If you must use terraform-plugin-sdkv2 for this new %[1]s you should first discuss it with a maintainer to fully understand the impact and potential ramifications. Only then should you bump %[2]s to include your %[1]s."
-	MAXIMUM_ALLOWED_SDKV2_RESOURCES            = 145
+	MAXIMUM_ALLOWED_SDKV2_RESOURCES            = 146
 	MAXIMUM_ALLOWED_SDKV2_DATASOURCES          = 23
 )
 
@@ -291,6 +291,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_bot_management":                                  resourceCloudflareBotManagement(),
 				"cloudflare_teams_account":                                   resourceCloudflareTeamsAccount(),
 				"cloudflare_zero_trust_gateway_settings":                     resourceCloudflareZeroTrustGatewaySettings(),
+				"cloudflare_zero_trust_gateway_certificate":                  resourceCloudflareTeamsCertificate(),
 				"cloudflare_teams_list":                                      resourceCloudflareTeamsList(),
 				"cloudflare_zero_trust_list":                                 resourceCloudflareZeroTrustList(),
 				"cloudflare_teams_location":                                  resourceCloudflareTeamsLocation(),

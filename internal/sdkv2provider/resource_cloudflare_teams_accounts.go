@@ -127,6 +127,12 @@ func resourceCloudflareTeamsAccountRead(ctx context.Context, d *schema.ResourceD
 		}
 	}
 
+	if configuration.Settings.Certificate != nil {
+		if err := d.Set("certificate", flattenCertificateConfig(configuration.Settings.Certificate)); err != nil {
+			return diag.FromErr(fmt.Errorf("error parsing account custom certificate config: %w", err))
+		}
+	}
+
 	logSettings, err := client.TeamsAccountLoggingConfiguration(ctx, accountID)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error finding Teams Account log settings %q: %w", d.Id(), err))
@@ -183,6 +189,7 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 	antivirusConfig := inflateAntivirusConfig(d.Get("antivirus"))
 	extendedEmailMatchingConfig := inflateExtendedEmailMatchingConfig(d.Get("extended_email_matching"))
 	customCertificateConfig := inflateCustomCertificateConfig(d.Get("custom_certificate"))
+	certificateConfig := inflateCertificateConfig(d.Get("certificate"))
 	loggingConfig := inflateLoggingSettings(d.Get("logging"))
 	deviceConfig := inflateDeviceSettings(d.Get("proxy"))
 	payloadLogSettings := inflatePayloadLogSettings(d.Get("payload_log"))
@@ -194,8 +201,13 @@ func resourceCloudflareTeamsAccountUpdate(ctx context.Context, d *schema.Resourc
 			FIPS:                  fipsConfig,
 			BodyScanning:          bodyScanningConfig,
 			ExtendedEmailMatching: extendedEmailMatchingConfig,
-			CustomCertificate:     customCertificateConfig,
 		},
+	}
+	if customCertificateConfig != nil {
+		updatedTeamsAccount.Settings.CustomCertificate = customCertificateConfig
+	}
+	if certificateConfig != nil {
+		updatedTeamsAccount.Settings.Certificate = certificateConfig
 	}
 
 	//nolint:staticcheck
@@ -548,5 +560,23 @@ func inflateCustomCertificateConfig(config interface{}) *cloudflare.TeamsCustomC
 	return &cloudflare.TeamsCustomCertificate{
 		Enabled: cloudflare.BoolPtr(configMap["enabled"].(bool)),
 		ID:      configMap["id"].(string),
+	}
+}
+
+func flattenCertificateConfig(config *cloudflare.TeamsCertificateSetting) []interface{} {
+	return []interface{}{map[string]interface{}{
+		"id": *&config.ID,
+	}}
+}
+
+func inflateCertificateConfig(config interface{}) *cloudflare.TeamsCertificateSetting {
+	list := config.([]interface{})
+	if len(list) != 1 {
+		return nil
+	}
+
+	configMap := list[0].(map[string]interface{})
+	return &cloudflare.TeamsCertificateSetting{
+		ID: configMap["id"].(string),
 	}
 }
