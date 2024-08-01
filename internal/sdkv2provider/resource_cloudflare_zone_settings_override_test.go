@@ -208,11 +208,6 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		fonts = "on"
 		origin_max_http_version = "2"
 		universal_ssl = "off"
-		minify {
-			css = "on"
-			js = "off"
-			html = "off"
-		}
 		security_header {
 			enabled = true
 		}
