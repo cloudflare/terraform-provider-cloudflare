@@ -15,12 +15,12 @@ var _ datasource.DataSourceWithValidateConfig = &AccessApplicationDataSource{}
 func (r AccessApplicationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"app_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"app_id": schema.StringAttribute{
+				Description: "Identifier",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{

@@ -19,16 +19,16 @@ type NotificationPolicyResultListDataSourceEnvelope struct {
 type NotificationPolicyDataSourceModel struct {
 	AccountID     types.String                                `tfsdk:"account_id" path:"account_id"`
 	PolicyID      types.String                                `tfsdk:"policy_id" path:"policy_id"`
+	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed"`
+	Enabled       types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
 	ID            types.String                                `tfsdk:"id" json:"id,computed"`
+	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed"`
 	AlertInterval types.String                                `tfsdk:"alert_interval" json:"alert_interval"`
 	AlertType     types.String                                `tfsdk:"alert_type" json:"alert_type"`
-	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed"`
 	Description   types.String                                `tfsdk:"description" json:"description"`
-	Enabled       types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
-	Filters       *NotificationPolicyFiltersDataSourceModel   `tfsdk:"filters" json:"filters"`
-	Mechanisms    map[string]*[]jsontypes.Normalized          `tfsdk:"mechanisms" json:"mechanisms"`
-	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed"`
 	Name          types.String                                `tfsdk:"name" json:"name"`
+	Mechanisms    map[string]*[]jsontypes.Normalized          `tfsdk:"mechanisms" json:"mechanisms"`
+	Filters       *NotificationPolicyFiltersDataSourceModel   `tfsdk:"filters" json:"filters"`
 	Filter        *NotificationPolicyFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

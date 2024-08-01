@@ -19,9 +19,22 @@ func (r DeviceDEXTestResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description:   "The name of the DEX test. Must be unique.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Determines whether or not the test is active.",
+				Required:    true,
+			},
+			"interval": schema.StringAttribute{
+				Description: "How often the test will run.",
+				Required:    true,
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "The configuration object which contains the details for the WARP client to conduct the test.",
@@ -41,22 +54,12 @@ func (r DeviceDEXTestResource) Schema(ctx context.Context, req resource.SchemaRe
 					},
 				},
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Determines whether or not the test is active.",
-				Required:    true,
-			},
-			"interval": schema.StringAttribute{
-				Description: "How often the test will run.",
-				Required:    true,
-			},
-			"name": schema.StringAttribute{
-				Description:   "The name of the DEX test. Must be unique.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
 			"description": schema.StringAttribute{
 				Description: "Additional details about the test.",
 				Optional:    true,
+			},
+			"targeted": schema.BoolAttribute{
+				Optional: true,
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "Device settings profiles targeted by this test",
@@ -77,9 +80,6 @@ func (r DeviceDEXTestResource) Schema(ctx context.Context, req resource.SchemaRe
 						},
 					},
 				},
-			},
-			"targeted": schema.BoolAttribute{
-				Optional: true,
 			},
 		},
 	}

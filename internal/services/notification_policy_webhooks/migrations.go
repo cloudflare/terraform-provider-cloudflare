@@ -43,6 +43,32 @@ func (r NotificationPolicyWebhooksResource) UpgradeState(ctx context.Context) ma
 						Description: "Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.",
 						Optional:    true,
 					},
+					"created_at": schema.StringAttribute{
+						Description: "Timestamp of when the webhook destination was created.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"last_failure": schema.StringAttribute{
+						Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"last_success": schema.StringAttribute{
+						Description: "Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"success": schema.BoolAttribute{
+						Description: "Whether the API call was successful",
+						Computed:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "Type of webhook endpoint.",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("slack", "generic", "gchat"),
+						},
+					},
 					"errors": schema.ListNestedAttribute{
 						Computed: true,
 						NestedObject: schema.NestedAttributeObject{
@@ -75,10 +101,6 @@ func (r NotificationPolicyWebhooksResource) UpgradeState(ctx context.Context) ma
 							},
 						},
 					},
-					"success": schema.BoolAttribute{
-						Description: "Whether the API call was successful",
-						Computed:    true,
-					},
 					"result_info": schema.SingleNestedAttribute{
 						Computed:   true,
 						CustomType: customfield.NewNestedObjectType[NotificationPolicyWebhooksResultInfoModel](ctx),
@@ -99,28 +121,6 @@ func (r NotificationPolicyWebhooksResource) UpgradeState(ctx context.Context) ma
 								Description: "Total results available without any search parameters",
 								Optional:    true,
 							},
-						},
-					},
-					"created_at": schema.StringAttribute{
-						Description: "Timestamp of when the webhook destination was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"last_failure": schema.StringAttribute{
-						Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"last_success": schema.StringAttribute{
-						Description: "Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"type": schema.StringAttribute{
-						Description: "Type of webhook endpoint.",
-						Computed:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("slack", "generic", "gchat"),
 						},
 					},
 				},

@@ -20,15 +20,15 @@ func (r AccessTagResource) Schema(ctx context.Context, req resource.SchemaReques
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"name": schema.StringAttribute{
 				Description:   "The name of the tag",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "The number of applications that have this tag",

@@ -12,9 +12,9 @@ type SpectrumApplicationsResultListDataSourceEnvelope struct {
 
 type SpectrumApplicationsDataSourceModel struct {
 	Zone      types.String                                  `tfsdk:"zone" path:"zone"`
+	Page      types.Float64                                 `tfsdk:"page" query:"page"`
 	Direction types.String                                  `tfsdk:"direction" query:"direction"`
 	Order     types.String                                  `tfsdk:"order" query:"order"`
-	Page      types.Float64                                 `tfsdk:"page" query:"page"`
 	PerPage   types.Float64                                 `tfsdk:"per_page" query:"per_page"`
 	MaxItems  types.Int64                                   `tfsdk:"max_items"`
 	Result    *[]*SpectrumApplicationsResultDataSourceModel `tfsdk:"result"`

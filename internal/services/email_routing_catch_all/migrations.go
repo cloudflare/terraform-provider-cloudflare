@@ -64,15 +64,15 @@ func (r EmailRoutingCatchAllResource) UpgradeState(ctx context.Context) map[int6
 							},
 						},
 					},
+					"name": schema.StringAttribute{
+						Description: "Routing rule name.",
+						Optional:    true,
+					},
 					"enabled": schema.BoolAttribute{
 						Description: "Routing rule status.",
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(true),
-					},
-					"name": schema.StringAttribute{
-						Description: "Routing rule name.",
-						Optional:    true,
 					},
 					"tag": schema.StringAttribute{
 						Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",

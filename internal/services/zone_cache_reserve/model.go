@@ -15,6 +15,6 @@ type ZoneCacheReserveModel struct {
 	ID            types.String      `tfsdk:"id" json:"-,computed"`
 	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id"`
 	Value         types.String      `tfsdk:"value" json:"value"`
-	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id,computed"`
 	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
+	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id,computed"`
 }

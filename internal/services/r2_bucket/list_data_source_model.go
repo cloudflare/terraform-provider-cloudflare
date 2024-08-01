@@ -16,8 +16,8 @@ type R2BucketsDataSourceModel struct {
 	Direction    types.String                       `tfsdk:"direction" query:"direction"`
 	NameContains types.String                       `tfsdk:"name_contains" query:"name_contains"`
 	Order        types.String                       `tfsdk:"order" query:"order"`
-	PerPage      types.Float64                      `tfsdk:"per_page" query:"per_page"`
 	StartAfter   types.String                       `tfsdk:"start_after" query:"start_after"`
+	PerPage      types.Float64                      `tfsdk:"per_page" query:"per_page"`
 	MaxItems     types.Int64                        `tfsdk:"max_items"`
 	Result       *[]*R2BucketsResultDataSourceModel `tfsdk:"result"`
 }

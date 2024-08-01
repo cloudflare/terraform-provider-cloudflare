@@ -15,11 +15,11 @@ var _ datasource.DataSourceWithValidateConfig = &PageRuleDataSource{}
 func (r PageRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
+			"pagerule_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},
-			"pagerule_id": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},

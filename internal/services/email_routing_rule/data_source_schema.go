@@ -19,17 +19,37 @@ var _ datasource.DataSourceWithValidateConfig = &EmailRoutingRuleDataSource{}
 func (r EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_identifier": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
-			},
 			"rule_identifier": schema.StringAttribute{
 				Description: "Routing rule identifier.",
 				Optional:    true,
 			},
+			"zone_identifier": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Routing rule status.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "Routing rule identifier.",
 				Computed:    true,
+			},
+			"priority": schema.Float64Attribute{
+				Description: "Priority of the routing rule.",
+				Computed:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(0),
+				},
+			},
+			"tag": schema.StringAttribute{
+				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "Routing rule name.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"actions": schema.ListNestedAttribute{
 				Description: "List actions patterns.",
@@ -50,10 +70,6 @@ func (r EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.S
 						},
 					},
 				},
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "Routing rule status.",
-				Computed:    true,
 			},
 			"matchers": schema.ListNestedAttribute{
 				Description: "Matching patterns to forward to your actions.",
@@ -81,22 +97,6 @@ func (r EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.S
 						},
 					},
 				},
-			},
-			"name": schema.StringAttribute{
-				Description: "Routing rule name.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"priority": schema.Float64Attribute{
-				Description: "Priority of the routing rule.",
-				Computed:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(0),
-				},
-			},
-			"tag": schema.StringAttribute{
-				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
-				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

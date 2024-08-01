@@ -52,11 +52,6 @@ func (r TeamsRuleResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Description: "True if the rule is enabled.",
 						Optional:    true,
 					},
-					"filters": schema.ListAttribute{
-						Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
-						Optional:    true,
-						ElementType: types.StringType,
-					},
 					"identity": schema.StringAttribute{
 						Description: "The wirefilter expression used for identity matching.",
 						Optional:    true,
@@ -64,6 +59,15 @@ func (r TeamsRuleResource) UpgradeState(ctx context.Context) map[int64]resource.
 					"precedence": schema.Int64Attribute{
 						Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value.",
 						Optional:    true,
+					},
+					"traffic": schema.StringAttribute{
+						Description: "The wirefilter expression used for traffic matching.",
+						Optional:    true,
+					},
+					"filters": schema.ListAttribute{
+						Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
+						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"rule_settings": schema.SingleNestedAttribute{
 						Description: "Additional settings that modify the rule's action.",
@@ -332,10 +336,6 @@ func (r TeamsRuleResource) UpgradeState(ctx context.Context) map[int64]resource.
 								Optional:    true,
 							},
 						},
-					},
-					"traffic": schema.StringAttribute{
-						Description: "The wirefilter expression used for traffic matching.",
-						Optional:    true,
 					},
 					"created_at": schema.StringAttribute{
 						Computed:   true,

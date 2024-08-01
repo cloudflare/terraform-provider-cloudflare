@@ -21,12 +21,12 @@ func (r ListItemDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"list_id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
-				Optional:    true,
-			},
 			"item_id": schema.StringAttribute{
 				Description: "The unique ID of the item in the List.",
+				Optional:    true,
+			},
+			"list_id": schema.StringAttribute{
+				Description: "The unique ID of the list.",
 				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{

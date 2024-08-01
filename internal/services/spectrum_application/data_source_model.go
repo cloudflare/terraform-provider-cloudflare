@@ -15,8 +15,8 @@ type SpectrumApplicationResultListDataSourceEnvelope struct {
 }
 
 type SpectrumApplicationDataSourceModel struct {
-	Zone   types.String                                 `tfsdk:"zone" path:"zone"`
 	AppID  types.String                                 `tfsdk:"app_id" path:"app_id"`
+	Zone   types.String                                 `tfsdk:"zone" path:"zone"`
 	Filter *SpectrumApplicationFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

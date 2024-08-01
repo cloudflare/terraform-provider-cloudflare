@@ -30,6 +30,20 @@ func (r RateLimitResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"period": schema.Float64Attribute{
+						Description: "The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.",
+						Required:    true,
+						Validators: []validator.Float64{
+							float64validator.Between(10, 86400),
+						},
+					},
+					"threshold": schema.Float64Attribute{
+						Description: "The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.",
+						Required:    true,
+						Validators: []validator.Float64{
+							float64validator.AtLeast(1),
+						},
+					},
 					"action": schema.SingleNestedAttribute{
 						Description: "The action to perform when the threshold of matched traffic within the configured period is exceeded.",
 						Required:    true,
@@ -118,20 +132,6 @@ func (r RateLimitResource) UpgradeState(ctx context.Context) map[int64]resource.
 									},
 								},
 							},
-						},
-					},
-					"period": schema.Float64Attribute{
-						Description: "The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.",
-						Required:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(10, 86400),
-						},
-					},
-					"threshold": schema.Float64Attribute{
-						Description: "The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.",
-						Required:    true,
-						Validators: []validator.Float64{
-							float64validator.AtLeast(1),
 						},
 					},
 				},

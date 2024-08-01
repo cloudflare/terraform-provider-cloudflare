@@ -21,6 +21,11 @@ func (r WorkerDomainResource) UpgradeState(ctx context.Context) map[int64]resour
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"hostname": schema.StringAttribute{
+						Description:   "Hostname of the Worker Domain.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+					},
 					"account_id": schema.StringAttribute{
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
@@ -28,11 +33,6 @@ func (r WorkerDomainResource) UpgradeState(ctx context.Context) map[int64]resour
 					"environment": schema.StringAttribute{
 						Description: "Worker environment associated with the zone and hostname.",
 						Required:    true,
-					},
-					"hostname": schema.StringAttribute{
-						Description:   "Hostname of the Worker Domain.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"service": schema.StringAttribute{
 						Description: "Worker service associated with the zone and hostname.",

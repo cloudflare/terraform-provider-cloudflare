@@ -18,11 +18,11 @@ type FirewallRuleDataSourceModel struct {
 	PathID         types.String    `tfsdk:"path_id" path:"id"`
 	ZoneIdentifier types.String    `tfsdk:"zone_identifier" path:"zone_identifier"`
 	QueryID        types.String    `tfsdk:"query_id" query:"id"`
-	ID             types.String    `tfsdk:"id" json:"id,computed"`
 	Action         types.String    `tfsdk:"action" json:"action,computed"`
+	ID             types.String    `tfsdk:"id" json:"id,computed"`
 	Paused         types.Bool      `tfsdk:"paused" json:"paused,computed"`
 	Description    types.String    `tfsdk:"description" json:"description"`
 	Priority       types.Float64   `tfsdk:"priority" json:"priority"`
-	Products       *[]types.String `tfsdk:"products" json:"products"`
 	Ref            types.String    `tfsdk:"ref" json:"ref"`
+	Products       *[]types.String `tfsdk:"products" json:"products"`
 }

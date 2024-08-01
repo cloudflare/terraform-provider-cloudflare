@@ -23,6 +23,10 @@ func (r APIShieldSchemasDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Identifier",
 				Required:    true,
 			},
+			"validation_enabled": schema.BoolAttribute{
+				Description: "Flag whether schema is enabled for validation.",
+				Optional:    true,
+			},
 			"omit_source": schema.BoolAttribute{
 				Description: "Omit the source-files of schemas and only retrieve their meta-data.",
 				Computed:    true,
@@ -43,10 +47,6 @@ func (r APIShieldSchemasDataSource) Schema(ctx context.Context, req datasource.S
 				Validators: []validator.Int64{
 					int64validator.Between(5, 50),
 				},
-			},
-			"validation_enabled": schema.BoolAttribute{
-				Description: "Flag whether schema is enabled for validation.",
-				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

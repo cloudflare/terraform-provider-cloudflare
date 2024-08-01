@@ -12,14 +12,14 @@ type DeviceDEXTestResultEnvelope struct {
 
 type DeviceDEXTestModel struct {
 	ID             types.String                         `tfsdk:"id" json:"-,computed"`
+	Name           types.String                         `tfsdk:"name" json:"name"`
 	AccountID      types.String                         `tfsdk:"account_id" path:"account_id"`
-	Data           *DeviceDEXTestDataModel              `tfsdk:"data" json:"data"`
 	Enabled        types.Bool                           `tfsdk:"enabled" json:"enabled"`
 	Interval       types.String                         `tfsdk:"interval" json:"interval"`
-	Name           types.String                         `tfsdk:"name" json:"name"`
+	Data           *DeviceDEXTestDataModel              `tfsdk:"data" json:"data"`
 	Description    types.String                         `tfsdk:"description" json:"description"`
-	TargetPolicies *[]*DeviceDEXTestTargetPoliciesModel `tfsdk:"target_policies" json:"target_policies"`
 	Targeted       types.Bool                           `tfsdk:"targeted" json:"targeted"`
+	TargetPolicies *[]*DeviceDEXTestTargetPoliciesModel `tfsdk:"target_policies" json:"target_policies"`
 }
 
 type DeviceDEXTestDataModel struct {

@@ -22,6 +22,11 @@ func (r RegionalHostnameResource) Schema(ctx context.Context, req resource.Schem
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"hostname": schema.StringAttribute{
+				Description:   "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -31,15 +36,14 @@ func (r RegionalHostnameResource) Schema(ctx context.Context, req resource.Schem
 				Description: "Identifying key for the region",
 				Required:    true,
 			},
-			"hostname": schema.StringAttribute{
-				Description:   "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
 			"created_on": schema.StringAttribute{
 				Description: "When the regional hostname was created",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"success": schema.BoolAttribute{
+				Description: "Whether the API call was successful",
+				Computed:    true,
 			},
 			"errors": schema.ListNestedAttribute{
 				Computed: true,
@@ -72,10 +76,6 @@ func (r RegionalHostnameResource) Schema(ctx context.Context, req resource.Schem
 						},
 					},
 				},
-			},
-			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
-				Computed:    true,
 			},
 		},
 	}

@@ -18,12 +18,12 @@ import (
 func (r WaitingRoomRulesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+			"waiting_room_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"waiting_room_id": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
+				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

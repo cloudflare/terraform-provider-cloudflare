@@ -23,15 +23,15 @@ func (r TunnelConfigResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Cloudflare account ID",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"tunnel_id": schema.StringAttribute{
 				Description:   "UUID of the tunnel.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Cloudflare account ID",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",

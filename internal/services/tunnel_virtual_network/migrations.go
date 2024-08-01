@@ -27,6 +27,11 @@ func (r TunnelVirtualNetworkResource) UpgradeState(ctx context.Context) map[int6
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"is_default": schema.BoolAttribute{
+						Description:   "If `true`, this virtual network is the default for the account.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
+					},
 					"name": schema.StringAttribute{
 						Description: "A user-friendly name for the virtual network.",
 						Required:    true,
@@ -34,11 +39,6 @@ func (r TunnelVirtualNetworkResource) UpgradeState(ctx context.Context) map[int6
 					"comment": schema.StringAttribute{
 						Description: "Optional remark describing the virtual network.",
 						Optional:    true,
-					},
-					"is_default": schema.BoolAttribute{
-						Description:   "If `true`, this virtual network is the default for the account.",
-						Optional:      true,
-						PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 					},
 					"is_default_network": schema.BoolAttribute{
 						Description: "If `true`, this virtual network is the default for the account.",

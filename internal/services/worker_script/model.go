@@ -14,19 +14,19 @@ type WorkerScriptResultEnvelope struct {
 
 type WorkerScriptModel struct {
 	ID            types.String                       `tfsdk:"id" json:"-,computed"`
-	AccountID     types.String                       `tfsdk:"account_id" path:"account_id"`
 	ScriptName    types.String                       `tfsdk:"script_name" path:"script_name"`
+	AccountID     types.String                       `tfsdk:"account_id" path:"account_id"`
+	Message       types.String                       `tfsdk:"message" json:"message"`
 	AnyPartName   *[]types.String                    `tfsdk:"any_part_name" json:"<any part name>"`
 	Metadata      *WorkerScriptMetadataModel         `tfsdk:"metadata" json:"metadata"`
-	Message       types.String                       `tfsdk:"message" json:"message"`
 	CreatedOn     timetypes.RFC3339                  `tfsdk:"created_on" json:"created_on,computed"`
 	Etag          types.String                       `tfsdk:"etag" json:"etag,computed"`
 	Logpush       types.Bool                         `tfsdk:"logpush" json:"logpush,computed"`
 	ModifiedOn    timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed"`
 	PlacementMode types.String                       `tfsdk:"placement_mode" json:"placement_mode,computed"`
 	StartupTimeMs types.Int64                        `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	TailConsumers *[]*WorkerScriptTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 	UsageModel    types.String                       `tfsdk:"usage_model" json:"usage_model,computed"`
+	TailConsumers *[]*WorkerScriptTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 }
 
 type WorkerScriptMetadataModel struct {

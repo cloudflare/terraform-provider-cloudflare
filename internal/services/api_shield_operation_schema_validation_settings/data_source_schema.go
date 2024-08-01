@@ -17,12 +17,12 @@ var _ datasource.DataSourceWithValidateConfig = &APIShieldOperationSchemaValidat
 func (r APIShieldOperationSchemaValidationSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
-			},
 			"operation_id": schema.StringAttribute{
 				Description: "UUID",
+				Required:    true,
+			},
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
 				Required:    true,
 			},
 			"mitigation_action": schema.StringAttribute{

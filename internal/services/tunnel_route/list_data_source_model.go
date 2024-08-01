@@ -18,12 +18,12 @@ type TunnelRoutesDataSourceModel struct {
 	IsDeleted        types.Bool                            `tfsdk:"is_deleted" query:"is_deleted"`
 	NetworkSubset    types.String                          `tfsdk:"network_subset" query:"network_subset"`
 	NetworkSuperset  types.String                          `tfsdk:"network_superset" query:"network_superset"`
-	Page             types.Float64                         `tfsdk:"page" query:"page"`
 	PerPage          types.Float64                         `tfsdk:"per_page" query:"per_page"`
 	RouteID          types.String                          `tfsdk:"route_id" query:"route_id"`
 	TunTypes         types.String                          `tfsdk:"tun_types" query:"tun_types"`
 	TunnelID         types.String                          `tfsdk:"tunnel_id" query:"tunnel_id"`
 	VirtualNetworkID types.String                          `tfsdk:"virtual_network_id" query:"virtual_network_id"`
+	Page             types.Float64                         `tfsdk:"page" query:"page"`
 	MaxItems         types.Int64                           `tfsdk:"max_items"`
 	Result           *[]*TunnelRoutesResultDataSourceModel `tfsdk:"result"`
 }

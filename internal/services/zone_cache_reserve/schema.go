@@ -37,17 +37,17 @@ func (r ZoneCacheReserveResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Default: stringdefault.StaticString("off"),
 			},
+			"modified_on": schema.StringAttribute{
+				Description: "last time this setting was modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"zone_setting_id": schema.StringAttribute{
 				Description: "ID of the zone setting.",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("cache_reserve"),
 				},
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "last time this setting was modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

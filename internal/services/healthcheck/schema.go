@@ -39,26 +39,14 @@ func (r HealthcheckResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
 				Required:    true,
 			},
+			"description": schema.StringAttribute{
+				Description: "A human-readable description of the health check.",
+				Optional:    true,
+			},
 			"check_regions": schema.ListAttribute{
 				Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
 				Optional:    true,
 				ElementType: types.StringType,
-			},
-			"consecutive_fails": schema.Int64Attribute{
-				Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(1),
-			},
-			"consecutive_successes": schema.Int64Attribute{
-				Description: "The number of consecutive successes required from a health check before changing the health to healthy.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(1),
-			},
-			"description": schema.StringAttribute{
-				Description: "A human-readable description of the health check.",
-				Optional:    true,
 			},
 			"http_config": schema.SingleNestedAttribute{
 				Description: "Parameters specific to an HTTP or HTTPS health check.",
@@ -115,24 +103,6 @@ func (r HealthcheckResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 			},
-			"interval": schema.Int64Attribute{
-				Description: "The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(60),
-			},
-			"retries": schema.Int64Attribute{
-				Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(2),
-			},
-			"suspended": schema.BoolAttribute{
-				Description: "If suspended, no health checks are sent to the origin.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"tcp_config": schema.SingleNestedAttribute{
 				Description: "Parameters specific to TCP health check.",
 				Optional:    true,
@@ -153,6 +123,36 @@ func (r HealthcheckResource) Schema(ctx context.Context, req resource.SchemaRequ
 						Default:     int64default.StaticInt64(80),
 					},
 				},
+			},
+			"consecutive_fails": schema.Int64Attribute{
+				Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(1),
+			},
+			"consecutive_successes": schema.Int64Attribute{
+				Description: "The number of consecutive successes required from a health check before changing the health to healthy.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(1),
+			},
+			"interval": schema.Int64Attribute{
+				Description: "The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(60),
+			},
+			"retries": schema.Int64Attribute{
+				Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(2),
+			},
+			"suspended": schema.BoolAttribute{
+				Description: "If suspended, no health checks are sent to the origin.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"timeout": schema.Int64Attribute{
 				Description: "The timeout (in seconds) before marking the health check as failed.",

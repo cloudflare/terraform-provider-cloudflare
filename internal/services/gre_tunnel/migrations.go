@@ -40,16 +40,16 @@ func (r GRETunnelResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Description: "The IP address assigned to the customer side of the GRE tunnel.",
 						Optional:    true,
 					},
+					"description": schema.StringAttribute{
+						Description: "An optional description of the GRE tunnel.",
+						Optional:    true,
+					},
 					"interface_address": schema.StringAttribute{
 						Description: "A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.",
 						Optional:    true,
 					},
 					"name": schema.StringAttribute{
 						Description: "The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.",
-						Optional:    true,
-					},
-					"description": schema.StringAttribute{
-						Description: "An optional description of the GRE tunnel.",
 						Optional:    true,
 					},
 					"health_check": schema.SingleNestedAttribute{
@@ -105,6 +105,12 @@ func (r GRETunnelResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Computed:    true,
 						Optional:    true,
 						Default:     int64default.StaticInt64(64),
+					},
+					"deleted": schema.BoolAttribute{
+						Computed: true,
+					},
+					"modified": schema.BoolAttribute{
+						Computed: true,
 					},
 					"gre_tunnels": schema.ListNestedAttribute{
 						Computed: true,
@@ -201,19 +207,13 @@ func (r GRETunnelResource) UpgradeState(ctx context.Context) map[int64]resource.
 							},
 						},
 					},
-					"modified": schema.BoolAttribute{
-						Computed: true,
-					},
-					"modified_gre_tunnel": schema.StringAttribute{
-						Computed: true,
-					},
-					"deleted": schema.BoolAttribute{
-						Computed: true,
-					},
 					"deleted_gre_tunnel": schema.StringAttribute{
 						Computed: true,
 					},
 					"gre_tunnel": schema.StringAttribute{
+						Computed: true,
+					},
+					"modified_gre_tunnel": schema.StringAttribute{
 						Computed: true,
 					},
 				},

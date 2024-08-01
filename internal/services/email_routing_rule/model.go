@@ -15,8 +15,8 @@ type EmailRoutingRuleModel struct {
 	ZoneIdentifier types.String                      `tfsdk:"zone_identifier" path:"zone_identifier"`
 	Actions        *[]*EmailRoutingRuleActionsModel  `tfsdk:"actions" json:"actions"`
 	Matchers       *[]*EmailRoutingRuleMatchersModel `tfsdk:"matchers" json:"matchers"`
-	Enabled        types.Bool                        `tfsdk:"enabled" json:"enabled"`
 	Name           types.String                      `tfsdk:"name" json:"name"`
+	Enabled        types.Bool                        `tfsdk:"enabled" json:"enabled"`
 	Priority       types.Float64                     `tfsdk:"priority" json:"priority"`
 	Tag            types.String                      `tfsdk:"tag" json:"tag,computed"`
 }

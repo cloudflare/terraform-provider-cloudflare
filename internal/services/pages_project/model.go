@@ -15,17 +15,17 @@ type PagesProjectResultEnvelope struct {
 
 type PagesProjectModel struct {
 	ID                  types.String                          `tfsdk:"id" json:"-,computed"`
+	Name                types.String                          `tfsdk:"name" json:"name"`
 	AccountID           types.String                          `tfsdk:"account_id" path:"account_id"`
+	ProductionBranch    types.String                          `tfsdk:"production_branch" json:"production_branch"`
 	BuildConfig         *PagesProjectBuildConfigModel         `tfsdk:"build_config" json:"build_config"`
 	CanonicalDeployment *PagesProjectCanonicalDeploymentModel `tfsdk:"canonical_deployment" json:"canonical_deployment"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsModel   `tfsdk:"deployment_configs" json:"deployment_configs"`
 	LatestDeployment    *PagesProjectLatestDeploymentModel    `tfsdk:"latest_deployment" json:"latest_deployment"`
-	Name                types.String                          `tfsdk:"name" json:"name"`
-	ProductionBranch    types.String                          `tfsdk:"production_branch" json:"production_branch"`
 	CreatedOn           timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed"`
+	Subdomain           types.String                          `tfsdk:"subdomain" json:"subdomain,computed"`
 	Domains             *[]jsontypes.Normalized               `tfsdk:"domains" json:"domains,computed"`
 	Source              jsontypes.Normalized                  `tfsdk:"source" json:"source,computed"`
-	Subdomain           types.String                          `tfsdk:"subdomain" json:"subdomain,computed"`
 }
 
 type PagesProjectBuildConfigModel struct {

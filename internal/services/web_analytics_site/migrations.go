@@ -49,6 +49,14 @@ func (r WebAnalyticsSiteResource) UpgradeState(ctx context.Context) map[int64]re
 						Computed:   true,
 						CustomType: timetypes.RFC3339Type{},
 					},
+					"site_token": schema.StringAttribute{
+						Description: "The Web Analytics site token.",
+						Computed:    true,
+					},
+					"snippet": schema.StringAttribute{
+						Description: "Encoded JavaScript snippet.",
+						Computed:    true,
+					},
 					"rules": schema.ListNestedAttribute{
 						Description: "A list of rules.",
 						Computed:    true,
@@ -105,14 +113,6 @@ func (r WebAnalyticsSiteResource) UpgradeState(ctx context.Context) map[int64]re
 								Optional:    true,
 							},
 						},
-					},
-					"site_token": schema.StringAttribute{
-						Description: "The Web Analytics site token.",
-						Computed:    true,
-					},
-					"snippet": schema.StringAttribute{
-						Description: "Encoded JavaScript snippet.",
-						Computed:    true,
 					},
 				},
 			},

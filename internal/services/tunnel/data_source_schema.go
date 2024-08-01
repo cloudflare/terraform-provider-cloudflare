@@ -27,8 +27,22 @@ func (r TunnelDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Description: "UUID of the tunnel.",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Description: "Timestamp of when the resource was created.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"deleted_at": schema.StringAttribute{
+				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "A user-friendly name for a tunnel.",
 				Optional:    true,
 			},
 			"connections": schema.ListNestedAttribute{
@@ -52,20 +66,6 @@ func (r TunnelDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 						},
 					},
 				},
-			},
-			"created_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was created.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"name": schema.StringAttribute{
-				Description: "A user-friendly name for a tunnel.",
-				Optional:    true,
-			},
-			"deleted_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

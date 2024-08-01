@@ -18,16 +18,16 @@ type LoadBalancerPoolModel struct {
 	Name               types.String                             `tfsdk:"name" json:"name"`
 	Origins            *[]*LoadBalancerPoolOriginsModel         `tfsdk:"origins" json:"origins"`
 	Description        types.String                             `tfsdk:"description" json:"description"`
-	Enabled            types.Bool                               `tfsdk:"enabled" json:"enabled"`
 	Latitude           types.Float64                            `tfsdk:"latitude" json:"latitude"`
-	LoadShedding       *LoadBalancerPoolLoadSheddingModel       `tfsdk:"load_shedding" json:"load_shedding"`
 	Longitude          types.Float64                            `tfsdk:"longitude" json:"longitude"`
-	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins"`
-	Monitor            jsontypes.Normalized                     `tfsdk:"monitor" json:"monitor"`
 	NotificationEmail  types.String                             `tfsdk:"notification_email" json:"notification_email"`
+	CheckRegions       *[]types.String                          `tfsdk:"check_regions" json:"check_regions"`
+	LoadShedding       *LoadBalancerPoolLoadSheddingModel       `tfsdk:"load_shedding" json:"load_shedding"`
 	NotificationFilter *LoadBalancerPoolNotificationFilterModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringModel     `tfsdk:"origin_steering" json:"origin_steering"`
-	CheckRegions       *[]types.String                          `tfsdk:"check_regions" json:"check_regions"`
+	Monitor            jsontypes.Normalized                     `tfsdk:"monitor" json:"monitor"`
+	Enabled            types.Bool                               `tfsdk:"enabled" json:"enabled"`
+	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins"`
 	CreatedOn          timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed"`
 	DisabledAt         timetypes.RFC3339                        `tfsdk:"disabled_at" json:"disabled_at,computed"`
 	ModifiedOn         timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed"`

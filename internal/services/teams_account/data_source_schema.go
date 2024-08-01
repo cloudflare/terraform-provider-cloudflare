@@ -23,6 +23,10 @@ func (r TeamsAccountDataSource) Schema(ctx context.Context, req datasource.Schem
 				Optional:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"updated_at": schema.StringAttribute{
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "account settings.",
 				Optional:    true,
@@ -248,10 +252,6 @@ func (r TeamsAccountDataSource) Schema(ctx context.Context, req datasource.Schem
 						},
 					},
 				},
-			},
-			"updated_at": schema.StringAttribute{
-				Optional:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

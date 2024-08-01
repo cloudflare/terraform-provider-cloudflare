@@ -29,6 +29,24 @@ func (r DevicePostureIntegrationDataSource) Schema(ctx context.Context, req data
 				Computed:    true,
 				Optional:    true,
 			},
+			"interval": schema.StringAttribute{
+				Description: "The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).",
+				Computed:    true,
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the device posture integration.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of device posture integration.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s"),
+				},
+			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The configuration object containing third-party integration information.",
 				Computed:    true,
@@ -46,24 +64,6 @@ func (r DevicePostureIntegrationDataSource) Schema(ctx context.Context, req data
 						Description: "The Workspace One client ID provided in the Workspace One Admin Dashboard.",
 						Computed:    true,
 					},
-				},
-			},
-			"interval": schema.StringAttribute{
-				Description: "The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the device posture integration.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"type": schema.StringAttribute{
-				Description: "The type of device posture integration.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s"),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{

@@ -50,6 +50,10 @@ func (r AccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resour
 							stringvalidator.OneOfCaseInsensitive("allow", "deny", "non_identity", "bypass"),
 						},
 					},
+					"name": schema.StringAttribute{
+						Description: "The name of the Access policy.",
+						Required:    true,
+					},
 					"include": schema.ListNestedAttribute{
 						Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 						Required:    true,
@@ -237,9 +241,13 @@ func (r AccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resour
 							},
 						},
 					},
-					"name": schema.StringAttribute{
-						Description: "The name of the Access policy.",
-						Required:    true,
+					"precedence": schema.Int64Attribute{
+						Description: "The order of execution for this policy. Must be unique for each policy within an app.",
+						Optional:    true,
+					},
+					"purpose_justification_prompt": schema.StringAttribute{
+						Description: "A custom message that will appear on the purpose justification screen.",
+						Optional:    true,
 					},
 					"approval_groups": schema.ListNestedAttribute{
 						Description: "Administrators who can approve a temporary authentication request.",
@@ -264,12 +272,6 @@ func (r AccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resour
 								},
 							},
 						},
-					},
-					"approval_required": schema.BoolAttribute{
-						Description: "Requires the user to request access from an administrator at the start of each session.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
 					},
 					"exclude": schema.ListNestedAttribute{
 						Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
@@ -458,26 +460,6 @@ func (r AccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resour
 							},
 						},
 					},
-					"isolation_required": schema.BoolAttribute{
-						Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
-					},
-					"precedence": schema.Int64Attribute{
-						Description: "The order of execution for this policy. Must be unique for each policy within an app.",
-						Optional:    true,
-					},
-					"purpose_justification_prompt": schema.StringAttribute{
-						Description: "A custom message that will appear on the purpose justification screen.",
-						Optional:    true,
-					},
-					"purpose_justification_required": schema.BoolAttribute{
-						Description: "Require users to enter a justification when they log in to the application.",
-						Computed:    true,
-						Optional:    true,
-						Default:     booldefault.StaticBool(false),
-					},
 					"require": schema.ListNestedAttribute{
 						Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 						Optional:    true,
@@ -664,6 +646,24 @@ func (r AccessPolicyResource) UpgradeState(ctx context.Context) map[int64]resour
 								},
 							},
 						},
+					},
+					"approval_required": schema.BoolAttribute{
+						Description: "Requires the user to request access from an administrator at the start of each session.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+					"isolation_required": schema.BoolAttribute{
+						Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+					"purpose_justification_required": schema.BoolAttribute{
+						Description: "Require users to enter a justification when they log in to the application.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"session_duration": schema.StringAttribute{
 						Description: "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",

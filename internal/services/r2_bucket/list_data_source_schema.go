@@ -44,6 +44,10 @@ func (r R2BucketsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					stringvalidator.OneOfCaseInsensitive("name"),
 				},
 			},
+			"start_after": schema.StringAttribute{
+				Description: "Bucket name to start searching after. Buckets are ordered lexicographically.",
+				Optional:    true,
+			},
 			"per_page": schema.Float64Attribute{
 				Description: "Maximum number of buckets to return in a single call",
 				Computed:    true,
@@ -51,10 +55,6 @@ func (r R2BucketsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Validators: []validator.Float64{
 					float64validator.Between(1, 1000),
 				},
-			},
-			"start_after": schema.StringAttribute{
-				Description: "Bucket name to start searching after. Buckets are ordered lexicographically.",
-				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

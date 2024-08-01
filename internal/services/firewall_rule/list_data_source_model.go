@@ -13,11 +13,11 @@ type FirewallRulesResultListDataSourceEnvelope struct {
 
 type FirewallRulesDataSourceModel struct {
 	ZoneIdentifier types.String                           `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                           `tfsdk:"id" query:"id"`
 	Action         types.String                           `tfsdk:"action" query:"action"`
 	Description    types.String                           `tfsdk:"description" query:"description"`
-	Page           types.Float64                          `tfsdk:"page" query:"page"`
+	ID             types.String                           `tfsdk:"id" query:"id"`
 	Paused         types.Bool                             `tfsdk:"paused" query:"paused"`
+	Page           types.Float64                          `tfsdk:"page" query:"page"`
 	PerPage        types.Float64                          `tfsdk:"per_page" query:"per_page"`
 	MaxItems       types.Int64                            `tfsdk:"max_items"`
 	Result         *[]*FirewallRulesResultDataSourceModel `tfsdk:"result"`

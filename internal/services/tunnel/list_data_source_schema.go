@@ -42,14 +42,6 @@ func (r TunnelsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Description: "A user-friendly name for the tunnel.",
 				Optional:    true,
 			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-			},
 			"per_page": schema.Float64Attribute{
 				Description: "Number of results to display.",
 				Optional:    true,
@@ -79,6 +71,14 @@ func (r TunnelsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			"was_inactive_at": schema.StringAttribute{
 				Optional:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"page": schema.Float64Attribute{
+				Description: "Page number of paginated results.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

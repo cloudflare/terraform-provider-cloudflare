@@ -18,10 +18,10 @@ type DevicePostureIntegrationDataSourceModel struct {
 	AccountID     types.String                                      `tfsdk:"account_id" path:"account_id"`
 	IntegrationID types.String                                      `tfsdk:"integration_id" path:"integration_id"`
 	ID            types.String                                      `tfsdk:"id" json:"id"`
-	Config        *DevicePostureIntegrationConfigDataSourceModel    `tfsdk:"config" json:"config"`
 	Interval      types.String                                      `tfsdk:"interval" json:"interval"`
 	Name          types.String                                      `tfsdk:"name" json:"name"`
 	Type          types.String                                      `tfsdk:"type" json:"type"`
+	Config        *DevicePostureIntegrationConfigDataSourceModel    `tfsdk:"config" json:"config"`
 	Filter        *DevicePostureIntegrationFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

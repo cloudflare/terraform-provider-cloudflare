@@ -24,14 +24,14 @@ func (r TeamsProxyEndpointResource) Schema(ctx context.Context, req resource.Sch
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description: "The name of the proxy endpoint.",
+				Required:    true,
+			},
 			"ips": schema.ListAttribute{
 				Description: "A list of CIDRs to restrict ingress connections.",
 				Required:    true,
 				ElementType: types.StringType,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the proxy endpoint.",
-				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

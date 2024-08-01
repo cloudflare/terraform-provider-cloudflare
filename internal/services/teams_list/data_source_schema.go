@@ -25,21 +25,25 @@ func (r TeamsListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "API Resource UUID tag.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "API Resource UUID tag.",
-				Computed:    true,
-				Optional:    true,
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"list_count": schema.Float64Attribute{
 				Description: "The number of items in the list.",
 				Computed:    true,
 			},
-			"created_at": schema.StringAttribute{
+			"updated_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the list.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "API Resource UUID tag.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -55,10 +59,6 @@ func (r TeamsListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
 				},
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

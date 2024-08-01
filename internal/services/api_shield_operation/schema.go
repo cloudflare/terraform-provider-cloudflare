@@ -21,15 +21,15 @@ func (r APIShieldOperationResource) Schema(ctx context.Context, req resource.Sch
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"operation_id": schema.StringAttribute{
 				Description:   "UUID",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"zone_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"state": schema.StringAttribute{
 				Description: "Mark state of operation in API Discovery\n  * `review` - Mark operation as for review\n  * `ignored` - Mark operation as ignored\n",

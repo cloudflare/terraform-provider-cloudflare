@@ -25,35 +25,11 @@ func (r AccessRulesDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
-			"configuration": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"target": schema.StringAttribute{
-						Description: "The target to search in existing rules.",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ip", "ip_range", "asn", "country"),
-						},
-					},
-					"value": schema.StringAttribute{
-						Description: "The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.\nNotes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.",
-						Optional:    true,
-					},
-				},
-			},
 			"direction": schema.StringAttribute{
 				Description: "The direction used to sort returned rules.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-				},
-			},
-			"match": schema.StringAttribute{
-				Description: "When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("any", "all"),
 				},
 			},
 			"mode": schema.StringAttribute{
@@ -81,6 +57,30 @@ func (r AccessRulesDataSource) Schema(ctx context.Context, req datasource.Schema
 			"per_page": schema.Float64Attribute{
 				Description: "Maximum number of results requested.",
 				Optional:    true,
+			},
+			"configuration": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"target": schema.StringAttribute{
+						Description: "The target to search in existing rules.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("ip", "ip_range", "asn", "country"),
+						},
+					},
+					"value": schema.StringAttribute{
+						Description: "The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.\nNotes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.",
+						Optional:    true,
+					},
+				},
+			},
+			"match": schema.StringAttribute{
+				Description: "When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("any", "all"),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

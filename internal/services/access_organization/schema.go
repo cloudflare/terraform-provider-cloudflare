@@ -21,6 +21,11 @@ func (r AccessOrganizationResource) Schema(ctx context.Context, req resource.Sch
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description:   "The name of your Zero Trust organization.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
 				Optional:      true,
@@ -35,49 +40,13 @@ func (r AccessOrganizationResource) Schema(ctx context.Context, req resource.Sch
 				Description: "The unique subdomain assigned to your Zero Trust organization.",
 				Required:    true,
 			},
-			"name": schema.StringAttribute{
-				Description:   "The name of your Zero Trust organization.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
 			"allow_authenticate_via_warp": schema.BoolAttribute{
 				Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
 				Optional:    true,
 			},
-			"auto_redirect_to_identity": schema.BoolAttribute{
-				Description: "When set to `true`, users skip the identity provider selection step during login.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"is_ui_read_only": schema.BoolAttribute{
 				Description: "Lock all settings as Read-Only in the Dashboard, regardless of user permission. Updates may only be made via the API or Terraform for this account when enabled.",
 				Optional:    true,
-			},
-			"login_design": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"background_color": schema.StringAttribute{
-						Description: "The background color on your login page.",
-						Optional:    true,
-					},
-					"footer_text": schema.StringAttribute{
-						Description: "The text at the bottom of your login page.",
-						Optional:    true,
-					},
-					"header_text": schema.StringAttribute{
-						Description: "The text at the top of your login page.",
-						Optional:    true,
-					},
-					"logo_path": schema.StringAttribute{
-						Description: "The URL of the logo on your login page.",
-						Optional:    true,
-					},
-					"text_color": schema.StringAttribute{
-						Description: "The text color on your login page.",
-						Optional:    true,
-					},
-				},
 			},
 			"session_duration": schema.StringAttribute{
 				Description: "The amount of time that tokens issued for applications will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
@@ -107,6 +76,37 @@ func (r AccessOrganizationResource) Schema(ctx context.Context, req resource.Sch
 						Optional:    true,
 					},
 				},
+			},
+			"login_design": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"background_color": schema.StringAttribute{
+						Description: "The background color on your login page.",
+						Optional:    true,
+					},
+					"footer_text": schema.StringAttribute{
+						Description: "The text at the bottom of your login page.",
+						Optional:    true,
+					},
+					"header_text": schema.StringAttribute{
+						Description: "The text at the top of your login page.",
+						Optional:    true,
+					},
+					"logo_path": schema.StringAttribute{
+						Description: "The URL of the logo on your login page.",
+						Optional:    true,
+					},
+					"text_color": schema.StringAttribute{
+						Description: "The text color on your login page.",
+						Optional:    true,
+					},
+				},
+			},
+			"auto_redirect_to_identity": schema.BoolAttribute{
+				Description: "When set to `true`, users skip the identity provider selection step during login.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

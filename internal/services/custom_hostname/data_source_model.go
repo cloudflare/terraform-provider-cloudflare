@@ -18,19 +18,19 @@ type CustomHostnameResultListDataSourceEnvelope struct {
 }
 
 type CustomHostnameDataSourceModel struct {
-	ZoneID                    types.String                                               `tfsdk:"zone_id" path:"zone_id"`
 	CustomHostnameID          types.String                                               `tfsdk:"custom_hostname_id" path:"custom_hostname_id"`
-	ID                        types.String                                               `tfsdk:"id" json:"id,computed"`
-	Hostname                  types.String                                               `tfsdk:"hostname" json:"hostname,computed"`
-	SSL                       customfield.NestedObject[CustomHostnameSSLDataSourceModel] `tfsdk:"ssl" json:"ssl,computed"`
+	ZoneID                    types.String                                               `tfsdk:"zone_id" path:"zone_id"`
 	CreatedAt                 timetypes.RFC3339                                          `tfsdk:"created_at" json:"created_at,computed"`
-	CustomMetadata            *CustomHostnameCustomMetadataDataSourceModel               `tfsdk:"custom_metadata" json:"custom_metadata"`
+	Hostname                  types.String                                               `tfsdk:"hostname" json:"hostname,computed"`
+	ID                        types.String                                               `tfsdk:"id" json:"id,computed"`
+	SSL                       customfield.NestedObject[CustomHostnameSSLDataSourceModel] `tfsdk:"ssl" json:"ssl,computed"`
 	CustomOriginServer        types.String                                               `tfsdk:"custom_origin_server" json:"custom_origin_server"`
 	CustomOriginSNI           types.String                                               `tfsdk:"custom_origin_sni" json:"custom_origin_sni"`
-	OwnershipVerification     *CustomHostnameOwnershipVerificationDataSourceModel        `tfsdk:"ownership_verification" json:"ownership_verification"`
-	OwnershipVerificationHTTP *CustomHostnameOwnershipVerificationHTTPDataSourceModel    `tfsdk:"ownership_verification_http" json:"ownership_verification_http"`
 	Status                    types.String                                               `tfsdk:"status" json:"status"`
 	VerificationErrors        *[]jsontypes.Normalized                                    `tfsdk:"verification_errors" json:"verification_errors"`
+	CustomMetadata            *CustomHostnameCustomMetadataDataSourceModel               `tfsdk:"custom_metadata" json:"custom_metadata"`
+	OwnershipVerification     *CustomHostnameOwnershipVerificationDataSourceModel        `tfsdk:"ownership_verification" json:"ownership_verification"`
+	OwnershipVerificationHTTP *CustomHostnameOwnershipVerificationHTTPDataSourceModel    `tfsdk:"ownership_verification_http" json:"ownership_verification_http"`
 	Filter                    *CustomHostnameFindOneByDataSourceModel                    `tfsdk:"filter"`
 }
 

@@ -17,16 +17,16 @@ var _ datasource.DataSourceWithValidateConfig = &HostnameTLSSettingDataSource{}
 func (r HostnameTLSSettingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
-			},
 			"setting_id": schema.StringAttribute{
 				Description: "The TLS Setting name.",
 				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
 				},
+			},
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
+				Required:    true,
 			},
 		},
 	}

@@ -21,6 +21,10 @@ var _ datasource.DataSourceWithValidateConfig = &LogpushJobDataSource{}
 func (r LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
 			"job_id": schema.Int64Attribute{
 				Description: "Unique id of the job.",
 				Optional:    true,
@@ -28,20 +32,29 @@ func (r LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaR
 					int64validator.AtLeast(1),
 				},
 			},
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
-			},
 			"zone_id": schema.StringAttribute{
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
-			"id": schema.Int64Attribute{
-				Description: "Unique id of the job.",
+			"frequency": schema.StringAttribute{
+				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.",
 				Computed:    true,
-				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("high", "low"),
+				},
+			},
+			"max_upload_interval_seconds": schema.Int64Attribute{
+				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.",
+				Computed:    true,
 				Validators: []validator.Int64{
-					int64validator.AtLeast(1),
+					int64validator.Between(30, 300),
+				},
+			},
+			"max_upload_records": schema.Int64Attribute{
+				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1000, 1000000),
 				},
 			},
 			"dataset": schema.StringAttribute{
@@ -65,11 +78,12 @@ func (r LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"frequency": schema.StringAttribute{
-				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.",
+			"id": schema.Int64Attribute{
+				Description: "Unique id of the job.",
 				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("high", "low"),
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(1),
 				},
 			},
 			"kind": schema.StringAttribute{
@@ -103,20 +117,6 @@ func (r LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(5000000, 1000000000),
-				},
-			},
-			"max_upload_interval_seconds": schema.Int64Attribute{
-				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.",
-				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(30, 300),
-				},
-			},
-			"max_upload_records": schema.Int64Attribute{
-				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.",
-				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(1000, 1000000),
 				},
 			},
 			"name": schema.StringAttribute{

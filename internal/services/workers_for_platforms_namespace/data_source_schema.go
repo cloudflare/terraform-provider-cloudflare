@@ -24,25 +24,25 @@ func (r WorkersForPlatformsNamespaceDataSource) Schema(ctx context.Context, req 
 				Description: "Name of the Workers for Platforms dispatch namespace.",
 				Optional:    true,
 			},
-			"created_by": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"modified_by": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"created_by": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+				Optional:    true,
+			},
+			"modified_by": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+				Optional:    true,
 			},
 			"namespace_id": schema.StringAttribute{
 				Description: "API Resource UUID tag.",

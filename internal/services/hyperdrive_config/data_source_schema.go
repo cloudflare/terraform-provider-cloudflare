@@ -25,6 +25,10 @@ func (r HyperdriveConfigDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Identifier",
 				Optional:    true,
 			},
+			"name": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+			},
 			"caching": schema.SingleNestedAttribute{
 				Computed: true,
 				Optional: true,
@@ -45,10 +49,6 @@ func (r HyperdriveConfigDataSource) Schema(ctx context.Context, req datasource.S
 						Optional:    true,
 					},
 				},
-			},
-			"name": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
 			},
 			"origin": schema.SingleNestedAttribute{
 				Computed: true,

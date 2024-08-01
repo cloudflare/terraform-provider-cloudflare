@@ -17,14 +17,14 @@ type DevicePostureRuleResultListDataSourceEnvelope struct {
 type DevicePostureRuleDataSourceModel struct {
 	AccountID   types.String                               `tfsdk:"account_id" path:"account_id"`
 	RuleID      types.String                               `tfsdk:"rule_id" path:"rule_id"`
-	ID          types.String                               `tfsdk:"id" json:"id"`
 	Description types.String                               `tfsdk:"description" json:"description"`
 	Expiration  types.String                               `tfsdk:"expiration" json:"expiration"`
-	Input       *DevicePostureRuleInputDataSourceModel     `tfsdk:"input" json:"input"`
-	Match       *[]*DevicePostureRuleMatchDataSourceModel  `tfsdk:"match" json:"match"`
+	ID          types.String                               `tfsdk:"id" json:"id"`
 	Name        types.String                               `tfsdk:"name" json:"name"`
 	Schedule    types.String                               `tfsdk:"schedule" json:"schedule"`
 	Type        types.String                               `tfsdk:"type" json:"type"`
+	Input       *DevicePostureRuleInputDataSourceModel     `tfsdk:"input" json:"input"`
+	Match       *[]*DevicePostureRuleMatchDataSourceModel  `tfsdk:"match" json:"match"`
 	Filter      *DevicePostureRuleFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

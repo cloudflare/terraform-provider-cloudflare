@@ -38,6 +38,13 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 					stringvalidator.OneOfCaseInsensitive("user.first_name", "user.last_name", "user.email", "status"),
 				},
 			},
+			"status": schema.StringAttribute{
+				Description: "A member's status in the account.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("accepted", "pending", "rejected"),
+				},
+			},
 			"page": schema.Float64Attribute{
 				Description: "Page number of paginated results.",
 				Computed:    true,
@@ -52,13 +59,6 @@ func (r AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sch
 				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(5, 50),
-				},
-			},
-			"status": schema.StringAttribute{
-				Description: "A member's status in the account.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("accepted", "pending", "rejected"),
 				},
 			},
 			"max_items": schema.Int64Attribute{

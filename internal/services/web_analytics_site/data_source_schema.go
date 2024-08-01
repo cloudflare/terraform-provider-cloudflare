@@ -27,14 +27,29 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Identifier",
 				Optional:    true,
 			},
+			"created": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"auto_install": schema.BoolAttribute{
 				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
 				Computed:    true,
 				Optional:    true,
 			},
-			"created": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+			"site_tag": schema.StringAttribute{
+				Description: "The Web Analytics site identifier.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"site_token": schema.StringAttribute{
+				Description: "The Web Analytics site token.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"snippet": schema.StringAttribute{
+				Description: "Encoded JavaScript snippet.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "A list of rules.",
@@ -103,21 +118,6 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 						Optional:    true,
 					},
 				},
-			},
-			"site_tag": schema.StringAttribute{
-				Description: "The Web Analytics site identifier.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"site_token": schema.StringAttribute{
-				Description: "The Web Analytics site token.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"snippet": schema.StringAttribute{
-				Description: "Encoded JavaScript snippet.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

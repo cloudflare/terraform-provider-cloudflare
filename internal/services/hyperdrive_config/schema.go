@@ -21,14 +21,14 @@ func (r HyperdriveConfigResource) Schema(ctx context.Context, req resource.Schem
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"name": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"origin": schema.SingleNestedAttribute{
 				Required: true,

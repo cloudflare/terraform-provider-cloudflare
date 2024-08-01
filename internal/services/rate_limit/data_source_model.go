@@ -17,13 +17,13 @@ type RateLimitResultListDataSourceEnvelope struct {
 type RateLimitDataSourceModel struct {
 	ZoneIdentifier types.String                       `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String                       `tfsdk:"id" path:"id"`
-	Action         *RateLimitActionDataSourceModel    `tfsdk:"action" json:"action"`
-	Bypass         *[]*RateLimitBypassDataSourceModel `tfsdk:"bypass" json:"bypass"`
 	Description    types.String                       `tfsdk:"description" json:"description"`
 	Disabled       types.Bool                         `tfsdk:"disabled" json:"disabled"`
-	Match          *RateLimitMatchDataSourceModel     `tfsdk:"match" json:"match"`
 	Period         types.Float64                      `tfsdk:"period" json:"period"`
 	Threshold      types.Float64                      `tfsdk:"threshold" json:"threshold"`
+	Action         *RateLimitActionDataSourceModel    `tfsdk:"action" json:"action"`
+	Bypass         *[]*RateLimitBypassDataSourceModel `tfsdk:"bypass" json:"bypass"`
+	Match          *RateLimitMatchDataSourceModel     `tfsdk:"match" json:"match"`
 	Filter         *RateLimitFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

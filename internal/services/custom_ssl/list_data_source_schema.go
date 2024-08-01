@@ -25,6 +25,13 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "Identifier",
 				Required:    true,
 			},
+			"status": schema.StringAttribute{
+				Description: "Status of the zone's custom SSL.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("active", "expired", "deleted", "pending", "initializing"),
+				},
+			},
 			"match": schema.StringAttribute{
 				Description: "Whether to match all search requirements or at least one (any).",
 				Computed:    true,
@@ -47,13 +54,6 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(5, 50),
-				},
-			},
-			"status": schema.StringAttribute{
-				Description: "Status of the zone's custom SSL.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "expired", "deleted", "pending", "initializing"),
 				},
 			},
 			"max_items": schema.Int64Attribute{

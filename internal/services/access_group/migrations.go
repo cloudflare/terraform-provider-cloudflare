@@ -32,6 +32,10 @@ func (r AccessGroupResource) UpgradeState(ctx context.Context) map[int64]resourc
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"name": schema.StringAttribute{
+						Description: "The name of the Access group.",
+						Required:    true,
+					},
 					"include": schema.ListNestedAttribute{
 						Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 						Required:    true,
@@ -219,9 +223,9 @@ func (r AccessGroupResource) UpgradeState(ctx context.Context) map[int64]resourc
 							},
 						},
 					},
-					"name": schema.StringAttribute{
-						Description: "The name of the Access group.",
-						Required:    true,
+					"is_default": schema.BoolAttribute{
+						Description: "Whether this is the default group",
+						Optional:    true,
 					},
 					"exclude": schema.ListNestedAttribute{
 						Description: "Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules.",
@@ -409,10 +413,6 @@ func (r AccessGroupResource) UpgradeState(ctx context.Context) map[int64]resourc
 								},
 							},
 						},
-					},
-					"is_default": schema.BoolAttribute{
-						Description: "Whether this is the default group",
-						Optional:    true,
 					},
 					"require": schema.ListNestedAttribute{
 						Description: "Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules.",

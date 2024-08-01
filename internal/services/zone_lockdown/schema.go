@@ -28,6 +28,11 @@ func (r ZoneLockdownResource) Schema(ctx context.Context, req resource.SchemaReq
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"urls": schema.ListAttribute{
+				Description: "The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
+				Required:    true,
+				ElementType: types.StringType,
+			},
 			"configurations": schema.SingleNestedAttribute{
 				Description: "A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations.",
 				Required:    true,
@@ -44,11 +49,6 @@ func (r ZoneLockdownResource) Schema(ctx context.Context, req resource.SchemaReq
 						Optional:    true,
 					},
 				},
-			},
-			"urls": schema.ListAttribute{
-				Description: "The URLs to include in the current WAF override. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
-				Required:    true,
-				ElementType: types.StringType,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was created.",

@@ -18,11 +18,11 @@ type TunnelResultListDataSourceEnvelope struct {
 type TunnelDataSourceModel struct {
 	AccountID   types.String                         `tfsdk:"account_id" path:"account_id"`
 	TunnelID    types.String                         `tfsdk:"tunnel_id" path:"tunnel_id"`
-	ID          types.String                         `tfsdk:"id" json:"id"`
-	Connections *[]*TunnelConnectionsDataSourceModel `tfsdk:"connections" json:"connections"`
 	CreatedAt   timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at"`
-	Name        types.String                         `tfsdk:"name" json:"name"`
 	DeletedAt   timetypes.RFC3339                    `tfsdk:"deleted_at" json:"deleted_at"`
+	ID          types.String                         `tfsdk:"id" json:"id"`
+	Name        types.String                         `tfsdk:"name" json:"name"`
+	Connections *[]*TunnelConnectionsDataSourceModel `tfsdk:"connections" json:"connections"`
 	Filter      *TunnelFindOneByDataSourceModel      `tfsdk:"filter"`
 }
 

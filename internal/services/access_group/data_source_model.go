@@ -17,17 +17,17 @@ type AccessGroupResultListDataSourceEnvelope struct {
 }
 
 type AccessGroupDataSourceModel struct {
-	GroupID   types.String                            `tfsdk:"group_id" path:"group_id"`
 	AccountID types.String                            `tfsdk:"account_id" path:"account_id"`
+	GroupID   types.String                            `tfsdk:"group_id" path:"group_id"`
 	ZoneID    types.String                            `tfsdk:"zone_id" path:"zone_id"`
-	ID        types.String                            `tfsdk:"id" json:"id"`
 	CreatedAt timetypes.RFC3339                       `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt timetypes.RFC3339                       `tfsdk:"updated_at" json:"updated_at,computed"`
+	ID        types.String                            `tfsdk:"id" json:"id"`
+	Name      types.String                            `tfsdk:"name" json:"name"`
 	Exclude   *[]*AccessGroupExcludeDataSourceModel   `tfsdk:"exclude" json:"exclude"`
 	Include   *[]*AccessGroupIncludeDataSourceModel   `tfsdk:"include" json:"include"`
 	IsDefault *[]*AccessGroupIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default"`
-	Name      types.String                            `tfsdk:"name" json:"name"`
 	Require   *[]*AccessGroupRequireDataSourceModel   `tfsdk:"require" json:"require"`
-	UpdatedAt timetypes.RFC3339                       `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 
 type AccessGroupExcludeDataSourceModel struct {

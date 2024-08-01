@@ -27,21 +27,21 @@ type DeviceSettingsPolicyDataSourceModel struct {
 	Description         types.String                                           `tfsdk:"description" json:"description"`
 	DisableAutoFallback types.Bool                                             `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback"`
 	Enabled             types.Bool                                             `tfsdk:"enabled" json:"enabled"`
-	Exclude             *[]*DeviceSettingsPolicyExcludeDataSourceModel         `tfsdk:"exclude" json:"exclude"`
 	ExcludeOfficeIPs    types.Bool                                             `tfsdk:"exclude_office_ips" json:"exclude_office_ips"`
-	FallbackDomains     *[]*DeviceSettingsPolicyFallbackDomainsDataSourceModel `tfsdk:"fallback_domains" json:"fallback_domains"`
 	GatewayUniqueID     types.String                                           `tfsdk:"gateway_unique_id" json:"gateway_unique_id"`
-	Include             *[]*DeviceSettingsPolicyIncludeDataSourceModel         `tfsdk:"include" json:"include"`
 	LANAllowMinutes     types.Float64                                          `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes"`
 	LANAllowSubnetSize  types.Float64                                          `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size"`
 	Match               types.String                                           `tfsdk:"match" json:"match"`
 	Name                types.String                                           `tfsdk:"name" json:"name"`
 	Precedence          types.Float64                                          `tfsdk:"precedence" json:"precedence"`
-	ServiceModeV2       *DeviceSettingsPolicyServiceModeV2DataSourceModel      `tfsdk:"service_mode_v2" json:"service_mode_v2"`
 	SupportURL          types.String                                           `tfsdk:"support_url" json:"support_url"`
 	SwitchLocked        types.Bool                                             `tfsdk:"switch_locked" json:"switch_locked"`
-	TargetTests         *[]*DeviceSettingsPolicyTargetTestsDataSourceModel     `tfsdk:"target_tests" json:"target_tests"`
 	TunnelProtocol      types.String                                           `tfsdk:"tunnel_protocol" json:"tunnel_protocol"`
+	Exclude             *[]*DeviceSettingsPolicyExcludeDataSourceModel         `tfsdk:"exclude" json:"exclude"`
+	FallbackDomains     *[]*DeviceSettingsPolicyFallbackDomainsDataSourceModel `tfsdk:"fallback_domains" json:"fallback_domains"`
+	Include             *[]*DeviceSettingsPolicyIncludeDataSourceModel         `tfsdk:"include" json:"include"`
+	ServiceModeV2       *DeviceSettingsPolicyServiceModeV2DataSourceModel      `tfsdk:"service_mode_v2" json:"service_mode_v2"`
+	TargetTests         *[]*DeviceSettingsPolicyTargetTestsDataSourceModel     `tfsdk:"target_tests" json:"target_tests"`
 	Filter              *DeviceSettingsPolicyFindOneByDataSourceModel          `tfsdk:"filter"`
 }
 

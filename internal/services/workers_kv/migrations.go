@@ -21,6 +21,11 @@ func (r WorkersKVResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"key_name": schema.StringAttribute{
+						Description:   "A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+					},
 					"account_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
@@ -30,11 +35,6 @@ func (r WorkersKVResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Description:   "Namespace identifier tag.",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
-					"key_name": schema.StringAttribute{
-						Description:   "A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"metadata": schema.StringAttribute{
 						Description: "Arbitrary JSON to be associated with a key/value pair.",

@@ -31,6 +31,11 @@ func (r AccountMemberResource) UpgradeState(ctx context.Context) map[int64]resou
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"email": schema.StringAttribute{
+						Description:   "The contact email address of the user.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
 					"roles": schema.ListAttribute{
 						Description: "Array of roles associated with this member.",
 						Optional:    true,
@@ -78,11 +83,6 @@ func (r AccountMemberResource) UpgradeState(ctx context.Context) map[int64]resou
 								},
 							},
 						},
-					},
-					"email": schema.StringAttribute{
-						Description:   "The contact email address of the user.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"status": schema.StringAttribute{
 						Description: "A member's status in the account.",

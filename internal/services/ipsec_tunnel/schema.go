@@ -49,6 +49,10 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: "An optional description forthe IPsec tunnel.",
 				Optional:    true,
 			},
+			"psk": schema.StringAttribute{
+				Description: "A randomly generated or provided string for use in the IPsec tunnel.",
+				Optional:    true,
+			},
 			"health_check": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -91,15 +95,17 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 			},
-			"psk": schema.StringAttribute{
-				Description: "A randomly generated or provided string for use in the IPsec tunnel.",
-				Optional:    true,
-			},
 			"replay_protection": schema.BoolAttribute{
 				Description: "If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"deleted": schema.BoolAttribute{
+				Computed: true,
+			},
+			"modified": schema.BoolAttribute{
+				Computed: true,
 			},
 			"ipsec_tunnels": schema.ListNestedAttribute{
 				Computed: true,
@@ -196,19 +202,13 @@ func (r IPSECTunnelResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 			},
-			"modified": schema.BoolAttribute{
-				Computed: true,
-			},
-			"modified_ipsec_tunnel": schema.StringAttribute{
-				Computed: true,
-			},
-			"deleted": schema.BoolAttribute{
-				Computed: true,
-			},
 			"deleted_ipsec_tunnel": schema.StringAttribute{
 				Computed: true,
 			},
 			"ipsec_tunnel": schema.StringAttribute{
+				Computed: true,
+			},
+			"modified_ipsec_tunnel": schema.StringAttribute{
 				Computed: true,
 			},
 		},

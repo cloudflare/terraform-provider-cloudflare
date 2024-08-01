@@ -26,10 +26,6 @@ func (r CustomHostnamesDataSource) Schema(ctx context.Context, req datasource.Sc
 				Description: "Identifier",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.",
-				Optional:    true,
-			},
 			"direction": schema.StringAttribute{
 				Description: "Direction to order hostnames.",
 				Optional:    true,
@@ -40,6 +36,17 @@ func (r CustomHostnamesDataSource) Schema(ctx context.Context, req datasource.Sc
 			"hostname": schema.StringAttribute{
 				Description: "Fully qualified domain name to match against. This parameter cannot be used with the 'id' parameter.",
 				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.",
+				Optional:    true,
+			},
+			"ssl": schema.Float64Attribute{
+				Description: "Whether to filter hostnames based on if they have SSL enabled.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.OneOf(0, 1),
+				},
 			},
 			"order": schema.StringAttribute{
 				Description: "Field to order hostnames by.",
@@ -63,13 +70,6 @@ func (r CustomHostnamesDataSource) Schema(ctx context.Context, req datasource.Sc
 				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(5, 50),
-				},
-			},
-			"ssl": schema.Float64Attribute{
-				Description: "Whether to filter hostnames based on if they have SSL enabled.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.OneOf(0, 1),
 				},
 			},
 			"max_items": schema.Int64Attribute{

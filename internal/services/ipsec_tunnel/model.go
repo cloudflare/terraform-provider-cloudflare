@@ -20,15 +20,15 @@ type IPSECTunnelModel struct {
 	Name                types.String                     `tfsdk:"name" json:"name"`
 	CustomerEndpoint    types.String                     `tfsdk:"customer_endpoint" json:"customer_endpoint"`
 	Description         types.String                     `tfsdk:"description" json:"description"`
-	HealthCheck         *IPSECTunnelHealthCheckModel     `tfsdk:"health_check" json:"health_check"`
 	PSK                 types.String                     `tfsdk:"psk" json:"psk"`
+	HealthCheck         *IPSECTunnelHealthCheckModel     `tfsdk:"health_check" json:"health_check"`
 	ReplayProtection    types.Bool                       `tfsdk:"replay_protection" json:"replay_protection"`
-	IPSECTunnels        *[]*IPSECTunnelIPSECTunnelsModel `tfsdk:"ipsec_tunnels" json:"ipsec_tunnels,computed"`
-	Modified            types.Bool                       `tfsdk:"modified" json:"modified,computed"`
-	ModifiedIPSECTunnel jsontypes.Normalized             `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed"`
 	Deleted             types.Bool                       `tfsdk:"deleted" json:"deleted,computed"`
+	Modified            types.Bool                       `tfsdk:"modified" json:"modified,computed"`
+	IPSECTunnels        *[]*IPSECTunnelIPSECTunnelsModel `tfsdk:"ipsec_tunnels" json:"ipsec_tunnels,computed"`
 	DeletedIPSECTunnel  jsontypes.Normalized             `tfsdk:"deleted_ipsec_tunnel" json:"deleted_ipsec_tunnel,computed"`
 	IPSECTunnel         jsontypes.Normalized             `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
+	ModifiedIPSECTunnel jsontypes.Normalized             `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed"`
 }
 
 type IPSECTunnelHealthCheckModel struct {

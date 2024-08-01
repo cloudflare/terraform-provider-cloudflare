@@ -15,8 +15,8 @@ type CertificatePackResultListDataSourceEnvelope struct {
 }
 
 type CertificatePackDataSourceModel struct {
-	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
 	CertificatePackID types.String                             `tfsdk:"certificate_pack_id" path:"certificate_pack_id"`
+	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
 	Filter            *CertificatePackFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

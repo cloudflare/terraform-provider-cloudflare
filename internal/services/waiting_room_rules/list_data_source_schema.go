@@ -18,12 +18,12 @@ var _ datasource.DataSourceWithValidateConfig = &WaitingRoomRulesListDataSource{
 func (r WaitingRoomRulesListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"waiting_room_id": schema.StringAttribute{
+				Required: true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"waiting_room_id": schema.StringAttribute{
-				Required: true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

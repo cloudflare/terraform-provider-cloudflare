@@ -14,9 +14,9 @@ type DeviceManagedNetworksModel struct {
 	ID        types.String                      `tfsdk:"id" json:"-,computed"`
 	NetworkID types.String                      `tfsdk:"network_id" json:"network_id,computed"`
 	AccountID types.String                      `tfsdk:"account_id" path:"account_id"`
-	Config    *DeviceManagedNetworksConfigModel `tfsdk:"config" json:"config"`
 	Name      types.String                      `tfsdk:"name" json:"name"`
 	Type      types.String                      `tfsdk:"type" json:"type"`
+	Config    *DeviceManagedNetworksConfigModel `tfsdk:"config" json:"config"`
 }
 
 type DeviceManagedNetworksConfigModel struct {

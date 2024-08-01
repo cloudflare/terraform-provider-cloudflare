@@ -18,31 +18,21 @@ var _ datasource.DataSourceWithValidateConfig = &Web3HostnameDataSource{}
 func (r Web3HostnameDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_identifier": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
-			},
 			"identifier": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
+			"zone_identifier": schema.StringAttribute{
 				Description: "Identifier",
-				Computed:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"description": schema.StringAttribute{
-				Description: "An optional description of the hostname.",
+			"id": schema.StringAttribute{
+				Description: "Identifier",
 				Computed:    true,
-				Optional:    true,
-			},
-			"dnslink": schema.StringAttribute{
-				Description: "DNSLink value used if the target is ipfs.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Computed:   true,
@@ -58,6 +48,16 @@ func (r Web3HostnameDataSource) Schema(ctx context.Context, req datasource.Schem
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "pending", "deleting", "error"),
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "An optional description of the hostname.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"dnslink": schema.StringAttribute{
+				Description: "DNSLink value used if the target is ipfs.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"target": schema.StringAttribute{
 				Description: "Target gateway of the hostname.",
