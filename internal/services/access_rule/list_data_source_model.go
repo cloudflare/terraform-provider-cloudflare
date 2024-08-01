@@ -13,9 +13,11 @@ type AccessRulesResultListDataSourceEnvelope struct {
 type AccessRulesDataSourceModel struct {
 	AccountID     types.String                             `tfsdk:"account_id" path:"account_id"`
 	ZoneID        types.String                             `tfsdk:"zone_id" path:"zone_id"`
+	Configuration *AccessRulesConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration"`
 	Direction     types.String                             `tfsdk:"direction" query:"direction"`
-	EgsPagination *AccessRulesEgsPaginationDataSourceModel `tfsdk:"egs_pagination" query:"egs-pagination"`
-	Filters       *AccessRulesFiltersDataSourceModel       `tfsdk:"filters" query:"filters"`
+	Match         types.String                             `tfsdk:"match" query:"match"`
+	Mode          types.String                             `tfsdk:"mode" query:"mode"`
+	Notes         types.String                             `tfsdk:"notes" query:"notes"`
 	Order         types.String                             `tfsdk:"order" query:"order"`
 	Page          types.Float64                            `tfsdk:"page" query:"page"`
 	PerPage       types.Float64                            `tfsdk:"per_page" query:"per_page"`
@@ -23,21 +25,9 @@ type AccessRulesDataSourceModel struct {
 	Result        *[]*AccessRulesResultDataSourceModel     `tfsdk:"result"`
 }
 
-type AccessRulesEgsPaginationDataSourceModel struct {
-	Json *AccessRulesEgsPaginationJsonDataSourceModel `tfsdk:"json" json:"json"`
-}
-
-type AccessRulesEgsPaginationJsonDataSourceModel struct {
-	Page    types.Float64 `tfsdk:"page" json:"page"`
-	PerPage types.Float64 `tfsdk:"per_page" json:"per_page"`
-}
-
-type AccessRulesFiltersDataSourceModel struct {
-	ConfigurationTarget types.String `tfsdk:"configuration_target" json:"configuration.target"`
-	ConfigurationValue  types.String `tfsdk:"configuration_value" json:"configuration.value"`
-	Match               types.String `tfsdk:"match" json:"match"`
-	Mode                types.String `tfsdk:"mode" json:"mode"`
-	Notes               types.String `tfsdk:"notes" json:"notes"`
+type AccessRulesConfigurationDataSourceModel struct {
+	Target types.String `tfsdk:"target" json:"target"`
+	Value  types.String `tfsdk:"value" json:"value"`
 }
 
 type AccessRulesResultDataSourceModel struct {
