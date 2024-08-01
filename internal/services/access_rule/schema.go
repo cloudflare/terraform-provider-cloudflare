@@ -27,7 +27,9 @@ func (r AccessRuleResource) Schema(ctx context.Context, req resource.SchemaReque
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"identifier": schema.StringAttribute{
-				Optional: true,
+				Description:   "The unique identifier of the resource.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"configuration": schema.SingleNestedAttribute{
 				Description: "The rule configuration.",
