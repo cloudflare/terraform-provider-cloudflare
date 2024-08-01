@@ -35,6 +35,16 @@ func (r TunnelResource) UpgradeState(ctx context.Context) map[int64]resource.Sta
 						Description: "Sets the password required to run a locally-managed tunnel. Must be at least 32 bytes and encoded as a base64 string.",
 						Required:    true,
 					},
+					"created_at": schema.StringAttribute{
+						Description: "Timestamp of when the resource was created.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"deleted_at": schema.StringAttribute{
+						Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
 					"connections": schema.ListNestedAttribute{
 						Description: "The tunnel connections between your origin and Cloudflare's edge.",
 						Computed:    true,
@@ -54,16 +64,6 @@ func (r TunnelResource) UpgradeState(ctx context.Context) map[int64]resource.Sta
 								},
 							},
 						},
-					},
-					"created_at": schema.StringAttribute{
-						Description: "Timestamp of when the resource was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"deleted_at": schema.StringAttribute{
-						Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
 					},
 				},
 			},

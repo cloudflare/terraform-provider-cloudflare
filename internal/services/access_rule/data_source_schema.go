@@ -17,12 +17,12 @@ var _ datasource.DataSourceWithValidateConfig = &AccessRuleDataSource{}
 func (r AccessRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"identifier": schema.StringAttribute{
-				Description: "The unique identifier of the resource.",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"identifier": schema.StringAttribute{
+				Description: "The unique identifier of the resource.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{

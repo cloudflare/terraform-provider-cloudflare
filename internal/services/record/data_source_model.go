@@ -15,8 +15,8 @@ type RecordResultListDataSourceEnvelope struct {
 }
 
 type RecordDataSourceModel struct {
-	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id"`
 	DNSRecordID types.String                    `tfsdk:"dns_record_id" path:"dns_record_id"`
+	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id"`
 	Filter      *RecordFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

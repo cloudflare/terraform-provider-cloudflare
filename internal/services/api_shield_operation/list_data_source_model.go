@@ -17,13 +17,13 @@ type APIShieldOperationsDataSourceModel struct {
 	Diff      types.Bool                                   `tfsdk:"diff" query:"diff"`
 	Direction types.String                                 `tfsdk:"direction" query:"direction"`
 	Endpoint  types.String                                 `tfsdk:"endpoint" query:"endpoint"`
-	Host      *[]types.String                              `tfsdk:"host" query:"host"`
-	Method    *[]types.String                              `tfsdk:"method" query:"method"`
 	Order     types.String                                 `tfsdk:"order" query:"order"`
 	Origin    types.String                                 `tfsdk:"origin" query:"origin"`
+	State     types.String                                 `tfsdk:"state" query:"state"`
+	Host      *[]types.String                              `tfsdk:"host" query:"host"`
+	Method    *[]types.String                              `tfsdk:"method" query:"method"`
 	Page      types.Int64                                  `tfsdk:"page" query:"page"`
 	PerPage   types.Int64                                  `tfsdk:"per_page" query:"per_page"`
-	State     types.String                                 `tfsdk:"state" query:"state"`
 	MaxItems  types.Int64                                  `tfsdk:"max_items"`
 	Result    *[]*APIShieldOperationsResultDataSourceModel `tfsdk:"result"`
 }

@@ -43,6 +43,16 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"dataset": schema.StringAttribute{
+				Description:   "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"name": schema.StringAttribute{
+				Description:   "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"destination_conf": schema.StringAttribute{
 				Description: "Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included.",
 				Required:    true,
@@ -50,15 +60,6 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 			"enabled": schema.BoolAttribute{
 				Description: "Flag that indicates if the job is enabled.",
 				Optional:    true,
-			},
-			"frequency": schema.StringAttribute{
-				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("high", "low"),
-				},
-				Default: stringdefault.StaticString("high"),
 			},
 			"kind": schema.StringAttribute{
 				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.",
@@ -78,23 +79,9 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 					int64validator.Between(5000000, 1000000000),
 				},
 			},
-			"max_upload_interval_seconds": schema.Int64Attribute{
-				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.",
-				Computed:    true,
+			"ownership_challenge": schema.StringAttribute{
+				Description: "Ownership challenge token to prove destination ownership.",
 				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(30, 300),
-				},
-				Default: int64default.StaticInt64(30),
-			},
-			"max_upload_records": schema.Int64Attribute{
-				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(1000, 1000000),
-				},
-				Default: int64default.StaticInt64(100000),
 			},
 			"output_options": schema.SingleNestedAttribute{
 				Description: "The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored.",
@@ -182,19 +169,32 @@ func (r LogpushJobResource) Schema(ctx context.Context, req resource.SchemaReque
 					},
 				},
 			},
-			"ownership_challenge": schema.StringAttribute{
-				Description: "Ownership challenge token to prove destination ownership.",
+			"frequency": schema.StringAttribute{
+				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.",
+				Computed:    true,
 				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("high", "low"),
+				},
+				Default: stringdefault.StaticString("high"),
 			},
-			"dataset": schema.StringAttribute{
-				Description:   "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"max_upload_interval_seconds": schema.Int64Attribute{
+				Description: "The maximum interval in seconds for log batches. This setting must be between 30 and 300 seconds (5 minutes), or `0` to disable it. Note that you cannot specify a minimum interval for log batches; this means that log files may be sent in shorter intervals than this. This parameter is only used for jobs with `edge` as its kind.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(30, 300),
+				},
+				Default: int64default.StaticInt64(30),
 			},
-			"name": schema.StringAttribute{
-				Description:   "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"max_upload_records": schema.Int64Attribute{
+				Description: "The maximum number of log lines per batch. This setting must be between 1000 and 1,000,000 lines, or `0` to disable it. Note that you cannot specify a minimum number of log lines per batch; this means that log files may contain many fewer lines than this. This parameter is not available for jobs with `edge` as its kind.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1000, 1000000),
+				},
+				Default: int64default.StaticInt64(100000),
 			},
 			"error_message": schema.StringAttribute{
 				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",

@@ -77,15 +77,15 @@ func (r EmailRoutingRuleResource) UpgradeState(ctx context.Context) map[int64]re
 							},
 						},
 					},
+					"name": schema.StringAttribute{
+						Description: "Routing rule name.",
+						Optional:    true,
+					},
 					"enabled": schema.BoolAttribute{
 						Description: "Routing rule status.",
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(true),
-					},
-					"name": schema.StringAttribute{
-						Description: "Routing rule name.",
-						Optional:    true,
 					},
 					"priority": schema.Float64Attribute{
 						Description: "Priority of the routing rule.",

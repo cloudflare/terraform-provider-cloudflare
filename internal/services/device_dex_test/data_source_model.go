@@ -18,13 +18,13 @@ type DeviceDEXTestResultListDataSourceEnvelope struct {
 type DeviceDEXTestDataSourceModel struct {
 	AccountID      types.String                                               `tfsdk:"account_id" path:"account_id"`
 	DEXTestID      types.String                                               `tfsdk:"dex_test_id" path:"dex_test_id"`
-	Data           customfield.NestedObject[DeviceDEXTestDataDataSourceModel] `tfsdk:"data" json:"data,computed"`
 	Enabled        types.Bool                                                 `tfsdk:"enabled" json:"enabled,computed"`
 	Interval       types.String                                               `tfsdk:"interval" json:"interval,computed"`
 	Name           types.String                                               `tfsdk:"name" json:"name,computed"`
+	Data           customfield.NestedObject[DeviceDEXTestDataDataSourceModel] `tfsdk:"data" json:"data,computed"`
 	Description    types.String                                               `tfsdk:"description" json:"description"`
-	TargetPolicies *[]*DeviceDEXTestTargetPoliciesDataSourceModel             `tfsdk:"target_policies" json:"target_policies"`
 	Targeted       types.Bool                                                 `tfsdk:"targeted" json:"targeted"`
+	TargetPolicies *[]*DeviceDEXTestTargetPoliciesDataSourceModel             `tfsdk:"target_policies" json:"target_policies"`
 	Filter         *DeviceDEXTestFindOneByDataSourceModel                     `tfsdk:"filter"`
 }
 

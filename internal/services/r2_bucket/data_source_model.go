@@ -17,10 +17,10 @@ type R2BucketResultListDataSourceEnvelope struct {
 type R2BucketDataSourceModel struct {
 	AccountID    types.String                      `tfsdk:"account_id" path:"account_id"`
 	BucketName   types.String                      `tfsdk:"bucket_name" path:"bucket_name"`
+	StorageClass types.String                      `tfsdk:"storage_class" json:"storage_class,computed"`
 	CreationDate types.String                      `tfsdk:"creation_date" json:"creation_date"`
 	Location     types.String                      `tfsdk:"location" json:"location"`
 	Name         types.String                      `tfsdk:"name" json:"name"`
-	StorageClass types.String                      `tfsdk:"storage_class" json:"storage_class,computed"`
 	Filter       *R2BucketFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

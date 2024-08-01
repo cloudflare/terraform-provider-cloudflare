@@ -30,12 +30,12 @@ func (r WorkersKVNamespaceDataSource) Schema(ctx context.Context, req datasource
 				Description: "Namespace identifier tag.",
 				Computed:    true,
 			},
-			"title": schema.StringAttribute{
-				Description: "A human-readable string name for a Namespace.",
-				Computed:    true,
-			},
 			"supports_url_encoding": schema.BoolAttribute{
 				Description: "True if keys written on the URL will be URL-decoded before storing. For example, if set to \"true\", a key written on the URL as \"%3F\" will be stored as \"?\".",
+				Computed:    true,
+			},
+			"title": schema.StringAttribute{
+				Description: "A human-readable string name for a Namespace.",
 				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{

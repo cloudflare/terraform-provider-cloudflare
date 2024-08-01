@@ -32,6 +32,42 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Membership identifier tag.",
 				Computed:    true,
 			},
+			"status": schema.StringAttribute{
+				Description: "A member's status in the account.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
+				},
+			},
+			"user": schema.SingleNestedAttribute{
+				Description: "Details of the user associated to the membership.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountMemberUserDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"email": schema.StringAttribute{
+						Description: "The contact email address of the user.",
+						Computed:    true,
+					},
+					"id": schema.StringAttribute{
+						Description: "Identifier",
+						Computed:    true,
+					},
+					"first_name": schema.StringAttribute{
+						Description: "User's first name",
+						Computed:    true,
+						Optional:    true,
+					},
+					"last_name": schema.StringAttribute{
+						Description: "User's last name",
+						Computed:    true,
+						Optional:    true,
+					},
+					"two_factor_authentication_enabled": schema.BoolAttribute{
+						Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
+						Computed:    true,
+					},
+				},
+			},
 			"policies": schema.ListNestedAttribute{
 				Description: "Access policy for the membership",
 				Computed:    true,
@@ -144,42 +180,6 @@ func (r AccountMemberDataSource) Schema(ctx context.Context, req datasource.Sche
 							Computed:    true,
 							ElementType: types.StringType,
 						},
-					},
-				},
-			},
-			"status": schema.StringAttribute{
-				Description: "A member's status in the account.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
-				},
-			},
-			"user": schema.SingleNestedAttribute{
-				Description: "Details of the user associated to the membership.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[AccountMemberUserDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"email": schema.StringAttribute{
-						Description: "The contact email address of the user.",
-						Computed:    true,
-					},
-					"id": schema.StringAttribute{
-						Description: "Identifier",
-						Computed:    true,
-					},
-					"first_name": schema.StringAttribute{
-						Description: "User's first name",
-						Computed:    true,
-						Optional:    true,
-					},
-					"last_name": schema.StringAttribute{
-						Description: "User's last name",
-						Computed:    true,
-						Optional:    true,
-					},
-					"two_factor_authentication_enabled": schema.BoolAttribute{
-						Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
-						Computed:    true,
 					},
 				},
 			},

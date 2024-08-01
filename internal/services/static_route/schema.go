@@ -26,6 +26,10 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"description": schema.StringAttribute{
+				Description: "An optional human provided description of the static route.",
+				Optional:    true,
+			},
 			"nexthop": schema.StringAttribute{
 				Description: "The next-hop IP Address for the static route.",
 				Optional:    true,
@@ -38,8 +42,8 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: "Priority of the static route.",
 				Optional:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "An optional human provided description of the static route.",
+			"weight": schema.Int64Attribute{
+				Description: "Optional weight of the ECMP scope - if provided.",
 				Optional:    true,
 			},
 			"scope": schema.SingleNestedAttribute{
@@ -58,9 +62,11 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 			},
-			"weight": schema.Int64Attribute{
-				Description: "Optional weight of the ECMP scope - if provided.",
-				Optional:    true,
+			"deleted": schema.BoolAttribute{
+				Computed: true,
+			},
+			"modified": schema.BoolAttribute{
+				Computed: true,
 			},
 			"routes": schema.ListNestedAttribute{
 				Computed: true,
@@ -119,16 +125,10 @@ func (r StaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 			},
-			"modified": schema.BoolAttribute{
+			"deleted_route": schema.StringAttribute{
 				Computed: true,
 			},
 			"modified_route": schema.StringAttribute{
-				Computed: true,
-			},
-			"deleted": schema.BoolAttribute{
-				Computed: true,
-			},
-			"deleted_route": schema.StringAttribute{
 				Computed: true,
 			},
 			"route": schema.StringAttribute{

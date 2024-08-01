@@ -19,21 +19,21 @@ type TeamsRuleResultListDataSourceEnvelope struct {
 type TeamsRuleDataSourceModel struct {
 	AccountID     types.String                          `tfsdk:"account_id" path:"account_id"`
 	RuleID        types.String                          `tfsdk:"rule_id" path:"rule_id"`
-	ID            types.String                          `tfsdk:"id" json:"id"`
-	Action        types.String                          `tfsdk:"action" json:"action"`
 	CreatedAt     timetypes.RFC3339                     `tfsdk:"created_at" json:"created_at,computed"`
 	DeletedAt     timetypes.RFC3339                     `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	UpdatedAt     timetypes.RFC3339                     `tfsdk:"updated_at" json:"updated_at,computed"`
+	Action        types.String                          `tfsdk:"action" json:"action"`
 	Description   types.String                          `tfsdk:"description" json:"description"`
 	DevicePosture types.String                          `tfsdk:"device_posture" json:"device_posture"`
 	Enabled       types.Bool                            `tfsdk:"enabled" json:"enabled"`
-	Filters       *[]types.String                       `tfsdk:"filters" json:"filters"`
+	ID            types.String                          `tfsdk:"id" json:"id"`
 	Identity      types.String                          `tfsdk:"identity" json:"identity"`
 	Name          types.String                          `tfsdk:"name" json:"name"`
 	Precedence    types.Int64                           `tfsdk:"precedence" json:"precedence"`
+	Traffic       types.String                          `tfsdk:"traffic" json:"traffic"`
+	Filters       *[]types.String                       `tfsdk:"filters" json:"filters"`
 	RuleSettings  *TeamsRuleRuleSettingsDataSourceModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *TeamsRuleScheduleDataSourceModel     `tfsdk:"schedule" json:"schedule"`
-	Traffic       types.String                          `tfsdk:"traffic" json:"traffic"`
-	UpdatedAt     timetypes.RFC3339                     `tfsdk:"updated_at" json:"updated_at,computed"`
 	Filter        *TeamsRuleFindOneByDataSourceModel    `tfsdk:"filter"`
 }
 

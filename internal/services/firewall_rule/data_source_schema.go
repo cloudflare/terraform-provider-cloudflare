@@ -31,16 +31,16 @@ func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "The unique identifier of the firewall rule.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the firewall rule.",
-				Computed:    true,
-			},
 			"action": schema.StringAttribute{
 				Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass"),
 				},
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the firewall rule.",
+				Computed:    true,
 			},
 			"paused": schema.BoolAttribute{
 				Description: "When true, indicates that the firewall rule is currently paused.",
@@ -59,15 +59,15 @@ func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Schem
 					float64validator.Between(0, 2147483647),
 				},
 			},
-			"products": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related firewall rules.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"products": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 		},
 	}

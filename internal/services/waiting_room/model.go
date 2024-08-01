@@ -18,9 +18,9 @@ type WaitingRoomModel struct {
 	Name                       types.String                         `tfsdk:"name" json:"name"`
 	NewUsersPerMinute          types.Int64                          `tfsdk:"new_users_per_minute" json:"new_users_per_minute"`
 	TotalActiveUsers           types.Int64                          `tfsdk:"total_active_users" json:"total_active_users"`
+	CookieSuffix               types.String                         `tfsdk:"cookie_suffix" json:"cookie_suffix"`
 	AdditionalRoutes           *[]*WaitingRoomAdditionalRoutesModel `tfsdk:"additional_routes" json:"additional_routes"`
 	CookieAttributes           *WaitingRoomCookieAttributesModel    `tfsdk:"cookie_attributes" json:"cookie_attributes"`
-	CookieSuffix               types.String                         `tfsdk:"cookie_suffix" json:"cookie_suffix"`
 	CustomPageHTML             types.String                         `tfsdk:"custom_page_html" json:"custom_page_html"`
 	DefaultTemplateLanguage    types.String                         `tfsdk:"default_template_language" json:"default_template_language"`
 	Description                types.String                         `tfsdk:"description" json:"description"`

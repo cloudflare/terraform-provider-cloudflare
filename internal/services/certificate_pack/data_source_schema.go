@@ -17,11 +17,11 @@ var _ datasource.DataSourceWithValidateConfig = &CertificatePackDataSource{}
 func (r CertificatePackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
+			"certificate_pack_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"certificate_pack_id": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},

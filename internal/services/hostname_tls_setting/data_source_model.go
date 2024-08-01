@@ -11,6 +11,6 @@ type HostnameTLSSettingResultDataSourceEnvelope struct {
 }
 
 type HostnameTLSSettingDataSourceModel struct {
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 	SettingID types.String `tfsdk:"setting_id" path:"setting_id"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 }

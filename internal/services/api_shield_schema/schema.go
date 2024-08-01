@@ -28,13 +28,6 @@ func (r APIShieldSchemaResource) Schema(ctx context.Context, req resource.Schema
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"validation_enabled": schema.StringAttribute{
-				Description: "Flag whether schema is enabled for validation.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("true", "false"),
-				},
-			},
 			"file": schema.StringAttribute{
 				Description:   "Schema file bytes",
 				Required:      true,
@@ -52,6 +45,21 @@ func (r APIShieldSchemaResource) Schema(ctx context.Context, req resource.Schema
 				Description:   "Name of the schema",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"validation_enabled": schema.StringAttribute{
+				Description: "Flag whether schema is enabled for validation.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("true", "false"),
+				},
+			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"source": schema.StringAttribute{
+				Description: "Source of the schema",
+				Computed:    true,
 			},
 			"schema": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -112,14 +120,6 @@ func (r APIShieldSchemaResource) Schema(ctx context.Context, req resource.Schema
 						},
 					},
 				},
-			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"source": schema.StringAttribute{
-				Description: "Source of the schema",
-				Computed:    true,
 			},
 		},
 	}

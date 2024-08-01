@@ -28,17 +28,36 @@ func (r DLPCustomProfileDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "The ID for this profile",
 				Required:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the profile.",
+				Optional:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "The ID for this profile",
 				Optional:    true,
 			},
-			"allowed_match_count": schema.Float64Attribute{
-				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
-				Computed:    true,
+			"name": schema.StringAttribute{
+				Description: "The name of the profile.",
 				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 1000),
+			},
+			"ocr_enabled": schema.BoolAttribute{
+				Description: "If true, scan images via OCR to determine if any text present matches filters.",
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of the profile.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("custom"),
 				},
+			},
+			"updated_at": schema.StringAttribute{
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -60,14 +79,6 @@ func (r DLPCustomProfileDataSource) Schema(ctx context.Context, req datasource.S
 						},
 					},
 				},
-			},
-			"created_at": schema.StringAttribute{
-				Optional:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"description": schema.StringAttribute{
-				Description: "The description of the profile.",
-				Optional:    true,
 			},
 			"entries": schema.ListNestedAttribute{
 				Description: "The entries for this profile.",
@@ -123,24 +134,13 @@ func (r DLPCustomProfileDataSource) Schema(ctx context.Context, req datasource.S
 					},
 				},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of the profile.",
+			"allowed_match_count": schema.Float64Attribute{
+				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
+				Computed:    true,
 				Optional:    true,
-			},
-			"ocr_enabled": schema.BoolAttribute{
-				Description: "If true, scan images via OCR to determine if any text present matches filters.",
-				Optional:    true,
-			},
-			"type": schema.StringAttribute{
-				Description: "The type of the profile.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("custom"),
+				Validators: []validator.Float64{
+					float64validator.Between(0, 1000),
 				},
-			},
-			"updated_at": schema.StringAttribute{
-				Optional:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

@@ -15,12 +15,12 @@ var _ datasource.DataSourceWithValidateConfig = &AccessIdentityProviderDataSourc
 func (r AccessIdentityProviderDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"identity_provider_id": schema.StringAttribute{
-				Description: "UUID",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"identity_provider_id": schema.StringAttribute{
+				Description: "UUID",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{

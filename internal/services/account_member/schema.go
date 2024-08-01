@@ -29,6 +29,11 @@ func (r AccountMemberResource) Schema(ctx context.Context, req resource.SchemaRe
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"email": schema.StringAttribute{
+				Description:   "The contact email address of the user.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"roles": schema.ListAttribute{
 				Description: "Array of roles associated with this member.",
 				Optional:    true,
@@ -76,11 +81,6 @@ func (r AccountMemberResource) Schema(ctx context.Context, req resource.SchemaRe
 						},
 					},
 				},
-			},
-			"email": schema.StringAttribute{
-				Description:   "The contact email address of the user.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"status": schema.StringAttribute{
 				Description: "A member's status in the account.",

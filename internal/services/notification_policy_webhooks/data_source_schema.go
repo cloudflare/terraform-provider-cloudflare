@@ -26,14 +26,14 @@ func (r NotificationPolicyWebhooksDataSource) Schema(ctx context.Context, req da
 				Description: "The unique identifier of a webhook",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of a webhook",
-				Computed:    true,
-			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the webhook destination was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of a webhook",
+				Computed:    true,
 			},
 			"last_failure": schema.StringAttribute{
 				Description: "Timestamp of the last time an attempt to dispatch a notification to this webhook failed.",

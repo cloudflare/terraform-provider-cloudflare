@@ -12,13 +12,13 @@ type FiltersResultListDataSourceEnvelope struct {
 
 type FiltersDataSourceModel struct {
 	ZoneIdentifier types.String                     `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                     `tfsdk:"id" query:"id"`
 	Description    types.String                     `tfsdk:"description" query:"description"`
 	Expression     types.String                     `tfsdk:"expression" query:"expression"`
-	Page           types.Float64                    `tfsdk:"page" query:"page"`
+	ID             types.String                     `tfsdk:"id" query:"id"`
 	Paused         types.Bool                       `tfsdk:"paused" query:"paused"`
-	PerPage        types.Float64                    `tfsdk:"per_page" query:"per_page"`
 	Ref            types.String                     `tfsdk:"ref" query:"ref"`
+	Page           types.Float64                    `tfsdk:"page" query:"page"`
+	PerPage        types.Float64                    `tfsdk:"per_page" query:"per_page"`
 	MaxItems       types.Int64                      `tfsdk:"max_items"`
 	Result         *[]*FiltersResultDataSourceModel `tfsdk:"result"`
 }

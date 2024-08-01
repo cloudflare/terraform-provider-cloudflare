@@ -15,15 +15,15 @@ type EmailRoutingRuleResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingRuleDataSourceModel struct {
-	ZoneIdentifier types.String                                `tfsdk:"zone_identifier" path:"zone_identifier"`
 	RuleIdentifier types.String                                `tfsdk:"rule_identifier" path:"rule_identifier"`
-	ID             types.String                                `tfsdk:"id" json:"id,computed"`
-	Actions        *[]*EmailRoutingRuleActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
+	ZoneIdentifier types.String                                `tfsdk:"zone_identifier" path:"zone_identifier"`
 	Enabled        types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
-	Matchers       *[]*EmailRoutingRuleMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
-	Name           types.String                                `tfsdk:"name" json:"name"`
+	ID             types.String                                `tfsdk:"id" json:"id,computed"`
 	Priority       types.Float64                               `tfsdk:"priority" json:"priority,computed"`
 	Tag            types.String                                `tfsdk:"tag" json:"tag,computed"`
+	Name           types.String                                `tfsdk:"name" json:"name"`
+	Actions        *[]*EmailRoutingRuleActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
+	Matchers       *[]*EmailRoutingRuleMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
 	Filter         *EmailRoutingRuleFindOneByDataSourceModel   `tfsdk:"filter"`
 }
 

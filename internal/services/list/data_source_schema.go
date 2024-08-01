@@ -25,12 +25,16 @@ func (r ListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				Description: "The unique ID of the list.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
-				Optional:    true,
-			},
 			"created_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the list was created.",
+				Optional:    true,
+			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the list.",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique ID of the list.",
 				Optional:    true,
 			},
 			"kind": schema.StringAttribute{
@@ -50,10 +54,6 @@ func (r ListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 			},
 			"num_items": schema.Float64Attribute{
 				Description: "The number of items in the list.",
-				Optional:    true,
-			},
-			"description": schema.StringAttribute{
-				Description: "An informative summary of the list.",
 				Optional:    true,
 			},
 			"num_referencing_filters": schema.Float64Attribute{

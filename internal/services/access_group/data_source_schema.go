@@ -16,26 +16,35 @@ var _ datasource.DataSourceWithValidateConfig = &AccessGroupDataSource{}
 func (r AccessGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"group_id": schema.StringAttribute{
-				Description: "UUID",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"group_id": schema.StringAttribute{
+				Description: "UUID",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"id": schema.StringAttribute{
 				Description: "UUID",
 				Computed:    true,
 				Optional:    true,
 			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+			"name": schema.StringAttribute{
+				Description: "The name of the Access group.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules.",
@@ -658,11 +667,6 @@ func (r AccessGroupDataSource) Schema(ctx context.Context, req datasource.Schema
 					},
 				},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of the Access group.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"require": schema.ListNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules.",
 				Computed:    true,
@@ -869,10 +873,6 @@ func (r AccessGroupDataSource) Schema(ctx context.Context, req datasource.Schema
 						},
 					},
 				},
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 		},
 	}

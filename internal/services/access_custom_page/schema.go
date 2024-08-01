@@ -22,6 +22,11 @@ func (r AccessCustomPageResource) Schema(ctx context.Context, req resource.Schem
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"uid": schema.StringAttribute{
+				Description:   "UUID",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -45,11 +50,6 @@ func (r AccessCustomPageResource) Schema(ctx context.Context, req resource.Schem
 			"app_count": schema.Int64Attribute{
 				Description: "Number of apps the custom page is assigned to.",
 				Optional:    true,
-			},
-			"uid": schema.StringAttribute{
-				Description:   "UUID",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

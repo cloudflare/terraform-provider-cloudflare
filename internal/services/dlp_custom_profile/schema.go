@@ -112,14 +112,17 @@ func (r DLPCustomProfileResource) Schema(ctx context.Context, req resource.Schem
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
-			"allowed_match_count": schema.Float64Attribute{
-				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
-				Computed:    true,
+			"description": schema.StringAttribute{
+				Description: "The description of the profile.",
 				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 1000),
-				},
-				Default: float64default.StaticFloat64(0),
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the profile.",
+				Optional:    true,
+			},
+			"ocr_enabled": schema.BoolAttribute{
+				Description: "If true, scan images via OCR to determine if any text present matches filters.",
+				Optional:    true,
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -140,10 +143,6 @@ func (r DLPCustomProfileResource) Schema(ctx context.Context, req resource.Schem
 						},
 					},
 				},
-			},
-			"description": schema.StringAttribute{
-				Description: "The description of the profile.",
-				Optional:    true,
 			},
 			"entries": schema.ListNestedAttribute{
 				Description: "The custom entries for this profile. Array elements with IDs are modifying the existing entry with that ID. Elements without ID will create new entries. Any entry not in the list will be deleted.",
@@ -194,14 +193,6 @@ func (r DLPCustomProfileResource) Schema(ctx context.Context, req resource.Schem
 					},
 				},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of the profile.",
-				Optional:    true,
-			},
-			"ocr_enabled": schema.BoolAttribute{
-				Description: "If true, scan images via OCR to determine if any text present matches filters.",
-				Optional:    true,
-			},
 			"shared_entries": schema.ListNestedAttribute{
 				Description: "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
 				Optional:    true,
@@ -218,13 +209,22 @@ func (r DLPCustomProfileResource) Schema(ctx context.Context, req resource.Schem
 					},
 				},
 			},
-			"id": schema.StringAttribute{
-				Description: "The ID for this profile",
+			"allowed_match_count": schema.Float64Attribute{
+				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
 				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 1000),
+				},
+				Default: float64default.StaticFloat64(0),
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "The ID for this profile",
+				Computed:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of the profile.",

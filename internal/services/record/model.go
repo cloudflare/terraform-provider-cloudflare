@@ -11,17 +11,17 @@ type RecordResultEnvelope struct {
 }
 
 type RecordModel struct {
+	ID       types.String     `tfsdk:"id" json:"id"`
 	ZoneID   types.String     `tfsdk:"zone_id" path:"zone_id"`
-	Content  types.String     `tfsdk:"content" json:"content"`
 	Name     types.String     `tfsdk:"name" json:"name"`
 	Type     types.String     `tfsdk:"type" json:"type"`
-	ID       types.String     `tfsdk:"id" json:"id"`
 	Comment  types.String     `tfsdk:"comment" json:"comment"`
-	Proxied  types.Bool       `tfsdk:"proxied" json:"proxied"`
-	Tags     *[]types.String  `tfsdk:"tags" json:"tags"`
-	TTL      types.Float64    `tfsdk:"ttl" json:"ttl"`
-	Data     *RecordDataModel `tfsdk:"data" json:"data"`
+	Content  types.String     `tfsdk:"content" json:"content"`
 	Priority types.Float64    `tfsdk:"priority" json:"priority"`
+	Data     *RecordDataModel `tfsdk:"data" json:"data"`
+	Proxied  types.Bool       `tfsdk:"proxied" json:"proxied"`
+	TTL      types.Float64    `tfsdk:"ttl" json:"ttl"`
+	Tags     *[]types.String  `tfsdk:"tags" json:"tags"`
 }
 
 type RecordDataModel struct {

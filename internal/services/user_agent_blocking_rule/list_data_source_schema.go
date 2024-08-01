@@ -30,6 +30,10 @@ func (r UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req dataso
 				Description: "A string to search for in the description of existing rules.",
 				Optional:    true,
 			},
+			"ua_search": schema.StringAttribute{
+				Description: "A string to search for in the user agent values of existing rules.",
+				Optional:    true,
+			},
 			"page": schema.Float64Attribute{
 				Description: "Page number of paginated results.",
 				Computed:    true,
@@ -45,10 +49,6 @@ func (r UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req dataso
 				Validators: []validator.Float64{
 					float64validator.Between(1, 1000),
 				},
-			},
-			"ua_search": schema.StringAttribute{
-				Description: "A string to search for in the user agent values of existing rules.",
-				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

@@ -30,6 +30,10 @@ func (r AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Custom page HTML.",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"name": schema.StringAttribute{
 				Description: "Custom page name.",
 				Computed:    true,
@@ -41,23 +45,19 @@ func (r AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.S
 					stringvalidator.OneOfCaseInsensitive("identity_denied", "forbidden"),
 				},
 			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"app_count": schema.Int64Attribute{
 				Description: "Number of apps the custom page is assigned to.",
 				Computed:    true,
 				Optional:    true,
 			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
 			"uid": schema.StringAttribute{
 				Description: "UUID",
 				Computed:    true,
 				Optional:    true,
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

@@ -14,14 +14,14 @@ type WorkerScriptResultListDataSourceEnvelope struct {
 type WorkerScriptDataSourceModel struct {
 	AccountID     types.String                                 `tfsdk:"account_id" path:"account_id"`
 	ScriptName    types.String                                 `tfsdk:"script_name" path:"script_name"`
-	ID            types.String                                 `tfsdk:"id" json:"id"`
 	CreatedOn     timetypes.RFC3339                            `tfsdk:"created_on" json:"created_on"`
 	Etag          types.String                                 `tfsdk:"etag" json:"etag"`
+	ID            types.String                                 `tfsdk:"id" json:"id"`
 	Logpush       types.Bool                                   `tfsdk:"logpush" json:"logpush"`
 	ModifiedOn    timetypes.RFC3339                            `tfsdk:"modified_on" json:"modified_on"`
 	PlacementMode types.String                                 `tfsdk:"placement_mode" json:"placement_mode"`
-	TailConsumers *[]*WorkerScriptTailConsumersDataSourceModel `tfsdk:"tail_consumers" json:"tail_consumers"`
 	UsageModel    types.String                                 `tfsdk:"usage_model" json:"usage_model"`
+	TailConsumers *[]*WorkerScriptTailConsumersDataSourceModel `tfsdk:"tail_consumers" json:"tail_consumers"`
 	Filter        *WorkerScriptFindOneByDataSourceModel        `tfsdk:"filter"`
 }
 

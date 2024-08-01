@@ -11,6 +11,6 @@ type PageRuleResultDataSourceEnvelope struct {
 }
 
 type PageRuleDataSourceModel struct {
-	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id"`
 	PageruleID types.String `tfsdk:"pagerule_id" path:"pagerule_id"`
+	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id"`
 }

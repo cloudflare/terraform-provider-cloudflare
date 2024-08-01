@@ -20,10 +20,10 @@ type WebAnalyticsSiteModel struct {
 	Host        types.String                                           `tfsdk:"host" json:"host"`
 	ZoneTag     types.String                                           `tfsdk:"zone_tag" json:"zone_tag"`
 	Created     timetypes.RFC3339                                      `tfsdk:"created" json:"created,computed"`
-	Rules       *[]*WebAnalyticsSiteRulesModel                         `tfsdk:"rules" json:"rules,computed"`
-	Ruleset     customfield.NestedObject[WebAnalyticsSiteRulesetModel] `tfsdk:"ruleset" json:"ruleset,computed"`
 	SiteToken   types.String                                           `tfsdk:"site_token" json:"site_token,computed"`
 	Snippet     types.String                                           `tfsdk:"snippet" json:"snippet,computed"`
+	Rules       *[]*WebAnalyticsSiteRulesModel                         `tfsdk:"rules" json:"rules,computed"`
+	Ruleset     customfield.NestedObject[WebAnalyticsSiteRulesetModel] `tfsdk:"ruleset" json:"ruleset,computed"`
 }
 
 type WebAnalyticsSiteRulesModel struct {

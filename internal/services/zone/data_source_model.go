@@ -18,18 +18,18 @@ type ZoneResultListDataSourceEnvelope struct {
 
 type ZoneDataSourceModel struct {
 	ZoneID              types.String                                         `tfsdk:"zone_id" path:"zone_id"`
-	ID                  types.String                                         `tfsdk:"id" json:"id,computed"`
-	Account             customfield.NestedObject[ZoneAccountDataSourceModel] `tfsdk:"account" json:"account,computed"`
 	ActivatedOn         timetypes.RFC3339                                    `tfsdk:"activated_on" json:"activated_on,computed"`
 	CreatedOn           timetypes.RFC3339                                    `tfsdk:"created_on" json:"created_on,computed"`
 	DevelopmentMode     types.Float64                                        `tfsdk:"development_mode" json:"development_mode,computed"`
-	Meta                customfield.NestedObject[ZoneMetaDataSourceModel]    `tfsdk:"meta" json:"meta,computed"`
+	ID                  types.String                                         `tfsdk:"id" json:"id,computed"`
 	ModifiedOn          timetypes.RFC3339                                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                types.String                                         `tfsdk:"name" json:"name,computed"`
-	NameServers         *[]types.String                                      `tfsdk:"name_servers" json:"name_servers,computed"`
 	OriginalDnshost     types.String                                         `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
-	OriginalNameServers *[]types.String                                      `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	OriginalRegistrar   types.String                                         `tfsdk:"original_registrar" json:"original_registrar,computed"`
+	NameServers         *[]types.String                                      `tfsdk:"name_servers" json:"name_servers,computed"`
+	OriginalNameServers *[]types.String                                      `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	Account             customfield.NestedObject[ZoneAccountDataSourceModel] `tfsdk:"account" json:"account,computed"`
+	Meta                customfield.NestedObject[ZoneMetaDataSourceModel]    `tfsdk:"meta" json:"meta,computed"`
 	Owner               customfield.NestedObject[ZoneOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`
 	VanityNameServers   *[]types.String                                      `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
 	Filter              *ZoneFindOneByDataSourceModel                        `tfsdk:"filter"`

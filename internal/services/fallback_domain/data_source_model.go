@@ -18,8 +18,8 @@ type FallbackDomainResultListDataSourceEnvelope struct {
 type FallbackDomainDataSourceModel struct {
 	AccountID   types.String                            `tfsdk:"account_id" path:"account_id"`
 	PolicyID    types.String                            `tfsdk:"policy_id" path:"policy_id"`
-	Suffix      types.String                            `tfsdk:"suffix" json:"suffix"`
 	Description types.String                            `tfsdk:"description" json:"description"`
+	Suffix      types.String                            `tfsdk:"suffix" json:"suffix"`
 	DNSServer   *[]jsontypes.Normalized                 `tfsdk:"dns_server" json:"dns_server"`
 	Filter      *FallbackDomainFindOneByDataSourceModel `tfsdk:"filter"`
 }

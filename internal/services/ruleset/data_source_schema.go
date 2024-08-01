@@ -20,44 +20,17 @@ var _ datasource.DataSourceWithValidateConfig = &RulesetDataSource{}
 func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"ruleset_id": schema.StringAttribute{
-				Description: "The unique ID of the ruleset.",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"ruleset_id": schema.StringAttribute{
+				Description: "The unique ID of the ruleset.",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique ID of the ruleset.",
-				Computed:    true,
-			},
-			"kind": schema.StringAttribute{
-				Description: "The kind of the ruleset.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("managed", "custom", "root", "zone"),
-				},
-			},
-			"last_updated": schema.StringAttribute{
-				Description: "The timestamp of when the ruleset was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"name": schema.StringAttribute{
-				Description: "The human-readable name of the ruleset.",
-				Computed:    true,
-			},
-			"phase": schema.StringAttribute{
-				Description: "The phase of the ruleset.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_select_configuration", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed"),
-				},
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "The list of rules in the ruleset.",
@@ -152,12 +125,39 @@ func (r RulesetDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					},
 				},
 			},
-			"version": schema.StringAttribute{
-				Description: "The version of the ruleset.",
-				Computed:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "An informative description of the ruleset.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique ID of the ruleset.",
+				Computed:    true,
+			},
+			"kind": schema.StringAttribute{
+				Description: "The kind of the ruleset.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("managed", "custom", "root", "zone"),
+				},
+			},
+			"last_updated": schema.StringAttribute{
+				Description: "The timestamp of when the ruleset was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"name": schema.StringAttribute{
+				Description: "The human-readable name of the ruleset.",
+				Computed:    true,
+			},
+			"phase": schema.StringAttribute{
+				Description: "The phase of the ruleset.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ddos_l4", "ddos_l7", "http_config_settings", "http_custom_errors", "http_log_custom_fields", "http_ratelimit", "http_request_cache_settings", "http_request_dynamic_redirect", "http_request_firewall_custom", "http_request_firewall_managed", "http_request_late_transform", "http_request_origin", "http_request_redirect", "http_request_sanitize", "http_request_sbfm", "http_request_select_configuration", "http_request_transform", "http_response_compression", "http_response_firewall_managed", "http_response_headers_transform", "magic_transit", "magic_transit_ids_managed", "magic_transit_managed"),
+				},
+			},
+			"version": schema.StringAttribute{
+				Description: "The version of the ruleset.",
 				Computed:    true,
 			},
 		},

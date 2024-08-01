@@ -23,6 +23,18 @@ func (r DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "API UUID.",
 				Optional:    true,
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "Determines whether or not the test is active.",
+				Computed:    true,
+			},
+			"interval": schema.StringAttribute{
+				Description: "How often the test will run.",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the DEX test. Must be unique.",
+				Computed:    true,
+			},
 			"data": schema.SingleNestedAttribute{
 				Description: "The configuration object which contains the details for the WARP client to conduct the test.",
 				Computed:    true,
@@ -45,22 +57,14 @@ func (r DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.Sche
 					},
 				},
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Determines whether or not the test is active.",
-				Computed:    true,
-			},
-			"interval": schema.StringAttribute{
-				Description: "How often the test will run.",
-				Computed:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the DEX test. Must be unique.",
-				Computed:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "Additional details about the test.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"targeted": schema.BoolAttribute{
+				Computed: true,
+				Optional: true,
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "Device settings profiles targeted by this test",
@@ -85,10 +89,6 @@ func (r DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.Sche
 						},
 					},
 				},
-			},
-			"targeted": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

@@ -45,6 +45,10 @@ func (r APIShieldResource) Schema(ctx context.Context, req resource.SchemaReques
 					},
 				},
 			},
+			"success": schema.BoolAttribute{
+				Description: "Whether the API call was successful",
+				Computed:    true,
+			},
 			"errors": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -76,10 +80,6 @@ func (r APIShieldResource) Schema(ctx context.Context, req resource.SchemaReques
 						},
 					},
 				},
-			},
-			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
-				Computed:    true,
 			},
 		},
 	}

@@ -15,17 +15,17 @@ type StaticRouteResultEnvelope struct {
 type StaticRouteModel struct {
 	AccountID     types.String               `tfsdk:"account_id" path:"account_id"`
 	RouteID       types.String               `tfsdk:"route_id" path:"route_id"`
+	Description   types.String               `tfsdk:"description" json:"description"`
 	Nexthop       types.String               `tfsdk:"nexthop" json:"nexthop"`
 	Prefix        types.String               `tfsdk:"prefix" json:"prefix"`
 	Priority      types.Int64                `tfsdk:"priority" json:"priority"`
-	Description   types.String               `tfsdk:"description" json:"description"`
-	Scope         *StaticRouteScopeModel     `tfsdk:"scope" json:"scope"`
 	Weight        types.Int64                `tfsdk:"weight" json:"weight"`
-	Routes        *[]*StaticRouteRoutesModel `tfsdk:"routes" json:"routes,computed"`
-	Modified      types.Bool                 `tfsdk:"modified" json:"modified,computed"`
-	ModifiedRoute jsontypes.Normalized       `tfsdk:"modified_route" json:"modified_route,computed"`
+	Scope         *StaticRouteScopeModel     `tfsdk:"scope" json:"scope"`
 	Deleted       types.Bool                 `tfsdk:"deleted" json:"deleted,computed"`
+	Modified      types.Bool                 `tfsdk:"modified" json:"modified,computed"`
+	Routes        *[]*StaticRouteRoutesModel `tfsdk:"routes" json:"routes,computed"`
 	DeletedRoute  jsontypes.Normalized       `tfsdk:"deleted_route" json:"deleted_route,computed"`
+	ModifiedRoute jsontypes.Normalized       `tfsdk:"modified_route" json:"modified_route,computed"`
 	Route         jsontypes.Normalized       `tfsdk:"route" json:"route,computed"`
 }
 

@@ -16,22 +16,12 @@ var _ datasource.DataSourceWithValidateConfig = &ByoIPPrefixDataSource{}
 func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
 			"prefix_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
+			"account_id": schema.StringAttribute{
 				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
-			"advertised": schema.BoolAttribute{
-				Description: "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -39,6 +29,19 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"modified_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"advertised": schema.BoolAttribute{
+				Description: "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"approved": schema.StringAttribute{
 				Description: "Approval state of the prefix (P = pending, V = active).",
@@ -55,12 +58,13 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 				Computed:    true,
 				Optional:    true,
 			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
 			"description": schema.StringAttribute{
 				Description: "Description of the prefix.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -68,10 +72,6 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Identifier for the uploaded LOA document.",
 				Computed:    true,
 				Optional:    true,
-			},
-			"modified_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 			"on_demand_enabled": schema.BoolAttribute{
 				Description: "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",

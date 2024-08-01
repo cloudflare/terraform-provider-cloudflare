@@ -15,24 +15,24 @@ var _ datasource.DataSourceWithValidateConfig = &AccessCACertificateDataSource{}
 func (r AccessCACertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"app_id": schema.StringAttribute{
-				Description: "UUID",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"app_id": schema.StringAttribute{
+				Description: "UUID",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The ID of the CA.",
-				Optional:    true,
-			},
 			"aud": schema.StringAttribute{
 				Description: "The Application Audience (AUD) tag. Identifies the application associated with the CA.",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The ID of the CA.",
 				Optional:    true,
 			},
 			"public_key": schema.StringAttribute{

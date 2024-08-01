@@ -25,11 +25,6 @@ func (r DevicePostureRuleDataSource) Schema(ctx context.Context, req datasource.
 				Description: "API UUID.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "API UUID.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "The description of the device posture rule.",
 				Computed:    true,
@@ -39,6 +34,29 @@ func (r DevicePostureRuleDataSource) Schema(ctx context.Context, req datasource.
 				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "API UUID.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the device posture rule.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"schedule": schema.StringAttribute{
+				Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of device posture rule.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
+				},
 			},
 			"input": schema.SingleNestedAttribute{
 				Description: "The value to be checked against.",
@@ -293,24 +311,6 @@ func (r DevicePostureRuleDataSource) Schema(ctx context.Context, req datasource.
 							},
 						},
 					},
-				},
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the device posture rule.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"schedule": schema.StringAttribute{
-				Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"type": schema.StringAttribute{
-				Description: "The type of device posture rule.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{

@@ -12,7 +12,7 @@ type APIShieldOperationResultEnvelope struct {
 
 type APIShieldOperationModel struct {
 	ID          types.String `tfsdk:"id" json:"-,computed"`
-	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id"`
 	OperationID types.String `tfsdk:"operation_id" path:"operation_id"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id"`
 	State       types.String `tfsdk:"state" json:"state"`
 }

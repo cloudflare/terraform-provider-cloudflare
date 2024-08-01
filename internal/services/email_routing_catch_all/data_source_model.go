@@ -13,11 +13,11 @@ type EmailRoutingCatchAllResultDataSourceEnvelope struct {
 type EmailRoutingCatchAllDataSourceModel struct {
 	ZoneIdentifier types.String                                    `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String                                    `tfsdk:"id" json:"id"`
-	Actions        *[]*EmailRoutingCatchAllActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
-	Enabled        types.Bool                                      `tfsdk:"enabled" json:"enabled"`
-	Matchers       *[]*EmailRoutingCatchAllMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
 	Name           types.String                                    `tfsdk:"name" json:"name"`
 	Tag            types.String                                    `tfsdk:"tag" json:"tag"`
+	Actions        *[]*EmailRoutingCatchAllActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
+	Matchers       *[]*EmailRoutingCatchAllMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
+	Enabled        types.Bool                                      `tfsdk:"enabled" json:"enabled"`
 }
 
 type EmailRoutingCatchAllActionsDataSourceModel struct {

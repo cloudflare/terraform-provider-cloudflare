@@ -17,30 +17,23 @@ var _ datasource.DataSourceWithValidateConfig = &AccessMutualTLSCertificateDataS
 func (r AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"certificate_id": schema.StringAttribute{
-				Description: "UUID",
-				Optional:    true,
-			},
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"certificate_id": schema.StringAttribute{
+				Description: "UUID",
 				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The ID of the application that will use this certificate.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"associated_hostnames": schema.ListAttribute{
-				Description: "The hostnames of the applications that will use this certificate.",
-				Computed:    true,
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"updated_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
@@ -54,14 +47,21 @@ func (r AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req da
 				Computed:    true,
 				Optional:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "The ID of the application that will use this certificate.",
+				Computed:    true,
+				Optional:    true,
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the certificate.",
 				Computed:    true,
 				Optional:    true,
 			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+			"associated_hostnames": schema.ListAttribute{
+				Description: "The hostnames of the applications that will use this certificate.",
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 		},
 	}

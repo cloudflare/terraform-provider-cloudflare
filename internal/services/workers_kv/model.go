@@ -12,9 +12,9 @@ type WorkersKVResultEnvelope struct {
 
 type WorkersKVModel struct {
 	ID          types.String `tfsdk:"id" json:"-,computed"`
+	KeyName     types.String `tfsdk:"key_name" path:"key_name"`
 	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
 	NamespaceID types.String `tfsdk:"namespace_id" path:"namespace_id"`
-	KeyName     types.String `tfsdk:"key_name" path:"key_name"`
 	Metadata    types.String `tfsdk:"metadata" json:"metadata"`
 	Value       types.String `tfsdk:"value" json:"value"`
 }

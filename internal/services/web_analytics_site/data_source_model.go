@@ -18,13 +18,13 @@ type WebAnalyticsSiteResultListDataSourceEnvelope struct {
 type WebAnalyticsSiteDataSourceModel struct {
 	AccountID   types.String                              `tfsdk:"account_id" path:"account_id"`
 	SiteID      types.String                              `tfsdk:"site_id" path:"site_id"`
-	AutoInstall types.Bool                                `tfsdk:"auto_install" json:"auto_install"`
 	Created     timetypes.RFC3339                         `tfsdk:"created" json:"created,computed"`
-	Rules       *[]*WebAnalyticsSiteRulesDataSourceModel  `tfsdk:"rules" json:"rules"`
-	Ruleset     *WebAnalyticsSiteRulesetDataSourceModel   `tfsdk:"ruleset" json:"ruleset"`
+	AutoInstall types.Bool                                `tfsdk:"auto_install" json:"auto_install"`
 	SiteTag     types.String                              `tfsdk:"site_tag" json:"site_tag"`
 	SiteToken   types.String                              `tfsdk:"site_token" json:"site_token"`
 	Snippet     types.String                              `tfsdk:"snippet" json:"snippet"`
+	Rules       *[]*WebAnalyticsSiteRulesDataSourceModel  `tfsdk:"rules" json:"rules"`
+	Ruleset     *WebAnalyticsSiteRulesetDataSourceModel   `tfsdk:"ruleset" json:"ruleset"`
 	Filter      *WebAnalyticsSiteFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

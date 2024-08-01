@@ -27,9 +27,19 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"name": schema.StringAttribute{
+						Description:   "Name of the project.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+					},
 					"account_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
+					"production_branch": schema.StringAttribute{
+						Description:   "Production branch of the project. Used to identify production deployments.",
+						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"build_config": schema.SingleNestedAttribute{
@@ -788,20 +798,14 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 						},
 						PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 					},
-					"name": schema.StringAttribute{
-						Description:   "Name of the project.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-					},
-					"production_branch": schema.StringAttribute{
-						Description:   "Production branch of the project. Used to identify production deployments.",
-						Optional:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
 					"created_on": schema.StringAttribute{
 						Description: "When the project was created.",
 						Computed:    true,
 						CustomType:  timetypes.RFC3339Type{},
+					},
+					"subdomain": schema.StringAttribute{
+						Description: "The Cloudflare subdomain associated with the project.",
+						Computed:    true,
 					},
 					"domains": schema.ListAttribute{
 						Description: "A list of associated custom domains for the project.",
@@ -810,10 +814,6 @@ func (r PagesProjectResource) UpgradeState(ctx context.Context) map[int64]resour
 					},
 					"source": schema.StringAttribute{
 						Computed: true,
-					},
-					"subdomain": schema.StringAttribute{
-						Description: "The Cloudflare subdomain associated with the project.",
-						Computed:    true,
 					},
 				},
 			},

@@ -30,15 +30,28 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"certificate": schema.StringAttribute{
+				Description:   "The zone's SSL certificate or SSL certificate and intermediate(s).",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"bundle_method": schema.StringAttribute{
+				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Default:       stringdefault.StaticString("ubiquitous"),
+			},
 			"host": schema.StringAttribute{
 				Description: "The keyless SSL name.",
 				Required:    true,
 			},
-			"port": schema.Float64Attribute{
-				Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
-				Computed:    true,
+			"enabled": schema.BoolAttribute{
+				Description: "Whether or not the Keyless SSL is on or off.",
 				Optional:    true,
-				Default:     float64default.StaticFloat64(24008),
 			},
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",
@@ -58,24 +71,11 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 					},
 				},
 			},
-			"certificate": schema.StringAttribute{
-				Description:   "The zone's SSL certificate or SSL certificate and intermediate(s).",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"bundle_method": schema.StringAttribute{
-				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
+			"port": schema.Float64Attribute{
+				Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
 				Computed:    true,
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
-				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-				Default:       stringdefault.StaticString("ubiquitous"),
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "Whether or not the Keyless SSL is on or off.",
-				Optional:    true,
+				Default:     float64default.StaticFloat64(24008),
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",
@@ -87,17 +87,17 @@ func (r KeylessCertificateResource) Schema(ctx context.Context, req resource.Sch
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"permissions": schema.ListAttribute{
-				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
-				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
-			},
 			"status": schema.StringAttribute{
 				Description: "Status of the Keyless SSL.",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "deleted"),
 				},
+			},
+			"permissions": schema.ListAttribute{
+				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
+				Computed:    true,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 		},
 	}

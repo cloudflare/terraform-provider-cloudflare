@@ -12,12 +12,12 @@ type DLPPredefinedProfileResultEnvelope struct {
 
 type DLPPredefinedProfileModel struct {
 	ID                types.String                               `tfsdk:"id" json:"-,computed"`
-	AccountID         types.String                               `tfsdk:"account_id" path:"account_id"`
 	ProfileID         types.String                               `tfsdk:"profile_id" path:"profile_id"`
-	AllowedMatchCount types.Float64                              `tfsdk:"allowed_match_count" json:"allowed_match_count"`
+	AccountID         types.String                               `tfsdk:"account_id" path:"account_id"`
+	OCREnabled        types.Bool                                 `tfsdk:"ocr_enabled" json:"ocr_enabled"`
 	ContextAwareness  *DLPPredefinedProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness"`
 	Entries           *[]*DLPPredefinedProfileEntriesModel       `tfsdk:"entries" json:"entries"`
-	OCREnabled        types.Bool                                 `tfsdk:"ocr_enabled" json:"ocr_enabled"`
+	AllowedMatchCount types.Float64                              `tfsdk:"allowed_match_count" json:"allowed_match_count"`
 	Name              types.String                               `tfsdk:"name" json:"name,computed"`
 	Type              types.String                               `tfsdk:"type" json:"type,computed"`
 }

@@ -27,6 +27,21 @@ func (r UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req datasou
 				Computed:    true,
 				Optional:    true,
 			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the rule.",
+				Optional:    true,
+			},
+			"mode": schema.StringAttribute{
+				Description: "The action to apply to a matched request.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge"),
+				},
+			},
+			"paused": schema.BoolAttribute{
+				Description: "When true, indicates that the rule is currently paused.",
+				Optional:    true,
+			},
 			"configuration": schema.SingleNestedAttribute{
 				Description: "The configuration object for the current rule.",
 				Optional:    true,
@@ -42,21 +57,6 @@ func (r UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req datasou
 						Optional:    true,
 					},
 				},
-			},
-			"description": schema.StringAttribute{
-				Description: "An informative summary of the rule.",
-				Optional:    true,
-			},
-			"mode": schema.StringAttribute{
-				Description: "The action to apply to a matched request.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge"),
-				},
-			},
-			"paused": schema.BoolAttribute{
-				Description: "When true, indicates that the rule is currently paused.",
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

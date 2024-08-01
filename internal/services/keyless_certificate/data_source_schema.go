@@ -19,17 +19,13 @@ var _ datasource.DataSourceWithValidateConfig = &KeylessCertificateDataSource{}
 func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
-			},
 			"keyless_certificate_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Keyless certificate identifier tag.",
-				Computed:    true,
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",
@@ -44,6 +40,10 @@ func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource
 				Description: "The keyless SSL name.",
 				Computed:    true,
 			},
+			"id": schema.StringAttribute{
+				Description: "Keyless certificate identifier tag.",
+				Computed:    true,
+			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was last modified.",
 				Computed:    true,
@@ -52,11 +52,6 @@ func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",
 				Computed:    true,
-			},
-			"permissions": schema.ListAttribute{
-				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
-				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 			"port": schema.Float64Attribute{
 				Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
@@ -68,6 +63,11 @@ func (r KeylessCertificateDataSource) Schema(ctx context.Context, req datasource
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("active", "deleted"),
 				},
+			},
+			"permissions": schema.ListAttribute{
+				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
+				Computed:    true,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 			"tunnel": schema.SingleNestedAttribute{
 				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",

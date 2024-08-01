@@ -17,21 +17,21 @@ type CustomSSLResultListDataSourceEnvelope struct {
 }
 
 type CustomSSLDataSourceModel struct {
-	ZoneID              types.String                             `tfsdk:"zone_id" path:"zone_id"`
 	CustomCertificateID types.String                             `tfsdk:"custom_certificate_id" path:"custom_certificate_id"`
-	ID                  types.String                             `tfsdk:"id" json:"id"`
-	BundleMethod        types.String                             `tfsdk:"bundle_method" json:"bundle_method"`
+	ZoneID              types.String                             `tfsdk:"zone_id" path:"zone_id"`
 	ExpiresOn           timetypes.RFC3339                        `tfsdk:"expires_on" json:"expires_on"`
-	Hosts               *[]types.String                          `tfsdk:"hosts" json:"hosts"`
+	ID                  types.String                             `tfsdk:"id" json:"id"`
 	Issuer              types.String                             `tfsdk:"issuer" json:"issuer"`
 	ModifiedOn          timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on"`
-	Priority            types.Float64                            `tfsdk:"priority" json:"priority"`
+	Policy              types.String                             `tfsdk:"policy" json:"policy"`
 	Signature           types.String                             `tfsdk:"signature" json:"signature"`
 	Status              types.String                             `tfsdk:"status" json:"status"`
 	UploadedOn          timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on"`
+	Hosts               *[]types.String                          `tfsdk:"hosts" json:"hosts"`
 	GeoRestrictions     *CustomSSLGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions"`
 	KeylessServer       *CustomSSLKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server"`
-	Policy              types.String                             `tfsdk:"policy" json:"policy"`
+	BundleMethod        types.String                             `tfsdk:"bundle_method" json:"bundle_method"`
+	Priority            types.Float64                            `tfsdk:"priority" json:"priority"`
 	Filter              *CustomSSLFindOneByDataSourceModel       `tfsdk:"filter"`
 }
 

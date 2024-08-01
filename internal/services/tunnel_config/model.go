@@ -12,8 +12,8 @@ type TunnelConfigResultEnvelope struct {
 
 type TunnelConfigModel struct {
 	ID        types.String             `tfsdk:"id" json:"-,computed"`
-	AccountID types.String             `tfsdk:"account_id" path:"account_id"`
 	TunnelID  types.String             `tfsdk:"tunnel_id" path:"tunnel_id"`
+	AccountID types.String             `tfsdk:"account_id" path:"account_id"`
 	Config    *TunnelConfigConfigModel `tfsdk:"config" json:"config"`
 }
 

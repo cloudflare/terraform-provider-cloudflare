@@ -18,16 +18,16 @@ type AccessPolicyModel struct {
 	AccountID                    types.String                        `tfsdk:"account_id" path:"account_id"`
 	ZoneID                       types.String                        `tfsdk:"zone_id" path:"zone_id"`
 	Decision                     types.String                        `tfsdk:"decision" json:"decision"`
-	Include                      *[]*AccessPolicyIncludeModel        `tfsdk:"include" json:"include"`
 	Name                         types.String                        `tfsdk:"name" json:"name"`
-	ApprovalGroups               *[]*AccessPolicyApprovalGroupsModel `tfsdk:"approval_groups" json:"approval_groups"`
-	ApprovalRequired             types.Bool                          `tfsdk:"approval_required" json:"approval_required"`
-	Exclude                      *[]*AccessPolicyExcludeModel        `tfsdk:"exclude" json:"exclude"`
-	IsolationRequired            types.Bool                          `tfsdk:"isolation_required" json:"isolation_required"`
+	Include                      *[]*AccessPolicyIncludeModel        `tfsdk:"include" json:"include"`
 	Precedence                   types.Int64                         `tfsdk:"precedence" json:"precedence"`
 	PurposeJustificationPrompt   types.String                        `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt"`
-	PurposeJustificationRequired types.Bool                          `tfsdk:"purpose_justification_required" json:"purpose_justification_required"`
+	ApprovalGroups               *[]*AccessPolicyApprovalGroupsModel `tfsdk:"approval_groups" json:"approval_groups"`
+	Exclude                      *[]*AccessPolicyExcludeModel        `tfsdk:"exclude" json:"exclude"`
 	Require                      *[]*AccessPolicyRequireModel        `tfsdk:"require" json:"require"`
+	ApprovalRequired             types.Bool                          `tfsdk:"approval_required" json:"approval_required"`
+	IsolationRequired            types.Bool                          `tfsdk:"isolation_required" json:"isolation_required"`
+	PurposeJustificationRequired types.Bool                          `tfsdk:"purpose_justification_required" json:"purpose_justification_required"`
 	SessionDuration              types.String                        `tfsdk:"session_duration" json:"session_duration"`
 	CreatedAt                    timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt                    timetypes.RFC3339                   `tfsdk:"updated_at" json:"updated_at,computed"`

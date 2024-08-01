@@ -17,8 +17,8 @@ type HyperdriveConfigResultListDataSourceEnvelope struct {
 type HyperdriveConfigDataSourceModel struct {
 	AccountID    types.String                              `tfsdk:"account_id" path:"account_id"`
 	HyperdriveID types.String                              `tfsdk:"hyperdrive_id" path:"hyperdrive_id"`
-	Caching      *HyperdriveConfigCachingDataSourceModel   `tfsdk:"caching" json:"caching"`
 	Name         types.String                              `tfsdk:"name" json:"name"`
+	Caching      *HyperdriveConfigCachingDataSourceModel   `tfsdk:"caching" json:"caching"`
 	Origin       *HyperdriveConfigOriginDataSourceModel    `tfsdk:"origin" json:"origin"`
 	Filter       *HyperdriveConfigFindOneByDataSourceModel `tfsdk:"filter"`
 }

@@ -21,15 +21,15 @@ func (r WorkerCronTriggerResource) UpgradeState(ctx context.Context) map[int64]r
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
-					"account_id": schema.StringAttribute{
-						Description:   "Identifier",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
 					"script_name": schema.StringAttribute{
 						Description:   "Name of the script, used in URLs and route configuration.",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+					},
+					"account_id": schema.StringAttribute{
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"schedules": schema.ListNestedAttribute{
 						Computed: true,

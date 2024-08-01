@@ -31,6 +31,17 @@ func (r DeviceManagedNetworksResource) UpgradeState(ctx context.Context) map[int
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"name": schema.StringAttribute{
+						Description: "The name of the device managed network. This name must be unique.",
+						Required:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "The type of device managed network.",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("tls"),
+						},
+					},
 					"config": schema.SingleNestedAttribute{
 						Description: "The configuration object containing information for the WARP client to detect the managed network.",
 						Required:    true,
@@ -43,17 +54,6 @@ func (r DeviceManagedNetworksResource) UpgradeState(ctx context.Context) map[int
 								Description: "The SHA-256 hash of the TLS certificate presented by the host found at tls_sockaddr. If absent, regular certificate verification (trusted roots, valid timestamp, etc) will be used to validate the certificate.",
 								Optional:    true,
 							},
-						},
-					},
-					"name": schema.StringAttribute{
-						Description: "The name of the device managed network. This name must be unique.",
-						Required:    true,
-					},
-					"type": schema.StringAttribute{
-						Description: "The type of device managed network.",
-						Required:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("tls"),
 						},
 					},
 				},

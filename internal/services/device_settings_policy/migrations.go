@@ -26,6 +26,16 @@ func (r DeviceSettingsPolicyResource) UpgradeState(ctx context.Context) map[int6
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"lan_allow_minutes": schema.Float64Attribute{
+						Description:   "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+					},
+					"lan_allow_subnet_size": schema.Float64Attribute{
+						Description:   "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+					},
 					"match": schema.StringAttribute{
 						Description: "The wirefilter expression to match devices.",
 						Required:    true,
@@ -74,19 +84,6 @@ func (r DeviceSettingsPolicyResource) UpgradeState(ctx context.Context) map[int6
 						Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
 						Optional:    true,
 					},
-					"service_mode_v2": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"mode": schema.StringAttribute{
-								Description: "The mode to run the WARP client under.",
-								Optional:    true,
-							},
-							"port": schema.Float64Attribute{
-								Description: "The port number when used with proxy mode.",
-								Optional:    true,
-							},
-						},
-					},
 					"support_url": schema.StringAttribute{
 						Description: "The URL to launch when the Send Feedback button is clicked.",
 						Optional:    true,
@@ -99,15 +96,18 @@ func (r DeviceSettingsPolicyResource) UpgradeState(ctx context.Context) map[int6
 						Description: "Determines which tunnel protocol to use.",
 						Optional:    true,
 					},
-					"lan_allow_minutes": schema.Float64Attribute{
-						Description:   "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
-						Optional:      true,
-						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
-					},
-					"lan_allow_subnet_size": schema.Float64Attribute{
-						Description:   "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
-						Optional:      true,
-						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
+					"service_mode_v2": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"mode": schema.StringAttribute{
+								Description: "The mode to run the WARP client under.",
+								Optional:    true,
+							},
+							"port": schema.Float64Attribute{
+								Description: "The port number when used with proxy mode.",
+								Optional:    true,
+							},
+						},
 					},
 				},
 			},

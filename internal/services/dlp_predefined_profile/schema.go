@@ -23,24 +23,19 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"profile_id": schema.StringAttribute{
 				Description:   "The ID for this profile",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"allowed_match_count": schema.Float64Attribute{
-				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
-				Computed:    true,
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"ocr_enabled": schema.BoolAttribute{
+				Description: "If true, scan images via OCR to determine if any text present matches filters.",
 				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 1000),
-				},
-				Default: float64default.StaticFloat64(0),
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -78,9 +73,14 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 					},
 				},
 			},
-			"ocr_enabled": schema.BoolAttribute{
-				Description: "If true, scan images via OCR to determine if any text present matches filters.",
+			"allowed_match_count": schema.Float64Attribute{
+				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
+				Computed:    true,
 				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 1000),
+				},
+				Default: float64default.StaticFloat64(0),
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the profile.",

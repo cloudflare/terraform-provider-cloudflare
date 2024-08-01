@@ -66,6 +66,23 @@ func (r APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest
 					},
 				},
 			},
+			"expires_on": schema.StringAttribute{
+				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"not_before": schema.StringAttribute{
+				Description: "The time before which the token MUST NOT be accepted for processing.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the token.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("active", "disabled", "expired"),
+				},
+			},
 			"condition": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -87,29 +104,12 @@ func (r APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest
 					},
 				},
 			},
-			"expires_on": schema.StringAttribute{
-				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"not_before": schema.StringAttribute{
-				Description: "The time before which the token MUST NOT be accepted for processing.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"status": schema.StringAttribute{
-				Description: "Status of the token.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "disabled", "expired"),
-				},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
 			},
 			"value": schema.StringAttribute{
 				Description: "The token value.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
 				Computed:    true,
 			},
 		},

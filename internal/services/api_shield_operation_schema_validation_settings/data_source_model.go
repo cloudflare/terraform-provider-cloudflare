@@ -7,7 +7,7 @@ import (
 )
 
 type APIShieldOperationSchemaValidationSettingsDataSourceModel struct {
-	ZoneID           types.String `tfsdk:"zone_id" path:"zone_id"`
 	OperationID      types.String `tfsdk:"operation_id" path:"operation_id"`
+	ZoneID           types.String `tfsdk:"zone_id" path:"zone_id"`
 	MitigationAction types.String `tfsdk:"mitigation_action" json:"mitigation_action"`
 }

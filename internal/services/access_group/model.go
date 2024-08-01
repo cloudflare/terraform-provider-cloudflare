@@ -16,10 +16,10 @@ type AccessGroupModel struct {
 	ID        types.String                `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                `tfsdk:"account_id" path:"account_id"`
 	ZoneID    types.String                `tfsdk:"zone_id" path:"zone_id"`
-	Include   *[]*AccessGroupIncludeModel `tfsdk:"include" json:"include"`
 	Name      types.String                `tfsdk:"name" json:"name"`
-	Exclude   *[]*AccessGroupExcludeModel `tfsdk:"exclude" json:"exclude"`
+	Include   *[]*AccessGroupIncludeModel `tfsdk:"include" json:"include"`
 	IsDefault types.Bool                  `tfsdk:"is_default" json:"is_default"`
+	Exclude   *[]*AccessGroupExcludeModel `tfsdk:"exclude" json:"exclude"`
 	Require   *[]*AccessGroupRequireModel `tfsdk:"require" json:"require"`
 	CreatedAt timetypes.RFC3339           `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt timetypes.RFC3339           `tfsdk:"updated_at" json:"updated_at,computed"`

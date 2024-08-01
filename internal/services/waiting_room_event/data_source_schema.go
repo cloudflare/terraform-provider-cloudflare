@@ -18,32 +18,40 @@ var _ datasource.DataSourceWithValidateConfig = &WaitingRoomEventDataSource{}
 func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
+			"event_id": schema.StringAttribute{
+				Optional: true,
 			},
 			"waiting_room_id": schema.StringAttribute{
 				Optional: true,
 			},
-			"event_id": schema.StringAttribute{
-				Optional: true,
-			},
-			"id": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"description": schema.StringAttribute{
+				Description: "A note that you can use to add more details about the event.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"shuffle_at_event_start": schema.BoolAttribute{
+				Description: "If enabled, users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. This is useful for situations when many users will join the event prequeue at the same time and you want to shuffle them to ensure fairness. Naturally, it makes the most sense to enable this feature when the `queueing_method` during the event respects ordering such as **fifo**, or else the shuffling may be unnecessary.",
+				Computed:    true,
+			},
+			"suspended": schema.BoolAttribute{
+				Description: "Suspends or allows an event. If set to `true`, the event is ignored and traffic will be handled based on the waiting room configuration.",
+				Computed:    true,
+			},
 			"custom_page_html": schema.StringAttribute{
 				Description: "If set, the event will override the waiting room's `custom_page_html` property while it is active. If null, the event will inherit it.",
 				Computed:    true,
 				Optional:    true,
-			},
-			"description": schema.StringAttribute{
-				Description: "A note that you can use to add more details about the event.",
-				Computed:    true,
 			},
 			"disable_session_renewal": schema.BoolAttribute{
 				Description: "If set, the event will override the waiting room's `disable_session_renewal` property while it is active. If null, the event will inherit it.",
@@ -60,9 +68,9 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 				Computed:    true,
 				Optional:    true,
 			},
-			"modified_on": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
+			"id": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
 			},
 			"name": schema.StringAttribute{
 				Description: "A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.",
@@ -94,14 +102,6 @@ func (r WaitingRoomEventDataSource) Schema(ctx context.Context, req datasource.S
 				Validators: []validator.Int64{
 					int64validator.Between(1, 30),
 				},
-			},
-			"shuffle_at_event_start": schema.BoolAttribute{
-				Description: "If enabled, users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. This is useful for situations when many users will join the event prequeue at the same time and you want to shuffle them to ensure fairness. Naturally, it makes the most sense to enable this feature when the `queueing_method` during the event respects ordering such as **fifo**, or else the shuffling may be unnecessary.",
-				Computed:    true,
-			},
-			"suspended": schema.BoolAttribute{
-				Description: "Suspends or allows an event. If set to `true`, the event is ignored and traffic will be handled based on the waiting room configuration.",
-				Computed:    true,
 			},
 			"total_active_users": schema.Int64Attribute{
 				Description: "If set, the event will override the waiting room's `total_active_users` property while it is active. If null, the event will inherit it. This can only be set if the event's `new_users_per_minute` property is also set.",

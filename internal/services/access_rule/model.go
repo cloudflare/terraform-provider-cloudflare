@@ -12,10 +12,10 @@ type AccessRuleResultEnvelope struct {
 
 type AccessRuleModel struct {
 	AccountID     types.String                  `tfsdk:"account_id" path:"account_id"`
-	ZoneID        types.String                  `tfsdk:"zone_id" path:"zone_id"`
 	Identifier    types.String                  `tfsdk:"identifier" path:"identifier"`
-	Configuration *AccessRuleConfigurationModel `tfsdk:"configuration" json:"configuration"`
+	ZoneID        types.String                  `tfsdk:"zone_id" path:"zone_id"`
 	Mode          types.String                  `tfsdk:"mode" json:"mode"`
+	Configuration *AccessRuleConfigurationModel `tfsdk:"configuration" json:"configuration"`
 	Notes         types.String                  `tfsdk:"notes" json:"notes"`
 	ID            types.String                  `tfsdk:"id" json:"id,computed"`
 }

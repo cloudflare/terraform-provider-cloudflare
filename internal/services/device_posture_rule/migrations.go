@@ -47,6 +47,10 @@ func (r DevicePostureRuleResource) UpgradeState(ctx context.Context) map[int64]r
 						Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
 						Optional:    true,
 					},
+					"schedule": schema.StringAttribute{
+						Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
+						Optional:    true,
+					},
 					"input": schema.SingleNestedAttribute{
 						Description: "The value to be checked against.",
 						Optional:    true,
@@ -258,10 +262,6 @@ func (r DevicePostureRuleResource) UpgradeState(ctx context.Context) map[int64]r
 								},
 							},
 						},
-					},
-					"schedule": schema.StringAttribute{
-						Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
-						Optional:    true,
 					},
 				},
 			},

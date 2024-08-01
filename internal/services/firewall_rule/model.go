@@ -16,11 +16,11 @@ type FirewallRuleModel struct {
 	PathID         types.String             `tfsdk:"path_id" path:"id"`
 	Action         *FirewallRuleActionModel `tfsdk:"action" json:"action"`
 	Filter         *FirewallRuleFilterModel `tfsdk:"filter" json:"filter"`
-	Paused         types.Bool               `tfsdk:"paused" json:"paused,computed"`
 	Description    types.String             `tfsdk:"description" json:"description,computed"`
+	Paused         types.Bool               `tfsdk:"paused" json:"paused,computed"`
 	Priority       types.Float64            `tfsdk:"priority" json:"priority,computed"`
-	Products       *[]types.String          `tfsdk:"products" json:"products,computed"`
 	Ref            types.String             `tfsdk:"ref" json:"ref,computed"`
+	Products       *[]types.String          `tfsdk:"products" json:"products,computed"`
 }
 
 type FirewallRuleActionModel struct {

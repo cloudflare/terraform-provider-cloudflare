@@ -21,15 +21,22 @@ func (r AccessRuleResource) Schema(ctx context.Context, req resource.SchemaReque
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"identifier": schema.StringAttribute{
+				Description:   "The unique identifier of the resource.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"identifier": schema.StringAttribute{
-				Description:   "The unique identifier of the resource.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"mode": schema.StringAttribute{
+				Description: "The action to apply to a matched request.",
+				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("block", "challenge", "whitelist", "js_challenge", "managed_challenge"),
+				},
 			},
 			"configuration": schema.SingleNestedAttribute{
 				Description: "The rule configuration.",
@@ -46,13 +53,6 @@ func (r AccessRuleResource) Schema(ctx context.Context, req resource.SchemaReque
 						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
 						Optional:    true,
 					},
-				},
-			},
-			"mode": schema.StringAttribute{
-				Description: "The action to apply to a matched request.",
-				Required:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "challenge", "whitelist", "js_challenge", "managed_challenge"),
 				},
 			},
 			"notes": schema.StringAttribute{

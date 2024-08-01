@@ -26,19 +26,6 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "The API resource UUID.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The API resource UUID.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"action": schema.StringAttribute{
-				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "audit_ssh", "resolve"),
-				},
-			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -47,6 +34,18 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "Date of deletion, if any.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"action": schema.StringAttribute{
+				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "audit_ssh", "resolve"),
+				},
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the rule.",
@@ -63,11 +62,10 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Computed:    true,
 				Optional:    true,
 			},
-			"filters": schema.ListAttribute{
-				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
+			"id": schema.StringAttribute{
+				Description: "The API resource UUID.",
 				Computed:    true,
 				Optional:    true,
-				ElementType: types.StringType,
 			},
 			"identity": schema.StringAttribute{
 				Description: "The wirefilter expression used for identity matching.",
@@ -83,6 +81,17 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"traffic": schema.StringAttribute{
+				Description: "The wirefilter expression used for traffic matching.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"filters": schema.ListAttribute{
+				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"rule_settings": schema.SingleNestedAttribute{
 				Description: "Additional settings that modify the rule's action.",
@@ -408,15 +417,6 @@ func (r TeamsRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Optional:    true,
 					},
 				},
-			},
-			"traffic": schema.StringAttribute{
-				Description: "The wirefilter expression used for traffic matching.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

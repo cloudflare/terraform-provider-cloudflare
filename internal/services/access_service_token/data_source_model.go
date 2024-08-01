@@ -16,13 +16,13 @@ type AccessServiceTokenResultListDataSourceEnvelope struct {
 }
 
 type AccessServiceTokenDataSourceModel struct {
-	ServiceTokenID types.String      `tfsdk:"service_token_id" path:"service_token_id"`
 	AccountID      types.String      `tfsdk:"account_id" path:"account_id"`
+	ServiceTokenID types.String      `tfsdk:"service_token_id" path:"service_token_id"`
 	ZoneID         types.String      `tfsdk:"zone_id" path:"zone_id"`
-	ID             types.String      `tfsdk:"id" json:"id"`
-	ClientID       types.String      `tfsdk:"client_id" json:"client_id"`
 	CreatedAt      timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	Duration       types.String      `tfsdk:"duration" json:"duration,computed"`
-	Name           types.String      `tfsdk:"name" json:"name"`
 	UpdatedAt      timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
+	ClientID       types.String      `tfsdk:"client_id" json:"client_id"`
+	ID             types.String      `tfsdk:"id" json:"id"`
+	Name           types.String      `tfsdk:"name" json:"name"`
 }

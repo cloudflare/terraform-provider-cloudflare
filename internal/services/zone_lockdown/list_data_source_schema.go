@@ -55,6 +55,14 @@ func (r ZoneLockdownsDataSource) Schema(ctx context.Context, req datasource.Sche
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"priority": schema.Float64Attribute{
+				Description: "The priority of the rule to control the processing order. A lower number indicates higher priority. If not provided, any rules with a configured priority will be processed before rules without a priority.",
+				Optional:    true,
+			},
+			"uri_search": schema.StringAttribute{
+				Description: "A single URI to search for in the list of URLs of existing rules.",
+				Optional:    true,
+			},
 			"page": schema.Float64Attribute{
 				Description: "Page number of paginated results.",
 				Computed:    true,
@@ -70,14 +78,6 @@ func (r ZoneLockdownsDataSource) Schema(ctx context.Context, req datasource.Sche
 				Validators: []validator.Float64{
 					float64validator.Between(1, 1000),
 				},
-			},
-			"priority": schema.Float64Attribute{
-				Description: "The priority of the rule to control the processing order. A lower number indicates higher priority. If not provided, any rules with a configured priority will be processed before rules without a priority.",
-				Optional:    true,
-			},
-			"uri_search": schema.StringAttribute{
-				Description: "A single URI to search for in the list of URLs of existing rules.",
-				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

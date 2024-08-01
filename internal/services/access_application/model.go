@@ -15,37 +15,37 @@ type AccessApplicationModel struct {
 	ID                       types.String                             `tfsdk:"id" json:"id,computed"`
 	AccountID                types.String                             `tfsdk:"account_id" path:"account_id"`
 	ZoneID                   types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	Domain                   types.String                             `tfsdk:"domain" json:"domain"`
-	Type                     types.String                             `tfsdk:"type" json:"type"`
 	AllowAuthenticateViaWARP types.Bool                               `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp"`
-	AllowedIdPs              *[]types.String                          `tfsdk:"allowed_idps" json:"allowed_idps"`
-	AppLauncherVisible       types.Bool                               `tfsdk:"app_launcher_visible" json:"app_launcher_visible"`
-	AutoRedirectToIdentity   types.Bool                               `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
-	CORSHeaders              *AccessApplicationCORSHeadersModel       `tfsdk:"cors_headers" json:"cors_headers"`
+	AppLauncherLogoURL       types.String                             `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url"`
+	BgColor                  types.String                             `tfsdk:"bg_color" json:"bg_color"`
 	CustomDenyMessage        types.String                             `tfsdk:"custom_deny_message" json:"custom_deny_message"`
 	CustomDenyURL            types.String                             `tfsdk:"custom_deny_url" json:"custom_deny_url"`
 	CustomNonIdentityDenyURL types.String                             `tfsdk:"custom_non_identity_deny_url" json:"custom_non_identity_deny_url"`
-	CustomPages              *[]types.String                          `tfsdk:"custom_pages" json:"custom_pages"`
-	EnableBindingCookie      types.Bool                               `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie"`
-	HTTPOnlyCookieAttribute  types.Bool                               `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute"`
+	Domain                   types.String                             `tfsdk:"domain" json:"domain"`
+	HeaderBgColor            types.String                             `tfsdk:"header_bg_color" json:"header_bg_color"`
 	LogoURL                  types.String                             `tfsdk:"logo_url" json:"logo_url"`
 	Name                     types.String                             `tfsdk:"name" json:"name"`
 	OptionsPreflightBypass   types.Bool                               `tfsdk:"options_preflight_bypass" json:"options_preflight_bypass"`
-	PathCookieAttribute      types.Bool                               `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute"`
-	Policies                 *[]*AccessApplicationPoliciesModel       `tfsdk:"policies" json:"policies"`
 	SameSiteCookieAttribute  types.String                             `tfsdk:"same_site_cookie_attribute" json:"same_site_cookie_attribute"`
-	SCIMConfig               *AccessApplicationSCIMConfigModel        `tfsdk:"scim_config" json:"scim_config"`
-	SelfHostedDomains        *[]types.String                          `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
 	ServiceAuth401Redirect   types.Bool                               `tfsdk:"service_auth_401_redirect" json:"service_auth_401_redirect"`
-	SessionDuration          types.String                             `tfsdk:"session_duration" json:"session_duration"`
 	SkipInterstitial         types.Bool                               `tfsdk:"skip_interstitial" json:"skip_interstitial"`
+	Type                     types.String                             `tfsdk:"type" json:"type"`
+	AllowedIdPs              *[]types.String                          `tfsdk:"allowed_idps" json:"allowed_idps"`
+	CustomPages              *[]types.String                          `tfsdk:"custom_pages" json:"custom_pages"`
+	SelfHostedDomains        *[]types.String                          `tfsdk:"self_hosted_domains" json:"self_hosted_domains"`
 	Tags                     *[]types.String                          `tfsdk:"tags" json:"tags"`
-	SaaSApp                  *AccessApplicationSaaSAppModel           `tfsdk:"saas_app" json:"saas_app"`
-	AppLauncherLogoURL       types.String                             `tfsdk:"app_launcher_logo_url" json:"app_launcher_logo_url"`
-	BgColor                  types.String                             `tfsdk:"bg_color" json:"bg_color"`
+	CORSHeaders              *AccessApplicationCORSHeadersModel       `tfsdk:"cors_headers" json:"cors_headers"`
 	FooterLinks              *[]*AccessApplicationFooterLinksModel    `tfsdk:"footer_links" json:"footer_links"`
-	HeaderBgColor            types.String                             `tfsdk:"header_bg_color" json:"header_bg_color"`
 	LandingPageDesign        *AccessApplicationLandingPageDesignModel `tfsdk:"landing_page_design" json:"landing_page_design"`
+	Policies                 *[]*AccessApplicationPoliciesModel       `tfsdk:"policies" json:"policies"`
+	SaaSApp                  *AccessApplicationSaaSAppModel           `tfsdk:"saas_app" json:"saas_app"`
+	SCIMConfig               *AccessApplicationSCIMConfigModel        `tfsdk:"scim_config" json:"scim_config"`
+	AppLauncherVisible       types.Bool                               `tfsdk:"app_launcher_visible" json:"app_launcher_visible"`
+	AutoRedirectToIdentity   types.Bool                               `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
+	EnableBindingCookie      types.Bool                               `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie"`
+	HTTPOnlyCookieAttribute  types.Bool                               `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute"`
+	PathCookieAttribute      types.Bool                               `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute"`
+	SessionDuration          types.String                             `tfsdk:"session_duration" json:"session_duration"`
 	SkipAppLauncherLoginPage types.Bool                               `tfsdk:"skip_app_launcher_login_page" json:"skip_app_launcher_login_page"`
 }
 
@@ -60,44 +60,22 @@ type AccessApplicationCORSHeadersModel struct {
 	MaxAge           types.Float64   `tfsdk:"max_age" json:"max_age"`
 }
 
+type AccessApplicationFooterLinksModel struct {
+	Name types.String `tfsdk:"name" json:"name"`
+	URL  types.String `tfsdk:"url" json:"url"`
+}
+
+type AccessApplicationLandingPageDesignModel struct {
+	ButtonColor     types.String `tfsdk:"button_color" json:"button_color"`
+	ButtonTextColor types.String `tfsdk:"button_text_color" json:"button_text_color"`
+	ImageURL        types.String `tfsdk:"image_url" json:"image_url"`
+	Message         types.String `tfsdk:"message" json:"message"`
+	Title           types.String `tfsdk:"title" json:"title,computed"`
+}
+
 type AccessApplicationPoliciesModel struct {
 	ID         types.String `tfsdk:"id" json:"id"`
 	Precedence types.Int64  `tfsdk:"precedence" json:"precedence"`
-}
-
-type AccessApplicationSCIMConfigModel struct {
-	IdPUID             types.String                                    `tfsdk:"idp_uid" json:"idp_uid"`
-	RemoteURI          types.String                                    `tfsdk:"remote_uri" json:"remote_uri"`
-	Authentication     *AccessApplicationSCIMConfigAuthenticationModel `tfsdk:"authentication" json:"authentication"`
-	DeactivateOnDelete types.Bool                                      `tfsdk:"deactivate_on_delete" json:"deactivate_on_delete"`
-	Enabled            types.Bool                                      `tfsdk:"enabled" json:"enabled"`
-	Mappings           *[]*AccessApplicationSCIMConfigMappingsModel    `tfsdk:"mappings" json:"mappings"`
-}
-
-type AccessApplicationSCIMConfigAuthenticationModel struct {
-	Password         types.String    `tfsdk:"password" json:"password"`
-	Scheme           types.String    `tfsdk:"scheme" json:"scheme"`
-	User             types.String    `tfsdk:"user" json:"user"`
-	Token            types.String    `tfsdk:"token" json:"token"`
-	AuthorizationURL types.String    `tfsdk:"authorization_url" json:"authorization_url"`
-	ClientID         types.String    `tfsdk:"client_id" json:"client_id"`
-	ClientSecret     types.String    `tfsdk:"client_secret" json:"client_secret"`
-	TokenURL         types.String    `tfsdk:"token_url" json:"token_url"`
-	Scopes           *[]types.String `tfsdk:"scopes" json:"scopes"`
-}
-
-type AccessApplicationSCIMConfigMappingsModel struct {
-	Schema           types.String                                        `tfsdk:"schema" json:"schema"`
-	Enabled          types.Bool                                          `tfsdk:"enabled" json:"enabled"`
-	Filter           types.String                                        `tfsdk:"filter" json:"filter"`
-	Operations       *AccessApplicationSCIMConfigMappingsOperationsModel `tfsdk:"operations" json:"operations"`
-	TransformJsonata types.String                                        `tfsdk:"transform_jsonata" json:"transform_jsonata"`
-}
-
-type AccessApplicationSCIMConfigMappingsOperationsModel struct {
-	Create types.Bool `tfsdk:"create" json:"create"`
-	Delete types.Bool `tfsdk:"delete" json:"delete"`
-	Update types.Bool `tfsdk:"update" json:"update"`
 }
 
 type AccessApplicationSaaSAppModel struct {
@@ -162,15 +140,37 @@ type AccessApplicationSaaSAppRefreshTokenOptionsModel struct {
 	Lifetime types.String `tfsdk:"lifetime" json:"lifetime"`
 }
 
-type AccessApplicationFooterLinksModel struct {
-	Name types.String `tfsdk:"name" json:"name"`
-	URL  types.String `tfsdk:"url" json:"url"`
+type AccessApplicationSCIMConfigModel struct {
+	IdPUID             types.String                                    `tfsdk:"idp_uid" json:"idp_uid"`
+	RemoteURI          types.String                                    `tfsdk:"remote_uri" json:"remote_uri"`
+	Authentication     *AccessApplicationSCIMConfigAuthenticationModel `tfsdk:"authentication" json:"authentication"`
+	DeactivateOnDelete types.Bool                                      `tfsdk:"deactivate_on_delete" json:"deactivate_on_delete"`
+	Enabled            types.Bool                                      `tfsdk:"enabled" json:"enabled"`
+	Mappings           *[]*AccessApplicationSCIMConfigMappingsModel    `tfsdk:"mappings" json:"mappings"`
 }
 
-type AccessApplicationLandingPageDesignModel struct {
-	ButtonColor     types.String `tfsdk:"button_color" json:"button_color"`
-	ButtonTextColor types.String `tfsdk:"button_text_color" json:"button_text_color"`
-	ImageURL        types.String `tfsdk:"image_url" json:"image_url"`
-	Message         types.String `tfsdk:"message" json:"message"`
-	Title           types.String `tfsdk:"title" json:"title,computed"`
+type AccessApplicationSCIMConfigAuthenticationModel struct {
+	Password         types.String    `tfsdk:"password" json:"password"`
+	Scheme           types.String    `tfsdk:"scheme" json:"scheme"`
+	User             types.String    `tfsdk:"user" json:"user"`
+	Token            types.String    `tfsdk:"token" json:"token"`
+	AuthorizationURL types.String    `tfsdk:"authorization_url" json:"authorization_url"`
+	ClientID         types.String    `tfsdk:"client_id" json:"client_id"`
+	ClientSecret     types.String    `tfsdk:"client_secret" json:"client_secret"`
+	TokenURL         types.String    `tfsdk:"token_url" json:"token_url"`
+	Scopes           *[]types.String `tfsdk:"scopes" json:"scopes"`
+}
+
+type AccessApplicationSCIMConfigMappingsModel struct {
+	Schema           types.String                                        `tfsdk:"schema" json:"schema"`
+	Enabled          types.Bool                                          `tfsdk:"enabled" json:"enabled"`
+	Filter           types.String                                        `tfsdk:"filter" json:"filter"`
+	Operations       *AccessApplicationSCIMConfigMappingsOperationsModel `tfsdk:"operations" json:"operations"`
+	TransformJsonata types.String                                        `tfsdk:"transform_jsonata" json:"transform_jsonata"`
+}
+
+type AccessApplicationSCIMConfigMappingsOperationsModel struct {
+	Create types.Bool `tfsdk:"create" json:"create"`
+	Delete types.Bool `tfsdk:"delete" json:"delete"`
+	Update types.Bool `tfsdk:"update" json:"update"`
 }

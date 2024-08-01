@@ -24,10 +24,6 @@ func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "Name of the script, used in URLs and route configuration.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The id of the script in the Workers system. Usually the script name.",
-				Optional:    true,
-			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
 				Optional:    true,
@@ -35,6 +31,10 @@ func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"etag": schema.StringAttribute{
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The id of the script in the Workers system. Usually the script name.",
 				Optional:    true,
 			},
 			"logpush": schema.BoolAttribute{
@@ -48,6 +48,10 @@ func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"placement_mode": schema.StringAttribute{
 				Description: "Specifies the placement mode for the Worker (e.g. 'smart').",
+				Optional:    true,
+			},
+			"usage_model": schema.StringAttribute{
+				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
 				Optional:    true,
 			},
 			"tail_consumers": schema.ListNestedAttribute{
@@ -71,10 +75,6 @@ func (r WorkerScriptDataSource) Schema(ctx context.Context, req datasource.Schem
 						},
 					},
 				},
-			},
-			"usage_model": schema.StringAttribute{
-				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

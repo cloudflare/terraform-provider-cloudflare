@@ -92,12 +92,12 @@ func (r FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaReq
 					},
 				},
 			},
-			"paused": schema.BoolAttribute{
-				Description: "When true, indicates that the firewall rule is currently paused.",
-				Computed:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the firewall rule.",
+				Computed:    true,
+			},
+			"paused": schema.BoolAttribute{
+				Description: "When true, indicates that the firewall rule is currently paused.",
 				Computed:    true,
 			},
 			"priority": schema.Float64Attribute{
@@ -107,13 +107,13 @@ func (r FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaReq
 					float64validator.Between(0, 2147483647),
 				},
 			},
-			"products": schema.ListAttribute{
-				Computed:    true,
-				ElementType: types.StringType,
-			},
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related firewall rules.",
 				Computed:    true,
+			},
+			"products": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 		},
 	}

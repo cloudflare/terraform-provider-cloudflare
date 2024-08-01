@@ -17,9 +17,9 @@ type DevicePostureRuleModel struct {
 	Type        types.String                    `tfsdk:"type" json:"type"`
 	Description types.String                    `tfsdk:"description" json:"description"`
 	Expiration  types.String                    `tfsdk:"expiration" json:"expiration"`
+	Schedule    types.String                    `tfsdk:"schedule" json:"schedule"`
 	Input       *DevicePostureRuleInputModel    `tfsdk:"input" json:"input"`
 	Match       *[]*DevicePostureRuleMatchModel `tfsdk:"match" json:"match"`
-	Schedule    types.String                    `tfsdk:"schedule" json:"schedule"`
 }
 
 type DevicePostureRuleInputModel struct {

@@ -21,6 +21,31 @@ var _ datasource.DataSourceWithValidateConfig = &ZonesDataSource{}
 func (r ZonesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"direction": schema.StringAttribute{
+				Description: "Direction to order zones.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
+			},
+			"name": schema.StringAttribute{
+				Description: "A domain name. Optional filter operators can be provided to extend refine the search:\n  * `equal` (default)\n  * `not_equal`\n  * `starts_with`\n  * `ends_with`\n  * `contains`\n  * `starts_with_case_sensitive`\n  * `ends_with_case_sensitive`\n  * `contains_case_sensitive`\n",
+				Optional:    true,
+			},
+			"order": schema.StringAttribute{
+				Description: "Field to order zones by.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("name", "status", "account.id", "account.name"),
+				},
+			},
+			"status": schema.StringAttribute{
+				Description: "A zone status",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("initializing", "pending", "active", "moved"),
+				},
+			},
 			"account": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -34,30 +59,12 @@ func (r ZonesDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 					},
 				},
 			},
-			"direction": schema.StringAttribute{
-				Description: "Direction to order zones.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-				},
-			},
 			"match": schema.StringAttribute{
 				Description: "Whether to match all search requirements or at least one (any).",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("any", "all"),
-				},
-			},
-			"name": schema.StringAttribute{
-				Description: "A domain name. Optional filter operators can be provided to extend refine the search:\n  * `equal` (default)\n  * `not_equal`\n  * `starts_with`\n  * `ends_with`\n  * `contains`\n  * `starts_with_case_sensitive`\n  * `ends_with_case_sensitive`\n  * `contains_case_sensitive`\n",
-				Optional:    true,
-			},
-			"order": schema.StringAttribute{
-				Description: "Field to order zones by.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("name", "status", "account.id", "account.name"),
 				},
 			},
 			"page": schema.Float64Attribute{
@@ -74,13 +81,6 @@ func (r ZonesDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(5, 50),
-				},
-			},
-			"status": schema.StringAttribute{
-				Description: "A zone status",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("initializing", "pending", "active", "moved"),
 				},
 			},
 			"max_items": schema.Int64Attribute{

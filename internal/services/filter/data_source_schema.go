@@ -26,17 +26,17 @@ func (r FilterDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Computed:    true,
 				Optional:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "An informative summary of the filter.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"expression": schema.StringAttribute{
 				Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
 				Optional:    true,
 			},
 			"paused": schema.BoolAttribute{
 				Description: "When true, indicates that the filter is currently paused.",
+				Optional:    true,
+			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the filter.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"ref": schema.StringAttribute{

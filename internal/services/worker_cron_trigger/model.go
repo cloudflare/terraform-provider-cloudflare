@@ -13,8 +13,8 @@ type WorkerCronTriggerResultEnvelope struct {
 
 type WorkerCronTriggerModel struct {
 	ID         types.String                        `tfsdk:"id" json:"-,computed"`
-	AccountID  types.String                        `tfsdk:"account_id" path:"account_id"`
 	ScriptName types.String                        `tfsdk:"script_name" path:"script_name"`
+	AccountID  types.String                        `tfsdk:"account_id" path:"account_id"`
 	Schedules  *[]*WorkerCronTriggerSchedulesModel `tfsdk:"schedules" json:"schedules,computed"`
 }
 

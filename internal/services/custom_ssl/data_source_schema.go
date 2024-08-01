@@ -21,35 +21,23 @@ var _ datasource.DataSourceWithValidateConfig = &CustomSSLDataSource{}
 func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
 			"custom_certificate_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
-				Optional:    true,
-			},
-			"bundle_method": schema.StringAttribute{
-				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
 				Computed:    true,
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
-				},
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate from the authority expires.",
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"hosts": schema.ListAttribute{
+			"id": schema.StringAttribute{
+				Description: "Identifier",
 				Optional:    true,
-				ElementType: types.StringType,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
@@ -60,9 +48,8 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"priority": schema.Float64Attribute{
-				Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
-				Computed:    true,
+			"policy": schema.StringAttribute{
+				Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.",
 				Optional:    true,
 			},
 			"signature": schema.StringAttribute{
@@ -80,6 +67,10 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "When the certificate was uploaded to Cloudflare.",
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"hosts": schema.ListAttribute{
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"geo_restrictions": schema.SingleNestedAttribute{
 				Description: "Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance.",
@@ -156,8 +147,17 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					},
 				},
 			},
-			"policy": schema.StringAttribute{
-				Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.",
+			"bundle_method": schema.StringAttribute{
+				Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+				},
+			},
+			"priority": schema.Float64Attribute{
+				Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{

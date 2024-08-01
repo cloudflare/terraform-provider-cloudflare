@@ -12,8 +12,8 @@ type WaitingRoomRulesListResultListDataSourceEnvelope struct {
 }
 
 type WaitingRoomRulesListDataSourceModel struct {
-	ZoneID        types.String                                  `tfsdk:"zone_id" path:"zone_id"`
 	WaitingRoomID types.String                                  `tfsdk:"waiting_room_id" path:"waiting_room_id"`
+	ZoneID        types.String                                  `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems      types.Int64                                   `tfsdk:"max_items"`
 	Result        *[]*WaitingRoomRulesListResultDataSourceModel `tfsdk:"result"`
 }
