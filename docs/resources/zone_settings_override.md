@@ -104,7 +104,7 @@ Optional:
 - `log_to_cloudflare` (String)
 - `max_upload` (Number)
 - `min_tls_version` (String)
-- `minify` (Block List, Max: 1, Deprecated) (see [below for nested schema](#nestedblock--settings--minify))
+- `minify` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--minify))
 - `mirage` (String)
 - `mobile_redirect` (Block List, Max: 1, Deprecated) (see [below for nested schema](#nestedblock--settings--mobile_redirect))
 - `nel` (Block List, Max: 1) (see [below for nested schema](#nestedblock--settings--nel))
