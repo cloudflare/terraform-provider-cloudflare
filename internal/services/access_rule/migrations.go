@@ -29,7 +29,9 @@ func (r AccessRuleResource) UpgradeState(ctx context.Context) map[int64]resource
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"identifier": schema.StringAttribute{
-						Optional: true,
+						Description:   "The unique identifier of the resource.",
+						Optional:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"configuration": schema.SingleNestedAttribute{
 						Description: "The rule configuration.",
