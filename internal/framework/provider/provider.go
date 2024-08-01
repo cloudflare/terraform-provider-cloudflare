@@ -21,6 +21,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_app_types"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_categories"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
@@ -381,6 +382,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		user.NewDataSource,
 		dlp_datasets.NewDataSource,
 		gateway_categories.NewDataSource,
+		gateway_app_types.NewDataSource,
 	}
 }
 
