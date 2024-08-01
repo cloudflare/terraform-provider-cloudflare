@@ -23,12 +23,12 @@ func (r WaitingRoomEventResource) Schema(ctx context.Context, req resource.Schem
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
+			"waiting_room_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"waiting_room_id": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
+				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -47,12 +47,6 @@ func (r WaitingRoomEventResource) Schema(ctx context.Context, req resource.Schem
 			"custom_page_html": schema.StringAttribute{
 				Description: "If set, the event will override the waiting room's `custom_page_html` property while it is active. If null, the event will inherit it.",
 				Optional:    true,
-			},
-			"description": schema.StringAttribute{
-				Description: "A note that you can use to add more details about the event.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
 			},
 			"disable_session_renewal": schema.BoolAttribute{
 				Description: "If set, the event will override the waiting room's `disable_session_renewal` property while it is active. If null, the event will inherit it.",
@@ -80,6 +74,19 @@ func (r WaitingRoomEventResource) Schema(ctx context.Context, req resource.Schem
 					int64validator.Between(1, 30),
 				},
 			},
+			"total_active_users": schema.Int64Attribute{
+				Description: "If set, the event will override the waiting room's `total_active_users` property while it is active. If null, the event will inherit it. This can only be set if the event's `new_users_per_minute` property is also set.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(200, 2147483647),
+				},
+			},
+			"description": schema.StringAttribute{
+				Description: "A note that you can use to add more details about the event.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
 			"shuffle_at_event_start": schema.BoolAttribute{
 				Description: "If enabled, users in the prequeue will be shuffled randomly at the `event_start_time`. Requires that `prequeue_start_time` is not null. This is useful for situations when many users will join the event prequeue at the same time and you want to shuffle them to ensure fairness. Naturally, it makes the most sense to enable this feature when the `queueing_method` during the event respects ordering such as **fifo**, or else the shuffling may be unnecessary.",
 				Computed:    true,
@@ -91,13 +98,6 @@ func (r WaitingRoomEventResource) Schema(ctx context.Context, req resource.Schem
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
-			},
-			"total_active_users": schema.Int64Attribute{
-				Description: "If set, the event will override the waiting room's `total_active_users` property while it is active. If null, the event will inherit it. This can only be set if the event's `new_users_per_minute` property is also set.",
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(200, 2147483647),
-				},
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,

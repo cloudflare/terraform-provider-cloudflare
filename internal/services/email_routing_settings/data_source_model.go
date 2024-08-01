@@ -13,12 +13,12 @@ type EmailRoutingSettingsResultDataSourceEnvelope struct {
 
 type EmailRoutingSettingsDataSourceModel struct {
 	ZoneIdentifier types.String      `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String      `tfsdk:"id" json:"id"`
 	Created        timetypes.RFC3339 `tfsdk:"created" json:"created"`
-	Enabled        types.Bool        `tfsdk:"enabled" json:"enabled"`
+	ID             types.String      `tfsdk:"id" json:"id"`
 	Modified       timetypes.RFC3339 `tfsdk:"modified" json:"modified"`
 	Name           types.String      `tfsdk:"name" json:"name"`
-	SkipWizard     types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard"`
 	Status         types.String      `tfsdk:"status" json:"status"`
 	Tag            types.String      `tfsdk:"tag" json:"tag"`
+	Enabled        types.Bool        `tfsdk:"enabled" json:"enabled"`
+	SkipWizard     types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard"`
 }

@@ -33,9 +33,15 @@ func (r TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schema
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"domains": schema.ListAttribute{
-				Required:    true,
-				ElementType: types.StringType,
+			"region": schema.StringAttribute{
+				Description: "Region where this widget can be used.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("world"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Default:       stringdefault.StaticString("world"),
 			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode",
@@ -47,6 +53,10 @@ func (r TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schema
 			"name": schema.StringAttribute{
 				Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
 				Required:    true,
+			},
+			"domains": schema.ListAttribute{
+				Required:    true,
+				ElementType: types.StringType,
 			},
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
@@ -62,16 +72,6 @@ func (r TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schema
 			"offlabel": schema.BoolAttribute{
 				Description: "Do not show any Cloudflare branding on the widget (ENT only).\n",
 				Optional:    true,
-			},
-			"region": schema.StringAttribute{
-				Description: "Region where this widget can be used.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("world"),
-				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-				Default:       stringdefault.StaticString("world"),
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the widget was created.",

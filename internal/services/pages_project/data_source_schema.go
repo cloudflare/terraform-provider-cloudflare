@@ -29,9 +29,52 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
+			"environment": schema.StringAttribute{
+				Description: "Type of deploy.",
+				Optional:    true,
+			},
+			"is_skipped": schema.BoolAttribute{
+				Description: "If the deployment has been skipped.",
+				Optional:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the deployment was last modified.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"name": schema.StringAttribute{
+				Description: "Name of the project.",
+				Optional:    true,
+			},
+			"production_branch": schema.StringAttribute{
+				Description: "Production branch of the project. Used to identify production deployments.",
+				Optional:    true,
+			},
+			"project_id": schema.StringAttribute{
 				Description: "Id of the project.",
-				Computed:    true,
+				Optional:    true,
+			},
+			"short_id": schema.StringAttribute{
+				Description: "Short Id (8 character) of the deployment.",
+				Optional:    true,
+			},
+			"subdomain": schema.StringAttribute{
+				Description: "The Cloudflare subdomain associated with the project.",
+				Optional:    true,
+			},
+			"url": schema.StringAttribute{
+				Description: "The live URL to view this deployment.",
+				Optional:    true,
+			},
+			"aliases": schema.ListAttribute{
+				Description: "A list of alias URLs pointing to this deployment.",
+				Optional:    true,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+			},
+			"domains": schema.ListAttribute{
+				Description: "A list of associated custom domains for the project.",
+				Optional:    true,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 			"build_config": schema.SingleNestedAttribute{
 				Description: "Configs for the project build process.",
@@ -186,11 +229,6 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 						Computed:    true,
 					},
 				},
-			},
-			"created_on": schema.StringAttribute{
-				Description: "When the project was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"deployment_configs": schema.SingleNestedAttribute{
 				Description: "Configs for deployments in a project.",
@@ -776,10 +814,34 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 					},
 				},
 			},
-			"domains": schema.ListAttribute{
-				Description: "A list of associated custom domains for the project.",
+			"deployment_trigger": schema.SingleNestedAttribute{
+				Description: "Info about what caused the deployment.",
 				Optional:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+				Attributes: map[string]schema.Attribute{
+					"metadata": schema.SingleNestedAttribute{
+						Description: "Additional info about the trigger.",
+						Computed:    true,
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"branch": schema.StringAttribute{
+								Description: "Where the trigger happened.",
+								Computed:    true,
+							},
+							"commit_hash": schema.StringAttribute{
+								Description: "Hash of the deployment trigger commit.",
+								Computed:    true,
+							},
+							"commit_message": schema.StringAttribute{
+								Description: "Message of the deployment trigger commit.",
+								Computed:    true,
+							},
+						},
+					},
+					"type": schema.StringAttribute{
+						Description: "What caused the deployment.",
+						Computed:    true,
+					},
+				},
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
 				Optional: true,
@@ -899,83 +961,6 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 					},
 				},
 			},
-			"name": schema.StringAttribute{
-				Description: "Name of the project.",
-				Optional:    true,
-			},
-			"production_branch": schema.StringAttribute{
-				Description: "Production branch of the project. Used to identify production deployments.",
-				Optional:    true,
-			},
-			"source": schema.StringAttribute{
-				Computed: true,
-			},
-			"subdomain": schema.StringAttribute{
-				Description: "The Cloudflare subdomain associated with the project.",
-				Optional:    true,
-			},
-			"aliases": schema.ListAttribute{
-				Description: "A list of alias URLs pointing to this deployment.",
-				Optional:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
-			},
-			"deployment_trigger": schema.SingleNestedAttribute{
-				Description: "Info about what caused the deployment.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"metadata": schema.SingleNestedAttribute{
-						Description: "Additional info about the trigger.",
-						Computed:    true,
-						Optional:    true,
-						Attributes: map[string]schema.Attribute{
-							"branch": schema.StringAttribute{
-								Description: "Where the trigger happened.",
-								Computed:    true,
-							},
-							"commit_hash": schema.StringAttribute{
-								Description: "Hash of the deployment trigger commit.",
-								Computed:    true,
-							},
-							"commit_message": schema.StringAttribute{
-								Description: "Message of the deployment trigger commit.",
-								Computed:    true,
-							},
-						},
-					},
-					"type": schema.StringAttribute{
-						Description: "What caused the deployment.",
-						Computed:    true,
-					},
-				},
-			},
-			"env_vars": schema.StringAttribute{
-				Description: "A dict of env variables to build this deploy.",
-				Optional:    true,
-			},
-			"environment": schema.StringAttribute{
-				Description: "Type of deploy.",
-				Optional:    true,
-			},
-			"is_skipped": schema.BoolAttribute{
-				Description: "If the deployment has been skipped.",
-				Optional:    true,
-			},
-			"latest_stage": schema.StringAttribute{
-				Optional: true,
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the deployment was last modified.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"project_id": schema.StringAttribute{
-				Description: "Id of the project.",
-				Optional:    true,
-			},
-			"short_id": schema.StringAttribute{
-				Description: "Short Id (8 character) of the deployment.",
-				Optional:    true,
-			},
 			"stages": schema.ListNestedAttribute{
 				Description: "List of past stages.",
 				Optional:    true,
@@ -1003,9 +988,24 @@ func (r PagesProjectDataSource) Schema(ctx context.Context, req datasource.Schem
 					},
 				},
 			},
-			"url": schema.StringAttribute{
-				Description: "The live URL to view this deployment.",
+			"env_vars": schema.StringAttribute{
+				Description: "A dict of env variables to build this deploy.",
 				Optional:    true,
+			},
+			"latest_stage": schema.StringAttribute{
+				Optional: true,
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the project was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "Id of the project.",
+				Computed:    true,
+			},
+			"source": schema.StringAttribute{
+				Computed: true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

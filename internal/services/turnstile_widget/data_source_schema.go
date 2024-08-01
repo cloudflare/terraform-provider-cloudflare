@@ -29,6 +29,10 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 				Computed:    true,
 				Optional:    true,
 			},
+			"secret": schema.StringAttribute{
+				Description: "Secret key for this widget.",
+				Optional:    true,
+			},
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
 				Computed:    true,
@@ -44,10 +48,6 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 				Description: "When the widget was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"domains": schema.ListAttribute{
-				Computed:    true,
-				ElementType: types.StringType,
 			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode",
@@ -76,9 +76,9 @@ func (r TurnstileWidgetDataSource) Schema(ctx context.Context, req datasource.Sc
 					stringvalidator.OneOfCaseInsensitive("world"),
 				},
 			},
-			"secret": schema.StringAttribute{
-				Description: "Secret key for this widget.",
-				Optional:    true,
+			"domains": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

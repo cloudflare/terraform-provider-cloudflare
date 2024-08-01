@@ -13,10 +13,10 @@ type DevicePostureIntegrationResultEnvelope struct {
 type DevicePostureIntegrationModel struct {
 	ID        types.String                         `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                         `tfsdk:"account_id" path:"account_id"`
-	Config    *DevicePostureIntegrationConfigModel `tfsdk:"config" json:"config"`
 	Interval  types.String                         `tfsdk:"interval" json:"interval"`
 	Name      types.String                         `tfsdk:"name" json:"name"`
 	Type      types.String                         `tfsdk:"type" json:"type"`
+	Config    *DevicePostureIntegrationConfigModel `tfsdk:"config" json:"config"`
 }
 
 type DevicePostureIntegrationConfigModel struct {

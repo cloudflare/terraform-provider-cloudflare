@@ -15,17 +15,17 @@ type KeylessCertificateResultEnvelope struct {
 type KeylessCertificateModel struct {
 	ID           types.String                   `tfsdk:"id" json:"id,computed"`
 	ZoneID       types.String                   `tfsdk:"zone_id" path:"zone_id"`
-	Host         types.String                   `tfsdk:"host" json:"host"`
-	Port         types.Float64                  `tfsdk:"port" json:"port"`
-	Name         types.String                   `tfsdk:"name" json:"name"`
-	Tunnel       *KeylessCertificateTunnelModel `tfsdk:"tunnel" json:"tunnel"`
 	Certificate  types.String                   `tfsdk:"certificate" json:"certificate"`
 	BundleMethod types.String                   `tfsdk:"bundle_method" json:"bundle_method"`
+	Host         types.String                   `tfsdk:"host" json:"host"`
 	Enabled      types.Bool                     `tfsdk:"enabled" json:"enabled"`
+	Name         types.String                   `tfsdk:"name" json:"name"`
+	Tunnel       *KeylessCertificateTunnelModel `tfsdk:"tunnel" json:"tunnel"`
+	Port         types.Float64                  `tfsdk:"port" json:"port"`
 	CreatedOn    timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn   timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed"`
-	Permissions  *[]jsontypes.Normalized        `tfsdk:"permissions" json:"permissions,computed"`
 	Status       types.String                   `tfsdk:"status" json:"status,computed"`
+	Permissions  *[]jsontypes.Normalized        `tfsdk:"permissions" json:"permissions,computed"`
 }
 
 type KeylessCertificateTunnelModel struct {

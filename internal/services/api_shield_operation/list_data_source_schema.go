@@ -40,16 +40,6 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 				Description: "Filter results to only include endpoints containing this pattern.",
 				Optional:    true,
 			},
-			"host": schema.ListAttribute{
-				Description: "Filter results to only include the specified hosts.",
-				Optional:    true,
-				ElementType: types.StringType,
-			},
-			"method": schema.ListAttribute{
-				Description: "Filter results to only include the specified HTTP methods.",
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"order": schema.StringAttribute{
 				Description: "Field to order by",
 				Optional:    true,
@@ -63,6 +53,23 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
 				},
+			},
+			"state": schema.StringAttribute{
+				Description: "Filter results to only include discovery results in a particular state. States are as follows\n  * `review` - Discovered operations that are not saved into API Shield Endpoint Management\n  * `saved` - Discovered operations that are already saved into API Shield Endpoint Management\n  * `ignored` - Discovered operations that have been marked as ignored\n",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("review", "saved", "ignored"),
+				},
+			},
+			"host": schema.ListAttribute{
+				Description: "Filter results to only include the specified hosts.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
+			"method": schema.ListAttribute{
+				Description: "Filter results to only include the specified HTTP methods.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"page": schema.Int64Attribute{
 				Description: "Page number of paginated results.",
@@ -78,13 +85,6 @@ func (r APIShieldOperationsDataSource) Schema(ctx context.Context, req datasourc
 				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.Between(5, 50),
-				},
-			},
-			"state": schema.StringAttribute{
-				Description: "Filter results to only include discovery results in a particular state. States are as follows\n  * `review` - Discovered operations that are not saved into API Shield Endpoint Management\n  * `saved` - Discovered operations that are already saved into API Shield Endpoint Management\n  * `ignored` - Discovered operations that have been marked as ignored\n",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("review", "saved", "ignored"),
 				},
 			},
 			"max_items": schema.Int64Attribute{

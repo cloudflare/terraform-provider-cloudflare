@@ -12,19 +12,19 @@ type RecordsResultListDataSourceEnvelope struct {
 
 type RecordsDataSourceModel struct {
 	ZoneID    types.String                     `tfsdk:"zone_id" path:"zone_id"`
-	Comment   *RecordsCommentDataSourceModel   `tfsdk:"comment" query:"comment"`
 	Content   types.String                     `tfsdk:"content" query:"content"`
+	Name      types.String                     `tfsdk:"name" query:"name"`
+	Search    types.String                     `tfsdk:"search" query:"search"`
+	Type      types.String                     `tfsdk:"type" query:"type"`
+	Comment   *RecordsCommentDataSourceModel   `tfsdk:"comment" query:"comment"`
+	Tag       *RecordsTagDataSourceModel       `tfsdk:"tag" query:"tag"`
 	Direction types.String                     `tfsdk:"direction" query:"direction"`
 	Match     types.String                     `tfsdk:"match" query:"match"`
-	Name      types.String                     `tfsdk:"name" query:"name"`
 	Order     types.String                     `tfsdk:"order" query:"order"`
 	Page      types.Float64                    `tfsdk:"page" query:"page"`
 	PerPage   types.Float64                    `tfsdk:"per_page" query:"per_page"`
 	Proxied   types.Bool                       `tfsdk:"proxied" query:"proxied"`
-	Search    types.String                     `tfsdk:"search" query:"search"`
-	Tag       *RecordsTagDataSourceModel       `tfsdk:"tag" query:"tag"`
 	TagMatch  types.String                     `tfsdk:"tag_match" query:"tag_match"`
-	Type      types.String                     `tfsdk:"type" query:"type"`
 	MaxItems  types.Int64                      `tfsdk:"max_items"`
 	Result    *[]*RecordsResultDataSourceModel `tfsdk:"result"`
 }

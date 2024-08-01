@@ -14,9 +14,9 @@ type APIShieldModel struct {
 	ID                    types.String                            `tfsdk:"id" json:"-,computed"`
 	ZoneID                types.String                            `tfsdk:"zone_id" path:"zone_id"`
 	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics"`
+	Success               types.Bool                              `tfsdk:"success" json:"success,computed"`
 	Errors                *[]*APIShieldErrorsModel                `tfsdk:"errors" json:"errors,computed"`
 	Messages              *[]*APIShieldMessagesModel              `tfsdk:"messages" json:"messages,computed"`
-	Success               types.Bool                              `tfsdk:"success" json:"success,computed"`
 }
 
 type APIShieldAuthIDCharacteristicsModel struct {

@@ -15,7 +15,7 @@ type AccessIdentityProviderResultListDataSourceEnvelope struct {
 }
 
 type AccessIdentityProviderDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" path:"identity_provider_id"`
 	AccountID          types.String `tfsdk:"account_id" path:"account_id"`
+	IdentityProviderID types.String `tfsdk:"identity_provider_id" path:"identity_provider_id"`
 	ZoneID             types.String `tfsdk:"zone_id" path:"zone_id"`
 }

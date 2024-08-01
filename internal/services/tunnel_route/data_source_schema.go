@@ -19,10 +19,6 @@ var _ datasource.DataSourceWithValidateConfig = &TunnelRouteDataSource{}
 func (r TunnelRouteDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "UUID of the route.",
-				Optional:    true,
-			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the route.",
 				Optional:    true,
@@ -36,6 +32,10 @@ func (r TunnelRouteDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "UUID of the route.",
+				Optional:    true,
 			},
 			"network": schema.StringAttribute{
 				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",

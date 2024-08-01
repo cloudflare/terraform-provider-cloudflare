@@ -33,6 +33,10 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"protocol": schema.StringAttribute{
+				Description: "The port configuration at Cloudflare’s edge. May specify a single port, for example `\"tcp/1000\"`, or a range of ports, for example `\"tcp/1000-2000\"`.",
+				Required:    true,
+			},
 			"dns": schema.SingleNestedAttribute{
 				Description: "The name and type of DNS record for the Spectrum application.",
 				Required:    true,
@@ -79,15 +83,40 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 				Required:    true,
 				Validators:  []validator.Dynamic{customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{})},
 			},
-			"protocol": schema.StringAttribute{
-				Description: "The port configuration at Cloudflare’s edge. May specify a single port, for example `\"tcp/1000\"`, or a range of ports, for example `\"tcp/1000-2000\"`.",
-				Required:    true,
+			"ip_firewall": schema.BoolAttribute{
+				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
+				Optional:    true,
+			},
+			"tls": schema.StringAttribute{
+				Description: "The type of TLS termination associated with the application.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("off", "flexible", "full", "strict"),
+				},
 			},
 			"argo_smart_routing": schema.BoolAttribute{
 				Description: "Enables Argo Smart Routing for this application.\nNotes: Only available for TCP applications with traffic_type set to \"direct\".",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"proxy_protocol": schema.StringAttribute{
+				Description: "Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("off", "v1", "v2", "simple"),
+				},
+				Default: stringdefault.StaticString("off"),
+			},
+			"traffic_type": schema.StringAttribute{
+				Description: "Determines how data travels from the edge to your origin. When set to \"direct\", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to \"http\" or \"https\", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("direct", "http", "https"),
+				},
+				Default: stringdefault.StaticString("direct"),
 			},
 			"edge_ips": schema.SingleNestedAttribute{
 				Description: "The anycast edge IP configuration for the hostname of this application.",
@@ -114,35 +143,6 @@ func (r SpectrumApplicationResource) Schema(ctx context.Context, req resource.Sc
 						ElementType: types.StringType,
 					},
 				},
-			},
-			"ip_firewall": schema.BoolAttribute{
-				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
-				Optional:    true,
-			},
-			"proxy_protocol": schema.StringAttribute{
-				Description: "Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://developers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy Protocol.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("off", "v1", "v2", "simple"),
-				},
-				Default: stringdefault.StaticString("off"),
-			},
-			"tls": schema.StringAttribute{
-				Description: "The type of TLS termination associated with the application.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("off", "flexible", "full", "strict"),
-				},
-			},
-			"traffic_type": schema.StringAttribute{
-				Description: "Determines how data travels from the edge to your origin. When set to \"direct\", Spectrum will send traffic directly to your origin, and the application's type is derived from the `protocol`. When set to \"http\" or \"https\", Spectrum will apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and the application type matches this property exactly.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("direct", "http", "https"),
-				},
-				Default: stringdefault.StaticString("direct"),
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Application was created.",

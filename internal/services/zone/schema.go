@@ -25,12 +25,10 @@ func (r ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"type": schema.StringAttribute{
-				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("full", "partial", "secondary"),
-				},
+			"name": schema.StringAttribute{
+				Description:   "The domain name",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account": schema.SingleNestedAttribute{
 				Required: true,
@@ -42,10 +40,17 @@ func (r ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description:   "The domain name",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			"type": schema.StringAttribute{
+				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("full", "partial", "secondary"),
+				},
+			},
+			"vanity_name_servers": schema.ListAttribute{
+				Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"plan": schema.SingleNestedAttribute{
 				Description: "(Deprecated) Please use the `/zones/{zone_id}/subscription` API\nto update a zone's plan. Changing this value will create/cancel\nassociated subscriptions. To view available plans for this zone,\nsee Zone Plans.\n",
@@ -56,11 +61,6 @@ func (r ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						Optional:    true,
 					},
 				},
-			},
-			"vanity_name_servers": schema.ListAttribute{
-				Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
-				Optional:    true,
-				ElementType: types.StringType,
 			},
 			"activated_on": schema.StringAttribute{
 				Description: "The last time proof of ownership was detected and the zone was made\nactive",
@@ -75,6 +75,29 @@ func (r ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"development_mode": schema.Float64Attribute{
 				Description: "The interval (in seconds) from when development mode expires\n(positive integer) or last expired (negative integer) for the\ndomain. If development mode has never been enabled, this value is 0.",
 				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the zone was last modified",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"original_dnshost": schema.StringAttribute{
+				Description: "DNS host at the time of switching to Cloudflare",
+				Computed:    true,
+			},
+			"original_registrar": schema.StringAttribute{
+				Description: "Registrar for the domain at the time of switching to Cloudflare",
+				Computed:    true,
+			},
+			"name_servers": schema.ListAttribute{
+				Description: "The name servers Cloudflare assigns to a zone",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"original_name_servers": schema.ListAttribute{
+				Description: "Original name servers before moving to Cloudflare",
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"meta": schema.SingleNestedAttribute{
 				Description: "Metadata about the zone",
@@ -109,29 +132,6 @@ func (r ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						Optional: true,
 					},
 				},
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the zone was last modified",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"name_servers": schema.ListAttribute{
-				Description: "The name servers Cloudflare assigns to a zone",
-				Computed:    true,
-				ElementType: types.StringType,
-			},
-			"original_dnshost": schema.StringAttribute{
-				Description: "DNS host at the time of switching to Cloudflare",
-				Computed:    true,
-			},
-			"original_name_servers": schema.ListAttribute{
-				Description: "Original name servers before moving to Cloudflare",
-				Computed:    true,
-				ElementType: types.StringType,
-			},
-			"original_registrar": schema.StringAttribute{
-				Description: "Registrar for the domain at the time of switching to Cloudflare",
-				Computed:    true,
 			},
 			"owner": schema.SingleNestedAttribute{
 				Description: "The owner of the zone",

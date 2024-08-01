@@ -30,26 +30,6 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				Optional:    true,
 			},
-			"configurations": schema.SingleNestedAttribute{
-				Description: "A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZoneLockdownConfigurationsDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"target": schema.StringAttribute{
-						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ip", "ip_range"),
-						},
-					},
-					"value": schema.StringAttribute{
-						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
-						Computed:    true,
-						Optional:    true,
-					},
-				},
-			},
 			"created_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was created.",
 				Computed:    true,
@@ -72,6 +52,26 @@ func (r ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
 				Computed:    true,
 				ElementType: types.StringType,
+			},
+			"configurations": schema.SingleNestedAttribute{
+				Description: "A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[ZoneLockdownConfigurationsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"target": schema.StringAttribute{
+						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("ip", "ip_range"),
+						},
+					},
+					"value": schema.StringAttribute{
+						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

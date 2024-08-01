@@ -14,16 +14,16 @@ type SpectrumApplicationResultEnvelope struct {
 type SpectrumApplicationModel struct {
 	ID               types.String                       `tfsdk:"id" json:"id,computed"`
 	Zone             types.String                       `tfsdk:"zone" path:"zone"`
+	Protocol         types.String                       `tfsdk:"protocol" json:"protocol"`
 	DNS              *SpectrumApplicationDNSModel       `tfsdk:"dns" json:"dns"`
 	OriginDNS        *SpectrumApplicationOriginDNSModel `tfsdk:"origin_dns" json:"origin_dns"`
 	OriginPort       types.Dynamic                      `tfsdk:"origin_port" json:"origin_port"`
-	Protocol         types.String                       `tfsdk:"protocol" json:"protocol"`
-	ArgoSmartRouting types.Bool                         `tfsdk:"argo_smart_routing" json:"argo_smart_routing"`
-	EdgeIPs          *SpectrumApplicationEdgeIPsModel   `tfsdk:"edge_ips" json:"edge_ips"`
 	IPFirewall       types.Bool                         `tfsdk:"ip_firewall" json:"ip_firewall"`
-	ProxyProtocol    types.String                       `tfsdk:"proxy_protocol" json:"proxy_protocol"`
 	TLS              types.String                       `tfsdk:"tls" json:"tls"`
+	ArgoSmartRouting types.Bool                         `tfsdk:"argo_smart_routing" json:"argo_smart_routing"`
+	ProxyProtocol    types.String                       `tfsdk:"proxy_protocol" json:"proxy_protocol"`
 	TrafficType      types.String                       `tfsdk:"traffic_type" json:"traffic_type"`
+	EdgeIPs          *SpectrumApplicationEdgeIPsModel   `tfsdk:"edge_ips" json:"edge_ips"`
 	CreatedOn        timetypes.RFC3339                  `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn       timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed"`
 }

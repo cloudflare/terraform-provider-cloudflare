@@ -19,23 +19,23 @@ type LoadBalancerPoolResultListDataSourceEnvelope struct {
 type LoadBalancerPoolDataSourceModel struct {
 	AccountID          types.String                                       `tfsdk:"account_id" path:"account_id"`
 	PoolID             types.String                                       `tfsdk:"pool_id" path:"pool_id"`
-	ID                 types.String                                       `tfsdk:"id" json:"id"`
-	CheckRegions       *[]types.String                                    `tfsdk:"check_regions" json:"check_regions"`
 	CreatedOn          timetypes.RFC3339                                  `tfsdk:"created_on" json:"created_on,computed"`
-	Description        types.String                                       `tfsdk:"description" json:"description"`
 	DisabledAt         timetypes.RFC3339                                  `tfsdk:"disabled_at" json:"disabled_at,computed"`
 	Enabled            types.Bool                                         `tfsdk:"enabled" json:"enabled,computed"`
-	Latitude           types.Float64                                      `tfsdk:"latitude" json:"latitude"`
-	LoadShedding       *LoadBalancerPoolLoadSheddingDataSourceModel       `tfsdk:"load_shedding" json:"load_shedding"`
-	Longitude          types.Float64                                      `tfsdk:"longitude" json:"longitude"`
 	MinimumOrigins     types.Int64                                        `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
 	ModifiedOn         timetypes.RFC3339                                  `tfsdk:"modified_on" json:"modified_on,computed"`
-	Monitor            jsontypes.Normalized                               `tfsdk:"monitor" json:"monitor"`
+	Description        types.String                                       `tfsdk:"description" json:"description"`
+	ID                 types.String                                       `tfsdk:"id" json:"id"`
+	Latitude           types.Float64                                      `tfsdk:"latitude" json:"latitude"`
+	Longitude          types.Float64                                      `tfsdk:"longitude" json:"longitude"`
 	Name               types.String                                       `tfsdk:"name" json:"name"`
 	NotificationEmail  types.String                                       `tfsdk:"notification_email" json:"notification_email"`
+	CheckRegions       *[]types.String                                    `tfsdk:"check_regions" json:"check_regions"`
+	LoadShedding       *LoadBalancerPoolLoadSheddingDataSourceModel       `tfsdk:"load_shedding" json:"load_shedding"`
 	NotificationFilter *LoadBalancerPoolNotificationFilterDataSourceModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringDataSourceModel     `tfsdk:"origin_steering" json:"origin_steering"`
 	Origins            *[]*LoadBalancerPoolOriginsDataSourceModel         `tfsdk:"origins" json:"origins"`
+	Monitor            jsontypes.Normalized                               `tfsdk:"monitor" json:"monitor"`
 	Filter             *LoadBalancerPoolFindOneByDataSourceModel          `tfsdk:"filter"`
 }
 

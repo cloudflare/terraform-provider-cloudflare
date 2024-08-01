@@ -26,6 +26,14 @@ func (r EmailRoutingCatchAllDataSource) Schema(ctx context.Context, req datasour
 				Description: "Routing rule identifier.",
 				Optional:    true,
 			},
+			"name": schema.StringAttribute{
+				Description: "Routing rule name.",
+				Optional:    true,
+			},
+			"tag": schema.StringAttribute{
+				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
+				Optional:    true,
+			},
 			"actions": schema.ListNestedAttribute{
 				Description: "List actions for the catch-all routing rule.",
 				Optional:    true,
@@ -46,11 +54,6 @@ func (r EmailRoutingCatchAllDataSource) Schema(ctx context.Context, req datasour
 					},
 				},
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Routing rule status.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"matchers": schema.ListNestedAttribute{
 				Description: "List of matchers for the catch-all routing rule.",
 				Optional:    true,
@@ -66,12 +69,9 @@ func (r EmailRoutingCatchAllDataSource) Schema(ctx context.Context, req datasour
 					},
 				},
 			},
-			"name": schema.StringAttribute{
-				Description: "Routing rule name.",
-				Optional:    true,
-			},
-			"tag": schema.StringAttribute{
-				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
+			"enabled": schema.BoolAttribute{
+				Description: "Routing rule status.",
+				Computed:    true,
 				Optional:    true,
 			},
 		},

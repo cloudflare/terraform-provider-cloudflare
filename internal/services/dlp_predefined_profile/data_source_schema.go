@@ -31,12 +31,19 @@ func (r DLPPredefinedProfileDataSource) Schema(ctx context.Context, req datasour
 				Description: "The ID for this profile",
 				Optional:    true,
 			},
-			"allowed_match_count": schema.Float64Attribute{
-				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
-				Computed:    true,
+			"name": schema.StringAttribute{
+				Description: "The name of the profile.",
 				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 1000),
+			},
+			"ocr_enabled": schema.BoolAttribute{
+				Description: "If true, scan images via OCR to determine if any text present matches filters.",
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of the profile.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("predefined"),
 				},
 			},
 			"context_awareness": schema.SingleNestedAttribute{
@@ -87,19 +94,12 @@ func (r DLPPredefinedProfileDataSource) Schema(ctx context.Context, req datasour
 					},
 				},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of the profile.",
+			"allowed_match_count": schema.Float64Attribute{
+				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
+				Computed:    true,
 				Optional:    true,
-			},
-			"ocr_enabled": schema.BoolAttribute{
-				Description: "If true, scan images via OCR to determine if any text present matches filters.",
-				Optional:    true,
-			},
-			"type": schema.StringAttribute{
-				Description: "The type of the profile.",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("predefined"),
+				Validators: []validator.Float64{
+					float64validator.Between(0, 1000),
 				},
 			},
 		},

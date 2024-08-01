@@ -47,6 +47,10 @@ func (r APIShieldResource) UpgradeState(ctx context.Context) map[int64]resource.
 							},
 						},
 					},
+					"success": schema.BoolAttribute{
+						Description: "Whether the API call was successful",
+						Computed:    true,
+					},
 					"errors": schema.ListNestedAttribute{
 						Computed: true,
 						NestedObject: schema.NestedAttributeObject{
@@ -78,10 +82,6 @@ func (r APIShieldResource) UpgradeState(ctx context.Context) map[int64]resource.
 								},
 							},
 						},
-					},
-					"success": schema.BoolAttribute{
-						Description: "Whether the API call was successful",
-						Computed:    true,
 					},
 				},
 			},

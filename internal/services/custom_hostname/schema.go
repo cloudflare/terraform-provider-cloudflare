@@ -31,6 +31,11 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"hostname": schema.StringAttribute{
+				Description:   "The custom hostname that will point to your hostname via CNAME.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"ssl": schema.SingleNestedAttribute{
 				Description: "SSL properties used when creating the custom hostname.",
 				Required:    true,
@@ -118,6 +123,14 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 					},
 				},
 			},
+			"custom_origin_server": schema.StringAttribute{
+				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
+				Optional:    true,
+			},
+			"custom_origin_sni": schema.StringAttribute{
+				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
+				Optional:    true,
+			},
 			"custom_metadata": schema.SingleNestedAttribute{
 				Description: "These are per-hostname (customer) settings.",
 				Optional:    true,
@@ -128,23 +141,22 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 					},
 				},
 			},
-			"hostname": schema.StringAttribute{
-				Description:   "The custom hostname that will point to your hostname via CNAME.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"custom_origin_server": schema.StringAttribute{
-				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
-				Optional:    true,
-			},
-			"custom_origin_sni": schema.StringAttribute{
-				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
-				Optional:    true,
-			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the hostname was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the hostname's activation.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
+				},
+			},
+			"verification_errors": schema.ListAttribute{
+				Description: "These are errors that were encountered while trying to activate a hostname.",
+				Computed:    true,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 			"ownership_verification": schema.SingleNestedAttribute{
 				Description: "This is a record which can be placed to activate a hostname.",
@@ -182,18 +194,6 @@ func (r CustomHostnameResource) Schema(ctx context.Context, req resource.SchemaR
 						Optional:    true,
 					},
 				},
-			},
-			"status": schema.StringAttribute{
-				Description: "Status of the hostname's activation.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
-				},
-			},
-			"verification_errors": schema.ListAttribute{
-				Description: "These are errors that were encountered while trying to activate a hostname.",
-				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
 		},
 	}

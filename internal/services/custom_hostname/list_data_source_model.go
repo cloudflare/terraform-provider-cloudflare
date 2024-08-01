@@ -15,13 +15,13 @@ type CustomHostnamesResultListDataSourceEnvelope struct {
 
 type CustomHostnamesDataSourceModel struct {
 	ZoneID    types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	ID        types.String                             `tfsdk:"id" query:"id"`
 	Direction types.String                             `tfsdk:"direction" query:"direction"`
 	Hostname  types.String                             `tfsdk:"hostname" query:"hostname"`
+	ID        types.String                             `tfsdk:"id" query:"id"`
+	SSL       types.Float64                            `tfsdk:"ssl" query:"ssl"`
 	Order     types.String                             `tfsdk:"order" query:"order"`
 	Page      types.Float64                            `tfsdk:"page" query:"page"`
 	PerPage   types.Float64                            `tfsdk:"per_page" query:"per_page"`
-	SSL       types.Float64                            `tfsdk:"ssl" query:"ssl"`
 	MaxItems  types.Int64                              `tfsdk:"max_items"`
 	Result    *[]*CustomHostnamesResultDataSourceModel `tfsdk:"result"`
 }

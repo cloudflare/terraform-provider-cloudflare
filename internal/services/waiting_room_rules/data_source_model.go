@@ -12,13 +12,13 @@ type WaitingRoomRulesResultListDataSourceEnvelope struct {
 }
 
 type WaitingRoomRulesDataSourceModel struct {
-	ID          types.String                              `tfsdk:"id" json:"id"`
 	Action      types.String                              `tfsdk:"action" json:"action"`
-	Description types.String                              `tfsdk:"description" json:"description"`
-	Enabled     types.Bool                                `tfsdk:"enabled" json:"enabled"`
 	Expression  types.String                              `tfsdk:"expression" json:"expression"`
+	ID          types.String                              `tfsdk:"id" json:"id"`
 	LastUpdated timetypes.RFC3339                         `tfsdk:"last_updated" json:"last_updated"`
 	Version     types.String                              `tfsdk:"version" json:"version"`
+	Description types.String                              `tfsdk:"description" json:"description"`
+	Enabled     types.Bool                                `tfsdk:"enabled" json:"enabled"`
 	Filter      *WaitingRoomRulesFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

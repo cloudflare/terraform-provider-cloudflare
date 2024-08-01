@@ -19,6 +19,11 @@ func (r AccessIdentityProviderResource) UpgradeState(ctx context.Context) map[in
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description:   "UUID",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+					},
 					"account_id": schema.StringAttribute{
 						Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
 						Optional:      true,
@@ -28,6 +33,17 @@ func (r AccessIdentityProviderResource) UpgradeState(ctx context.Context) map[in
 						Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+					},
+					"name": schema.StringAttribute{
+						Description: "The name of the identity provider, shown to users on the login page.",
+						Required:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex"),
+						},
 					},
 					"config": schema.SingleNestedAttribute{
 						Description: "The configuration parameters for the identity provider. To view the required parameters for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).",
@@ -70,22 +86,6 @@ func (r AccessIdentityProviderResource) UpgradeState(ctx context.Context) map[in
 								Optional:    true,
 							},
 						},
-					},
-					"name": schema.StringAttribute{
-						Description: "The name of the identity provider, shown to users on the login page.",
-						Required:    true,
-					},
-					"type": schema.StringAttribute{
-						Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).",
-						Required:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex"),
-						},
-					},
-					"id": schema.StringAttribute{
-						Description:   "UUID",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"scim_config": schema.SingleNestedAttribute{
 						Description: "The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider.",

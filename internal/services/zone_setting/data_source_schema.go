@@ -15,12 +15,12 @@ var _ datasource.DataSourceWithValidateConfig = &ZoneSettingDataSource{}
 func (r ZoneSettingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Required:    true,
-			},
 			"setting_id": schema.StringAttribute{
 				Description: "Setting name",
+				Required:    true,
+			},
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
 				Required:    true,
 			},
 		},

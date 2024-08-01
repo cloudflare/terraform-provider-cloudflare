@@ -21,16 +21,24 @@ func (r FiltersDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Description: "Identifier",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the filter.",
-				Optional:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "A case-insensitive string to find in the description.",
 				Optional:    true,
 			},
 			"expression": schema.StringAttribute{
 				Description: "A case-insensitive string to find in the expression.",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the filter.",
+				Optional:    true,
+			},
+			"paused": schema.BoolAttribute{
+				Description: "When true, indicates that the filter is currently paused.",
+				Optional:    true,
+			},
+			"ref": schema.StringAttribute{
+				Description: "The filter ref (a short reference tag) to search for. Must be an exact match.",
 				Optional:    true,
 			},
 			"page": schema.Float64Attribute{
@@ -41,10 +49,6 @@ func (r FiltersDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					float64validator.AtLeast(1),
 				},
 			},
-			"paused": schema.BoolAttribute{
-				Description: "When true, indicates that the filter is currently paused.",
-				Optional:    true,
-			},
 			"per_page": schema.Float64Attribute{
 				Description: "Number of filters per page.",
 				Computed:    true,
@@ -52,10 +56,6 @@ func (r FiltersDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Validators: []validator.Float64{
 					float64validator.Between(5, 100),
 				},
-			},
-			"ref": schema.StringAttribute{
-				Description: "The filter ref (a short reference tag) to search for. Must be an exact match.",
-				Optional:    true,
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

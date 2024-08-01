@@ -23,6 +23,11 @@ func (r WorkerSecretResource) UpgradeState(ctx context.Context) map[int64]resour
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"script_name": schema.StringAttribute{
+						Description:   "Name of the script, used in URLs and route configuration.",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+					},
 					"account_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
@@ -32,11 +37,6 @@ func (r WorkerSecretResource) UpgradeState(ctx context.Context) map[int64]resour
 						Description:   "Name of the Workers for Platforms dispatch namespace.",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
-					"script_name": schema.StringAttribute{
-						Description:   "Name of the script, used in URLs and route configuration.",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"name": schema.StringAttribute{
 						Description: "The name of this secret, this is what will be to access it inside the Worker.",

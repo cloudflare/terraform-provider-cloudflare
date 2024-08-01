@@ -31,6 +31,11 @@ func (r AccessMutualTLSCertificateResource) Schema(ctx context.Context, req reso
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"certificate": schema.StringAttribute{
+				Description:   "The certificate content.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the certificate.",
 				Required:    true,
@@ -39,11 +44,6 @@ func (r AccessMutualTLSCertificateResource) Schema(ctx context.Context, req reso
 				Description: "The hostnames of the applications that will use this certificate.",
 				Optional:    true,
 				ElementType: types.StringType,
-			},
-			"certificate": schema.StringAttribute{
-				Description:   "The certificate content.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

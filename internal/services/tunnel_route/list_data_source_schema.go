@@ -44,14 +44,6 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "If set, only list routes that contain this IP range.",
 				Optional:    true,
 			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-			},
 			"per_page": schema.Float64Attribute{
 				Description: "Number of results to display.",
 				Optional:    true,
@@ -74,6 +66,14 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
 				Optional:    true,
+			},
+			"page": schema.Float64Attribute{
+				Description: "Page number of paginated results.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

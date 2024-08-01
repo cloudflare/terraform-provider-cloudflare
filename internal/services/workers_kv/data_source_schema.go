@@ -19,12 +19,12 @@ func (r WorkersKVDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "Identifier",
 				Required:    true,
 			},
-			"namespace_id": schema.StringAttribute{
-				Description: "Namespace identifier tag.",
-				Required:    true,
-			},
 			"key_name": schema.StringAttribute{
 				Description: "A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.",
+				Required:    true,
+			},
+			"namespace_id": schema.StringAttribute{
+				Description: "Namespace identifier tag.",
 				Required:    true,
 			},
 		},

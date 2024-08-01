@@ -18,16 +18,28 @@ var _ datasource.DataSourceWithValidateConfig = &WaitingRoomRulesDataSource{}
 func (r WaitingRoomRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "The ID of the rule.",
-				Optional:    true,
-			},
 			"action": schema.StringAttribute{
 				Description: "The action to take when the expression matches.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("bypass_waiting_room"),
 				},
+			},
+			"expression": schema.StringAttribute{
+				Description: "Criteria defining when there is a match for the current rule.",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The ID of the rule.",
+				Optional:    true,
+			},
+			"last_updated": schema.StringAttribute{
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"version": schema.StringAttribute{
+				Description: "The version of the rule.",
+				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the rule.",
@@ -37,18 +49,6 @@ func (r WaitingRoomRulesDataSource) Schema(ctx context.Context, req datasource.S
 			"enabled": schema.BoolAttribute{
 				Description: "When set to true, the rule is enabled.",
 				Computed:    true,
-				Optional:    true,
-			},
-			"expression": schema.StringAttribute{
-				Description: "Criteria defining when there is a match for the current rule.",
-				Optional:    true,
-			},
-			"last_updated": schema.StringAttribute{
-				Optional:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"version": schema.StringAttribute{
-				Description: "The version of the rule.",
 				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{

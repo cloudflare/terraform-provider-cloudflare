@@ -60,6 +60,45 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 				Description: "Whether the policy will be applied to matching devices.",
 				Optional:    true,
 			},
+			"exclude_office_ips": schema.BoolAttribute{
+				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
+				Optional:    true,
+			},
+			"gateway_unique_id": schema.StringAttribute{
+				Optional: true,
+			},
+			"lan_allow_minutes": schema.Float64Attribute{
+				Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
+				Optional:    true,
+			},
+			"lan_allow_subnet_size": schema.Float64Attribute{
+				Description: "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
+				Optional:    true,
+			},
+			"match": schema.StringAttribute{
+				Description: "The wirefilter expression to match devices.",
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the device settings profile.",
+				Optional:    true,
+			},
+			"precedence": schema.Float64Attribute{
+				Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
+				Optional:    true,
+			},
+			"support_url": schema.StringAttribute{
+				Description: "The URL to launch when the Send Feedback button is clicked.",
+				Optional:    true,
+			},
+			"switch_locked": schema.BoolAttribute{
+				Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
+				Optional:    true,
+			},
+			"tunnel_protocol": schema.StringAttribute{
+				Description: "Determines which tunnel protocol to use.",
+				Optional:    true,
+			},
 			"exclude": schema.ListNestedAttribute{
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -79,10 +118,6 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 						},
 					},
 				},
-			},
-			"exclude_office_ips": schema.BoolAttribute{
-				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
-				Optional:    true,
 			},
 			"fallback_domains": schema.ListNestedAttribute{
 				Optional: true,
@@ -106,9 +141,6 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 					},
 				},
 			},
-			"gateway_unique_id": schema.StringAttribute{
-				Optional: true,
-			},
 			"include": schema.ListNestedAttribute{
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -129,26 +161,6 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 					},
 				},
 			},
-			"lan_allow_minutes": schema.Float64Attribute{
-				Description: "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
-				Optional:    true,
-			},
-			"lan_allow_subnet_size": schema.Float64Attribute{
-				Description: "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
-				Optional:    true,
-			},
-			"match": schema.StringAttribute{
-				Description: "The wirefilter expression to match devices.",
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the device settings profile.",
-				Optional:    true,
-			},
-			"precedence": schema.Float64Attribute{
-				Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
-				Optional:    true,
-			},
 			"service_mode_v2": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -163,14 +175,6 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 						Optional:    true,
 					},
 				},
-			},
-			"support_url": schema.StringAttribute{
-				Description: "The URL to launch when the Send Feedback button is clicked.",
-				Optional:    true,
-			},
-			"switch_locked": schema.BoolAttribute{
-				Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
-				Optional:    true,
 			},
 			"target_tests": schema.ListNestedAttribute{
 				Optional: true,
@@ -188,10 +192,6 @@ func (r DeviceSettingsPolicyDataSource) Schema(ctx context.Context, req datasour
 						},
 					},
 				},
-			},
-			"tunnel_protocol": schema.StringAttribute{
-				Description: "Determines which tunnel protocol to use.",
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

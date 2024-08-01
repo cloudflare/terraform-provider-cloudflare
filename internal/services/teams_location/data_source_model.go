@@ -18,19 +18,19 @@ type TeamsLocationResultListDataSourceEnvelope struct {
 type TeamsLocationDataSourceModel struct {
 	AccountID             types.String                             `tfsdk:"account_id" path:"account_id"`
 	LocationID            types.String                             `tfsdk:"location_id" path:"location_id"`
-	ID                    types.String                             `tfsdk:"id" json:"id"`
-	ClientDefault         types.Bool                               `tfsdk:"client_default" json:"client_default"`
 	CreatedAt             timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed"`
+	UpdatedAt             timetypes.RFC3339                        `tfsdk:"updated_at" json:"updated_at,computed"`
+	ClientDefault         types.Bool                               `tfsdk:"client_default" json:"client_default"`
 	DNSDestinationIPsID   types.String                             `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id"`
 	DOHSubdomain          types.String                             `tfsdk:"doh_subdomain" json:"doh_subdomain"`
 	ECSSupport            types.Bool                               `tfsdk:"ecs_support" json:"ecs_support"`
-	Endpoints             *TeamsLocationEndpointsDataSourceModel   `tfsdk:"endpoints" json:"endpoints"`
+	ID                    types.String                             `tfsdk:"id" json:"id"`
 	IP                    types.String                             `tfsdk:"ip" json:"ip"`
 	IPV4Destination       types.String                             `tfsdk:"ipv4_destination" json:"ipv4_destination"`
 	IPV4DestinationBackup types.String                             `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup"`
 	Name                  types.String                             `tfsdk:"name" json:"name"`
+	Endpoints             *TeamsLocationEndpointsDataSourceModel   `tfsdk:"endpoints" json:"endpoints"`
 	Networks              *[]*TeamsLocationNetworksDataSourceModel `tfsdk:"networks" json:"networks"`
-	UpdatedAt             timetypes.RFC3339                        `tfsdk:"updated_at" json:"updated_at,computed"`
 	Filter                *TeamsLocationFindOneByDataSourceModel   `tfsdk:"filter"`
 }
 

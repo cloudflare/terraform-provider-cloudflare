@@ -23,12 +23,12 @@ func (r FallbackDomainDataSource) Schema(ctx context.Context, req datasource.Sch
 				Description: "Device ID.",
 				Optional:    true,
 			},
-			"suffix": schema.StringAttribute{
-				Description: "The domain suffix to match when resolving locally.",
-				Optional:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "A description of the fallback domain, displayed in the client UI.",
+				Optional:    true,
+			},
+			"suffix": schema.StringAttribute{
+				Description: "The domain suffix to match when resolving locally.",
 				Optional:    true,
 			},
 			"dns_server": schema.ListAttribute{

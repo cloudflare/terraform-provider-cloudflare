@@ -16,17 +16,17 @@ type AccessOrganizationDataSourceModel struct {
 	ZoneID                         types.String                                  `tfsdk:"zone_id" path:"zone_id"`
 	AllowAuthenticateViaWARP       types.Bool                                    `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp"`
 	AuthDomain                     types.String                                  `tfsdk:"auth_domain" json:"auth_domain"`
-	AutoRedirectToIdentity         types.Bool                                    `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
 	CreatedAt                      timetypes.RFC3339                             `tfsdk:"created_at" json:"created_at"`
-	CustomPages                    *AccessOrganizationCustomPagesDataSourceModel `tfsdk:"custom_pages" json:"custom_pages"`
 	IsUIReadOnly                   types.Bool                                    `tfsdk:"is_ui_read_only" json:"is_ui_read_only"`
-	LoginDesign                    *AccessOrganizationLoginDesignDataSourceModel `tfsdk:"login_design" json:"login_design"`
 	Name                           types.String                                  `tfsdk:"name" json:"name"`
 	SessionDuration                types.String                                  `tfsdk:"session_duration" json:"session_duration"`
 	UIReadOnlyToggleReason         types.String                                  `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason"`
 	UpdatedAt                      timetypes.RFC3339                             `tfsdk:"updated_at" json:"updated_at"`
 	UserSeatExpirationInactiveTime types.String                                  `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time"`
 	WARPAuthSessionDuration        types.String                                  `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
+	CustomPages                    *AccessOrganizationCustomPagesDataSourceModel `tfsdk:"custom_pages" json:"custom_pages"`
+	LoginDesign                    *AccessOrganizationLoginDesignDataSourceModel `tfsdk:"login_design" json:"login_design"`
+	AutoRedirectToIdentity         types.Bool                                    `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
 }
 
 type AccessOrganizationCustomPagesDataSourceModel struct {

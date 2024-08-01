@@ -25,9 +25,50 @@ func (r ZoneDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				Description: "Identifier",
 				Optional:    true,
 			},
+			"activated_on": schema.StringAttribute{
+				Description: "The last time proof of ownership was detected and the zone was made\nactive",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the zone was created",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"development_mode": schema.Float64Attribute{
+				Description: "The interval (in seconds) from when development mode expires\n(positive integer) or last expired (negative integer) for the\ndomain. If development mode has never been enabled, this value is 0.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "Identifier",
 				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the zone was last modified",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"name": schema.StringAttribute{
+				Description: "The domain name",
+				Computed:    true,
+			},
+			"original_dnshost": schema.StringAttribute{
+				Description: "DNS host at the time of switching to Cloudflare",
+				Computed:    true,
+			},
+			"original_registrar": schema.StringAttribute{
+				Description: "Registrar for the domain at the time of switching to Cloudflare",
+				Computed:    true,
+			},
+			"name_servers": schema.ListAttribute{
+				Description: "The name servers Cloudflare assigns to a zone",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"original_name_servers": schema.ListAttribute{
+				Description: "Original name servers before moving to Cloudflare",
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"account": schema.SingleNestedAttribute{
 				Description: "The account the zone belongs to",
@@ -45,20 +86,6 @@ func (r ZoneDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 						Optional:    true,
 					},
 				},
-			},
-			"activated_on": schema.StringAttribute{
-				Description: "The last time proof of ownership was detected and the zone was made\nactive",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"created_on": schema.StringAttribute{
-				Description: "When the zone was created",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"development_mode": schema.Float64Attribute{
-				Description: "The interval (in seconds) from when development mode expires\n(positive integer) or last expired (negative integer) for the\ndomain. If development mode has never been enabled, this value is 0.",
-				Computed:    true,
 			},
 			"meta": schema.SingleNestedAttribute{
 				Description: "Metadata about the zone",
@@ -100,33 +127,6 @@ func (r ZoneDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 						Optional: true,
 					},
 				},
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the zone was last modified",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"name": schema.StringAttribute{
-				Description: "The domain name",
-				Computed:    true,
-			},
-			"name_servers": schema.ListAttribute{
-				Description: "The name servers Cloudflare assigns to a zone",
-				Computed:    true,
-				ElementType: types.StringType,
-			},
-			"original_dnshost": schema.StringAttribute{
-				Description: "DNS host at the time of switching to Cloudflare",
-				Computed:    true,
-			},
-			"original_name_servers": schema.ListAttribute{
-				Description: "Original name servers before moving to Cloudflare",
-				Computed:    true,
-				ElementType: types.StringType,
-			},
-			"original_registrar": schema.StringAttribute{
-				Description: "Registrar for the domain at the time of switching to Cloudflare",
-				Computed:    true,
 			},
 			"owner": schema.SingleNestedAttribute{
 				Description: "The owner of the zone",

@@ -19,12 +19,12 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 type ZoneLockdownDataSourceModel struct {
 	ZoneIdentifier types.String                                                        `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String                                                        `tfsdk:"id" path:"id"`
-	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
 	CreatedOn      timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed"`
 	Description    types.String                                                        `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed"`
 	Paused         types.Bool                                                          `tfsdk:"paused" json:"paused,computed"`
 	URLs           *[]types.String                                                     `tfsdk:"urls" json:"urls,computed"`
+	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
 	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
 }
 

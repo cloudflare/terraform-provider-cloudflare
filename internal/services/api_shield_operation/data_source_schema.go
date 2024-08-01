@@ -20,16 +20,16 @@ var _ datasource.DataSourceWithValidateConfig = &APIShieldOperationDataSource{}
 func (r APIShieldOperationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "UUID",
-				Optional:    true,
-			},
 			"endpoint": schema.StringAttribute{
 				Description: "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
 				Optional:    true,
 			},
 			"host": schema.StringAttribute{
 				Description: "RFC3986-compliant host.",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "UUID",
 				Optional:    true,
 			},
 			"last_updated": schema.StringAttribute{
@@ -43,17 +43,17 @@ func (r APIShieldOperationDataSource) Schema(ctx context.Context, req datasource
 					stringvalidator.OneOfCaseInsensitive("GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE"),
 				},
 			},
-			"origin": schema.ListAttribute{
-				Description: "API discovery engine(s) that discovered this operation",
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"state": schema.StringAttribute{
 				Description: "State of operation in API Discovery\n  * `review` - Operation is not saved into API Shield Endpoint Management\n  * `saved` - Operation is saved into API Shield Endpoint Management\n  * `ignored` - Operation is marked as ignored\n",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("review", "saved", "ignored"),
 				},
+			},
+			"origin": schema.ListAttribute{
+				Description: "API discovery engine(s) that discovered this operation",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"features": schema.SingleNestedAttribute{
 				Optional: true,

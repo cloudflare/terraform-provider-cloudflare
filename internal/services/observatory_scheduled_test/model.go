@@ -14,13 +14,13 @@ type ObservatoryScheduledTestResultEnvelope struct {
 
 type ObservatoryScheduledTestModel struct {
 	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
-	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id"`
 	URL       types.String                                                    `tfsdk:"url" path:"url"`
+	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id"`
+	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed"`
+	ItemCount types.Float64                                                   `tfsdk:"item_count" json:"count,computed"`
+	Region    types.String                                                    `tfsdk:"region" json:"region,computed"`
 	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed"`
 	Test      customfield.NestedObject[ObservatoryScheduledTestTestModel]     `tfsdk:"test" json:"test,computed"`
-	ItemCount types.Float64                                                   `tfsdk:"item_count" json:"count,computed"`
-	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed"`
-	Region    types.String                                                    `tfsdk:"region" json:"region,computed"`
 }
 
 type ObservatoryScheduledTestScheduleModel struct {

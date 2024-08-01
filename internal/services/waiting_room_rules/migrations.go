@@ -20,12 +20,12 @@ func (r WaitingRoomRulesResource) UpgradeState(ctx context.Context) map[int64]re
 		0: {
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
-						Description:   "Identifier",
+					"waiting_room_id": schema.StringAttribute{
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
-					"waiting_room_id": schema.StringAttribute{
+					"zone_id": schema.StringAttribute{
+						Description:   "Identifier",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},

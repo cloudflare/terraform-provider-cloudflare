@@ -16,10 +16,6 @@ var _ datasource.DataSourceWithValidateConfig = &TunnelVirtualNetworkDataSource{
 func (r TunnelVirtualNetworkDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "UUID of the virtual network.",
-				Optional:    true,
-			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the virtual network.",
 				Optional:    true,
@@ -29,6 +25,15 @@ func (r TunnelVirtualNetworkDataSource) Schema(ctx context.Context, req datasour
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"deleted_at": schema.StringAttribute{
+				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "UUID of the virtual network.",
+				Optional:    true,
+			},
 			"is_default_network": schema.BoolAttribute{
 				Description: "If `true`, this virtual network is the default for the account.",
 				Optional:    true,
@@ -36,11 +41,6 @@ func (r TunnelVirtualNetworkDataSource) Schema(ctx context.Context, req datasour
 			"name": schema.StringAttribute{
 				Description: "A user-friendly name for the virtual network.",
 				Optional:    true,
-			},
-			"deleted_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

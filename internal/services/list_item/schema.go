@@ -18,14 +18,14 @@ import (
 func (r ListItemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"list_id": schema.StringAttribute{
 				Description:   "The unique ID of the list.",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"account_identifier": schema.StringAttribute{
@@ -46,6 +46,10 @@ func (r ListItemResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Description: "An informative summary of the list item.",
 				Optional:    true,
 			},
+			"ip": schema.StringAttribute{
+				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
+				Optional:    true,
+			},
 			"hostname": schema.SingleNestedAttribute{
 				Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
 				Optional:    true,
@@ -54,10 +58,6 @@ func (r ListItemResource) Schema(ctx context.Context, req resource.SchemaRequest
 						Required: true,
 					},
 				},
-			},
-			"ip": schema.StringAttribute{
-				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
-				Optional:    true,
 			},
 			"redirect": schema.SingleNestedAttribute{
 				Description: "The definition of the redirect.",

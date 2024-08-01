@@ -17,24 +17,24 @@ type AccessPolicyResultListDataSourceEnvelope struct {
 }
 
 type AccessPolicyDataSourceModel struct {
+	AccountID                    types.String                                  `tfsdk:"account_id" path:"account_id"`
 	AppID                        types.String                                  `tfsdk:"app_id" path:"app_id"`
 	PolicyID                     types.String                                  `tfsdk:"policy_id" path:"policy_id"`
-	AccountID                    types.String                                  `tfsdk:"account_id" path:"account_id"`
 	ZoneID                       types.String                                  `tfsdk:"zone_id" path:"zone_id"`
-	ID                           types.String                                  `tfsdk:"id" json:"id"`
-	ApprovalGroups               *[]*AccessPolicyApprovalGroupsDataSourceModel `tfsdk:"approval_groups" json:"approval_groups"`
 	ApprovalRequired             types.Bool                                    `tfsdk:"approval_required" json:"approval_required,computed"`
 	CreatedAt                    timetypes.RFC3339                             `tfsdk:"created_at" json:"created_at,computed"`
-	Decision                     types.String                                  `tfsdk:"decision" json:"decision"`
-	Exclude                      *[]*AccessPolicyExcludeDataSourceModel        `tfsdk:"exclude" json:"exclude"`
-	Include                      *[]*AccessPolicyIncludeDataSourceModel        `tfsdk:"include" json:"include"`
 	IsolationRequired            types.Bool                                    `tfsdk:"isolation_required" json:"isolation_required,computed"`
-	Name                         types.String                                  `tfsdk:"name" json:"name"`
-	PurposeJustificationPrompt   types.String                                  `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt"`
 	PurposeJustificationRequired types.Bool                                    `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
-	Require                      *[]*AccessPolicyRequireDataSourceModel        `tfsdk:"require" json:"require"`
 	SessionDuration              types.String                                  `tfsdk:"session_duration" json:"session_duration,computed"`
 	UpdatedAt                    timetypes.RFC3339                             `tfsdk:"updated_at" json:"updated_at,computed"`
+	Decision                     types.String                                  `tfsdk:"decision" json:"decision"`
+	ID                           types.String                                  `tfsdk:"id" json:"id"`
+	Name                         types.String                                  `tfsdk:"name" json:"name"`
+	PurposeJustificationPrompt   types.String                                  `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt"`
+	ApprovalGroups               *[]*AccessPolicyApprovalGroupsDataSourceModel `tfsdk:"approval_groups" json:"approval_groups"`
+	Exclude                      *[]*AccessPolicyExcludeDataSourceModel        `tfsdk:"exclude" json:"exclude"`
+	Include                      *[]*AccessPolicyIncludeDataSourceModel        `tfsdk:"include" json:"include"`
+	Require                      *[]*AccessPolicyRequireDataSourceModel        `tfsdk:"require" json:"require"`
 	Filter                       *AccessPolicyFindOneByDataSourceModel         `tfsdk:"filter"`
 }
 

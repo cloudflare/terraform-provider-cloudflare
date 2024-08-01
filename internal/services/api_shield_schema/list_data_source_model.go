@@ -13,10 +13,10 @@ type APIShieldSchemasResultListDataSourceEnvelope struct {
 
 type APIShieldSchemasDataSourceModel struct {
 	ZoneID            types.String                              `tfsdk:"zone_id" path:"zone_id"`
+	ValidationEnabled types.Bool                                `tfsdk:"validation_enabled" query:"validation_enabled"`
 	OmitSource        types.Bool                                `tfsdk:"omit_source" query:"omit_source"`
 	Page              types.Int64                               `tfsdk:"page" query:"page"`
 	PerPage           types.Int64                               `tfsdk:"per_page" query:"per_page"`
-	ValidationEnabled types.Bool                                `tfsdk:"validation_enabled" query:"validation_enabled"`
 	MaxItems          types.Int64                               `tfsdk:"max_items"`
 	Result            *[]*APIShieldSchemasResultDataSourceModel `tfsdk:"result"`
 }

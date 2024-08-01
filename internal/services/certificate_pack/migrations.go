@@ -25,15 +25,15 @@ func (r CertificatePackResource) UpgradeState(ctx context.Context) map[int64]res
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
-					"zone_id": schema.StringAttribute{
-						Description:   "Identifier",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
 					"certificate_pack_id": schema.StringAttribute{
 						Description:   "Identifier",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+					},
+					"zone_id": schema.StringAttribute{
+						Description:   "Identifier",
+						Required:      true,
+						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"certificate_authority": schema.StringAttribute{
 						Description: "Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)",
@@ -45,11 +45,6 @@ func (r CertificatePackResource) UpgradeState(ctx context.Context) map[int64]res
 					"cloudflare_branding": schema.BoolAttribute{
 						Description: "Whether or not to add Cloudflare Branding for the order.  This will add sni.cloudflaressl.com as the Common Name if set true.",
 						Computed:    true,
-					},
-					"hosts": schema.ListAttribute{
-						Description: "Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.",
-						Computed:    true,
-						ElementType: types.StringType,
 					},
 					"status": schema.StringAttribute{
 						Description: "Status of certificate pack.",
@@ -78,6 +73,11 @@ func (r CertificatePackResource) UpgradeState(ctx context.Context) map[int64]res
 						Validators: []validator.Int64{
 							int64validator.OneOf(14, 30, 90, 365),
 						},
+					},
+					"hosts": schema.ListAttribute{
+						Description: "Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.",
+						Computed:    true,
+						ElementType: types.StringType,
 					},
 				},
 			},

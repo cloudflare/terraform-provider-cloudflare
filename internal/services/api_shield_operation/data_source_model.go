@@ -12,13 +12,13 @@ type APIShieldOperationResultListDataSourceEnvelope struct {
 }
 
 type APIShieldOperationDataSourceModel struct {
-	ID          types.String                                `tfsdk:"id" json:"id"`
 	Endpoint    types.String                                `tfsdk:"endpoint" json:"endpoint"`
 	Host        types.String                                `tfsdk:"host" json:"host"`
+	ID          types.String                                `tfsdk:"id" json:"id"`
 	LastUpdated timetypes.RFC3339                           `tfsdk:"last_updated" json:"last_updated"`
 	Method      types.String                                `tfsdk:"method" json:"method"`
-	Origin      *[]types.String                             `tfsdk:"origin" json:"origin"`
 	State       types.String                                `tfsdk:"state" json:"state"`
+	Origin      *[]types.String                             `tfsdk:"origin" json:"origin"`
 	Features    *APIShieldOperationFeaturesDataSourceModel  `tfsdk:"features" json:"features"`
 	Filter      *APIShieldOperationFindOneByDataSourceModel `tfsdk:"filter"`
 }

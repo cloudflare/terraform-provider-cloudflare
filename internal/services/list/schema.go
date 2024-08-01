@@ -26,10 +26,6 @@ func (r ListResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"description": schema.StringAttribute{
-				Description: "An informative summary of the list.",
-				Optional:    true,
-			},
 			"kind": schema.StringAttribute{
 				Description: "The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).",
 				Required:    true,
@@ -42,6 +38,10 @@ func (r ListResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description:   "An informative name for the list. Use this name in filter and rule expressions.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the list.",
+				Optional:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique ID of the item in the List.",

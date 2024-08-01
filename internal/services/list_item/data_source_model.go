@@ -16,8 +16,8 @@ type ListItemResultListDataSourceEnvelope struct {
 
 type ListItemDataSourceModel struct {
 	AccountIdentifier types.String                      `tfsdk:"account_identifier" path:"account_identifier"`
-	ListID            types.String                      `tfsdk:"list_id" path:"list_id"`
 	ItemID            types.String                      `tfsdk:"item_id" path:"item_id"`
+	ListID            types.String                      `tfsdk:"list_id" path:"list_id"`
 	Filter            *ListItemFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

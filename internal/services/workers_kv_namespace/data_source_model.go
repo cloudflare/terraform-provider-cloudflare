@@ -18,8 +18,8 @@ type WorkersKVNamespaceDataSourceModel struct {
 	AccountID           types.String                                `tfsdk:"account_id" path:"account_id"`
 	NamespaceID         types.String                                `tfsdk:"namespace_id" path:"namespace_id"`
 	ID                  types.String                                `tfsdk:"id" json:"id,computed"`
-	Title               types.String                                `tfsdk:"title" json:"title,computed"`
 	SupportsURLEncoding types.Bool                                  `tfsdk:"supports_url_encoding" json:"supports_url_encoding,computed"`
+	Title               types.String                                `tfsdk:"title" json:"title,computed"`
 	Filter              *WorkersKVNamespaceFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

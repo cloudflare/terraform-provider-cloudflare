@@ -17,18 +17,18 @@ type GRETunnelModel struct {
 	GRETunnelID           types.String                 `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id"`
 	CloudflareGREEndpoint types.String                 `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint"`
 	CustomerGREEndpoint   types.String                 `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint"`
+	Description           types.String                 `tfsdk:"description" json:"description"`
 	InterfaceAddress      types.String                 `tfsdk:"interface_address" json:"interface_address"`
 	Name                  types.String                 `tfsdk:"name" json:"name"`
-	Description           types.String                 `tfsdk:"description" json:"description"`
 	HealthCheck           *GRETunnelHealthCheckModel   `tfsdk:"health_check" json:"health_check"`
 	Mtu                   types.Int64                  `tfsdk:"mtu" json:"mtu"`
 	TTL                   types.Int64                  `tfsdk:"ttl" json:"ttl"`
-	GRETunnels            *[]*GRETunnelGRETunnelsModel `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
-	Modified              types.Bool                   `tfsdk:"modified" json:"modified,computed"`
-	ModifiedGRETunnel     jsontypes.Normalized         `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
 	Deleted               types.Bool                   `tfsdk:"deleted" json:"deleted,computed"`
+	Modified              types.Bool                   `tfsdk:"modified" json:"modified,computed"`
+	GRETunnels            *[]*GRETunnelGRETunnelsModel `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
 	DeletedGRETunnel      jsontypes.Normalized         `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
 	GRETunnel             jsontypes.Normalized         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
+	ModifiedGRETunnel     jsontypes.Normalized         `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
 }
 
 type GRETunnelHealthCheckModel struct {

@@ -28,6 +28,28 @@ func (r RateLimitDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Computed:    true,
 				Optional:    true,
 			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the rate limit. This value is sanitized and any tags will be removed.",
+				Optional:    true,
+			},
+			"disabled": schema.BoolAttribute{
+				Description: "When true, indicates that the rate limit is currently disabled.",
+				Optional:    true,
+			},
+			"period": schema.Float64Attribute{
+				Description: "The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(10, 86400),
+				},
+			},
+			"threshold": schema.Float64Attribute{
+				Description: "The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
+			},
 			"action": schema.SingleNestedAttribute{
 				Description: "The action to perform when the threshold of matched traffic within the configured period is exceeded.",
 				Optional:    true,
@@ -86,14 +108,6 @@ func (r RateLimitDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						},
 					},
 				},
-			},
-			"description": schema.StringAttribute{
-				Description: "An informative summary of the rate limit. This value is sanitized and any tags will be removed.",
-				Optional:    true,
-			},
-			"disabled": schema.BoolAttribute{
-				Description: "When true, indicates that the rate limit is currently disabled.",
-				Optional:    true,
 			},
 			"match": schema.SingleNestedAttribute{
 				Description: "Determines which traffic the rate limit counts towards the threshold.",
@@ -159,20 +173,6 @@ func (r RateLimitDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 							},
 						},
 					},
-				},
-			},
-			"period": schema.Float64Attribute{
-				Description: "The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(10, 86400),
-				},
-			},
-			"threshold": schema.Float64Attribute{
-				Description: "The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{

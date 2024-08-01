@@ -20,6 +20,10 @@ var _ datasource.DataSourceWithValidateConfig = &AccessPolicyDataSource{}
 func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
 			"app_id": schema.StringAttribute{
 				Description: "UUID",
 				Optional:    true,
@@ -28,16 +32,54 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "UUID",
 				Optional:    true,
 			},
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
-			},
 			"zone_id": schema.StringAttribute{
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
+			"approval_required": schema.BoolAttribute{
+				Description: "Requires the user to request access from an administrator at the start of each session.",
+				Computed:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"isolation_required": schema.BoolAttribute{
+				Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
+				Computed:    true,
+			},
+			"purpose_justification_required": schema.BoolAttribute{
+				Description: "Require users to enter a justification when they log in to the application.",
+				Computed:    true,
+			},
+			"session_duration": schema.StringAttribute{
+				Description: "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
+				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"decision": schema.StringAttribute{
+				Description: "The action Access will take if a user matches this policy.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("allow", "deny", "non_identity", "bypass"),
+				},
+			},
 			"id": schema.StringAttribute{
 				Description: "The UUID of the policy",
+				Computed:    true,
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the Access policy.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"purpose_justification_prompt": schema.StringAttribute{
+				Description: "A custom message that will appear on the purpose justification screen.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -66,22 +108,6 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 							Optional:    true,
 						},
 					},
-				},
-			},
-			"approval_required": schema.BoolAttribute{
-				Description: "Requires the user to request access from an administrator at the start of each session.",
-				Computed:    true,
-			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"decision": schema.StringAttribute{
-				Description: "The action Access will take if a user matches this policy.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("allow", "deny", "non_identity", "bypass"),
 				},
 			},
 			"exclude": schema.ListNestedAttribute{
@@ -498,24 +524,6 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 					},
 				},
 			},
-			"isolation_required": schema.BoolAttribute{
-				Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
-				Computed:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the Access policy.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"purpose_justification_prompt": schema.StringAttribute{
-				Description: "A custom message that will appear on the purpose justification screen.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"purpose_justification_required": schema.BoolAttribute{
-				Description: "Require users to enter a justification when they log in to the application.",
-				Computed:    true,
-			},
 			"require": schema.ListNestedAttribute{
 				Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 				Computed:    true,
@@ -722,14 +730,6 @@ func (r AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Schem
 						},
 					},
 				},
-			},
-			"session_duration": schema.StringAttribute{
-				Description: "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
-				Computed:    true,
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

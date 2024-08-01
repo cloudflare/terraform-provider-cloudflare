@@ -18,12 +18,12 @@ var _ datasource.DataSourceWithValidateConfig = &WaitingRoomEventsDataSource{}
 func (r WaitingRoomEventsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"waiting_room_id": schema.StringAttribute{
+				Required: true,
+			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"waiting_room_id": schema.StringAttribute{
-				Required: true,
 			},
 			"page": schema.StringAttribute{
 				Description: "Page number of paginated results.",

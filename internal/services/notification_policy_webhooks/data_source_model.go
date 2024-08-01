@@ -18,8 +18,8 @@ type NotificationPolicyWebhooksResultListDataSourceEnvelope struct {
 type NotificationPolicyWebhooksDataSourceModel struct {
 	AccountID   types.String                                        `tfsdk:"account_id" path:"account_id"`
 	WebhookID   types.String                                        `tfsdk:"webhook_id" path:"webhook_id"`
-	ID          types.String                                        `tfsdk:"id" json:"id,computed"`
 	CreatedAt   timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed"`
+	ID          types.String                                        `tfsdk:"id" json:"id,computed"`
 	LastFailure timetypes.RFC3339                                   `tfsdk:"last_failure" json:"last_failure,computed"`
 	LastSuccess timetypes.RFC3339                                   `tfsdk:"last_success" json:"last_success,computed"`
 	Name        types.String                                        `tfsdk:"name" json:"name"`

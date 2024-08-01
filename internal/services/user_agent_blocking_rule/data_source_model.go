@@ -17,10 +17,10 @@ type UserAgentBlockingRuleResultListDataSourceEnvelope struct {
 type UserAgentBlockingRuleDataSourceModel struct {
 	ZoneIdentifier types.String                                       `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String                                       `tfsdk:"id" path:"id"`
-	Configuration  *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration"`
 	Description    types.String                                       `tfsdk:"description" json:"description"`
 	Mode           types.String                                       `tfsdk:"mode" json:"mode"`
 	Paused         types.Bool                                         `tfsdk:"paused" json:"paused"`
+	Configuration  *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration"`
 	Filter         *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
 }
 

@@ -28,6 +28,10 @@ func (r BotManagementResource) UpgradeState(ctx context.Context) map[int64]resou
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
+					"auto_update_model": schema.BoolAttribute{
+						Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
+						Optional:    true,
+					},
 					"enable_js": schema.BoolAttribute{
 						Description: "Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).",
 						Optional:    true,
@@ -47,6 +51,13 @@ func (r BotManagementResource) UpgradeState(ctx context.Context) map[int64]resou
 							stringvalidator.OneOfCaseInsensitive("allow", "block", "managed_challenge"),
 						},
 					},
+					"sbfm_likely_automated": schema.StringAttribute{
+						Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("allow", "block", "managed_challenge"),
+						},
+					},
 					"sbfm_static_resource_protection": schema.BoolAttribute{
 						Description: "Super Bot Fight Mode (SBFM) to enable static resource protection.\nEnable if static resources on your application need bot protection.\nNote: Static resource protection can also result in legitimate traffic being blocked.\n",
 						Optional:    true,
@@ -57,17 +68,6 @@ func (r BotManagementResource) UpgradeState(ctx context.Context) map[int64]resou
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("allow", "block"),
 						},
-					},
-					"sbfm_likely_automated": schema.StringAttribute{
-						Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("allow", "block", "managed_challenge"),
-						},
-					},
-					"auto_update_model": schema.BoolAttribute{
-						Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
-						Optional:    true,
 					},
 					"suppress_session_score": schema.BoolAttribute{
 						Description: "Whether to disable tracking the highest bot score for a session in the Bot Management cookie.",

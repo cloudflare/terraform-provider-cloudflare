@@ -18,12 +18,12 @@ var _ datasource.DataSourceWithValidateConfig = &SpectrumApplicationDataSource{}
 func (r SpectrumApplicationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
-			},
 			"app_id": schema.StringAttribute{
 				Description: "Application identifier.",
+				Optional:    true,
+			},
+			"zone": schema.StringAttribute{
+				Description: "Identifier",
 				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{

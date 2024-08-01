@@ -16,15 +16,15 @@ type Web3HostnameResultListDataSourceEnvelope struct {
 }
 
 type Web3HostnameDataSourceModel struct {
-	ZoneIdentifier types.String                          `tfsdk:"zone_identifier" path:"zone_identifier"`
 	Identifier     types.String                          `tfsdk:"identifier" path:"identifier"`
-	ID             types.String                          `tfsdk:"id" json:"id,computed"`
+	ZoneIdentifier types.String                          `tfsdk:"zone_identifier" path:"zone_identifier"`
 	CreatedOn      timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed"`
-	Description    types.String                          `tfsdk:"description" json:"description"`
-	Dnslink        types.String                          `tfsdk:"dnslink" json:"dnslink"`
+	ID             types.String                          `tfsdk:"id" json:"id,computed"`
 	ModifiedOn     timetypes.RFC3339                     `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name           types.String                          `tfsdk:"name" json:"name,computed"`
 	Status         types.String                          `tfsdk:"status" json:"status,computed"`
+	Description    types.String                          `tfsdk:"description" json:"description"`
+	Dnslink        types.String                          `tfsdk:"dnslink" json:"dnslink"`
 	Target         types.String                          `tfsdk:"target" json:"target"`
 	Filter         *Web3HostnameFindOneByDataSourceModel `tfsdk:"filter"`
 }

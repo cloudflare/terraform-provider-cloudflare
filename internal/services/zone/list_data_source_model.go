@@ -13,14 +13,14 @@ type ZonesResultListDataSourceEnvelope struct {
 }
 
 type ZonesDataSourceModel struct {
-	Account   *ZonesAccountDataSourceModel   `tfsdk:"account" query:"account"`
 	Direction types.String                   `tfsdk:"direction" query:"direction"`
-	Match     types.String                   `tfsdk:"match" query:"match"`
 	Name      types.String                   `tfsdk:"name" query:"name"`
 	Order     types.String                   `tfsdk:"order" query:"order"`
+	Status    types.String                   `tfsdk:"status" query:"status"`
+	Account   *ZonesAccountDataSourceModel   `tfsdk:"account" query:"account"`
+	Match     types.String                   `tfsdk:"match" query:"match"`
 	Page      types.Float64                  `tfsdk:"page" query:"page"`
 	PerPage   types.Float64                  `tfsdk:"per_page" query:"per_page"`
-	Status    types.String                   `tfsdk:"status" query:"status"`
 	MaxItems  types.Int64                    `tfsdk:"max_items"`
 	Result    *[]*ZonesResultDataSourceModel `tfsdk:"result"`
 }

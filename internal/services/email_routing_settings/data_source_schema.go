@@ -22,18 +22,13 @@ func (r EmailRoutingSettingsDataSource) Schema(ctx context.Context, req datasour
 				Description: "Identifier",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Email Routing settings identifier.",
-				Optional:    true,
-			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the settings have been created.",
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "State of the zone settings for Email Routing.",
-				Computed:    true,
+			"id": schema.StringAttribute{
+				Description: "Email Routing settings identifier.",
 				Optional:    true,
 			},
 			"modified": schema.StringAttribute{
@@ -45,11 +40,6 @@ func (r EmailRoutingSettingsDataSource) Schema(ctx context.Context, req datasour
 				Description: "Domain of your zone.",
 				Optional:    true,
 			},
-			"skip_wizard": schema.BoolAttribute{
-				Description: "Flag to check if the user skipped the configuration wizard.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"status": schema.StringAttribute{
 				Description: "Show the state of your account, and the type or configuration error.",
 				Optional:    true,
@@ -59,6 +49,16 @@ func (r EmailRoutingSettingsDataSource) Schema(ctx context.Context, req datasour
 			},
 			"tag": schema.StringAttribute{
 				Description: "Email Routing settings tag. (Deprecated, replaced by Email Routing settings identifier)",
+				Optional:    true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "State of the zone settings for Email Routing.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"skip_wizard": schema.BoolAttribute{
+				Description: "Flag to check if the user skipped the configuration wizard.",
+				Computed:    true,
 				Optional:    true,
 			},
 		},

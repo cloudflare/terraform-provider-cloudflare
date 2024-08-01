@@ -24,15 +24,19 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"script_name": schema.StringAttribute{
+				Description:   "Name of the script, used in URLs and route configuration.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"script_name": schema.StringAttribute{
-				Description:   "Name of the script, used in URLs and route configuration.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			"message": schema.StringAttribute{
+				Description: "Rollback message to be associated with this deployment. Only parsed when query param `\"rollback_to\"` is present.",
+				Optional:    true,
 			},
 			"any_part_name": schema.ListAttribute{
 				Description: "A module comprising a Worker script, often a javascript file. Multiple modules may be provided as separate named parts, but at least one module must be present and referenced in the metadata as `main_module` or `body_part` by part name. Source maps may also be included using the `application/source-map` content type.",
@@ -228,10 +232,6 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 					},
 				},
 			},
-			"message": schema.StringAttribute{
-				Description: "Rollback message to be associated with this deployment. Only parsed when query param `\"rollback_to\"` is present.",
-				Optional:    true,
-			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
 				Computed:    true,
@@ -257,6 +257,10 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 			"startup_time_ms": schema.Int64Attribute{
 				Computed: true,
 			},
+			"usage_model": schema.StringAttribute{
+				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
+				Computed:    true,
+			},
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
 				Computed:    true,
@@ -276,10 +280,6 @@ func (r WorkerScriptResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 					},
 				},
-			},
-			"usage_model": schema.StringAttribute{
-				Description: "Specifies the usage model for the Worker (e.g. 'bundled' or 'unbound').",
-				Computed:    true,
 			},
 		},
 	}

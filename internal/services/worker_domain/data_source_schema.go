@@ -22,11 +22,6 @@ func (r WorkerDomainDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "Identifer of the Worker Domain.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifer of the Worker Domain.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"environment": schema.StringAttribute{
 				Description: "Worker environment associated with the zone and hostname.",
 				Computed:    true,
@@ -34,6 +29,11 @@ func (r WorkerDomainDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"hostname": schema.StringAttribute{
 				Description: "Hostname of the Worker Domain.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifer of the Worker Domain.",
 				Computed:    true,
 				Optional:    true,
 			},

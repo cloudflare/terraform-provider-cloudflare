@@ -13,8 +13,8 @@ type WaitingRoomEventsResultListDataSourceEnvelope struct {
 }
 
 type WaitingRoomEventsDataSourceModel struct {
-	ZoneID        types.String                               `tfsdk:"zone_id" path:"zone_id"`
 	WaitingRoomID types.String                               `tfsdk:"waiting_room_id" path:"waiting_room_id"`
+	ZoneID        types.String                               `tfsdk:"zone_id" path:"zone_id"`
 	Page          jsontypes.Normalized                       `tfsdk:"page" query:"page"`
 	PerPage       jsontypes.Normalized                       `tfsdk:"per_page" query:"per_page"`
 	MaxItems      types.Int64                                `tfsdk:"max_items"`

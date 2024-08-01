@@ -20,14 +20,14 @@ func (r FallbackDomainResource) Schema(ctx context.Context, req resource.SchemaR
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"policy_id": schema.StringAttribute{
 				Description:   "Device ID.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"account_id": schema.StringAttribute{
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"suffix": schema.StringAttribute{
 				Description: "The domain suffix to match when resolving locally.",

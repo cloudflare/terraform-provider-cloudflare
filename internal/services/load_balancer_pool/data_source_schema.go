@@ -27,24 +27,9 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 			"pool_id": schema.StringAttribute{
 				Optional: true,
 			},
-			"id": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-			},
-			"check_regions": schema.ListAttribute{
-				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
-				Computed:    true,
-				Optional:    true,
-				ElementType: types.StringType,
-			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"description": schema.StringAttribute{
-				Description: "A human-readable description of the pool.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"disabled_at": schema.StringAttribute{
 				Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
@@ -55,10 +40,48 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
 				Computed:    true,
 			},
+			"minimum_origins": schema.Int64Attribute{
+				Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"description": schema.StringAttribute{
+				Description: "A human-readable description of the pool.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+			},
 			"latitude": schema.Float64Attribute{
 				Description: "The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.",
 				Computed:    true,
 				Optional:    true,
+			},
+			"longitude": schema.Float64Attribute{
+				Description: "The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"notification_email": schema.StringAttribute{
+				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"check_regions": schema.ListAttribute{
+				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"load_shedding": schema.SingleNestedAttribute{
 				Description: "Configures load shedding policies and percentages for the pool.",
@@ -94,34 +117,6 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 						},
 					},
 				},
-			},
-			"longitude": schema.Float64Attribute{
-				Description: "The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"minimum_origins": schema.Int64Attribute{
-				Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.",
-				Computed:    true,
-			},
-			"modified_on": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"monitor": schema.StringAttribute{
-				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"notification_email": schema.StringAttribute{
-				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"notification_filter": schema.SingleNestedAttribute{
 				Description: "Filter pool and origin health notifications by resource type or health status. Use null to reset.",
@@ -228,6 +223,11 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 						},
 					},
 				},
+			},
+			"monitor": schema.StringAttribute{
+				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

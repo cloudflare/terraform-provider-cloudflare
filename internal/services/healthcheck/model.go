@@ -16,15 +16,15 @@ type HealthcheckModel struct {
 	ZoneID               types.String                `tfsdk:"zone_id" path:"zone_id"`
 	Address              types.String                `tfsdk:"address" json:"address"`
 	Name                 types.String                `tfsdk:"name" json:"name"`
+	Description          types.String                `tfsdk:"description" json:"description"`
 	CheckRegions         *[]types.String             `tfsdk:"check_regions" json:"check_regions"`
+	HTTPConfig           *HealthcheckHTTPConfigModel `tfsdk:"http_config" json:"http_config"`
+	TCPConfig            *HealthcheckTCPConfigModel  `tfsdk:"tcp_config" json:"tcp_config"`
 	ConsecutiveFails     types.Int64                 `tfsdk:"consecutive_fails" json:"consecutive_fails"`
 	ConsecutiveSuccesses types.Int64                 `tfsdk:"consecutive_successes" json:"consecutive_successes"`
-	Description          types.String                `tfsdk:"description" json:"description"`
-	HTTPConfig           *HealthcheckHTTPConfigModel `tfsdk:"http_config" json:"http_config"`
 	Interval             types.Int64                 `tfsdk:"interval" json:"interval"`
 	Retries              types.Int64                 `tfsdk:"retries" json:"retries"`
 	Suspended            types.Bool                  `tfsdk:"suspended" json:"suspended"`
-	TCPConfig            *HealthcheckTCPConfigModel  `tfsdk:"tcp_config" json:"tcp_config"`
 	Timeout              types.Int64                 `tfsdk:"timeout" json:"timeout"`
 	Type                 types.String                `tfsdk:"type" json:"type"`
 	CreatedOn            timetypes.RFC3339           `tfsdk:"created_on" json:"created_on,computed"`

@@ -25,6 +25,19 @@ func (r DeviceManagedNetworksDataSource) Schema(ctx context.Context, req datasou
 				Computed:    true,
 				Optional:    true,
 			},
+			"name": schema.StringAttribute{
+				Description: "The name of the device managed network. This name must be unique.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of device managed network.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("tls"),
+				},
+			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The configuration object containing information for the WARP client to detect the managed network.",
 				Computed:    true,
@@ -39,19 +52,6 @@ func (r DeviceManagedNetworksDataSource) Schema(ctx context.Context, req datasou
 						Computed:    true,
 						Optional:    true,
 					},
-				},
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the device managed network. This name must be unique.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"type": schema.StringAttribute{
-				Description: "The type of device managed network.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("tls"),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{

@@ -12,12 +12,12 @@ type TunnelVirtualNetworkResultListDataSourceEnvelope struct {
 }
 
 type TunnelVirtualNetworkDataSourceModel struct {
-	ID               types.String                                  `tfsdk:"id" json:"id"`
 	Comment          types.String                                  `tfsdk:"comment" json:"comment"`
 	CreatedAt        timetypes.RFC3339                             `tfsdk:"created_at" json:"created_at"`
+	DeletedAt        timetypes.RFC3339                             `tfsdk:"deleted_at" json:"deleted_at"`
+	ID               types.String                                  `tfsdk:"id" json:"id"`
 	IsDefaultNetwork types.Bool                                    `tfsdk:"is_default_network" json:"is_default_network"`
 	Name             types.String                                  `tfsdk:"name" json:"name"`
-	DeletedAt        timetypes.RFC3339                             `tfsdk:"deleted_at" json:"deleted_at"`
 	Filter           *TunnelVirtualNetworkFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

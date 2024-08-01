@@ -20,12 +20,12 @@ type TeamsRuleModel struct {
 	Description   types.String                `tfsdk:"description" json:"description"`
 	DevicePosture types.String                `tfsdk:"device_posture" json:"device_posture"`
 	Enabled       types.Bool                  `tfsdk:"enabled" json:"enabled"`
-	Filters       *[]types.String             `tfsdk:"filters" json:"filters"`
 	Identity      types.String                `tfsdk:"identity" json:"identity"`
 	Precedence    types.Int64                 `tfsdk:"precedence" json:"precedence"`
+	Traffic       types.String                `tfsdk:"traffic" json:"traffic"`
+	Filters       *[]types.String             `tfsdk:"filters" json:"filters"`
 	RuleSettings  *TeamsRuleRuleSettingsModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *TeamsRuleScheduleModel     `tfsdk:"schedule" json:"schedule"`
-	Traffic       types.String                `tfsdk:"traffic" json:"traffic"`
 	CreatedAt     timetypes.RFC3339           `tfsdk:"created_at" json:"created_at,computed"`
 	DeletedAt     timetypes.RFC3339           `tfsdk:"deleted_at" json:"deleted_at,computed"`
 	UpdatedAt     timetypes.RFC3339           `tfsdk:"updated_at" json:"updated_at,computed"`

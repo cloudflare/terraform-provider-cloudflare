@@ -22,12 +22,12 @@ func (r TieredCacheDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Identifier",
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The identifier of the caching setting",
-				Optional:    true,
-			},
 			"editable": schema.BoolAttribute{
 				Description: "Whether the setting is editable",
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The identifier of the caching setting",
 				Optional:    true,
 			},
 			"modified_on": schema.StringAttribute{

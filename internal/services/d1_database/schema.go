@@ -21,14 +21,14 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"name": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"primary_location_hint": schema.StringAttribute{
 				Description: "Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.",
@@ -42,17 +42,17 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"uuid": schema.StringAttribute{
-				Computed: true,
-			},
-			"version": schema.StringAttribute{
-				Computed: true,
-			},
 			"file_size": schema.Float64Attribute{
 				Description: "The D1 database's size, in bytes.",
 				Computed:    true,
 			},
 			"num_tables": schema.Float64Attribute{
+				Computed: true,
+			},
+			"uuid": schema.StringAttribute{
+				Computed: true,
+			},
+			"version": schema.StringAttribute{
 				Computed: true,
 			},
 		},

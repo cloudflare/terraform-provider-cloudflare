@@ -18,14 +18,14 @@ type NotificationPolicyWebhooksModel struct {
 	Name        types.String                                                        `tfsdk:"name" json:"name"`
 	URL         types.String                                                        `tfsdk:"url" json:"url"`
 	Secret      types.String                                                        `tfsdk:"secret" json:"secret"`
-	Errors      *[]*NotificationPolicyWebhooksErrorsModel                           `tfsdk:"errors" json:"errors,computed"`
-	Messages    *[]*NotificationPolicyWebhooksMessagesModel                         `tfsdk:"messages" json:"messages,computed"`
-	Success     types.Bool                                                          `tfsdk:"success" json:"success,computed"`
-	ResultInfo  customfield.NestedObject[NotificationPolicyWebhooksResultInfoModel] `tfsdk:"result_info" json:"result_info,computed"`
 	CreatedAt   timetypes.RFC3339                                                   `tfsdk:"created_at" json:"created_at,computed"`
 	LastFailure timetypes.RFC3339                                                   `tfsdk:"last_failure" json:"last_failure,computed"`
 	LastSuccess timetypes.RFC3339                                                   `tfsdk:"last_success" json:"last_success,computed"`
+	Success     types.Bool                                                          `tfsdk:"success" json:"success,computed"`
 	Type        types.String                                                        `tfsdk:"type" json:"type,computed"`
+	Errors      *[]*NotificationPolicyWebhooksErrorsModel                           `tfsdk:"errors" json:"errors,computed"`
+	Messages    *[]*NotificationPolicyWebhooksMessagesModel                         `tfsdk:"messages" json:"messages,computed"`
+	ResultInfo  customfield.NestedObject[NotificationPolicyWebhooksResultInfoModel] `tfsdk:"result_info" json:"result_info,computed"`
 }
 
 type NotificationPolicyWebhooksErrorsModel struct {

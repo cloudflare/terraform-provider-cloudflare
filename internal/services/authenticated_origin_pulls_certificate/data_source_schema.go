@@ -18,15 +18,11 @@ var _ datasource.DataSourceWithValidateConfig = &AuthenticatedOriginPullsCertifi
 func (r AuthenticatedOriginPullsCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
-			},
 			"certificate_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
@@ -38,6 +34,10 @@ func (r AuthenticatedOriginPullsCertificateDataSource) Schema(ctx context.Contex
 				Description: "When the certificate from the authority expires.",
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Optional:    true,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",

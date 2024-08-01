@@ -24,22 +24,22 @@ func (r AccessTagDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Description: "The name of the tag",
 				Optional:    true,
 			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the tag",
 				Computed:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "The number of applications that have this tag",
 				Computed:    true,
 				Optional:    true,
-			},
-			"created_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

@@ -16,11 +16,11 @@ type AuthenticatedOriginPullsCertificateResultListDataSourceEnvelope struct {
 }
 
 type AuthenticatedOriginPullsCertificateDataSourceModel struct {
-	ZoneID        types.String                                                 `tfsdk:"zone_id" path:"zone_id"`
 	CertificateID types.String                                                 `tfsdk:"certificate_id" path:"certificate_id"`
-	ID            types.String                                                 `tfsdk:"id" json:"id"`
+	ZoneID        types.String                                                 `tfsdk:"zone_id" path:"zone_id"`
 	Certificate   types.String                                                 `tfsdk:"certificate" json:"certificate"`
 	ExpiresOn     timetypes.RFC3339                                            `tfsdk:"expires_on" json:"expires_on"`
+	ID            types.String                                                 `tfsdk:"id" json:"id"`
 	Issuer        types.String                                                 `tfsdk:"issuer" json:"issuer"`
 	Signature     types.String                                                 `tfsdk:"signature" json:"signature"`
 	Status        types.String                                                 `tfsdk:"status" json:"status"`

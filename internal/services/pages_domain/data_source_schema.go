@@ -19,12 +19,12 @@ func (r PagesDomainDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"project_name": schema.StringAttribute{
-				Description: "Name of the project.",
-				Optional:    true,
-			},
 			"domain_name": schema.StringAttribute{
 				Description: "Name of the domain.",
+				Optional:    true,
+			},
+			"project_name": schema.StringAttribute{
+				Description: "Name of the project.",
 				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{

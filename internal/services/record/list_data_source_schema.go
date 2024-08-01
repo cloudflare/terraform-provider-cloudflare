@@ -22,6 +22,25 @@ func (r RecordsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Description: "Identifier",
 				Required:    true,
 			},
+			"content": schema.StringAttribute{
+				Description: "DNS record content.",
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Optional:    true,
+			},
+			"search": schema.StringAttribute{
+				Description: "Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.\n",
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "Record type.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI"),
+				},
+			},
 			"comment": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -50,63 +69,6 @@ func (r RecordsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						Optional:    true,
 					},
 				},
-			},
-			"content": schema.StringAttribute{
-				Description: "DNS record content.",
-				Optional:    true,
-			},
-			"direction": schema.StringAttribute{
-				Description: "Direction to order DNS records in.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
-				},
-			},
-			"match": schema.StringAttribute{
-				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.\n",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("any", "all"),
-				},
-			},
-			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Optional:    true,
-			},
-			"order": schema.StringAttribute{
-				Description: "Field to order DNS records by.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("type", "name", "content", "ttl", "proxied"),
-				},
-			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-			},
-			"per_page": schema.Float64Attribute{
-				Description: "Number of DNS records per page.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(1, 5000000),
-				},
-			},
-			"proxied": schema.BoolAttribute{
-				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"search": schema.StringAttribute{
-				Description: "Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.\n",
-				Optional:    true,
 			},
 			"tag": schema.SingleNestedAttribute{
 				Optional: true,
@@ -137,19 +99,57 @@ func (r RecordsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					},
 				},
 			},
-			"tag_match": schema.StringAttribute{
-				Description: "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.\n",
+			"direction": schema.StringAttribute{
+				Description: "Direction to order DNS records in.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("asc", "desc"),
+				},
+			},
+			"match": schema.StringAttribute{
+				Description: "Whether to match all search requirements or at least one (any). If set to `all`, acts like a logical AND between filters. If set to `any`, acts like a logical OR instead. Note that the interaction between tag filters is controlled by the `tag-match` parameter instead.\n",
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("any", "all"),
 				},
 			},
-			"type": schema.StringAttribute{
-				Description: "Record type.",
+			"order": schema.StringAttribute{
+				Description: "Field to order DNS records by.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI"),
+					stringvalidator.OneOfCaseInsensitive("type", "name", "content", "ttl", "proxied"),
+				},
+			},
+			"page": schema.Float64Attribute{
+				Description: "Page number of paginated results.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.AtLeast(1),
+				},
+			},
+			"per_page": schema.Float64Attribute{
+				Description: "Number of DNS records per page.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(1, 5000000),
+				},
+			},
+			"proxied": schema.BoolAttribute{
+				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"tag_match": schema.StringAttribute{
+				Description: "Whether to match all tag search requirements or at least one (any). If set to `all`, acts like a logical AND between tag filters. If set to `any`, acts like a logical OR instead. Note that the regular `match` parameter is still used to combine the resulting condition with other filters that aren't related to tags.\n",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("any", "all"),
 				},
 			},
 			"max_items": schema.Int64Attribute{

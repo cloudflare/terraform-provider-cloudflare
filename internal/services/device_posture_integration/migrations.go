@@ -27,6 +27,21 @@ func (r DevicePostureIntegrationResource) UpgradeState(ctx context.Context) map[
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"interval": schema.StringAttribute{
+						Description: "The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).",
+						Required:    true,
+					},
+					"name": schema.StringAttribute{
+						Description: "The name of the device posture integration.",
+						Required:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "The type of device posture integration.",
+						Required:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s"),
+						},
+					},
 					"config": schema.SingleNestedAttribute{
 						Description: "The configuration object containing third-party integration information.",
 						Required:    true,
@@ -63,21 +78,6 @@ func (r DevicePostureIntegrationResource) UpgradeState(ctx context.Context) map[
 								Description: "If present, this secret will be passed in the `CF-Access-Client-Secret` header when hitting the `api_url`",
 								Optional:    true,
 							},
-						},
-					},
-					"interval": schema.StringAttribute{
-						Description: "The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).",
-						Required:    true,
-					},
-					"name": schema.StringAttribute{
-						Description: "The name of the device posture integration.",
-						Required:    true,
-					},
-					"type": schema.StringAttribute{
-						Description: "The type of device posture integration.",
-						Required:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s"),
 						},
 					},
 				},

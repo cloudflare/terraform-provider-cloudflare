@@ -15,8 +15,8 @@ type AccessRuleResultListDataSourceEnvelope struct {
 }
 
 type AccessRuleDataSourceModel struct {
-	Identifier types.String                        `tfsdk:"identifier" path:"identifier"`
 	AccountID  types.String                        `tfsdk:"account_id" path:"account_id"`
+	Identifier types.String                        `tfsdk:"identifier" path:"identifier"`
 	ZoneID     types.String                        `tfsdk:"zone_id" path:"zone_id"`
 	Filter     *AccessRuleFindOneByDataSourceModel `tfsdk:"filter"`
 }

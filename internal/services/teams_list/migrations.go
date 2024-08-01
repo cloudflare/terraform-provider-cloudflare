@@ -29,14 +29,6 @@ func (r TeamsListResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
-					"name": schema.StringAttribute{
-						Description: "The name of the list.",
-						Required:    true,
-					},
-					"description": schema.StringAttribute{
-						Description: "The description of the list.",
-						Optional:    true,
-					},
 					"type": schema.StringAttribute{
 						Description: "The type of list.",
 						Required:    true,
@@ -66,17 +58,25 @@ func (r TeamsListResource) UpgradeState(ctx context.Context) map[int64]resource.
 						},
 						PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 					},
-					"created_at": schema.StringAttribute{
-						Computed:   true,
-						CustomType: timetypes.RFC3339Type{},
+					"name": schema.StringAttribute{
+						Description: "The name of the list.",
+						Required:    true,
 					},
-					"updated_at": schema.StringAttribute{
+					"description": schema.StringAttribute{
+						Description: "The description of the list.",
+						Optional:    true,
+					},
+					"created_at": schema.StringAttribute{
 						Computed:   true,
 						CustomType: timetypes.RFC3339Type{},
 					},
 					"list_count": schema.Float64Attribute{
 						Description: "The number of items in the list.",
 						Computed:    true,
+					},
+					"updated_at": schema.StringAttribute{
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
 					},
 				},
 			},
