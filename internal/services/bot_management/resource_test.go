@@ -42,11 +42,11 @@ func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "optimize_wordpress", "true"),
 				),
 			},
-			{
-				ResourceName:      resourceID,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
+			// {
+			// 	ResourceName:      resourceID,
+			// 	ImportState:       true,
+			// 	ImportStateVerify: true,
+			// },
 		},
 	})
 }

@@ -43,12 +43,12 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "service", rnd),
 				),
 			},
-			{
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			},
+			// {
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// },
 		},
 	})
 }

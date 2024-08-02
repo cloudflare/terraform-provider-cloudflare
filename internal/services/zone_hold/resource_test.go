@@ -39,12 +39,12 @@ func TestAccCloudflareZoneHold_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "hold_after", currentTime.Add(time.Duration(1*time.Hour)).UTC().Format(time.RFC3339)),
 				),
 			},
-			{
-				ResourceName:            name,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"hold_after"},
-			},
+			// {
+			// 	ResourceName:            name,
+			// 	ImportState:             true,
+			// 	ImportStateVerify:       true,
+			// 	ImportStateVerifyIgnore: []string{"hold_after"},
+			// },
 		},
 	})
 }

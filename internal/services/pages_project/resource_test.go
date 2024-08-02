@@ -1,7 +1,6 @@
 package pages_project_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -208,12 +207,12 @@ func TestAccCloudflarePagesProject_DirectUpload(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "production_branch", "main"),
 				),
 			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }

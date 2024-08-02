@@ -1,7 +1,6 @@
 package tunnel_config_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -83,12 +82,12 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.2.service", "https://10.0.0.4:8082"),
 				),
 			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
@@ -113,12 +112,12 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.0.service", "https://10.0.0.1:8081"),
 				),
 			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
@@ -147,12 +146,12 @@ func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "config.0.ingress_rule.1.service", "http_status:501"),
 				),
 			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }

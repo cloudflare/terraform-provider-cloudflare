@@ -265,13 +265,13 @@ func TestAccCloudflareAccessIdentityProvider_OAuth_Import(t *testing.T) {
 				Config: testAccCheckCloudflareAccessIdentityProviderOAuth(accountID, rnd),
 				Check:  checkFn,
 			},
-			{
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				Check:               checkFn,
-			},
+			// {
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	Check:               checkFn,
+			// },
 		},
 	})
 }

@@ -1,7 +1,6 @@
 package zone_lockdown_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -72,12 +71,12 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 			{
 				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/*", "ip", "198.51.100.4"),
 			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }

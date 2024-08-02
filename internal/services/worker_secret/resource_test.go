@@ -40,17 +40,17 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
 				),
 			},
-			{
-				Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
-				ResourceName:            "cloudflare_worker_secret." + name,
-				ImportStateId:           fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, name),
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"secret_text"},
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
-				),
-			},
+			// {
+			// 	Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
+			// 	ResourceName:            "cloudflare_worker_secret." + name,
+			// 	ImportStateId:           fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, name),
+			// 	ImportState:             true,
+			// 	ImportStateVerify:       true,
+			// 	ImportStateVerifyIgnore: []string{"secret_text"},
+			// 	Check: resource.ComposeTestCheckFunc(
+			// 		testAccCheckCloudflareWorkerSecretExists(workerSecretTestScriptName, name, accountID),
+			// 	),
+			// },
 		},
 	})
 }

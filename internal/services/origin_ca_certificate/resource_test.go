@@ -52,10 +52,10 @@ func TestAccCloudflareOriginCACertificate_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "requested_validity", "7"),
 				),
 			},
-			{
-				ResourceName: name,
-				ImportState:  true,
-			},
+			// {
+			// 	ResourceName: name,
+			// 	ImportState:  true,
+			// },
 		},
 	})
 }

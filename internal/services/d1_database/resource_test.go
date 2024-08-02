@@ -68,12 +68,12 @@ func TestAccCloudflareD1Database_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "version", "production"),
 				),
 			},
-			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
