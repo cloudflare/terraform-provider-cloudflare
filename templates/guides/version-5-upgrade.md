@@ -131,6 +131,28 @@ terraform_cloudflare_v5()
 ## cloudflare_email_routing_rule
 ## cloudflare_fallback_domain
 ## cloudflare_healthcheck
+## cloudflare_hostname_tls_setting
+
+- `setting` is now `setting_id`.
+
+  Before
+  ```hcl
+  resource "cloudflare_hostname_tls_setting" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    setting = "min_tls_version"
+    value = "1.2"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_hostname_tls_setting" "example" {
+    zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+    setting_id = "min_tls_version"
+    value      = "1.2"
+  }
+  ```
+
 ## cloudflare_list
 ## cloudflare_list_item
 ## cloudflare_load_balancer
