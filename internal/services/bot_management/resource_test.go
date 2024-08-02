@@ -88,6 +88,5 @@ func testCloudflareBotManagementSBFM(resourceName, rnd string, bm cloudflare.Bot
 }
 
 func testCloudflareBotManagementEntSubscription(resourceName, rnd string, bm cloudflare.BotManagement) string {
-	return acctest.LoadTestCase("cloudflarebotmanagemententsubscription.tf", resourceName, rnd,
-		*bm.EnableJS, *bm.SuppressSessionScore)
+	return acctest.LoadTestCase("cloudflarebotmanagemententsubscription.tf", resourceName, rnd, *bm.EnableJS, *bm.SuppressSessionScore, false)
 }
