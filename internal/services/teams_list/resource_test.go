@@ -44,7 +44,7 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "SERIAL"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "items.#", "2"),
-					resource.TestCheckResourceAttr(name, "items.0", "asdf-1234"),
+					resource.TestCheckResourceAttr(name, "items.0.value", "asdf-1234"),
 				),
 			},
 		},
@@ -119,7 +119,7 @@ func testAccCloudflareTeamsListConfigBasic(rnd, accountID string) string {
 func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string {
 	items := []string{}
 	for i := 0; i < 1000; i++ {
-		items = append(items, `"example-`+strconv.Itoa(i)+`"`)
+		items = append(items, `{value = "example-`+strconv.Itoa(i)+`"}`)
 	}
 
 	return acctest.LoadTestCase("teamslistconfigbigitemcount.tf", rnd, accountID, strings.Join(items, ","))

@@ -170,6 +170,32 @@ terraform_cloudflare_v5()
 ## cloudflare_r2_bucket
 ## cloudflare_spectrum_application
 ## cloudflare_split_tunneclououdflare_teams_account
+## cloudflare_teams_list
+
+- `items` is now an object of `value = $item` instead of `items = [$item1, $item2]`
+
+  Before
+  ```hcl
+  resource "cloudflare_teams_list" "example" {
+   	account_id  = "f037e56e89293a057740de681ac9abbe"
+   	name        = "example"
+   	description = "My description"
+   	type        = "SERIAL"
+   	items       = ["item-1234", "item-5678"	]
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_teams_list" "example" {
+   	account_id  = "f037e56e89293a057740de681ac9abbe"
+   	name        = "example"
+   	description = "My description"
+   	type        = "SERIAL"
+   	items       = [{value = "item-1234"}, {value = "item-5678"}]
+  }
+  ```
+
 ## cloudflare_teams_location
 ## cloudflare_teams_rule
 ## cloudflare_tunnel_config
