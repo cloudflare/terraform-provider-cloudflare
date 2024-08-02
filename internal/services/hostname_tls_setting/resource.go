@@ -89,7 +89,7 @@ func (r *HostnameTLSSettingResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	data = &env.Result
-	data.ID = data.Hostname
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -107,7 +107,7 @@ func (r *HostnameTLSSettingResource) Read(ctx context.Context, req resource.Read
 	env := HostnameTLSSettingResultEnvelope{*data}
 	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
-		hostnames.SettingTLSGetParamsSettingID(data.Hostname.ValueString()),
+		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
 		hostnames.SettingTLSGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -125,7 +125,7 @@ func (r *HostnameTLSSettingResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 	data = &env.Result
-	data.ID = data.Hostname
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -157,7 +157,7 @@ func (r *HostnameTLSSettingResource) Update(ctx context.Context, req resource.Up
 	_, err = r.client.Hostnames.Settings.TLS.Update(
 		ctx,
 		hostnames.SettingTLSUpdateParamsSettingID(data.SettingID.ValueString()),
-		data.Hostname.ValueString(),
+		data.SettingID.ValueString(),
 		hostnames.SettingTLSUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -176,7 +176,7 @@ func (r *HostnameTLSSettingResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	data = &env.Result
-	data.ID = data.Hostname
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -193,7 +193,7 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 	_, err := r.client.Hostnames.Settings.TLS.Delete(
 		ctx,
 		hostnames.SettingTLSDeleteParamsSettingID(data.SettingID.ValueString()),
-		data.Hostname.ValueString(),
+		data.SettingID.ValueString(),
 		hostnames.SettingTLSDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -203,7 +203,7 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.Hostname
+	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

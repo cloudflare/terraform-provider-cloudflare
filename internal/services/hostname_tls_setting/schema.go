@@ -18,14 +18,12 @@ func (r HostnameTLSSettingResource) Schema(ctx context.Context, req resource.Sch
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "The hostname for which the tls settings are set.",
-				Computed:      true,
+				Description: "The TLS Setting name.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
+				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"hostname": schema.StringAttribute{
-				Description:   "The hostname for which the tls settings are set.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"setting_id": schema.StringAttribute{
 				Description: "The TLS Setting name.",
@@ -33,11 +31,16 @@ func (r HostnameTLSSettingResource) Schema(ctx context.Context, req resource.Sch
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"hostname": schema.StringAttribute{
+				Description:   "The hostname for which the tls settings are set.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"value": schema.Float64Attribute{
