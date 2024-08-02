@@ -13,12 +13,12 @@ type D1DatabaseResultEnvelope struct {
 
 type D1DatabaseModel struct {
 	ID                  types.String      `tfsdk:"id" json:"-,computed"`
-	Name                types.String      `tfsdk:"name" json:"name"`
+	UUID                types.String      `tfsdk:"uuid" json:"uuid,computed"`
 	AccountID           types.String      `tfsdk:"account_id" path:"account_id"`
+	Name                types.String      `tfsdk:"name" json:"name"`
 	PrimaryLocationHint types.String      `tfsdk:"primary_location_hint" json:"primary_location_hint"`
 	CreatedAt           timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	FileSize            types.Float64     `tfsdk:"file_size" json:"file_size,computed"`
 	NumTables           types.Float64     `tfsdk:"num_tables" json:"num_tables,computed"`
-	UUID                types.String      `tfsdk:"uuid" json:"uuid,computed"`
 	Version             types.String      `tfsdk:"version" json:"version,computed"`
 }
