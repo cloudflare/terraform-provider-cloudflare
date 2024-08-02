@@ -2,7 +2,7 @@
 		resource "cloudflare_access_organization" "%[1]s" {
 			account_id      = "%[2]s"
 			name            = "terraform-cfapi.cloudflareaccess.com"
-			auth_domain     = "terraform-cfapi.cloudflareaccess.com1"
+			auth_domain     = "%[1]s-terraform-cfapi.cloudflareaccess.com"
 			is_ui_read_only = false
 			user_seat_expiration_inactive_time = "1460h"
 			auto_redirect_to_identity = false
@@ -18,4 +18,3 @@
 				footer_text      = "My footer text"
 }
 		}
-		
