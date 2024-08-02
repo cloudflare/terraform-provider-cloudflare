@@ -87,7 +87,7 @@ func (r *D1DatabaseResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 	data = &env.Result
-	data.ID = data.Name
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -105,7 +105,7 @@ func (r *D1DatabaseResource) Read(ctx context.Context, req resource.ReadRequest,
 	env := D1DatabaseResultEnvelope{*data}
 	_, err := r.client.D1.Database.Get(
 		ctx,
-		data.Name.ValueString(),
+		data.UUID.ValueString(),
 		d1.DatabaseGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -123,7 +123,7 @@ func (r *D1DatabaseResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 	data = &env.Result
-	data.ID = data.Name
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -155,7 +155,7 @@ func (r *D1DatabaseResource) Update(ctx context.Context, req resource.UpdateRequ
 	_, err = r.client.D1.Database.New(
 		ctx,
 		d1.DatabaseNewParams{
-			AccountID: cloudflare.F(data.Name.ValueString()),
+			AccountID: cloudflare.F(data.UUID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -172,7 +172,7 @@ func (r *D1DatabaseResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	data = &env.Result
-	data.ID = data.Name
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -188,7 +188,7 @@ func (r *D1DatabaseResource) Delete(ctx context.Context, req resource.DeleteRequ
 
 	_, err := r.client.D1.Database.Delete(
 		ctx,
-		data.Name.ValueString(),
+		data.UUID.ValueString(),
 		d1.DatabaseDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -198,7 +198,7 @@ func (r *D1DatabaseResource) Delete(ctx context.Context, req resource.DeleteRequ
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.Name
+	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

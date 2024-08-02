@@ -21,12 +21,16 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Required:      true,
+			"uuid": schema.StringAttribute{
+				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Account identifier tag.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"name": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -36,6 +40,7 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("wnam", "enam", "weur", "eeur", "apac", "oc"),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{
 				Description: "Specifies the timestamp the resource was created as an ISO8601 string.",
@@ -47,9 +52,6 @@ func (r D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed:    true,
 			},
 			"num_tables": schema.Float64Attribute{
-				Computed: true,
-			},
-			"uuid": schema.StringAttribute{
 				Computed: true,
 			},
 			"version": schema.StringAttribute{
