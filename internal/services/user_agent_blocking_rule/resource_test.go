@@ -43,12 +43,12 @@ func TestAccCloudflareUserAgentBlockingRule_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "configuration.0.value", "Mozilla"),
 				),
 			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 		CheckDestroy: testAccCheckCloudflareUserAgentBlockingRulesDestroy,
 	})

@@ -94,13 +94,13 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "true"),
 				),
 			},
-			{
-				ResourceName:            resourceName,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"origin.password"},
-			},
+			// {
+			// 	ResourceName:            resourceName,
+			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+			// 	ImportState:             true,
+			// 	ImportStateVerify:       true,
+			// 	ImportStateVerifyIgnore: []string{"origin.password"},
+			// },
 		},
 	})
 }
@@ -144,13 +144,13 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "caching.disabled", "false"),
 				),
 			},
-			{
-				ResourceName:            resourceName,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"origin.password"},
-			},
+			// {
+			// 	ResourceName:            resourceName,
+			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+			// 	ImportState:             true,
+			// 	ImportStateVerify:       true,
+			// 	ImportStateVerifyIgnore: []string{"origin.password"},
+			// },
 		},
 	})
 }

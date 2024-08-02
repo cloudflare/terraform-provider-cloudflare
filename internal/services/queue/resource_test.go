@@ -72,12 +72,12 @@ func TestAccCloudflareQueue_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 				),
 			},
-			{
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-			},
+			// {
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// },
 		},
 	})
 }

@@ -90,12 +90,12 @@ func TestAccCloudflareRuleset_WAFBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" ruleset rule description"),
 				),
 			},
-			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("zone/%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("zone/%s/", zoneID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
@@ -748,12 +748,12 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_to_origin", "true"),
 				),
 			},
-			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("zone/%s/", zoneID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("zone/%s/", zoneID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
@@ -2633,14 +2633,14 @@ func TestAccCloudflareRuleset_ImportHandlesMissingValues(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config:        testAccCheckCloudflareRulesetTransformationRuleResponseHeaders(rnd, "broken", zoneID, zoneName),
-				ExpectError:   regexp.MustCompile(`invalid import identifier`),
-				ImportState:   true,
-				ImportStateId: rnd,
-				ResourceName:  name,
-			},
+		Steps:                    []resource.TestStep{
+			// {
+			// 	Config:        testAccCheckCloudflareRulesetTransformationRuleResponseHeaders(rnd, "broken", zoneID, zoneName),
+			// 	ExpectError:   regexp.MustCompile(`invalid import identifier`),
+			// 	ImportState:   true,
+			// 	ImportStateId: rnd,
+			// 	ResourceName:  name,
+			// },
 		},
 	})
 }

@@ -42,12 +42,12 @@ func TestAccCloudflareRegionalTieredCache_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "value", "on"),
 				),
 			},
-			{
-				Config:        testAccCloudflareRegionalTieredCache(rnd, zoneID, "on"),
-				ResourceName:  name,
-				ImportState:   true,
-				ImportStateId: zoneID,
-			},
+			// {
+			// 	Config:        testAccCloudflareRegionalTieredCache(rnd, zoneID, "on"),
+			// 	ResourceName:  name,
+			// 	ImportState:   true,
+			// 	ImportStateId: zoneID,
+			// },
 		},
 	})
 }

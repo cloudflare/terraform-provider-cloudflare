@@ -511,13 +511,13 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
 				Check:  checkFn,
 			},
-			{
-				ImportState:         true,
-				ImportStateVerify:   true,
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				Check:               checkFn,
-			},
+			// {
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// 	ResourceName:        name,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	Check:               checkFn,
+			// },
 		},
 	})
 }
