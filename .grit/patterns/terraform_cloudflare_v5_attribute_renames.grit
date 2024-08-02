@@ -12,6 +12,9 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     // cloudflare_access_service_token
     `min_days_for_renewal = $days` as $renewal => . where { $renewal <: within `resource "cloudflare_access_service_token" $_ { $_ }` },
 
+    // cloudflare_hostname_tls_setting
+    `setting = $v` as $setting => `setting_id = $v` where { $setting <: within `resource "cloudflare_hostname_tls_setting" $_ { $_ }` },
+
     // cloudflare_zone
     `account_id = $id` => `account = {
       id = $id
