@@ -15,6 +15,15 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     // cloudflare_hostname_tls_setting
     `setting = $v` as $setting => `setting_id = $v` where { $setting <: within `resource "cloudflare_hostname_tls_setting" $_ { $_ }` },
 
+    // cloudflare_teams_list
+    `items = [$items]` as $all_items where {
+        $values = [],
+        $items <: some bubble($values) `$item` where {
+            $values += `{ value = $item}`
+        },
+        $new_colors = join(list=$values, separator=", ")
+    } => `items = [$new_colors]` where $all_items <: within `resource "cloudflare_teams_list" $_ { $_ }`,
+
     // cloudflare_zone
     `account_id = $id` => `account = {
       id = $id
