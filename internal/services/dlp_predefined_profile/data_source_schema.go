@@ -24,11 +24,11 @@ func (r DLPPredefinedProfileDataSource) Schema(ctx context.Context, req datasour
 				Required:    true,
 			},
 			"profile_id": schema.StringAttribute{
-				Description: "The ID for this profile",
+				Description: "Unique identifier for a DLP profile",
 				Required:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The ID for this profile",
+				Description: "Unique identifier for a DLP profile",
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
@@ -73,7 +73,7 @@ func (r DLPPredefinedProfileDataSource) Schema(ctx context.Context, req datasour
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The ID for this entry",
+							Description: "Unique identifier for a DLP entry",
 							Computed:    true,
 						},
 						"enabled": schema.BoolAttribute{
@@ -87,9 +87,8 @@ func (r DLPPredefinedProfileDataSource) Schema(ctx context.Context, req datasour
 							Optional:    true,
 						},
 						"profile_id": schema.StringAttribute{
-							Description: "ID of the parent profile",
+							Description: "Unique identifier for a DLP profile",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

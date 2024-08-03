@@ -21,12 +21,12 @@ func (r DLPPredefinedProfileResource) UpgradeState(ctx context.Context) map[int6
 			PriorSchema: &schema.Schema{
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Description:   "The ID for this profile",
+						Description:   "Unique identifier for a DLP profile",
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"profile_id": schema.StringAttribute{
-						Description:   "The ID for this profile",
+						Description:   "Unique identifier for a DLP profile",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
@@ -65,7 +65,7 @@ func (r DLPPredefinedProfileResource) UpgradeState(ctx context.Context) map[int6
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
-									Description: "The ID for this entry",
+									Description: "Unique identifier for a DLP entry",
 									Computed:    true,
 								},
 								"enabled": schema.BoolAttribute{
