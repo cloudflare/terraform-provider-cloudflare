@@ -19,12 +19,12 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "The ID for this profile",
+				Description:   "Unique identifier for a DLP profile",
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"profile_id": schema.StringAttribute{
-				Description:   "The ID for this profile",
+				Description:   "Unique identifier for a DLP profile",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
@@ -63,7 +63,7 @@ func (r DLPPredefinedProfileResource) Schema(ctx context.Context, req resource.S
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Description: "The ID for this entry",
+							Description: "Unique identifier for a DLP entry",
 							Computed:    true,
 						},
 						"enabled": schema.BoolAttribute{

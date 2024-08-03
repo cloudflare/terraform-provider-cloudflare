@@ -3,7 +3,6 @@
 package dlp_custom_profile
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -73,7 +72,7 @@ type DLPCustomProfileEntriesModel struct {
 	Enabled   types.Bool                           `tfsdk:"enabled" json:"enabled"`
 	Name      types.String                         `tfsdk:"name" json:"name"`
 	Pattern   *DLPCustomProfileEntriesPatternModel `tfsdk:"pattern" json:"pattern"`
-	ProfileID jsontypes.Normalized                 `tfsdk:"profile_id" json:"profile_id"`
+	ProfileID types.String                         `tfsdk:"profile_id" json:"profile_id,computed"`
 	UpdatedAt timetypes.RFC3339                    `tfsdk:"updated_at" json:"updated_at,computed"`
 }
 

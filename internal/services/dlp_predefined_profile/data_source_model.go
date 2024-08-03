@@ -4,7 +4,6 @@ package dlp_predefined_profile
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -34,8 +33,8 @@ type DLPPredefinedProfileContextAwarenessSkipDataSourceModel struct {
 }
 
 type DLPPredefinedProfileEntriesDataSourceModel struct {
-	ID        types.String         `tfsdk:"id" json:"id,computed"`
-	Enabled   types.Bool           `tfsdk:"enabled" json:"enabled"`
-	Name      types.String         `tfsdk:"name" json:"name"`
-	ProfileID jsontypes.Normalized `tfsdk:"profile_id" json:"profile_id"`
+	ID        types.String `tfsdk:"id" json:"id,computed"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled"`
+	Name      types.String `tfsdk:"name" json:"name"`
+	ProfileID types.String `tfsdk:"profile_id" json:"profile_id,computed"`
 }
