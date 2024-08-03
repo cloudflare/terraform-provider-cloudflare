@@ -28,7 +28,7 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
 					"profile_id": schema.StringAttribute{
-						Description:   "The ID for this profile",
+						Description:   "Unique identifier for a DLP profile",
 						Optional:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
@@ -152,7 +152,7 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
-									Description: "The ID for this entry",
+									Description: "Unique identifier for a DLP entry",
 									Computed:    true,
 								},
 								"created_at": schema.StringAttribute{
@@ -185,8 +185,8 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 									},
 								},
 								"profile_id": schema.StringAttribute{
-									Description: "ID of the parent profile",
-									Optional:    true,
+									Description: "Unique identifier for a DLP profile",
+									Computed:    true,
 								},
 								"updated_at": schema.StringAttribute{
 									Computed:   true,
@@ -205,7 +205,7 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 									Optional:    true,
 								},
 								"entry_id": schema.StringAttribute{
-									Description: "The ID for this entry",
+									Description: "Unique identifier for a DLP entry",
 									Computed:    true,
 								},
 							},
@@ -225,7 +225,7 @@ func (r DLPCustomProfileResource) UpgradeState(ctx context.Context) map[int64]re
 						CustomType: timetypes.RFC3339Type{},
 					},
 					"id": schema.StringAttribute{
-						Description: "The ID for this profile",
+						Description: "Unique identifier for a DLP profile",
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
