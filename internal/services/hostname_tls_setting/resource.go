@@ -193,7 +193,7 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 	_, err := r.client.Hostnames.Settings.TLS.Delete(
 		ctx,
 		hostnames.SettingTLSDeleteParamsSettingID(data.SettingID.ValueString()),
-		data.SettingID.ValueString(),
+		data.Hostname.ValueString(),
 		hostnames.SettingTLSDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
