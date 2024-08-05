@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/shared"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -71,7 +70,7 @@ func (d *AccessApplicationDataSource) Read(ctx context.Context, req datasource.R
 
 	_, err := d.client.ZeroTrust.Access.Applications.Get(
 		ctx,
-		shared.UnionString(data.AppID.ValueString()),
+		data.AppID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/shared"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -120,7 +119,7 @@ func (r *AccessApplicationResource) Read(ctx context.Context, req resource.ReadR
 
 	_, err := r.client.ZeroTrust.Access.Applications.Get(
 		ctx,
-		shared.UnionString(data.ID.ValueString()),
+		data.ID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -174,7 +173,7 @@ func (r *AccessApplicationResource) Update(ctx context.Context, req resource.Upd
 
 	_, err = r.client.ZeroTrust.Access.Applications.Update(
 		ctx,
-		shared.UnionString(data.ID.ValueString()),
+		data.ID.ValueString(),
 		params,
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -214,7 +213,7 @@ func (r *AccessApplicationResource) Delete(ctx context.Context, req resource.Del
 
 	_, err := r.client.ZeroTrust.Access.Applications.Delete(
 		ctx,
-		shared.UnionString(data.ID.ValueString()),
+		data.ID.ValueString(),
 		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
