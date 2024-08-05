@@ -23,19 +23,19 @@ func TestAccCloudflareZoneCacheReserve_Basic(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCloudflareZoneCacheReserveConfig(zoneID, rnd, true),
+				Config: testAccCloudflareZoneCacheReserveConfig(zoneID, rnd, "on"),
 				Check: resource.ComposeTestCheckFunc(
 					// testAccCheckCloudflareZoneCacheReserveValuesUpdated(zoneID, true),
 					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
-					resource.TestCheckResourceAttr(name, "enabled", "true"),
+					resource.TestCheckResourceAttr(name, "value", "on"),
 				),
 			},
 			{
-				Config: testAccCloudflareZoneCacheReserveConfig(zoneID, rnd, false),
+				Config: testAccCloudflareZoneCacheReserveConfig(zoneID, rnd, "off"),
 				Check: resource.ComposeTestCheckFunc(
 					// testAccCheckCloudflareZoneCacheReserveValuesUpdated(zoneID, false),
 					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
-					resource.TestCheckResourceAttr(name, "enabled", "false"),
+					resource.TestCheckResourceAttr(name, "value", "off"),
 				),
 			},
 		},
@@ -112,6 +112,6 @@ func TestAccCloudflareZoneCacheReserve_Basic(t *testing.T) {
 // 	}
 // }
 
-func testAccCloudflareZoneCacheReserveConfig(zoneID, name string, enable bool) string {
+func testAccCloudflareZoneCacheReserveConfig(zoneID, name, enable string) string {
 	return acctest.LoadTestCase("zonecachereserveconfig.tf", zoneID, name, enable)
 }
