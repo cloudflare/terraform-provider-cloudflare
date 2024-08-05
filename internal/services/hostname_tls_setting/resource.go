@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &HostnameTLSSettingResource{}
+var _ resource.ResourceWithModifyPlan = &HostnameTLSSettingResource{}
 
 func NewResource() resource.Resource {
 	return &HostnameTLSSettingResource{}
@@ -206,4 +207,8 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 	data.ID = data.SettingID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *HostnameTLSSettingResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

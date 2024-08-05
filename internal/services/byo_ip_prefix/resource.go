@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ByoIPPrefixResource{}
+var _ resource.ResourceWithModifyPlan = &ByoIPPrefixResource{}
 
 func NewResource() resource.Resource {
 	return &ByoIPPrefixResource{}
@@ -198,4 +199,8 @@ func (r *ByoIPPrefixResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ByoIPPrefixResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

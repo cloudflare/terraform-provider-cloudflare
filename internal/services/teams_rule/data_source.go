@@ -30,7 +30,7 @@ func (d *TeamsRuleDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_teams_rule"
 }
 
-func (r *TeamsRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TeamsRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TeamsRuleDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TeamsRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TeamsRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TeamsRuleDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *TeamsRuleDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := TeamsRuleResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Gateway.Rules.Get(
+		_, err := d.client.ZeroTrust.Gateway.Rules.Get(
 			ctx,
 			data.RuleID.ValueString(),
 			zero_trust.GatewayRuleGetParams{
@@ -85,7 +85,7 @@ func (r *TeamsRuleDataSource) Read(ctx context.Context, req datasource.ReadReque
 		items := &[]*TeamsRuleDataSourceModel{}
 		env := TeamsRuleResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Gateway.Rules.List(ctx, zero_trust.GatewayRuleListParams{
+		page, err := d.client.ZeroTrust.Gateway.Rules.List(ctx, zero_trust.GatewayRuleListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

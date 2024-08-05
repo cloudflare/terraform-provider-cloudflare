@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &GRETunnelDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &GRETunnelDataSource{}
 
-func (r GRETunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *GRETunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -30,9 +29,6 @@ func (r GRETunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 	}
 }
 
-func (r *GRETunnelDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *GRETunnelDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *GRETunnelDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

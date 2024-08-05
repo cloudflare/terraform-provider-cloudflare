@@ -30,7 +30,7 @@ func (d *AccessCACertificateDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_access_ca_certificate"
 }
 
-func (r *AccessCACertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessCACertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessCACertificateDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessCACertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessCACertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessCACertificateDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -68,7 +68,7 @@ func (r *AccessCACertificateDataSource) Read(ctx context.Context, req datasource
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.ZeroTrust.Access.Applications.CAs.Get(
+	_, err := d.client.ZeroTrust.Access.Applications.CAs.Get(
 		ctx,
 		data.AppID.ValueString(),
 		params,

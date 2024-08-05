@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &IPSECTunnelResource{}
+var _ resource.ResourceWithModifyPlan = &IPSECTunnelResource{}
 
 func NewResource() resource.Resource {
 	return &IPSECTunnelResource{}
@@ -198,4 +199,8 @@ func (r *IPSECTunnelResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *IPSECTunnelResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

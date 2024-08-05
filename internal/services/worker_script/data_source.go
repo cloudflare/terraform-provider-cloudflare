@@ -30,7 +30,7 @@ func (d *WorkerScriptDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_worker_script"
 }
 
-func (r *WorkerScriptDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkerScriptDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WorkerScriptDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkerScriptDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkerScriptDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkerScriptDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *WorkerScriptDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	if data.Filter == nil {
 		res := new(http.Response)
-		_, err := r.client.Workers.Scripts.Get(
+		_, err := d.client.Workers.Scripts.Get(
 			ctx,
 			data.ScriptName.ValueString(),
 			workers.ScriptGetParams{
@@ -83,7 +83,7 @@ func (r *WorkerScriptDataSource) Read(ctx context.Context, req datasource.ReadRe
 		items := &[]*WorkerScriptDataSourceModel{}
 		env := WorkerScriptResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Workers.Scripts.List(ctx, workers.ScriptListParams{
+		page, err := d.client.Workers.Scripts.List(ctx, workers.ScriptListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

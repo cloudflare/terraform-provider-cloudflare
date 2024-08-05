@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &SpectrumApplicationDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &SpectrumApplicationDataSource{}
 
-func (r SpectrumApplicationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *SpectrumApplicationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"app_id": schema.StringAttribute{
@@ -70,9 +69,6 @@ func (r SpectrumApplicationDataSource) Schema(ctx context.Context, req datasourc
 	}
 }
 
-func (r *SpectrumApplicationDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *SpectrumApplicationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *SpectrumApplicationDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

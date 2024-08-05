@@ -31,7 +31,7 @@ func (d *RecordDataSource) Metadata(ctx context.Context, req datasource.Metadata
 	resp.TypeName = req.ProviderTypeName + "_record"
 }
 
-func (r *RecordDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RecordDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -47,10 +47,10 @@ func (r *RecordDataSource) Configure(ctx context.Context, req datasource.Configu
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *RecordDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *RecordDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *RecordDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -62,7 +62,7 @@ func (r *RecordDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := RecordResultDataSourceEnvelope{*data}
-		_, err := r.client.DNS.Records.Get(
+		_, err := d.client.DNS.Records.Get(
 			ctx,
 			data.DNSRecordID.ValueString(),
 			dns.RecordGetParams{
@@ -86,7 +86,7 @@ func (r *RecordDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		items := &[]*RecordDataSourceModel{}
 		env := RecordResultListDataSourceEnvelope{items}
 
-		page, err := r.client.DNS.Records.List(ctx, dns.RecordListParams{
+		page, err := d.client.DNS.Records.List(ctx, dns.RecordListParams{
 			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 			Comment: cloudflare.F(dns.RecordListParamsComment{
 				Absent:     cloudflare.F(data.Filter.Comment.Absent.ValueString()),

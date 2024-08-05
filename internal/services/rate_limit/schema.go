@@ -15,7 +15,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r RateLimitResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+var _ resource.ResourceWithConfigValidators = &RateLimitResource{}
+
+func (r *RateLimitResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
@@ -134,4 +136,8 @@ func (r RateLimitResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 		},
 	}
+}
+
+func (r *RateLimitResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

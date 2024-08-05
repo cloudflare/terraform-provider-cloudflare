@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZoneDNSSECDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &ZoneDNSSECDataSource{}
 
-func (r ZoneDNSSECDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ZoneDNSSECDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -82,9 +81,6 @@ func (r ZoneDNSSECDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-func (r *ZoneDNSSECDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *ZoneDNSSECDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *ZoneDNSSECDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

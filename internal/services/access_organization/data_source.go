@@ -30,7 +30,7 @@ func (d *AccessOrganizationDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_access_organization"
 }
 
-func (r *AccessOrganizationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessOrganizationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessOrganizationDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessOrganizationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessOrganizationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessOrganizationDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -68,7 +68,7 @@ func (r *AccessOrganizationDataSource) Read(ctx context.Context, req datasource.
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.ZeroTrust.Organizations.List(
+	_, err := d.client.ZeroTrust.Organizations.List(
 		ctx,
 		params,
 		option.WithResponseBodyInto(&res),

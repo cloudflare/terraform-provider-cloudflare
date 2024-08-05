@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &CertificatePackResource{}
+var _ resource.ResourceWithModifyPlan = &CertificatePackResource{}
 
 func NewResource() resource.Resource {
 	return &CertificatePackResource{}
@@ -203,4 +204,8 @@ func (r *CertificatePackResource) Delete(ctx context.Context, req resource.Delet
 	data.ID = data.CertificatePackID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *CertificatePackResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

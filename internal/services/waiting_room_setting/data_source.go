@@ -30,7 +30,7 @@ func (d *WaitingRoomSettingDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_waiting_room_setting"
 }
 
-func (r *WaitingRoomSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WaitingRoomSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WaitingRoomSettingDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WaitingRoomSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WaitingRoomSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WaitingRoomSettingDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *WaitingRoomSettingDataSource) Read(ctx context.Context, req datasource.
 
 	res := new(http.Response)
 	env := WaitingRoomSettingResultDataSourceEnvelope{*data}
-	_, err := r.client.WaitingRooms.Settings.Get(
+	_, err := d.client.WaitingRooms.Settings.Get(
 		ctx,
 		waiting_rooms.SettingGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

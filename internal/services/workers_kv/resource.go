@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WorkersKVResource{}
+var _ resource.ResourceWithModifyPlan = &WorkersKVResource{}
 
 func NewResource() resource.Resource {
 	return &WorkersKVResource{}
@@ -205,4 +206,8 @@ func (r *WorkersKVResource) Delete(ctx context.Context, req resource.DeleteReque
 	data.ID = data.KeyName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WorkersKVResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

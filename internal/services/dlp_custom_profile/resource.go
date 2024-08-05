@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &DLPCustomProfileResource{}
+var _ resource.ResourceWithModifyPlan = &DLPCustomProfileResource{}
 
 func NewResource() resource.Resource {
 	return &DLPCustomProfileResource{}
@@ -196,4 +197,8 @@ func (r *DLPCustomProfileResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *DLPCustomProfileResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

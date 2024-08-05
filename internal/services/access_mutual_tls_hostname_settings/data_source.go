@@ -30,7 +30,7 @@ func (d *AccessMutualTLSHostnameSettingsDataSource) Metadata(ctx context.Context
 	resp.TypeName = req.ProviderTypeName + "_access_mutual_tls_hostname_settings"
 }
 
-func (r *AccessMutualTLSHostnameSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessMutualTLSHostnameSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessMutualTLSHostnameSettingsDataSource) Configure(ctx context.Contex
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessMutualTLSHostnameSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessMutualTLSHostnameSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessMutualTLSHostnameSettingsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -68,7 +68,7 @@ func (r *AccessMutualTLSHostnameSettingsDataSource) Read(ctx context.Context, re
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.ZeroTrust.Access.Certificates.Settings.Get(
+	_, err := d.client.ZeroTrust.Access.Certificates.Settings.Get(
 		ctx,
 		params,
 		option.WithResponseBodyInto(&res),

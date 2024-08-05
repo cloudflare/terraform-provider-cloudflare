@@ -15,9 +15,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &DLPCustomProfileDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &DLPCustomProfileDataSource{}
 
-func (r DLPCustomProfileDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *DLPCustomProfileDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -145,9 +144,6 @@ func (r DLPCustomProfileDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (r *DLPCustomProfileDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *DLPCustomProfileDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *DLPCustomProfileDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

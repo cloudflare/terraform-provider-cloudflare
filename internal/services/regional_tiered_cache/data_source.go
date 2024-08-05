@@ -30,7 +30,7 @@ func (d *RegionalTieredCacheDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_regional_tiered_cache"
 }
 
-func (r *RegionalTieredCacheDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RegionalTieredCacheDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *RegionalTieredCacheDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *RegionalTieredCacheDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *RegionalTieredCacheDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *RegionalTieredCacheDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *RegionalTieredCacheDataSource) Read(ctx context.Context, req datasource
 
 	res := new(http.Response)
 	env := RegionalTieredCacheResultDataSourceEnvelope{*data}
-	_, err := r.client.Cache.RegionalTieredCache.Get(
+	_, err := d.client.Cache.RegionalTieredCache.Get(
 		ctx,
 		cache.RegionalTieredCacheGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

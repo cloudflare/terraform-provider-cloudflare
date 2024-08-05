@@ -30,7 +30,7 @@ func (d *QueueDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 	resp.TypeName = req.ProviderTypeName + "_queue"
 }
 
-func (r *QueueDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *QueueDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *QueueDataSource) Configure(ctx context.Context, req datasource.Configur
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *QueueDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *QueueDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *QueueDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *QueueDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := QueueResultDataSourceEnvelope{*data}
-		_, err := r.client.Queues.Get(
+		_, err := d.client.Queues.Get(
 			ctx,
 			data.QueueID.ValueString(),
 			queues.QueueGetParams{
@@ -85,7 +85,7 @@ func (r *QueueDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		items := &[]*QueueDataSourceModel{}
 		env := QueueResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Queues.List(ctx, queues.QueueListParams{
+		page, err := d.client.Queues.List(ctx, queues.QueueListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

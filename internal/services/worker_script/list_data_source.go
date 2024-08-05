@@ -26,7 +26,7 @@ func (d *WorkerScriptsDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_worker_scripts"
 }
 
-func (r *WorkerScriptsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkerScriptsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *WorkerScriptsDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkerScriptsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkerScriptsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkerScriptsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WorkerScriptsDataSource) Read(ctx context.Context, req datasource.ReadR
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WorkerScriptsResultDataSourceModel{}
 
-	page, err := r.client.Workers.Scripts.List(ctx, workers.ScriptListParams{
+	page, err := d.client.Workers.Scripts.List(ctx, workers.ScriptListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

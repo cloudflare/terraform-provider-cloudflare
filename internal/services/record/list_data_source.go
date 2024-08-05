@@ -27,7 +27,7 @@ func (d *RecordsDataSource) Metadata(ctx context.Context, req datasource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_records"
 }
 
-func (r *RecordsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RecordsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -43,10 +43,10 @@ func (r *RecordsDataSource) Configure(ctx context.Context, req datasource.Config
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *RecordsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *RecordsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *RecordsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *RecordsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*RecordsResultDataSourceModel{}
 
-	page, err := r.client.DNS.Records.List(ctx, dns.RecordListParams{
+	page, err := d.client.DNS.Records.List(ctx, dns.RecordListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		Comment: cloudflare.F(dns.RecordListParamsComment{
 			Absent:     cloudflare.F(data.Comment.Absent.ValueString()),

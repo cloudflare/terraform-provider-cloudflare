@@ -30,7 +30,7 @@ func (d *IPSECTunnelDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_ipsec_tunnel"
 }
 
-func (r *IPSECTunnelDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *IPSECTunnelDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *IPSECTunnelDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *IPSECTunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *IPSECTunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *IPSECTunnelDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *IPSECTunnelDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	res := new(http.Response)
 	env := IPSECTunnelResultDataSourceEnvelope{*data}
-	_, err := r.client.MagicTransit.IPSECTunnels.Get(
+	_, err := d.client.MagicTransit.IPSECTunnels.Get(
 		ctx,
 		data.IPSECTunnelID.ValueString(),
 		magic_transit.IPSECTunnelGetParams{

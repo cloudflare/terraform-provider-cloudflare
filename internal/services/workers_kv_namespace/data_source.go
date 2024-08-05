@@ -30,7 +30,7 @@ func (d *WorkersKVNamespaceDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_workers_kv_namespace"
 }
 
-func (r *WorkersKVNamespaceDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkersKVNamespaceDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WorkersKVNamespaceDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkersKVNamespaceDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := WorkersKVNamespaceResultDataSourceEnvelope{*data}
-		_, err := r.client.KV.Namespaces.Get(
+		_, err := d.client.KV.Namespaces.Get(
 			ctx,
 			data.NamespaceID.ValueString(),
 			kv.NamespaceGetParams{
@@ -85,7 +85,7 @@ func (r *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 		items := &[]*WorkersKVNamespaceDataSourceModel{}
 		env := WorkersKVNamespaceResultListDataSourceEnvelope{items}
 
-		page, err := r.client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
+		page, err := d.client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 			Direction: cloudflare.F(kv.NamespaceListParamsDirection(data.Filter.Direction.ValueString())),
 			Order:     cloudflare.F(kv.NamespaceListParamsOrder(data.Filter.Order.ValueString())),

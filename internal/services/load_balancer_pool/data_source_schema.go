@@ -15,9 +15,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &LoadBalancerPoolDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &LoadBalancerPoolDataSource{}
 
-func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -246,9 +245,6 @@ func (r LoadBalancerPoolDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (r *LoadBalancerPoolDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *LoadBalancerPoolDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *LoadBalancerPoolDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

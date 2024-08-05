@@ -30,7 +30,7 @@ func (d *AuthenticatedOriginPullsCertificateDataSource) Metadata(ctx context.Con
 	resp.TypeName = req.ProviderTypeName + "_authenticated_origin_pulls_certificate"
 }
 
-func (r *AuthenticatedOriginPullsCertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AuthenticatedOriginPullsCertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AuthenticatedOriginPullsCertificateDataSource) Configure(ctx context.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AuthenticatedOriginPullsCertificateDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := AuthenticatedOriginPullsCertificateResultDataSourceEnvelope{*data}
-		_, err := r.client.OriginTLSClientAuth.Get(
+		_, err := d.client.OriginTLSClientAuth.Get(
 			ctx,
 			data.CertificateID.ValueString(),
 			origin_tls_client_auth.OriginTLSClientAuthGetParams{
@@ -85,7 +85,7 @@ func (r *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 		items := &[]*AuthenticatedOriginPullsCertificateDataSourceModel{}
 		env := AuthenticatedOriginPullsCertificateResultListDataSourceEnvelope{items}
 
-		page, err := r.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
+		page, err := d.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
 			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 		})
 		if err != nil {

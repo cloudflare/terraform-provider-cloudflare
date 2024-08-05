@@ -13,7 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-func (r AccessOrganizationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+var _ resource.ResourceWithUpgradeState = &AccessOrganizationResource{}
+
+func (r *AccessOrganizationResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{
 		0: {
 			PriorSchema: &schema.Schema{

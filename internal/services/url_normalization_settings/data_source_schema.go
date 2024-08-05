@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &URLNormalizationSettingsDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &URLNormalizationSettingsDataSource{}
 
-func (r URLNormalizationSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *URLNormalizationSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -31,9 +30,6 @@ func (r URLNormalizationSettingsDataSource) Schema(ctx context.Context, req data
 	}
 }
 
-func (r *URLNormalizationSettingsDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *URLNormalizationSettingsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *URLNormalizationSettingsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

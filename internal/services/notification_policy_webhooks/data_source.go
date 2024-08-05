@@ -30,7 +30,7 @@ func (d *NotificationPolicyWebhooksDataSource) Metadata(ctx context.Context, req
 	resp.TypeName = req.ProviderTypeName + "_notification_policy_webhooks"
 }
 
-func (r *NotificationPolicyWebhooksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *NotificationPolicyWebhooksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *NotificationPolicyWebhooksDataSource) Configure(ctx context.Context, re
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *NotificationPolicyWebhooksDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req dat
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := NotificationPolicyWebhooksResultDataSourceEnvelope{*data}
-		_, err := r.client.Alerting.Destinations.Webhooks.Get(
+		_, err := d.client.Alerting.Destinations.Webhooks.Get(
 			ctx,
 			data.WebhookID.ValueString(),
 			alerting.DestinationWebhookGetParams{
@@ -85,7 +85,7 @@ func (r *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req dat
 		items := &[]*NotificationPolicyWebhooksDataSourceModel{}
 		env := NotificationPolicyWebhooksResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Alerting.Destinations.Webhooks.List(ctx, alerting.DestinationWebhookListParams{
+		page, err := d.client.Alerting.Destinations.Webhooks.List(ctx, alerting.DestinationWebhookListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

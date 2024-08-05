@@ -15,7 +15,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r TeamsRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+var _ resource.ResourceWithUpgradeState = &TeamsRuleResource{}
+
+func (r *TeamsRuleResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{
 		0: {
 			PriorSchema: &schema.Schema{

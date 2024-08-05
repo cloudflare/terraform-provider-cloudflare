@@ -30,7 +30,7 @@ func (d *ManagedHeadersDataSource) Metadata(ctx context.Context, req datasource.
 	resp.TypeName = req.ProviderTypeName + "_managed_headers"
 }
 
-func (r *ManagedHeadersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ManagedHeadersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ManagedHeadersDataSource) Configure(ctx context.Context, req datasource
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ManagedHeadersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ManagedHeadersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ManagedHeadersDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *ManagedHeadersDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	res := new(http.Response)
-	_, err := r.client.ManagedHeaders.List(
+	_, err := d.client.ManagedHeaders.List(
 		ctx,
 		managed_headers.ManagedHeaderListParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

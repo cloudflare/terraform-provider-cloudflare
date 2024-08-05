@@ -26,7 +26,7 @@ func (d *AccessPoliciesDataSource) Metadata(ctx context.Context, req datasource.
 	resp.TypeName = req.ProviderTypeName + "_access_policies"
 }
 
-func (r *AccessPoliciesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessPoliciesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccessPoliciesDataSource) Configure(ctx context.Context, req datasource
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessPoliciesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessPoliciesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessPoliciesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -66,7 +66,7 @@ func (r *AccessPoliciesDataSource) Read(ctx context.Context, req datasource.Read
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccessPoliciesResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Access.Applications.Policies.List(
+	page, err := d.client.ZeroTrust.Access.Applications.Policies.List(
 		ctx,
 		data.AppID.ValueString(),
 		params,

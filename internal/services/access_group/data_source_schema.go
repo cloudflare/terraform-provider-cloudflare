@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessGroupDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessGroupDataSource{}
 
-func (r AccessGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -878,9 +877,6 @@ func (r AccessGroupDataSource) Schema(ctx context.Context, req datasource.Schema
 	}
 }
 
-func (r *AccessGroupDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessGroupDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessGroupDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

@@ -30,7 +30,7 @@ func (d *TunnelDataSource) Metadata(ctx context.Context, req datasource.Metadata
 	resp.TypeName = req.ProviderTypeName + "_tunnel"
 }
 
-func (r *TunnelDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TunnelDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TunnelDataSource) Configure(ctx context.Context, req datasource.Configu
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TunnelDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := TunnelResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Tunnels.Get(
+		_, err := d.client.ZeroTrust.Tunnels.Get(
 			ctx,
 			data.TunnelID.ValueString(),
 			zero_trust.TunnelGetParams{
@@ -95,7 +95,7 @@ func (r *TunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		items := &[]*TunnelDataSourceModel{}
 		env := TunnelResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
+		page, err := d.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
 			AccountID:     cloudflare.F(data.Filter.AccountID.ValueString()),
 			ExcludePrefix: cloudflare.F(data.Filter.ExcludePrefix.ValueString()),
 			ExistedAt:     cloudflare.F(dataFilterExistedAt),

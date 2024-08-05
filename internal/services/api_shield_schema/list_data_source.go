@@ -26,7 +26,7 @@ func (d *APIShieldSchemasDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_api_shield_schemas"
 }
 
-func (r *APIShieldSchemasDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APIShieldSchemasDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *APIShieldSchemasDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *APIShieldSchemasDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *APIShieldSchemasDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *APIShieldSchemasDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *APIShieldSchemasDataSource) Read(ctx context.Context, req datasource.Re
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*APIShieldSchemasResultDataSourceModel{}
 
-	page, err := r.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
+	page, err := d.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
 		ZoneID:            cloudflare.F(data.ZoneID.ValueString()),
 		OmitSource:        cloudflare.F(data.OmitSource.ValueBool()),
 		Page:              cloudflare.F(data.Page.ValueInt64()),

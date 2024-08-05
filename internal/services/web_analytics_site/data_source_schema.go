@@ -14,9 +14,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WebAnalyticsSiteDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &WebAnalyticsSiteDataSource{}
 
-func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -147,9 +146,6 @@ func (r WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (r *WebAnalyticsSiteDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *WebAnalyticsSiteDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *WebAnalyticsSiteDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

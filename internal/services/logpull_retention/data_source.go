@@ -29,7 +29,7 @@ func (d *LogpullRetentionDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_logpull_retention"
 }
 
-func (r *LogpullRetentionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *LogpullRetentionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -45,10 +45,10 @@ func (r *LogpullRetentionDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *LogpullRetentionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *LogpullRetentionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *LogpullRetentionDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *LogpullRetentionDataSource) Read(ctx context.Context, req datasource.Re
 
 	res := new(http.Response)
 	env := LogpullRetentionResultDataSourceEnvelope{*data}
-	_, err := r.client.Logs.Control.Retention.Get(
+	_, err := d.client.Logs.Control.Retention.Get(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		option.WithResponseBodyInto(&res),

@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ObservatoryScheduledTestResource{}
+var _ resource.ResourceWithModifyPlan = &ObservatoryScheduledTestResource{}
 
 func NewResource() resource.Resource {
 	return &ObservatoryScheduledTestResource{}
@@ -203,4 +204,8 @@ func (r *ObservatoryScheduledTestResource) Delete(ctx context.Context, req resou
 	data.ID = data.URL
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ObservatoryScheduledTestResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

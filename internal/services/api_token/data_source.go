@@ -30,7 +30,7 @@ func (d *APITokenDataSource) Metadata(ctx context.Context, req datasource.Metada
 	resp.TypeName = req.ProviderTypeName + "_api_token"
 }
 
-func (r *APITokenDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APITokenDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *APITokenDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *APITokenDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *APITokenDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *APITokenDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *APITokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := APITokenResultDataSourceEnvelope{*data}
-		_, err := r.client.User.Tokens.Get(
+		_, err := d.client.User.Tokens.Get(
 			ctx,
 			data.TokenID.ValueString(),
 			option.WithResponseBodyInto(&res),
@@ -82,7 +82,7 @@ func (r *APITokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		items := &[]*APITokenDataSourceModel{}
 		env := APITokenResultListDataSourceEnvelope{items}
 
-		page, err := r.client.User.Tokens.List(ctx, user.TokenListParams{
+		page, err := d.client.User.Tokens.List(ctx, user.TokenListParams{
 			Direction: cloudflare.F(user.TokenListParamsDirection(data.Filter.Direction.ValueString())),
 			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
 			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),

@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &PageRuleDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &PageRuleDataSource{}
 
-func (r PageRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *PageRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"pagerule_id": schema.StringAttribute{
@@ -27,9 +26,6 @@ func (r PageRuleDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 	}
 }
 
-func (r *PageRuleDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *PageRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *PageRuleDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

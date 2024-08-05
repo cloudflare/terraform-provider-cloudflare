@@ -14,7 +14,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-func (r HyperdriveConfigResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+var _ resource.ResourceWithUpgradeState = &HyperdriveConfigResource{}
+
+func (r *HyperdriveConfigResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{
 		0: {
 			PriorSchema: &schema.Schema{

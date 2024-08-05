@@ -30,7 +30,7 @@ func (d *ZoneDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_zone"
 }
 
-func (r *ZoneDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ZoneDataSource) Configure(ctx context.Context, req datasource.Configure
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZoneDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := ZoneResultDataSourceEnvelope{*data}
-		_, err := r.client.Zones.Get(
+		_, err := d.client.Zones.Get(
 			ctx,
 			zones.ZoneGetParams{
 				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
@@ -84,7 +84,7 @@ func (r *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		items := &[]*ZoneDataSourceModel{}
 		env := ZoneResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Zones.List(ctx, zones.ZoneListParams{
+		page, err := d.client.Zones.List(ctx, zones.ZoneListParams{
 			Account: cloudflare.F(zones.ZoneListParamsAccount{
 				ID:   cloudflare.F(data.Filter.Account.ID.ValueString()),
 				Name: cloudflare.F(data.Filter.Account.Name.ValueString()),

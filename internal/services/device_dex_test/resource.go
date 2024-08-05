@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &DeviceDEXTestResource{}
+var _ resource.ResourceWithModifyPlan = &DeviceDEXTestResource{}
 
 func NewResource() resource.Resource {
 	return &DeviceDEXTestResource{}
@@ -202,4 +203,8 @@ func (r *DeviceDEXTestResource) Delete(ctx context.Context, req resource.DeleteR
 	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *DeviceDEXTestResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

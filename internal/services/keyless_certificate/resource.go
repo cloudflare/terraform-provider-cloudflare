@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &KeylessCertificateResource{}
+var _ resource.ResourceWithModifyPlan = &KeylessCertificateResource{}
 
 func NewResource() resource.Resource {
 	return &KeylessCertificateResource{}
@@ -198,4 +199,8 @@ func (r *KeylessCertificateResource) Delete(ctx context.Context, req resource.De
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *KeylessCertificateResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

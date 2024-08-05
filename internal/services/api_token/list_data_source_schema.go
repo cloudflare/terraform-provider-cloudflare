@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &APITokensDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &APITokensDataSource{}
 
-func (r APITokensDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *APITokensDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"direction": schema.StringAttribute{
@@ -56,9 +55,6 @@ func (r APITokensDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 	}
 }
 
-func (r *APITokensDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *APITokensDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *APITokensDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

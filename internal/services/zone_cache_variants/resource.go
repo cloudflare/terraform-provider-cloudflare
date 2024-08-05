@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ZoneCacheVariantsResource{}
+var _ resource.ResourceWithModifyPlan = &ZoneCacheVariantsResource{}
 
 func NewResource() resource.Resource {
 	return &ZoneCacheVariantsResource{}
@@ -199,4 +200,8 @@ func (r *ZoneCacheVariantsResource) Delete(ctx context.Context, req resource.Del
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZoneCacheVariantsResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

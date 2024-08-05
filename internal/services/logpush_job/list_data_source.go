@@ -26,7 +26,7 @@ func (d *LogpushJobsDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_logpush_jobs"
 }
 
-func (r *LogpushJobsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *LogpushJobsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *LogpushJobsDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *LogpushJobsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *LogpushJobsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *LogpushJobsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -66,7 +66,7 @@ func (r *LogpushJobsDataSource) Read(ctx context.Context, req datasource.ReadReq
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*LogpushJobsResultDataSourceModel{}
 
-	page, err := r.client.Logpush.Jobs.List(ctx, params)
+	page, err := d.client.Logpush.Jobs.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

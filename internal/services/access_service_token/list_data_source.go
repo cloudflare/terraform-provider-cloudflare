@@ -26,7 +26,7 @@ func (d *AccessServiceTokensDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_access_service_tokens"
 }
 
-func (r *AccessServiceTokensDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessServiceTokensDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccessServiceTokensDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessServiceTokensDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessServiceTokensDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessServiceTokensDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -66,7 +66,7 @@ func (r *AccessServiceTokensDataSource) Read(ctx context.Context, req datasource
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccessServiceTokensResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Access.ServiceTokens.List(ctx, params)
+	page, err := d.client.ZeroTrust.Access.ServiceTokens.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

@@ -30,7 +30,7 @@ func (d *URLNormalizationSettingsDataSource) Metadata(ctx context.Context, req d
 	resp.TypeName = req.ProviderTypeName + "_url_normalization_settings"
 }
 
-func (r *URLNormalizationSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *URLNormalizationSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *URLNormalizationSettingsDataSource) Configure(ctx context.Context, req 
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *URLNormalizationSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *URLNormalizationSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *URLNormalizationSettingsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *URLNormalizationSettingsDataSource) Read(ctx context.Context, req datas
 	}
 
 	res := new(http.Response)
-	_, err := r.client.URLNormalization.Get(
+	_, err := d.client.URLNormalization.Get(
 		ctx,
 		url_normalization.URLNormalizationGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

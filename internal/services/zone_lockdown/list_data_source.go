@@ -26,7 +26,7 @@ func (d *ZoneLockdownsDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_zone_lockdowns"
 }
 
-func (r *ZoneLockdownsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneLockdownsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *ZoneLockdownsDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZoneLockdownsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -67,7 +67,7 @@ func (r *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ZoneLockdownsResultDataSourceModel{}
 
-	page, err := r.client.Firewall.Lockdowns.List(
+	page, err := d.client.Firewall.Lockdowns.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		firewall.LockdownListParams{

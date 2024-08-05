@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &RateLimitResource{}
+var _ resource.ResourceWithModifyPlan = &RateLimitResource{}
 
 func NewResource() resource.Resource {
 	return &RateLimitResource{}
@@ -192,4 +193,8 @@ func (r *RateLimitResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *RateLimitResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

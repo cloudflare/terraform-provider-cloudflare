@@ -26,7 +26,7 @@ func (d *FiltersDataSource) Metadata(ctx context.Context, req datasource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_filters"
 }
 
-func (r *FiltersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *FiltersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *FiltersDataSource) Configure(ctx context.Context, req datasource.Config
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *FiltersDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*FiltersResultDataSourceModel{}
 
-	page, err := r.client.Filters.List(
+	page, err := d.client.Filters.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		filters.FilterListParams{

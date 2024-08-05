@@ -30,7 +30,7 @@ func (d *DevicePostureRuleDataSource) Metadata(ctx context.Context, req datasour
 	resp.TypeName = req.ProviderTypeName + "_device_posture_rule"
 }
 
-func (r *DevicePostureRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DevicePostureRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *DevicePostureRuleDataSource) Configure(ctx context.Context, req datasou
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DevicePostureRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DevicePostureRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DevicePostureRuleDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *DevicePostureRuleDataSource) Read(ctx context.Context, req datasource.R
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := DevicePostureRuleResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Devices.Posture.Get(
+		_, err := d.client.ZeroTrust.Devices.Posture.Get(
 			ctx,
 			data.RuleID.ValueString(),
 			zero_trust.DevicePostureGetParams{
@@ -85,7 +85,7 @@ func (r *DevicePostureRuleDataSource) Read(ctx context.Context, req datasource.R
 		items := &[]*DevicePostureRuleDataSourceModel{}
 		env := DevicePostureRuleResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Devices.Posture.List(ctx, zero_trust.DevicePostureListParams{
+		page, err := d.client.ZeroTrust.Devices.Posture.List(ctx, zero_trust.DevicePostureListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

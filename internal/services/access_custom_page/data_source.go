@@ -30,7 +30,7 @@ func (d *AccessCustomPageDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_access_custom_page"
 }
 
-func (r *AccessCustomPageDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessCustomPageDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessCustomPageDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessCustomPageDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessCustomPageDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessCustomPageDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *AccessCustomPageDataSource) Read(ctx context.Context, req datasource.Re
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := AccessCustomPageResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Access.CustomPages.Get(
+		_, err := d.client.ZeroTrust.Access.CustomPages.Get(
 			ctx,
 			data.CustomPageID.ValueString(),
 			zero_trust.AccessCustomPageGetParams{
@@ -85,7 +85,7 @@ func (r *AccessCustomPageDataSource) Read(ctx context.Context, req datasource.Re
 		items := &[]*AccessCustomPageDataSourceModel{}
 		env := AccessCustomPageResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Access.CustomPages.List(ctx, zero_trust.AccessCustomPageListParams{
+		page, err := d.client.ZeroTrust.Access.CustomPages.List(ctx, zero_trust.AccessCustomPageListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

@@ -26,7 +26,7 @@ func (d *TurnstileWidgetsDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_turnstile_widgets"
 }
 
-func (r *TurnstileWidgetsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TurnstileWidgetsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *TurnstileWidgetsDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TurnstileWidgetsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TurnstileWidgetsResultDataSourceModel{}
 
-	page, err := r.client.Challenges.Widgets.List(ctx, challenges.WidgetListParams{
+	page, err := d.client.Challenges.Widgets.List(ctx, challenges.WidgetListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 		Direction: cloudflare.F(challenges.WidgetListParamsDirection(data.Direction.ValueString())),
 		Order:     cloudflare.F(challenges.WidgetListParamsOrder(data.Order.ValueString())),

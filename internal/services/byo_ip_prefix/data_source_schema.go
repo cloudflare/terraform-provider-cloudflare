@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ByoIPPrefixDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &ByoIPPrefixDataSource{}
 
-func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"prefix_id": schema.StringAttribute{
@@ -96,9 +95,6 @@ func (r ByoIPPrefixDataSource) Schema(ctx context.Context, req datasource.Schema
 	}
 }
 
-func (r *ByoIPPrefixDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *ByoIPPrefixDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *ByoIPPrefixDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

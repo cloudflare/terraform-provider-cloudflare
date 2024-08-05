@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ObservatoryScheduledTestDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &ObservatoryScheduledTestDataSource{}
 
-func (r ObservatoryScheduledTestDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ObservatoryScheduledTestDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -43,9 +42,6 @@ func (r ObservatoryScheduledTestDataSource) Schema(ctx context.Context, req data
 	}
 }
 
-func (r *ObservatoryScheduledTestDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *ObservatoryScheduledTestDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *ObservatoryScheduledTestDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

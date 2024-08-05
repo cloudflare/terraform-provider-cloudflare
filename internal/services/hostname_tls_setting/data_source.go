@@ -30,7 +30,7 @@ func (d *HostnameTLSSettingDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_hostname_tls_setting"
 }
 
-func (r *HostnameTLSSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *HostnameTLSSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *HostnameTLSSettingDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *HostnameTLSSettingDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.
 
 	res := new(http.Response)
 	env := HostnameTLSSettingResultDataSourceEnvelope{*data}
-	_, err := r.client.Hostnames.Settings.TLS.Get(
+	_, err := d.client.Hostnames.Settings.TLS.Get(
 		ctx,
 		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
 		hostnames.SettingTLSGetParams{

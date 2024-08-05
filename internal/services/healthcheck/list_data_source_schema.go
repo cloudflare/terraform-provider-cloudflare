@@ -14,9 +14,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &HealthchecksDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &HealthchecksDataSource{}
 
-func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *HealthchecksDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -188,9 +187,6 @@ func (r HealthchecksDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (r *HealthchecksDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *HealthchecksDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *HealthchecksDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

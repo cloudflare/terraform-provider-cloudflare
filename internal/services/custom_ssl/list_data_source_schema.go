@@ -16,9 +16,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &CustomSSLsDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &CustomSSLsDataSource{}
 
-func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -207,9 +206,6 @@ func (r CustomSSLsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-func (r *CustomSSLsDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *CustomSSLsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *CustomSSLsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

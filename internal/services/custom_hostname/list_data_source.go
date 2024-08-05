@@ -26,7 +26,7 @@ func (d *CustomHostnamesDataSource) Metadata(ctx context.Context, req datasource
 	resp.TypeName = req.ProviderTypeName + "_custom_hostnames"
 }
 
-func (r *CustomHostnamesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CustomHostnamesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *CustomHostnamesDataSource) Configure(ctx context.Context, req datasourc
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *CustomHostnamesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*CustomHostnamesResultDataSourceModel{}
 
-	page, err := r.client.CustomHostnames.List(ctx, custom_hostnames.CustomHostnameListParams{
+	page, err := d.client.CustomHostnames.List(ctx, custom_hostnames.CustomHostnameListParams{
 		ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
 		ID:        cloudflare.F(data.ID.ValueString()),
 		Direction: cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(data.Direction.ValueString())),

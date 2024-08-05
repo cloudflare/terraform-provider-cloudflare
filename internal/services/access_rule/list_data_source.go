@@ -26,7 +26,7 @@ func (d *AccessRulesDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_access_rules"
 }
 
-func (r *AccessRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccessRulesDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -78,7 +78,7 @@ func (r *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccessRulesResultDataSourceModel{}
 
-	page, err := r.client.Firewall.AccessRules.List(ctx, params)
+	page, err := d.client.Firewall.AccessRules.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

@@ -30,7 +30,7 @@ func (d *RulesetDataSource) Metadata(ctx context.Context, req datasource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_ruleset"
 }
 
-func (r *RulesetDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RulesetDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *RulesetDataSource) Configure(ctx context.Context, req datasource.Config
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *RulesetDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -68,7 +68,7 @@ func (r *RulesetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.Rulesets.Get(
+	_, err := d.client.Rulesets.Get(
 		ctx,
 		data.RulesetID.ValueString(),
 		params,

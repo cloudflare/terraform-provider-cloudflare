@@ -15,7 +15,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r ZoneLockdownResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+var _ resource.ResourceWithConfigValidators = &ZoneLockdownResource{}
+
+func (r *ZoneLockdownResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -70,4 +72,8 @@ func (r ZoneLockdownResource) Schema(ctx context.Context, req resource.SchemaReq
 			},
 		},
 	}
+}
+
+func (r *ZoneLockdownResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

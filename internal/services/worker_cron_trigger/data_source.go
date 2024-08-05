@@ -30,7 +30,7 @@ func (d *WorkerCronTriggerDataSource) Metadata(ctx context.Context, req datasour
 	resp.TypeName = req.ProviderTypeName + "_worker_cron_trigger"
 }
 
-func (r *WorkerCronTriggerDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkerCronTriggerDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WorkerCronTriggerDataSource) Configure(ctx context.Context, req datasou
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkerCronTriggerDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkerCronTriggerDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkerCronTriggerDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *WorkerCronTriggerDataSource) Read(ctx context.Context, req datasource.R
 
 	res := new(http.Response)
 	env := WorkerCronTriggerResultDataSourceEnvelope{*data}
-	_, err := r.client.Workers.Scripts.Schedules.Get(
+	_, err := d.client.Workers.Scripts.Schedules.Get(
 		ctx,
 		data.ScriptName.ValueString(),
 		workers.ScriptScheduleGetParams{

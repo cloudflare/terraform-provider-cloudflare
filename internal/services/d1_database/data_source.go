@@ -30,7 +30,7 @@ func (d *D1DatabaseDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_d1_database"
 }
 
-func (r *D1DatabaseDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *D1DatabaseDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *D1DatabaseDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *D1DatabaseDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := D1DatabaseResultDataSourceEnvelope{*data}
-		_, err := r.client.D1.Database.Get(
+		_, err := d.client.D1.Database.Get(
 			ctx,
 			data.DatabaseID.ValueString(),
 			d1.DatabaseGetParams{
@@ -85,7 +85,7 @@ func (r *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		items := &[]*D1DatabaseDataSourceModel{}
 		env := D1DatabaseResultListDataSourceEnvelope{items}
 
-		page, err := r.client.D1.Database.List(ctx, d1.DatabaseListParams{
+		page, err := d.client.D1.Database.List(ctx, d1.DatabaseListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 			Name:      cloudflare.F(data.Filter.Name.ValueString()),
 			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),

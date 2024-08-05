@@ -26,7 +26,7 @@ func (d *UserAgentBlockingRulesDataSource) Metadata(ctx context.Context, req dat
 	resp.TypeName = req.ProviderTypeName + "_user_agent_blocking_rules"
 }
 
-func (r *UserAgentBlockingRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *UserAgentBlockingRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *UserAgentBlockingRulesDataSource) Configure(ctx context.Context, req da
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *UserAgentBlockingRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*UserAgentBlockingRulesResultDataSourceModel{}
 
-	page, err := r.client.Firewall.UARules.List(
+	page, err := d.client.Firewall.UARules.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		firewall.UARuleListParams{

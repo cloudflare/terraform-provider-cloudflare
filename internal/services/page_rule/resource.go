@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &PageRuleResource{}
+var _ resource.ResourceWithModifyPlan = &PageRuleResource{}
 
 func NewResource() resource.Resource {
 	return &PageRuleResource{}
@@ -198,4 +199,8 @@ func (r *PageRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *PageRuleResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

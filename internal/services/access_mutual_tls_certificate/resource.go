@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccessMutualTLSCertificateResource{}
+var _ resource.ResourceWithModifyPlan = &AccessMutualTLSCertificateResource{}
 
 func NewResource() resource.Resource {
 	return &AccessMutualTLSCertificateResource{}
@@ -222,4 +223,8 @@ func (r *AccessMutualTLSCertificateResource) Delete(ctx context.Context, req res
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *AccessMutualTLSCertificateResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

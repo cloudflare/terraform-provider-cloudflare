@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &Web3HostnameResource{}
+var _ resource.ResourceWithModifyPlan = &Web3HostnameResource{}
 
 func NewResource() resource.Resource {
 	return &Web3HostnameResource{}
@@ -192,4 +193,8 @@ func (r *Web3HostnameResource) Delete(ctx context.Context, req resource.DeleteRe
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *Web3HostnameResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

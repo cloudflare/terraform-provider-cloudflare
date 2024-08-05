@@ -26,7 +26,7 @@ func (d *WebAnalyticsSitesDataSource) Metadata(ctx context.Context, req datasour
 	resp.TypeName = req.ProviderTypeName + "_web_analytics_sites"
 }
 
-func (r *WebAnalyticsSitesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WebAnalyticsSitesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *WebAnalyticsSitesDataSource) Configure(ctx context.Context, req datasou
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WebAnalyticsSitesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WebAnalyticsSitesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WebAnalyticsSitesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WebAnalyticsSitesDataSource) Read(ctx context.Context, req datasource.R
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WebAnalyticsSitesResultDataSourceModel{}
 
-	page, err := r.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
+	page, err := d.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 		OrderBy:   cloudflare.F(rum.SiteInfoListParamsOrderBy(data.OrderBy.ValueString())),
 		Page:      cloudflare.F(data.Page.ValueFloat64()),

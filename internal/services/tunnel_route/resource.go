@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &TunnelRouteResource{}
+var _ resource.ResourceWithModifyPlan = &TunnelRouteResource{}
 
 func NewResource() resource.Resource {
 	return &TunnelRouteResource{}
@@ -167,4 +168,8 @@ func (r *TunnelRouteResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *TunnelRouteResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

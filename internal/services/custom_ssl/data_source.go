@@ -30,7 +30,7 @@ func (d *CustomSSLDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_custom_ssl"
 }
 
-func (r *CustomSSLDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CustomSSLDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *CustomSSLDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *CustomSSLDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := CustomSSLResultDataSourceEnvelope{*data}
-		_, err := r.client.CustomCertificates.Get(
+		_, err := d.client.CustomCertificates.Get(
 			ctx,
 			data.CustomCertificateID.ValueString(),
 			custom_certificates.CustomCertificateGetParams{
@@ -85,7 +85,7 @@ func (r *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 		items := &[]*CustomSSLDataSourceModel{}
 		env := CustomSSLResultListDataSourceEnvelope{items}
 
-		page, err := r.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
+		page, err := d.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
 			ZoneID:  cloudflare.F(data.Filter.ZoneID.ValueString()),
 			Match:   cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Filter.Match.ValueString())),
 			Page:    cloudflare.F(data.Filter.Page.ValueFloat64()),

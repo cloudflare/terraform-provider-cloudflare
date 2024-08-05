@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessServiceTokensDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessServiceTokensDataSource{}
 
-func (r AccessServiceTokensDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessServiceTokensDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -67,9 +66,6 @@ func (r AccessServiceTokensDataSource) Schema(ctx context.Context, req datasourc
 	}
 }
 
-func (r *AccessServiceTokensDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessServiceTokensDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessServiceTokensDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

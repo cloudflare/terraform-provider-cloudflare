@@ -26,7 +26,7 @@ func (d *AccessGroupsDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_access_groups"
 }
 
-func (r *AccessGroupsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessGroupsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccessGroupsDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessGroupsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessGroupsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessGroupsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -66,7 +66,7 @@ func (r *AccessGroupsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccessGroupsResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Access.Groups.List(ctx, params)
+	page, err := d.client.ZeroTrust.Access.Groups.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

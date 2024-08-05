@@ -26,7 +26,7 @@ func (d *AccountMembersDataSource) Metadata(ctx context.Context, req datasource.
 	resp.TypeName = req.ProviderTypeName + "_account_members"
 }
 
-func (r *AccountMembersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccountMembersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccountMembersDataSource) Configure(ctx context.Context, req datasource
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccountMembersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccountMembersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccountMembersDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *AccountMembersDataSource) Read(ctx context.Context, req datasource.Read
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccountMembersResultDataSourceModel{}
 
-	page, err := r.client.Accounts.Members.List(ctx, accounts.MemberListParams{
+	page, err := d.client.Accounts.Members.List(ctx, accounts.MemberListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 		Direction: cloudflare.F(accounts.MemberListParamsDirection(data.Direction.ValueString())),
 		Order:     cloudflare.F(accounts.MemberListParamsOrder(data.Order.ValueString())),

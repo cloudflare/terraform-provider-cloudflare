@@ -26,7 +26,7 @@ func (d *R2BucketsDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_r2_buckets"
 }
 
-func (r *R2BucketsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *R2BucketsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *R2BucketsDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *R2BucketsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*R2BucketsResultDataSourceModel{}
 
-	page, err := r.client.R2.Buckets.List(ctx, r2.BucketListParams{
+	page, err := d.client.R2.Buckets.List(ctx, r2.BucketListParams{
 		AccountID:    cloudflare.F(data.AccountID.ValueString()),
 		Cursor:       cloudflare.F(data.Cursor.ValueString()),
 		Direction:    cloudflare.F(r2.BucketListParamsDirection(data.Direction.ValueString())),

@@ -30,7 +30,7 @@ func (d *TieredCacheDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_tiered_cache"
 }
 
-func (r *TieredCacheDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TieredCacheDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TieredCacheDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TieredCacheDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TieredCacheDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TieredCacheDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *TieredCacheDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	res := new(http.Response)
 	env := TieredCacheResultDataSourceEnvelope{*data}
-	_, err := r.client.Cache.SmartTieredCache.Get(
+	_, err := d.client.Cache.SmartTieredCache.Get(
 		ctx,
 		cache.SmartTieredCacheGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

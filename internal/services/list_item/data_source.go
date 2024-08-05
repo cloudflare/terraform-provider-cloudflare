@@ -30,7 +30,7 @@ func (d *ListItemDataSource) Metadata(ctx context.Context, req datasource.Metada
 	resp.TypeName = req.ProviderTypeName + "_list_item"
 }
 
-func (r *ListItemDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ListItemDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ListItemDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ListItemDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ListItemDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ListItemDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := ListItemResultDataSourceEnvelope{*data}
-		_, err := r.client.Rules.Lists.Items.Get(
+		_, err := d.client.Rules.Lists.Items.Get(
 			ctx,
 			data.AccountIdentifier.ValueString(),
 			data.ListID.ValueString(),
@@ -84,7 +84,7 @@ func (r *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 		items := &[]*ListItemDataSourceModel{}
 		env := ListItemResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Rules.Lists.Items.List(
+		page, err := d.client.Rules.Lists.Items.List(
 			ctx,
 			data.Filter.ListID.ValueString(),
 			rules.ListItemListParams{

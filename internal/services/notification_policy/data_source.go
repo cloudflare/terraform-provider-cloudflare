@@ -30,7 +30,7 @@ func (d *NotificationPolicyDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_notification_policy"
 }
 
-func (r *NotificationPolicyDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *NotificationPolicyDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *NotificationPolicyDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *NotificationPolicyDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := NotificationPolicyResultDataSourceEnvelope{*data}
-		_, err := r.client.Alerting.Policies.Get(
+		_, err := d.client.Alerting.Policies.Get(
 			ctx,
 			data.PolicyID.ValueString(),
 			alerting.PolicyGetParams{
@@ -85,7 +85,7 @@ func (r *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.
 		items := &[]*NotificationPolicyDataSourceModel{}
 		env := NotificationPolicyResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Alerting.Policies.List(ctx, alerting.PolicyListParams{
+		page, err := d.client.Alerting.Policies.List(ctx, alerting.PolicyListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

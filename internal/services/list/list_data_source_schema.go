@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ListsDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &ListsDataSource{}
 
-func (r ListsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ListsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -74,9 +73,6 @@ func (r ListsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 	}
 }
 
-func (r *ListsDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *ListsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *ListsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

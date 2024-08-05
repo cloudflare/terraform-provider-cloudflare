@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ArgoSmartRoutingDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &ArgoSmartRoutingDataSource{}
 
-func (r ArgoSmartRoutingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ArgoSmartRoutingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -23,9 +22,6 @@ func (r ArgoSmartRoutingDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (r *ArgoSmartRoutingDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *ArgoSmartRoutingDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *ArgoSmartRoutingDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

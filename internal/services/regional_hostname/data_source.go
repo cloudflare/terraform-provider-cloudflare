@@ -30,7 +30,7 @@ func (d *RegionalHostnameDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_regional_hostname"
 }
 
-func (r *RegionalHostnameDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RegionalHostnameDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *RegionalHostnameDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *RegionalHostnameDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *RegionalHostnameDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *RegionalHostnameDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *RegionalHostnameDataSource) Read(ctx context.Context, req datasource.Re
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := RegionalHostnameResultDataSourceEnvelope{*data}
-		_, err := r.client.Addressing.RegionalHostnames.Get(
+		_, err := d.client.Addressing.RegionalHostnames.Get(
 			ctx,
 			data.Hostname.ValueString(),
 			addressing.RegionalHostnameGetParams{
@@ -85,7 +85,7 @@ func (r *RegionalHostnameDataSource) Read(ctx context.Context, req datasource.Re
 		items := &[]*RegionalHostnameDataSourceModel{}
 		env := RegionalHostnameResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Addressing.RegionalHostnames.List(ctx, addressing.RegionalHostnameListParams{
+		page, err := d.client.Addressing.RegionalHostnames.List(ctx, addressing.RegionalHostnameListParams{
 			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 		})
 		if err != nil {

@@ -26,7 +26,7 @@ func (d *DevicePostureIntegrationsDataSource) Metadata(ctx context.Context, req 
 	resp.TypeName = req.ProviderTypeName + "_device_posture_integrations"
 }
 
-func (r *DevicePostureIntegrationsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DevicePostureIntegrationsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *DevicePostureIntegrationsDataSource) Configure(ctx context.Context, req
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DevicePostureIntegrationsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DevicePostureIntegrationsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DevicePostureIntegrationsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *DevicePostureIntegrationsDataSource) Read(ctx context.Context, req data
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*DevicePostureIntegrationsResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Devices.Posture.Integrations.List(ctx, zero_trust.DevicePostureIntegrationListParams{
+	page, err := d.client.ZeroTrust.Devices.Posture.Integrations.List(ctx, zero_trust.DevicePostureIntegrationListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

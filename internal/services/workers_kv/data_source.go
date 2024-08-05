@@ -30,7 +30,7 @@ func (d *WorkersKVDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_workers_kv"
 }
 
-func (r *WorkersKVDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkersKVDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WorkersKVDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkersKVDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkersKVDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkersKVDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WorkersKVDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	res := new(http.Response)
-	_, err := r.client.KV.Namespaces.Values.Get(
+	_, err := d.client.KV.Namespaces.Values.Get(
 		ctx,
 		data.NamespaceID.ValueString(),
 		data.KeyName.ValueString(),

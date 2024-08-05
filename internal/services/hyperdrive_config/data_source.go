@@ -30,7 +30,7 @@ func (d *HyperdriveConfigDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_hyperdrive_config"
 }
 
-func (r *HyperdriveConfigDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *HyperdriveConfigDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *HyperdriveConfigDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *HyperdriveConfigDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.Re
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := HyperdriveConfigResultDataSourceEnvelope{*data}
-		_, err := r.client.Hyperdrive.Configs.Get(
+		_, err := d.client.Hyperdrive.Configs.Get(
 			ctx,
 			data.HyperdriveID.ValueString(),
 			hyperdrive.ConfigGetParams{
@@ -85,7 +85,7 @@ func (r *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.Re
 		items := &[]*HyperdriveConfigDataSourceModel{}
 		env := HyperdriveConfigResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Hyperdrive.Configs.List(ctx, hyperdrive.ConfigListParams{
+		page, err := d.client.Hyperdrive.Configs.List(ctx, hyperdrive.ConfigListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

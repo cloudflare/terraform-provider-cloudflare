@@ -30,7 +30,7 @@ func (d *AccessPolicyDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_access_policy"
 }
 
-func (r *AccessPolicyDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessPolicyDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessPolicyDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessPolicyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessPolicyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessPolicyDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -69,7 +69,7 @@ func (r *AccessPolicyDataSource) Read(ctx context.Context, req datasource.ReadRe
 			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 		}
 
-		_, err := r.client.ZeroTrust.Access.Applications.Policies.Get(
+		_, err := d.client.ZeroTrust.Access.Applications.Policies.Get(
 			ctx,
 			data.AppID.ValueString(),
 			data.PolicyID.ValueString(),
@@ -99,7 +99,7 @@ func (r *AccessPolicyDataSource) Read(ctx context.Context, req datasource.ReadRe
 		items := &[]*AccessPolicyDataSourceModel{}
 		env := AccessPolicyResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Access.Applications.Policies.List(
+		page, err := d.client.ZeroTrust.Access.Applications.Policies.List(
 			ctx,
 			data.Filter.AppID.ValueString(),
 			params,

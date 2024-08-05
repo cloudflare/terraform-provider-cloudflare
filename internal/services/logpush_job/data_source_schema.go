@@ -16,9 +16,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &LogpushJobDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &LogpushJobDataSource{}
 
-func (r LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -194,9 +193,6 @@ func (r LogpushJobDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-func (r *LogpushJobDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *LogpushJobDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *LogpushJobDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

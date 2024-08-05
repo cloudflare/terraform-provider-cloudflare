@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &LoadBalancerPoolResource{}
+var _ resource.ResourceWithModifyPlan = &LoadBalancerPoolResource{}
 
 func NewResource() resource.Resource {
 	return &LoadBalancerPoolResource{}
@@ -198,4 +199,8 @@ func (r *LoadBalancerPoolResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *LoadBalancerPoolResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

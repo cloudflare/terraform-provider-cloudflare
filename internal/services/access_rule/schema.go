@@ -13,7 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-func (r AccessRuleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+var _ resource.ResourceWithConfigValidators = &AccessRuleResource{}
+
+func (r *AccessRuleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -65,4 +67,8 @@ func (r AccessRuleResource) Schema(ctx context.Context, req resource.SchemaReque
 			},
 		},
 	}
+}
+
+func (r *AccessRuleResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

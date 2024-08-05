@@ -30,7 +30,7 @@ func (d *GRETunnelDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_gre_tunnel"
 }
 
-func (r *GRETunnelDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *GRETunnelDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *GRETunnelDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *GRETunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *GRETunnelDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *GRETunnelDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *GRETunnelDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	res := new(http.Response)
 	env := GRETunnelResultDataSourceEnvelope{*data}
-	_, err := r.client.MagicTransit.GRETunnels.Get(
+	_, err := d.client.MagicTransit.GRETunnels.Get(
 		ctx,
 		data.GRETunnelID.ValueString(),
 		magic_transit.GRETunnelGetParams{

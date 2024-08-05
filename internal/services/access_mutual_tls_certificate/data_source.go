@@ -30,7 +30,7 @@ func (d *AccessMutualTLSCertificateDataSource) Metadata(ctx context.Context, req
 	resp.TypeName = req.ProviderTypeName + "_access_mutual_tls_certificate"
 }
 
-func (r *AccessMutualTLSCertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessMutualTLSCertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessMutualTLSCertificateDataSource) Configure(ctx context.Context, re
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessMutualTLSCertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessMutualTLSCertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessMutualTLSCertificateDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -68,7 +68,7 @@ func (r *AccessMutualTLSCertificateDataSource) Read(ctx context.Context, req dat
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.ZeroTrust.Access.Certificates.Get(
+	_, err := d.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		data.CertificateID.ValueString(),
 		params,

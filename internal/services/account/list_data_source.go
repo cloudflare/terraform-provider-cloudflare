@@ -26,7 +26,7 @@ func (d *AccountsDataSource) Metadata(ctx context.Context, req datasource.Metada
 	resp.TypeName = req.ProviderTypeName + "_accounts"
 }
 
-func (r *AccountsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccountsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccountsDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccountsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccountsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccountsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccountsResultDataSourceModel{}
 
-	page, err := r.client.Accounts.List(ctx, accounts.AccountListParams{
+	page, err := d.client.Accounts.List(ctx, accounts.AccountListParams{
 		Direction: cloudflare.F(accounts.AccountListParamsDirection(data.Direction.ValueString())),
 		Name:      cloudflare.F(data.Name.ValueString()),
 		Page:      cloudflare.F(data.Page.ValueFloat64()),
