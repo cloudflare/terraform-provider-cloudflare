@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AddressMapDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AddressMapDataSource{}
 
-func (r AddressMapDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AddressMapDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -120,9 +119,6 @@ func (r AddressMapDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-func (r *AddressMapDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AddressMapDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AddressMapDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

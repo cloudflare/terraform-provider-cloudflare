@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &CustomSSLResource{}
+var _ resource.ResourceWithModifyPlan = &CustomSSLResource{}
 
 func NewResource() resource.Resource {
 	return &CustomSSLResource{}
@@ -198,4 +199,8 @@ func (r *CustomSSLResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *CustomSSLResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

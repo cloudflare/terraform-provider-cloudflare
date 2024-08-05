@@ -30,7 +30,7 @@ func (d *CertificatePackDataSource) Metadata(ctx context.Context, req datasource
 	resp.TypeName = req.ProviderTypeName + "_certificate_pack"
 }
 
-func (r *CertificatePackDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CertificatePackDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *CertificatePackDataSource) Configure(ctx context.Context, req datasourc
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *CertificatePackDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *CertificatePackDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *CertificatePackDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *CertificatePackDataSource) Read(ctx context.Context, req datasource.Rea
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := CertificatePackResultDataSourceEnvelope{*data}
-		_, err := r.client.SSL.CertificatePacks.Get(
+		_, err := d.client.SSL.CertificatePacks.Get(
 			ctx,
 			data.CertificatePackID.ValueString(),
 			ssl.CertificatePackGetParams{
@@ -85,7 +85,7 @@ func (r *CertificatePackDataSource) Read(ctx context.Context, req datasource.Rea
 		items := &[]*CertificatePackDataSourceModel{}
 		env := CertificatePackResultListDataSourceEnvelope{items}
 
-		page, err := r.client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
+		page, err := d.client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
 			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 			Status: cloudflare.F(ssl.CertificatePackListParamsStatus(data.Filter.Status.ValueString())),
 		})

@@ -30,7 +30,7 @@ func (d *DeviceManagedNetworksDataSource) Metadata(ctx context.Context, req data
 	resp.TypeName = req.ProviderTypeName + "_device_managed_networks"
 }
 
-func (r *DeviceManagedNetworksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DeviceManagedNetworksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *DeviceManagedNetworksDataSource) Configure(ctx context.Context, req dat
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DeviceManagedNetworksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DeviceManagedNetworksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DeviceManagedNetworksDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *DeviceManagedNetworksDataSource) Read(ctx context.Context, req datasour
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := DeviceManagedNetworksResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Devices.Networks.Get(
+		_, err := d.client.ZeroTrust.Devices.Networks.Get(
 			ctx,
 			data.NetworkID.ValueString(),
 			zero_trust.DeviceNetworkGetParams{
@@ -85,7 +85,7 @@ func (r *DeviceManagedNetworksDataSource) Read(ctx context.Context, req datasour
 		items := &[]*DeviceManagedNetworksDataSourceModel{}
 		env := DeviceManagedNetworksResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Devices.Networks.List(ctx, zero_trust.DeviceNetworkListParams{
+		page, err := d.client.ZeroTrust.Devices.Networks.List(ctx, zero_trust.DeviceNetworkListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

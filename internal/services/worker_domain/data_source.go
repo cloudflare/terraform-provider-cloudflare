@@ -30,7 +30,7 @@ func (d *WorkerDomainDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_worker_domain"
 }
 
-func (r *WorkerDomainDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkerDomainDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WorkerDomainDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkerDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkerDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkerDomainDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *WorkerDomainDataSource) Read(ctx context.Context, req datasource.ReadRe
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := WorkerDomainResultDataSourceEnvelope{*data}
-		_, err := r.client.Workers.Domains.Get(
+		_, err := d.client.Workers.Domains.Get(
 			ctx,
 			data.DomainID.ValueString(),
 			workers.DomainGetParams{
@@ -85,7 +85,7 @@ func (r *WorkerDomainDataSource) Read(ctx context.Context, req datasource.ReadRe
 		items := &[]*WorkerDomainDataSourceModel{}
 		env := WorkerDomainResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Workers.Domains.List(ctx, workers.DomainListParams{
+		page, err := d.client.Workers.Domains.List(ctx, workers.DomainListParams{
 			AccountID:   cloudflare.F(data.Filter.AccountID.ValueString()),
 			Environment: cloudflare.F(data.Filter.Environment.ValueString()),
 			Hostname:    cloudflare.F(data.Filter.Hostname.ValueString()),

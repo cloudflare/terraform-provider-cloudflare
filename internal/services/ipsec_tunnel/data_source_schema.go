@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &IPSECTunnelDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &IPSECTunnelDataSource{}
 
-func (r IPSECTunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *IPSECTunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -30,9 +29,6 @@ func (r IPSECTunnelDataSource) Schema(ctx context.Context, req datasource.Schema
 	}
 }
 
-func (r *IPSECTunnelDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *IPSECTunnelDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *IPSECTunnelDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

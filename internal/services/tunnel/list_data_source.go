@@ -26,7 +26,7 @@ func (d *TunnelsDataSource) Metadata(ctx context.Context, req datasource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_tunnels"
 }
 
-func (r *TunnelsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TunnelsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *TunnelsDataSource) Configure(ctx context.Context, req datasource.Config
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TunnelsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TunnelsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TunnelsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -69,7 +69,7 @@ func (r *TunnelsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TunnelsResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
+	page, err := d.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
 		AccountID:     cloudflare.F(data.AccountID.ValueString()),
 		ExcludePrefix: cloudflare.F(data.ExcludePrefix.ValueString()),
 		ExistedAt:     cloudflare.F(dataExistedAt),

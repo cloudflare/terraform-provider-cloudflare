@@ -26,7 +26,7 @@ func (d *APIShieldOperationDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_api_shield_operation"
 }
 
-func (r *APIShieldOperationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APIShieldOperationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *APIShieldOperationDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *APIShieldOperationDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -69,7 +69,7 @@ func (r *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.
 	items := &[]*APIShieldOperationDataSourceModel{}
 	env := APIShieldOperationResultListDataSourceEnvelope{items}
 
-	page, err := r.client.APIGateway.Discovery.Operations.List(ctx, api_gateway.DiscoveryOperationListParams{
+	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, api_gateway.DiscoveryOperationListParams{
 		ZoneID:    cloudflare.F(data.Filter.ZoneID.ValueString()),
 		Diff:      cloudflare.F(data.Filter.Diff.ValueBool()),
 		Direction: cloudflare.F(api_gateway.DiscoveryOperationListParamsDirection(data.Filter.Direction.ValueString())),

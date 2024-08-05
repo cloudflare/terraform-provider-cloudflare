@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &CustomHostnameFallbackOriginResource{}
+var _ resource.ResourceWithModifyPlan = &CustomHostnameFallbackOriginResource{}
 
 func NewResource() resource.Resource {
 	return &CustomHostnameFallbackOriginResource{}
@@ -199,4 +200,8 @@ func (r *CustomHostnameFallbackOriginResource) Delete(ctx context.Context, req r
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *CustomHostnameFallbackOriginResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

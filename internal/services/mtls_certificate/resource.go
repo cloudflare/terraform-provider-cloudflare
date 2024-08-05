@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &MTLSCertificateResource{}
+var _ resource.ResourceWithModifyPlan = &MTLSCertificateResource{}
 
 func NewResource() resource.Resource {
 	return &MTLSCertificateResource{}
@@ -197,4 +198,8 @@ func (r *MTLSCertificateResource) Delete(ctx context.Context, req resource.Delet
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *MTLSCertificateResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

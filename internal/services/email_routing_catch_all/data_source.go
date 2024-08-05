@@ -29,7 +29,7 @@ func (d *EmailRoutingCatchAllDataSource) Metadata(ctx context.Context, req datas
 	resp.TypeName = req.ProviderTypeName + "_email_routing_catch_all"
 }
 
-func (r *EmailRoutingCatchAllDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *EmailRoutingCatchAllDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -45,10 +45,10 @@ func (r *EmailRoutingCatchAllDataSource) Configure(ctx context.Context, req data
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *EmailRoutingCatchAllDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *EmailRoutingCatchAllDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *EmailRoutingCatchAllDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *EmailRoutingCatchAllDataSource) Read(ctx context.Context, req datasourc
 
 	res := new(http.Response)
 	env := EmailRoutingCatchAllResultDataSourceEnvelope{*data}
-	_, err := r.client.EmailRouting.Rules.CatchAlls.Get(
+	_, err := d.client.EmailRouting.Rules.CatchAlls.Get(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		option.WithResponseBodyInto(&res),

@@ -26,7 +26,7 @@ func (d *HealthchecksDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_healthchecks"
 }
 
-func (r *HealthchecksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *HealthchecksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *HealthchecksDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *HealthchecksDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRe
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*HealthchecksResultDataSourceModel{}
 
-	page, err := r.client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
+	page, err := d.client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
 		ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
 		Page:    cloudflare.F[any](data.Page.ValueString()),
 		PerPage: cloudflare.F[any](data.PerPage.ValueString()),

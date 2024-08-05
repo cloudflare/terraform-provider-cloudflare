@@ -26,7 +26,7 @@ func (d *TeamsRulesDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_teams_rules"
 }
 
-func (r *TeamsRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TeamsRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *TeamsRulesDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TeamsRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TeamsRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TeamsRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *TeamsRulesDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TeamsRulesResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Gateway.Rules.List(ctx, zero_trust.GatewayRuleListParams{
+	page, err := d.client.ZeroTrust.Gateway.Rules.List(ctx, zero_trust.GatewayRuleListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

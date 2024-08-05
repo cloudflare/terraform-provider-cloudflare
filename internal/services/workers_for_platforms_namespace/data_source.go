@@ -30,7 +30,7 @@ func (d *WorkersForPlatformsNamespaceDataSource) Metadata(ctx context.Context, r
 	resp.TypeName = req.ProviderTypeName + "_workers_for_platforms_namespace"
 }
 
-func (r *WorkersForPlatformsNamespaceDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkersForPlatformsNamespaceDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WorkersForPlatformsNamespaceDataSource) Configure(ctx context.Context, 
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkersForPlatformsNamespaceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkersForPlatformsNamespaceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkersForPlatformsNamespaceDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *WorkersForPlatformsNamespaceDataSource) Read(ctx context.Context, req d
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := WorkersForPlatformsNamespaceResultDataSourceEnvelope{*data}
-		_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
+		_, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
 			ctx,
 			data.DispatchNamespace.ValueString(),
 			workers_for_platforms.DispatchNamespaceGetParams{
@@ -85,7 +85,7 @@ func (r *WorkersForPlatformsNamespaceDataSource) Read(ctx context.Context, req d
 		items := &[]*WorkersForPlatformsNamespaceDataSourceModel{}
 		env := WorkersForPlatformsNamespaceResultListDataSourceEnvelope{items}
 
-		page, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
+		page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

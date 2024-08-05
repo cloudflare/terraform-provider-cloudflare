@@ -26,7 +26,7 @@ func (d *WorkerSecretsDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_worker_secrets"
 }
 
-func (r *WorkerSecretsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkerSecretsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *WorkerSecretsDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkerSecretsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkerSecretsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkerSecretsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WorkerSecretsDataSource) Read(ctx context.Context, req datasource.ReadR
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WorkerSecretsResultDataSourceModel{}
 
-	page, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
+	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
 		ctx,
 		data.DispatchNamespace.ValueString(),
 		data.ScriptName.ValueString(),

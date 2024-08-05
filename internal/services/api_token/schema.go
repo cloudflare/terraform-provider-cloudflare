@@ -13,7 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+var _ resource.ResourceWithConfigValidators = &APITokenResource{}
+
+func (r *APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"token_id": schema.StringAttribute{
@@ -114,4 +116,8 @@ func (r APITokenResource) Schema(ctx context.Context, req resource.SchemaRequest
 			},
 		},
 	}
+}
+
+func (r *APITokenResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

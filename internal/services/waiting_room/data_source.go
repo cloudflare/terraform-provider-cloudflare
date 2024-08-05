@@ -30,7 +30,7 @@ func (d *WaitingRoomDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_waiting_room"
 }
 
-func (r *WaitingRoomDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WaitingRoomDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WaitingRoomDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WaitingRoomDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadReq
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := WaitingRoomResultDataSourceEnvelope{*data}
-		_, err := r.client.WaitingRooms.Get(
+		_, err := d.client.WaitingRooms.Get(
 			ctx,
 			data.WaitingRoomID.ValueString(),
 			waiting_rooms.WaitingRoomGetParams{
@@ -85,7 +85,7 @@ func (r *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadReq
 		items := &[]*WaitingRoomDataSourceModel{}
 		env := WaitingRoomResultListDataSourceEnvelope{items}
 
-		page, err := r.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
+		page, err := d.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
 			ZoneID:  cloudflare.F(data.Filter.ZoneID.ValueString()),
 			Page:    cloudflare.F[any](data.Filter.Page.ValueString()),
 			PerPage: cloudflare.F[any](data.Filter.PerPage.ValueString()),

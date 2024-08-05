@@ -26,7 +26,7 @@ func (d *SpectrumApplicationsDataSource) Metadata(ctx context.Context, req datas
 	resp.TypeName = req.ProviderTypeName + "_spectrum_applications"
 }
 
-func (r *SpectrumApplicationsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *SpectrumApplicationsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *SpectrumApplicationsDataSource) Configure(ctx context.Context, req data
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *SpectrumApplicationsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *SpectrumApplicationsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *SpectrumApplicationsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *SpectrumApplicationsDataSource) Read(ctx context.Context, req datasourc
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*SpectrumApplicationsResultDataSourceModel{}
 
-	page, err := r.client.Spectrum.Apps.List(
+	page, err := d.client.Spectrum.Apps.List(
 		ctx,
 		data.Zone.ValueString(),
 		spectrum.AppListParams{

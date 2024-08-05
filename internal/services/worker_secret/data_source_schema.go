@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WorkerSecretDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &WorkerSecretDataSource{}
 
-func (r WorkerSecretDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *WorkerSecretDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
@@ -49,9 +48,6 @@ func (r WorkerSecretDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (r *WorkerSecretDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *WorkerSecretDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *WorkerSecretDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

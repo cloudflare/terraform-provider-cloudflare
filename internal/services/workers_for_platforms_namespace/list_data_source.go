@@ -26,7 +26,7 @@ func (d *WorkersForPlatformsNamespacesDataSource) Metadata(ctx context.Context, 
 	resp.TypeName = req.ProviderTypeName + "_workers_for_platforms_namespaces"
 }
 
-func (r *WorkersForPlatformsNamespacesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkersForPlatformsNamespacesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *WorkersForPlatformsNamespacesDataSource) Configure(ctx context.Context,
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkersForPlatformsNamespacesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkersForPlatformsNamespacesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkersForPlatformsNamespacesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WorkersForPlatformsNamespacesDataSource) Read(ctx context.Context, req 
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WorkersForPlatformsNamespacesResultDataSourceModel{}
 
-	page, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
+	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

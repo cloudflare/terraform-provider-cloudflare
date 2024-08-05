@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WorkerCronTriggerDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &WorkerCronTriggerDataSource{}
 
-func (r WorkerCronTriggerDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *WorkerCronTriggerDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -43,9 +42,6 @@ func (r WorkerCronTriggerDataSource) Schema(ctx context.Context, req datasource.
 	}
 }
 
-func (r *WorkerCronTriggerDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *WorkerCronTriggerDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *WorkerCronTriggerDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

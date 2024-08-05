@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &APITokenDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &APITokenDataSource{}
 
-func (r APITokenDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *APITokenDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"token_id": schema.StringAttribute{
@@ -53,9 +52,6 @@ func (r APITokenDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 	}
 }
 
-func (r *APITokenDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *APITokenDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *APITokenDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

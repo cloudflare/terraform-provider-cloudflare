@@ -26,7 +26,7 @@ func (d *ZonesDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 	resp.TypeName = req.ProviderTypeName + "_zones"
 }
 
-func (r *ZonesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZonesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *ZonesDataSource) Configure(ctx context.Context, req datasource.Configur
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZonesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ZonesResultDataSourceModel{}
 
-	page, err := r.client.Zones.List(ctx, zones.ZoneListParams{
+	page, err := d.client.Zones.List(ctx, zones.ZoneListParams{
 		Account: cloudflare.F(zones.ZoneListParamsAccount{
 			ID:   cloudflare.F(data.Account.ID.ValueString()),
 			Name: cloudflare.F(data.Account.Name.ValueString()),

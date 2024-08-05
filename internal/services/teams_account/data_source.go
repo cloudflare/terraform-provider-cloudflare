@@ -30,7 +30,7 @@ func (d *TeamsAccountDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_teams_account"
 }
 
-func (r *TeamsAccountDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TeamsAccountDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TeamsAccountDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TeamsAccountDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TeamsAccountDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TeamsAccountDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *TeamsAccountDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	res := new(http.Response)
 	env := TeamsAccountResultDataSourceEnvelope{*data}
-	_, err := r.client.ZeroTrust.Gateway.Configurations.Get(
+	_, err := d.client.ZeroTrust.Gateway.Configurations.Get(
 		ctx,
 		zero_trust.GatewayConfigurationGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),

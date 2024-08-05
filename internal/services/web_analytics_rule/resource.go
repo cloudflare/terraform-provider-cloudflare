@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WebAnalyticsRuleResource{}
+var _ resource.ResourceWithModifyPlan = &WebAnalyticsRuleResource{}
 
 func NewResource() resource.Resource {
 	return &WebAnalyticsRuleResource{}
@@ -170,4 +171,8 @@ func (r *WebAnalyticsRuleResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WebAnalyticsRuleResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

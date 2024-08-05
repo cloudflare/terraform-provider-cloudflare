@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &HyperdriveConfigDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &HyperdriveConfigDataSource{}
 
-func (r HyperdriveConfigDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *HyperdriveConfigDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -98,9 +97,6 @@ func (r HyperdriveConfigDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (r *HyperdriveConfigDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *HyperdriveConfigDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *HyperdriveConfigDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

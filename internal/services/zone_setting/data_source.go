@@ -30,7 +30,7 @@ func (d *ZoneSettingDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_zone_setting"
 }
 
-func (r *ZoneSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ZoneSettingDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZoneSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZoneSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZoneSettingDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *ZoneSettingDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	res := new(http.Response)
 	env := ZoneSettingResultDataSourceEnvelope{*data}
-	_, err := r.client.Zones.Settings.Get(
+	_, err := d.client.Zones.Settings.Get(
 		ctx,
 		data.SettingID.ValueString(),
 		zones.SettingGetParams{

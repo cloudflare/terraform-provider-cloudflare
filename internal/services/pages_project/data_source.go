@@ -30,7 +30,7 @@ func (d *PagesProjectDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_pages_project"
 }
 
-func (r *PagesProjectDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *PagesProjectDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *PagesProjectDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *PagesProjectDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *PagesProjectDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *PagesProjectDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *PagesProjectDataSource) Read(ctx context.Context, req datasource.ReadRe
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := PagesProjectResultDataSourceEnvelope{*data}
-		_, err := r.client.Pages.Projects.Get(
+		_, err := d.client.Pages.Projects.Get(
 			ctx,
 			data.ProjectName.ValueString(),
 			pages.ProjectGetParams{
@@ -85,7 +85,7 @@ func (r *PagesProjectDataSource) Read(ctx context.Context, req datasource.ReadRe
 		items := &[]*PagesProjectDataSourceModel{}
 		env := PagesProjectResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Pages.Projects.List(ctx, pages.ProjectListParams{
+		page, err := d.client.Pages.Projects.List(ctx, pages.ProjectListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

@@ -26,7 +26,7 @@ func (d *RateLimitsDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_rate_limits"
 }
 
-func (r *RateLimitsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RateLimitsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *RateLimitsDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *RateLimitsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*RateLimitsResultDataSourceModel{}
 
-	page, err := r.client.RateLimits.List(
+	page, err := d.client.RateLimits.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		rate_limits.RateLimitListParams{

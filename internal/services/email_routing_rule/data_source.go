@@ -30,7 +30,7 @@ func (d *EmailRoutingRuleDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_email_routing_rule"
 }
 
-func (r *EmailRoutingRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *EmailRoutingRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *EmailRoutingRuleDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *EmailRoutingRuleDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.Re
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := EmailRoutingRuleResultDataSourceEnvelope{*data}
-		_, err := r.client.EmailRouting.Rules.Get(
+		_, err := d.client.EmailRouting.Rules.Get(
 			ctx,
 			data.ZoneIdentifier.ValueString(),
 			data.RuleIdentifier.ValueString(),
@@ -83,7 +83,7 @@ func (r *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.Re
 		items := &[]*EmailRoutingRuleDataSourceModel{}
 		env := EmailRoutingRuleResultListDataSourceEnvelope{items}
 
-		page, err := r.client.EmailRouting.Rules.List(
+		page, err := d.client.EmailRouting.Rules.List(
 			ctx,
 			data.Filter.ZoneIdentifier.ValueString(),
 			email_routing.RuleListParams{

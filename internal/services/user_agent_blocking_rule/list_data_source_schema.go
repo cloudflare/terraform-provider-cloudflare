@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &UserAgentBlockingRulesDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &UserAgentBlockingRulesDataSource{}
 
-func (r UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
@@ -105,9 +104,6 @@ func (r UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req dataso
 	}
 }
 
-func (r *UserAgentBlockingRulesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *UserAgentBlockingRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *UserAgentBlockingRulesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

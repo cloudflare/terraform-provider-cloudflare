@@ -30,7 +30,7 @@ func (d *ObservatoryScheduledTestDataSource) Metadata(ctx context.Context, req d
 	resp.TypeName = req.ProviderTypeName + "_observatory_scheduled_test"
 }
 
-func (r *ObservatoryScheduledTestDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ObservatoryScheduledTestDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ObservatoryScheduledTestDataSource) Configure(ctx context.Context, req 
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ObservatoryScheduledTestDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ObservatoryScheduledTestDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ObservatoryScheduledTestDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *ObservatoryScheduledTestDataSource) Read(ctx context.Context, req datas
 
 	res := new(http.Response)
 	env := ObservatoryScheduledTestResultDataSourceEnvelope{*data}
-	_, err := r.client.Speed.Schedule.Get(
+	_, err := d.client.Speed.Schedule.Get(
 		ctx,
 		data.URL.ValueString(),
 		speed.ScheduleGetParams{

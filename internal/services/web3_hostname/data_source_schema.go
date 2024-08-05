@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &Web3HostnameDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &Web3HostnameDataSource{}
 
-func (r Web3HostnameDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *Web3HostnameDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"identifier": schema.StringAttribute{
@@ -80,9 +79,6 @@ func (r Web3HostnameDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (r *Web3HostnameDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *Web3HostnameDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *Web3HostnameDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

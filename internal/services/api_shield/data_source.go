@@ -30,7 +30,7 @@ func (d *APIShieldDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_api_shield"
 }
 
-func (r *APIShieldDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APIShieldDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *APIShieldDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *APIShieldDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *APIShieldDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *APIShieldDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *APIShieldDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	res := new(http.Response)
 	env := APIShieldResultDataSourceEnvelope{*data}
-	_, err := r.client.APIGateway.Configurations.Get(
+	_, err := d.client.APIGateway.Configurations.Get(
 		ctx,
 		api_gateway.ConfigurationGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

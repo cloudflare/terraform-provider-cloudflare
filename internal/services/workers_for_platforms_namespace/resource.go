@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WorkersForPlatformsNamespaceResource{}
+var _ resource.ResourceWithModifyPlan = &WorkersForPlatformsNamespaceResource{}
 
 func NewResource() resource.Resource {
 	return &WorkersForPlatformsNamespaceResource{}
@@ -201,4 +202,8 @@ func (r *WorkersForPlatformsNamespaceResource) Delete(ctx context.Context, req r
 	data.ID = data.NamespaceID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WorkersForPlatformsNamespaceResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

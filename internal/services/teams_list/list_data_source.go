@@ -26,7 +26,7 @@ func (d *TeamsListsDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_teams_lists"
 }
 
-func (r *TeamsListsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TeamsListsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *TeamsListsDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TeamsListsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TeamsListsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TeamsListsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *TeamsListsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TeamsListsResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
+	page, err := d.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 		Type:      cloudflare.F(zero_trust.GatewayListListParamsType(data.Type.ValueString())),
 	})

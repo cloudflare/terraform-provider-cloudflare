@@ -30,7 +30,7 @@ func (d *LoadBalancerPoolDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_load_balancer_pool"
 }
 
-func (r *LoadBalancerPoolDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *LoadBalancerPoolDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *LoadBalancerPoolDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *LoadBalancerPoolDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *LoadBalancerPoolDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *LoadBalancerPoolDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *LoadBalancerPoolDataSource) Read(ctx context.Context, req datasource.Re
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := LoadBalancerPoolResultDataSourceEnvelope{*data}
-		_, err := r.client.LoadBalancers.Pools.Get(
+		_, err := d.client.LoadBalancers.Pools.Get(
 			ctx,
 			data.PoolID.ValueString(),
 			load_balancers.PoolGetParams{
@@ -85,7 +85,7 @@ func (r *LoadBalancerPoolDataSource) Read(ctx context.Context, req datasource.Re
 		items := &[]*LoadBalancerPoolDataSourceModel{}
 		env := LoadBalancerPoolResultListDataSourceEnvelope{items}
 
-		page, err := r.client.LoadBalancers.Pools.List(ctx, load_balancers.PoolListParams{
+		page, err := d.client.LoadBalancers.Pools.List(ctx, load_balancers.PoolListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 			Monitor:   cloudflare.F[any](data.Filter.Monitor.ValueString()),
 		})

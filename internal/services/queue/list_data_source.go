@@ -26,7 +26,7 @@ func (d *QueuesDataSource) Metadata(ctx context.Context, req datasource.Metadata
 	resp.TypeName = req.ProviderTypeName + "_queues"
 }
 
-func (r *QueuesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *QueuesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *QueuesDataSource) Configure(ctx context.Context, req datasource.Configu
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *QueuesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*QueuesResultDataSourceModel{}
 
-	page, err := r.client.Queues.List(ctx, queues.QueueListParams{
+	page, err := d.client.Queues.List(ctx, queues.QueueListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

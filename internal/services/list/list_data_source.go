@@ -26,7 +26,7 @@ func (d *ListsDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 	resp.TypeName = req.ProviderTypeName + "_lists"
 }
 
-func (r *ListsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ListsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *ListsDataSource) Configure(ctx context.Context, req datasource.Configur
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ListsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ListsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ListsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *ListsDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ListsResultDataSourceModel{}
 
-	page, err := r.client.Rules.Lists.List(ctx, rules.ListListParams{
+	page, err := d.client.Rules.Lists.List(ctx, rules.ListListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

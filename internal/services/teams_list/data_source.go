@@ -30,7 +30,7 @@ func (d *TeamsListDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_teams_list"
 }
 
-func (r *TeamsListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TeamsListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TeamsListDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TeamsListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TeamsListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TeamsListDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *TeamsListDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := TeamsListResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Gateway.Lists.Get(
+		_, err := d.client.ZeroTrust.Gateway.Lists.Get(
 			ctx,
 			data.ListID.ValueString(),
 			zero_trust.GatewayListGetParams{
@@ -85,7 +85,7 @@ func (r *TeamsListDataSource) Read(ctx context.Context, req datasource.ReadReque
 		items := &[]*TeamsListDataSourceModel{}
 		env := TeamsListResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
+		page, err := d.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 			Type:      cloudflare.F(zero_trust.GatewayListListParamsType(data.Filter.Type.ValueString())),
 		})

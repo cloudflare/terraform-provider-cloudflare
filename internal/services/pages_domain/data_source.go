@@ -30,7 +30,7 @@ func (d *PagesDomainDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_pages_domain"
 }
 
-func (r *PagesDomainDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *PagesDomainDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *PagesDomainDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *PagesDomainDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := PagesDomainResultDataSourceEnvelope{*data}
-		_, err := r.client.Pages.Projects.Domains.Get(
+		_, err := d.client.Pages.Projects.Domains.Get(
 			ctx,
 			data.ProjectName.ValueString(),
 			data.DomainName.ValueString(),
@@ -86,7 +86,7 @@ func (r *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 		items := &[]*PagesDomainDataSourceModel{}
 		env := PagesDomainResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Pages.Projects.Domains.List(
+		page, err := d.client.Pages.Projects.Domains.List(
 			ctx,
 			data.Filter.ProjectName.ValueString(),
 			pages.ProjectDomainListParams{

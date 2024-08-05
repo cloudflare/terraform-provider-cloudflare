@@ -30,7 +30,7 @@ func (d *TeamsProxyEndpointDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_teams_proxy_endpoint"
 }
 
-func (r *TeamsProxyEndpointDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TeamsProxyEndpointDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TeamsProxyEndpointDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TeamsProxyEndpointDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TeamsProxyEndpointDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TeamsProxyEndpointDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *TeamsProxyEndpointDataSource) Read(ctx context.Context, req datasource.
 
 	res := new(http.Response)
 	env := TeamsProxyEndpointResultDataSourceEnvelope{*data}
-	_, err := r.client.ZeroTrust.Gateway.ProxyEndpoints.Get(
+	_, err := d.client.ZeroTrust.Gateway.ProxyEndpoints.Get(
 		ctx,
 		data.ProxyEndpointID.ValueString(),
 		zero_trust.GatewayProxyEndpointGetParams{

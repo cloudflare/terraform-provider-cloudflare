@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WaitingRoomResource{}
+var _ resource.ResourceWithModifyPlan = &WaitingRoomResource{}
 
 func NewResource() resource.Resource {
 	return &WaitingRoomResource{}
@@ -198,4 +199,8 @@ func (r *WaitingRoomResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WaitingRoomResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

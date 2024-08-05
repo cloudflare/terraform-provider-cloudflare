@@ -30,7 +30,7 @@ func (d *SpectrumApplicationDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_spectrum_application"
 }
 
-func (r *SpectrumApplicationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *SpectrumApplicationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *SpectrumApplicationDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *SpectrumApplicationDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := SpectrumApplicationResultDataSourceEnvelope{*data}
-		_, err := r.client.Spectrum.Apps.Get(
+		_, err := d.client.Spectrum.Apps.Get(
 			ctx,
 			data.Zone.ValueString(),
 			data.AppID.ValueString(),
@@ -83,7 +83,7 @@ func (r *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource
 		items := &[]*SpectrumApplicationDataSourceModel{}
 		env := SpectrumApplicationResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Spectrum.Apps.List(
+		page, err := d.client.Spectrum.Apps.List(
 			ctx,
 			data.Filter.Zone.ValueString(),
 			spectrum.AppListParams{

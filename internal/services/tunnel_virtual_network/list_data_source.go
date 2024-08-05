@@ -26,7 +26,7 @@ func (d *TunnelVirtualNetworksDataSource) Metadata(ctx context.Context, req data
 	resp.TypeName = req.ProviderTypeName + "_tunnel_virtual_networks"
 }
 
-func (r *TunnelVirtualNetworksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TunnelVirtualNetworksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *TunnelVirtualNetworksDataSource) Configure(ctx context.Context, req dat
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TunnelVirtualNetworksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TunnelVirtualNetworksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TunnelVirtualNetworksDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *TunnelVirtualNetworksDataSource) Read(ctx context.Context, req datasour
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TunnelVirtualNetworksResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Networks.VirtualNetworks.List(ctx, zero_trust.NetworkVirtualNetworkListParams{
+	page, err := d.client.ZeroTrust.Networks.VirtualNetworks.List(ctx, zero_trust.NetworkVirtualNetworkListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 		ID:        cloudflare.F(data.ID.ValueString()),
 		IsDefault: cloudflare.F(data.IsDefault.ValueBool()),

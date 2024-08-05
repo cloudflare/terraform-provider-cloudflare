@@ -30,7 +30,7 @@ func (d *FilterDataSource) Metadata(ctx context.Context, req datasource.Metadata
 	resp.TypeName = req.ProviderTypeName + "_filter"
 }
 
-func (r *FilterDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *FilterDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *FilterDataSource) Configure(ctx context.Context, req datasource.Configu
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *FilterDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := FilterResultDataSourceEnvelope{*data}
-		_, err := r.client.Filters.Get(
+		_, err := d.client.Filters.Get(
 			ctx,
 			data.ZoneIdentifier.ValueString(),
 			data.ID.ValueString(),
@@ -83,7 +83,7 @@ func (r *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		items := &[]*FilterDataSourceModel{}
 		env := FilterResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Filters.List(
+		page, err := d.client.Filters.List(
 			ctx,
 			data.Filter.ZoneIdentifier.ValueString(),
 			filters.FilterListParams{

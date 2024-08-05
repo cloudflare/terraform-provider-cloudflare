@@ -26,7 +26,7 @@ func (d *DeviceSettingsPoliciesDataSource) Metadata(ctx context.Context, req dat
 	resp.TypeName = req.ProviderTypeName + "_device_settings_policies"
 }
 
-func (r *DeviceSettingsPoliciesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DeviceSettingsPoliciesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *DeviceSettingsPoliciesDataSource) Configure(ctx context.Context, req da
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DeviceSettingsPoliciesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DeviceSettingsPoliciesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DeviceSettingsPoliciesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *DeviceSettingsPoliciesDataSource) Read(ctx context.Context, req datasou
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*DeviceSettingsPoliciesResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Devices.Policies.List(ctx, zero_trust.DevicePolicyListParams{
+	page, err := d.client.ZeroTrust.Devices.Policies.List(ctx, zero_trust.DevicePolicyListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

@@ -15,9 +15,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &NotificationPolicyDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &NotificationPolicyDataSource{}
 
-func (r NotificationPolicyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *NotificationPolicyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -335,9 +334,6 @@ func (r NotificationPolicyDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (r *NotificationPolicyDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *NotificationPolicyDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *NotificationPolicyDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

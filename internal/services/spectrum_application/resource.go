@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &SpectrumApplicationResource{}
+var _ resource.ResourceWithModifyPlan = &SpectrumApplicationResource{}
 
 func NewResource() resource.Resource {
 	return &SpectrumApplicationResource{}
@@ -192,4 +193,8 @@ func (r *SpectrumApplicationResource) Delete(ctx context.Context, req resource.D
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *SpectrumApplicationResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

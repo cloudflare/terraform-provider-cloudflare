@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &DevicePostureIntegrationResource{}
+var _ resource.ResourceWithModifyPlan = &DevicePostureIntegrationResource{}
 
 func NewResource() resource.Resource {
 	return &DevicePostureIntegrationResource{}
@@ -198,4 +199,8 @@ func (r *DevicePostureIntegrationResource) Delete(ctx context.Context, req resou
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *DevicePostureIntegrationResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

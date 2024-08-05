@@ -30,7 +30,7 @@ func (d *DevicePostureIntegrationDataSource) Metadata(ctx context.Context, req d
 	resp.TypeName = req.ProviderTypeName + "_device_posture_integration"
 }
 
-func (r *DevicePostureIntegrationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DevicePostureIntegrationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *DevicePostureIntegrationDataSource) Configure(ctx context.Context, req 
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DevicePostureIntegrationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DevicePostureIntegrationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DevicePostureIntegrationDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *DevicePostureIntegrationDataSource) Read(ctx context.Context, req datas
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := DevicePostureIntegrationResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Devices.Posture.Integrations.Get(
+		_, err := d.client.ZeroTrust.Devices.Posture.Integrations.Get(
 			ctx,
 			data.IntegrationID.ValueString(),
 			zero_trust.DevicePostureIntegrationGetParams{
@@ -85,7 +85,7 @@ func (r *DevicePostureIntegrationDataSource) Read(ctx context.Context, req datas
 		items := &[]*DevicePostureIntegrationDataSourceModel{}
 		env := DevicePostureIntegrationResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Devices.Posture.Integrations.List(ctx, zero_trust.DevicePostureIntegrationListParams{
+		page, err := d.client.ZeroTrust.Devices.Posture.Integrations.List(ctx, zero_trust.DevicePostureIntegrationListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

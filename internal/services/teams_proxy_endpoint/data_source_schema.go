@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &TeamsProxyEndpointDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &TeamsProxyEndpointDataSource{}
 
-func (r TeamsProxyEndpointDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *TeamsProxyEndpointDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -25,9 +24,6 @@ func (r TeamsProxyEndpointDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (r *TeamsProxyEndpointDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *TeamsProxyEndpointDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *TeamsProxyEndpointDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

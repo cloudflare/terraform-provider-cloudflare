@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &EmailRoutingSettingsResource{}
+var _ resource.ResourceWithModifyPlan = &EmailRoutingSettingsResource{}
 
 func NewResource() resource.Resource {
 	return &EmailRoutingSettingsResource{}
@@ -194,4 +195,8 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 	data.ID = data.ZoneIdentifier
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *EmailRoutingSettingsResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

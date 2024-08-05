@@ -30,7 +30,7 @@ func (d *WaitingRoomEventDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_waiting_room_event"
 }
 
-func (r *WaitingRoomEventDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WaitingRoomEventDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WaitingRoomEventDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WaitingRoomEventDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WaitingRoomEventDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WaitingRoomEventDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *WaitingRoomEventDataSource) Read(ctx context.Context, req datasource.Re
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := WaitingRoomEventResultDataSourceEnvelope{*data}
-		_, err := r.client.WaitingRooms.Events.Get(
+		_, err := d.client.WaitingRooms.Events.Get(
 			ctx,
 			data.WaitingRoomID.ValueString(),
 			data.EventID.ValueString(),
@@ -86,7 +86,7 @@ func (r *WaitingRoomEventDataSource) Read(ctx context.Context, req datasource.Re
 		items := &[]*WaitingRoomEventDataSourceModel{}
 		env := WaitingRoomEventResultListDataSourceEnvelope{items}
 
-		page, err := r.client.WaitingRooms.Events.List(
+		page, err := d.client.WaitingRooms.Events.List(
 			ctx,
 			data.Filter.WaitingRoomID.ValueString(),
 			waiting_rooms.EventListParams{

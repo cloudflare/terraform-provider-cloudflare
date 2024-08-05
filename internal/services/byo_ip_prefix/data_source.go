@@ -30,7 +30,7 @@ func (d *ByoIPPrefixDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_byo_ip_prefix"
 }
 
-func (r *ByoIPPrefixDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ByoIPPrefixDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ByoIPPrefixDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ByoIPPrefixDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ByoIPPrefixDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ByoIPPrefixDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *ByoIPPrefixDataSource) Read(ctx context.Context, req datasource.ReadReq
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := ByoIPPrefixResultDataSourceEnvelope{*data}
-		_, err := r.client.Addressing.Prefixes.Get(
+		_, err := d.client.Addressing.Prefixes.Get(
 			ctx,
 			data.PrefixID.ValueString(),
 			addressing.PrefixGetParams{
@@ -85,7 +85,7 @@ func (r *ByoIPPrefixDataSource) Read(ctx context.Context, req datasource.ReadReq
 		items := &[]*ByoIPPrefixDataSourceModel{}
 		env := ByoIPPrefixResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Addressing.Prefixes.List(ctx, addressing.PrefixListParams{
+		page, err := d.client.Addressing.Prefixes.List(ctx, addressing.PrefixListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

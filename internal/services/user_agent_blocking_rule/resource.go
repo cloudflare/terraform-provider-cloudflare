@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &UserAgentBlockingRuleResource{}
+var _ resource.ResourceWithModifyPlan = &UserAgentBlockingRuleResource{}
 
 func NewResource() resource.Resource {
 	return &UserAgentBlockingRuleResource{}
@@ -192,4 +193,8 @@ func (r *UserAgentBlockingRuleResource) Delete(ctx context.Context, req resource
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *UserAgentBlockingRuleResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

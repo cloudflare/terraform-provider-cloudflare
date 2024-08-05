@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &LogpullRetentionDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &LogpullRetentionDataSource{}
 
-func (r LogpullRetentionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *LogpullRetentionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
@@ -26,9 +25,6 @@ func (r LogpullRetentionDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (r *LogpullRetentionDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *LogpullRetentionDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *LogpullRetentionDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

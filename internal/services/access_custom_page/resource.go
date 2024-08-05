@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccessCustomPageResource{}
+var _ resource.ResourceWithModifyPlan = &AccessCustomPageResource{}
 
 func NewResource() resource.Resource {
 	return &AccessCustomPageResource{}
@@ -202,4 +203,8 @@ func (r *AccessCustomPageResource) Delete(ctx context.Context, req resource.Dele
 	data.ID = data.UID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *AccessCustomPageResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

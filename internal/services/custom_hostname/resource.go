@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &CustomHostnameResource{}
+var _ resource.ResourceWithModifyPlan = &CustomHostnameResource{}
 
 func NewResource() resource.Resource {
 	return &CustomHostnameResource{}
@@ -198,4 +199,8 @@ func (r *CustomHostnameResource) Delete(ctx context.Context, req resource.Delete
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *CustomHostnameResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

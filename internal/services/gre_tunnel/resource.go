@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &GRETunnelResource{}
+var _ resource.ResourceWithModifyPlan = &GRETunnelResource{}
 
 func NewResource() resource.Resource {
 	return &GRETunnelResource{}
@@ -198,4 +199,8 @@ func (r *GRETunnelResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *GRETunnelResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

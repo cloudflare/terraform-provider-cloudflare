@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WorkersKVDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &WorkersKVDataSource{}
 
-func (r WorkersKVDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *WorkersKVDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -31,9 +30,6 @@ func (r WorkersKVDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 	}
 }
 
-func (r *WorkersKVDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *WorkersKVDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *WorkersKVDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

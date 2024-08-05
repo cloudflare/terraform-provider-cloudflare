@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessKeysConfigurationDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessKeysConfigurationDataSource{}
 
-func (r AccessKeysConfigurationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessKeysConfigurationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -23,9 +22,6 @@ func (r AccessKeysConfigurationDataSource) Schema(ctx context.Context, req datas
 	}
 }
 
-func (r *AccessKeysConfigurationDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessKeysConfigurationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessKeysConfigurationDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

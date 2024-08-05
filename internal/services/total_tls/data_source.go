@@ -30,7 +30,7 @@ func (d *TotalTLSDataSource) Metadata(ctx context.Context, req datasource.Metada
 	resp.TypeName = req.ProviderTypeName + "_total_tls"
 }
 
-func (r *TotalTLSDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TotalTLSDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TotalTLSDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TotalTLSDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TotalTLSDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TotalTLSDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *TotalTLSDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	res := new(http.Response)
 	env := TotalTLSResultDataSourceEnvelope{*data}
-	_, err := r.client.ACM.TotalTLS.Get(
+	_, err := d.client.ACM.TotalTLS.Get(
 		ctx,
 		acm.TotalTLSGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

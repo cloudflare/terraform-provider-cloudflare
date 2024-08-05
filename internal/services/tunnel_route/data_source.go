@@ -26,7 +26,7 @@ func (d *TunnelRouteDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_tunnel_route"
 }
 
-func (r *TunnelRouteDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TunnelRouteDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *TunnelRouteDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TunnelRouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TunnelRouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TunnelRouteDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -63,7 +63,7 @@ func (r *TunnelRouteDataSource) Read(ctx context.Context, req datasource.ReadReq
 	items := &[]*TunnelRouteDataSourceModel{}
 	env := TunnelRouteResultListDataSourceEnvelope{items}
 
-	page, err := r.client.ZeroTrust.Networks.Routes.List(ctx, zero_trust.NetworkRouteListParams{
+	page, err := d.client.ZeroTrust.Networks.Routes.List(ctx, zero_trust.NetworkRouteListParams{
 		AccountID:        cloudflare.F(data.Filter.AccountID.ValueString()),
 		Comment:          cloudflare.F(data.Filter.Comment.ValueString()),
 		ExistedAt:        cloudflare.F(dataFilterExistedAt),

@@ -26,7 +26,7 @@ func (d *WaitingRoomsDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_waiting_rooms"
 }
 
-func (r *WaitingRoomsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WaitingRoomsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *WaitingRoomsDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WaitingRoomsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WaitingRoomsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WaitingRoomsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WaitingRoomsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WaitingRoomsResultDataSourceModel{}
 
-	page, err := r.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
+	page, err := d.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
 		ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
 		Page:    cloudflare.F[any](data.Page.ValueString()),
 		PerPage: cloudflare.F[any](data.PerPage.ValueString()),

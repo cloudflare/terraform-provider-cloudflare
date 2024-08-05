@@ -30,7 +30,7 @@ func (d *FirewallRuleDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_firewall_rule"
 }
 
-func (r *FirewallRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *FirewallRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *FirewallRuleDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *FirewallRuleDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	res := new(http.Response)
 	env := FirewallRuleResultDataSourceEnvelope{*data}
-	_, err := r.client.Firewall.Rules.Get(
+	_, err := d.client.Firewall.Rules.Get(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		firewall.RuleGetParams{

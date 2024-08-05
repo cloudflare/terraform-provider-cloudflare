@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ArgoTieredCachingDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &ArgoTieredCachingDataSource{}
 
-func (r ArgoTieredCachingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ArgoTieredCachingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -46,9 +45,6 @@ func (r ArgoTieredCachingDataSource) Schema(ctx context.Context, req datasource.
 	}
 }
 
-func (r *ArgoTieredCachingDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *ArgoTieredCachingDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *ArgoTieredCachingDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

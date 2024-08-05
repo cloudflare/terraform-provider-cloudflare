@@ -26,7 +26,7 @@ func (d *AccessMutualTLSCertificatesDataSource) Metadata(ctx context.Context, re
 	resp.TypeName = req.ProviderTypeName + "_access_mutual_tls_certificates"
 }
 
-func (r *AccessMutualTLSCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessMutualTLSCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccessMutualTLSCertificatesDataSource) Configure(ctx context.Context, r
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessMutualTLSCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessMutualTLSCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessMutualTLSCertificatesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -66,7 +66,7 @@ func (r *AccessMutualTLSCertificatesDataSource) Read(ctx context.Context, req da
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccessMutualTLSCertificatesResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Access.Certificates.List(ctx, params)
+	page, err := d.client.ZeroTrust.Access.Certificates.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

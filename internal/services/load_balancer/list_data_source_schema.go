@@ -16,9 +16,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &LoadBalancersDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &LoadBalancersDataSource{}
 
-func (r LoadBalancersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *LoadBalancersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -426,9 +425,6 @@ func (r LoadBalancersDataSource) Schema(ctx context.Context, req datasource.Sche
 	}
 }
 
-func (r *LoadBalancersDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *LoadBalancersDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *LoadBalancersDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

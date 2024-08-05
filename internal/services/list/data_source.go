@@ -30,7 +30,7 @@ func (d *ListDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_list"
 }
 
-func (r *ListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ListDataSource) Configure(ctx context.Context, req datasource.Configure
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ListDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := ListResultDataSourceEnvelope{*data}
-		_, err := r.client.Rules.Lists.Get(
+		_, err := d.client.Rules.Lists.Get(
 			ctx,
 			data.ListID.ValueString(),
 			rules.ListGetParams{
@@ -85,7 +85,7 @@ func (r *ListDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		items := &[]*ListDataSourceModel{}
 		env := ListResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Rules.Lists.List(ctx, rules.ListListParams{
+		page, err := d.client.Rules.Lists.List(ctx, rules.ListListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

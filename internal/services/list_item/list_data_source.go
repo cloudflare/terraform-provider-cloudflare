@@ -26,7 +26,7 @@ func (d *ListItemsDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_list_items"
 }
 
-func (r *ListItemsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ListItemsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *ListItemsDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ListItemsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ListItemsResultDataSourceModel{}
 
-	page, err := r.client.Rules.Lists.Items.List(
+	page, err := d.client.Rules.Lists.Items.List(
 		ctx,
 		data.ListID.ValueString(),
 		rules.ListItemListParams{

@@ -30,7 +30,7 @@ func (d *EmailRoutingAddressDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_email_routing_address"
 }
 
-func (r *EmailRoutingAddressDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *EmailRoutingAddressDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *EmailRoutingAddressDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *EmailRoutingAddressDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := EmailRoutingAddressResultDataSourceEnvelope{*data}
-		_, err := r.client.EmailRouting.Addresses.Get(
+		_, err := d.client.EmailRouting.Addresses.Get(
 			ctx,
 			data.AccountIdentifier.ValueString(),
 			data.DestinationAddressIdentifier.ValueString(),
@@ -83,7 +83,7 @@ func (r *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 		items := &[]*EmailRoutingAddressDataSourceModel{}
 		env := EmailRoutingAddressResultListDataSourceEnvelope{items}
 
-		page, err := r.client.EmailRouting.Addresses.List(
+		page, err := d.client.EmailRouting.Addresses.List(
 			ctx,
 			data.Filter.AccountIdentifier.ValueString(),
 			email_routing.AddressListParams{

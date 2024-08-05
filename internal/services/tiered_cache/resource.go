@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &TieredCacheResource{}
+var _ resource.ResourceWithModifyPlan = &TieredCacheResource{}
 
 func NewResource() resource.Resource {
 	return &TieredCacheResource{}
@@ -199,4 +200,8 @@ func (r *TieredCacheResource) Delete(ctx context.Context, req resource.DeleteReq
 	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *TieredCacheResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

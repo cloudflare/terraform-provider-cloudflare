@@ -30,7 +30,7 @@ func (d *AuthenticatedOriginPullsDataSource) Metadata(ctx context.Context, req d
 	resp.TypeName = req.ProviderTypeName + "_authenticated_origin_pulls"
 }
 
-func (r *AuthenticatedOriginPullsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AuthenticatedOriginPullsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AuthenticatedOriginPullsDataSource) Configure(ctx context.Context, req 
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AuthenticatedOriginPullsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AuthenticatedOriginPullsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AuthenticatedOriginPullsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *AuthenticatedOriginPullsDataSource) Read(ctx context.Context, req datas
 
 	res := new(http.Response)
 	env := AuthenticatedOriginPullsResultDataSourceEnvelope{*data}
-	_, err := r.client.OriginTLSClientAuth.Hostnames.Get(
+	_, err := d.client.OriginTLSClientAuth.Hostnames.Get(
 		ctx,
 		data.Hostname.ValueString(),
 		origin_tls_client_auth.HostnameGetParams{

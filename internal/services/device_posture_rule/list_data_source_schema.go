@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &DevicePostureRulesDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &DevicePostureRulesDataSource{}
 
-func (r DevicePostureRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *DevicePostureRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -325,9 +324,6 @@ func (r DevicePostureRulesDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (r *DevicePostureRulesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *DevicePostureRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *DevicePostureRulesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

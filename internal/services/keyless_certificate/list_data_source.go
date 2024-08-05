@@ -26,7 +26,7 @@ func (d *KeylessCertificatesDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_keyless_certificates"
 }
 
-func (r *KeylessCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *KeylessCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *KeylessCertificatesDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *KeylessCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *KeylessCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *KeylessCertificatesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *KeylessCertificatesDataSource) Read(ctx context.Context, req datasource
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*KeylessCertificatesResultDataSourceModel{}
 
-	page, err := r.client.KeylessCertificates.List(ctx, keyless_certificates.KeylessCertificateListParams{
+	page, err := d.client.KeylessCertificates.List(ctx, keyless_certificates.KeylessCertificateListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 	})
 	if err != nil {

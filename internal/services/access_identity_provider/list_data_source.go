@@ -26,7 +26,7 @@ func (d *AccessIdentityProvidersDataSource) Metadata(ctx context.Context, req da
 	resp.TypeName = req.ProviderTypeName + "_access_identity_providers"
 }
 
-func (r *AccessIdentityProvidersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessIdentityProvidersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AccessIdentityProvidersDataSource) Configure(ctx context.Context, req d
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessIdentityProvidersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessIdentityProvidersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessIdentityProvidersDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -66,7 +66,7 @@ func (r *AccessIdentityProvidersDataSource) Read(ctx context.Context, req dataso
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccessIdentityProvidersResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.IdentityProviders.List(ctx, params)
+	page, err := d.client.ZeroTrust.IdentityProviders.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

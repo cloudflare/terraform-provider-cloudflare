@@ -30,7 +30,7 @@ func (d *AccessIdentityProviderDataSource) Metadata(ctx context.Context, req dat
 	resp.TypeName = req.ProviderTypeName + "_access_identity_provider"
 }
 
-func (r *AccessIdentityProviderDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessIdentityProviderDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessIdentityProviderDataSource) Configure(ctx context.Context, req da
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessIdentityProviderDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessIdentityProviderDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessIdentityProviderDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -68,7 +68,7 @@ func (r *AccessIdentityProviderDataSource) Read(ctx context.Context, req datasou
 		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 	}
 
-	_, err := r.client.ZeroTrust.IdentityProviders.Get(
+	_, err := d.client.ZeroTrust.IdentityProviders.Get(
 		ctx,
 		data.IdentityProviderID.ValueString(),
 		params,

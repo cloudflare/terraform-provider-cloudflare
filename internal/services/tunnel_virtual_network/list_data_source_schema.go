@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &TunnelVirtualNetworksDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &TunnelVirtualNetworksDataSource{}
 
-func (r TunnelVirtualNetworksDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *TunnelVirtualNetworksDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -78,9 +77,6 @@ func (r TunnelVirtualNetworksDataSource) Schema(ctx context.Context, req datasou
 	}
 }
 
-func (r *TunnelVirtualNetworksDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *TunnelVirtualNetworksDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *TunnelVirtualNetworksDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

@@ -30,7 +30,7 @@ func (d *StaticRouteDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_static_route"
 }
 
-func (r *StaticRouteDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *StaticRouteDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *StaticRouteDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *StaticRouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *StaticRouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *StaticRouteDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *StaticRouteDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	res := new(http.Response)
 	env := StaticRouteResultDataSourceEnvelope{*data}
-	_, err := r.client.MagicTransit.Routes.Get(
+	_, err := d.client.MagicTransit.Routes.Get(
 		ctx,
 		data.RouteID.ValueString(),
 		magic_transit.RouteGetParams{

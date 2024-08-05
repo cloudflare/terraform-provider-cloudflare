@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &APIShieldOperationSchemaValidationSettingsDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &APIShieldOperationSchemaValidationSettingsDataSource{}
 
-func (r APIShieldOperationSchemaValidationSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *APIShieldOperationSchemaValidationSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"operation_id": schema.StringAttribute{
@@ -36,9 +35,6 @@ func (r APIShieldOperationSchemaValidationSettingsDataSource) Schema(ctx context
 	}
 }
 
-func (r *APIShieldOperationSchemaValidationSettingsDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *APIShieldOperationSchemaValidationSettingsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *APIShieldOperationSchemaValidationSettingsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

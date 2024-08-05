@@ -14,9 +14,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &APIShieldSchemaDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &APIShieldSchemaDataSource{}
 
-func (r APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -94,9 +93,6 @@ func (r APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.Sc
 	}
 }
 
-func (r *APIShieldSchemaDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *APIShieldSchemaDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *APIShieldSchemaDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

@@ -30,7 +30,7 @@ func (d *AccessTagDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_access_tag"
 }
 
-func (r *AccessTagDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessTagDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessTagDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessTagDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessTagDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessTagDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *AccessTagDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := AccessTagResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Access.Tags.Get(
+		_, err := d.client.ZeroTrust.Access.Tags.Get(
 			ctx,
 			data.TagName.ValueString(),
 			zero_trust.AccessTagGetParams{
@@ -85,7 +85,7 @@ func (r *AccessTagDataSource) Read(ctx context.Context, req datasource.ReadReque
 		items := &[]*AccessTagDataSourceModel{}
 		env := AccessTagResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Access.Tags.List(ctx, zero_trust.AccessTagListParams{
+		page, err := d.client.ZeroTrust.Access.Tags.List(ctx, zero_trust.AccessTagListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

@@ -30,7 +30,7 @@ func (d *ArgoSmartRoutingDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_argo_smart_routing"
 }
 
-func (r *ArgoSmartRoutingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ArgoSmartRoutingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ArgoSmartRoutingDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ArgoSmartRoutingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ArgoSmartRoutingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ArgoSmartRoutingDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *ArgoSmartRoutingDataSource) Read(ctx context.Context, req datasource.Re
 
 	res := new(http.Response)
 	env := ArgoSmartRoutingResultDataSourceEnvelope{*data}
-	_, err := r.client.Argo.SmartRouting.Get(
+	_, err := d.client.Argo.SmartRouting.Get(
 		ctx,
 		argo.SmartRoutingGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

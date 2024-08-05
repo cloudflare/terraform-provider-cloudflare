@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WorkerScriptResource{}
+var _ resource.ResourceWithModifyPlan = &WorkerScriptResource{}
 
 func NewResource() resource.Resource {
 	return &WorkerScriptResource{}
@@ -201,4 +202,8 @@ func (r *WorkerScriptResource) Delete(ctx context.Context, req resource.DeleteRe
 	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WorkerScriptResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

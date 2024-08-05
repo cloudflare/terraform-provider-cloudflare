@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &TeamsRuleResource{}
+var _ resource.ResourceWithModifyPlan = &TeamsRuleResource{}
 
 func NewResource() resource.Resource {
 	return &TeamsRuleResource{}
@@ -198,4 +199,8 @@ func (r *TeamsRuleResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *TeamsRuleResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

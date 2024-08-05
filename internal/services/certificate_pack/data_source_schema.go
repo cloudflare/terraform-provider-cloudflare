@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &CertificatePackDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &CertificatePackDataSource{}
 
-func (r CertificatePackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *CertificatePackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"certificate_pack_id": schema.StringAttribute{
@@ -45,9 +44,6 @@ func (r CertificatePackDataSource) Schema(ctx context.Context, req datasource.Sc
 	}
 }
 
-func (r *CertificatePackDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *CertificatePackDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *CertificatePackDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

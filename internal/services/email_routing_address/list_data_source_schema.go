@@ -14,9 +14,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &EmailRoutingAddressesDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &EmailRoutingAddressesDataSource{}
 
-func (r EmailRoutingAddressesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *EmailRoutingAddressesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_identifier": schema.StringAttribute{
@@ -96,9 +95,6 @@ func (r EmailRoutingAddressesDataSource) Schema(ctx context.Context, req datasou
 	}
 }
 
-func (r *EmailRoutingAddressesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *EmailRoutingAddressesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *EmailRoutingAddressesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

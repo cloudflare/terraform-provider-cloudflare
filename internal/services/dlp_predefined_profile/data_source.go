@@ -30,7 +30,7 @@ func (d *DLPPredefinedProfileDataSource) Metadata(ctx context.Context, req datas
 	resp.TypeName = req.ProviderTypeName + "_dlp_predefined_profile"
 }
 
-func (r *DLPPredefinedProfileDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DLPPredefinedProfileDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *DLPPredefinedProfileDataSource) Configure(ctx context.Context, req data
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DLPPredefinedProfileDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DLPPredefinedProfileDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DLPPredefinedProfileDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *DLPPredefinedProfileDataSource) Read(ctx context.Context, req datasourc
 
 	res := new(http.Response)
 	env := DLPPredefinedProfileResultDataSourceEnvelope{*data}
-	_, err := r.client.ZeroTrust.DLP.Profiles.Predefined.Get(
+	_, err := d.client.ZeroTrust.DLP.Profiles.Predefined.Get(
 		ctx,
 		data.ProfileID.ValueString(),
 		zero_trust.DLPProfilePredefinedGetParams{

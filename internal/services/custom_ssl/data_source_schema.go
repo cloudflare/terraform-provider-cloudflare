@@ -16,9 +16,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &CustomSSLDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &CustomSSLDataSource{}
 
-func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"custom_certificate_id": schema.StringAttribute{
@@ -204,9 +203,6 @@ func (r CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 	}
 }
 
-func (r *CustomSSLDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *CustomSSLDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *CustomSSLDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

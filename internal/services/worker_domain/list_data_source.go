@@ -26,7 +26,7 @@ func (d *WorkerDomainsDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_worker_domains"
 }
 
-func (r *WorkerDomainsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WorkerDomainsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *WorkerDomainsDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WorkerDomainsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WorkerDomainsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WorkerDomainsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WorkerDomainsDataSource) Read(ctx context.Context, req datasource.ReadR
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WorkerDomainsResultDataSourceModel{}
 
-	page, err := r.client.Workers.Domains.List(ctx, workers.DomainListParams{
+	page, err := d.client.Workers.Domains.List(ctx, workers.DomainListParams{
 		AccountID:   cloudflare.F(data.AccountID.ValueString()),
 		Environment: cloudflare.F(data.Environment.ValueString()),
 		Hostname:    cloudflare.F(data.Hostname.ValueString()),

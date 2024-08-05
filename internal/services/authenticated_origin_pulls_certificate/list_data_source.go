@@ -26,7 +26,7 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Metadata(ctx context.Co
 	resp.TypeName = req.ProviderTypeName + "_authenticated_origin_pulls_certificates"
 }
 
-func (r *AuthenticatedOriginPullsCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AuthenticatedOriginPullsCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AuthenticatedOriginPullsCertificatesDataSource) Configure(ctx context.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AuthenticatedOriginPullsCertificatesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AuthenticatedOriginPullsCertificatesResultDataSourceModel{}
 
-	page, err := r.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
+	page, err := d.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 	})
 	if err != nil {

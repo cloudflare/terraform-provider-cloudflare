@@ -30,7 +30,7 @@ func (d *TunnelConfigDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_tunnel_config"
 }
 
-func (r *TunnelConfigDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TunnelConfigDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TunnelConfigDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TunnelConfigDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TunnelConfigDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TunnelConfigDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *TunnelConfigDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	res := new(http.Response)
 	env := TunnelConfigResultDataSourceEnvelope{*data}
-	_, err := r.client.ZeroTrust.Tunnels.Configurations.Get(
+	_, err := d.client.ZeroTrust.Tunnels.Configurations.Get(
 		ctx,
 		data.TunnelID.ValueString(),
 		zero_trust.TunnelConfigurationGetParams{

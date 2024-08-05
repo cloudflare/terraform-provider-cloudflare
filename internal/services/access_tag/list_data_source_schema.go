@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessTagsDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessTagsDataSource{}
 
-func (r AccessTagsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessTagsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -53,9 +52,6 @@ func (r AccessTagsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-func (r *AccessTagsDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessTagsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessTagsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }
