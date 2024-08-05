@@ -12,7 +12,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-func (r AccessMutualTLSHostnameSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+var _ resource.ResourceWithConfigValidators = &AccessMutualTLSHostnameSettingsResource{}
+
+func (r *AccessMutualTLSHostnameSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -47,4 +49,8 @@ func (r AccessMutualTLSHostnameSettingsResource) Schema(ctx context.Context, req
 			},
 		},
 	}
+}
+
+func (r *AccessMutualTLSHostnameSettingsResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

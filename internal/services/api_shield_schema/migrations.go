@@ -16,7 +16,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r APIShieldSchemaResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+var _ resource.ResourceWithUpgradeState = &APIShieldSchemaResource{}
+
+func (r *APIShieldSchemaResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{
 		0: {
 			PriorSchema: &schema.Schema{

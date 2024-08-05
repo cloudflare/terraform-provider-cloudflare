@@ -30,7 +30,7 @@ func (d *CustomHostnameFallbackOriginDataSource) Metadata(ctx context.Context, r
 	resp.TypeName = req.ProviderTypeName + "_custom_hostname_fallback_origin"
 }
 
-func (r *CustomHostnameFallbackOriginDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CustomHostnameFallbackOriginDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *CustomHostnameFallbackOriginDataSource) Configure(ctx context.Context, 
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *CustomHostnameFallbackOriginDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *CustomHostnameFallbackOriginDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *CustomHostnameFallbackOriginDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *CustomHostnameFallbackOriginDataSource) Read(ctx context.Context, req d
 
 	res := new(http.Response)
 	env := CustomHostnameFallbackOriginResultDataSourceEnvelope{*data}
-	_, err := r.client.CustomHostnames.FallbackOrigin.Get(
+	_, err := d.client.CustomHostnames.FallbackOrigin.Get(
 		ctx,
 		custom_hostnames.FallbackOriginGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

@@ -26,7 +26,7 @@ func (d *EmailRoutingRulesDataSource) Metadata(ctx context.Context, req datasour
 	resp.TypeName = req.ProviderTypeName + "_email_routing_rules"
 }
 
-func (r *EmailRoutingRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *EmailRoutingRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *EmailRoutingRulesDataSource) Configure(ctx context.Context, req datasou
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *EmailRoutingRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *EmailRoutingRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *EmailRoutingRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *EmailRoutingRulesDataSource) Read(ctx context.Context, req datasource.R
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*EmailRoutingRulesResultDataSourceModel{}
 
-	page, err := r.client.EmailRouting.Rules.List(
+	page, err := d.client.EmailRouting.Rules.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		email_routing.RuleListParams{

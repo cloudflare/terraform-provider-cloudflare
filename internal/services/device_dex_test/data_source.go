@@ -30,7 +30,7 @@ func (d *DeviceDEXTestDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_device_dex_test"
 }
 
-func (r *DeviceDEXTestDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DeviceDEXTestDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *DeviceDEXTestDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DeviceDEXTestDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DeviceDEXTestDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DeviceDEXTestDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *DeviceDEXTestDataSource) Read(ctx context.Context, req datasource.ReadR
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := DeviceDEXTestResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
+		_, err := d.client.ZeroTrust.Devices.DEXTests.Get(
 			ctx,
 			data.DEXTestID.ValueString(),
 			zero_trust.DeviceDEXTestGetParams{
@@ -85,7 +85,7 @@ func (r *DeviceDEXTestDataSource) Read(ctx context.Context, req datasource.ReadR
 		items := &[]*DeviceDEXTestDataSourceModel{}
 		env := DeviceDEXTestResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Devices.DEXTests.List(ctx, zero_trust.DeviceDEXTestListParams{
+		page, err := d.client.ZeroTrust.Devices.DEXTests.List(ctx, zero_trust.DeviceDEXTestListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

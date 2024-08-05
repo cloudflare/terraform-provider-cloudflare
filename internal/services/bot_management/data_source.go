@@ -30,7 +30,7 @@ func (d *BotManagementDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_bot_management"
 }
 
-func (r *BotManagementDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *BotManagementDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *BotManagementDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *BotManagementDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *BotManagementDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *BotManagementDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *BotManagementDataSource) Read(ctx context.Context, req datasource.ReadR
 
 	res := new(http.Response)
 	env := BotManagementResultDataSourceEnvelope{*data}
-	_, err := r.client.BotManagement.Get(
+	_, err := d.client.BotManagement.Get(
 		ctx,
 		bot_management.BotManagementGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

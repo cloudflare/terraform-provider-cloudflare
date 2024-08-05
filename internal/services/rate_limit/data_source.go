@@ -30,7 +30,7 @@ func (d *RateLimitDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_rate_limit"
 }
 
-func (r *RateLimitDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *RateLimitDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *RateLimitDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *RateLimitDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := RateLimitResultDataSourceEnvelope{*data}
-		_, err := r.client.RateLimits.Get(
+		_, err := d.client.RateLimits.Get(
 			ctx,
 			data.ZoneIdentifier.ValueString(),
 			data.ID.ValueString(),
@@ -83,7 +83,7 @@ func (r *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 		items := &[]*RateLimitDataSourceModel{}
 		env := RateLimitResultListDataSourceEnvelope{items}
 
-		page, err := r.client.RateLimits.List(
+		page, err := d.client.RateLimits.List(
 			ctx,
 			data.Filter.ZoneIdentifier.ValueString(),
 			rate_limits.RateLimitListParams{

@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &TeamsAccountDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &TeamsAccountDataSource{}
 
-func (r TeamsAccountDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *TeamsAccountDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -257,9 +256,6 @@ func (r TeamsAccountDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (r *TeamsAccountDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *TeamsAccountDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *TeamsAccountDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

@@ -30,7 +30,7 @@ func (d *TeamsLocationDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_teams_location"
 }
 
-func (r *TeamsLocationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TeamsLocationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *TeamsLocationDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TeamsLocationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TeamsLocationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TeamsLocationDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *TeamsLocationDataSource) Read(ctx context.Context, req datasource.ReadR
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := TeamsLocationResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Gateway.Locations.Get(
+		_, err := d.client.ZeroTrust.Gateway.Locations.Get(
 			ctx,
 			data.LocationID.ValueString(),
 			zero_trust.GatewayLocationGetParams{
@@ -85,7 +85,7 @@ func (r *TeamsLocationDataSource) Read(ctx context.Context, req datasource.ReadR
 		items := &[]*TeamsLocationDataSourceModel{}
 		env := TeamsLocationResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Gateway.Locations.List(ctx, zero_trust.GatewayLocationListParams{
+		page, err := d.client.ZeroTrust.Gateway.Locations.List(ctx, zero_trust.GatewayLocationListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

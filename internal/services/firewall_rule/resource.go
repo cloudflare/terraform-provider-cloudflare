@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &FirewallRuleResource{}
+var _ resource.ResourceWithModifyPlan = &FirewallRuleResource{}
 
 func NewResource() resource.Resource {
 	return &FirewallRuleResource{}
@@ -194,4 +195,8 @@ func (r *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *FirewallRuleResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

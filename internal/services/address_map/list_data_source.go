@@ -26,7 +26,7 @@ func (d *AddressMapsDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_address_maps"
 }
 
-func (r *AddressMapsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AddressMapsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *AddressMapsDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AddressMapsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AddressMapsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AddressMapsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *AddressMapsDataSource) Read(ctx context.Context, req datasource.ReadReq
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AddressMapsResultDataSourceModel{}
 
-	page, err := r.client.Addressing.AddressMaps.List(ctx, addressing.AddressMapListParams{
+	page, err := d.client.Addressing.AddressMaps.List(ctx, addressing.AddressMapListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

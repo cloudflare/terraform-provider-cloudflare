@@ -30,7 +30,7 @@ func (d *APIShieldSchemaValidationSettingsDataSource) Metadata(ctx context.Conte
 	resp.TypeName = req.ProviderTypeName + "_api_shield_schema_validation_settings"
 }
 
-func (r *APIShieldSchemaValidationSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APIShieldSchemaValidationSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *APIShieldSchemaValidationSettingsDataSource) Configure(ctx context.Cont
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *APIShieldSchemaValidationSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *APIShieldSchemaValidationSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *APIShieldSchemaValidationSettingsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *APIShieldSchemaValidationSettingsDataSource) Read(ctx context.Context, 
 	}
 
 	res := new(http.Response)
-	_, err := r.client.APIGateway.Settings.SchemaValidation.Get(
+	_, err := d.client.APIGateway.Settings.SchemaValidation.Get(
 		ctx,
 		api_gateway.SettingSchemaValidationGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

@@ -26,7 +26,7 @@ func (d *MTLSCertificatesDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_mtls_certificates"
 }
 
-func (r *MTLSCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *MTLSCertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *MTLSCertificatesDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *MTLSCertificatesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.Re
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*MTLSCertificatesResultDataSourceModel{}
 
-	page, err := r.client.MTLSCertificates.List(ctx, mtls_certificates.MTLSCertificateListParams{
+	page, err := d.client.MTLSCertificates.List(ctx, mtls_certificates.MTLSCertificateListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

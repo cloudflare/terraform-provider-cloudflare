@@ -26,7 +26,7 @@ func (d *CustomSSLsDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_custom_ssls"
 }
 
-func (r *CustomSSLsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CustomSSLsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *CustomSSLsDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *CustomSSLsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *CustomSSLsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *CustomSSLsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *CustomSSLsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*CustomSSLsResultDataSourceModel{}
 
-	page, err := r.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
+	page, err := d.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
 		ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
 		Match:   cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Match.ValueString())),
 		Page:    cloudflare.F(data.Page.ValueFloat64()),

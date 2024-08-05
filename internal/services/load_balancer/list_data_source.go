@@ -26,7 +26,7 @@ func (d *LoadBalancersDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_load_balancers"
 }
 
-func (r *LoadBalancersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *LoadBalancersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *LoadBalancersDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *LoadBalancersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *LoadBalancersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *LoadBalancersDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *LoadBalancersDataSource) Read(ctx context.Context, req datasource.ReadR
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*LoadBalancersResultDataSourceModel{}
 
-	page, err := r.client.LoadBalancers.List(ctx, load_balancers.LoadBalancerListParams{
+	page, err := d.client.LoadBalancers.List(ctx, load_balancers.LoadBalancerListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 	})
 	if err != nil {

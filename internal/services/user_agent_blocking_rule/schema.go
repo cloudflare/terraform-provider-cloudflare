@@ -13,7 +13,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-func (r UserAgentBlockingRuleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+var _ resource.ResourceWithConfigValidators = &UserAgentBlockingRuleResource{}
+
+func (r *UserAgentBlockingRuleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
@@ -52,4 +54,8 @@ func (r UserAgentBlockingRuleResource) Schema(ctx context.Context, req resource.
 			},
 		},
 	}
+}
+
+func (r *UserAgentBlockingRuleResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

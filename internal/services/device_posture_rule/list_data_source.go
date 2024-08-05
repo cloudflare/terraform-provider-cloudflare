@@ -26,7 +26,7 @@ func (d *DevicePostureRulesDataSource) Metadata(ctx context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_device_posture_rules"
 }
 
-func (r *DevicePostureRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DevicePostureRulesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *DevicePostureRulesDataSource) Configure(ctx context.Context, req dataso
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DevicePostureRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DevicePostureRulesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DevicePostureRulesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *DevicePostureRulesDataSource) Read(ctx context.Context, req datasource.
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*DevicePostureRulesResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Devices.Posture.List(ctx, zero_trust.DevicePostureListParams{
+	page, err := d.client.ZeroTrust.Devices.Posture.List(ctx, zero_trust.DevicePostureListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessMutualTLSCertificateDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessMutualTLSCertificateDataSource{}
 
-func (r AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -67,9 +66,6 @@ func (r AccessMutualTLSCertificateDataSource) Schema(ctx context.Context, req da
 	}
 }
 
-func (r *AccessMutualTLSCertificateDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessMutualTLSCertificateDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessMutualTLSCertificateDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

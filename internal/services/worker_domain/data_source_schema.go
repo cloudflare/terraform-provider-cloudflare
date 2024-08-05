@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WorkerDomainDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &WorkerDomainDataSource{}
 
-func (r WorkerDomainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *WorkerDomainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -84,9 +83,6 @@ func (r WorkerDomainDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (r *WorkerDomainDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *WorkerDomainDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *WorkerDomainDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

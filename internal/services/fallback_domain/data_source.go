@@ -30,7 +30,7 @@ func (d *FallbackDomainDataSource) Metadata(ctx context.Context, req datasource.
 	resp.TypeName = req.ProviderTypeName + "_fallback_domain"
 }
 
-func (r *FallbackDomainDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *FallbackDomainDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *FallbackDomainDataSource) Configure(ctx context.Context, req datasource
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *FallbackDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *FallbackDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *FallbackDomainDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *FallbackDomainDataSource) Read(ctx context.Context, req datasource.Read
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := FallbackDomainResultDataSourceEnvelope{*data}
-		_, err := r.client.ZeroTrust.Devices.Policies.FallbackDomains.Get(
+		_, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.Get(
 			ctx,
 			data.PolicyID.ValueString(),
 			zero_trust.DevicePolicyFallbackDomainGetParams{
@@ -85,7 +85,7 @@ func (r *FallbackDomainDataSource) Read(ctx context.Context, req datasource.Read
 		items := &[]*FallbackDomainDataSourceModel{}
 		env := FallbackDomainResultListDataSourceEnvelope{items}
 
-		page, err := r.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, zero_trust.DevicePolicyFallbackDomainListParams{
+		page, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, zero_trust.DevicePolicyFallbackDomainListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

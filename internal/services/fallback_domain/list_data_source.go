@@ -26,7 +26,7 @@ func (d *FallbackDomainsDataSource) Metadata(ctx context.Context, req datasource
 	resp.TypeName = req.ProviderTypeName + "_fallback_domains"
 }
 
-func (r *FallbackDomainsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *FallbackDomainsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *FallbackDomainsDataSource) Configure(ctx context.Context, req datasourc
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *FallbackDomainsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *FallbackDomainsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *FallbackDomainsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *FallbackDomainsDataSource) Read(ctx context.Context, req datasource.Rea
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*FallbackDomainsResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, zero_trust.DevicePolicyFallbackDomainListParams{
+	page, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, zero_trust.DevicePolicyFallbackDomainListParams{
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 	})
 	if err != nil {

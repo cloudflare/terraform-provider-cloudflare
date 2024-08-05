@@ -30,7 +30,7 @@ func (d *ZoneCacheVariantsDataSource) Metadata(ctx context.Context, req datasour
 	resp.TypeName = req.ProviderTypeName + "_zone_cache_variants"
 }
 
-func (r *ZoneCacheVariantsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneCacheVariantsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ZoneCacheVariantsDataSource) Configure(ctx context.Context, req datasou
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZoneCacheVariantsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZoneCacheVariantsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZoneCacheVariantsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *ZoneCacheVariantsDataSource) Read(ctx context.Context, req datasource.R
 
 	res := new(http.Response)
 	env := ZoneCacheVariantsResultDataSourceEnvelope{*data}
-	_, err := r.client.Cache.Variants.Get(
+	_, err := d.client.Cache.Variants.Get(
 		ctx,
 		cache.VariantGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

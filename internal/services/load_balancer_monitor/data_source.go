@@ -30,7 +30,7 @@ func (d *LoadBalancerMonitorDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_load_balancer_monitor"
 }
 
-func (r *LoadBalancerMonitorDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *LoadBalancerMonitorDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *LoadBalancerMonitorDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *LoadBalancerMonitorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *LoadBalancerMonitorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *LoadBalancerMonitorDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *LoadBalancerMonitorDataSource) Read(ctx context.Context, req datasource
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := LoadBalancerMonitorResultDataSourceEnvelope{*data}
-		_, err := r.client.LoadBalancers.Monitors.Get(
+		_, err := d.client.LoadBalancers.Monitors.Get(
 			ctx,
 			data.MonitorID.ValueString(),
 			load_balancers.MonitorGetParams{
@@ -85,7 +85,7 @@ func (r *LoadBalancerMonitorDataSource) Read(ctx context.Context, req datasource
 		items := &[]*LoadBalancerMonitorDataSourceModel{}
 		env := LoadBalancerMonitorResultListDataSourceEnvelope{items}
 
-		page, err := r.client.LoadBalancers.Monitors.List(ctx, load_balancers.MonitorListParams{
+		page, err := d.client.LoadBalancers.Monitors.List(ctx, load_balancers.MonitorListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

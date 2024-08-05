@@ -14,9 +14,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &FirewallRuleDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &FirewallRuleDataSource{}
 
-func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *FirewallRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"path_id": schema.StringAttribute{
@@ -73,9 +72,6 @@ func (r FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (r *FirewallRuleDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *FirewallRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *FirewallRuleDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

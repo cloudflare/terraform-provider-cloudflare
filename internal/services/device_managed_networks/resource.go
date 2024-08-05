@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &DeviceManagedNetworksResource{}
+var _ resource.ResourceWithModifyPlan = &DeviceManagedNetworksResource{}
 
 func NewResource() resource.Resource {
 	return &DeviceManagedNetworksResource{}
@@ -202,4 +203,8 @@ func (r *DeviceManagedNetworksResource) Delete(ctx context.Context, req resource
 	data.ID = data.NetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *DeviceManagedNetworksResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

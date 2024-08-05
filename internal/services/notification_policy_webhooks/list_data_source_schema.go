@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &NotificationPolicyWebhooksListDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &NotificationPolicyWebhooksListDataSource{}
 
-func (r NotificationPolicyWebhooksListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *NotificationPolicyWebhooksListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -80,9 +79,6 @@ func (r NotificationPolicyWebhooksListDataSource) Schema(ctx context.Context, re
 	}
 }
 
-func (r *NotificationPolicyWebhooksListDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *NotificationPolicyWebhooksListDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *NotificationPolicyWebhooksListDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

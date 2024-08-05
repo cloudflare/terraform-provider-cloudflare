@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &QueueResource{}
+var _ resource.ResourceWithModifyPlan = &QueueResource{}
 
 func NewResource() resource.Resource {
 	return &QueueResource{}
@@ -202,4 +203,8 @@ func (r *QueueResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	data.ID = data.QueueID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *QueueResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

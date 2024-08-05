@@ -26,7 +26,7 @@ func (d *OriginCACertificatesDataSource) Metadata(ctx context.Context, req datas
 	resp.TypeName = req.ProviderTypeName + "_origin_ca_certificates"
 }
 
-func (r *OriginCACertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *OriginCACertificatesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *OriginCACertificatesDataSource) Configure(ctx context.Context, req data
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *OriginCACertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *OriginCACertificatesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *OriginCACertificatesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *OriginCACertificatesDataSource) Read(ctx context.Context, req datasourc
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*OriginCACertificatesResultDataSourceModel{}
 
-	page, err := r.client.OriginCACertificates.List(ctx, origin_ca_certificates.OriginCACertificateListParams{
+	page, err := d.client.OriginCACertificates.List(ctx, origin_ca_certificates.OriginCACertificateListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 	})
 	if err != nil {

@@ -30,7 +30,7 @@ func (d *AccessKeysConfigurationDataSource) Metadata(ctx context.Context, req da
 	resp.TypeName = req.ProviderTypeName + "_access_keys_configuration"
 }
 
-func (r *AccessKeysConfigurationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessKeysConfigurationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessKeysConfigurationDataSource) Configure(ctx context.Context, req d
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessKeysConfigurationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessKeysConfigurationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessKeysConfigurationDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *AccessKeysConfigurationDataSource) Read(ctx context.Context, req dataso
 
 	res := new(http.Response)
 	env := AccessKeysConfigurationResultDataSourceEnvelope{*data}
-	_, err := r.client.ZeroTrust.Access.Keys.Get(
+	_, err := d.client.ZeroTrust.Access.Keys.Get(
 		ctx,
 		zero_trust.AccessKeyGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),

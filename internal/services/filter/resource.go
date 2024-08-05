@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &FilterResource{}
+var _ resource.ResourceWithModifyPlan = &FilterResource{}
 
 func NewResource() resource.Resource {
 	return &FilterResource{}
@@ -192,4 +193,8 @@ func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *FilterResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

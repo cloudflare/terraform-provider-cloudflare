@@ -15,7 +15,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-func (r WaitingRoomRulesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+var _ resource.ResourceWithConfigValidators = &WaitingRoomRulesResource{}
+
+func (r *WaitingRoomRulesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"waiting_room_id": schema.StringAttribute{
@@ -57,4 +59,8 @@ func (r WaitingRoomRulesResource) Schema(ctx context.Context, req resource.Schem
 			},
 		},
 	}
+}
+
+func (r *WaitingRoomRulesResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+	return []resource.ConfigValidator{}
 }

@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &TunnelVirtualNetworkResource{}
+var _ resource.ResourceWithModifyPlan = &TunnelVirtualNetworkResource{}
 
 func NewResource() resource.Resource {
 	return &TunnelVirtualNetworkResource{}
@@ -167,4 +168,8 @@ func (r *TunnelVirtualNetworkResource) Delete(ctx context.Context, req resource.
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *TunnelVirtualNetworkResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

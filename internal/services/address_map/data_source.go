@@ -30,7 +30,7 @@ func (d *AddressMapDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_address_map"
 }
 
-func (r *AddressMapDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AddressMapDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AddressMapDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AddressMapDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AddressMapDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AddressMapDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *AddressMapDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := AddressMapResultDataSourceEnvelope{*data}
-		_, err := r.client.Addressing.AddressMaps.Get(
+		_, err := d.client.Addressing.AddressMaps.Get(
 			ctx,
 			data.AddressMapID.ValueString(),
 			addressing.AddressMapGetParams{
@@ -85,7 +85,7 @@ func (r *AddressMapDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		items := &[]*AddressMapDataSourceModel{}
 		env := AddressMapResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Addressing.AddressMaps.List(ctx, addressing.AddressMapListParams{
+		page, err := d.client.Addressing.AddressMaps.List(ctx, addressing.AddressMapListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 		})
 		if err != nil {

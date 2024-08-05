@@ -30,7 +30,7 @@ func (d *PageRuleDataSource) Metadata(ctx context.Context, req datasource.Metada
 	resp.TypeName = req.ProviderTypeName + "_page_rule"
 }
 
-func (r *PageRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *PageRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *PageRuleDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *PageRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *PageRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *PageRuleDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *PageRuleDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	res := new(http.Response)
 	env := PageRuleResultDataSourceEnvelope{*data}
-	_, err := r.client.Pagerules.Get(
+	_, err := d.client.Pagerules.Get(
 		ctx,
 		data.PageruleID.ValueString(),
 		pagerules.PageruleGetParams{

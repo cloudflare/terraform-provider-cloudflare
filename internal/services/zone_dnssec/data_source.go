@@ -30,7 +30,7 @@ func (d *ZoneDNSSECDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_zone_dnssec"
 }
 
-func (r *ZoneDNSSECDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneDNSSECDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ZoneDNSSECDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZoneDNSSECDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZoneDNSSECDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZoneDNSSECDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *ZoneDNSSECDataSource) Read(ctx context.Context, req datasource.ReadRequ
 
 	res := new(http.Response)
 	env := ZoneDNSSECResultDataSourceEnvelope{*data}
-	_, err := r.client.DNSSEC.Get(
+	_, err := d.client.DNSSEC.Get(
 		ctx,
 		dnssec.DNSSECGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

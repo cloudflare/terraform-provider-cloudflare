@@ -30,7 +30,7 @@ func (d *ZoneCacheReserveDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_zone_cache_reserve"
 }
 
-func (r *ZoneCacheReserveDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneCacheReserveDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ZoneCacheReserveDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZoneCacheReserveDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZoneCacheReserveDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZoneCacheReserveDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *ZoneCacheReserveDataSource) Read(ctx context.Context, req datasource.Re
 
 	res := new(http.Response)
 	env := ZoneCacheReserveResultDataSourceEnvelope{*data}
-	_, err := r.client.Cache.CacheReserve.Get(
+	_, err := d.client.Cache.CacheReserve.Get(
 		ctx,
 		cache.CacheReserveGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

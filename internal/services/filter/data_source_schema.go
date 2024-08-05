@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &FilterDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &FilterDataSource{}
 
-func (r FilterDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *FilterDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
@@ -93,9 +92,6 @@ func (r FilterDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 	}
 }
 
-func (r *FilterDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *FilterDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *FilterDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

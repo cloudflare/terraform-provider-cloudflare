@@ -30,7 +30,7 @@ func (d *DLPCustomProfileDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_dlp_custom_profile"
 }
 
-func (r *DLPCustomProfileDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *DLPCustomProfileDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *DLPCustomProfileDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *DLPCustomProfileDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *DLPCustomProfileDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *DLPCustomProfileDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *DLPCustomProfileDataSource) Read(ctx context.Context, req datasource.Re
 
 	res := new(http.Response)
 	env := DLPCustomProfileResultDataSourceEnvelope{*data}
-	_, err := r.client.ZeroTrust.DLP.Profiles.Custom.Get(
+	_, err := d.client.ZeroTrust.DLP.Profiles.Custom.Get(
 		ctx,
 		data.ProfileID.ValueString(),
 		zero_trust.DLPProfileCustomGetParams{

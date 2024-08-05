@@ -26,7 +26,7 @@ func (d *APITokensDataSource) Metadata(ctx context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_api_tokens"
 }
 
-func (r *APITokensDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APITokensDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *APITokensDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *APITokensDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *APITokensDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *APITokensDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*APITokensResultDataSourceModel{}
 
-	page, err := r.client.User.Tokens.List(ctx, user.TokenListParams{
+	page, err := d.client.User.Tokens.List(ctx, user.TokenListParams{
 		Direction: cloudflare.F(user.TokenListParamsDirection(data.Direction.ValueString())),
 		Page:      cloudflare.F(data.Page.ValueFloat64()),
 		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),

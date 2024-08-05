@@ -30,7 +30,7 @@ func (d *AccessRuleDataSource) Metadata(ctx context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_access_rule"
 }
 
-func (r *AccessRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *AccessRuleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *AccessRuleDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *AccessRuleDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -69,7 +69,7 @@ func (r *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
 		}
 
-		_, err := r.client.Firewall.AccessRules.Get(
+		_, err := d.client.Firewall.AccessRules.Get(
 			ctx,
 			data.Identifier.ValueString(),
 			params,
@@ -110,7 +110,7 @@ func (r *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		items := &[]*AccessRuleDataSourceModel{}
 		env := AccessRuleResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Firewall.AccessRules.List(ctx, params)
+		page, err := d.client.Firewall.AccessRules.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

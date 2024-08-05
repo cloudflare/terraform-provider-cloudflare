@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &CustomHostnameFallbackOriginDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &CustomHostnameFallbackOriginDataSource{}
 
-func (r CustomHostnameFallbackOriginDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *CustomHostnameFallbackOriginDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -23,9 +22,6 @@ func (r CustomHostnameFallbackOriginDataSource) Schema(ctx context.Context, req 
 	}
 }
 
-func (r *CustomHostnameFallbackOriginDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *CustomHostnameFallbackOriginDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *CustomHostnameFallbackOriginDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

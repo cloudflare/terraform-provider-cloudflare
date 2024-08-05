@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccountMemberResource{}
+var _ resource.ResourceWithModifyPlan = &AccountMemberResource{}
 
 func NewResource() resource.Resource {
 	return &AccountMemberResource{}
@@ -198,4 +199,8 @@ func (r *AccountMemberResource) Delete(ctx context.Context, req resource.DeleteR
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *AccountMemberResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

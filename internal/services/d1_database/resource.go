@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &D1DatabaseResource{}
+var _ resource.ResourceWithModifyPlan = &D1DatabaseResource{}
 
 func NewResource() resource.Resource {
 	return &D1DatabaseResource{}
@@ -201,4 +202,8 @@ func (r *D1DatabaseResource) Delete(ctx context.Context, req resource.DeleteRequ
 	data.ID = data.UUID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *D1DatabaseResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

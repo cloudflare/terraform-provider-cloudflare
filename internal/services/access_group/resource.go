@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccessGroupResource{}
+var _ resource.ResourceWithModifyPlan = &AccessGroupResource{}
 
 func NewResource() resource.Resource {
 	return &AccessGroupResource{}
@@ -222,4 +223,8 @@ func (r *AccessGroupResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *AccessGroupResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

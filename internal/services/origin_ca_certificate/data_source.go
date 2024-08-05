@@ -30,7 +30,7 @@ func (d *OriginCACertificateDataSource) Metadata(ctx context.Context, req dataso
 	resp.TypeName = req.ProviderTypeName + "_origin_ca_certificate"
 }
 
-func (r *OriginCACertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *OriginCACertificateDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *OriginCACertificateDataSource) Configure(ctx context.Context, req datas
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *OriginCACertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *OriginCACertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *OriginCACertificateDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *OriginCACertificateDataSource) Read(ctx context.Context, req datasource
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := OriginCACertificateResultDataSourceEnvelope{*data}
-		_, err := r.client.OriginCACertificates.Get(
+		_, err := d.client.OriginCACertificates.Get(
 			ctx,
 			data.CertificateID.ValueString(),
 			option.WithResponseBodyInto(&res),
@@ -82,7 +82,7 @@ func (r *OriginCACertificateDataSource) Read(ctx context.Context, req datasource
 		items := &[]*OriginCACertificateDataSourceModel{}
 		env := OriginCACertificateResultListDataSourceEnvelope{items}
 
-		page, err := r.client.OriginCACertificates.List(ctx, origin_ca_certificates.OriginCACertificateListParams{
+		page, err := d.client.OriginCACertificates.List(ctx, origin_ca_certificates.OriginCACertificateListParams{
 			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
 		})
 		if err != nil {

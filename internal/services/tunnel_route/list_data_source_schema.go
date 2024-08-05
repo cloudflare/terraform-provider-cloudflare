@@ -14,9 +14,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &TunnelRoutesDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &TunnelRoutesDataSource{}
 
-func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -144,9 +143,6 @@ func (r TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (r *TunnelRoutesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *TunnelRoutesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *TunnelRoutesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

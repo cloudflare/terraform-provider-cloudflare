@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &LogpushJobResource{}
+var _ resource.ResourceWithModifyPlan = &LogpushJobResource{}
 
 func NewResource() resource.Resource {
 	return &LogpushJobResource{}
@@ -222,4 +223,8 @@ func (r *LogpushJobResource) Delete(ctx context.Context, req resource.DeleteRequ
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *LogpushJobResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

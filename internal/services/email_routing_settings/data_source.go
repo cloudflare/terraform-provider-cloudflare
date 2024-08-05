@@ -29,7 +29,7 @@ func (d *EmailRoutingSettingsDataSource) Metadata(ctx context.Context, req datas
 	resp.TypeName = req.ProviderTypeName + "_email_routing_settings"
 }
 
-func (r *EmailRoutingSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *EmailRoutingSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -45,10 +45,10 @@ func (r *EmailRoutingSettingsDataSource) Configure(ctx context.Context, req data
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *EmailRoutingSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *EmailRoutingSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *EmailRoutingSettingsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *EmailRoutingSettingsDataSource) Read(ctx context.Context, req datasourc
 
 	res := new(http.Response)
 	env := EmailRoutingSettingsResultDataSourceEnvelope{*data}
-	_, err := r.client.EmailRouting.Get(
+	_, err := d.client.EmailRouting.Get(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		option.WithResponseBodyInto(&res),

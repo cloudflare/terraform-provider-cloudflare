@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WaitingRoomEventResource{}
+var _ resource.ResourceWithModifyPlan = &WaitingRoomEventResource{}
 
 func NewResource() resource.Resource {
 	return &WaitingRoomEventResource{}
@@ -202,4 +203,8 @@ func (r *WaitingRoomEventResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WaitingRoomEventResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

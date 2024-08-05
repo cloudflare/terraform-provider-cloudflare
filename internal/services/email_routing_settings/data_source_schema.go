@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &EmailRoutingSettingsDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &EmailRoutingSettingsDataSource{}
 
-func (r EmailRoutingSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *EmailRoutingSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
@@ -65,9 +64,6 @@ func (r EmailRoutingSettingsDataSource) Schema(ctx context.Context, req datasour
 	}
 }
 
-func (r *EmailRoutingSettingsDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *EmailRoutingSettingsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *EmailRoutingSettingsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

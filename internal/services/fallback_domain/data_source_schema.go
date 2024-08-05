@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &FallbackDomainDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &FallbackDomainDataSource{}
 
-func (r FallbackDomainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *FallbackDomainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -48,9 +47,6 @@ func (r FallbackDomainDataSource) Schema(ctx context.Context, req datasource.Sch
 	}
 }
 
-func (r *FallbackDomainDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *FallbackDomainDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *FallbackDomainDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

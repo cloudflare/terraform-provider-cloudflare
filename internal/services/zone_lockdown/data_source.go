@@ -30,7 +30,7 @@ func (d *ZoneLockdownDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_zone_lockdown"
 }
 
-func (r *ZoneLockdownDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneLockdownDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ZoneLockdownDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ZoneLockdownDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := ZoneLockdownResultDataSourceEnvelope{*data}
-		_, err := r.client.Firewall.Lockdowns.Get(
+		_, err := d.client.Firewall.Lockdowns.Get(
 			ctx,
 			data.ZoneIdentifier.ValueString(),
 			data.ID.ValueString(),
@@ -91,7 +91,7 @@ func (r *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		items := &[]*ZoneLockdownDataSourceModel{}
 		env := ZoneLockdownResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Firewall.Lockdowns.List(
+		page, err := d.client.Firewall.Lockdowns.List(
 			ctx,
 			data.Filter.ZoneIdentifier.ValueString(),
 			firewall.LockdownListParams{

@@ -30,7 +30,7 @@ func (d *WebAnalyticsSiteDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_web_analytics_site"
 }
 
-func (r *WebAnalyticsSiteDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WebAnalyticsSiteDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *WebAnalyticsSiteDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WebAnalyticsSiteDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := WebAnalyticsSiteResultDataSourceEnvelope{*data}
-		_, err := r.client.RUM.SiteInfo.Get(
+		_, err := d.client.RUM.SiteInfo.Get(
 			ctx,
 			data.SiteID.ValueString(),
 			rum.SiteInfoGetParams{
@@ -85,7 +85,7 @@ func (r *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 		items := &[]*WebAnalyticsSiteDataSourceModel{}
 		env := WebAnalyticsSiteResultListDataSourceEnvelope{items}
 
-		page, err := r.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
+		page, err := d.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
 			OrderBy:   cloudflare.F(rum.SiteInfoListParamsOrderBy(data.Filter.OrderBy.ValueString())),
 			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),

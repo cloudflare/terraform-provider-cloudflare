@@ -30,7 +30,7 @@ func (d *APIShieldOperationSchemaValidationSettingsDataSource) Metadata(ctx cont
 	resp.TypeName = req.ProviderTypeName + "_api_shield_operation_schema_validation_settings"
 }
 
-func (r *APIShieldOperationSchemaValidationSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *APIShieldOperationSchemaValidationSettingsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *APIShieldOperationSchemaValidationSettingsDataSource) Configure(ctx con
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *APIShieldOperationSchemaValidationSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *APIShieldOperationSchemaValidationSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *APIShieldOperationSchemaValidationSettingsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *APIShieldOperationSchemaValidationSettingsDataSource) Read(ctx context.
 	}
 
 	res := new(http.Response)
-	_, err := r.client.APIGateway.Operations.SchemaValidation.Get(
+	_, err := d.client.APIGateway.Operations.SchemaValidation.Get(
 		ctx,
 		data.OperationID.ValueString(),
 		api_gateway.OperationSchemaValidationGetParams{

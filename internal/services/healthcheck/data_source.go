@@ -30,7 +30,7 @@ func (d *HealthcheckDataSource) Metadata(ctx context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_healthcheck"
 }
 
-func (r *HealthcheckDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *HealthcheckDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *HealthcheckDataSource) Configure(ctx context.Context, req datasource.Co
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *HealthcheckDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *HealthcheckDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *HealthcheckDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -61,7 +61,7 @@ func (r *HealthcheckDataSource) Read(ctx context.Context, req datasource.ReadReq
 	if data.Filter == nil {
 		res := new(http.Response)
 		env := HealthcheckResultDataSourceEnvelope{*data}
-		_, err := r.client.Healthchecks.Get(
+		_, err := d.client.Healthchecks.Get(
 			ctx,
 			data.HealthcheckID.ValueString(),
 			healthchecks.HealthcheckGetParams{
@@ -85,7 +85,7 @@ func (r *HealthcheckDataSource) Read(ctx context.Context, req datasource.ReadReq
 		items := &[]*HealthcheckDataSourceModel{}
 		env := HealthcheckResultListDataSourceEnvelope{items}
 
-		page, err := r.client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
+		page, err := d.client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
 			ZoneID:  cloudflare.F(data.Filter.ZoneID.ValueString()),
 			Page:    cloudflare.F[any](data.Filter.Page.ValueString()),
 			PerPage: cloudflare.F[any](data.Filter.PerPage.ValueString()),

@@ -135,7 +135,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ provider.Provider = &CloudflareProvider{}
+var _ provider.ProviderWithConfigValidators = &CloudflareProvider{}
 
 // CloudflareProvider defines the provider implementation.
 type CloudflareProvider struct {
@@ -160,7 +160,7 @@ func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.Metadata
 	resp.Version = p.version
 }
 
-func (p CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			consts.EmailSchemaKey: schema.StringAttribute{
@@ -267,6 +267,10 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 	resp.DataSourceData = client
 	resp.ResourceData = client
+}
+
+func (p *CloudflareProvider) ConfigValidators(_ context.Context) []provider.ConfigValidator {
+	return []provider.ConfigValidator{}
 }
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {

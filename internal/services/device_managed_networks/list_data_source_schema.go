@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &DeviceManagedNetworksListDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &DeviceManagedNetworksListDataSource{}
 
-func (r DeviceManagedNetworksListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *DeviceManagedNetworksListDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -70,9 +69,6 @@ func (r DeviceManagedNetworksListDataSource) Schema(ctx context.Context, req dat
 	}
 }
 
-func (r *DeviceManagedNetworksListDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *DeviceManagedNetworksListDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *DeviceManagedNetworksListDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

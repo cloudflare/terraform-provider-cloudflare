@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &AccessIdentityProviderResource{}
+var _ resource.ResourceWithModifyPlan = &AccessIdentityProviderResource{}
 
 func NewResource() resource.Resource {
 	return &AccessIdentityProviderResource{}
@@ -222,4 +223,8 @@ func (r *AccessIdentityProviderResource) Delete(ctx context.Context, req resourc
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *AccessIdentityProviderResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

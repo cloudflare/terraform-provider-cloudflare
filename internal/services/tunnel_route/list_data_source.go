@@ -26,7 +26,7 @@ func (d *TunnelRoutesDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_tunnel_routes"
 }
 
-func (r *TunnelRoutesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *TunnelRoutesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *TunnelRoutesDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *TunnelRoutesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *TunnelRoutesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *TunnelRoutesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -65,7 +65,7 @@ func (r *TunnelRoutesDataSource) Read(ctx context.Context, req datasource.ReadRe
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TunnelRoutesResultDataSourceModel{}
 
-	page, err := r.client.ZeroTrust.Networks.Routes.List(ctx, zero_trust.NetworkRouteListParams{
+	page, err := d.client.ZeroTrust.Networks.Routes.List(ctx, zero_trust.NetworkRouteListParams{
 		AccountID:        cloudflare.F(data.AccountID.ValueString()),
 		Comment:          cloudflare.F(data.Comment.ValueString()),
 		ExistedAt:        cloudflare.F(dataExistedAt),

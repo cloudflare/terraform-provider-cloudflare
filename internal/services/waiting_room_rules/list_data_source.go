@@ -26,7 +26,7 @@ func (d *WaitingRoomRulesListDataSource) Metadata(ctx context.Context, req datas
 	resp.TypeName = req.ProviderTypeName + "_waiting_room_rules_list"
 }
 
-func (r *WaitingRoomRulesListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *WaitingRoomRulesListDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *WaitingRoomRulesListDataSource) Configure(ctx context.Context, req data
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *WaitingRoomRulesListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *WaitingRoomRulesListDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *WaitingRoomRulesListDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *WaitingRoomRulesListDataSource) Read(ctx context.Context, req datasourc
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WaitingRoomRulesListResultDataSourceModel{}
 
-	page, err := r.client.WaitingRooms.Rules.List(
+	page, err := d.client.WaitingRooms.Rules.List(
 		ctx,
 		data.WaitingRoomID.ValueString(),
 		waiting_rooms.RuleListParams{

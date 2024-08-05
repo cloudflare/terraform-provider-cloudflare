@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessCustomPageDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessCustomPageDataSource{}
 
-func (r AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -72,9 +71,6 @@ func (r AccessCustomPageDataSource) Schema(ctx context.Context, req datasource.S
 	}
 }
 
-func (r *AccessCustomPageDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessCustomPageDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessCustomPageDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

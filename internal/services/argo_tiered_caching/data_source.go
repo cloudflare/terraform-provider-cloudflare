@@ -30,7 +30,7 @@ func (d *ArgoTieredCachingDataSource) Metadata(ctx context.Context, req datasour
 	resp.TypeName = req.ProviderTypeName + "_argo_tiered_caching"
 }
 
-func (r *ArgoTieredCachingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ArgoTieredCachingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,10 +46,10 @@ func (r *ArgoTieredCachingDataSource) Configure(ctx context.Context, req datasou
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *ArgoTieredCachingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *ArgoTieredCachingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *ArgoTieredCachingDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -60,7 +60,7 @@ func (r *ArgoTieredCachingDataSource) Read(ctx context.Context, req datasource.R
 
 	res := new(http.Response)
 	env := ArgoTieredCachingResultDataSourceEnvelope{*data}
-	_, err := r.client.Argo.TieredCaching.Get(
+	_, err := d.client.Argo.TieredCaching.Get(
 		ctx,
 		argo.TieredCachingGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),

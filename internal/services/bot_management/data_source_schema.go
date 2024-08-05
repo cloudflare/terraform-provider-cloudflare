@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &BotManagementDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &BotManagementDataSource{}
 
-func (r BotManagementDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *BotManagementDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -23,9 +22,6 @@ func (r BotManagementDataSource) Schema(ctx context.Context, req datasource.Sche
 	}
 }
 
-func (r *BotManagementDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *BotManagementDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *BotManagementDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

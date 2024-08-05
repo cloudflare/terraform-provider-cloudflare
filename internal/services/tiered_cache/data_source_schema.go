@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &TieredCacheDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &TieredCacheDataSource{}
 
-func (r TieredCacheDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *TieredCacheDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -46,9 +45,6 @@ func (r TieredCacheDataSource) Schema(ctx context.Context, req datasource.Schema
 	}
 }
 
-func (r *TieredCacheDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *TieredCacheDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *TieredCacheDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

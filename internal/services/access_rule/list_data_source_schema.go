@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessRulesDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessRulesDataSource{}
 
-func (r AccessRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -97,9 +96,6 @@ func (r AccessRulesDataSource) Schema(ctx context.Context, req datasource.Schema
 	}
 }
 
-func (r *AccessRulesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessRulesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

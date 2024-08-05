@@ -25,7 +25,7 @@ func (d *Web3HostnamesDataSource) Metadata(ctx context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_web3_hostnames"
 }
 
-func (r *Web3HostnamesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *Web3HostnamesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -41,10 +41,10 @@ func (r *Web3HostnamesDataSource) Configure(ctx context.Context, req datasource.
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *Web3HostnamesDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -58,7 +58,7 @@ func (r *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadR
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*Web3HostnamesResultDataSourceModel{}
 
-	page, err := r.client.Web3.Hostnames.List(ctx, data.ZoneIdentifier.ValueString())
+	page, err := d.client.Web3.Hostnames.List(ctx, data.ZoneIdentifier.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

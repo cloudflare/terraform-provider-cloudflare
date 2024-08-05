@@ -26,7 +26,7 @@ func (d *CertificatePacksDataSource) Metadata(ctx context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_certificate_packs"
 }
 
-func (r *CertificatePacksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CertificatePacksDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *CertificatePacksDataSource) Configure(ctx context.Context, req datasour
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *CertificatePacksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *CertificatePacksDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *CertificatePacksDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *CertificatePacksDataSource) Read(ctx context.Context, req datasource.Re
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*CertificatePacksResultDataSourceModel{}
 
-	page, err := r.client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
+	page, err := d.client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
 		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		Status: cloudflare.F(ssl.CertificatePackListParamsStatus(data.Status.ValueString())),
 	})

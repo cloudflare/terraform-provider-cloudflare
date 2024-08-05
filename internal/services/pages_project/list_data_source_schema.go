@@ -13,9 +13,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &PagesProjectsDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &PagesProjectsDataSource{}
 
-func (r PagesProjectsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *PagesProjectsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -151,9 +150,6 @@ func (r PagesProjectsDataSource) Schema(ctx context.Context, req datasource.Sche
 	}
 }
 
-func (r *PagesProjectsDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *PagesProjectsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *PagesProjectsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

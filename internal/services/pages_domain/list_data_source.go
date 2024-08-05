@@ -26,7 +26,7 @@ func (d *PagesDomainsDataSource) Metadata(ctx context.Context, req datasource.Me
 	resp.TypeName = req.ProviderTypeName + "_pages_domains"
 }
 
-func (r *PagesDomainsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *PagesDomainsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -42,10 +42,10 @@ func (r *PagesDomainsDataSource) Configure(ctx context.Context, req datasource.C
 		return
 	}
 
-	r.client = client
+	d.client = client
 }
 
-func (r *PagesDomainsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *PagesDomainsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data *PagesDomainsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -59,7 +59,7 @@ func (r *PagesDomainsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*PagesDomainsResultDataSourceModel{}
 
-	page, err := r.client.Pages.Projects.Domains.List(
+	page, err := d.client.Pages.Projects.Domains.List(
 		ctx,
 		data.ProjectName.ValueString(),
 		pages.ProjectDomainListParams{

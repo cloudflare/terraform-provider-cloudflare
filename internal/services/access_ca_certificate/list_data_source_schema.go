@@ -10,9 +10,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &AccessCACertificatesDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &AccessCACertificatesDataSource{}
 
-func (r AccessCACertificatesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *AccessCACertificatesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -51,9 +50,6 @@ func (r AccessCACertificatesDataSource) Schema(ctx context.Context, req datasour
 	}
 }
 
-func (r *AccessCACertificatesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *AccessCACertificatesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *AccessCACertificatesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

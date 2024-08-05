@@ -11,9 +11,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &DeviceDEXTestDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &DeviceDEXTestDataSource{}
 
-func (r DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
@@ -102,9 +101,6 @@ func (r DeviceDEXTestDataSource) Schema(ctx context.Context, req datasource.Sche
 	}
 }
 
-func (r *DeviceDEXTestDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *DeviceDEXTestDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *DeviceDEXTestDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

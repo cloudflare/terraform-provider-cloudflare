@@ -15,9 +15,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &APIShieldOperationDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &APIShieldOperationDataSource{}
 
-func (r APIShieldOperationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{
@@ -153,9 +152,6 @@ func (r APIShieldOperationDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (r *APIShieldOperationDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *APIShieldOperationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *APIShieldOperationDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

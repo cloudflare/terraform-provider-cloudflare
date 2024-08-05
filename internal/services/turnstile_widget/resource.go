@@ -18,6 +18,7 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &TurnstileWidgetResource{}
+var _ resource.ResourceWithModifyPlan = &TurnstileWidgetResource{}
 
 func NewResource() resource.Resource {
 	return &TurnstileWidgetResource{}
@@ -202,4 +203,8 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 	data.ID = data.Sitekey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *TurnstileWidgetResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

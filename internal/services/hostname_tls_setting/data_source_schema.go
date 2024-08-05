@@ -12,9 +12,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &HostnameTLSSettingDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &HostnameTLSSettingDataSource{}
 
-func (r HostnameTLSSettingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *HostnameTLSSettingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"setting_id": schema.StringAttribute{
@@ -32,9 +31,6 @@ func (r HostnameTLSSettingDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (r *HostnameTLSSettingDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *HostnameTLSSettingDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *HostnameTLSSettingDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }

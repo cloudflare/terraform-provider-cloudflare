@@ -15,9 +15,8 @@ import (
 )
 
 var _ datasource.DataSourceWithConfigValidators = &OriginCACertificatesDataSource{}
-var _ datasource.DataSourceWithValidateConfig = &OriginCACertificatesDataSource{}
 
-func (r OriginCACertificatesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *OriginCACertificatesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
@@ -77,9 +76,6 @@ func (r OriginCACertificatesDataSource) Schema(ctx context.Context, req datasour
 	}
 }
 
-func (r *OriginCACertificatesDataSource) ConfigValidators(ctx context.Context) []datasource.ConfigValidator {
+func (d *OriginCACertificatesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{}
-}
-
-func (r *OriginCACertificatesDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 }
