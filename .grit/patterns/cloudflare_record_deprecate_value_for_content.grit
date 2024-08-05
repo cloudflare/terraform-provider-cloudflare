@@ -1,0 +1,9 @@
+engine marzano(0.1)
+language hcl
+
+pattern cloudflare_record_deprecate_value_for_content() {
+  `value = $v` as $record => `content = $v` where $record <: and {
+    within `resource "cloudflare_record" $_ { $_ }`,
+    not within `data { $_ }`,
+  }
+}

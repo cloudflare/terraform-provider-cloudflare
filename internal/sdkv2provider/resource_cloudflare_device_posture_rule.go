@@ -166,7 +166,7 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 			input.Path = p.(string)
 		}
 		if exists, ok := d.GetOk("input.0.exists"); ok {
-			input.Exists = exists.(bool)
+			input.Exists = cloudflare.BoolPtr(exists.(bool))
 		}
 		if tp, ok := d.GetOk("input.0.thumbprint"); ok {
 			input.Thumbprint = tp.(string)
@@ -175,10 +175,10 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 			input.Sha256 = s.(string)
 		}
 		if running, ok := d.GetOk("input.0.running"); ok {
-			input.Running = running.(bool)
+			input.Running = cloudflare.BoolPtr(running.(bool))
 		}
 		if require_all, ok := d.GetOk("input.0.require_all"); ok {
-			input.RequireAll = require_all.(bool)
+			input.RequireAll = cloudflare.BoolPtr(require_all.(bool))
 		}
 		if check_disks, ok := d.GetOk("input.0.check_disks"); ok {
 			values := check_disks.(*schema.Set).List()
@@ -187,7 +187,7 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 			}
 		}
 		if enabled, ok := d.GetOk("input.0.enabled"); ok {
-			input.Enabled = enabled.(bool)
+			input.Enabled = cloudflare.BoolPtr(enabled.(bool))
 		}
 		if version, ok := d.GetOk("input.0.version"); ok {
 			input.Version = version.(string)
@@ -250,10 +250,10 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 			input.NetworkStatus = networkStatus.(string)
 		}
 		if infected, ok := d.GetOk("input.0.infected"); ok {
-			input.Infected = infected.(bool)
+			input.Infected = cloudflare.BoolPtr(infected.(bool))
 		}
 		if isActive, ok := d.GetOk("input.0.is_active"); ok {
-			input.IsActive = isActive.(bool)
+			input.IsActive = cloudflare.BoolPtr(isActive.(bool))
 		}
 		if eidLastSeen, ok := d.GetOk("input.0.eid_last_seen"); ok {
 			input.EidLastSeen = eidLastSeen.(string)

@@ -37,10 +37,19 @@ resource "cloudflare_teams_list" "example" {
 
 - `description` (String) The description of the teams list.
 - `items` (Set of String) The items of the teams list.
+- `items_with_description` (Set of Object) The items of the teams list that has explicit description. (see [below for nested schema](#nestedatt--items_with_description))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedatt--items_with_description"></a>
+### Nested Schema for `items_with_description`
+
+Optional:
+
+- `description` (String)
+- `value` (String)
 
 ## Import
 

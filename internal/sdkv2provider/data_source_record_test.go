@@ -97,7 +97,7 @@ resource "cloudflare_record" "%[1]s" {
 	zone_id = "%[2]s"
 	type = "A"
 	name = "%[1]s.%[3]s"
-	value = "192.0.2.0"
+	content = "192.0.2.0"
 }`, rnd, zoneID, domain)
 }
 
@@ -112,7 +112,7 @@ resource "cloudflare_record" "%[1]s" {
 	zone_id = "%[2]s"
 	type = "TXT"
 	name = "%[1]s.%[3]s"
-	value = "i am a text record"
+	content = "i am a text record"
 }`, rnd, zoneID, domain)
 }
 
@@ -128,14 +128,14 @@ resource "cloudflare_record" "%[1]s" {
 	zone_id = "%[2]s"
 	type = "MX"
 	name = "%[1]s.%[3]s"
-	value = "mx1.example.com"
+	content = "mx1.example.com"
 	priority = 10
 }
 resource "cloudflare_record" "%[1]s_2" {
 	zone_id = "%[2]s"
 	type = "MX"
 	name = "%[1]s.%[3]s"
-	value = "mx1.example.com"
+	content = "mx1.example.com"
 	priority = 20
 }
 `, rnd, zoneID, domain)

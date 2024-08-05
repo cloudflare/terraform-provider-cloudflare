@@ -94,9 +94,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	if appType == "app_launcher" {
 		newAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
-			LogoURL:               d.Get("app_launcher_logo_url").(string),
-			BackgroundColor:       d.Get("bg_color").(string),
-			HeaderBackgroundColor: d.Get("header_bg_color").(string),
+			LogoURL:                  d.Get("app_launcher_logo_url").(string),
+			BackgroundColor:          d.Get("bg_color").(string),
+			HeaderBackgroundColor:    d.Get("header_bg_color").(string),
+			SkipAppLauncherLoginPage: cloudflare.BoolPtr(d.Get("skip_app_launcher_login_page").(bool)),
 		}
 
 		if _, ok := d.GetOk("landing_page_design"); ok {
@@ -171,7 +172,13 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("name", accessApplication.Name)
 	d.Set("aud", accessApplication.AUD)
 	d.Set("session_duration", accessApplication.SessionDuration)
-	d.Set("domain", accessApplication.Domain)
+	if _, domainWasSet := d.GetOk("domain"); domainWasSet {
+		// Only set the domain if it was set in the configuration, as apps can be created without a domain
+		// if they define a non-empty self_hosted_domains array
+		d.Set("domain", accessApplication.Domain)
+	} else {
+		d.Set("domain", nil)
+	}
 	d.Set("type", accessApplication.Type)
 	d.Set("auto_redirect_to_identity", accessApplication.AutoRedirectToIdentity)
 	d.Set("enable_binding_cookie", accessApplication.EnableBindingCookie)
@@ -190,6 +197,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("bg_color", accessApplication.AccessAppLauncherCustomization.BackgroundColor)
 	d.Set("header_bg_color", accessApplication.AccessAppLauncherCustomization.HeaderBackgroundColor)
 	d.Set("app_launcher_logo_url", accessApplication.AccessAppLauncherCustomization.LogoURL)
+	d.Set("skip_app_launcher_login_page", accessApplication.AccessAppLauncherCustomization.SkipAppLauncherLoginPage)
 	d.Set("allow_authenticate_via_warp", accessApplication.AllowAuthenticateViaWarp)
 	d.Set("options_preflight_bypass", accessApplication.OptionsPreflightBypass)
 
@@ -283,8 +291,8 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 		updatedAccessApplication.SelfHostedDomains = expandInterfaceToStringList(value.(*schema.Set).List())
 	}
 
-	if value, ok := d.GetOk("policies"); ok {
-		policies := expandInterfaceToStringList(value)
+	if d.HasChange("policies") {
+		policies := expandInterfaceToStringList(d.Get("policies"))
 		updatedAccessApplication.Policies = &policies
 	}
 

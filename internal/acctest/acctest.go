@@ -50,9 +50,9 @@ var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 }
 
 func TestAccPreCheck(t *testing.T) {
-	// You can add code here to run prior to any test case execution, for example assertions
-	// about the appropriate environment variables being set are common to see in a pre-check
-	// function.
+	if os.Getenv("CLOUDFLARE_ACCOUNT_ID") == "" {
+		t.Fatal("CLOUDFLARE_ACCOUNT_ID must be set for acceptance tests")
+	}
 }
 
 func TestAccPreCheck_Zone(t *testing.T) {
@@ -65,6 +65,40 @@ func TestAccPreCheck_Account(t *testing.T) {
 	// You can add code here to run prior to any test case execution, for example assertions
 	// about the appropriate environment variables being set are common to see in a pre-check
 	// function.
+}
+
+func TestAccPreCheck_Hyperdrive(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_USER must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD must be set for this acceptance test")
+	}
+}
+
+func TestAccPreCheck_HyperdriveWithAccess(t *testing.T) {
+	TestAccPreCheck_Hyperdrive(t)
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_ID must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_SECRET"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_SECRET must be set for this acceptance test")
+	}
 }
 
 func TestAccSkipForDefaultZone(t *testing.T, reason string) {

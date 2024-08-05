@@ -70,7 +70,14 @@ func (r *RiskBehaviorResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	behaviorsSet := ConvertBehaviorsCtoT(behaviors.Behaviors)
+	retained := map[string]cloudflare.Behavior{}
+	for k, b := range behaviors.Behaviors {
+		_, ok := behaviorsMap[k]
+		if ok {
+			retained[k] = b
+		}
+	}
+	behaviorsSet := ConvertBehaviorsCtoT(retained)
 
 	data.AccountID = types.StringValue(accountId)
 	data.Behaviors = behaviorsSet
@@ -94,11 +101,26 @@ func (r *RiskBehaviorResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	behaviorsSet := ConvertBehaviorsCtoT(behaviors.Behaviors)
+	retained := map[string]cloudflare.Behavior{}
+	for k, b := range behaviors.Behaviors {
+		if containsBehavior(data.Behaviors, k) {
+			retained[k] = b
+		}
+	}
+	behaviorsSet := ConvertBehaviorsCtoT(retained)
 
 	data.AccountID = types.StringValue(accountId)
 	data.Behaviors = behaviorsSet
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func containsBehavior(s []RiskBehaviorBehaviorModel, n string) bool {
+	for _, a := range s {
+		if a.Name.ValueString() == n {
+			return true
+		}
+	}
+	return false
 }
 
 func ConvertBehaviorsTtoC(b []RiskBehaviorBehaviorModel) (map[string]cloudflare.Behavior, error) {
@@ -163,7 +185,15 @@ func (r *RiskBehaviorResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	behaviorsSet := ConvertBehaviorsCtoT(behaviors.Behaviors)
+	retained := map[string]cloudflare.Behavior{}
+	for k, b := range behaviors.Behaviors {
+		_, ok := behaviorsMap[k]
+		if ok {
+			retained[k] = b
+		}
+	}
+
+	behaviorsSet := ConvertBehaviorsCtoT(retained)
 
 	data.AccountID = types.StringValue(accountId)
 	data.Behaviors = behaviorsSet

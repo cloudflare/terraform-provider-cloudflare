@@ -3,7 +3,7 @@
 resource "cloudflare_record" "example" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "example.com"
-  value   = "192.0.2.1"
+  content = "192.0.2.1"
   type    = "A"
   ttl     = 3600
 }

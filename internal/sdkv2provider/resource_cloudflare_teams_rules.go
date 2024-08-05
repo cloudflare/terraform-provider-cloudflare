@@ -216,6 +216,7 @@ func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.Teams
 		settings.AuditSSH == nil &&
 		settings.NotificationSettings == nil &&
 		settings.ResolveDnsThroughCloudflare == nil &&
+		settings.IgnoreCNAMECategoryMatches == nil &&
 		settings.DnsResolverSettings == nil {
 		return nil
 	}
@@ -234,12 +235,18 @@ func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.Teams
 		"untrusted_cert":                     flattenTeamsUntrustedCertSettings(settings.UntrustedCertSettings),
 		"payload_log":                        flattenTeamsDlpPayloadLogSettings(settings.PayloadLog),
 		"notification_settings":              flattenTeamsNotificationSettings(settings.NotificationSettings),
-		"resolve_dns_through_cloudflare":     settings.ResolveDnsThroughCloudflare,
-		"dns_resolvers":                      flattenTeamsDnsResolverSettings(settings.DnsResolverSettings),
 	}
 
 	if settings.IPCategories {
 		result["ip_categories"] = true
+	}
+
+	if settings.IgnoreCNAMECategoryMatches != nil {
+		result["ignore_cname_category_matches"] = *settings.IgnoreCNAMECategoryMatches
+	}
+
+	if settings.ResolveDnsThroughCloudflare != nil {
+		result["resolve_dns_through_cloudflare"] = *settings.ResolveDnsThroughCloudflare
 	}
 
 	if settings.AllowChildBypass != nil {
@@ -252,6 +259,10 @@ func flattenTeamsRuleSettings(d *schema.ResourceData, settings *cloudflare.Teams
 
 	if settings.AuditSSH != nil {
 		result["audit_ssh"] = flattenTeamsAuditSSHSettings(settings.AuditSSH)
+	}
+
+	if settings.DnsResolverSettings != nil {
+		result["dns_resolvers"] = flattenTeamsDnsResolverSettings(settings.DnsResolverSettings)
 	}
 
 	return []interface{}{result}
@@ -283,10 +294,16 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 	payloadLog := inflateTeamsDlpPayloadLogSettings(settingsMap["payload_log"].([]interface{}))
 	untrustedCertSettings := inflateTeamsUntrustedCertSettings(settingsMap["untrusted_cert"].([]interface{}))
 	notificationSettings := inflateTeamsNotificationSettings(settingsMap["notification_settings"])
-	resolveDnsThroughCloudflare := settingsMap["resolve_dns_through_cloudflare"].(bool)
 	dnsResolverSettings := inflateTeamsDnsResolverSettings(settingsMap["dns_resolvers"].([]interface{}))
 
-	return &cloudflare.TeamsRuleSettings{
+	ignoreCNAMECategoryMatches := readOptionalBooleanSettings(settingsMap, "ignore_cname_category_matches")
+	allowChildBypass := readOptionalBooleanSettings(settingsMap, "allow_child_bypass")
+	bypassParentRule := readOptionalBooleanSettings(settingsMap, "bypass_parent_rule")
+	resolveDnsThroughCloudflare := readOptionalBooleanSettings(settingsMap, "resolve_dns_through_cloudflare")
+	auditSSHSettings := inflateTeamsAuditSSHSettings(settingsMap["audit_ssh"].([]interface{}))
+	ipCategories := readOptionalBooleanSettings(settingsMap, "ip_categories")
+
+	result := &cloudflare.TeamsRuleSettings{
 		BlockPageEnabled:                enabled,
 		BlockReason:                     reason,
 		OverrideIPs:                     overrideIPs,
@@ -302,7 +319,20 @@ func inflateTeamsRuleSettings(settings interface{}) *cloudflare.TeamsRuleSetting
 		NotificationSettings:            notificationSettings,
 		ResolveDnsThroughCloudflare:     &resolveDnsThroughCloudflare,
 		DnsResolverSettings:             dnsResolverSettings,
+		IgnoreCNAMECategoryMatches:      &ignoreCNAMECategoryMatches,
+		IPCategories:                    ipCategories,
+		AuditSSH:                        auditSSHSettings,
 	}
+
+	// set optional settings if present, so api won't complain
+	if allowChildBypass {
+		result.AllowChildBypass = &allowChildBypass
+	}
+	if bypassParentRule {
+		result.BypassParentRule = &bypassParentRule
+	}
+
+	return result
 }
 
 func flattenTeamsRuleBisoAdminControls(settings *cloudflare.TeamsBISOAdminControlSettings) []interface{} {
@@ -310,11 +340,12 @@ func flattenTeamsRuleBisoAdminControls(settings *cloudflare.TeamsBISOAdminContro
 		return nil
 	}
 	return []interface{}{map[string]interface{}{
-		"disable_printing":   settings.DisablePrinting,
-		"disable_copy_paste": settings.DisableCopyPaste,
-		"disable_download":   settings.DisableDownload,
-		"disable_upload":     settings.DisableUpload,
-		"disable_keyboard":   settings.DisableKeyboard,
+		"disable_printing":              settings.DisablePrinting,
+		"disable_copy_paste":            settings.DisableCopyPaste,
+		"disable_download":              settings.DisableDownload,
+		"disable_upload":                settings.DisableUpload,
+		"disable_keyboard":              settings.DisableKeyboard,
+		"disable_clipboard_redirection": settings.DisableClipboardRedirection,
 	}}
 }
 
@@ -340,12 +371,14 @@ func inflateTeamsRuleBisoAdminControls(settings interface{}) *cloudflare.TeamsBI
 	disableDownload := settingsMap["disable_download"].(bool)
 	disableUpload := settingsMap["disable_upload"].(bool)
 	disableKeyboard := settingsMap["disable_keyboard"].(bool)
+	disableClipboardRedirection := settingsMap["disable_clipboard_redirection"].(bool)
 	return &cloudflare.TeamsBISOAdminControlSettings{
-		DisablePrinting:  disablePrinting,
-		DisableCopyPaste: disableCopyPaste,
-		DisableDownload:  disableDownload,
-		DisableUpload:    disableUpload,
-		DisableKeyboard:  disableKeyboard,
+		DisablePrinting:             disablePrinting,
+		DisableCopyPaste:            disableCopyPaste,
+		DisableDownload:             disableDownload,
+		DisableUpload:               disableUpload,
+		DisableKeyboard:             disableKeyboard,
+		DisableClipboardRedirection: disableClipboardRedirection,
 	}
 }
 
@@ -640,4 +673,24 @@ func providerToApiRulePrecedence(provided int64, ruleName string) int64 {
 
 func apiToProviderRulePrecedence(apiPrecedence uint64, ruleName string) int64 {
 	return (int64(apiPrecedence) - int64(hashCodeString(ruleName))%rulePrecedenceFactor) / rulePrecedenceFactor
+}
+
+func readOptionalBooleanSettings(settingsMap map[string]any, name string) bool {
+	val, ok := settingsMap[name]
+	if !ok {
+		return false
+	}
+	return val.(bool)
+}
+
+func inflateTeamsAuditSSHSettings(settings interface{}) *cloudflare.AuditSSHRuleSettings {
+	settingsList := settings.([]interface{})
+	if len(settingsList) != 1 {
+		return nil
+	}
+	settingsMap := settingsList[0].(map[string]interface{})
+	logging := settingsMap["command_logging"].(bool)
+	return &cloudflare.AuditSSHRuleSettings{
+		CommandLogging: logging,
+	}
 }

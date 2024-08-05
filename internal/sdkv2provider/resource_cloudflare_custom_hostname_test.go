@@ -220,7 +220,7 @@ resource "cloudflare_custom_hostname" "%[2]s" {
 resource "cloudflare_record" "%[2]s" {
   zone_id = "%[1]s"
   name    = "origin.%[2]s.terraform.cfapi.net"
-  value   = "example.com"
+  content   = "example.com"
   type    = "CNAME"
   ttl     = 3600
 }`, zoneID, rnd, domain)
@@ -283,7 +283,7 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.2"),
 					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.certificate_authority", "lets_encrypt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.0.certificate_authority", "google"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),

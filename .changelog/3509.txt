@@ -1,0 +1,3 @@
+```release-note:note
+resource/cloudflare_record: `value` is now deprecated in favour of `content`
+```

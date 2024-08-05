@@ -47,9 +47,14 @@ Required:
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
 - `password` (String, Sensitive) The password of the Hyperdrive configuration.
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 - `user` (String) The user of your origin database.
+
+Optional:
+
+- `access_client_id` (String) Client ID associated with the Cloudflare Access Service Token used to connect via Access.
+- `access_client_secret` (String) Client Secret associated with the Cloudflare Access Service Token used to connect via Access.
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 
 
 <a id="nestedatt--caching"></a>
@@ -58,6 +63,8 @@ Required:
 Optional:
 
 - `disabled` (Boolean) Disable caching for this Hyperdrive configuration.
+- `max_age` (Number) Configure the `max_age` value of this Hyperdrive configuration.
+- `stale_while_revalidate` (Number) Disable caching for this Hyperdrive configuration.
 
 ## Import
 

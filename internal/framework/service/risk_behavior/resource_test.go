@@ -51,6 +51,38 @@ func init() {
 	})
 }
 
+func TestAccCloudflareRiskBehavior_Partial(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_risk_behavior." + rnd
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRiskBehaviorsPartial(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "behavior.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCloudflareRiskBehaviorsPartial(name, accountId string) string {
+	return fmt.Sprintf(`
+	resource cloudflare_risk_behavior %s {
+		account_id = "%s"
+		behavior {
+			name = "imp_travel"
+			enabled = true
+			risk_level = "high"
+		}
+	}`, name, accountId)
+}
+
 func TestAccCloudflareRiskBehavior_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_risk_behavior." + rnd
