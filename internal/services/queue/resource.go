@@ -88,7 +88,7 @@ func (r *QueueResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 	data = &env.Result
-	data.ID = data.QueueID
+	data.ID = data.QueueName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -106,7 +106,7 @@ func (r *QueueResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	env := QueueResultEnvelope{*data}
 	_, err := r.client.Queues.Get(
 		ctx,
-		data.QueueID.ValueString(),
+		data.QueueName.ValueString(),
 		queues.QueueGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -124,7 +124,7 @@ func (r *QueueResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 	data = &env.Result
-	data.ID = data.QueueID
+	data.ID = data.QueueName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -155,7 +155,7 @@ func (r *QueueResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	env := QueueResultEnvelope{*data}
 	_, err = r.client.Queues.Update(
 		ctx,
-		data.QueueID.ValueString(),
+		data.QueueName.ValueString(),
 		queues.QueueUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -174,7 +174,7 @@ func (r *QueueResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 	data = &env.Result
-	data.ID = data.QueueID
+	data.ID = data.QueueName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -190,7 +190,7 @@ func (r *QueueResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 
 	_, err := r.client.Queues.Delete(
 		ctx,
-		data.QueueID.ValueString(),
+		data.QueueName.ValueString(),
 		queues.QueueDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -200,7 +200,7 @@ func (r *QueueResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.QueueID
+	data.ID = data.QueueName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
