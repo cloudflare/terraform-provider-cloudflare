@@ -257,14 +257,15 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Description: "Confirm the certificate was not imported from another device.",
 					},
 					"extended_key_usage": {
-						Type: schema.TypeSet,
+						Type:     schema.TypeSet,
+						Optional: true,
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
 						Description: fmt.Sprintf("List of values indicating purposes for which the certificate public key can be used. %s", renderAvailableDocumentationValuesStringSlice([]string{"clientAuth", "emailProtection"})),
 					},
 					"locations": {
-						Type: schema.TypeMap,
+						Type: schema.TypeList,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"paths": {
