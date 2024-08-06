@@ -13,13 +13,13 @@ type QueueResultEnvelope struct {
 
 type QueueModel struct {
 	ID                  types.String         `tfsdk:"id" json:"-,computed"`
-	QueueID             types.String         `tfsdk:"queue_id" json:"queue_id,computed"`
+	QueueName           types.String         `tfsdk:"queue_name" json:"queue_name,computed"`
 	AccountID           types.String         `tfsdk:"account_id" path:"account_id"`
 	ConsumersTotalCount types.Float64        `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String         `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn          types.String         `tfsdk:"modified_on" json:"modified_on,computed"`
 	ProducersTotalCount types.Float64        `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
-	QueueName           types.String         `tfsdk:"queue_name" json:"queue_name,computed"`
+	QueueID             types.String         `tfsdk:"queue_id" json:"queue_id,computed"`
 	Consumers           jsontypes.Normalized `tfsdk:"consumers" json:"consumers,computed"`
 	Producers           jsontypes.Normalized `tfsdk:"producers" json:"producers,computed"`
 }
