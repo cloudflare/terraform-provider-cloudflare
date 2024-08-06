@@ -21,7 +21,7 @@ func (r *QueueResource) UpgradeState(ctx context.Context) map[int64]resource.Sta
 					"id": schema.StringAttribute{
 						Computed: true,
 					},
-					"queue_name": schema.StringAttribute{
+					"queue_id": schema.StringAttribute{
 						Computed:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
@@ -42,7 +42,7 @@ func (r *QueueResource) UpgradeState(ctx context.Context) map[int64]resource.Sta
 					"producers_total_count": schema.Float64Attribute{
 						Computed: true,
 					},
-					"queue_id": schema.StringAttribute{
+					"queue_name": schema.StringAttribute{
 						Computed: true,
 					},
 					"consumers": schema.StringAttribute{
