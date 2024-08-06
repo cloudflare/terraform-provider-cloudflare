@@ -463,7 +463,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		waiting_room_event.NewWaitingRoomEventDataSource,
 		waiting_room_event.NewWaitingRoomEventsDataSource,
 		waiting_room_rules.NewWaitingRoomRulesDataSource,
-		waiting_room_rules.NewWaitingRoomRulesListDataSource,
 		waiting_room_setting.NewWaitingRoomSettingDataSource,
 		web3_hostname.NewWeb3HostnameDataSource,
 		web3_hostname.NewWeb3HostnamesDataSource,

@@ -5,10 +5,14 @@ package waiting_room_rules
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -54,33 +58,28 @@ func (d *WaitingRoomRulesDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	items := &[]*WaitingRoomRulesDataSourceModel{}
-	env := WaitingRoomRulesResultListDataSourceEnvelope{items}
-
-	page, err := d.client.WaitingRooms.Rules.List(
+	res := new(http.Response)
+	env := WaitingRoomRulesResultDataSourceEnvelope{*data}
+	_, err := d.client.WaitingRooms.Rules.Get(
 		ctx,
-		data.Filter.WaitingRoomID.ValueString(),
-		waiting_rooms.RuleListParams{
-			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
+		data.WaitingRoomID.ValueString(),
+		waiting_rooms.RuleGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-
-	bytes := []byte(page.JSON.RawJSON())
+	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-
-	if count := len(*items); count != 1 {
-		resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
-		return
-	}
-	data = (*items)[0]
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
