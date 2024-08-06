@@ -24,6 +24,9 @@ pattern terraform_cloudflare_v5_attribute_renames() {
         $new_colors = join(list=$values, separator=", ")
     } => `items = [$new_colors]` where $all_items <: within `resource "cloudflare_teams_list" $_ { $_ }`,
 
+    // cloudflare_worker_kv
+    `key = $v` as $setting => `key_name = $v` where { $setting <: within `resource "cloudflare_workers_kv" $_ { $_ }` },
+
     // cloudflare_zone_cache_variants
     `resource "cloudflare_zone_cache_variants" $_ {
     	$body

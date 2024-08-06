@@ -203,6 +203,30 @@ terraform_cloudflare_v5()
 ## cloudflare_waiting_room
 ## cloudflare_waiting_room_rules
 ## cloudflare_worker_script
+## cloudflare_workers_kv
+
+- `key` is now `key_name`.
+
+  Before
+  ```hcl
+  resource "cloudflare_workers_kv" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    namespace_id = "9e5bd5c4acd7201064fe42d4e46cc48c"
+    key = "my-simple-key"
+    value = "foo"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_workers_kv" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    namespace_id = "9e5bd5c4acd7201064fe42d4e46cc48c"
+    key_name= "my-simple-key"
+    value = "foo"
+  }
+  ```
+
 ## cloudflare_zone_cache_variants
 
 - file extensions are now nested under the `value` object.
