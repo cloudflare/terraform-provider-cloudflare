@@ -141,11 +141,11 @@ func testAccCloudflareWorkersKVDestroy(s *terraform.State) error {
 }
 
 func testAccCheckCloudflareWorkersKV(rName, key, value, accountID string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + acctest.LoadTestCase("workerskv.tf", rName, key, value, accountID)
+	return acctest.LoadTestCase("workerskv.tf", rName, key, value, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVWithAccount(rName string, key string, value string, accountID string) string {
-	return testAccCheckCloudflareWorkersKVNamespace(rName, accountID) + acctest.LoadTestCase("workerskvwithaccount.tf", rName, key, value, accountID)
+	return acctest.LoadTestCase("workerskvwithaccount.tf", rName, key, value, accountID)
 }
 
 func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVPair) resource.TestCheckFunc {
@@ -174,8 +174,4 @@ func testAccCheckCloudflareWorkersKVExists(key string, kv *cloudflare.WorkersKVP
 
 		return nil
 	}
-}
-
-func testAccCheckCloudflareWorkersKVNamespace(rName, accountID string) string {
-	return acctest.LoadTestCase("workerskvnamespace.tf", rName, accountID)
 }
