@@ -38,7 +38,7 @@ type APITokenPoliciesPermissionGroupsModel struct {
 }
 
 type APITokenConditionModel struct {
-	RequestIP *APITokenConditionRequestIPModel `tfsdk:"request_ip" json:"request_ip"`
+	RequestIP *APITokenConditionRequestIPModel `tfsdk:"request_ip" json:"request.ip"`
 }
 
 type APITokenConditionRequestIPModel struct {
