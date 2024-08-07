@@ -5,7 +5,6 @@ package user_agent_blocking_rule
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -71,22 +70,6 @@ func (d *UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req dataso
 					"description_search": schema.StringAttribute{
 						Description: "A string to search for in the description of existing rules.",
 						Optional:    true,
-					},
-					"page": schema.Float64Attribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.AtLeast(1),
-						},
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(1, 1000),
-						},
 					},
 					"ua_search": schema.StringAttribute{
 						Description: "A string to search for in the user agent values of existing rules.",

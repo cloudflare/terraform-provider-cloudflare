@@ -60,11 +60,9 @@ func (d *CustomSSLsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	acc := []*CustomSSLsResultDataSourceModel{}
 
 	page, err := d.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
-		ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
-		Match:   cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Match.ValueString())),
-		Page:    cloudflare.F(data.Page.ValueFloat64()),
-		PerPage: cloudflare.F(data.PerPage.ValueFloat64()),
-		Status:  cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(data.Status.ValueString())),
+		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		Match:  cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Match.ValueString())),
+		Status: cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(data.Status.ValueString())),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

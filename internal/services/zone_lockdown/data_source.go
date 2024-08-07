@@ -102,8 +102,6 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 				IPRangeSearch:     cloudflare.F(data.Filter.IPRangeSearch.ValueString()),
 				IPSearch:          cloudflare.F(data.Filter.IPSearch.ValueString()),
 				ModifiedOn:        cloudflare.F(dataFilterModifiedOn),
-				Page:              cloudflare.F(data.Filter.Page.ValueFloat64()),
-				PerPage:           cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 				Priority:          cloudflare.F(data.Filter.Priority.ValueFloat64()),
 				URISearch:         cloudflare.F(data.Filter.URISearch.ValueString()),
 			},

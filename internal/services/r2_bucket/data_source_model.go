@@ -25,11 +25,9 @@ type R2BucketDataSourceModel struct {
 }
 
 type R2BucketFindOneByDataSourceModel struct {
-	AccountID    types.String  `tfsdk:"account_id" path:"account_id"`
-	Cursor       types.String  `tfsdk:"cursor" query:"cursor"`
-	Direction    types.String  `tfsdk:"direction" query:"direction"`
-	NameContains types.String  `tfsdk:"name_contains" query:"name_contains"`
-	Order        types.String  `tfsdk:"order" query:"order"`
-	PerPage      types.Float64 `tfsdk:"per_page" query:"per_page"`
-	StartAfter   types.String  `tfsdk:"start_after" query:"start_after"`
+	AccountID    types.String `tfsdk:"account_id" path:"account_id"`
+	Direction    types.String `tfsdk:"direction" query:"direction"`
+	NameContains types.String `tfsdk:"name_contains" query:"name_contains"`
+	Order        types.String `tfsdk:"order" query:"order"`
+	StartAfter   types.String `tfsdk:"start_after" query:"start_after"`
 }

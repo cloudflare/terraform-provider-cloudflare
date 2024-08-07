@@ -65,8 +65,6 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 		firewall.UARuleListParams{
 			Description:       cloudflare.F(data.Description.ValueString()),
 			DescriptionSearch: cloudflare.F(data.DescriptionSearch.ValueString()),
-			Page:              cloudflare.F(data.Page.ValueFloat64()),
-			PerPage:           cloudflare.F(data.PerPage.ValueFloat64()),
 			UASearch:          cloudflare.F(data.UASearch.ValueString()),
 		},
 	)

@@ -76,8 +76,6 @@ func (d *TunnelsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		IncludePrefix: cloudflare.F(data.IncludePrefix.ValueString()),
 		IsDeleted:     cloudflare.F(data.IsDeleted.ValueBool()),
 		Name:          cloudflare.F(data.Name.ValueString()),
-		Page:          cloudflare.F(data.Page.ValueFloat64()),
-		PerPage:       cloudflare.F(data.PerPage.ValueFloat64()),
 		Status:        cloudflare.F(zero_trust.TunnelListParamsStatus(data.Status.ValueString())),
 		TunTypes:      cloudflare.F(data.TunTypes.ValueString()),
 		UUID:          cloudflare.F(data.UUID.ValueString()),

@@ -63,8 +63,6 @@ func (d *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 		Direction: cloudflare.F(challenges.WidgetListParamsDirection(data.Direction.ValueString())),
 		Order:     cloudflare.F(challenges.WidgetListParamsOrder(data.Order.ValueString())),
-		Page:      cloudflare.F(data.Page.ValueFloat64()),
-		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

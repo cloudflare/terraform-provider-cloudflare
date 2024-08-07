@@ -5,10 +5,8 @@ package filter
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &FiltersDataSource{}
@@ -39,22 +37,6 @@ func (d *FiltersDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 			"ref": schema.StringAttribute{
 				Description: "The filter ref (a short reference tag) to search for. Must be an exact match.",
 				Optional:    true,
-			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-			},
-			"per_page": schema.Float64Attribute{
-				Description: "Number of filters per page.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(5, 100),
-				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

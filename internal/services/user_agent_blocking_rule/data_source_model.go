@@ -30,10 +30,8 @@ type UserAgentBlockingRuleConfigurationDataSourceModel struct {
 }
 
 type UserAgentBlockingRuleFindOneByDataSourceModel struct {
-	ZoneIdentifier    types.String  `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Description       types.String  `tfsdk:"description" query:"description"`
-	DescriptionSearch types.String  `tfsdk:"description_search" query:"description_search"`
-	Page              types.Float64 `tfsdk:"page" query:"page"`
-	PerPage           types.Float64 `tfsdk:"per_page" query:"per_page"`
-	UASearch          types.String  `tfsdk:"ua_search" query:"ua_search"`
+	ZoneIdentifier    types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
+	Description       types.String `tfsdk:"description" query:"description"`
+	DescriptionSearch types.String `tfsdk:"description_search" query:"description_search"`
+	UASearch          types.String `tfsdk:"ua_search" query:"ua_search"`
 }

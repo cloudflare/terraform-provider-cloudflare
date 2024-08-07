@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -91,21 +90,6 @@ func (d *TunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					"name": schema.StringAttribute{
 						Description: "A user-friendly name for the tunnel.",
 						Optional:    true,
-					},
-					"page": schema.Float64Attribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.AtLeast(1),
-						},
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "Number of results to display.",
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(1, 1000),
-						},
 					},
 					"status": schema.StringAttribute{
 						Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).",

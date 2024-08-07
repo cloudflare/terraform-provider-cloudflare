@@ -5,7 +5,6 @@ package r2_bucket
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -57,10 +56,6 @@ func (d *R2BucketDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Description: "Account ID",
 						Required:    true,
 					},
-					"cursor": schema.StringAttribute{
-						Description: "Pagination cursor received during the last List Buckets call. R2 buckets are paginated using cursors instead of page numbers.",
-						Optional:    true,
-					},
 					"direction": schema.StringAttribute{
 						Description: "Direction to order buckets",
 						Optional:    true,
@@ -77,14 +72,6 @@ func (d *R2BucketDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("name"),
-						},
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "Maximum number of buckets to return in a single call",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(1, 1000),
 						},
 					},
 					"start_after": schema.StringAttribute{

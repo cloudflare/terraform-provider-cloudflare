@@ -62,8 +62,6 @@ func (d *APIShieldSchemasDataSource) Read(ctx context.Context, req datasource.Re
 	page, err := d.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
 		ZoneID:            cloudflare.F(data.ZoneID.ValueString()),
 		OmitSource:        cloudflare.F(data.OmitSource.ValueBool()),
-		Page:              cloudflare.F(data.Page.ValueInt64()),
-		PerPage:           cloudflare.F(data.PerPage.ValueInt64()),
 		ValidationEnabled: cloudflare.F(data.ValidationEnabled.ValueBool()),
 	})
 	if err != nil {

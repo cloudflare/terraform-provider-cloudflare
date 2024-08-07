@@ -63,8 +63,6 @@ func (d *AccountMembersDataSource) Read(ctx context.Context, req datasource.Read
 		AccountID: cloudflare.F(data.AccountID.ValueString()),
 		Direction: cloudflare.F(accounts.MemberListParamsDirection(data.Direction.ValueString())),
 		Order:     cloudflare.F(accounts.MemberListParamsOrder(data.Order.ValueString())),
-		Page:      cloudflare.F(data.Page.ValueFloat64()),
-		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
 		Status:    cloudflare.F(accounts.MemberListParamsStatus(data.Status.ValueString())),
 	})
 	if err != nil {

@@ -87,11 +87,9 @@ func (d *R2BucketDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 		page, err := d.client.R2.Buckets.List(ctx, r2.BucketListParams{
 			AccountID:    cloudflare.F(data.Filter.AccountID.ValueString()),
-			Cursor:       cloudflare.F(data.Filter.Cursor.ValueString()),
 			Direction:    cloudflare.F(r2.BucketListParamsDirection(data.Filter.Direction.ValueString())),
 			NameContains: cloudflare.F(data.Filter.NameContains.ValueString()),
 			Order:        cloudflare.F(r2.BucketListParamsOrder(data.Filter.Order.ValueString())),
-			PerPage:      cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 			StartAfter:   cloudflare.F(data.Filter.StartAfter.ValueString()),
 		})
 		if err != nil {

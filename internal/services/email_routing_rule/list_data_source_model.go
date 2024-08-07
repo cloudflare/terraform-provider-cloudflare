@@ -13,8 +13,6 @@ type EmailRoutingRulesResultListDataSourceEnvelope struct {
 type EmailRoutingRulesDataSourceModel struct {
 	ZoneIdentifier types.String                               `tfsdk:"zone_identifier" path:"zone_identifier"`
 	Enabled        types.Bool                                 `tfsdk:"enabled" query:"enabled"`
-	Page           types.Float64                              `tfsdk:"page" query:"page"`
-	PerPage        types.Float64                              `tfsdk:"per_page" query:"per_page"`
 	MaxItems       types.Int64                                `tfsdk:"max_items"`
 	Result         *[]*EmailRoutingRulesResultDataSourceModel `tfsdk:"result"`
 }

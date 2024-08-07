@@ -26,22 +26,6 @@ func (d *EmailRoutingRulesDataSource) Schema(ctx context.Context, req datasource
 				Description: "Filter by enabled routing rules.",
 				Optional:    true,
 			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-			},
-			"per_page": schema.Float64Attribute{
-				Description: "Maximum number of results per page.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(5, 50),
-				},
-			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,

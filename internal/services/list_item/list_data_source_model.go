@@ -13,8 +13,6 @@ type ListItemsResultListDataSourceEnvelope struct {
 type ListItemsDataSourceModel struct {
 	AccountID types.String                       `tfsdk:"account_id" path:"account_id"`
 	ListID    types.String                       `tfsdk:"list_id" path:"list_id"`
-	Cursor    types.String                       `tfsdk:"cursor" query:"cursor"`
-	PerPage   types.Int64                        `tfsdk:"per_page" query:"per_page"`
 	Search    types.String                       `tfsdk:"search" query:"search"`
 	MaxItems  types.Int64                        `tfsdk:"max_items"`
 	Result    *[]*ListItemsResultDataSourceModel `tfsdk:"result"`

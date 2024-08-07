@@ -12,12 +12,10 @@ type R2BucketsResultListDataSourceEnvelope struct {
 
 type R2BucketsDataSourceModel struct {
 	AccountID    types.String                       `tfsdk:"account_id" path:"account_id"`
-	Cursor       types.String                       `tfsdk:"cursor" query:"cursor"`
 	Direction    types.String                       `tfsdk:"direction" query:"direction"`
 	NameContains types.String                       `tfsdk:"name_contains" query:"name_contains"`
 	Order        types.String                       `tfsdk:"order" query:"order"`
 	StartAfter   types.String                       `tfsdk:"start_after" query:"start_after"`
-	PerPage      types.Float64                      `tfsdk:"per_page" query:"per_page"`
 	MaxItems     types.Int64                        `tfsdk:"max_items"`
 	Result       *[]*R2BucketsResultDataSourceModel `tfsdk:"result"`
 }

@@ -68,8 +68,6 @@ func (d *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		Match:     cloudflare.F(zones.ZoneListParamsMatch(data.Match.ValueString())),
 		Name:      cloudflare.F(data.Name.ValueString()),
 		Order:     cloudflare.F(zones.ZoneListParamsOrder(data.Order.ValueString())),
-		Page:      cloudflare.F(data.Page.ValueFloat64()),
-		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
 		Status:    cloudflare.F(zones.ZoneListParamsStatus(data.Status.ValueString())),
 	})
 	if err != nil {
