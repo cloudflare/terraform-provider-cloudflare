@@ -87,8 +87,6 @@ func (d *AccountDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		page, err := d.client.Accounts.List(ctx, accounts.AccountListParams{
 			Direction: cloudflare.F(accounts.AccountListParamsDirection(data.Filter.Direction.ValueString())),
 			Name:      cloudflare.F(data.Filter.Name.ValueString()),
-			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

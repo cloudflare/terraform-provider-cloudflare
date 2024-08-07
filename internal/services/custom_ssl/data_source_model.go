@@ -58,9 +58,7 @@ type CustomSSLKeylessServerTunnelDataSourceModel struct {
 }
 
 type CustomSSLFindOneByDataSourceModel struct {
-	ZoneID  types.String  `tfsdk:"zone_id" path:"zone_id"`
-	Match   types.String  `tfsdk:"match" query:"match"`
-	Page    types.Float64 `tfsdk:"page" query:"page"`
-	PerPage types.Float64 `tfsdk:"per_page" query:"per_page"`
-	Status  types.String  `tfsdk:"status" query:"status"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	Match  types.String `tfsdk:"match" query:"match"`
+	Status types.String `tfsdk:"status" query:"status"`
 }

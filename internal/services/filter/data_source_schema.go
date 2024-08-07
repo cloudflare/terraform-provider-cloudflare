@@ -5,10 +5,8 @@ package filter
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &FilterDataSource{}
@@ -62,25 +60,9 @@ func (d *FilterDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						Description: "A case-insensitive string to find in the expression.",
 						Optional:    true,
 					},
-					"page": schema.Float64Attribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.AtLeast(1),
-						},
-					},
 					"paused": schema.BoolAttribute{
 						Description: "When true, indicates that the filter is currently paused.",
 						Optional:    true,
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "Number of filters per page.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(5, 100),
-						},
 					},
 					"ref": schema.StringAttribute{
 						Description: "The filter ref (a short reference tag) to search for. Must be an exact match.",

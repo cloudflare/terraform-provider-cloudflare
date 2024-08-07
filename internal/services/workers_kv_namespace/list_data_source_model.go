@@ -14,8 +14,6 @@ type WorkersKVNamespacesDataSourceModel struct {
 	AccountID types.String                                 `tfsdk:"account_id" path:"account_id"`
 	Direction types.String                                 `tfsdk:"direction" query:"direction"`
 	Order     types.String                                 `tfsdk:"order" query:"order"`
-	Page      types.Float64                                `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                                `tfsdk:"per_page" query:"per_page"`
 	MaxItems  types.Int64                                  `tfsdk:"max_items"`
 	Result    *[]*WorkersKVNamespacesResultDataSourceModel `tfsdk:"result"`
 }

@@ -64,8 +64,6 @@ func (d *EmailRoutingAddressesDataSource) Read(ctx context.Context, req datasour
 		data.AccountIdentifier.ValueString(),
 		email_routing.AddressListParams{
 			Direction: cloudflare.F(email_routing.AddressListParamsDirection(data.Direction.ValueString())),
-			Page:      cloudflare.F(data.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
 			Verified:  cloudflare.F(email_routing.AddressListParamsVerified(data.Verified.ValueBool())),
 		},
 	)

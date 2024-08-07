@@ -101,8 +101,6 @@ func (d *RecordDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 			Match:     cloudflare.F(dns.RecordListParamsMatch(data.Filter.Match.ValueString())),
 			Name:      cloudflare.F(data.Filter.Name.ValueString()),
 			Order:     cloudflare.F(dns.RecordListParamsOrder(data.Filter.Order.ValueString())),
-			Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
-			PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 			Proxied:   cloudflare.F(data.Filter.Proxied.ValueBool()),
 			Search:    cloudflare.F(data.Filter.Search.ValueString()),
 			Tag: cloudflare.F(dns.RecordListParamsTag{

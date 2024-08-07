@@ -66,7 +66,5 @@ type RateLimitMatchResponseDataSourceModel struct {
 }
 
 type RateLimitFindOneByDataSourceModel struct {
-	ZoneIdentifier types.String  `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Page           types.Float64 `tfsdk:"page" query:"page"`
-	PerPage        types.Float64 `tfsdk:"per_page" query:"per_page"`
+	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
 }

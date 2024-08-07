@@ -89,8 +89,6 @@ func (d *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 			data.Filter.ListID.ValueString(),
 			rules.ListItemListParams{
 				AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-				Cursor:    cloudflare.F(data.Filter.Cursor.ValueString()),
-				PerPage:   cloudflare.F(data.Filter.PerPage.ValueInt64()),
 				Search:    cloudflare.F(data.Filter.Search.ValueString()),
 			},
 		)

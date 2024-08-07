@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -66,22 +65,6 @@ func (d *APIShieldSchemaDataSource) Schema(ctx context.Context, req datasource.S
 						Description: "Omit the source-files of schemas and only retrieve their meta-data.",
 						Computed:    true,
 						Optional:    true,
-					},
-					"page": schema.Int64Attribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Int64{
-							int64validator.AtLeast(1),
-						},
-					},
-					"per_page": schema.Int64Attribute{
-						Description: "Maximum number of results per page.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Int64{
-							int64validator.Between(5, 50),
-						},
 					},
 					"validation_enabled": schema.BoolAttribute{
 						Description: "Flag whether schema is enabled for validation.",

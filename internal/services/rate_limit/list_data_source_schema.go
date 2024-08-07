@@ -22,22 +22,6 @@ func (d *RateLimitsDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Identifier",
 				Required:    true,
 			},
-			"page": schema.Float64Attribute{
-				Description: "The page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-			},
-			"per_page": schema.Float64Attribute{
-				Description: "The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(1, 1000),
-				},
-			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,

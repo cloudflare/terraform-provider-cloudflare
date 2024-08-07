@@ -14,8 +14,6 @@ type D1DatabasesResultListDataSourceEnvelope struct {
 type D1DatabasesDataSourceModel struct {
 	AccountID types.String                         `tfsdk:"account_id" path:"account_id"`
 	Name      types.String                         `tfsdk:"name" query:"name"`
-	Page      types.Float64                        `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                        `tfsdk:"per_page" query:"per_page"`
 	MaxItems  types.Int64                          `tfsdk:"max_items"`
 	Result    *[]*D1DatabasesResultDataSourceModel `tfsdk:"result"`
 }

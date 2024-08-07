@@ -97,7 +97,5 @@ type CustomHostnameFindOneByDataSourceModel struct {
 	Direction types.String  `tfsdk:"direction" query:"direction"`
 	Hostname  types.String  `tfsdk:"hostname" query:"hostname"`
 	Order     types.String  `tfsdk:"order" query:"order"`
-	Page      types.Float64 `tfsdk:"page" query:"page"`
-	PerPage   types.Float64 `tfsdk:"per_page" query:"per_page"`
 	SSL       types.Float64 `tfsdk:"ssl" query:"ssl"`
 }

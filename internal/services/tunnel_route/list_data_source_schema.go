@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -43,13 +42,6 @@ func (d *TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "If set, only list routes that contain this IP range.",
 				Optional:    true,
 			},
-			"per_page": schema.Float64Attribute{
-				Description: "Number of results to display.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(1, 1000),
-				},
-			},
 			"route_id": schema.StringAttribute{
 				Description: "UUID of the route.",
 				Optional:    true,
@@ -65,14 +57,6 @@ func (d *TunnelRoutesDataSource) Schema(ctx context.Context, req datasource.Sche
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
 				Optional:    true,
-			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",

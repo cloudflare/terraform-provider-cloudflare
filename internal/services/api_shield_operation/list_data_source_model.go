@@ -22,8 +22,6 @@ type APIShieldOperationsDataSourceModel struct {
 	State     types.String                                 `tfsdk:"state" query:"state"`
 	Host      *[]types.String                              `tfsdk:"host" query:"host"`
 	Method    *[]types.String                              `tfsdk:"method" query:"method"`
-	Page      types.Int64                                  `tfsdk:"page" query:"page"`
-	PerPage   types.Int64                                  `tfsdk:"per_page" query:"per_page"`
 	MaxItems  types.Int64                                  `tfsdk:"max_items"`
 	Result    *[]*APIShieldOperationsResultDataSourceModel `tfsdk:"result"`
 }

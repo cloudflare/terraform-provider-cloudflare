@@ -17,8 +17,6 @@ type AccountMembersDataSourceModel struct {
 	Direction types.String                            `tfsdk:"direction" query:"direction"`
 	Order     types.String                            `tfsdk:"order" query:"order"`
 	Status    types.String                            `tfsdk:"status" query:"status"`
-	Page      types.Float64                           `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                           `tfsdk:"per_page" query:"per_page"`
 	MaxItems  types.Int64                             `tfsdk:"max_items"`
 	Result    *[]*AccountMembersResultDataSourceModel `tfsdk:"result"`
 }

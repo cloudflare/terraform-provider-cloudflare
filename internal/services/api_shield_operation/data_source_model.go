@@ -42,7 +42,5 @@ type APIShieldOperationFindOneByDataSourceModel struct {
 	Method    *[]types.String `tfsdk:"method" query:"method"`
 	Order     types.String    `tfsdk:"order" query:"order"`
 	Origin    types.String    `tfsdk:"origin" query:"origin"`
-	Page      types.Int64     `tfsdk:"page" query:"page"`
-	PerPage   types.Int64     `tfsdk:"per_page" query:"per_page"`
 	State     types.String    `tfsdk:"state" query:"state"`
 }

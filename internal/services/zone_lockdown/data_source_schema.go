@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -108,22 +107,6 @@ func (d *ZoneLockdownDataSource) Schema(ctx context.Context, req datasource.Sche
 						Description: "The timestamp of when the rule was last modified.",
 						Optional:    true,
 						CustomType:  timetypes.RFC3339Type{},
-					},
-					"page": schema.Float64Attribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.AtLeast(1),
-						},
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(1, 1000),
-						},
 					},
 					"priority": schema.Float64Attribute{
 						Description: "The priority of the rule to control the processing order. A lower number indicates higher priority. If not provided, any rules with a configured priority will be processed before rules without a priority.",

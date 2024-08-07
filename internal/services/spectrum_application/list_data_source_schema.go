@@ -5,7 +5,6 @@ package spectrum_application
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -21,13 +20,6 @@ func (d *SpectrumApplicationsDataSource) Schema(ctx context.Context, req datasou
 				Description: "Identifier",
 				Required:    true,
 			},
-			"page": schema.Float64Attribute{
-				Description: "Page number of paginated results. This parameter is required in order to use other pagination parameters. If included in the query, `result_info` will be present in the response.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.AtLeast(1),
-				},
-			},
 			"direction": schema.StringAttribute{
 				Description: "Sets the direction by which results are ordered.",
 				Computed:    true,
@@ -42,14 +34,6 @@ func (d *SpectrumApplicationsDataSource) Schema(ctx context.Context, req datasou
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("protocol", "app_id", "created_on", "modified_on", "dns"),
-				},
-			},
-			"per_page": schema.Float64Attribute{
-				Description: "Sets the maximum number of results per page.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(1, 100),
 				},
 			},
 			"max_items": schema.Int64Attribute{

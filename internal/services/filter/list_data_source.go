@@ -66,9 +66,7 @@ func (d *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest
 			ID:          cloudflare.F(data.ID.ValueString()),
 			Description: cloudflare.F(data.Description.ValueString()),
 			Expression:  cloudflare.F(data.Expression.ValueString()),
-			Page:        cloudflare.F(data.Page.ValueFloat64()),
 			Paused:      cloudflare.F(data.Paused.ValueBool()),
-			PerPage:     cloudflare.F(data.PerPage.ValueFloat64()),
 			Ref:         cloudflare.F(data.Ref.ValueString()),
 		},
 	)
