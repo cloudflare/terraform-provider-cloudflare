@@ -6,10 +6,8 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &D1DatabaseDataSource{}
@@ -57,22 +55,6 @@ func (d *D1DatabaseDataSource) Schema(ctx context.Context, req datasource.Schema
 					"name": schema.StringAttribute{
 						Description: "a database name to search for.",
 						Optional:    true,
-					},
-					"page": schema.Float64Attribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.AtLeast(1),
-						},
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "Number of items per page.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.Float64{
-							float64validator.Between(10, 10000),
-						},
 					},
 				},
 			},

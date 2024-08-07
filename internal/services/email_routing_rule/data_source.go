@@ -88,8 +88,6 @@ func (d *EmailRoutingRuleDataSource) Read(ctx context.Context, req datasource.Re
 			data.Filter.ZoneIdentifier.ValueString(),
 			email_routing.RuleListParams{
 				Enabled: cloudflare.F(email_routing.RuleListParamsEnabled(data.Filter.Enabled.ValueBool())),
-				Page:    cloudflare.F(data.Filter.Page.ValueFloat64()),
-				PerPage: cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 			},
 		)
 		if err != nil {

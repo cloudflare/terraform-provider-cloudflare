@@ -21,8 +21,6 @@ type RecordsDataSourceModel struct {
 	Direction types.String                     `tfsdk:"direction" query:"direction"`
 	Match     types.String                     `tfsdk:"match" query:"match"`
 	Order     types.String                     `tfsdk:"order" query:"order"`
-	Page      types.Float64                    `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                    `tfsdk:"per_page" query:"per_page"`
 	Proxied   types.Bool                       `tfsdk:"proxied" query:"proxied"`
 	TagMatch  types.String                     `tfsdk:"tag_match" query:"tag_match"`
 	MaxItems  types.Int64                      `tfsdk:"max_items"`

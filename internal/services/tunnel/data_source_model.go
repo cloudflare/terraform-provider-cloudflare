@@ -39,8 +39,6 @@ type TunnelFindOneByDataSourceModel struct {
 	IncludePrefix types.String      `tfsdk:"include_prefix" query:"include_prefix"`
 	IsDeleted     types.Bool        `tfsdk:"is_deleted" query:"is_deleted"`
 	Name          types.String      `tfsdk:"name" query:"name"`
-	Page          types.Float64     `tfsdk:"page" query:"page"`
-	PerPage       types.Float64     `tfsdk:"per_page" query:"per_page"`
 	Status        types.String      `tfsdk:"status" query:"status"`
 	TunTypes      types.String      `tfsdk:"tun_types" query:"tun_types"`
 	UUID          types.String      `tfsdk:"uuid" query:"uuid"`

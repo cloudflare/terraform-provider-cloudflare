@@ -21,8 +21,6 @@ type AccountDataSourceModel struct {
 }
 
 type AccountFindOneByDataSourceModel struct {
-	Direction types.String  `tfsdk:"direction" query:"direction"`
-	Name      types.String  `tfsdk:"name" query:"name"`
-	Page      types.Float64 `tfsdk:"page" query:"page"`
-	PerPage   types.Float64 `tfsdk:"per_page" query:"per_page"`
+	Direction types.String `tfsdk:"direction" query:"direction"`
+	Name      types.String `tfsdk:"name" query:"name"`
 }

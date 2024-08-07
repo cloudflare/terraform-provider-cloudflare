@@ -70,8 +70,6 @@ func (d *TunnelRouteDataSource) Read(ctx context.Context, req datasource.ReadReq
 		IsDeleted:        cloudflare.F(data.Filter.IsDeleted.ValueBool()),
 		NetworkSubset:    cloudflare.F(data.Filter.NetworkSubset.ValueString()),
 		NetworkSuperset:  cloudflare.F(data.Filter.NetworkSuperset.ValueString()),
-		Page:             cloudflare.F(data.Filter.Page.ValueFloat64()),
-		PerPage:          cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 		RouteID:          cloudflare.F(data.Filter.RouteID.ValueString()),
 		TunTypes:         cloudflare.F(data.Filter.TunTypes.ValueString()),
 		TunnelID:         cloudflare.F(data.Filter.TunnelID.ValueString()),

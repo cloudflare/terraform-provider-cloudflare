@@ -25,12 +25,10 @@ type FilterDataSourceModel struct {
 }
 
 type FilterFindOneByDataSourceModel struct {
-	ZoneIdentifier types.String  `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String  `tfsdk:"id" query:"id"`
-	Description    types.String  `tfsdk:"description" query:"description"`
-	Expression     types.String  `tfsdk:"expression" query:"expression"`
-	Page           types.Float64 `tfsdk:"page" query:"page"`
-	Paused         types.Bool    `tfsdk:"paused" query:"paused"`
-	PerPage        types.Float64 `tfsdk:"per_page" query:"per_page"`
-	Ref            types.String  `tfsdk:"ref" query:"ref"`
+	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ID             types.String `tfsdk:"id" query:"id"`
+	Description    types.String `tfsdk:"description" query:"description"`
+	Expression     types.String `tfsdk:"expression" query:"expression"`
+	Paused         types.Bool   `tfsdk:"paused" query:"paused"`
+	Ref            types.String `tfsdk:"ref" query:"ref"`
 }

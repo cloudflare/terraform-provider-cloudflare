@@ -14,8 +14,6 @@ type WebAnalyticsSitesResultListDataSourceEnvelope struct {
 type WebAnalyticsSitesDataSourceModel struct {
 	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
 	OrderBy   types.String                               `tfsdk:"order_by" query:"order_by"`
-	Page      types.Float64                              `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                              `tfsdk:"per_page" query:"per_page"`
 	MaxItems  types.Int64                                `tfsdk:"max_items"`
 	Result    *[]*WebAnalyticsSitesResultDataSourceModel `tfsdk:"result"`
 }

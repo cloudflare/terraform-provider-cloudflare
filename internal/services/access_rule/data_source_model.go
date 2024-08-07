@@ -28,8 +28,6 @@ type AccessRuleFindOneByDataSourceModel struct {
 	Mode          types.String                            `tfsdk:"mode" query:"mode"`
 	Notes         types.String                            `tfsdk:"notes" query:"notes"`
 	Order         types.String                            `tfsdk:"order" query:"order"`
-	Page          types.Float64                           `tfsdk:"page" query:"page"`
-	PerPage       types.Float64                           `tfsdk:"per_page" query:"per_page"`
 }
 
 type AccessRuleConfigurationDataSourceModel struct {

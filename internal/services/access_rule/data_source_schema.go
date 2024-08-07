@@ -80,14 +80,6 @@ func (d *AccessRuleDataSource) Schema(ctx context.Context, req datasource.Schema
 							stringvalidator.OneOfCaseInsensitive("configuration.target", "configuration.value", "mode"),
 						},
 					},
-					"page": schema.Float64Attribute{
-						Description: "Requested page within paginated list of results.",
-						Optional:    true,
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "Maximum number of results requested.",
-						Optional:    true,
-					},
 				},
 			},
 		},

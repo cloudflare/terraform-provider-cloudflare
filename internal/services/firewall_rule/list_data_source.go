@@ -66,9 +66,7 @@ func (d *FirewallRulesDataSource) Read(ctx context.Context, req datasource.ReadR
 			ID:          cloudflare.F(data.ID.ValueString()),
 			Action:      cloudflare.F(data.Action.ValueString()),
 			Description: cloudflare.F(data.Description.ValueString()),
-			Page:        cloudflare.F(data.Page.ValueFloat64()),
 			Paused:      cloudflare.F(data.Paused.ValueBool()),
-			PerPage:     cloudflare.F(data.PerPage.ValueFloat64()),
 		},
 	)
 	if err != nil {

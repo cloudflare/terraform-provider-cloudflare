@@ -65,8 +65,6 @@ func (d *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 		Direction: cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(data.Direction.ValueString())),
 		Hostname:  cloudflare.F(data.Hostname.ValueString()),
 		Order:     cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(data.Order.ValueString())),
-		Page:      cloudflare.F(data.Page.ValueFloat64()),
-		PerPage:   cloudflare.F(data.PerPage.ValueFloat64()),
 		SSL:       cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(data.SSL.ValueFloat64())),
 	})
 	if err != nil {

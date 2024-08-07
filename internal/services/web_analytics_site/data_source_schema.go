@@ -132,14 +132,6 @@ func (d *WebAnalyticsSiteDataSource) Schema(ctx context.Context, req datasource.
 							stringvalidator.OneOfCaseInsensitive("host", "created"),
 						},
 					},
-					"page": schema.Float64Attribute{
-						Description: "Current page within the paginated list of results.",
-						Optional:    true,
-					},
-					"per_page": schema.Float64Attribute{
-						Description: "Number of items to return per page of results.",
-						Optional:    true,
-					},
 				},
 			},
 		},

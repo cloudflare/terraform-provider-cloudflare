@@ -89,8 +89,6 @@ func (d *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource
 			spectrum.AppListParams{
 				Direction: cloudflare.F(spectrum.AppListParamsDirection(data.Filter.Direction.ValueString())),
 				Order:     cloudflare.F(spectrum.AppListParamsOrder(data.Filter.Order.ValueString())),
-				Page:      cloudflare.F(data.Filter.Page.ValueFloat64()),
-				PerPage:   cloudflare.F(data.Filter.PerPage.ValueFloat64()),
 			},
 		)
 		if err != nil {

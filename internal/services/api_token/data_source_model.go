@@ -21,7 +21,5 @@ type APITokenDataSourceModel struct {
 }
 
 type APITokenFindOneByDataSourceModel struct {
-	Direction types.String  `tfsdk:"direction" query:"direction"`
-	Page      types.Float64 `tfsdk:"page" query:"page"`
-	PerPage   types.Float64 `tfsdk:"per_page" query:"per_page"`
+	Direction types.String `tfsdk:"direction" query:"direction"`
 }

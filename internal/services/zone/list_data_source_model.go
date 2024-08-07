@@ -19,8 +19,6 @@ type ZonesDataSourceModel struct {
 	Status    types.String                   `tfsdk:"status" query:"status"`
 	Account   *ZonesAccountDataSourceModel   `tfsdk:"account" query:"account"`
 	Match     types.String                   `tfsdk:"match" query:"match"`
-	Page      types.Float64                  `tfsdk:"page" query:"page"`
-	PerPage   types.Float64                  `tfsdk:"per_page" query:"per_page"`
 	MaxItems  types.Int64                    `tfsdk:"max_items"`
 	Result    *[]*ZonesResultDataSourceModel `tfsdk:"result"`
 }

@@ -23,8 +23,6 @@ type ZoneLockdownsDataSourceModel struct {
 	ModifiedOn        timetypes.RFC3339                      `tfsdk:"modified_on" query:"modified_on"`
 	Priority          types.Float64                          `tfsdk:"priority" query:"priority"`
 	URISearch         types.String                           `tfsdk:"uri_search" query:"uri_search"`
-	Page              types.Float64                          `tfsdk:"page" query:"page"`
-	PerPage           types.Float64                          `tfsdk:"per_page" query:"per_page"`
 	MaxItems          types.Int64                            `tfsdk:"max_items"`
 	Result            *[]*ZoneLockdownsResultDataSourceModel `tfsdk:"result"`
 }

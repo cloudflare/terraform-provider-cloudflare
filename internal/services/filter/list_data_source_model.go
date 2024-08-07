@@ -17,8 +17,6 @@ type FiltersDataSourceModel struct {
 	ID             types.String                     `tfsdk:"id" query:"id"`
 	Paused         types.Bool                       `tfsdk:"paused" query:"paused"`
 	Ref            types.String                     `tfsdk:"ref" query:"ref"`
-	Page           types.Float64                    `tfsdk:"page" query:"page"`
-	PerPage        types.Float64                    `tfsdk:"per_page" query:"per_page"`
 	MaxItems       types.Int64                      `tfsdk:"max_items"`
 	Result         *[]*FiltersResultDataSourceModel `tfsdk:"result"`
 }

@@ -28,9 +28,7 @@ type EmailRoutingAddressDataSourceModel struct {
 }
 
 type EmailRoutingAddressFindOneByDataSourceModel struct {
-	AccountIdentifier types.String  `tfsdk:"account_identifier" path:"account_identifier"`
-	Direction         types.String  `tfsdk:"direction" query:"direction"`
-	Page              types.Float64 `tfsdk:"page" query:"page"`
-	PerPage           types.Float64 `tfsdk:"per_page" query:"per_page"`
-	Verified          types.Bool    `tfsdk:"verified" query:"verified"`
+	AccountIdentifier types.String `tfsdk:"account_identifier" path:"account_identifier"`
+	Direction         types.String `tfsdk:"direction" query:"direction"`
+	Verified          types.Bool   `tfsdk:"verified" query:"verified"`
 }

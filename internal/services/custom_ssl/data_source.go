@@ -86,11 +86,9 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 		env := CustomSSLResultListDataSourceEnvelope{items}
 
 		page, err := d.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
-			ZoneID:  cloudflare.F(data.Filter.ZoneID.ValueString()),
-			Match:   cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Filter.Match.ValueString())),
-			Page:    cloudflare.F(data.Filter.Page.ValueFloat64()),
-			PerPage: cloudflare.F(data.Filter.PerPage.ValueFloat64()),
-			Status:  cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(data.Filter.Status.ValueString())),
+			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
+			Match:  cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Filter.Match.ValueString())),
+			Status: cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(data.Filter.Status.ValueString())),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
