@@ -5,7 +5,7 @@ on:
       - "v*"
 jobs:
   goreleaser:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Cleanup unused directories and tools
         run: |
