@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   comment-on-closed-milestone:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       ids: ${{ steps.milestone-comment.outputs.ids }}
     steps:
@@ -25,7 +25,7 @@ jobs:
             For further feature requests or bug reports with this functionality, please create a [new GitHub issue](https://github.com/${{ github.repository }}/issues/new/choose) following the template. Thank you!
             
   lock-closed-issues:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: comment-on-closed-milestone
     steps:
       - uses: actions/checkout@v4
