@@ -332,10 +332,11 @@ func flattenAntivirusConfig(antivirusConfig *cloudflare.TeamsAntivirus) []interf
 
 func flattenTeamsDeviceSettings(deviceSettings *cloudflare.TeamsDeviceSettings) []interface{} {
 	return []interface{}{map[string]interface{}{
-		"tcp":        deviceSettings.GatewayProxyEnabled,
-		"udp":        deviceSettings.GatewayProxyUDPEnabled,
-		"root_ca":    deviceSettings.RootCertificateInstallationEnabled,
-		"virtual_ip": deviceSettings.UseZTVirtualIP,
+		"tcp":              deviceSettings.GatewayProxyEnabled,
+		"udp":              deviceSettings.GatewayProxyUDPEnabled,
+		"root_ca":          deviceSettings.RootCertificateInstallationEnabled,
+		"virtual_ip":       deviceSettings.UseZTVirtualIP,
+		"disable_for_time": deviceSettings.DisableForTime,
 	}}
 }
 
@@ -451,6 +452,7 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 		GatewayProxyUDPEnabled:             deviceSettings["udp"].(bool),
 		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
 		UseZTVirtualIP:                     cloudflare.BoolPtr(deviceSettings["virtual_ip"].(bool)),
+		DisableForTime:                     deviceSettings["disable_for_time"].(int32),
 	}
 }
 func flattenSSHSessionLogSettings(logSettings *cloudflare.AuditSSHSettings) []interface{} {
