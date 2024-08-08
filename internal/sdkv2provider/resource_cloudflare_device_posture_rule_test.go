@@ -21,7 +21,7 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -54,7 +54,7 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -88,7 +88,7 @@ func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -123,7 +123,7 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -158,7 +158,7 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -191,7 +191,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -226,7 +226,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) 
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -261,7 +261,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -304,7 +304,7 @@ func TestAccCloudflareDevicePostureRule_Intune(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 	connectionID := os.Getenv("CLOUDFLARE_DEVICE_POSTURE_INTUNE_CONNECTION_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -333,7 +333,7 @@ func TestAccCloudflareDevicePostureRule_Intune(t *testing.T) {
 
 func testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "serial_number"
@@ -352,7 +352,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 func testAccCloudflareDevicePostureRuleConfigOsVersion(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "os_version"
@@ -372,7 +372,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 func testAccCloudflareDevicePostureRuleConfigOsVersionExtra(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "os_version"
@@ -393,7 +393,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 func testAccCloudflareDevicePostureRuleConfigLinuxDistro(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "os_version"
@@ -415,7 +415,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 func testAccCloudflareDevicePostureRuleConfigDomainJoined(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "domain_joined"
@@ -434,7 +434,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 func testAccCloudflareDevicePostureRuleConfigDiskEncryptionRequireAll(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "disk_encryption"
@@ -453,7 +453,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 func testAccCloudflareDevicePostureRuleConfigDiskEncryptionCheckDisks(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "disk_encryption"
@@ -473,7 +473,7 @@ resource "cloudflare_device_posture_rule" "%[1]s" {
 
 func testAccCloudflareDevicePostureRuleConfigFirewall(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "firewall"
@@ -494,7 +494,7 @@ func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_device_posture_rule" {
+		if rs.Type != "cloudflare_zero_trust_device_posture_rule" {
 			continue
 		}
 
@@ -509,7 +509,7 @@ func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {
 
 func testAccCloudflareDevicePostureRuleIntune(rnd, accountID, connectionID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_posture_rule" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "intune"

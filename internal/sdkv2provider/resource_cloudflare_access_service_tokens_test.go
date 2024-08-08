@@ -22,7 +22,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
@@ -98,7 +98,7 @@ func TestAccCloudflareAccessServiceToken_Basic(t *testing.T) {
 // 	rnd := generateRandomResourceName()
 // 	var initialState terraform.ResourceState
 
-// 	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
+// 	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
 // 	resourceName := strings.Split(name, ".")[1]
 // 	expirationTime := 365
 
@@ -174,7 +174,7 @@ func TestAccCloudflareAccessServiceToken_Delete(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
@@ -228,7 +228,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_service_token.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_service_token.%s", rnd)
 	resourceName := strings.Split(name, ".")[1]
 
 	resource.Test(t, resource.TestCase{
@@ -297,7 +297,7 @@ func TestAccCloudflareAccessServiceToken_WithDuration(t *testing.T) {
 
 func testCloudflareAccessServiceTokenBasicConfig(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_service_token" "%[1]s" {
+resource "cloudflare_zero_trust_access_service_token" "%[1]s" {
   %[3]s_id = "%[4]s"
   name     = "%[2]s"
   min_days_for_renewal = "0"
@@ -306,7 +306,7 @@ resource "cloudflare_access_service_token" "%[1]s" {
 
 func testCloudflareAccessServiceTokenBasicConfigWithDuration(resourceName string, tokenName string, identifier *cloudflare.ResourceContainer, duration string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_service_token" "%[1]s" {
+resource "cloudflare_zero_trust_access_service_token" "%[1]s" {
   %[3]s_id = "%[4]s"
   name     = "%[2]s"
   min_days_for_renewal = "0"
@@ -318,7 +318,7 @@ func testAccCheckCloudflareAccessServiceTokenDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_service_token" {
+		if rs.Type != "cloudflare_zero_trust_access_service_token" {
 			continue
 		}
 

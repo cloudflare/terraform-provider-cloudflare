@@ -17,7 +17,7 @@ func TestAccCloudflareIPsecTunnelExists(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_ipsec_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	psk := "asdf1234"
 
@@ -77,7 +77,7 @@ func TestAccCloudflareIPsecTunnelUpdateDescription(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_ipsec_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	psk := "asdf1234"
 
@@ -109,7 +109,7 @@ func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_ipsec_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_ipsec_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	psk := "asdf1234"
 	pskUpdated := "1234asd"
@@ -140,7 +140,7 @@ func TestAccCloudflareIPsecTunnelUpdatePsk(t *testing.T) {
 
 func testAccCheckCloudflareIPsecTunnelSimple(ID, description, accountID, psk string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_ipsec_tunnel" "%[1]s" {
+  resource "cloudflare_magic_wan_ipsec_tunnel" "%[1]s" {
 	account_id = "%[3]s"
 	name = "%[2]s"
 	customer_endpoint = "203.0.113.1"

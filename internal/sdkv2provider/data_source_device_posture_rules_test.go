@@ -13,7 +13,7 @@ import (
 func TestAccCloudflareDevicePostureRules_DataSource(t *testing.T) {
 	rnd := generateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	name := fmt.Sprintf("data.cloudflare_device_posture_rules.%s", rnd)
+	name := fmt.Sprintf("data.cloudflare_zero_trust_device_posture_rules.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -37,7 +37,7 @@ func TestAccCloudflareDevicePostureRules_DataSource(t *testing.T) {
 }
 
 func testAccCloudflareDevicePostureRulesConfig(name, accountID string) string {
-	return fmt.Sprintf(`resource "cloudflare_device_posture_rule" "%[1]s" {
+	return fmt.Sprintf(`resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
   account_id = "%[2]s"
   name        = "%[1]s"
   type        = "file"
@@ -53,11 +53,11 @@ func testAccCloudflareDevicePostureRulesConfig(name, accountID string) string {
   }
 }
 
-data "cloudflare_device_posture_rules" "%[1]s" {
+data "cloudflare_zero_trust_device_posture_rules" "%[1]s" {
   account_id = "%[2]s"
   name = "%[1]s"
 
-  depends_on = [cloudflare_device_posture_rule.%[1]s]
+  depends_on = [cloudflare_zero_trust_device_posture_rule.%[1]s]
 }
 `, name, accountID)
 }

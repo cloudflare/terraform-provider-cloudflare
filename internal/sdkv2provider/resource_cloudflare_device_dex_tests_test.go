@@ -9,7 +9,7 @@ import (
 
 func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dex_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -35,7 +35,7 @@ func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 
 func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dex_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -61,7 +61,7 @@ func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
 
 func TestAccCloudflareDeviceDexTest_HTTP(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dex_test.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -88,7 +88,7 @@ func TestAccCloudflareDeviceDexTest_HTTP(t *testing.T) {
 
 func testAccCloudflareDeviceDexTestsHttp(accountID, rnd string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_test" "%[1]s" {
+	resource "cloudflare_zero_trust_dex_test" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"
@@ -105,7 +105,7 @@ func testAccCloudflareDeviceDexTestsHttp(accountID, rnd string) string {
 
 func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_test" "%[1]s" {
+	resource "cloudflare_zero_trust_dex_test" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"
@@ -121,7 +121,7 @@ func testAccCloudflareDeviceDexTestsTraceroute(accountID, rnd string) string {
 
 func testAccCloudflareDeviceDexTestsTracerouteIpv4(accountID, rnd string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_device_dex_test" "%[1]s" {
+	resource "cloudflare_zero_trust_dex_test" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"

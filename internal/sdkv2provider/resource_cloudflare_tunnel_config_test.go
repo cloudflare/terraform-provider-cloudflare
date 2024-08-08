@@ -11,15 +11,15 @@ import (
 
 func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_tunnel" "%[1]s" {
+		resource "cloudflare_zero_trust_tunnel_cloudflared" "%[1]s" {
 		  account_id = "%[2]s"
 		  name       = "%[1]s"
 		  secret     = "%[3]s"
 		}
 
-		resource "cloudflare_tunnel_config" "%[1]s" {
+		resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
 		  account_id         = "%[2]s"
-		  tunnel_id          = cloudflare_tunnel.%[1]s.id
+		  tunnel_id          = cloudflare_zero_trust_tunnel_cloudflared.%[1]s.id
 
 		  config {
 			warp_routing {
@@ -78,15 +78,15 @@ func testTunnelConfig(resourceID, accountID, tunnelSecret string) string {
 
 func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_tunnel" "%[1]s" {
+		resource "cloudflare_zero_trust_tunnel_cloudflared" "%[1]s" {
 		  account_id = "%[2]s"
 		  name       = "%[1]s"
 		  secret     = "%[3]s"
 		}
 
-		resource "cloudflare_tunnel_config" "%[1]s" {
+		resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
 		  account_id         = "%[2]s"
-		  tunnel_id          = cloudflare_tunnel.%[1]s.id
+		  tunnel_id          = cloudflare_zero_trust_tunnel_cloudflared.%[1]s.id
 
 		  config {
 			ingress_rule {
@@ -100,15 +100,15 @@ func testTunnelConfigShort(resourceID, accountID, tunnelSecret string) string {
 func testTunnelConfigNilPointer(resourceID, accountID, tunnelSecret string) string {
 	return fmt.Sprintf(`
 
-resource "cloudflare_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_tunnel_cloudflared" "%[1]s" {
 		  account_id = "%[2]s"
 		  name       = "%[1]s"
 		  secret     = "%[3]s"
 		}
 
-resource "cloudflare_tunnel_config" "%[1]s" {
+resource "cloudflare_zero_trust_tunnel_cloudflared_config" "%[1]s" {
   account_id = "%[2]s"
-  tunnel_id  = cloudflare_tunnel.%[1]s.id
+  tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.%[1]s.id
 
   config {
     warp_routing {
@@ -130,7 +130,7 @@ resource "cloudflare_tunnel_config" "%[1]s" {
 
 func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "cloudflare_tunnel_config." + rnd
+	name := "cloudflare_zero_trust_tunnel_cloudflared_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
 
@@ -200,7 +200,7 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 
 func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "cloudflare_tunnel_config." + rnd
+	name := "cloudflare_zero_trust_tunnel_cloudflared_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
 
@@ -230,7 +230,7 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 
 func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "cloudflare_tunnel_config." + rnd
+	name := "cloudflare_zero_trust_tunnel_cloudflared_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := acctest.RandStringFromCharSet(32, acctest.CharSetAlpha)
 
