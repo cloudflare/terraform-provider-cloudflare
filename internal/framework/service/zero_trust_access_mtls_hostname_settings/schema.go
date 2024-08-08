@@ -14,8 +14,7 @@ import (
 
 func (r *AccessMutualTLSHostnameSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		DeprecationMessage: "`cloudflare_access_mutual_tls_hostname_settings` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_mtls_hostname_settings` instead.",
-		Description:        "Provides a Cloudflare Access Mutual TLS Certificate Settings resource.",
+		Description: "Provides a Cloudflare Access Mutual TLS Certificate Settings resource.",
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				Description: consts.AccountIDSchemaDescription,

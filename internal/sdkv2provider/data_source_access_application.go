@@ -45,6 +45,47 @@ func dataSourceCloudflareAccessApplication() *schema.Resource {
 				Computed:    true,
 			},
 		},
+		Description:        "Use this data source to lookup a single [Access Application](https://developers.cloudflare.com/cloudflare-one/applications/)",
+		ReadContext:        dataSourceCloudflareAccessApplicationRead,
+		DeprecationMessage: "`cloudflare_access_application` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_application` instead.",
+	}
+}
+
+func dataSourceCloudflareZeroTrustAccessApplication() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			consts.AccountIDSchemaKey: {
+				Description:  consts.AccountIDSchemaDescription,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
+			},
+			consts.ZoneIDSchemaKey: {
+				Description:  consts.ZoneIDSchemaDescription,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{consts.ZoneIDSchemaKey, consts.AccountIDSchemaKey},
+			},
+			"name": {
+				Description:  "Friendly name of the Access Application.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ExactlyOneOf: []string{"name", "domain"},
+			},
+			"domain": {
+				Description:  "The primary hostname and path that Access will secure.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ExactlyOneOf: []string{"name", "domain"},
+			},
+			"aud": {
+				Description: "Application Audience (AUD) Tag of the application.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+		},
 		Description: "Use this data source to lookup a single [Access Application](https://developers.cloudflare.com/cloudflare-one/applications/)",
 		ReadContext: dataSourceCloudflareAccessApplicationRead,
 	}

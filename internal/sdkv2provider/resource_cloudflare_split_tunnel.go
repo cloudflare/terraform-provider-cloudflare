@@ -27,6 +27,24 @@ func resourceCloudflareSplitTunnel() *schema.Resource {
 			Provides a Cloudflare Split Tunnel resource. Split tunnels are used to either
 			include or exclude lists of routes from the WARP client's tunnel.
 		`),
+		DeprecationMessage: "`cloudflare_split_tunnel` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_split_tunnel` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustSplitTunnel() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareSplitTunnelSchema(),
+		ReadContext:   resourceCloudflareSplitTunnelRead,
+		CreateContext: resourceCloudflareSplitTunnelUpdate, // Intentionally identical to Update as the resource is always present
+		UpdateContext: resourceCloudflareSplitTunnelUpdate,
+		DeleteContext: resourceCloudflareSplitTunnelDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareSplitTunnelImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Split Tunnel resource. Split tunnels are used to either
+			include or exclude lists of routes from the WARP client's tunnel.
+		`),
 	}
 }
 

@@ -29,6 +29,25 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			Applications are used to restrict access to a whole application using an
 			authorisation gateway managed by Cloudflare.
 		`),
+		DeprecationMessage: "`cloudflare_access_application` is now deprecated and will be removed in the next major version. Use `zero_trust_access_application` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessApplication() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessApplicationSchema(),
+		CreateContext: resourceCloudflareAccessApplicationCreate,
+		ReadContext:   resourceCloudflareAccessApplicationRead,
+		UpdateContext: resourceCloudflareAccessApplicationUpdate,
+		DeleteContext: resourceCloudflareAccessApplicationDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessApplicationImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Application resource. Access
+			Applications are used to restrict access to a whole application using an
+			authorisation gateway managed by Cloudflare.
+		`),
 	}
 }
 

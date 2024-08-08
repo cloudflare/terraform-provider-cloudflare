@@ -29,6 +29,25 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 			in conjunction with Access Policies to restrict access to a
 			particular resource based on group membership.
 		`),
+		DeprecationMessage: "`cloudflare_access_group` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_group` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessGroup() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessGroupSchema(),
+		CreateContext: resourceCloudflareAccessGroupCreate,
+		ReadContext:   resourceCloudflareAccessGroupRead,
+		UpdateContext: resourceCloudflareAccessGroupUpdate,
+		DeleteContext: resourceCloudflareAccessGroupDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessGroupImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Group resource. Access Groups are used
+			in conjunction with Access Policies to restrict access to a
+			particular resource based on group membership.
+		`),
 	}
 }
 

@@ -37,6 +37,37 @@ func dataSourceCloudflareTunnelVirtualNetwork() *schema.Resource {
 				Computed:    true,
 			},
 		},
+		Description:        "Use this datasource to lookup a tunnel virtual network in an account.",
+		DeprecationMessage: "`cloudflare_tunnel_virtual_network` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_tunnel_virtual_network` instead.",
+	}
+}
+
+func dataSourceCloudflareZeroTrustTunnelVirtualNetwork() *schema.Resource {
+	return &schema.Resource{
+		ReadContext: dataSourceCloudflareTunnelVirtualNetworkRead,
+
+		Schema: map[string]*schema.Schema{
+			consts.AccountIDSchemaKey: {
+				Description: consts.AccountIDSchemaDescription,
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"name": {
+				Description: "The Virtual Network Name.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"comment": {
+				Description: "The Virtual Network Comment.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"is_default": {
+				Description: "If true, only include deleted virtual networks. If false, exclude deleted virtual networks. If empty, all virtual networks will be included.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
+		},
 		Description: "Use this datasource to lookup a tunnel virtual network in an account.",
 	}
 }

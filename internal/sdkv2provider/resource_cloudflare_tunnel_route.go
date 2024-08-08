@@ -29,6 +29,25 @@ func resourceCloudflareTunnelRoute() *schema.Resource {
 			Trust. Tunnel routes are used to direct IP traffic through
 			Cloudflare Tunnels.
 		`),
+		DeprecationMessage: "`cloudflare_tunnel_route` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_tunnel_route` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustTunnelRoute() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTunnelRouteSchema(),
+		CreateContext: resourceCloudflareTunnelRouteCreate,
+		ReadContext:   resourceCloudflareTunnelRouteRead,
+		UpdateContext: resourceCloudflareTunnelRouteUpdate,
+		DeleteContext: resourceCloudflareTunnelRouteDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTunnelRouteImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a resource, that manages Cloudflare tunnel routes for Zero
+			Trust. Tunnel routes are used to direct IP traffic through
+			Cloudflare Tunnels.
+		`),
 	}
 }
 
