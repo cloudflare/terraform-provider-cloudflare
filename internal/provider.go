@@ -9,20 +9,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_application"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_ca_certificate"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_custom_page"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_group"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_identity_provider"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_keys_configuration"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_mutual_tls_certificate"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_mutual_tls_hostname_settings"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_organization"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_service_token"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_tag"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
@@ -43,25 +30,15 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/device_dex_test"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/device_managed_networks"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/device_posture_integration"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/device_posture_rule"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/device_settings_policy"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dlp_custom_profile"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dlp_predefined_profile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_settings"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/fallback_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/gre_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hostname_tls_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hyperdrive_config"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/keyless_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/list_item"
@@ -71,6 +48,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpull_retention"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_ownership_challenge"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_gre_tunnel"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_headers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
@@ -88,18 +68,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/static_route"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/teams_account"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/teams_list"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/teams_location"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/teams_proxy_endpoint"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/teams_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel_config"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel_route"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tunnel_virtual_network"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_agent_blocking_rule"
@@ -110,13 +80,42 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web3_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web_analytics_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web_analytics_site"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/worker_cron_trigger"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/worker_domain"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/worker_script"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/worker_secret"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_cron_trigger"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_custom_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_secret"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_group"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_identity_provider"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_key_configuration"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_mtls_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_mtls_hostname_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_policy"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_service_token"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_short_lived_certificate"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_profiles"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dex_test"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_custom_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dlp_predefined_profile"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_dns_location"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_policy"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_proxy_endpoint"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_gateway_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_list"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_local_domain_fallback"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_organization"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_config"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_route"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_virtual_network"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
@@ -321,9 +320,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		waiting_room_rules.NewResource,
 		waiting_room_setting.NewResource,
 		web3_hostname.NewResource,
-		worker_script.NewResource,
-		worker_cron_trigger.NewResource,
-		worker_domain.NewResource,
+		workers_script.NewResource,
+		workers_cron_trigger.NewResource,
+		workers_custom_domain.NewResource,
 		workers_kv_namespace.NewResource,
 		workers_kv.NewResource,
 		queue.NewResource,
@@ -339,9 +338,9 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
-		gre_tunnel.NewResource,
-		ipsec_tunnel.NewResource,
-		static_route.NewResource,
+		magic_wan_gre_tunnel.NewResource,
+		magic_wan_ipsec_tunnel.NewResource,
+		magic_wan_static_route.NewResource,
 		mtls_certificate.NewResource,
 		pages_project.NewResource,
 		pages_domain.NewResource,
@@ -351,37 +350,37 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		notification_policy.NewResource,
 		d1_database.NewResource,
 		r2_bucket.NewResource,
-		workers_for_platforms_namespace.NewResource,
-		worker_secret.NewResource,
-		device_dex_test.NewResource,
-		device_managed_networks.NewResource,
-		device_settings_policy.NewResource,
-		fallback_domain.NewResource,
-		device_posture_rule.NewResource,
-		device_posture_integration.NewResource,
-		access_identity_provider.NewResource,
-		access_organization.NewResource,
-		access_application.NewResource,
-		access_ca_certificate.NewResource,
-		access_policy.NewResource,
-		access_mutual_tls_certificate.NewResource,
-		access_mutual_tls_hostname_settings.NewResource,
-		access_group.NewResource,
-		access_service_token.NewResource,
-		access_keys_configuration.NewResource,
-		access_custom_page.NewResource,
-		access_tag.NewResource,
-		tunnel.NewResource,
-		tunnel_config.NewResource,
-		dlp_custom_profile.NewResource,
-		dlp_predefined_profile.NewResource,
-		teams_account.NewResource,
-		teams_list.NewResource,
-		teams_location.NewResource,
-		teams_proxy_endpoint.NewResource,
-		teams_rule.NewResource,
-		tunnel_route.NewResource,
-		tunnel_virtual_network.NewResource,
+		workers_for_platforms_dispatch_namespace.NewResource,
+		workers_secret.NewResource,
+		zero_trust_dex_test.NewResource,
+		zero_trust_device_managed_networks.NewResource,
+		zero_trust_device_profiles.NewResource,
+		zero_trust_local_domain_fallback.NewResource,
+		zero_trust_device_posture_rule.NewResource,
+		zero_trust_device_posture_integration.NewResource,
+		zero_trust_access_identity_provider.NewResource,
+		zero_trust_organization.NewResource,
+		zero_trust_access_application.NewResource,
+		zero_trust_access_short_lived_certificate.NewResource,
+		zero_trust_access_policy.NewResource,
+		zero_trust_access_mtls_certificate.NewResource,
+		zero_trust_access_mtls_hostname_settings.NewResource,
+		zero_trust_access_group.NewResource,
+		zero_trust_access_service_token.NewResource,
+		zero_trust_access_key_configuration.NewResource,
+		zero_trust_access_custom_page.NewResource,
+		zero_trust_access_tag.NewResource,
+		zero_trust_tunnel_cloudflared.NewResource,
+		zero_trust_tunnel_cloudflared_config.NewResource,
+		zero_trust_dlp_custom_profile.NewResource,
+		zero_trust_dlp_predefined_profile.NewResource,
+		zero_trust_gateway_settings.NewResource,
+		zero_trust_list.NewResource,
+		zero_trust_dns_location.NewResource,
+		zero_trust_gateway_proxy_endpoint.NewResource,
+		zero_trust_gateway_policy.NewResource,
+		zero_trust_tunnel_cloudflared_route.NewResource,
+		zero_trust_tunnel_cloudflared_virtual_network.NewResource,
 		turnstile_widget.NewResource,
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,
@@ -466,11 +465,11 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		waiting_room_setting.NewWaitingRoomSettingDataSource,
 		web3_hostname.NewWeb3HostnameDataSource,
 		web3_hostname.NewWeb3HostnamesDataSource,
-		worker_script.NewWorkerScriptDataSource,
-		worker_script.NewWorkerScriptsDataSource,
-		worker_cron_trigger.NewWorkerCronTriggerDataSource,
-		worker_domain.NewWorkerDomainDataSource,
-		worker_domain.NewWorkerDomainsDataSource,
+		workers_script.NewWorkersScriptDataSource,
+		workers_script.NewWorkersScriptsDataSource,
+		workers_cron_trigger.NewWorkersCronTriggerDataSource,
+		workers_custom_domain.NewWorkersCustomDomainDataSource,
+		workers_custom_domain.NewWorkersCustomDomainsDataSource,
 		workers_kv_namespace.NewWorkersKVNamespaceDataSource,
 		workers_kv_namespace.NewWorkersKVNamespacesDataSource,
 		workers_kv.NewWorkersKVDataSource,
@@ -495,9 +494,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		address_map.NewAddressMapsDataSource,
 		byo_ip_prefix.NewByoIPPrefixDataSource,
 		byo_ip_prefix.NewByoIPPrefixesDataSource,
-		gre_tunnel.NewGRETunnelDataSource,
-		ipsec_tunnel.NewIPSECTunnelDataSource,
-		static_route.NewStaticRouteDataSource,
+		magic_wan_gre_tunnel.NewMagicWANGRETunnelDataSource,
+		magic_wan_ipsec_tunnel.NewMagicWANIPSECTunnelDataSource,
+		magic_wan_static_route.NewMagicWANStaticRouteDataSource,
 		mtls_certificate.NewMTLSCertificateDataSource,
 		mtls_certificate.NewMTLSCertificatesDataSource,
 		pages_project.NewPagesProjectDataSource,
@@ -516,60 +515,60 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		d1_database.NewD1DatabasesDataSource,
 		r2_bucket.NewR2BucketDataSource,
 		r2_bucket.NewR2BucketsDataSource,
-		workers_for_platforms_namespace.NewWorkersForPlatformsNamespaceDataSource,
-		workers_for_platforms_namespace.NewWorkersForPlatformsNamespacesDataSource,
-		worker_secret.NewWorkerSecretDataSource,
-		worker_secret.NewWorkerSecretsDataSource,
-		device_dex_test.NewDeviceDEXTestDataSource,
-		device_dex_test.NewDeviceDEXTestsDataSource,
-		device_managed_networks.NewDeviceManagedNetworksDataSource,
-		device_managed_networks.NewDeviceManagedNetworksListDataSource,
-		device_settings_policy.NewDeviceSettingsPolicyDataSource,
-		device_settings_policy.NewDeviceSettingsPoliciesDataSource,
-		fallback_domain.NewFallbackDomainDataSource,
-		fallback_domain.NewFallbackDomainsDataSource,
-		device_posture_rule.NewDevicePostureRuleDataSource,
-		device_posture_rule.NewDevicePostureRulesDataSource,
-		device_posture_integration.NewDevicePostureIntegrationDataSource,
-		device_posture_integration.NewDevicePostureIntegrationsDataSource,
-		access_identity_provider.NewAccessIdentityProviderDataSource,
-		access_identity_provider.NewAccessIdentityProvidersDataSource,
-		access_organization.NewAccessOrganizationDataSource,
-		access_application.NewAccessApplicationDataSource,
-		access_application.NewAccessApplicationsDataSource,
-		access_ca_certificate.NewAccessCACertificateDataSource,
-		access_ca_certificate.NewAccessCACertificatesDataSource,
-		access_policy.NewAccessPolicyDataSource,
-		access_policy.NewAccessPoliciesDataSource,
-		access_mutual_tls_certificate.NewAccessMutualTLSCertificateDataSource,
-		access_mutual_tls_certificate.NewAccessMutualTLSCertificatesDataSource,
-		access_mutual_tls_hostname_settings.NewAccessMutualTLSHostnameSettingsDataSource,
-		access_group.NewAccessGroupDataSource,
-		access_group.NewAccessGroupsDataSource,
-		access_service_token.NewAccessServiceTokenDataSource,
-		access_service_token.NewAccessServiceTokensDataSource,
-		access_keys_configuration.NewAccessKeysConfigurationDataSource,
-		access_custom_page.NewAccessCustomPageDataSource,
-		access_custom_page.NewAccessCustomPagesDataSource,
-		access_tag.NewAccessTagDataSource,
-		access_tag.NewAccessTagsDataSource,
-		tunnel.NewTunnelDataSource,
-		tunnel.NewTunnelsDataSource,
-		tunnel_config.NewTunnelConfigDataSource,
-		dlp_custom_profile.NewDLPCustomProfileDataSource,
-		dlp_predefined_profile.NewDLPPredefinedProfileDataSource,
-		teams_account.NewTeamsAccountDataSource,
-		teams_list.NewTeamsListDataSource,
-		teams_list.NewTeamsListsDataSource,
-		teams_location.NewTeamsLocationDataSource,
-		teams_location.NewTeamsLocationsDataSource,
-		teams_proxy_endpoint.NewTeamsProxyEndpointDataSource,
-		teams_rule.NewTeamsRuleDataSource,
-		teams_rule.NewTeamsRulesDataSource,
-		tunnel_route.NewTunnelRouteDataSource,
-		tunnel_route.NewTunnelRoutesDataSource,
-		tunnel_virtual_network.NewTunnelVirtualNetworkDataSource,
-		tunnel_virtual_network.NewTunnelVirtualNetworksDataSource,
+		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
+		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
+		workers_secret.NewWorkersSecretDataSource,
+		workers_secret.NewWorkersSecretsDataSource,
+		zero_trust_dex_test.NewZeroTrustDEXTestDataSource,
+		zero_trust_dex_test.NewZeroTrustDEXTestsDataSource,
+		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksDataSource,
+		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
+		zero_trust_device_profiles.NewZeroTrustDeviceProfilesDataSource,
+		zero_trust_device_profiles.NewZeroTrustDeviceProfilesListDataSource,
+		zero_trust_local_domain_fallback.NewZeroTrustLocalDomainFallbackDataSource,
+		zero_trust_local_domain_fallback.NewZeroTrustLocalDomainFallbacksDataSource,
+		zero_trust_device_posture_rule.NewZeroTrustDevicePostureRuleDataSource,
+		zero_trust_device_posture_rule.NewZeroTrustDevicePostureRulesDataSource,
+		zero_trust_device_posture_integration.NewZeroTrustDevicePostureIntegrationDataSource,
+		zero_trust_device_posture_integration.NewZeroTrustDevicePostureIntegrationsDataSource,
+		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProviderDataSource,
+		zero_trust_access_identity_provider.NewZeroTrustAccessIdentityProvidersDataSource,
+		zero_trust_organization.NewZeroTrustOrganizationDataSource,
+		zero_trust_access_application.NewZeroTrustAccessApplicationDataSource,
+		zero_trust_access_application.NewZeroTrustAccessApplicationsDataSource,
+		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificateDataSource,
+		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificatesDataSource,
+		zero_trust_access_policy.NewZeroTrustAccessPolicyDataSource,
+		zero_trust_access_policy.NewZeroTrustAccessPoliciesDataSource,
+		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificateDataSource,
+		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificatesDataSource,
+		zero_trust_access_mtls_hostname_settings.NewZeroTrustAccessMTLSHostnameSettingsDataSource,
+		zero_trust_access_group.NewZeroTrustAccessGroupDataSource,
+		zero_trust_access_group.NewZeroTrustAccessGroupsDataSource,
+		zero_trust_access_service_token.NewZeroTrustAccessServiceTokenDataSource,
+		zero_trust_access_service_token.NewZeroTrustAccessServiceTokensDataSource,
+		zero_trust_access_key_configuration.NewZeroTrustAccessKeyConfigurationDataSource,
+		zero_trust_access_custom_page.NewZeroTrustAccessCustomPageDataSource,
+		zero_trust_access_custom_page.NewZeroTrustAccessCustomPagesDataSource,
+		zero_trust_access_tag.NewZeroTrustAccessTagDataSource,
+		zero_trust_access_tag.NewZeroTrustAccessTagsDataSource,
+		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredDataSource,
+		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredsDataSource,
+		zero_trust_tunnel_cloudflared_config.NewZeroTrustTunnelCloudflaredConfigDataSource,
+		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
+		zero_trust_dlp_predefined_profile.NewZeroTrustDLPPredefinedProfileDataSource,
+		zero_trust_gateway_settings.NewZeroTrustGatewaySettingsDataSource,
+		zero_trust_list.NewZeroTrustListDataSource,
+		zero_trust_list.NewZeroTrustListsDataSource,
+		zero_trust_dns_location.NewZeroTrustDNSLocationDataSource,
+		zero_trust_dns_location.NewZeroTrustDNSLocationsDataSource,
+		zero_trust_gateway_proxy_endpoint.NewZeroTrustGatewayProxyEndpointDataSource,
+		zero_trust_gateway_policy.NewZeroTrustGatewayPolicyDataSource,
+		zero_trust_gateway_policy.NewZeroTrustGatewayPoliciesDataSource,
+		zero_trust_tunnel_cloudflared_route.NewZeroTrustTunnelCloudflaredRouteDataSource,
+		zero_trust_tunnel_cloudflared_route.NewZeroTrustTunnelCloudflaredRoutesDataSource,
+		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworkDataSource,
+		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworksDataSource,
 		turnstile_widget.NewTurnstileWidgetDataSource,
 		turnstile_widget.NewTurnstileWidgetsDataSource,
 		hyperdrive_config.NewHyperdriveConfigDataSource,
