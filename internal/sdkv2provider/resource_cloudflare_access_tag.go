@@ -23,6 +23,21 @@ func resourceCloudflareAccessTag() *schema.Resource {
 			Provides a resource to customize the pages your end users will see
 			when trying to reach applications behind Cloudflare Access.
 		`),
+		DeprecationMessage: "`cloudflare_access_tag` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_tag` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessTag() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessTagSchema(),
+		CreateContext: resourceCloudflareAccessTagCreate,
+		ReadContext:   resourceCloudflareAccessTagRead,
+		DeleteContext: resourceCloudflareAccessTagDelete,
+		UpdateContext: schema.NoopContext,
+		Description: heredoc.Doc(`
+			Provides a resource to customize the pages your end users will see
+			when trying to reach applications behind Cloudflare Access.
+		`),
 	}
 }
 

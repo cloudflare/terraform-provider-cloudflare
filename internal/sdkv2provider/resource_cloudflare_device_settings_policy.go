@@ -22,6 +22,21 @@ func resourceCloudflareDeviceSettingsPolicy() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDeviceSettingsPolicyImport,
 		},
+		Description:        "Provides a Cloudflare Device Settings Policy resource. Device policies configure settings applied to WARP devices.",
+		DeprecationMessage: "`cloudflare_device_settings_policy` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_device_profiles` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDeviceProfiles() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDeviceSettingsPolicySchema(),
+		CreateContext: resourceCloudflareDeviceSettingsPolicyCreate,
+		ReadContext:   resourceCloudflareDeviceSettingsPolicyRead,
+		UpdateContext: resourceCloudflareDeviceSettingsPolicyUpdate,
+		DeleteContext: resourceCloudflareDeviceSettingsPolicyDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDeviceSettingsPolicyImport,
+		},
 		Description: "Provides a Cloudflare Device Settings Policy resource. Device policies configure settings applied to WARP devices.",
 	}
 }

@@ -1,4 +1,47 @@
-## 4.39.0 (Unreleased)
+## 4.40.0 (Unreleased)
+
+## 4.39.0 (August 7th, 2024)
+
+NOTES:
+
+* resource/cloudflare_access_policy: remove deprecation notice related to precedence ([#3556](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3556))
+* resource/cloudflare_record: `value` is now deprecated in favour of `content` ([#3509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3509))
+* resource/cloudflare_worker_cron_trigger: deprecated in favour of `cloudflare_workers_cron_trigger` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_domain: deprecated in favour of `cloudflare_workers_domain` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_route: deprecated in favour of `cloudflare_workers_route` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_script: deprecated in favour of `cloudflare_workers_script` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_secret: deprecated in favour of `cloudflare_workers_secret` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_workers_for_platforms_namespace: deprecated in favour of `cloudflare_workers_for_platforms_dispatch_namespace` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/zone_settings_override: deprecate `minify` setting and include state migration to remove from local state. You should immediately remove the configuration from the resource to prevent permadiffs. Automatic migration of user configuration can be handled with [Grit](https://docs.grit.io/cli/quickstart) by running `grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_zone_settings_override_remove_minify` ([#3521](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3521))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_gateway_app_types` ([#3470](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3470))
+* **New Resource:** `cloudflare_workers_cron_trigger` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_domain` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_for_platforms_dispatch_namespace` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_route` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_script` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_secret` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+
+ENHANCEMENTS:
+
+* resource/access_application: add `skip_app_launcher_login_page` flag to skip the App Launcher landing page ([#3519](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3519))
+* resource/cloudflare_device_posture_rules: added support for intune compliance_status values ([#3492](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3492))
+* resource/cloudflare_teams_rule: Add `disable_clipboard_redirection` attribute to `BISOAdminControls` ([#3511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3511))
+* resource/hyperdrive_config: Add support for creating Hyperdrive over Access configs ([#3516](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3516))
+* resource/hyperdrive_config: Add support for max_age and stale_while_revalidate in Hyperdrive Config caching settings ([#3516](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3516))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: handle overlapping hostname `url_hostname` ([#3515](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3515))
+* resource/cloudflare_risk_behavior: fix bug where partial definition of risk behaviors resulted in a provider error ([#3463](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3463))
+
+DEPENDENCIES:
+
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.58.2 to 1.58.3 in the aws group ([#3557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3557))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.100.0 to 0.101.0 ([#3540](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3540))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.99.0 to 0.100.0 ([#3499](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3499))
 
 ## 4.38.0 (July 24th, 2024)
 

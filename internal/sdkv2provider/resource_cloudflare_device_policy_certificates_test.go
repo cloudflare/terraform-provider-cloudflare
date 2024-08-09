@@ -18,7 +18,7 @@ func TestAccCloudflareDevicePolicyCertificatesCreate(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_policy_certificates.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_certificates.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -40,7 +40,7 @@ func TestAccCloudflareDevicePolicyCertificatesCreate(t *testing.T) {
 
 func testCloudflareDevicePolicyCertificates(rnd, zoneID string, enable bool) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_policy_certificates" "%[1]s" {
+resource "cloudflare_zero_trust_device_certificates" "%[1]s" {
 	zone_id = "%[2]s"
 	enabled = "%[3]t"
 }

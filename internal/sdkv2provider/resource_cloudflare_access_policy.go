@@ -28,6 +28,25 @@ func resourceCloudflareAccessPolicy() *schema.Resource {
 			used in conjunction with Access Applications to restrict access to
 			a particular resource.
 		`),
+		DeprecationMessage: "`cloudflare_access_policy` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_policy` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessPolicy() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessPolicySchema(),
+		CreateContext: resourceCloudflareAccessPolicyCreate,
+		ReadContext:   resourceCloudflareAccessPolicyRead,
+		UpdateContext: resourceCloudflareAccessPolicyUpdate,
+		DeleteContext: resourceCloudflareAccessPolicyDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessPolicyImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Policy resource. Access Policies are
+			used in conjunction with Access Applications to restrict access to
+			a particular resource.
+		`),
 	}
 }
 

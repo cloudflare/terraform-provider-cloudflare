@@ -11,7 +11,7 @@ import (
 
 func TestAccCloudflareAccessOrganization(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_organization.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_organization.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -80,7 +80,7 @@ func accessOrgImportStateCheck(instanceStates []*terraform.InstanceState) error 
 
 func testAccCloudflareAccessOrganizationConfigBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_access_organization" "%[1]s" {
+		resource "cloudflare_zero_trust_organization" "%[1]s" {
 			account_id      = "%[2]s"
 			name            = "terraform-cfapi.cloudflareaccess.com"
 			auth_domain     = "terraform-cfapi.cloudflareaccess.com1"

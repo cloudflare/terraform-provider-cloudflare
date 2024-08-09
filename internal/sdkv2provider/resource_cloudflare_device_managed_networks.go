@@ -23,6 +23,21 @@ func resourceCloudflareDeviceManagedNetworks() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDeviceManagedNetworksImport,
 		},
+		Description:        "Provides a Cloudflare Device Managed Network resource. Device managed networks allow for building location-aware device settings policies.",
+		DeprecationMessage: "`cloudflare_device_managed_networks` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_device_managed_networks` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDeviceManagedNetworks() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDeviceManagedNetworksSchema(),
+		CreateContext: resourceCloudflareDeviceManagedNetworksCreate,
+		ReadContext:   resourceCloudflareDeviceManagedNetworksRead,
+		UpdateContext: resourceCloudflareDeviceManagedNetworksUpdate,
+		DeleteContext: resourceCloudflareDeviceManagedNetworksDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDeviceManagedNetworksImport,
+		},
 		Description: "Provides a Cloudflare Device Managed Network resource. Device managed networks allow for building location-aware device settings policies.",
 	}
 }

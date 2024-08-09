@@ -18,8 +18,8 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
-	resource.AddTestSweepers("cloudflare_risk_behavior", &resource.Sweeper{
-		Name: "cloudflare_risk_behavior",
+	resource.AddTestSweepers("cloudflare_zero_trust_risk_behavior", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_risk_behavior",
 		F: func(region string) error {
 			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -53,7 +53,7 @@ func init() {
 
 func TestAccCloudflareRiskBehavior_Partial(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_risk_behavior." + rnd
+	name := "cloudflare_zero_trust_risk_behavior." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -73,7 +73,7 @@ func TestAccCloudflareRiskBehavior_Partial(t *testing.T) {
 
 func testAccCloudflareRiskBehaviorsPartial(name, accountId string) string {
 	return fmt.Sprintf(`
-	resource cloudflare_risk_behavior %s {
+	resource cloudflare_zero_trust_risk_behavior %s {
 		account_id = "%s"
 		behavior {
 			name = "imp_travel"
@@ -85,7 +85,7 @@ func testAccCloudflareRiskBehaviorsPartial(name, accountId string) string {
 
 func TestAccCloudflareRiskBehavior_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_risk_behavior." + rnd
+	name := "cloudflare_zero_trust_risk_behavior." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -105,7 +105,7 @@ func TestAccCloudflareRiskBehavior_Basic(t *testing.T) {
 
 func testAccCloudflareRiskBehaviors(name, accountId string) string {
 	return fmt.Sprintf(`
-	resource cloudflare_risk_behavior %s {
+	resource cloudflare_zero_trust_risk_behavior %s {
 		account_id = "%s"
 		behavior {
 			name = "imp_travel"

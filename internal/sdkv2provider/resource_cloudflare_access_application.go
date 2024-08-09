@@ -29,6 +29,25 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			Applications are used to restrict access to a whole application using an
 			authorisation gateway managed by Cloudflare.
 		`),
+		DeprecationMessage: "`cloudflare_access_application` is now deprecated and will be removed in the next major version. Use `zero_trust_access_application` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessApplication() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessApplicationSchema(),
+		CreateContext: resourceCloudflareAccessApplicationCreate,
+		ReadContext:   resourceCloudflareAccessApplicationRead,
+		UpdateContext: resourceCloudflareAccessApplicationUpdate,
+		DeleteContext: resourceCloudflareAccessApplicationDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessApplicationImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Application resource. Access
+			Applications are used to restrict access to a whole application using an
+			authorisation gateway managed by Cloudflare.
+		`),
 	}
 }
 
@@ -94,9 +113,10 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	if appType == "app_launcher" {
 		newAccessApplication.AccessAppLauncherCustomization = cloudflare.AccessAppLauncherCustomization{
-			LogoURL:               d.Get("app_launcher_logo_url").(string),
-			BackgroundColor:       d.Get("bg_color").(string),
-			HeaderBackgroundColor: d.Get("header_bg_color").(string),
+			LogoURL:                  d.Get("app_launcher_logo_url").(string),
+			BackgroundColor:          d.Get("bg_color").(string),
+			HeaderBackgroundColor:    d.Get("header_bg_color").(string),
+			SkipAppLauncherLoginPage: cloudflare.BoolPtr(d.Get("skip_app_launcher_login_page").(bool)),
 		}
 
 		if _, ok := d.GetOk("landing_page_design"); ok {
@@ -196,6 +216,7 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 	d.Set("bg_color", accessApplication.AccessAppLauncherCustomization.BackgroundColor)
 	d.Set("header_bg_color", accessApplication.AccessAppLauncherCustomization.HeaderBackgroundColor)
 	d.Set("app_launcher_logo_url", accessApplication.AccessAppLauncherCustomization.LogoURL)
+	d.Set("skip_app_launcher_login_page", accessApplication.AccessAppLauncherCustomization.SkipAppLauncherLoginPage)
 	d.Set("allow_authenticate_via_warp", accessApplication.AllowAuthenticateViaWarp)
 	d.Set("options_preflight_bypass", accessApplication.OptionsPreflightBypass)
 

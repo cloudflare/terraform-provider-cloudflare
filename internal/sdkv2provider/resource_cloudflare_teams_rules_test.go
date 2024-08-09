@@ -21,7 +21,7 @@ func TestAccCloudflareTeamsRule_Basic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -57,7 +57,7 @@ func TestAccCloudflareTeamsRule_Basic(t *testing.T) {
 
 func testAccCloudflareTeamsRuleConfigBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_rule" "%[1]s" {
+resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
   description = "desc"
@@ -93,7 +93,7 @@ func TestAccCloudflareTeamsRule_NoSettings(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -125,7 +125,7 @@ func TestAccCloudflareTeamsRule_NoSettings(t *testing.T) {
 
 func testAccCloudflareTeamsRuleConfigNoSettings(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_rule" "%[1]s" {
+resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
   description = "desc"
@@ -141,7 +141,7 @@ func testAccCheckCloudflareTeamsRuleDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_teams_rule" {
+		if rs.Type != "cloudflare_zero_trust_gateway_policy" {
 			continue
 		}
 
@@ -163,7 +163,7 @@ func TestAccCloudflareTeamsRule_CustomResolver(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -218,7 +218,7 @@ func TestAccCloudflareTeamsRule_CustomResolver(t *testing.T) {
 
 func testAccCloudflareTeamsRuleConfigCustomResolver(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_rule" "%[1]s" {
+resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
   description = "desc"
@@ -276,7 +276,7 @@ func TestAccCloudflareTeamsRule_WithClipboardRedirection(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_policy.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -312,7 +312,7 @@ func TestAccCloudflareTeamsRule_WithClipboardRedirection(t *testing.T) {
 
 func testAccCloudflareTeamsRuleConfigWithClipboardRedirection(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_rule" "%[1]s" {
+resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
   description = "desc"

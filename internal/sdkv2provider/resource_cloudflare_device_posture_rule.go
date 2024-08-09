@@ -28,6 +28,23 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Device Posture Rule resource. Device posture rules configure security policies for device posture checks.
 		`),
+		DeprecationMessage: "`cloudflare_device_posture_rule` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_device_posture_rule` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDevicePostureRule() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDevicePostureRuleSchema(),
+		CreateContext: resourceCloudflareDevicePostureRuleCreate,
+		ReadContext:   resourceCloudflareDevicePostureRuleRead,
+		UpdateContext: resourceCloudflareDevicePostureRuleUpdate,
+		DeleteContext: resourceCloudflareDevicePostureRuleDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDevicePostureRuleImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Device Posture Rule resource. Device posture rules configure security policies for device posture checks.
+		`),
 	}
 }
 

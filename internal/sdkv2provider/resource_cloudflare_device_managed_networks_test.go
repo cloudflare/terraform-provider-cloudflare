@@ -10,7 +10,7 @@ import (
 
 func TestAccCloudflareDeviceManagedNetworks(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_managed_networks.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_managed_networks.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -34,7 +34,7 @@ func TestAccCloudflareDeviceManagedNetworks(t *testing.T) {
 
 func testAccCloudflareDeviceManagedNetworks(accountID, rnd string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_managed_networks" "%[1]s" {
+resource "cloudflare_zero_trust_device_managed_networks" "%[1]s" {
   account_id                = "%[2]s"
   name                      = "%[1]s"
   type                      = "tls"

@@ -1,0 +1,3 @@
+```release-note:note
+resource/cloudflare_access_policy: remove deprecation notice related to precedence
+```

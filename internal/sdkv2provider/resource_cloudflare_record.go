@@ -94,7 +94,7 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 	if contentOk == dataOk {
 		return diag.FromErr(fmt.Errorf(
 			"either 'content' (present: %t) or 'data' (present: %t) must be provided",
-			valueOk, dataOk))
+			contentOk, dataOk))
 	}
 
 	if priority, ok := d.GetOkExists("priority"); ok {

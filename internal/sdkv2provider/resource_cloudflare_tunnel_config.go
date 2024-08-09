@@ -30,6 +30,23 @@ func resourceCloudflareTunnelConfig() *schema.Resource {
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Tunnel configuration resource.
 		`),
+		DeprecationMessage: "`cloudflare_tunnel_config` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_tunnel_cloudflared_config` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustTunnelCloudflaredConfig() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTunnelConfigSchema(),
+		ReadContext:   resourceCloudflareTunnelConfigRead,
+		CreateContext: resourceCloudflareTunnelConfigUpdate,
+		UpdateContext: resourceCloudflareTunnelConfigUpdate,
+		DeleteContext: resourceCloudflareTunnelConfigDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTunnelConfigImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Tunnel configuration resource.
+		`),
 	}
 }
 

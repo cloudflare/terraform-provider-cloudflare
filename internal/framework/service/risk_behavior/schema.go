@@ -18,6 +18,8 @@ import (
 
 func (r *RiskBehaviorResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		DeprecationMessage: "`cloudflare_risk_behavior` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_risk_behavior` instead.",
+
 		MarkdownDescription: heredoc.Doc(`
 			The [Risk Behavior](https://developers.cloudflare.com/cloudflare-one/insights/risk-score/) resource allows you to configure Cloudflare Risk Behaviors for an account.
 	`),

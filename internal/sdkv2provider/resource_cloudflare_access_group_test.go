@@ -15,8 +15,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_access_group", &resource.Sweeper{
-		Name: "cloudflare_access_group",
+	resource.AddTestSweepers("cloudflare_zero_trust_access_group", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_group",
 		F:    testSweepCloudflareAccessGroups,
 	})
 }
@@ -76,7 +76,7 @@ var (
 
 func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -122,7 +122,7 @@ func TestAccCloudflareAccessGroup_ConfigBasicZone(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -183,10 +183,10 @@ func TestAccCloudflareAccessGroup_ConfigBasicAccount(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	rnd2 := generateRandomResourceName()
-	emailListName := fmt.Sprintf("cloudflare_teams_list.%s", rnd2)
+	emailListName := fmt.Sprintf("cloudflare_zero_trust_list.%s", rnd2)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -214,7 +214,7 @@ func TestAccCloudflareAccessGroup_ConfigEmailList(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -241,7 +241,7 @@ func TestAccCloudflareAccessGroup_Exclude(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -268,7 +268,7 @@ func TestAccCloudflareAccessGroup_Require(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -299,7 +299,7 @@ func TestAccCloudflareAccessGroup_FullConfig(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 	rnd := generateRandomResourceName()
-	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	groupName := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 	githubOrg := "Terraform-Cloudflare-Provider-Test-Org"
 	team := "test-team-1"
 
@@ -328,7 +328,7 @@ func TestAccCloudflareAccessGroup_WithIDP(t *testing.T) {
 
 func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 	rnd := generateRandomResourceName()
-	groupName := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	groupName := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 	ctxID := generateRandomResourceName()
 	ctxACID := "c1"
 
@@ -358,7 +358,7 @@ func TestAccCloudflareAccessGroup_WithIDPAuthContext(t *testing.T) {
 func TestAccCloudflareAccessGroup_Updated(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -390,7 +390,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	var initialID string
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -426,7 +426,7 @@ func TestAccCloudflareAccessGroup_CreateAfterManualDestroy(t *testing.T) {
 func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.T) {
 	var before, after cloudflare.AccessGroup
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_group.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_group.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -458,7 +458,7 @@ func TestAccCloudflareAccessGroup_UpdatedFromCommonNameToCommonNames(t *testing.
 
 func testAccCloudflareAccessGroupConfigBasic(resourceName string, email string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   %[3]s_id = "%[4]s"
   name     = "%[1]s"
 
@@ -496,7 +496,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
 func testAccCloudflareAccessGroupConfigBasicWithUpdate(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   account_id = "%[2]s"
   name = "%[1]s-updated"
 
@@ -509,7 +509,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
 func testAccessGroupConfigExclude(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   account_id = "%[2]s"
   name = "%[1]s"
 
@@ -526,7 +526,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
 func testAccessGroupConfigRequire(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   account_id = "%[2]s"
   name = "%[1]s"
 
@@ -543,7 +543,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
 func testAccessGroupConfigFullConfig(resourceName, accountID, email string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   account_id = "%[2]s"
   name = "%[1]s"
 
@@ -565,7 +565,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
 func testAccCloudflareAccessGroupWithIDP(accountID, rnd, githubOrg, team string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
   account_id = "%[1]s"
   name = "%[2]s"
   type = "github"
@@ -575,7 +575,7 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
   }
 }
 
-resource "cloudflare_access_group" "%[2]s" {
+resource "cloudflare_zero_trust_access_group" "%[2]s" {
   account_id = "%[1]s"
   name = "%[2]s"
 
@@ -583,7 +583,7 @@ resource "cloudflare_access_group" "%[2]s" {
     github {
       name                 = "%[3]s"
       teams                = ["%[4]s"]
-      identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
+      identity_provider_id = cloudflare_zero_trust_access_identity_provider.%[2]s.id
     }
   }
 }`, accountID, rnd, githubOrg, team)
@@ -591,7 +591,7 @@ resource "cloudflare_access_group" "%[2]s" {
 
 func testAccCloudflareAccessGroupWithIDPAuthContext(accountID, rnd, authCtxID, authCtxACID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[2]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
   account_id = "%[1]s"
   name = "%[2]s"
   type = "azureAD"
@@ -602,7 +602,7 @@ resource "cloudflare_access_identity_provider" "%[2]s" {
   }
 }
 
-resource "cloudflare_access_group" "%[2]s" {
+resource "cloudflare_zero_trust_access_group" "%[2]s" {
   account_id = "%[1]s"
   name = "%[2]s"
 
@@ -614,7 +614,7 @@ resource "cloudflare_access_group" "%[2]s" {
     auth_context {
       id = "%[3]s"
       ac_id = "%[4]s"
-      identity_provider_id = cloudflare_access_identity_provider.%[2]s.id
+      identity_provider_id = cloudflare_zero_trust_access_identity_provider.%[2]s.id
     }
   }
 }`, accountID, rnd, authCtxID, authCtxACID)
@@ -622,7 +622,7 @@ resource "cloudflare_access_group" "%[2]s" {
 
 func testAccCloudflareAccessGroupConfigBasicWithCommonName(resourceName string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   %[2]s_id = "%[3]s"
   name     = "%[1]s"
 
@@ -634,7 +634,7 @@ resource "cloudflare_access_group" "%[1]s" {
 
 func testAccCloudflareAccessGroupConfigBasicWithCommonNames(resourceName string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   %[2]s_id = "%[3]s"
   name     = "%[1]s"
 
@@ -646,19 +646,19 @@ resource "cloudflare_access_group" "%[1]s" {
 
 func testAccCloudflareAccessGroupConfigEmailList(resourceName string, emailListName string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[2]s" {
+resource "cloudflare_zero_trust_list" "%[2]s" {
   %[3]s_id    = "%[4]s"
 	name        = "%[2]s"
 	type        = "EMAIL"
 	description = "Email list test for %[1]s"
 	items       = [ "test@example.com" ]
 }
-resource "cloudflare_access_group" "%[1]s" {
+resource "cloudflare_zero_trust_access_group" "%[1]s" {
   %[3]s_id = "%[4]s"
   name     = "%[1]s"
 
   include {
-		email_list = [cloudflare_teams_list.%[2]s.id]
+		email_list = [cloudflare_zero_trust_list.%[2]s.id]
   }
 }`, resourceName, emailListName, identifier.Type, identifier.Identifier)
 }
@@ -704,7 +704,7 @@ func testAccCheckCloudflareAccessGroupDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_group" {
+		if rs.Type != "cloudflare_zero_trust_access_group" {
 			continue
 		}
 

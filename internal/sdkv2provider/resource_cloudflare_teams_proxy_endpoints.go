@@ -28,6 +28,25 @@ func resourceCloudflareTeamsProxyEndpoint() *schema.Resource {
 			Endpoints are used for pointing proxy clients at Cloudflare Secure
 			Gateway.
 		`),
+		DeprecationMessage: "`cloudflare_teams_proxy_endpoint` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_gateway_proxy_endpoint` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustGatewayProxyEndpoint() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTeamsProxyEndpointSchema(),
+		CreateContext: resourceCloudflareTeamsProxyEndpointCreate,
+		ReadContext:   resourceCloudflareTeamsProxyEndpointRead,
+		UpdateContext: resourceCloudflareTeamsProxyEndpointUpdate,
+		DeleteContext: resourceCloudflareTeamsProxyEndpointDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTeamsProxyEndpointImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams Proxy Endpoint resource. Teams Proxy
+			Endpoints are used for pointing proxy clients at Cloudflare Secure
+			Gateway.
+		`),
 	}
 }
 
