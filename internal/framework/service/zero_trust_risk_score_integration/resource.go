@@ -1,4 +1,4 @@
-package risk_score_integration
+package zero_trust_risk_score_integration
 
 import (
 	"context"
@@ -26,7 +26,7 @@ type RiskScoreIntegrationResource struct {
 }
 
 func (r *RiskScoreIntegrationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_risk_score_integration"
+	resp.TypeName = req.ProviderTypeName + "_zero_trust_risk_score_integration"
 }
 
 func (r *RiskScoreIntegrationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {

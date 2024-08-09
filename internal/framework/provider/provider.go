@@ -28,7 +28,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/risk_behavior"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/risk_score_integration"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_score_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
@@ -377,7 +377,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_mtls_hostname_settings.NewResource,
 		workers_for_platforms_dispatch_namespace_deprecated.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
-		risk_score_integration.NewResource,
+		zero_trust_risk_score_integration.NewResource,
 	}
 }
 

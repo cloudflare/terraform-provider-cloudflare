@@ -1,4 +1,4 @@
-package risk_score_integration
+package zero_trust_risk_score_integration
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"

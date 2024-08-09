@@ -1,11 +1,11 @@
 ---
-page_title: "cloudflare_risk_score_integration Resource - Cloudflare"
+page_title: "cloudflare_zero_trust_risk_score_integration Resource - Cloudflare"
 subcategory: ""
 description: |-
   The Risk Score Integration https://developers.cloudflare.com/cloudflare-one/insights/risk-score/#send-risk-score-to-okta resource allows you to transmit changes in User Risk Score to a specified vendor such as Okta.
 ---
 
-# cloudflare_risk_score_integration (Resource)
+# cloudflare_zero_trust_risk_score_integration (Resource)
 
 The [Risk Score Integration](https://developers.cloudflare.com/cloudflare-one/insights/risk-score/#send-risk-score-to-okta) resource allows you to transmit changes in User Risk Score to a specified vendor such as Okta.
 

@@ -1,4 +1,4 @@
-package risk_score_integration_test
+package zero_trust_risk_score_integration_test
 
 import (
 	"context"
@@ -18,8 +18,8 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
-	resource.AddTestSweepers("cloudflare_risk_score_integration", &resource.Sweeper{
-		Name: "cloudflare_risk_score_integration",
+	resource.AddTestSweepers("cloudflare_zero_trust_risk_score_integration", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_risk_score_integration",
 		F: func(region string) error {
 			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -50,7 +50,7 @@ func init() {
 
 func TestAccCloudflareRiskScoreIntegration_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_risk_score_integration." + rnd
+	name := "cloudflare_zero_trust_risk_score_integration." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -59,7 +59,7 @@ func TestAccCloudflareRiskScoreIntegration_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(`
-				resource cloudflare_risk_score_integration %s {
+				resource cloudflare_zero_trust_risk_score_integration %s {
 					account_id = "%s"
 					integration_type = "Okta"
 					tenant_url = "https://test-tenant.okta.com"
@@ -77,7 +77,7 @@ func TestAccCloudflareRiskScoreIntegration_Basic(t *testing.T) {
 
 func TestAccCloudflareRiskScoreIntegration_Reference_ID(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_risk_score_integration." + rnd
+	name := "cloudflare_zero_trust_risk_score_integration." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -86,7 +86,7 @@ func TestAccCloudflareRiskScoreIntegration_Reference_ID(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(`
-				resource cloudflare_risk_score_integration %s {
+				resource cloudflare_zero_trust_risk_score_integration %s {
 					account_id = "%s"
 					integration_type = "Okta"
 					tenant_url = "https://test-tenant.okta.com"
