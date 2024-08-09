@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_mutual_tls_certificate: change associated hostnames to a set
+```
