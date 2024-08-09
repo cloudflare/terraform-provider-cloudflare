@@ -1,0 +1,3 @@
+```release-note:new-resource
+resource/teams-certificate: add teams certificates to Gateway and Gateway account configurations
+```
