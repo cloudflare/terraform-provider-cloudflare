@@ -93,10 +93,11 @@ func (d *ZeroTrustGatewayPoliciesDataSource) Schema(ctx context.Context, req dat
 							Computed:    true,
 							Optional:    true,
 							Attributes: map[string]schema.Attribute{
-								"add_headers": schema.StringAttribute{
+								"add_headers": schema.MapAttribute{
 									Description: "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).",
 									Computed:    true,
 									Optional:    true,
+									ElementType: types.StringType,
 								},
 								"allow_child_bypass": schema.BoolAttribute{
 									Description: "Set by parent MSP accounts to enable their children to bypass this rule.",
