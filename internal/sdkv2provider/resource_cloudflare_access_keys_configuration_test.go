@@ -17,7 +17,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_key_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -38,7 +38,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithKeyRotationIntervalDaysSet(t *
 
 func testAccessKeysConfigurationWithKeyRotationIntervalDays(rnd, accountID string, days int) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_keys_configuration" "%[1]s" {
+resource "cloudflare_zero_trust_access_key_configuration" "%[1]s" {
   account_id = "%[2]s"
   key_rotation_interval_days = "%[3]d"
 }`, rnd, accountID, days)
@@ -53,7 +53,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_keys_configuration.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_key_configuration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -74,7 +74,7 @@ func TestAccCloudflareAccessKeysConfiguration_WithoutKeyRotationIntervalDaysSet(
 
 func testAccessKeysConfigurationWithoutKeyRotationIntervalDays(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_keys_configuration" "%[1]s" {
+resource "cloudflare_zero_trust_access_key_configuration" "%[1]s" {
   account_id = "%[2]s"
 }`, rnd, accountID)
 }

@@ -27,6 +27,24 @@ func resourceCloudflareAccessKeysConfiguration() *schema.Resource {
 			Access Keys Configuration defines the rotation policy for the keys
 			that access will use to sign data.
 		`),
+		DeprecationMessage: "`cloudflare_access_keys_configuration` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_key_access_key_configuration` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessKeyConfiguration() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessKeysConfigurationSchema(),
+		ReadContext:   resourceCloudflareAccessKeysConfigurationRead,
+		CreateContext: resourceCloudflareAccessKeysConfigurationCreate,
+		UpdateContext: resourceCloudflareAccessKeysConfigurationUpdate,
+		DeleteContext: resourceCloudflareKeysConfigurationDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareKeysConfigurationImport,
+		},
+		Description: heredoc.Doc(`
+			Access Keys Configuration defines the rotation policy for the keys
+			that access will use to sign data.
+		`),
 	}
 }
 

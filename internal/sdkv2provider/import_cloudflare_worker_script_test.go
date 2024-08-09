@@ -19,7 +19,7 @@ func TestAccCloudflareWorkerScript_Import(t *testing.T) {
 
 	var script cloudflare.WorkerScript
 	rnd := generateRandomResourceName()
-	name := "cloudflare_worker_script." + rnd
+	name := "cloudflare_workers_script." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{

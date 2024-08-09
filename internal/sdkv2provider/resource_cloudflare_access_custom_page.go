@@ -23,6 +23,21 @@ func resourceCloudflareAccessCustomPage() *schema.Resource {
 			Provides a resource to customize the pages your end users will see
 			when trying to reach applications behind Cloudflare Access.
 		`),
+		DeprecationMessage: "`cloudflare_access_custom_page` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_custom_page` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessCustomPage() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessCustomPageSchema(),
+		CreateContext: resourceCloudflareAccessCustomPageCreate,
+		ReadContext:   resourceCloudflareAccessCustomPageRead,
+		UpdateContext: resourceCloudflareAccessCustomPageUpdate,
+		DeleteContext: resourceCloudflareAccessCustomPageDelete,
+		Description: heredoc.Doc(`
+			Provides a resource to customize the pages your end users will see
+			when trying to reach applications behind Cloudflare Access.
+		`),
 	}
 }
 

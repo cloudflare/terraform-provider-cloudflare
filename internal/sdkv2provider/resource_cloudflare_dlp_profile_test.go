@@ -13,7 +13,7 @@ import (
 
 func TestAccCloudflareDLPProfile_Custom(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_dlp_profile.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dlp_profile.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -41,7 +41,7 @@ func TestAccCloudflareDLPProfile_Custom(t *testing.T) {
 
 func TestAccCloudflareDLPProfile_Custom_MultipleEntries(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_dlp_profile.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dlp_profile.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -81,7 +81,7 @@ func TestAccCloudflareDLPProfile_Custom_MultipleEntries(t *testing.T) {
 
 func TestAccCloudflareDLPProfile_CustomWithAllowedMatchCount(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_dlp_profile.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dlp_profile.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -109,7 +109,7 @@ func TestAccCloudflareDLPProfile_CustomWithAllowedMatchCount(t *testing.T) {
 
 func TestAccCloudflareDLPProfile_CustomWithOCREnabled(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_dlp_profile.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dlp_profile.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -138,7 +138,7 @@ func TestAccCloudflareDLPProfile_CustomWithOCREnabled(t *testing.T) {
 
 func TestAccCloudflareDLPProfile_ContextAwareness(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_dlp_profile.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dlp_profile.%s", rnd)
 
 	enabled := true
 	files := true
@@ -176,7 +176,7 @@ func TestAccCloudflareDLPProfile_ContextAwareness(t *testing.T) {
 
 func testAccCloudflareDLPProfileConfigCustom(accountID, rnd, description string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_dlp_profile" "%[1]s" {
+resource "cloudflare_zero_trust_dlp_profile" "%[1]s" {
   account_id                = "%[3]s"
   name                      = "%[1]s"
   description               = "%[2]s"
@@ -196,7 +196,7 @@ resource "cloudflare_dlp_profile" "%[1]s" {
 
 func testAccCloudflareDLPProfileConfigCustomMultipleEntries(accountID, rnd, description string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_dlp_profile" "%[1]s" {
+resource "cloudflare_zero_trust_dlp_profile" "%[1]s" {
   account_id                = "%[3]s"
   name                      = "%[1]s"
   description               = "%[2]s"
@@ -224,7 +224,7 @@ resource "cloudflare_dlp_profile" "%[1]s" {
 
 func testAccCloudflareDLPProfileConfigCustomWithAllowedMatchCount(accountID, rnd, description string, allowedMatchCount uint) string {
 	return fmt.Sprintf(`
-resource "cloudflare_dlp_profile" "%[1]s" {
+resource "cloudflare_zero_trust_dlp_profile" "%[1]s" {
   account_id                = "%[3]s"
   name                      = "%[1]s"
   description               = "%[2]s"
@@ -244,7 +244,7 @@ resource "cloudflare_dlp_profile" "%[1]s" {
 
 func testAccCloudflareDLPProfileConfigCustomWithOCREnabled(accountID, rnd, description string, ocrEnabled bool) string {
 	return fmt.Sprintf(`
-resource "cloudflare_dlp_profile" "%[1]s" {
+resource "cloudflare_zero_trust_dlp_profile" "%[1]s" {
   account_id                = "%[3]s"
   name                      = "%[1]s"
   description               = "%[2]s"
@@ -265,7 +265,7 @@ resource "cloudflare_dlp_profile" "%[1]s" {
 
 func testAccCloudflareDLPProfileConfigWithContextAwareness(accountID, rnd, description string, contextAwareness cloudflare.DLPContextAwareness) string {
 	return fmt.Sprintf(`
-resource "cloudflare_dlp_profile" "%[2]s" {
+resource "cloudflare_zero_trust_dlp_profile" "%[2]s" {
   account_id                = "%[1]s"
   name                      = "%[2]s"
   description               = "%[3]s"

@@ -1,4 +1,4 @@
-package access_mutual_tls_hostname_settings_test
+package zero_trust_access_mtls_hostname_settings_test
 
 import (
 	"context"

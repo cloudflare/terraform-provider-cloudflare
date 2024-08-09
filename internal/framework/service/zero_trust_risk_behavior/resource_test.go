@@ -1,4 +1,4 @@
-package risk_behavior_test
+package zero_trust_risk_behavior_test
 
 import (
 	"context"

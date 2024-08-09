@@ -27,6 +27,24 @@ func resourceCloudflareDevicePolicyCertificates() *schema.Resource {
 			policy certificate resources enable client device certificate
 			generation.
 		`),
+		DeprecationMessage: "`cloudflare_device_policy_certificates` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_device_certificates` instead.",
+	}
+}
+func resourceCloudflareZeroTrustDevicePolicyCertificates() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDevicePolicyCertificatesSchema(),
+		CreateContext: resourceCloudflareDevicePolicyCertificateUpdate,
+		ReadContext:   resourceCloudflareDevicePolicyCertificateRead,
+		UpdateContext: resourceCloudflareDevicePolicyCertificateUpdate,
+		DeleteContext: resourceCloudflareDevicePolicyCertificateDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDevicePolicyCertificateImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare device policy certificates resource. Device
+			policy certificate resources enable client device certificate
+			generation.
+		`),
 	}
 }
 
