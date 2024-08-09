@@ -1,4 +1,4 @@
-package worker_secret_test
+package workers_secret_test
 
 import (
 	"context"

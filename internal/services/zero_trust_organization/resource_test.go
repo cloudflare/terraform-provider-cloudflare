@@ -1,4 +1,4 @@
-package access_organization_test
+package zero_trust_organization_test
 
 import (
 	"fmt"

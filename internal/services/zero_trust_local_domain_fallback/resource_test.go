@@ -1,4 +1,4 @@
-package fallback_domain_test
+package zero_trust_local_domain_fallback_test
 
 import (
 	"fmt"

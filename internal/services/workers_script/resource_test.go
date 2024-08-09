@@ -1,4 +1,4 @@
-package worker_script_test
+package workers_script_test
 
 import (
 	"context"

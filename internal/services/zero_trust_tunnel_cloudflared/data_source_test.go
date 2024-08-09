@@ -1,4 +1,4 @@
-package tunnel_test
+package zero_trust_tunnel_cloudflared_test
 
 import (
 	"fmt"

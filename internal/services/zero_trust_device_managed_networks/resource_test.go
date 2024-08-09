@@ -1,4 +1,4 @@
-package device_managed_networks_test
+package zero_trust_device_managed_networks_test
 
 import (
 	"fmt"

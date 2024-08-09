@@ -1,4 +1,4 @@
-package ipsec_tunnel_test
+package magic_wan_ipsec_tunnel_test
 
 import (
 	"context"

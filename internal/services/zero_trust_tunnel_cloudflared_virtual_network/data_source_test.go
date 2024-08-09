@@ -1,4 +1,4 @@
-package tunnel_virtual_network_test
+package zero_trust_tunnel_cloudflared_virtual_network_test
 
 import (
 	"os"

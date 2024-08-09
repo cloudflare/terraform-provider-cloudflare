@@ -1,4 +1,4 @@
-package device_dex_test_test
+package zero_trust_dex_test_test
 
 import (
 	"fmt"

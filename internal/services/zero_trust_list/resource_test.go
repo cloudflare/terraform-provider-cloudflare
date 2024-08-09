@@ -1,4 +1,4 @@
-package teams_list_test
+package zero_trust_list_test
 
 import (
 	"context"

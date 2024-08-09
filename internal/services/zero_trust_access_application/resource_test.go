@@ -1,4 +1,4 @@
-package access_application_test
+package zero_trust_access_application_test
 
 import (
 	"context"

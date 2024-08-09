@@ -1,4 +1,4 @@
-package access_custom_page_test
+package zero_trust_access_custom_page_test
 
 import (
 	"fmt"

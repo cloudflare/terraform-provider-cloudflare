@@ -1,4 +1,4 @@
-package access_ca_certificate_test
+package zero_trust_access_short_lived_certificate_test
 
 import (
 	"context"

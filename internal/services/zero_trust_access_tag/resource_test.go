@@ -1,4 +1,4 @@
-package access_tag_test
+package zero_trust_access_tag_test
 
 import (
 	"fmt"

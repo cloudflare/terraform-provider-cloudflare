@@ -1,4 +1,4 @@
-package teams_account_test
+package zero_trust_gateway_settings_test
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package teams_proxy_endpoint_test
+package zero_trust_gateway_proxy_endpoint_test
 
 import (
 	"context"

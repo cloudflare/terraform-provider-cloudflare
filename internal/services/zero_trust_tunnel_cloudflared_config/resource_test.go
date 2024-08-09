@@ -1,4 +1,4 @@
-package tunnel_config_test
+package zero_trust_tunnel_cloudflared_config_test
 
 import (
 	"os"

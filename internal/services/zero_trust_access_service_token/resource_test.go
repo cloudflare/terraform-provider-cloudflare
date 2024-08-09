@@ -1,4 +1,4 @@
-package access_service_token_test
+package zero_trust_access_service_token_test
 
 import (
 	"context"

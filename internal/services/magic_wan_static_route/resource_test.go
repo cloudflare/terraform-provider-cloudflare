@@ -1,4 +1,4 @@
-package static_route_test
+package magic_wan_static_route_test
 
 import (
 	"context"

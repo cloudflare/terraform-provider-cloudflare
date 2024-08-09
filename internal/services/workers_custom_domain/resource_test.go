@@ -1,4 +1,4 @@
-package worker_domain_test
+package workers_custom_domain_test
 
 import (
 	"context"

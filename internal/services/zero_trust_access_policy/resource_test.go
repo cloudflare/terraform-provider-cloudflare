@@ -1,4 +1,4 @@
-package access_policy_test
+package zero_trust_access_policy_test
 
 import (
 	"context"
