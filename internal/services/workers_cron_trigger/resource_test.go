@@ -1,4 +1,4 @@
-package worker_cron_trigger_test
+package workers_cron_trigger_test
 
 import (
 	"fmt"

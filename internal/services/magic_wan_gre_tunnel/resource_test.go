@@ -1,4 +1,4 @@
-package gre_tunnel_test
+package magic_wan_gre_tunnel
 
 import (
 	"context"

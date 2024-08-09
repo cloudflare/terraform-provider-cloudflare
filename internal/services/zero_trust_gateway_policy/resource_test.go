@@ -1,4 +1,4 @@
-package teams_rule_test
+package zero_trust_gateway_policy_test
 
 import (
 	"context"

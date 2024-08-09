@@ -1,4 +1,4 @@
-package access_group_test
+package zero_trust_access_group_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package teams_location_test
+package zero_trust_dns_location_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package access_keys_configuration_test
+package zero_trust_access_key_configuration_test
 
 import (
 	"fmt"

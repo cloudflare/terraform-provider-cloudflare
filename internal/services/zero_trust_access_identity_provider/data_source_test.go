@@ -1,4 +1,4 @@
-package access_identity_provider_test
+package zero_trust_access_identity_provider_test
 
 import (
 	"fmt"

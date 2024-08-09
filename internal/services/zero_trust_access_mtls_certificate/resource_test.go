@@ -1,4 +1,4 @@
-package access_mutual_tls_certificate_test
+package zero_trust_access_mtls_certificate_test
 
 import (
 	"context"

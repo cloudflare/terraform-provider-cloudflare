@@ -1,4 +1,4 @@
-package device_posture_rule_test
+package zero_trust_device_posture_rule_test
 
 import (
 	"context"

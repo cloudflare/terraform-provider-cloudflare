@@ -1,4 +1,4 @@
-package tunnel_route_test
+package zero_trust_tunnel_cloudflared_route_test
 
 import (
 	"context"
