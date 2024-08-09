@@ -12,7 +12,7 @@ Provides a Cloudflare Tunnel configuration resource.
 ## Example Usage
 
 ```terraform
-resource "cloudflare_tunnel" "example_tunnel" {
+resource "cloudflare_zero_trust_tunnel_cloudflared" "example_tunnel" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "example_tunnel"
   secret     = "<32 character secret>"
@@ -20,7 +20,7 @@ resource "cloudflare_tunnel" "example_tunnel" {
 
 resource "cloudflare_tunnel_config" "example_config" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  tunnel_id  = cloudflare_tunnel.example_tunnel.id
+  tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.example_tunnel.id
 
   config {
     warp_routing {
