@@ -24,7 +24,11 @@ func (r *QueueResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier",
+				Description:   "Identifier.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"queue_name": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -38,9 +42,6 @@ func (r *QueueResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				Computed: true,
 			},
 			"producers_total_count": schema.Float64Attribute{
-				Computed: true,
-			},
-			"queue_name": schema.StringAttribute{
 				Computed: true,
 			},
 			"consumers": schema.StringAttribute{
