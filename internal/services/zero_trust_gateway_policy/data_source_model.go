@@ -3,7 +3,6 @@
 package zero_trust_gateway_policy
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -38,7 +37,7 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {
-	AddHeaders                      jsontypes.Normalized                                                   `tfsdk:"add_headers" json:"add_headers"`
+	AddHeaders                      map[string]types.String                                                `tfsdk:"add_headers" json:"add_headers"`
 	AllowChildBypass                types.Bool                                                             `tfsdk:"allow_child_bypass" json:"allow_child_bypass"`
 	AuditSSH                        *ZeroTrustGatewayPolicyRuleSettingsAuditSSHDataSourceModel             `tfsdk:"audit_ssh" json:"audit_ssh"`
 	BISOAdminControls               *ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsDataSourceModel    `tfsdk:"biso_admin_controls" json:"biso_admin_controls"`
