@@ -11,4 +11,4 @@ type ZeroTrustRiskBehaviorBehaviorModel struct {
 	Enabled   types.Bool   `tfsdk:"enabled"`
 	Name      types.String `tfsdk:"name"`
 	RiskLevel types.String `tfsdk:"risk_level"`
-}w
+}

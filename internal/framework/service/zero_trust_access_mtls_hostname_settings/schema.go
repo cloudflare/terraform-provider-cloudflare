@@ -1,4 +1,4 @@
-package access_mutual_tls_hostname_settings
+package zero_trust_access_mtls_hostname_settings
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-func (r *AccessMutualTLSHostnameSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *ZeroTrustAccessMutualTLSHostnameSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Provides a Cloudflare Access Mutual TLS Certificate Settings resource.",
 		Attributes: map[string]schema.Attribute{
