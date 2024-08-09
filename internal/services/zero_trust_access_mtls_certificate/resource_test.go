@@ -16,8 +16,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_access_mutual_tls_certificate", &resource.Sweeper{
-		Name: "cloudflare_access_mutual_tls_certificate",
+	resource.AddTestSweepers("cloudflare_zero_trust_access_mtls_certificate", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_mtls_certificate",
 		F:    testSweepCloudflareAccessMutualTLSCertificate,
 	})
 }
@@ -70,7 +70,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -114,7 +114,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -155,7 +155,7 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_mutual_tls_certificate" {
+		if rs.Type != "cloudflare_zero_trust_access_mtls_certificate" {
 			continue
 		}
 

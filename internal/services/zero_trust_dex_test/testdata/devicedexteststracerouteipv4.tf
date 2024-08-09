@@ -1,5 +1,5 @@
 
-	resource "cloudflare_device_dex_test" "%[1]s" {
+	resource "cloudflare_zero_trust_dex_test" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		description = "%[1]s"

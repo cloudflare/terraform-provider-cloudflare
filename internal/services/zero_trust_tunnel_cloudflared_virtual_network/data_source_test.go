@@ -19,7 +19,7 @@ func TestAccCloudflareTunneVirtualNetwork_MatchName(t *testing.T) {
 			{
 				Config: testCloudflareTunnelVirtualNetworkMatchName(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel_virtual_network."+rnd, "comment", "test"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared_virtual_network."+rnd, "comment", "test"),
 				),
 			},
 		},

@@ -23,7 +23,7 @@ func TestAccCloudflareDevicePostureIntegrationCreate(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_integration.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_integration.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	clientID := os.Getenv("CLOUDFLARE_WORKSPACE_ONE_CLIENT_ID")
@@ -66,7 +66,7 @@ func testAccCheckCloudflareDevicePostureIntegrationDestroy(s *terraform.State) e
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_device_posture_integration" {
+		if rs.Type != "cloudflare_zero_trust_device_posture_integration" {
 			continue
 		}
 

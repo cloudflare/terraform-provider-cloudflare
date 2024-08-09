@@ -42,7 +42,7 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 			},
 			// {
 			// 	Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountID),
-			// 	ResourceName:            "cloudflare_worker_secret." + name,
+			// 	ResourceName:            "cloudflare_workers_secret." + name,
 			// 	ImportStateId:           fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, name),
 			// 	ImportState:             true,
 			// 	ImportStateVerify:       true,
@@ -59,7 +59,7 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_secret" {
+		if rs.Type != "cloudflare_workers_secret" {
 			continue
 		}
 

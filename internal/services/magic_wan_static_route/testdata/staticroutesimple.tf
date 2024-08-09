@@ -1,5 +1,5 @@
 
-  resource "cloudflare_static_route" "%[1]s" {
+  resource "cloudflare_magic_wan_static_route" "%[1]s" {
 	account_id = "%[3]s"
 	prefix = "10.100.0.0/24"
 	nexthop = "10.0.0.0"

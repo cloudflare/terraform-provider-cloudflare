@@ -174,7 +174,7 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 	tunnelRouteResID := utils.GenerateRandomResourceName()
 	poolResID := utils.GenerateRandomResourceName()
 
-	vnetName := "cloudflare_tunnel_virtual_network." + vnetResID
+	vnetName := "cloudflare_zero_trust_tunnel_cloudflared_virtual_network." + vnetResID
 	poolName := "cloudflare_load_balancer_pool." + poolResID
 
 	resource.Test(t, resource.TestCase{

@@ -1,5 +1,5 @@
 
-resource "cloudflare_teams_rule" "%[1]s" {
+resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
   description = "desc"

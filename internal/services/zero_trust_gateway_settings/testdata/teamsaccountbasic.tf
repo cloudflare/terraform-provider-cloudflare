@@ -1,5 +1,5 @@
 
-resource "cloudflare_teams_account" "%[1]s" {
+resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
   account_id = "%[2]s"
   tls_decrypt_enabled = true
   protocol_detection_enabled = true

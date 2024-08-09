@@ -12,7 +12,7 @@ import (
 
 func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -37,7 +37,7 @@ func testAccCheckCloudflareAccessApplicationAccountName(accountID, name, domain 
 
 func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -62,7 +62,7 @@ func testAccCheckCloudflareAccessApplicationAccountDomain(accountID, name, domai
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
@@ -87,7 +87,7 @@ func testAccCheckCloudflareAccessApplicationZoneName(zoneID, name, domain string
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,

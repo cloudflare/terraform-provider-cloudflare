@@ -21,7 +21,7 @@ func TestAccCloudflareTunnel_MatchName(t *testing.T) {
 			{
 				Config: testCloudflareTunnelMatchName(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared."+rnd, "status", "inactive"),
 				),
 			},
 		},
@@ -43,8 +43,8 @@ func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
 			{
 				Config: testCloudflareTunnelMatchIsDeleted_Default(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "status", "inactive"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "is_deleted", "false"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared."+rnd, "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared."+rnd, "is_deleted", "false"),
 				),
 			},
 			{
@@ -54,8 +54,8 @@ func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
 			{
 				Config: testCloudflareTunnelMatchIsDeleted_DeletedTunnels(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "status", "inactive"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "is_deleted", "true"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared."+rnd, "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared."+rnd, "is_deleted", "true"),
 				),
 			},
 			{
@@ -65,8 +65,8 @@ func TestAccCloudflareTunnel_MatchIsDeleted(t *testing.T) {
 			{
 				Config: testCloudflareTunnelMatchIsDeleted_ActiveTunnels(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "status", "inactive"),
-					resource.TestCheckResourceAttr("data.cloudflare_tunnel."+rnd, "is_deleted", "true"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared."+rnd, "status", "inactive"),
+					resource.TestCheckResourceAttr("data.cloudflare_zero_trust_tunnel_cloudflared."+rnd, "is_deleted", "true"),
 				),
 				ExpectError: regexp.MustCompile(`Error: No tunnels with name: ` + rnd),
 			},
@@ -82,7 +82,7 @@ func testCloudflareTunnelMatchIsDeleted_Default(name string) string {
 func testCloudflareTunnelMatchIsDeleted_DeletedTunnels(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return fmt.Sprintf(`
-data "cloudflare_tunnel" "%[2]s" {
+data "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
 	account_id = "%[1]s"
 	name       = "%[2]s"
 	is_deleted = true
@@ -93,7 +93,7 @@ data "cloudflare_tunnel" "%[2]s" {
 func testCloudflareTunnelMatchIsDeleted_ActiveTunnels(name string) string {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return fmt.Sprintf(`
-data "cloudflare_tunnel" "%[2]s" {
+data "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
 	account_id = "%[1]s"
 	name       = "%[2]s"
 	is_deleted = false

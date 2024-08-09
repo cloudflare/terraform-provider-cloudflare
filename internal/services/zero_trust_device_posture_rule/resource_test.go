@@ -27,7 +27,7 @@ func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -60,7 +60,7 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -94,7 +94,7 @@ func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -129,7 +129,7 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -164,7 +164,7 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -197,7 +197,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -232,7 +232,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) 
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -267,7 +267,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_posture_rule.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -334,7 +334,7 @@ func testAccCheckCloudflareDevicePostureRuleDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_device_posture_rule" {
+		if rs.Type != "cloudflare_zero_trust_device_posture_rule" {
 			continue
 		}
 

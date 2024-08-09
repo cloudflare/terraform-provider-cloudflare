@@ -16,7 +16,7 @@ func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_custom_page.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -43,7 +43,7 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_custom_page.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{

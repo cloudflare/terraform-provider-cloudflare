@@ -23,7 +23,7 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_location.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dns_location.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -57,7 +57,7 @@ func testAccCheckCloudflareTeamsLocationDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_teams_location" {
+		if rs.Type != "cloudflare_zero_trust_dns_location" {
 			continue
 		}
 

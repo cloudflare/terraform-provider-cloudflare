@@ -23,7 +23,7 @@ func testTunnelConfigNilPointer(resourceID, accountID, tunnelSecret string) stri
 
 func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_tunnel_config." + rnd
+	name := "cloudflare_zero_trust_tunnel_cloudflared_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
@@ -94,7 +94,7 @@ func TestAccCloudflareTunnelConfig_Full(t *testing.T) {
 
 func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_tunnel_config." + rnd
+	name := "cloudflare_zero_trust_tunnel_cloudflared_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 
@@ -124,7 +124,7 @@ func TestAccCloudflareTunnelConfig_Short(t *testing.T) {
 
 func TestAccCloudflareTunnelConfig_NilPointer(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_tunnel_config." + rnd
+	name := "cloudflare_zero_trust_tunnel_cloudflared_config." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	tunnelSecret := utils.RandStringFromCharSet(32, utils.CharSetAlpha)
 

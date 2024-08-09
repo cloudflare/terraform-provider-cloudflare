@@ -9,13 +9,13 @@ resource "cloudflare_queue" "%[1]s" {
 	name = "%[1]s"
 }
 
-resource "cloudflare_worker_script" "%[1]s-service" {
+resource "cloudflare_workers_script" "%[1]s-service" {
 	account_id = "%[4]s"
 	name    = "%[1]s-service"
 	content = "%[2]s"
 }
 
-resource "cloudflare_worker_script" "%[1]s" {
+resource "cloudflare_workers_script" "%[1]s" {
   account_id = "%[4]s"
   name    = "%[1]s"
   content = "%[2]s"
@@ -47,7 +47,7 @@ resource "cloudflare_worker_script" "%[1]s" {
 
   service_binding =[ {
 	name = "MY_SERVICE_BINDING"
-    service = cloudflare_worker_script.%[1]s-service.name
+    service = cloudflare_workers_script.%[1]s-service.name
     environment = "production"
   }
 

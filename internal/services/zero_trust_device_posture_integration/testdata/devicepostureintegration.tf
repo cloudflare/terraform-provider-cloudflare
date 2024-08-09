@@ -1,5 +1,5 @@
 
-resource "cloudflare_device_posture_integration" "%[1]s" {
+resource "cloudflare_zero_trust_device_posture_integration" "%[1]s" {
 	account_id                = "%[2]s"
 	name                      = "%[1]s"
 	type                      = "workspace_one"

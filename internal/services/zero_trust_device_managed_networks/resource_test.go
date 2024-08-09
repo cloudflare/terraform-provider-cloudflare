@@ -13,7 +13,7 @@ import (
 
 func TestAccCloudflareDeviceManagedNetworks(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_managed_networks.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_device_managed_networks.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{

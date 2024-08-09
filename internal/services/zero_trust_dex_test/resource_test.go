@@ -13,7 +13,7 @@ import (
 
 func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dex_test.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -40,7 +40,7 @@ func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 
 func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dex_test.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -67,7 +67,7 @@ func TestAccCloudflareDeviceDexTest_TracerouteIPv4(t *testing.T) {
 
 func TestAccCloudflareDeviceDexTest_HTTP(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_device_dex_test.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dex_test.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{

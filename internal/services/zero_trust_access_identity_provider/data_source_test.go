@@ -28,7 +28,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventZoneIdAndAccountId
 
 func testCloudflareAccessIdentityProviderDataSourceConfigConflictingFields(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {
+data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
   account_id = "123abc"
   zone_id    = "abc123"
   name       = "foo"
@@ -52,7 +52,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventNoInputSpecify(t *
 
 func testCloudflareAccessIdentityProviderDataSourceNoInput(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {
+data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	name = "foo"
 }
 `, rnd)
@@ -85,7 +85,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 
-	name := "data.cloudflare_access_identity_provider." + rnd
+	name := "data.cloudflare_zero_trust_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)

@@ -15,7 +15,7 @@ import (
 func TestAccCloudflareDevicePostureRules_DataSource(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	name := fmt.Sprintf("data.cloudflare_device_posture_rules.%s", rnd)
+	name := fmt.Sprintf("data.cloudflare_zero_trust_device_posture_rules.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },

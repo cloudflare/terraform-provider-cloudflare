@@ -1,10 +1,10 @@
 
-data "cloudflare_access_identity_provider" "%[1]s" {
+data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name = "%[1]s-abc123"
 }
 
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
   name = "%[1]s"
   type = "github"
