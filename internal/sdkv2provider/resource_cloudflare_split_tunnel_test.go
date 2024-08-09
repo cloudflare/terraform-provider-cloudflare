@@ -105,6 +105,7 @@ resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips        = false
+	tunnel_protocol           = "wireguard"
 }
 
 resource "cloudflare_zero_trust_split_tunnels" "%[1]s" {

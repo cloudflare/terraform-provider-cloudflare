@@ -57,6 +57,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "switch_locked", "true"),
 					resource.TestCheckResourceAttr(name, "exclude_office_ips", "true"),
+					resource.TestCheckResourceAttr(name, "tunnel_protocol", "wireguard"),
 				),
 			},
 			{
@@ -79,6 +80,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(defaultName, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(defaultName, "switch_locked", "true"),
 					resource.TestCheckResourceAttr(defaultName, "exclude_office_ips", "true"),
+					resource.TestCheckResourceAttr(defaultName, "tunnel_protocol", "wireguard"),
 				),
 			},
 			{
@@ -107,6 +109,7 @@ resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips		  = true
+	tunnel_protocol           = "wireguard"
 }
 `, rnd, accountID, precedence, rnd)
 }
@@ -128,6 +131,7 @@ resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips		  = true
+	tunnel_protocol           = "wireguard"
 }
 `, rnd, accountID, rnd)
 }
@@ -150,6 +154,7 @@ resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	switch_locked             = true
 	match                     = "identity.email == \"foo@example.com\""
 	exclude_office_ips		  = true
+	tunnel_protocol           = "wireguard"
 }
 `, rnd, accountID, rnd)
 }

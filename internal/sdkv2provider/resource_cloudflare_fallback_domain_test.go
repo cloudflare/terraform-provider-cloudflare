@@ -154,6 +154,7 @@ resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	switch_locked             = true
 	exclude_office_ips		  = false
 	description               = "%[1]s"
+	tunnel_protocol           = "wireguard"
 }
 
 resource "cloudflare_zero_trust_local_domain_fallback" "%[1]s" {
