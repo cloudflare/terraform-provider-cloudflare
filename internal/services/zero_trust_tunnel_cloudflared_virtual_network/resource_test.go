@@ -18,8 +18,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_tunnel_virtual_network", &resource.Sweeper{
-		Name: "cloudflare_tunnel_virtual_network",
+	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_virtual_network", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_tunnel_cloudflared_virtual_network",
 		F:    testSweepCloudflareTunnelVirtualNetwork,
 	})
 }
@@ -57,7 +57,7 @@ func testSweepCloudflareTunnelVirtualNetwork(r string) error {
 
 func TestAccCloudflareTunnelVirtualNetwork_Exists(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_tunnel_virtual_network.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_virtual_network.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var TunnelVirtualNetwork cloudflare.TunnelVirtualNetwork
@@ -115,7 +115,7 @@ func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwor
 
 func TestAccCloudflareTunnelVirtualNetwork_UpdateComment(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_tunnel_virtual_network.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_virtual_network.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var TunnelVirtualNetwork cloudflare.TunnelVirtualNetwork

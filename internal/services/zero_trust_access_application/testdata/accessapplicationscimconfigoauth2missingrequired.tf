@@ -1,5 +1,5 @@
 
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -17,7 +17,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 }
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -26,7 +26,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config = {
   enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication = {
 		scheme =  "oauth2"

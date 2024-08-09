@@ -24,7 +24,7 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_local_domain_fallback.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -58,7 +58,7 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_local_domain_fallback.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		// CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
@@ -102,7 +102,7 @@ func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_local_domain_fallback.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		// CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
@@ -141,7 +141,7 @@ func testAccCloudflareFallbackDomain(rnd, accountID, description string, suffix 
 // 	}
 
 // 	for _, rs := range s.RootModule().Resources {
-// 		if rs.Type != "cloudflare_fallback_domain" {
+// 		if rs.Type != "cloudflare_zero_trust_local_domain_fallback" {
 // 			continue
 // 		}
 

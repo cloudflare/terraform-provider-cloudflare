@@ -37,7 +37,7 @@ func TestAccCloudflareWorkerScript_MultiScriptEnt(t *testing.T) {
 
 	// var script cloudflare.WorkerScript
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_worker_script." + rnd
+	name := "cloudflare_workers_script." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -82,7 +82,7 @@ func TestAccCloudflareWorkerScript_ModuleUpload(t *testing.T) {
 
 	// var script cloudflare.WorkerScript
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_worker_script." + rnd
+	name := "cloudflare_workers_script." + rnd
 	r2AccesKeyID := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_ID")
 	r2AccesKeySecret := os.Getenv("CLOUDFLARE_R2_ACCESS_KEY_SECRET")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -222,7 +222,7 @@ func testAccCheckCloudflareWorkerScriptUploadModule(rnd, accountID, r2AccessKeyI
 // 			return fmt.Errorf("Worker Script not found")
 // 		}
 
-// 		name := strings.Replace(n, "cloudflare_worker_script.", "", -1)
+// 		name := strings.Replace(n, "cloudflare_workers_script.", "", -1)
 // 		foundBindings, err := getWorkerScriptBindings(context.Background(), accountID, name, nil, client)
 // 		if err != nil {
 // 			return fmt.Errorf("cannot list script bindings: %w", err)
@@ -243,7 +243,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_script" {
+		if rs.Type != "cloudflare_workers_script" {
 			continue
 		}
 

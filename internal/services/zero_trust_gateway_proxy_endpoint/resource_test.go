@@ -24,7 +24,7 @@ func TestAccCloudflareTeamsProxyEndpoint_Basic(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_proxy_endpoint.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_proxy_endpoint.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -58,7 +58,7 @@ func testAccCheckCloudflareTeamsProxyEndpointDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_teams_proxy_endpoint" {
+		if rs.Type != "cloudflare_zero_trust_gateway_proxy_endpoint" {
 			continue
 		}
 

@@ -1,5 +1,5 @@
 
-		resource "cloudflare_access_organization" "%[1]s" {
+		resource "cloudflare_zero_trust_organization" "%[1]s" {
 			account_id      = "%[2]s"
 			name            = "terraform-cfapi.cloudflareaccess.com"
 			auth_domain     = "%[1]s-terraform-cfapi.cloudflareaccess.com"

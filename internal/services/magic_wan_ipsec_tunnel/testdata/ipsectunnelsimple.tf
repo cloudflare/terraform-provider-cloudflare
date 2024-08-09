@@ -1,5 +1,5 @@
 
-  resource "cloudflare_ipsec_tunnel" "%[1]s" {
+  resource "cloudflare_magic_wan_ipsec_tunnel" "%[1]s" {
 	account_id = "%[3]s"
 	name = "%[2]s"
 	customer_endpoint = "203.0.113.1"

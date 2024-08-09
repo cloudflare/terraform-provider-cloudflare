@@ -19,7 +19,7 @@ func TestAccCloudflareAccessCACertificate_AccountLevel(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_ca_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_short_lived_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -46,7 +46,7 @@ func TestAccCloudflareAccessCACertificate_ZoneLevel(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_ca_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_short_lived_certificate.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -80,7 +80,7 @@ func testAccCheckCloudflareAccessCACertificateDestroy(s *terraform.State) error 
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_ca_certificate" {
+		if rs.Type != "cloudflare_zero_trust_access_short_lived_certificate" {
 			continue
 		}
 

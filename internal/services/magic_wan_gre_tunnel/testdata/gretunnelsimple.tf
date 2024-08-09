@@ -1,5 +1,5 @@
 
-  resource "cloudflare_gre_tunnel" "%[1]s" {
+  resource "cloudflare_magic_wan_gre_tunnel" "%[1]s" {
 	account_id = "%[4]s"
 	name = "%[2]s"
 	customer_gre_endpoint = "203.0.113.1"

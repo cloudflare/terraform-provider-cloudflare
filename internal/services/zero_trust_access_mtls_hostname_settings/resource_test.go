@@ -15,8 +15,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_access_mutual_tls_hostname_settings", &resource.Sweeper{
-		Name: "cloudflare_access_mutual_tls_hostname_settings",
+	resource.AddTestSweepers("cloudflare_zero_trust_access_mtls_hostname_settings", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_mtls_hostname_settings",
 		F: func(region string) error {
 			ctx := context.Background()
 
@@ -55,7 +55,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 	}
 
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_mutual_tls_hostname_settings.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_hostname_settings.%s", rnd)
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -87,7 +87,7 @@ func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.S
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_mutual_tls_hostname_settings" {
+		if rs.Type != "cloudflare_zero_trust_access_mtls_hostname_settings" {
 			continue
 		}
 

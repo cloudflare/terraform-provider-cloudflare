@@ -23,7 +23,7 @@ func TestAccCloudflareWorkerDomain_Attach(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	var domain cloudflare.WorkersDomain
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_worker_domain." + rnd
+	name := "cloudflare_workers_custom_domain." + rnd
 	hostname := rnd + "." + zoneName
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -109,7 +109,7 @@ func testAccCheckCloudflareWorkerDomainDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_domain" {
+		if rs.Type != "cloudflare_workers_custom_domain" {
 			continue
 		}
 

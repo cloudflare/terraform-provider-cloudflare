@@ -19,8 +19,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_access_application", &resource.Sweeper{
-		Name: "cloudflare_access_application",
+	resource.AddTestSweepers("cloudflare_zero_trust_access_application", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_application",
 		F:    testSweepCloudflareAccessApplications,
 	})
 }
@@ -80,7 +80,7 @@ var (
 
 func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -110,7 +110,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -141,8 +141,8 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -182,8 +182,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -277,8 +277,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasicMissingRequired(t
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -317,8 +317,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -398,7 +398,7 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigAuthenticationInvalid(t *t
 
 func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -428,7 +428,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -475,7 +475,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_access_application." + rnd
+	name := "cloudflare_zero_trust_access_application." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
 		resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
@@ -524,7 +524,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -577,7 +577,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_access_application." + rnd
+	name := "cloudflare_zero_trust_access_application." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
 		resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
@@ -636,7 +636,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -663,7 +663,7 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 
 func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -689,7 +689,7 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -717,7 +717,7 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -766,7 +766,7 @@ func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) 
 
 func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -792,7 +792,7 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 
 func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -818,7 +818,7 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 
 func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -844,7 +844,7 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 
 func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -870,7 +870,7 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -896,7 +896,7 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -922,7 +922,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -952,7 +952,7 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -979,7 +979,7 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1004,7 +1004,7 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1040,7 +1040,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 
 func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1141,7 +1141,7 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 	}
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_application" {
+		if rs.Type != "cloudflare_zero_trust_access_application" {
 			continue
 		}
 
@@ -1167,7 +1167,7 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 
 func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_access_application." + rnd
+	name := "cloudflare_zero_trust_access_application." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	updatedName := fmt.Sprintf("%s-updated", rnd)
