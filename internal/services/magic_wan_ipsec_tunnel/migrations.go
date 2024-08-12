@@ -5,6 +5,7 @@ package magic_wan_ipsec_tunnel
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -115,6 +116,202 @@ func (r *MagicWANIPSECTunnelResource) UpgradeState(ctx context.Context) map[int6
 					"modified": schema.BoolAttribute{
 						Computed: true,
 					},
+					"deleted_ipsec_tunnel": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelDeletedIPSECTunnelModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"cloudflare_endpoint": schema.StringAttribute{
+								Description: "The IP address assigned to the Cloudflare side of the IPsec tunnel.",
+								Required:    true,
+							},
+							"interface_address": schema.StringAttribute{
+								Description: "A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.",
+								Required:    true,
+							},
+							"name": schema.StringAttribute{
+								Description: "The name of the IPsec tunnel. The name cannot share a name with other tunnels.",
+								Required:    true,
+							},
+							"id": schema.StringAttribute{
+								Description: "Tunnel identifier tag.",
+								Computed:    true,
+							},
+							"allow_null_cipher": schema.BoolAttribute{
+								Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
+								Optional:    true,
+							},
+							"created_on": schema.StringAttribute{
+								Description: "The date and time the tunnel was created.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"customer_endpoint": schema.StringAttribute{
+								Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
+								Optional:    true,
+							},
+							"description": schema.StringAttribute{
+								Description: "An optional description forthe IPsec tunnel.",
+								Optional:    true,
+							},
+							"modified_on": schema.StringAttribute{
+								Description: "The date and time the tunnel was last modified.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"psk_metadata": schema.SingleNestedAttribute{
+								Description: "The PSK metadata that includes when the PSK was generated.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"last_generated_on": schema.StringAttribute{
+										Description: "The date and time the tunnel was last modified.",
+										Computed:    true,
+										CustomType:  timetypes.RFC3339Type{},
+									},
+								},
+							},
+							"replay_protection": schema.BoolAttribute{
+								Description: "If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"tunnel_health_check": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "Determines whether to run healthchecks for a tunnel.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(true),
+									},
+									"rate": schema.StringAttribute{
+										Description: "How frequent the health check is run. The default value is `mid`.",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"low",
+												"mid",
+												"high",
+											),
+										},
+										Default: stringdefault.StaticString("mid"),
+									},
+									"target": schema.StringAttribute{
+										Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
+										Optional:    true,
+									},
+									"type": schema.StringAttribute{
+										Description: "The type of healthcheck to run, reply or request. The default value is `reply`.",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("reply", "request"),
+										},
+										Default: stringdefault.StaticString("reply"),
+									},
+								},
+							},
+						},
+					},
+					"ipsec_tunnel": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"cloudflare_endpoint": schema.StringAttribute{
+								Description: "The IP address assigned to the Cloudflare side of the IPsec tunnel.",
+								Required:    true,
+							},
+							"interface_address": schema.StringAttribute{
+								Description: "A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.",
+								Required:    true,
+							},
+							"name": schema.StringAttribute{
+								Description: "The name of the IPsec tunnel. The name cannot share a name with other tunnels.",
+								Required:    true,
+							},
+							"id": schema.StringAttribute{
+								Description: "Tunnel identifier tag.",
+								Computed:    true,
+							},
+							"allow_null_cipher": schema.BoolAttribute{
+								Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
+								Optional:    true,
+							},
+							"created_on": schema.StringAttribute{
+								Description: "The date and time the tunnel was created.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"customer_endpoint": schema.StringAttribute{
+								Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
+								Optional:    true,
+							},
+							"description": schema.StringAttribute{
+								Description: "An optional description forthe IPsec tunnel.",
+								Optional:    true,
+							},
+							"modified_on": schema.StringAttribute{
+								Description: "The date and time the tunnel was last modified.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"psk_metadata": schema.SingleNestedAttribute{
+								Description: "The PSK metadata that includes when the PSK was generated.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"last_generated_on": schema.StringAttribute{
+										Description: "The date and time the tunnel was last modified.",
+										Computed:    true,
+										CustomType:  timetypes.RFC3339Type{},
+									},
+								},
+							},
+							"replay_protection": schema.BoolAttribute{
+								Description: "If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"tunnel_health_check": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "Determines whether to run healthchecks for a tunnel.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(true),
+									},
+									"rate": schema.StringAttribute{
+										Description: "How frequent the health check is run. The default value is `mid`.",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"low",
+												"mid",
+												"high",
+											),
+										},
+										Default: stringdefault.StaticString("mid"),
+									},
+									"target": schema.StringAttribute{
+										Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
+										Optional:    true,
+									},
+									"type": schema.StringAttribute{
+										Description: "The type of healthcheck to run, reply or request. The default value is `reply`.",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("reply", "request"),
+										},
+										Default: stringdefault.StaticString("reply"),
+									},
+								},
+							},
+						},
+					},
 					"ipsec_tunnels": schema.ListNestedAttribute{
 						Computed: true,
 						NestedObject: schema.NestedAttributeObject{
@@ -214,14 +411,103 @@ func (r *MagicWANIPSECTunnelResource) UpgradeState(ctx context.Context) map[int6
 							},
 						},
 					},
-					"deleted_ipsec_tunnel": schema.StringAttribute{
-						Computed: true,
-					},
-					"ipsec_tunnel": schema.StringAttribute{
-						Computed: true,
-					},
-					"modified_ipsec_tunnel": schema.StringAttribute{
-						Computed: true,
+					"modified_ipsec_tunnel": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelModifiedIPSECTunnelModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"cloudflare_endpoint": schema.StringAttribute{
+								Description: "The IP address assigned to the Cloudflare side of the IPsec tunnel.",
+								Required:    true,
+							},
+							"interface_address": schema.StringAttribute{
+								Description: "A 31-bit prefix (/31 in CIDR notation) supporting two hosts, one for each side of the tunnel. Select the subnet from the following private IP space: 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255, 192.168.0.0–192.168.255.255.",
+								Required:    true,
+							},
+							"name": schema.StringAttribute{
+								Description: "The name of the IPsec tunnel. The name cannot share a name with other tunnels.",
+								Required:    true,
+							},
+							"id": schema.StringAttribute{
+								Description: "Tunnel identifier tag.",
+								Computed:    true,
+							},
+							"allow_null_cipher": schema.BoolAttribute{
+								Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
+								Optional:    true,
+							},
+							"created_on": schema.StringAttribute{
+								Description: "The date and time the tunnel was created.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"customer_endpoint": schema.StringAttribute{
+								Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
+								Optional:    true,
+							},
+							"description": schema.StringAttribute{
+								Description: "An optional description forthe IPsec tunnel.",
+								Optional:    true,
+							},
+							"modified_on": schema.StringAttribute{
+								Description: "The date and time the tunnel was last modified.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"psk_metadata": schema.SingleNestedAttribute{
+								Description: "The PSK metadata that includes when the PSK was generated.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"last_generated_on": schema.StringAttribute{
+										Description: "The date and time the tunnel was last modified.",
+										Computed:    true,
+										CustomType:  timetypes.RFC3339Type{},
+									},
+								},
+							},
+							"replay_protection": schema.BoolAttribute{
+								Description: "If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.",
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+							},
+							"tunnel_health_check": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"enabled": schema.BoolAttribute{
+										Description: "Determines whether to run healthchecks for a tunnel.",
+										Computed:    true,
+										Optional:    true,
+										Default:     booldefault.StaticBool(true),
+									},
+									"rate": schema.StringAttribute{
+										Description: "How frequent the health check is run. The default value is `mid`.",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"low",
+												"mid",
+												"high",
+											),
+										},
+										Default: stringdefault.StaticString("mid"),
+									},
+									"target": schema.StringAttribute{
+										Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
+										Optional:    true,
+									},
+									"type": schema.StringAttribute{
+										Description: "The type of healthcheck to run, reply or request. The default value is `reply`.",
+										Computed:    true,
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive("reply", "request"),
+										},
+										Default: stringdefault.StaticString("reply"),
+									},
+								},
+							},
+						},
 					},
 				},
 			},
