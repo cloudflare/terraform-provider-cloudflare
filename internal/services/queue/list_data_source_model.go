@@ -18,12 +18,26 @@ type QueuesDataSourceModel struct {
 }
 
 type QueuesResultDataSourceModel struct {
-	Consumers           jsontypes.Normalized `tfsdk:"consumers" json:"consumers,computed"`
-	ConsumersTotalCount types.Float64        `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
-	CreatedOn           types.String         `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn          types.String         `tfsdk:"modified_on" json:"modified_on,computed"`
-	Producers           jsontypes.Normalized `tfsdk:"producers" json:"producers,computed"`
-	ProducersTotalCount types.Float64        `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
-	QueueID             types.String         `tfsdk:"queue_id" json:"queue_id,computed"`
-	QueueName           types.String         `tfsdk:"queue_name" json:"queue_name"`
+	Consumers           *[]*QueuesConsumersDataSourceModel `tfsdk:"consumers" json:"consumers,computed"`
+	ConsumersTotalCount types.Float64                      `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
+	CreatedOn           types.String                       `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn          types.String                       `tfsdk:"modified_on" json:"modified_on,computed"`
+	Producers           *[]jsontypes.Normalized            `tfsdk:"producers" json:"producers,computed"`
+	ProducersTotalCount types.Float64                      `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
+	QueueID             types.String                       `tfsdk:"queue_id" json:"queue_id,computed"`
+	QueueName           types.String                       `tfsdk:"queue_name" json:"queue_name"`
+}
+
+type QueuesConsumersDataSourceModel struct {
+	CreatedOn   types.String                            `tfsdk:"created_on" json:"created_on,computed"`
+	Environment types.String                            `tfsdk:"environment" json:"environment,computed"`
+	QueueName   types.String                            `tfsdk:"queue_name" json:"queue_name,computed"`
+	Service     types.String                            `tfsdk:"service" json:"service,computed"`
+	Settings    *QueuesConsumersSettingsDataSourceModel `tfsdk:"settings" json:"settings"`
+}
+
+type QueuesConsumersSettingsDataSourceModel struct {
+	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size"`
+	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries"`
+	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms"`
 }
