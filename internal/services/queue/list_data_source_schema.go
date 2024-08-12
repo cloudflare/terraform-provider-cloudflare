@@ -16,7 +16,7 @@ func (d *QueuesDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Required:    true,
 			},
 			"max_items": schema.Int64Attribute{
