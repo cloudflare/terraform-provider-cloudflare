@@ -21,8 +21,21 @@ type APIShieldSchemaModel struct {
 	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled"`
 	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`
+	Success           types.Bool                                                  `tfsdk:"success" json:"success,computed"`
+	Errors            *[]*APIShieldSchemaErrorsModel                              `tfsdk:"errors" json:"errors,computed"`
+	Messages          *[]*APIShieldSchemaMessagesModel                            `tfsdk:"messages" json:"messages,computed"`
 	Schema            customfield.NestedObject[APIShieldSchemaSchemaModel]        `tfsdk:"schema" json:"schema,computed"`
 	UploadDetails     customfield.NestedObject[APIShieldSchemaUploadDetailsModel] `tfsdk:"upload_details" json:"upload_details,computed"`
+}
+
+type APIShieldSchemaErrorsModel struct {
+	Code    types.Int64  `tfsdk:"code" json:"code"`
+	Message types.String `tfsdk:"message" json:"message"`
+}
+
+type APIShieldSchemaMessagesModel struct {
+	Code    types.Int64  `tfsdk:"code" json:"code"`
+	Message types.String `tfsdk:"message" json:"message"`
 }
 
 type APIShieldSchemaSchemaModel struct {
