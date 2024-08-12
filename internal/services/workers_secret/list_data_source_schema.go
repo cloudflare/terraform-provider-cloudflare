@@ -38,12 +38,12 @@ func (d *WorkersSecretsDataSource) Schema(ctx context.Context, req datasource.Sc
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
-							Description: "The name of this secret, this is what will be to access it inside the Worker.",
+							Description: "The name of this secret, this is what will be used to access it inside the Worker.",
 							Computed:    true,
 							Optional:    true,
 						},
 						"type": schema.StringAttribute{
-							Description: "The type of secret to put.",
+							Description: "The type of secret.",
 							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
