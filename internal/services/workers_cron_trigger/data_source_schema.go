@@ -31,6 +31,7 @@ func (d *WorkersCronTriggerDataSource) Schema(ctx context.Context, req datasourc
 						},
 						"cron": schema.StringAttribute{
 							Computed: true,
+							Optional: true,
 						},
 						"modified_on": schema.StringAttribute{
 							Computed: true,

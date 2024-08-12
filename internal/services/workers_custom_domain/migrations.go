@@ -29,6 +29,7 @@ func (r *WorkersCustomDomainResource) UpgradeState(ctx context.Context) map[int6
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
 					"account_id": schema.StringAttribute{
+						Description:   "Identifer of the account.",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
