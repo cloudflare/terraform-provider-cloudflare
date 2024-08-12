@@ -27,7 +27,7 @@ func (r *QueueResource) UpgradeState(ctx context.Context) map[int64]resource.Sta
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 					},
 					"account_id": schema.StringAttribute{
-						Description:   "Identifier.",
+						Description:   "Identifier",
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
