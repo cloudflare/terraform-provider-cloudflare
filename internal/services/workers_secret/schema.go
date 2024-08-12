@@ -39,7 +39,7 @@ func (r *WorkersSecretResource) Schema(ctx context.Context, req resource.SchemaR
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "The name of this secret, this is what will be to access it inside the Worker.",
+				Description: "The name of this secret, this is what will be used to access it inside the Worker.",
 				Optional:    true,
 			},
 			"text": schema.StringAttribute{
