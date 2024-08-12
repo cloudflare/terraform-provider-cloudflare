@@ -84,7 +84,11 @@ func (r *APITokenResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Description: "Status of the token.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("active", "disabled", "expired"),
+							stringvalidator.OneOfCaseInsensitive(
+								"active",
+								"disabled",
+								"expired",
+							),
 						},
 					},
 					"condition": schema.SingleNestedAttribute{

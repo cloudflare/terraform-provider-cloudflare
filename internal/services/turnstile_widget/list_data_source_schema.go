@@ -33,7 +33,13 @@ func (d *TurnstileWidgetsDataSource) Schema(ctx context.Context, req datasource.
 				Description: "Field to order widgets by.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("id", "sitekey", "name", "created_on", "modified_on"),
+					stringvalidator.OneOfCaseInsensitive(
+						"id",
+						"sitekey",
+						"name",
+						"created_on",
+						"modified_on",
+					),
 				},
 			},
 			"max_items": schema.Int64Attribute{
@@ -53,7 +59,12 @@ func (d *TurnstileWidgetsDataSource) Schema(ctx context.Context, req datasource.
 							Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\n",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("no_clearance", "jschallenge", "managed", "interactive"),
+								stringvalidator.OneOfCaseInsensitive(
+									"no_clearance",
+									"jschallenge",
+									"managed",
+									"interactive",
+								),
 							},
 						},
 						"created_on": schema.StringAttribute{
@@ -69,7 +80,11 @@ func (d *TurnstileWidgetsDataSource) Schema(ctx context.Context, req datasource.
 							Description: "Widget Mode",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("non-interactive", "invisible", "managed"),
+								stringvalidator.OneOfCaseInsensitive(
+									"non-interactive",
+									"invisible",
+									"managed",
+								),
 							},
 						},
 						"modified_on": schema.StringAttribute{

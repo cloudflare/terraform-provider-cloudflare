@@ -5,6 +5,7 @@ package zero_trust_device_posture_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -36,7 +37,28 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 				Description: "The type of device posture rule.",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
+					stringvalidator.OneOfCaseInsensitive(
+						"file",
+						"application",
+						"tanium",
+						"gateway",
+						"warp",
+						"disk_encryption",
+						"sentinelone",
+						"carbonblack",
+						"firewall",
+						"os_version",
+						"domain_joined",
+						"client_certificate",
+						"client_certificate_v2",
+						"unique_client_id",
+						"kolide",
+						"tanium_s2s",
+						"crowdstrike_s2s",
+						"intune",
+						"workspace_one",
+						"sentinelone_s2s",
+					),
 				},
 			},
 			"description": schema.StringAttribute{
@@ -59,7 +81,14 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 						Description: "Operating system",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("windows", "linux", "mac", "android", "ios", "chromeos"),
+							stringvalidator.OneOfCaseInsensitive(
+								"windows",
+								"linux",
+								"mac",
+								"android",
+								"ios",
+								"chromeos",
+							),
 						},
 					},
 					"path": schema.StringAttribute{
@@ -90,7 +119,13 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 						Description: "operator",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"version": schema.StringAttribute{
@@ -137,6 +172,11 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 					"extended_key_usage": schema.ListAttribute{
 						Description: "List of values indicating purposes for which the certificate public key can be used",
 						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive("clientAuth", "emailProtection"),
+							),
+						},
 						ElementType: types.StringType,
 					},
 					"locations": schema.SingleNestedAttribute{
@@ -150,6 +190,11 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 							"trust_stores": schema.ListAttribute{
 								Description: "List of trust stores to check for client certificate.",
 								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("system", "user"),
+									),
+								},
 								ElementType: types.StringType,
 							},
 						},
@@ -158,7 +203,14 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 						Description: "Compliance Status",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("compliant", "noncompliant", "unknown", "notapplicable", "ingraceperiod", "error"),
+							stringvalidator.OneOfCaseInsensitive(
+								"compliant",
+								"noncompliant",
+								"unknown",
+								"notapplicable",
+								"ingraceperiod",
+								"error",
+							),
 						},
 					},
 					"connection_id": schema.StringAttribute{
@@ -185,21 +237,37 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 						Description: "For more details on state, please refer to the Crowdstrike documentation.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("online", "offline", "unknown"),
+							stringvalidator.OneOfCaseInsensitive(
+								"online",
+								"offline",
+								"unknown",
+							),
 						},
 					},
 					"version_operator": schema.StringAttribute{
 						Description: "Version Operator",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"count_operator": schema.StringAttribute{
 						Description: "Count Operator",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"issue_count": schema.StringAttribute{
@@ -214,14 +282,25 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 						Description: "For more details on risk level, refer to the Tanium documentation.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("low", "medium", "high", "critical"),
+							stringvalidator.OneOfCaseInsensitive(
+								"low",
+								"medium",
+								"high",
+								"critical",
+							),
 						},
 					},
 					"score_operator": schema.StringAttribute{
 						Description: "Score Operator",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"total_score": schema.Float64Attribute{
@@ -244,7 +323,12 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 						Description: "Network status of device.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("connected", "disconnected", "disconnecting", "connecting"),
+							stringvalidator.OneOfCaseInsensitive(
+								"connected",
+								"disconnected",
+								"disconnecting",
+								"connecting",
+							),
 						},
 					},
 				},
@@ -257,7 +341,13 @@ func (r *ZeroTrustDevicePostureRuleResource) Schema(ctx context.Context, req res
 						"platform": schema.StringAttribute{
 							Optional: true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("windows", "mac", "linux", "android", "ios"),
+								stringvalidator.OneOfCaseInsensitive(
+									"windows",
+									"mac",
+									"linux",
+									"android",
+									"ios",
+								),
 							},
 						},
 					},

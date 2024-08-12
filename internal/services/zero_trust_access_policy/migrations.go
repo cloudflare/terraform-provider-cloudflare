@@ -49,7 +49,12 @@ func (r *ZeroTrustAccessPolicyResource) UpgradeState(ctx context.Context) map[in
 						Description: "The action Access will take if a user matches this policy.",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("allow", "deny", "non_identity", "bypass"),
+							stringvalidator.OneOfCaseInsensitive(
+								"allow",
+								"deny",
+								"non_identity",
+								"bypass",
+							),
 						},
 					},
 					"name": schema.StringAttribute{

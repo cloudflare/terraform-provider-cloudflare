@@ -110,7 +110,14 @@ func (d *LoadBalancerMonitorsDataSource) Schema(ctx context.Context, req datasou
 							Description: "The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS', 'TCP', 'ICMP-PING', 'UDP-ICMP', and 'SMTP'.",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("http", "https", "tcp", "udp_icmp", "icmp_ping", "smtp"),
+								stringvalidator.OneOfCaseInsensitive(
+									"http",
+									"https",
+									"tcp",
+									"udp_icmp",
+									"icmp_ping",
+									"smtp",
+								),
 							},
 						},
 					},

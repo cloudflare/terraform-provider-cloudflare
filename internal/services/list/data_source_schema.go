@@ -40,7 +40,12 @@ func (d *ListDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Description: "The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ip", "redirect", "hostname", "asn"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ip",
+						"redirect",
+						"hostname",
+						"asn",
+					),
 				},
 			},
 			"modified_on": schema.StringAttribute{

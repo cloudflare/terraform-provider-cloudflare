@@ -50,7 +50,15 @@ func (d *AuthenticatedOriginPullsCertificateDataSource) Schema(ctx context.Conte
 				Description: "Status of the certificate activation.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out"),
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending_deployment",
+						"pending_deletion",
+						"active",
+						"deleted",
+						"deployment_timed_out",
+						"deletion_timed_out",
+					),
 				},
 			},
 			"uploaded_on": schema.StringAttribute{

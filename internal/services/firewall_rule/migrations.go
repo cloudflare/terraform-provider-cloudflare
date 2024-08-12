@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -45,7 +46,13 @@ func (r *FirewallRuleResource) UpgradeState(ctx context.Context) map[int64]resou
 								Description: "The action to perform.",
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("simulate", "ban", "challenge", "js_challenge", "managed_challenge"),
+									stringvalidator.OneOfCaseInsensitive(
+										"simulate",
+										"ban",
+										"challenge",
+										"js_challenge",
+										"managed_challenge",
+									),
 								},
 							},
 							"response": schema.SingleNestedAttribute{
@@ -116,7 +123,20 @@ func (r *FirewallRuleResource) UpgradeState(ctx context.Context) map[int64]resou
 						Computed:    true,
 					},
 					"products": schema.ListAttribute{
-						Computed:    true,
+						Computed: true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"zoneLockdown",
+									"uaBlock",
+									"bic",
+									"hot",
+									"securityLevel",
+									"rateLimit",
+									"waf",
+								),
+							),
+						},
 						ElementType: types.StringType,
 					},
 				},

@@ -39,7 +39,11 @@ func (r *OriginCACertificateResource) UpgradeState(ctx context.Context) map[int6
 						Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("origin-rsa", "origin-ecc", "keyless-certificate"),
+							stringvalidator.OneOfCaseInsensitive(
+								"origin-rsa",
+								"origin-ecc",
+								"keyless-certificate",
+							),
 						},
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
@@ -54,7 +58,15 @@ func (r *OriginCACertificateResource) UpgradeState(ctx context.Context) map[int6
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
-							float64validator.OneOf(7, 30, 90, 365, 730, 1095, 5475),
+							float64validator.OneOf(
+								7,
+								30,
+								90,
+								365,
+								730,
+								1095,
+								5475,
+							),
 						},
 						PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 						Default:       float64default.StaticFloat64(5475),

@@ -42,7 +42,22 @@ func (r *ZeroTrustAccessIdentityProviderResource) Schema(ctx context.Context, re
 				Description: "The type of identity provider. To determine the value for a specific provider, refer to our [developer documentation](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("onetimepin", "azureAD", "saml", "centrify", "facebook", "github", "google-apps", "google", "linkedin", "oidc", "okta", "onelogin", "pingone", "yandex"),
+					stringvalidator.OneOfCaseInsensitive(
+						"onetimepin",
+						"azureAD",
+						"saml",
+						"centrify",
+						"facebook",
+						"github",
+						"google-apps",
+						"google",
+						"linkedin",
+						"oidc",
+						"okta",
+						"onelogin",
+						"pingone",
+						"yandex",
+					),
 				},
 			},
 			"config": schema.SingleNestedAttribute{
@@ -78,7 +93,11 @@ func (r *ZeroTrustAccessIdentityProviderResource) Schema(ctx context.Context, re
 						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("login", "select_account", "none"),
+							stringvalidator.OneOfCaseInsensitive(
+								"login",
+								"select_account",
+								"none",
+							),
 						},
 					},
 					"support_groups": schema.BoolAttribute{

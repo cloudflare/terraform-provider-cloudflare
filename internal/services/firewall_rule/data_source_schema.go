@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -34,7 +35,15 @@ func (d *FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "The action to apply to a matched request. The `log` action is only available on an Enterprise plan.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge", "allow", "log", "bypass"),
+					stringvalidator.OneOfCaseInsensitive(
+						"block",
+						"challenge",
+						"js_challenge",
+						"managed_challenge",
+						"allow",
+						"log",
+						"bypass",
+					),
 				},
 			},
 			"id": schema.StringAttribute{
@@ -64,8 +73,21 @@ func (d *FirewallRuleDataSource) Schema(ctx context.Context, req datasource.Sche
 				Optional:    true,
 			},
 			"products": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"zoneLockdown",
+							"uaBlock",
+							"bic",
+							"hot",
+							"securityLevel",
+							"rateLimit",
+							"waf",
+						),
+					),
+				},
 				ElementType: types.StringType,
 			},
 		},

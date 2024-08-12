@@ -45,14 +45,26 @@ func (d *OriginCACertificatesDataSource) Schema(ctx context.Context, req datasou
 							Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("origin-rsa", "origin-ecc", "keyless-certificate"),
+								stringvalidator.OneOfCaseInsensitive(
+									"origin-rsa",
+									"origin-ecc",
+									"keyless-certificate",
+								),
 							},
 						},
 						"requested_validity": schema.Float64Attribute{
 							Description: "The number of days for which the certificate should be valid.",
 							Computed:    true,
 							Validators: []validator.Float64{
-								float64validator.OneOf(7, 30, 90, 365, 730, 1095, 5475),
+								float64validator.OneOf(
+									7,
+									30,
+									90,
+									365,
+									730,
+									1095,
+									5475,
+								),
 							},
 						},
 						"id": schema.StringAttribute{

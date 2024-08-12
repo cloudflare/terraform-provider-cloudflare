@@ -51,7 +51,11 @@ func (r *TurnstileWidgetResource) UpgradeState(ctx context.Context) map[int64]re
 						Description: "Widget Mode",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("non-interactive", "invisible", "managed"),
+							stringvalidator.OneOfCaseInsensitive(
+								"non-interactive",
+								"invisible",
+								"managed",
+							),
 						},
 					},
 					"name": schema.StringAttribute{
@@ -70,7 +74,12 @@ func (r *TurnstileWidgetResource) UpgradeState(ctx context.Context) map[int64]re
 						Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\n",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("no_clearance", "jschallenge", "managed", "interactive"),
+							stringvalidator.OneOfCaseInsensitive(
+								"no_clearance",
+								"jschallenge",
+								"managed",
+								"interactive",
+							),
 						},
 					},
 					"offlabel": schema.BoolAttribute{

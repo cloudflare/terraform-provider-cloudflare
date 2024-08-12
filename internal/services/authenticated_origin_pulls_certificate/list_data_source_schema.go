@@ -58,7 +58,15 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Schema(ctx context.Cont
 							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out"),
+								stringvalidator.OneOfCaseInsensitive(
+									"initializing",
+									"pending_deployment",
+									"pending_deletion",
+									"active",
+									"deleted",
+									"deployment_timed_out",
+									"deletion_timed_out",
+								),
 							},
 						},
 						"uploaded_on": schema.StringAttribute{

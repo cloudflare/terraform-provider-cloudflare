@@ -48,7 +48,11 @@ func (r *HyperdriveConfigResource) Schema(ctx context.Context, req resource.Sche
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("postgres", "postgresql", "mysql"),
+							stringvalidator.OneOfCaseInsensitive(
+								"postgres",
+								"postgresql",
+								"mysql",
+							),
 						},
 						Default: stringdefault.StaticString("postgres"),
 					},

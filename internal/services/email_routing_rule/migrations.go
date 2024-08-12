@@ -43,7 +43,11 @@ func (r *EmailRoutingRuleResource) UpgradeState(ctx context.Context) map[int64]r
 									Description: "Type of supported action.",
 									Required:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("drop", "forward", "worker"),
+										stringvalidator.OneOfCaseInsensitive(
+											"drop",
+											"forward",
+											"worker",
+										),
 									},
 								},
 								"value": schema.ListAttribute{

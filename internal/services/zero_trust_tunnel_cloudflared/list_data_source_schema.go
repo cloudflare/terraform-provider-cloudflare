@@ -44,7 +44,12 @@ func (d *ZeroTrustTunnelCloudflaredsDataSource) Schema(ctx context.Context, req 
 				Description: "The status of the tunnel. Valid values are `inactive` (tunnel has never been run), `degraded` (tunnel is active and able to serve traffic but in an unhealthy state), `healthy` (tunnel is active and able to serve traffic), or `down` (tunnel can not serve traffic as it has no connections to the Cloudflare Edge).",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("inactive", "degraded", "healthy", "down"),
+					stringvalidator.OneOfCaseInsensitive(
+						"inactive",
+						"degraded",
+						"healthy",
+						"down",
+					),
 				},
 			},
 			"tun_types": schema.StringAttribute{

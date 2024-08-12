@@ -35,7 +35,11 @@ func (r *Web3HostnameResource) UpgradeState(ctx context.Context) map[int64]resou
 						Description: "Target gateway of the hostname.",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ethereum", "ipfs", "ipfs_universal_path"),
+							stringvalidator.OneOfCaseInsensitive(
+								"ethereum",
+								"ipfs",
+								"ipfs_universal_path",
+							),
 						},
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
@@ -63,7 +67,12 @@ func (r *Web3HostnameResource) UpgradeState(ctx context.Context) map[int64]resou
 						Description: "Status of the hostname's activation.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("active", "pending", "deleting", "error"),
+							stringvalidator.OneOfCaseInsensitive(
+								"active",
+								"pending",
+								"deleting",
+								"error",
+							),
 						},
 					},
 				},

@@ -50,7 +50,11 @@ func (r *HyperdriveConfigResource) UpgradeState(ctx context.Context) map[int64]r
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("postgres", "postgresql", "mysql"),
+									stringvalidator.OneOfCaseInsensitive(
+										"postgres",
+										"postgresql",
+										"mysql",
+									),
 								},
 								Default: stringdefault.StaticString("postgres"),
 							},

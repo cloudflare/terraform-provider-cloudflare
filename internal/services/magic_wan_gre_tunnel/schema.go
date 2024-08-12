@@ -75,7 +75,11 @@ func (r *MagicWANGRETunnelResource) Schema(ctx context.Context, req resource.Sch
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("low", "mid", "high"),
+							stringvalidator.OneOfCaseInsensitive(
+								"low",
+								"mid",
+								"high",
+							),
 						},
 						Default: stringdefault.StaticString("mid"),
 					},
@@ -168,7 +172,11 @@ func (r *MagicWANGRETunnelResource) Schema(ctx context.Context, req resource.Sch
 									Computed:    true,
 									Optional:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("low", "mid", "high"),
+										stringvalidator.OneOfCaseInsensitive(
+											"low",
+											"mid",
+											"high",
+										),
 									},
 									Default: stringdefault.StaticString("mid"),
 								},

@@ -58,7 +58,11 @@ func (r *CustomSSLResource) Schema(ctx context.Context, req resource.SchemaReque
 					"label": schema.StringAttribute{
 						Optional: true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("us", "eu", "highest_security"),
+							stringvalidator.OneOfCaseInsensitive(
+								"us",
+								"eu",
+								"highest_security",
+							),
 						},
 					},
 				},
@@ -68,7 +72,11 @@ func (r *CustomSSLResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ubiquitous",
+						"optimal",
+						"force",
+					),
 				},
 				Default: stringdefault.StaticString("ubiquitous"),
 			},

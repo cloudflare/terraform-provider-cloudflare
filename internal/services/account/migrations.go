@@ -43,7 +43,11 @@ func (r *AccountResource) UpgradeState(ctx context.Context) map[int64]resource.S
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("cloudflare.standard", "custom.account", "custom.tenant"),
+									stringvalidator.OneOfCaseInsensitive(
+										"cloudflare.standard",
+										"custom.account",
+										"custom.tenant",
+									),
 								},
 								Default: stringdefault.StaticString("cloudflare.standard"),
 							},

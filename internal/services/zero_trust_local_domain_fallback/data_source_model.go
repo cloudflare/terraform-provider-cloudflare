@@ -3,7 +3,6 @@
 package zero_trust_local_domain_fallback
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,7 +19,7 @@ type ZeroTrustLocalDomainFallbackDataSourceModel struct {
 	PolicyID    types.String                                          `tfsdk:"policy_id" path:"policy_id"`
 	Description types.String                                          `tfsdk:"description" json:"description"`
 	Suffix      types.String                                          `tfsdk:"suffix" json:"suffix"`
-	DNSServer   *[]jsontypes.Normalized                               `tfsdk:"dns_server" json:"dns_server"`
+	DNSServer   *[]types.String                                       `tfsdk:"dns_server" json:"dns_server"`
 	Filter      *ZeroTrustLocalDomainFallbackFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -38,19 +39,38 @@ func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasourc
 				Description: "The HTTP method used to access the endpoint.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "CONNECT", "PATCH", "TRACE"),
+					stringvalidator.OneOfCaseInsensitive(
+						"GET",
+						"POST",
+						"HEAD",
+						"OPTIONS",
+						"PUT",
+						"DELETE",
+						"CONNECT",
+						"PATCH",
+						"TRACE",
+					),
 				},
 			},
 			"state": schema.StringAttribute{
 				Description: "State of operation in API Discovery\n  * `review` - Operation is not saved into API Shield Endpoint Management\n  * `saved` - Operation is saved into API Shield Endpoint Management\n  * `ignored` - Operation is marked as ignored\n",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("review", "saved", "ignored"),
+					stringvalidator.OneOfCaseInsensitive(
+						"review",
+						"saved",
+						"ignored",
+					),
 				},
 			},
 			"origin": schema.ListAttribute{
 				Description: "API discovery engine(s) that discovered this operation",
 				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
+					),
+				},
 				ElementType: types.StringType,
 			},
 			"features": schema.SingleNestedAttribute{
@@ -112,7 +132,13 @@ func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasourc
 						Description: "Field to order by",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("host", "method", "endpoint", "traffic_stats.requests", "traffic_stats.last_updated"),
+							stringvalidator.OneOfCaseInsensitive(
+								"host",
+								"method",
+								"endpoint",
+								"traffic_stats.requests",
+								"traffic_stats.last_updated",
+							),
 						},
 					},
 					"origin": schema.StringAttribute{
@@ -126,7 +152,11 @@ func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasourc
 						Description: "Filter results to only include discovery results in a particular state. States are as follows\n  * `review` - Discovered operations that are not saved into API Shield Endpoint Management\n  * `saved` - Discovered operations that are already saved into API Shield Endpoint Management\n  * `ignored` - Discovered operations that have been marked as ignored\n",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("review", "saved", "ignored"),
+							stringvalidator.OneOfCaseInsensitive(
+								"review",
+								"saved",
+								"ignored",
+							),
 						},
 					},
 				},

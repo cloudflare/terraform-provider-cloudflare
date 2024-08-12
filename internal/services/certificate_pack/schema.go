@@ -39,7 +39,11 @@ func (r *CertificatePackResource) Schema(ctx context.Context, req resource.Schem
 				Description: "Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt", "ssl_com"),
+					stringvalidator.OneOfCaseInsensitive(
+						"google",
+						"lets_encrypt",
+						"ssl_com",
+					),
 				},
 			},
 			"cloudflare_branding": schema.BoolAttribute{
@@ -50,7 +54,29 @@ func (r *CertificatePackResource) Schema(ctx context.Context, req resource.Schem
 				Description: "Status of certificate pack.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment"),
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending_validation",
+						"deleted",
+						"pending_issuance",
+						"pending_deployment",
+						"pending_deletion",
+						"pending_expiration",
+						"expired",
+						"active",
+						"initializing_timed_out",
+						"validation_timed_out",
+						"issuance_timed_out",
+						"deployment_timed_out",
+						"deletion_timed_out",
+						"pending_cleanup",
+						"staging_deployment",
+						"staging_active",
+						"deactivating",
+						"inactive",
+						"backup_issued",
+						"holding_deployment",
+					),
 				},
 			},
 			"type": schema.StringAttribute{
@@ -64,14 +90,23 @@ func (r *CertificatePackResource) Schema(ctx context.Context, req resource.Schem
 				Description: "Validation Method selected for the order.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("txt", "http", "email"),
+					stringvalidator.OneOfCaseInsensitive(
+						"txt",
+						"http",
+						"email",
+					),
 				},
 			},
 			"validity_days": schema.Int64Attribute{
 				Description: "Validity Days selected for the order.",
 				Computed:    true,
 				Validators: []validator.Int64{
-					int64validator.OneOf(14, 30, 90, 365),
+					int64validator.OneOf(
+						14,
+						30,
+						90,
+						365,
+					),
 				},
 			},
 			"hosts": schema.ListAttribute{

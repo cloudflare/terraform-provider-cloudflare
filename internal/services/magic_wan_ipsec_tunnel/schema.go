@@ -78,7 +78,11 @@ func (r *MagicWANIPSECTunnelResource) Schema(ctx context.Context, req resource.S
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("low", "mid", "high"),
+							stringvalidator.OneOfCaseInsensitive(
+								"low",
+								"mid",
+								"high",
+							),
 						},
 						Default: stringdefault.StaticString("mid"),
 					},
@@ -182,7 +186,11 @@ func (r *MagicWANIPSECTunnelResource) Schema(ctx context.Context, req resource.S
 									Computed:    true,
 									Optional:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("low", "mid", "high"),
+										stringvalidator.OneOfCaseInsensitive(
+											"low",
+											"mid",
+											"high",
+										),
 									},
 									Default: stringdefault.StaticString("mid"),
 								},

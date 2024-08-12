@@ -46,7 +46,11 @@ func (r *ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("full", "partial", "secondary"),
+					stringvalidator.OneOfCaseInsensitive(
+						"full",
+						"partial",
+						"secondary",
+					),
 				},
 			},
 			"vanity_name_servers": schema.ListAttribute{

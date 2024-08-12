@@ -118,7 +118,14 @@ func (r *LoadBalancerMonitorResource) Schema(ctx context.Context, req resource.S
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("http", "https", "tcp", "udp_icmp", "icmp_ping", "smtp"),
+					stringvalidator.OneOfCaseInsensitive(
+						"http",
+						"https",
+						"tcp",
+						"udp_icmp",
+						"icmp_ping",
+						"smtp",
+					),
 				},
 				Default: stringdefault.StaticString("http"),
 			},
