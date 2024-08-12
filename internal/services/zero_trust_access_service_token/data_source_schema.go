@@ -44,6 +44,11 @@ func (d *ZeroTrustAccessServiceTokenDataSource) Schema(ctx context.Context, req 
 				Computed:    true,
 				Optional:    true,
 			},
+			"expires_at": schema.StringAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"id": schema.StringAttribute{
 				Description: "The ID of the service token.",
 				Computed:    true,

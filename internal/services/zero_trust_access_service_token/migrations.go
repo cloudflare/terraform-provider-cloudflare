@@ -57,6 +57,10 @@ func (r *ZeroTrustAccessServiceTokenResource) UpgradeState(ctx context.Context) 
 						Computed:   true,
 						CustomType: timetypes.RFC3339Type{},
 					},
+					"expires_at": schema.StringAttribute{
+						Computed:   true,
+						CustomType: timetypes.RFC3339Type{},
+					},
 					"updated_at": schema.StringAttribute{
 						Computed:   true,
 						CustomType: timetypes.RFC3339Type{},
