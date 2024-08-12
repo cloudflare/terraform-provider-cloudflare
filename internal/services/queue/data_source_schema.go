@@ -16,11 +16,11 @@ func (d *QueueDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Optional:    true,
 			},
 			"queue_id": schema.StringAttribute{
-				Description: "Identifier.",
+				Description: "Identifier",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -87,7 +87,7 @@ func (d *QueueDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Identifier.",
+						Description: "Identifier",
 						Required:    true,
 					},
 				},
