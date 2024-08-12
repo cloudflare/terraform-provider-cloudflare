@@ -15,7 +15,8 @@ func (d *WorkersCustomDomainsDataSource) Schema(ctx context.Context, req datasou
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Description: "Identifer of the account.",
+				Required:    true,
 			},
 			"environment": schema.StringAttribute{
 				Description: "Worker environment associated with the zone and hostname.",

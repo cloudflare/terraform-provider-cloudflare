@@ -27,6 +27,7 @@ func (r *WorkersCustomDomainResource) Schema(ctx context.Context, req resource.S
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
+				Description:   "Identifer of the account.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
