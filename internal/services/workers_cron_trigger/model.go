@@ -3,7 +3,6 @@
 package workers_cron_trigger
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,11 +14,12 @@ type WorkersCronTriggerModel struct {
 	ID         types.String                         `tfsdk:"id" json:"-,computed"`
 	ScriptName types.String                         `tfsdk:"script_name" path:"script_name"`
 	AccountID  types.String                         `tfsdk:"account_id" path:"account_id"`
+	Cron       types.String                         `tfsdk:"cron" json:"cron"`
 	Schedules  *[]*WorkersCronTriggerSchedulesModel `tfsdk:"schedules" json:"schedules,computed"`
 }
 
 type WorkersCronTriggerSchedulesModel struct {
-	CreatedOn  jsontypes.Normalized `tfsdk:"created_on" json:"created_on,computed"`
-	Cron       jsontypes.Normalized `tfsdk:"cron" json:"cron,computed"`
-	ModifiedOn jsontypes.Normalized `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
+	Cron       types.String `tfsdk:"cron" json:"cron"`
+	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

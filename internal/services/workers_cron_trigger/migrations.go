@@ -33,6 +33,9 @@ func (r *WorkersCronTriggerResource) UpgradeState(ctx context.Context) map[int64
 						Required:      true,
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
+					"cron": schema.StringAttribute{
+						Optional: true,
+					},
 					"schedules": schema.ListNestedAttribute{
 						Computed: true,
 						NestedObject: schema.NestedAttributeObject{
@@ -41,7 +44,7 @@ func (r *WorkersCronTriggerResource) UpgradeState(ctx context.Context) map[int64
 									Computed: true,
 								},
 								"cron": schema.StringAttribute{
-									Computed: true,
+									Optional: true,
 								},
 								"modified_on": schema.StringAttribute{
 									Computed: true,
