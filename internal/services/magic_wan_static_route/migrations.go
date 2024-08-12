@@ -5,6 +5,7 @@ package magic_wan_static_route
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -72,6 +73,174 @@ func (r *MagicWANStaticRouteResource) UpgradeState(ctx context.Context) map[int6
 					"modified": schema.BoolAttribute{
 						Computed: true,
 					},
+					"deleted_route": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANStaticRouteDeletedRouteModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"nexthop": schema.StringAttribute{
+								Description: "The next-hop IP Address for the static route.",
+								Required:    true,
+							},
+							"prefix": schema.StringAttribute{
+								Description: "IP Prefix in Classless Inter-Domain Routing format.",
+								Required:    true,
+							},
+							"priority": schema.Int64Attribute{
+								Description: "Priority of the static route.",
+								Required:    true,
+							},
+							"id": schema.StringAttribute{
+								Description: "Identifier",
+								Optional:    true,
+							},
+							"created_on": schema.StringAttribute{
+								Description: "When the route was created.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"description": schema.StringAttribute{
+								Description: "An optional human provided description of the static route.",
+								Optional:    true,
+							},
+							"modified_on": schema.StringAttribute{
+								Description: "When the route was last modified.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"scope": schema.SingleNestedAttribute{
+								Description: "Used only for ECMP routes.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"colo_names": schema.ListAttribute{
+										Description: "List of colo names for the ECMP scope.",
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"colo_regions": schema.ListAttribute{
+										Description: "List of colo regions for the ECMP scope.",
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+								},
+							},
+							"weight": schema.Int64Attribute{
+								Description: "Optional weight of the ECMP scope - if provided.",
+								Optional:    true,
+							},
+						},
+					},
+					"modified_route": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANStaticRouteModifiedRouteModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"nexthop": schema.StringAttribute{
+								Description: "The next-hop IP Address for the static route.",
+								Required:    true,
+							},
+							"prefix": schema.StringAttribute{
+								Description: "IP Prefix in Classless Inter-Domain Routing format.",
+								Required:    true,
+							},
+							"priority": schema.Int64Attribute{
+								Description: "Priority of the static route.",
+								Required:    true,
+							},
+							"id": schema.StringAttribute{
+								Description: "Identifier",
+								Optional:    true,
+							},
+							"created_on": schema.StringAttribute{
+								Description: "When the route was created.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"description": schema.StringAttribute{
+								Description: "An optional human provided description of the static route.",
+								Optional:    true,
+							},
+							"modified_on": schema.StringAttribute{
+								Description: "When the route was last modified.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"scope": schema.SingleNestedAttribute{
+								Description: "Used only for ECMP routes.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"colo_names": schema.ListAttribute{
+										Description: "List of colo names for the ECMP scope.",
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"colo_regions": schema.ListAttribute{
+										Description: "List of colo regions for the ECMP scope.",
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+								},
+							},
+							"weight": schema.Int64Attribute{
+								Description: "Optional weight of the ECMP scope - if provided.",
+								Optional:    true,
+							},
+						},
+					},
+					"route": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANStaticRouteRouteModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"nexthop": schema.StringAttribute{
+								Description: "The next-hop IP Address for the static route.",
+								Required:    true,
+							},
+							"prefix": schema.StringAttribute{
+								Description: "IP Prefix in Classless Inter-Domain Routing format.",
+								Required:    true,
+							},
+							"priority": schema.Int64Attribute{
+								Description: "Priority of the static route.",
+								Required:    true,
+							},
+							"id": schema.StringAttribute{
+								Description: "Identifier",
+								Optional:    true,
+							},
+							"created_on": schema.StringAttribute{
+								Description: "When the route was created.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"description": schema.StringAttribute{
+								Description: "An optional human provided description of the static route.",
+								Optional:    true,
+							},
+							"modified_on": schema.StringAttribute{
+								Description: "When the route was last modified.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"scope": schema.SingleNestedAttribute{
+								Description: "Used only for ECMP routes.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"colo_names": schema.ListAttribute{
+										Description: "List of colo names for the ECMP scope.",
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"colo_regions": schema.ListAttribute{
+										Description: "List of colo regions for the ECMP scope.",
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+								},
+							},
+							"weight": schema.Int64Attribute{
+								Description: "Optional weight of the ECMP scope - if provided.",
+								Optional:    true,
+							},
+						},
+					},
 					"routes": schema.ListNestedAttribute{
 						Computed: true,
 						NestedObject: schema.NestedAttributeObject{
@@ -128,15 +297,6 @@ func (r *MagicWANStaticRouteResource) UpgradeState(ctx context.Context) map[int6
 								},
 							},
 						},
-					},
-					"deleted_route": schema.StringAttribute{
-						Computed: true,
-					},
-					"modified_route": schema.StringAttribute{
-						Computed: true,
-					},
-					"route": schema.StringAttribute{
-						Computed: true,
 					},
 				},
 			},
