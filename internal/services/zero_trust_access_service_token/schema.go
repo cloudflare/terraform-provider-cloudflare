@@ -56,6 +56,10 @@ func (r *ZeroTrustAccessServiceTokenResource) Schema(ctx context.Context, req re
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"expires_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},

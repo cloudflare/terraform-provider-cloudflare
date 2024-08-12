@@ -50,6 +50,11 @@ func (d *ZeroTrustAccessServiceTokensDataSource) Schema(ctx context.Context, req
 							Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
 							Computed:    true,
 						},
+						"expires_at": schema.StringAttribute{
+							Computed:   true,
+							Optional:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
 						"name": schema.StringAttribute{
 							Description: "The name of the service token.",
 							Computed:    true,
