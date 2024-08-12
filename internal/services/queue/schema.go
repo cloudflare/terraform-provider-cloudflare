@@ -5,6 +5,7 @@ package queue
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -24,7 +25,7 @@ func (r *QueueResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Identifier.",
+				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -44,11 +45,44 @@ func (r *QueueResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 			"producers_total_count": schema.Float64Attribute{
 				Computed: true,
 			},
-			"consumers": schema.StringAttribute{
-				Computed: true,
+			"producers": schema.ListAttribute{
+				Computed:    true,
+				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
 			},
-			"producers": schema.StringAttribute{
+			"consumers": schema.ListNestedAttribute{
 				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"created_on": schema.StringAttribute{
+							Computed: true,
+						},
+						"environment": schema.StringAttribute{
+							Computed: true,
+						},
+						"queue_name": schema.StringAttribute{
+							Computed: true,
+						},
+						"service": schema.StringAttribute{
+							Computed: true,
+						},
+						"settings": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"batch_size": schema.Float64Attribute{
+									Description: "The maximum number of messages to include in a batch.",
+									Optional:    true,
+								},
+								"max_retries": schema.Float64Attribute{
+									Description: "The maximum number of retries",
+									Optional:    true,
+								},
+								"max_wait_time_ms": schema.Float64Attribute{
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
