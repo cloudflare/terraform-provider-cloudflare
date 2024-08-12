@@ -5,6 +5,7 @@ package api_shield
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -24,6 +25,11 @@ func (d *APIShieldDataSource) Schema(ctx context.Context, req datasource.SchemaR
 			"properties": schema.ListAttribute{
 				Description: "Requests information about certain properties.",
 				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive("auth_id_characteristics"),
+					),
+				},
 				ElementType: types.StringType,
 			},
 			"auth_id_characteristics": schema.ListNestedAttribute{
@@ -38,7 +44,11 @@ func (d *APIShieldDataSource) Schema(ctx context.Context, req datasource.SchemaR
 							Description: "The type of characteristic.",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("header", "cookie", "jwt"),
+								stringvalidator.OneOfCaseInsensitive(
+									"header",
+									"cookie",
+									"jwt",
+								),
 							},
 						},
 					},

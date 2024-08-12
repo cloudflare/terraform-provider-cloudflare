@@ -35,7 +35,13 @@ func (r *ZeroTrustListResource) UpgradeState(ctx context.Context) map[int64]reso
 						Description: "The type of list.",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
+							stringvalidator.OneOfCaseInsensitive(
+								"SERIAL",
+								"URL",
+								"DOMAIN",
+								"EMAIL",
+								"IP",
+							),
 						},
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},

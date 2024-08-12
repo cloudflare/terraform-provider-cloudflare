@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -147,6 +148,21 @@ func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) m
 							"allowed_methods": schema.ListAttribute{
 								Description: "Allowed HTTP request methods.",
 								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive(
+											"GET",
+											"POST",
+											"HEAD",
+											"PUT",
+											"DELETE",
+											"CONNECT",
+											"OPTIONS",
+											"TRACE",
+											"PATCH",
+										),
+									),
+								},
 								ElementType: types.StringType,
 							},
 							"allowed_origins": schema.ListAttribute{
@@ -255,7 +271,11 @@ func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) m
 										Description: "A globally unique name for an identity or service provider.",
 										Optional:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"),
+											stringvalidator.OneOfCaseInsensitive(
+												"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+												"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+												"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
+											),
 										},
 									},
 									"required": schema.BoolAttribute{
@@ -352,7 +372,12 @@ func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) m
 										Description: "The scope of the claim.",
 										Optional:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("groups", "profile", "email", "openid"),
+											stringvalidator.OneOfCaseInsensitive(
+												"groups",
+												"profile",
+												"email",
+												"openid",
+											),
 										},
 									},
 									"source": schema.SingleNestedAttribute{
@@ -374,6 +399,17 @@ func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) m
 							"grant_types": schema.ListAttribute{
 								Description: "The OIDC flows supported by this application",
 								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive(
+											"authorization_code",
+											"authorization_code_with_pkce",
+											"refresh_tokens",
+											"hybrid",
+											"implicit",
+										),
+									),
+								},
 								ElementType: types.StringType,
 							},
 							"group_filter_regex": schema.StringAttribute{
@@ -410,6 +446,16 @@ func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) m
 							"scopes": schema.ListAttribute{
 								Description: "Define the user information shared with access, \"offline_access\" scope will be automatically enabled if refresh tokens are enabled",
 								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive(
+											"openid",
+											"groups",
+											"email",
+											"profile",
+										),
+									),
+								},
 								ElementType: types.StringType,
 							},
 						},
@@ -438,7 +484,11 @@ func (r *ZeroTrustAccessApplicationResource) UpgradeState(ctx context.Context) m
 										Description: "The authentication scheme to use when making SCIM requests to this application.",
 										Required:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("httpbasic", "oauthbearertoken", "oauth2"),
+											stringvalidator.OneOfCaseInsensitive(
+												"httpbasic",
+												"oauthbearertoken",
+												"oauth2",
+											),
 										},
 									},
 									"user": schema.StringAttribute{

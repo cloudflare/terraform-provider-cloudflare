@@ -44,7 +44,11 @@ func (d *OriginCACertificateDataSource) Schema(ctx context.Context, req datasour
 				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("origin-rsa", "origin-ecc", "keyless-certificate"),
+					stringvalidator.OneOfCaseInsensitive(
+						"origin-rsa",
+						"origin-ecc",
+						"keyless-certificate",
+					),
 				},
 			},
 			"hostnames": schema.ListAttribute{
@@ -57,7 +61,15 @@ func (d *OriginCACertificateDataSource) Schema(ctx context.Context, req datasour
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Float64{
-					float64validator.OneOf(7, 30, 90, 365, 730, 1095, 5475),
+					float64validator.OneOf(
+						7,
+						30,
+						90,
+						365,
+						730,
+						1095,
+						5475,
+					),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{

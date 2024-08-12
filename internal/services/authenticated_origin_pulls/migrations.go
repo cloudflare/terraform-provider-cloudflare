@@ -60,7 +60,15 @@ func (r *AuthenticatedOriginPullsResource) UpgradeState(ctx context.Context) map
 						Description: "Status of the certificate or the association.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out"),
+							stringvalidator.OneOfCaseInsensitive(
+								"initializing",
+								"pending_deployment",
+								"pending_deletion",
+								"active",
+								"deleted",
+								"deployment_timed_out",
+								"deletion_timed_out",
+							),
 						},
 					},
 					"cert_updated_at": schema.StringAttribute{
@@ -107,7 +115,15 @@ func (r *AuthenticatedOriginPullsResource) UpgradeState(ctx context.Context) map
 						Description: "Status of the certificate or the association.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out"),
+							stringvalidator.OneOfCaseInsensitive(
+								"initializing",
+								"pending_deployment",
+								"pending_deletion",
+								"active",
+								"deleted",
+								"deployment_timed_out",
+								"deletion_timed_out",
+							),
 						},
 					},
 					"updated_at": schema.StringAttribute{

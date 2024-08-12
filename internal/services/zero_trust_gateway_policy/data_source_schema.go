@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -43,7 +44,23 @@ func (d *ZeroTrustGatewayPolicyDataSource) Schema(ctx context.Context, req datas
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "audit_ssh", "resolve"),
+					stringvalidator.OneOfCaseInsensitive(
+						"on",
+						"off",
+						"allow",
+						"block",
+						"scan",
+						"noscan",
+						"safesearch",
+						"ytrestricted",
+						"isolate",
+						"noisolate",
+						"override",
+						"l4_override",
+						"egress",
+						"audit_ssh",
+						"resolve",
+					),
 				},
 			},
 			"description": schema.StringAttribute{
@@ -90,6 +107,16 @@ func (d *ZeroTrustGatewayPolicyDataSource) Schema(ctx context.Context, req datas
 				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"http",
+							"dns",
+							"l4",
+							"egress",
+						),
+					),
+				},
 				ElementType: types.StringType,
 			},
 			"rule_settings": schema.SingleNestedAttribute{
@@ -364,7 +391,11 @@ func (d *ZeroTrustGatewayPolicyDataSource) Schema(ctx context.Context, req datas
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("pass_through", "block", "error"),
+									stringvalidator.OneOfCaseInsensitive(
+										"pass_through",
+										"block",
+										"error",
+									),
 								},
 							},
 						},

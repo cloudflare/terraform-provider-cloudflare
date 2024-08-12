@@ -42,7 +42,14 @@ func (r *D1DatabaseResource) UpgradeState(ctx context.Context) map[int64]resourc
 						Description: "Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("wnam", "enam", "weur", "eeur", "apac", "oc"),
+							stringvalidator.OneOfCaseInsensitive(
+								"wnam",
+								"enam",
+								"weur",
+								"eeur",
+								"apac",
+								"oc",
+							),
 						},
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},

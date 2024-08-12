@@ -41,7 +41,11 @@ func (r *APIShieldResource) Schema(ctx context.Context, req resource.SchemaReque
 							Description: "The type of characteristic.",
 							Required:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("header", "cookie", "jwt"),
+								stringvalidator.OneOfCaseInsensitive(
+									"header",
+									"cookie",
+									"jwt",
+								),
 							},
 						},
 					},

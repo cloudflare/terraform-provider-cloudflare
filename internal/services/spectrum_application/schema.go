@@ -75,7 +75,12 @@ func (r *SpectrumApplicationResource) Schema(ctx context.Context, req resource.S
 						Description: "The type of DNS record associated with the origin. \"\" is used to specify a combination of A/AAAA records.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("", "A", "AAAA", "SRV"),
+							stringvalidator.OneOfCaseInsensitive(
+								"",
+								"A",
+								"AAAA",
+								"SRV",
+							),
 						},
 					},
 				},
@@ -83,7 +88,9 @@ func (r *SpectrumApplicationResource) Schema(ctx context.Context, req resource.S
 			"origin_port": schema.DynamicAttribute{
 				Description: "The destination port at the origin. Only specified in conjunction with origin_dns. May use an integer to specify a single origin port, for example `1000`, or a string to specify a range of origin ports, for example `\"1000-2000\"`.\nNotes: If specifying a port range, the number of ports in the range must match the number of ports specified in the \"protocol\" field.",
 				Required:    true,
-				Validators:  []validator.Dynamic{customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{})},
+				Validators: []validator.Dynamic{
+					customvalidator.AllowedSubtypes(basetypes.Int64Type{}, basetypes.StringType{}),
+				},
 			},
 			"ip_firewall": schema.BoolAttribute{
 				Description: "Enables IP Access Rules for this application.\nNotes: Only available for TCP applications.",
@@ -93,7 +100,12 @@ func (r *SpectrumApplicationResource) Schema(ctx context.Context, req resource.S
 				Description: "The type of TLS termination associated with the application.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("off", "flexible", "full", "strict"),
+					stringvalidator.OneOfCaseInsensitive(
+						"off",
+						"flexible",
+						"full",
+						"strict",
+					),
 				},
 			},
 			"argo_smart_routing": schema.BoolAttribute{
@@ -107,7 +119,12 @@ func (r *SpectrumApplicationResource) Schema(ctx context.Context, req resource.S
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("off", "v1", "v2", "simple"),
+					stringvalidator.OneOfCaseInsensitive(
+						"off",
+						"v1",
+						"v2",
+						"simple",
+					),
 				},
 				Default: stringdefault.StaticString("off"),
 			},
@@ -116,7 +133,11 @@ func (r *SpectrumApplicationResource) Schema(ctx context.Context, req resource.S
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("direct", "http", "https"),
+					stringvalidator.OneOfCaseInsensitive(
+						"direct",
+						"http",
+						"https",
+					),
 				},
 				Default: stringdefault.StaticString("direct"),
 			},
@@ -129,7 +150,11 @@ func (r *SpectrumApplicationResource) Schema(ctx context.Context, req resource.S
 						Description: "The IP versions supported for inbound connections on Spectrum anycast IPs.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("all", "ipv4", "ipv6"),
+							stringvalidator.OneOfCaseInsensitive(
+								"all",
+								"ipv4",
+								"ipv6",
+							),
 						},
 					},
 					"type": schema.StringAttribute{

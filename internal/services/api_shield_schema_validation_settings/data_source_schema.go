@@ -24,7 +24,11 @@ func (d *APIShieldSchemaValidationSettingsDataSource) Schema(ctx context.Context
 				Description: "The default mitigation action used when there is no mitigation action defined on the operation\n\nMitigation actions are as follows:\n\n  * `log` - log request when request does not conform to schema\n  * `block` - deny access to the site when request does not conform to schema\n\nA special value of of `none` will skip running schema validation entirely for the request when there is no mitigation action defined on the operation\n",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("none", "log", "block"),
+					stringvalidator.OneOfCaseInsensitive(
+						"none",
+						"log",
+						"block",
+					),
 				},
 			},
 			"validation_override_mitigation_action": schema.StringAttribute{

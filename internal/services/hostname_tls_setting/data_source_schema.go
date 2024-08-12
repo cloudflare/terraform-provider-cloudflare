@@ -20,7 +20,11 @@ func (d *HostnameTLSSettingDataSource) Schema(ctx context.Context, req datasourc
 				Description: "The TLS Setting name.",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ciphers",
+						"min_tls_version",
+						"http2",
+					),
 				},
 			},
 			"zone_id": schema.StringAttribute{

@@ -45,7 +45,12 @@ func (d *Web3HostnameDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "Status of the hostname's activation.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "pending", "deleting", "error"),
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"pending",
+						"deleting",
+						"error",
+					),
 				},
 			},
 			"description": schema.StringAttribute{
@@ -63,7 +68,11 @@ func (d *Web3HostnameDataSource) Schema(ctx context.Context, req datasource.Sche
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ethereum", "ipfs", "ipfs_universal_path"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ethereum",
+						"ipfs",
+						"ipfs_universal_path",
+					),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{

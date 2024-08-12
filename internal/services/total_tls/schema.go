@@ -37,7 +37,11 @@ func (r *TotalTLSResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "The Certificate Authority that Total TLS certificates will be issued through.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt", "ssl_com"),
+					stringvalidator.OneOfCaseInsensitive(
+						"google",
+						"lets_encrypt",
+						"ssl_com",
+					),
 				},
 			},
 			"validity_period": schema.Int64Attribute{

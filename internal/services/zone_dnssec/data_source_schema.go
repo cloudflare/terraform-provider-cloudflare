@@ -74,7 +74,13 @@ func (d *ZoneDNSSECDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Status of DNSSEC, based on user-desired state and presence of necessary records.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "pending", "disabled", "pending-disabled", "error"),
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"pending",
+						"disabled",
+						"pending-disabled",
+						"error",
+					),
 				},
 			},
 		},

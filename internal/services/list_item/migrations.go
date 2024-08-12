@@ -92,7 +92,12 @@ func (r *ListItemResource) UpgradeState(ctx context.Context) map[int64]resource.
 								Computed: true,
 								Optional: true,
 								Validators: []validator.Int64{
-									int64validator.OneOf(301, 302, 307, 308),
+									int64validator.OneOf(
+										301,
+										302,
+										307,
+										308,
+									),
 								},
 								Default: int64default.StaticInt64(301),
 							},

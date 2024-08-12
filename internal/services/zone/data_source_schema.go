@@ -193,14 +193,24 @@ func (d *ZoneDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						Description: "Field to order zones by.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("name", "status", "account.id", "account.name"),
+							stringvalidator.OneOfCaseInsensitive(
+								"name",
+								"status",
+								"account.id",
+								"account.name",
+							),
 						},
 					},
 					"status": schema.StringAttribute{
 						Description: "A zone status",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("initializing", "pending", "active", "moved"),
+							stringvalidator.OneOfCaseInsensitive(
+								"initializing",
+								"pending",
+								"active",
+								"moved",
+							),
 						},
 					},
 				},

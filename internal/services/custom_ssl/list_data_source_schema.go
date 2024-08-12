@@ -27,7 +27,13 @@ func (d *CustomSSLsDataSource) Schema(ctx context.Context, req datasource.Schema
 				Description: "Status of the zone's custom SSL.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "expired", "deleted", "pending", "initializing"),
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"expired",
+						"deleted",
+						"pending",
+						"initializing",
+					),
 				},
 			},
 			"match": schema.StringAttribute{
@@ -55,7 +61,11 @@ func (d *CustomSSLsDataSource) Schema(ctx context.Context, req datasource.Schema
 							Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+								stringvalidator.OneOfCaseInsensitive(
+									"ubiquitous",
+									"optimal",
+									"force",
+								),
 							},
 						},
 						"expires_on": schema.StringAttribute{
@@ -88,7 +98,13 @@ func (d *CustomSSLsDataSource) Schema(ctx context.Context, req datasource.Schema
 							Description: "Status of the zone's custom SSL.",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("active", "expired", "deleted", "pending", "initializing"),
+								stringvalidator.OneOfCaseInsensitive(
+									"active",
+									"expired",
+									"deleted",
+									"pending",
+									"initializing",
+								),
 							},
 						},
 						"uploaded_on": schema.StringAttribute{
@@ -109,7 +125,11 @@ func (d *CustomSSLsDataSource) Schema(ctx context.Context, req datasource.Schema
 									Computed: true,
 									Optional: true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("us", "eu", "highest_security"),
+										stringvalidator.OneOfCaseInsensitive(
+											"us",
+											"eu",
+											"highest_security",
+										),
 									},
 								},
 							},

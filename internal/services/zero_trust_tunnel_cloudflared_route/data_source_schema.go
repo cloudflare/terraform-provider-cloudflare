@@ -43,7 +43,13 @@ func (d *ZeroTrustTunnelCloudflaredRouteDataSource) Schema(ctx context.Context, 
 				Description: "The type of tunnel.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("cfd_tunnel", "warp_connector", "ip_sec", "gre", "cni"),
+					stringvalidator.OneOfCaseInsensitive(
+						"cfd_tunnel",
+						"warp_connector",
+						"ip_sec",
+						"gre",
+						"cni",
+					),
 				},
 			},
 			"tunnel_id": schema.StringAttribute{

@@ -44,7 +44,11 @@ func (r *KeylessCertificateResource) UpgradeState(ctx context.Context) map[int64
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+							stringvalidator.OneOfCaseInsensitive(
+								"ubiquitous",
+								"optimal",
+								"force",
+							),
 						},
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 						Default:       stringdefault.StaticString("ubiquitous"),

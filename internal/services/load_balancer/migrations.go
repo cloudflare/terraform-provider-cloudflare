@@ -91,7 +91,12 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("always", "never", "proximity", "geo"),
+									stringvalidator.OneOfCaseInsensitive(
+										"always",
+										"never",
+										"proximity",
+										"geo",
+									),
 								},
 								Default: stringdefault.StaticString("proximity"),
 							},
@@ -204,7 +209,12 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 													Computed:    true,
 													Optional:    true,
 													Validators: []validator.String{
-														stringvalidator.OneOfCaseInsensitive("always", "never", "proximity", "geo"),
+														stringvalidator.OneOfCaseInsensitive(
+															"always",
+															"never",
+															"proximity",
+															"geo",
+														),
 													},
 													Default: stringdefault.StaticString("proximity"),
 												},
@@ -242,7 +252,13 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("none", "cookie", "ip_cookie", "header", ""),
+												stringvalidator.OneOfCaseInsensitive(
+													"none",
+													"cookie",
+													"ip_cookie",
+													"header",
+													"\"\"",
+												),
 											},
 											Default: stringdefault.StaticString("\"\""),
 										},
@@ -270,7 +286,12 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 													Computed:    true,
 													Optional:    true,
 													Validators: []validator.String{
-														stringvalidator.OneOfCaseInsensitive("Auto", "Lax", "None", "Strict"),
+														stringvalidator.OneOfCaseInsensitive(
+															"Auto",
+															"Lax",
+															"None",
+															"Strict",
+														),
 													},
 													Default: stringdefault.StaticString("Auto"),
 												},
@@ -279,7 +300,11 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 													Computed:    true,
 													Optional:    true,
 													Validators: []validator.String{
-														stringvalidator.OneOfCaseInsensitive("Auto", "Always", "Never"),
+														stringvalidator.OneOfCaseInsensitive(
+															"Auto",
+															"Always",
+															"Never",
+														),
 													},
 													Default: stringdefault.StaticString("Auto"),
 												},
@@ -288,7 +313,11 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 													Computed:    true,
 													Optional:    true,
 													Validators: []validator.String{
-														stringvalidator.OneOfCaseInsensitive("none", "temporary", "sticky"),
+														stringvalidator.OneOfCaseInsensitive(
+															"none",
+															"temporary",
+															"sticky",
+														),
 													},
 													Default: stringdefault.StaticString("none"),
 												},
@@ -303,7 +332,16 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("off", "geo", "random", "dynamic_latency", "proximity", "least_outstanding_requests", "least_connections", ""),
+												stringvalidator.OneOfCaseInsensitive(
+													"off",
+													"geo",
+													"random",
+													"dynamic_latency",
+													"proximity",
+													"least_outstanding_requests",
+													"least_connections",
+													"\"\"",
+												),
 											},
 											Default: stringdefault.StaticString("\"\""),
 										},
@@ -355,7 +393,12 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("Auto", "Lax", "None", "Strict"),
+									stringvalidator.OneOfCaseInsensitive(
+										"Auto",
+										"Lax",
+										"None",
+										"Strict",
+									),
 								},
 								Default: stringdefault.StaticString("Auto"),
 							},
@@ -364,7 +407,11 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("Auto", "Always", "Never"),
+									stringvalidator.OneOfCaseInsensitive(
+										"Auto",
+										"Always",
+										"Never",
+									),
 								},
 								Default: stringdefault.StaticString("Auto"),
 							},
@@ -373,7 +420,11 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("none", "temporary", "sticky"),
+									stringvalidator.OneOfCaseInsensitive(
+										"none",
+										"temporary",
+										"sticky",
+									),
 								},
 								Default: stringdefault.StaticString("none"),
 							},
@@ -408,7 +459,13 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("none", "cookie", "ip_cookie", "header", ""),
+							stringvalidator.OneOfCaseInsensitive(
+								"none",
+								"cookie",
+								"ip_cookie",
+								"header",
+								"\"\"",
+							),
 						},
 						Default: stringdefault.StaticString("\"\""),
 					},
@@ -417,7 +474,16 @@ func (r *LoadBalancerResource) UpgradeState(ctx context.Context) map[int64]resou
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("off", "geo", "random", "dynamic_latency", "proximity", "least_outstanding_requests", "least_connections", ""),
+							stringvalidator.OneOfCaseInsensitive(
+								"off",
+								"geo",
+								"random",
+								"dynamic_latency",
+								"proximity",
+								"least_outstanding_requests",
+								"least_connections",
+								"\"\"",
+							),
 						},
 						Default: stringdefault.StaticString("\"\""),
 					},

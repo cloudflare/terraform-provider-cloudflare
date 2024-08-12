@@ -25,7 +25,11 @@ func (r *HostnameTLSSettingResource) UpgradeState(ctx context.Context) map[int64
 						Description: "The TLS Setting name.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
+							stringvalidator.OneOfCaseInsensitive(
+								"ciphers",
+								"min_tls_version",
+								"http2",
+							),
 						},
 						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 					},
@@ -33,7 +37,11 @@ func (r *HostnameTLSSettingResource) UpgradeState(ctx context.Context) map[int64
 						Description: "The TLS Setting name.",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
+							stringvalidator.OneOfCaseInsensitive(
+								"ciphers",
+								"min_tls_version",
+								"http2",
+							),
 						},
 						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 					},
