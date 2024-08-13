@@ -19,8 +19,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &KeylessCertificateResource{}
 
-func (r *KeylessCertificateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Keyless certificate identifier tag.",
@@ -107,6 +107,10 @@ func (r *KeylessCertificateResource) Schema(ctx context.Context, req resource.Sc
 			},
 		},
 	}
+}
+
+func (r *KeylessCertificateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *KeylessCertificateResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

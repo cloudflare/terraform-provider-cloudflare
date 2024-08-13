@@ -16,8 +16,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ZoneLockdownsDataSource{}
 
-func (d *ZoneLockdownsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
 				Description: "Identifier",
@@ -122,6 +122,10 @@ func (d *ZoneLockdownsDataSource) Schema(ctx context.Context, req datasource.Sch
 			},
 		},
 	}
+}
+
+func (d *ZoneLockdownsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *ZoneLockdownsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

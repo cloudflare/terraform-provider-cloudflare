@@ -11,8 +11,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessIdentityProviderDataSource{}
 
-func (d *ZeroTrustAccessIdentityProviderDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -28,6 +28,10 @@ func (d *ZeroTrustAccessIdentityProviderDataSource) Schema(ctx context.Context, 
 			},
 		},
 	}
+}
+
+func (d *ZeroTrustAccessIdentityProviderDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *ZeroTrustAccessIdentityProviderDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

@@ -15,8 +15,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &EmailRoutingRuleDataSource{}
 
-func (d *EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"rule_identifier": schema.StringAttribute{
 				Description: "Routing rule identifier.",
@@ -116,6 +116,10 @@ func (d *EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.
 			},
 		},
 	}
+}
+
+func (d *EmailRoutingRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *EmailRoutingRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

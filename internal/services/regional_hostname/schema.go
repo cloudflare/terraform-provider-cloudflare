@@ -16,8 +16,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &RegionalHostnameResource{}
 
-func (r *RegionalHostnameResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
@@ -81,6 +81,10 @@ func (r *RegionalHostnameResource) Schema(ctx context.Context, req resource.Sche
 			},
 		},
 	}
+}
+
+func (r *RegionalHostnameResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *RegionalHostnameResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

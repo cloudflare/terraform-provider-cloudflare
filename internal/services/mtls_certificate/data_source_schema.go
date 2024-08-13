@@ -12,8 +12,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &MTLSCertificateDataSource{}
 
-func (d *MTLSCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -77,6 +77,10 @@ func (d *MTLSCertificateDataSource) Schema(ctx context.Context, req datasource.S
 			},
 		},
 	}
+}
+
+func (d *MTLSCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *MTLSCertificateDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

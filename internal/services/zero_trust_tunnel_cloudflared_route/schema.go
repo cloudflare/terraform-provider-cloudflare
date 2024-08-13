@@ -14,8 +14,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustTunnelCloudflaredRouteResource{}
 
-func (r *ZeroTrustTunnelCloudflaredRouteResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID of the route.",
@@ -55,6 +55,10 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) Schema(ctx context.Context, re
 			},
 		},
 	}
+}
+
+func (r *ZeroTrustTunnelCloudflaredRouteResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZeroTrustTunnelCloudflaredRouteResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

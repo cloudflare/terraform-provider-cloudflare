@@ -11,8 +11,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessShortLivedCertificateDataSource{}
 
-func (d *ZeroTrustAccessShortLivedCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -40,6 +40,10 @@ func (d *ZeroTrustAccessShortLivedCertificateDataSource) Schema(ctx context.Cont
 			},
 		},
 	}
+}
+
+func (d *ZeroTrustAccessShortLivedCertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *ZeroTrustAccessShortLivedCertificateDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

@@ -21,8 +21,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &HealthcheckResource{}
 
-func (r *HealthcheckResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -215,6 +215,10 @@ func (r *HealthcheckResource) Schema(ctx context.Context, req resource.SchemaReq
 			},
 		},
 	}
+}
+
+func (r *HealthcheckResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *HealthcheckResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

@@ -14,8 +14,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &RulesetsDataSource{}
 
-func (d *RulesetsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -103,6 +103,10 @@ func (d *RulesetsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 		},
 	}
+}
+
+func (d *RulesetsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *RulesetsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

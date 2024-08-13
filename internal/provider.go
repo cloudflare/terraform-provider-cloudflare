@@ -152,8 +152,8 @@ func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.Metadata
 	resp.Version = p.version
 }
 
-func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ProviderSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"base_url": schema.StringAttribute{
 				Description: "Set the base url that the provider connects to. This can be used for testing in other environments.",
@@ -173,6 +173,10 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 			},
 		},
 	}
+}
+
+func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = ProviderSchema(ctx)
 }
 
 func (p *CloudflareProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {

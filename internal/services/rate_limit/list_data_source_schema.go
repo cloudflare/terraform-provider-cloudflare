@@ -16,8 +16,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &RateLimitsDataSource{}
 
-func (d *RateLimitsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
 				Description: "Identifier",
@@ -214,6 +214,10 @@ func (d *RateLimitsDataSource) Schema(ctx context.Context, req datasource.Schema
 			},
 		},
 	}
+}
+
+func (d *RateLimitsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *RateLimitsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

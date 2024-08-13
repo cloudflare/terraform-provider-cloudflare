@@ -14,8 +14,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustDeviceProfilesResource{}
 
-func (r *ZeroTrustDeviceProfilesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Required:      true,
@@ -111,6 +111,10 @@ func (r *ZeroTrustDeviceProfilesResource) Schema(ctx context.Context, req resour
 			},
 		},
 	}
+}
+
+func (r *ZeroTrustDeviceProfilesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZeroTrustDeviceProfilesResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

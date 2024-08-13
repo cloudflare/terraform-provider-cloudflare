@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &APIShieldOperationSchemaValidationSettingsDataSource{}
 
-func (d *APIShieldOperationSchemaValidationSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"operation_id": schema.StringAttribute{
 				Description: "UUID",
@@ -37,6 +37,10 @@ func (d *APIShieldOperationSchemaValidationSettingsDataSource) Schema(ctx contex
 			},
 		},
 	}
+}
+
+func (d *APIShieldOperationSchemaValidationSettingsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *APIShieldOperationSchemaValidationSettingsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

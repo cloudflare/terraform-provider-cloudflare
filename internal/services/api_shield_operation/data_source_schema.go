@@ -16,8 +16,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &APIShieldOperationDataSource{}
 
-func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{
 				Description: "The endpoint which can contain path parameter templates in curly braces, each will be replaced from left to right with {varN}, starting with {var1}, during insertion. This will further be Cloudflare-normalized upon insertion. See: https://developers.cloudflare.com/rules/normalization/how-it-works/.",
@@ -163,6 +163,10 @@ func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasourc
 			},
 		},
 	}
+}
+
+func (d *APIShieldOperationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *APIShieldOperationDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

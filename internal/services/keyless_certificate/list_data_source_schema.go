@@ -15,8 +15,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &KeylessCertificatesDataSource{}
 
-func (d *KeylessCertificatesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -93,6 +93,10 @@ func (d *KeylessCertificatesDataSource) Schema(ctx context.Context, req datasour
 			},
 		},
 	}
+}
+
+func (d *KeylessCertificatesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *KeylessCertificatesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

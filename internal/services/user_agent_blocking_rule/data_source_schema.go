@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &UserAgentBlockingRuleDataSource{}
 
-func (d *UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
 				Description: "Identifier",
@@ -84,6 +84,10 @@ func (d *UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req dataso
 			},
 		},
 	}
+}
+
+func (d *UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *UserAgentBlockingRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

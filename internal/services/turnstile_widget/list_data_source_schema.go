@@ -15,8 +15,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &TurnstileWidgetsDataSource{}
 
-func (d *TurnstileWidgetsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -116,6 +116,10 @@ func (d *TurnstileWidgetsDataSource) Schema(ctx context.Context, req datasource.
 			},
 		},
 	}
+}
+
+func (d *TurnstileWidgetsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *TurnstileWidgetsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

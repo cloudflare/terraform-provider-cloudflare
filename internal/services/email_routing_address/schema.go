@@ -14,8 +14,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &EmailRoutingAddressResource{}
 
-func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Destination address identifier.",
@@ -53,6 +53,10 @@ func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.S
 			},
 		},
 	}
+}
+
+func (r *EmailRoutingAddressResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *EmailRoutingAddressResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

@@ -14,8 +14,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &MagicWANGRETunnelDataSource{}
 
-func (d *MagicWANGRETunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -115,6 +115,10 @@ func (d *MagicWANGRETunnelDataSource) Schema(ctx context.Context, req datasource
 			},
 		},
 	}
+}
+
+func (d *MagicWANGRETunnelDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *MagicWANGRETunnelDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &R2BucketDataSource{}
 
-func (d *R2BucketDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account ID",
@@ -88,6 +88,10 @@ func (d *R2BucketDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 		},
 	}
+}
+
+func (d *R2BucketDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *R2BucketDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

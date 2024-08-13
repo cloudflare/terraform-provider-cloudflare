@@ -16,8 +16,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &CustomSSLResource{}
 
-func (r *CustomSSLResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -86,6 +86,10 @@ func (r *CustomSSLResource) Schema(ctx context.Context, req resource.SchemaReque
 			},
 		},
 	}
+}
+
+func (r *CustomSSLResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *CustomSSLResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

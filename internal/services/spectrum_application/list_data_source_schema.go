@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &SpectrumApplicationsDataSource{}
 
-func (d *SpectrumApplicationsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone": schema.StringAttribute{
 				Description: "Identifier",
@@ -55,6 +55,10 @@ func (d *SpectrumApplicationsDataSource) Schema(ctx context.Context, req datasou
 			},
 		},
 	}
+}
+
+func (d *SpectrumApplicationsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *SpectrumApplicationsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

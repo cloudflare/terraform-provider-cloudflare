@@ -5,115 +5,11 @@ package turnstile_widget
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithUpgradeState = &TurnstileWidgetResource{}
 
 func (r *TurnstileWidgetResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{
-		0: {
-			PriorSchema: &schema.Schema{
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Description: "Widget item identifier tag.",
-						Computed:    true,
-					},
-					"sitekey": schema.StringAttribute{
-						Description:   "Widget item identifier tag.",
-						Computed:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-					},
-					"account_id": schema.StringAttribute{
-						Description:   "Identifier",
-						Required:      true,
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-					},
-					"region": schema.StringAttribute{
-						Description: "Region where this widget can be used.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("world"),
-						},
-						PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-						Default:       stringdefault.StaticString("world"),
-					},
-					"mode": schema.StringAttribute{
-						Description: "Widget Mode",
-						Required:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"non-interactive",
-								"invisible",
-								"managed",
-							),
-						},
-					},
-					"name": schema.StringAttribute{
-						Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
-						Required:    true,
-					},
-					"domains": schema.ListAttribute{
-						Required:    true,
-						ElementType: types.StringType,
-					},
-					"bot_fight_mode": schema.BoolAttribute{
-						Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
-						Optional:    true,
-					},
-					"clearance_level": schema.StringAttribute{
-						Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\n",
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"no_clearance",
-								"jschallenge",
-								"managed",
-								"interactive",
-							),
-						},
-					},
-					"offlabel": schema.BoolAttribute{
-						Description: "Do not show any Cloudflare branding on the widget (ENT only).\n",
-						Optional:    true,
-					},
-					"created_on": schema.StringAttribute{
-						Description: "When the widget was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"modified_on": schema.StringAttribute{
-						Description: "When the widget was modified.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"secret": schema.StringAttribute{
-						Description: "Secret key for this widget.",
-						Computed:    true,
-					},
-				},
-			},
-
-			StateUpgrader: func(ctx context.Context, req resource.UpgradeStateRequest, resp *resource.UpgradeStateResponse) {
-				var state TurnstileWidgetModel
-
-				resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-				if resp.Diagnostics.HasError() {
-					return
-				}
-
-				resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
-			},
-		},
-	}
+	return map[int64]resource.StateUpgrader{}
 }

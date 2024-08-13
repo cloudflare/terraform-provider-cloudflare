@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &CertificatePackDataSource{}
 
-func (d *CertificatePackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"certificate_pack_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -42,6 +42,10 @@ func (d *CertificatePackDataSource) Schema(ctx context.Context, req datasource.S
 			},
 		},
 	}
+}
+
+func (d *CertificatePackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *CertificatePackDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

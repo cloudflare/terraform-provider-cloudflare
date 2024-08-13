@@ -18,8 +18,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &NotificationPolicyWebhooksResource{}
 
-func (r *NotificationPolicyWebhooksResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID",
@@ -129,6 +129,10 @@ func (r *NotificationPolicyWebhooksResource) Schema(ctx context.Context, req res
 			},
 		},
 	}
+}
+
+func (r *NotificationPolicyWebhooksResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *NotificationPolicyWebhooksResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
