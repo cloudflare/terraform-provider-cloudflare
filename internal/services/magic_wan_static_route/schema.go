@@ -16,8 +16,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &MagicWANStaticRouteResource{}
 
-func (r *MagicWANStaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -298,6 +298,10 @@ func (r *MagicWANStaticRouteResource) Schema(ctx context.Context, req resource.S
 			},
 		},
 	}
+}
+
+func (r *MagicWANStaticRouteResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *MagicWANStaticRouteResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

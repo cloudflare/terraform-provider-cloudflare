@@ -11,8 +11,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ManagedHeadersDataSource{}
 
-func (d *ManagedHeadersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -54,6 +54,10 @@ func (d *ManagedHeadersDataSource) Schema(ctx context.Context, req datasource.Sc
 			},
 		},
 	}
+}
+
+func (d *ManagedHeadersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *ManagedHeadersDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

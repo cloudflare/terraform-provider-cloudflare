@@ -19,8 +19,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &APIShieldSchemaResource{}
 
-func (r *APIShieldSchemaResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -162,6 +162,10 @@ func (r *APIShieldSchemaResource) Schema(ctx context.Context, req resource.Schem
 			},
 		},
 	}
+}
+
+func (r *APIShieldSchemaResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *APIShieldSchemaResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

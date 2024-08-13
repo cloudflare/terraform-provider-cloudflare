@@ -17,8 +17,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustListResource{}
 
-func (r *ZeroTrustListResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "API Resource UUID tag.",
@@ -86,6 +86,10 @@ func (r *ZeroTrustListResource) Schema(ctx context.Context, req resource.SchemaR
 			},
 		},
 	}
+}
+
+func (r *ZeroTrustListResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZeroTrustListResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

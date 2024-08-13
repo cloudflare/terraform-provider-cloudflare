@@ -18,8 +18,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &RateLimitResource{}
 
-func (r *RateLimitResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
 				Description:   "Identifier",
@@ -156,6 +156,10 @@ func (r *RateLimitResource) Schema(ctx context.Context, req resource.SchemaReque
 			},
 		},
 	}
+}
+
+func (r *RateLimitResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *RateLimitResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

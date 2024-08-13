@@ -12,8 +12,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustLocalDomainFallbackDataSource{}
 
-func (d *ZeroTrustLocalDomainFallbackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Optional: true,
@@ -45,6 +45,10 @@ func (d *ZeroTrustLocalDomainFallbackDataSource) Schema(ctx context.Context, req
 			},
 		},
 	}
+}
+
+func (d *ZeroTrustLocalDomainFallbackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *ZeroTrustLocalDomainFallbackDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

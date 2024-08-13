@@ -18,8 +18,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &CustomHostnameDataSource{}
 
-func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"custom_hostname_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -414,6 +414,10 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 			},
 		},
 	}
+}
+
+func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *CustomHostnameDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

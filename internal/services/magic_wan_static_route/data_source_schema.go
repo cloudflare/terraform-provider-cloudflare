@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &MagicWANStaticRouteDataSource{}
 
-func (d *MagicWANStaticRouteDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -87,6 +87,10 @@ func (d *MagicWANStaticRouteDataSource) Schema(ctx context.Context, req datasour
 			},
 		},
 	}
+}
+
+func (d *MagicWANStaticRouteDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *MagicWANStaticRouteDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

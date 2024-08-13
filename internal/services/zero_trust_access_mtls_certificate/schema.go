@@ -15,8 +15,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustAccessMTLSCertificateResource{}
 
-func (r *ZeroTrustAccessMTLSCertificateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "The ID of the application that will use this certificate.",
@@ -65,6 +65,10 @@ func (r *ZeroTrustAccessMTLSCertificateResource) Schema(ctx context.Context, req
 			},
 		},
 	}
+}
+
+func (r *ZeroTrustAccessMTLSCertificateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZeroTrustAccessMTLSCertificateResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

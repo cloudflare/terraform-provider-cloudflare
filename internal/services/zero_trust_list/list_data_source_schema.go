@@ -14,8 +14,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustListsDataSource{}
 
-func (d *ZeroTrustListsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Required: true,
@@ -88,6 +88,10 @@ func (d *ZeroTrustListsDataSource) Schema(ctx context.Context, req datasource.Sc
 			},
 		},
 	}
+}
+
+func (d *ZeroTrustListsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *ZeroTrustListsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

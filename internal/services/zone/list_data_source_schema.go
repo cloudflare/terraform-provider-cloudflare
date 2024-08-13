@@ -16,8 +16,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ZonesDataSource{}
 
-func (d *ZonesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"direction": schema.StringAttribute{
 				Description: "Direction to order zones.",
@@ -220,6 +220,10 @@ func (d *ZonesDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			},
 		},
 	}
+}
+
+func (d *ZonesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *ZonesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

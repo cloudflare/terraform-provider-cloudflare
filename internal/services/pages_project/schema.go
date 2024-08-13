@@ -19,8 +19,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &PagesProjectResource{}
 
-func (r *PagesProjectResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Name of the project.",
@@ -817,6 +817,10 @@ func (r *PagesProjectResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 		},
 	}
+}
+
+func (r *PagesProjectResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *PagesProjectResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

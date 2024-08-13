@@ -14,8 +14,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustTunnelCloudflaredRoutesDataSource{}
 
-func (d *ZeroTrustTunnelCloudflaredRoutesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Cloudflare account ID",
@@ -131,6 +131,10 @@ func (d *ZeroTrustTunnelCloudflaredRoutesDataSource) Schema(ctx context.Context,
 			},
 		},
 	}
+}
+
+func (d *ZeroTrustTunnelCloudflaredRoutesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *ZeroTrustTunnelCloudflaredRoutesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
