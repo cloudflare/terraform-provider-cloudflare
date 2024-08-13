@@ -15,8 +15,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &AccountMembersDataSource{}
 
-func (d *AccountMembersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description: "Account identifier tag.",
@@ -221,6 +221,10 @@ func (d *AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sc
 			},
 		},
 	}
+}
+
+func (d *AccountMembersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *AccountMembersDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

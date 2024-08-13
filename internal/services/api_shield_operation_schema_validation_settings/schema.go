@@ -15,8 +15,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &APIShieldOperationSchemaValidationSettingsResource{}
 
-func (r *APIShieldOperationSchemaValidationSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID",
@@ -46,6 +46,10 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Schema(ctx context.
 			},
 		},
 	}
+}
+
+func (r *APIShieldOperationSchemaValidationSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *APIShieldOperationSchemaValidationSettingsResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

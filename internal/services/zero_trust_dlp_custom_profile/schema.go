@@ -19,8 +19,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustDLPCustomProfileResource{}
 
-func (r *ZeroTrustDLPCustomProfileResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -241,6 +241,10 @@ func (r *ZeroTrustDLPCustomProfileResource) Schema(ctx context.Context, req reso
 			},
 		},
 	}
+}
+
+func (r *ZeroTrustDLPCustomProfileResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZeroTrustDLPCustomProfileResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &RecordDataSource{}
 
-func (d *RecordDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"dns_record_id": schema.StringAttribute{
 				Description: "Identifier",
@@ -176,6 +176,10 @@ func (d *RecordDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			},
 		},
 	}
+}
+
+func (d *RecordDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *RecordDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

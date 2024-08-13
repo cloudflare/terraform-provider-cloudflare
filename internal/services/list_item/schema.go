@@ -17,8 +17,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ListItemResource{}
 
-func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"list_id": schema.StringAttribute{
 				Description:   "The unique ID of the list.",
@@ -112,6 +112,10 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 		},
 	}
+}
+
+func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ListItemResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

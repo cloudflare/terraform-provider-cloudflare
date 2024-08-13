@@ -17,8 +17,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustDLPPredefinedProfileResource{}
 
-func (r *ZeroTrustDLPPredefinedProfileResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Unique identifier for a DLP profile",
@@ -97,6 +97,10 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Schema(ctx context.Context, req 
 			},
 		},
 	}
+}
+
+func (r *ZeroTrustDLPPredefinedProfileResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZeroTrustDLPPredefinedProfileResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

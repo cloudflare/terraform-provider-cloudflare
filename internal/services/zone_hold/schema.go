@@ -13,8 +13,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZoneHoldResource{}
 
-func (r *ZoneHoldResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -37,6 +37,10 @@ func (r *ZoneHoldResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 		},
 	}
+}
+
+func (r *ZoneHoldResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZoneHoldResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

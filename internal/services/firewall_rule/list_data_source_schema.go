@@ -17,8 +17,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &FirewallRulesDataSource{}
 
-func (d *FirewallRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"zone_identifier": schema.StringAttribute{
 				Description: "Identifier",
@@ -148,6 +148,10 @@ func (d *FirewallRulesDataSource) Schema(ctx context.Context, req datasource.Sch
 			},
 		},
 	}
+}
+
+func (d *FirewallRulesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *FirewallRulesDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

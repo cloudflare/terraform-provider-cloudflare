@@ -14,8 +14,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &WaitingRoomEventsDataSource{}
 
-func (d *WaitingRoomEventsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ListDataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"waiting_room_id": schema.StringAttribute{
 				Required: true,
@@ -131,6 +131,10 @@ func (d *WaitingRoomEventsDataSource) Schema(ctx context.Context, req datasource
 			},
 		},
 	}
+}
+
+func (d *WaitingRoomEventsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = ListDataSourceSchema(ctx)
 }
 
 func (d *WaitingRoomEventsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

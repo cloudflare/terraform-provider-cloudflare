@@ -17,8 +17,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ObservatoryScheduledTestResource{}
 
-func (r *ObservatoryScheduledTestResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "A URL.",
@@ -359,6 +359,10 @@ func (r *ObservatoryScheduledTestResource) Schema(ctx context.Context, req resou
 			},
 		},
 	}
+}
+
+func (r *ObservatoryScheduledTestResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ObservatoryScheduledTestResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

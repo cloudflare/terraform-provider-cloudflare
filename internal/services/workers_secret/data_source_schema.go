@@ -13,8 +13,8 @@ import (
 
 var _ datasource.DataSourceWithConfigValidators = &WorkersSecretDataSource{}
 
-func (d *WorkersSecretDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func DataSourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
 				Description: "The name of this secret, this is what will be used to access it inside the Worker.",
@@ -46,6 +46,10 @@ func (d *WorkersSecretDataSource) Schema(ctx context.Context, req datasource.Sch
 			},
 		},
 	}
+}
+
+func (d *WorkersSecretDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = DataSourceSchema(ctx)
 }
 
 func (d *WorkersSecretDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {

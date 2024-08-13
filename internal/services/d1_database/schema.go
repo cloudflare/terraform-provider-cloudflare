@@ -16,8 +16,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &D1DatabaseResource{}
 
-func (r *D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
@@ -68,6 +68,10 @@ func (r *D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaRequ
 			},
 		},
 	}
+}
+
+func (r *D1DatabaseResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *D1DatabaseResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

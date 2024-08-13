@@ -23,8 +23,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &LoadBalancerResource{}
 
-func (r *LoadBalancerResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:      true,
@@ -495,6 +495,10 @@ func (r *LoadBalancerResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 		},
 	}
+}
+
+func (r *LoadBalancerResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *LoadBalancerResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {

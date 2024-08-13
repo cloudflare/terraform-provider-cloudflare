@@ -14,8 +14,8 @@ import (
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustAccessGroupResource{}
 
-func (r *ZeroTrustAccessGroupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
+func ResourceSchema(ctx context.Context) schema.Schema {
+	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID",
@@ -611,6 +611,10 @@ func (r *ZeroTrustAccessGroupResource) Schema(ctx context.Context, req resource.
 			},
 		},
 	}
+}
+
+func (r *ZeroTrustAccessGroupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = ResourceSchema(ctx)
 }
 
 func (r *ZeroTrustAccessGroupResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
