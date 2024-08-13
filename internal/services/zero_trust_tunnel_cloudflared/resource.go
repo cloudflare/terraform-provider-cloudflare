@@ -68,9 +68,10 @@ func (r *ZeroTrustTunnelCloudflaredResource) Create(ctx context.Context, req res
 	}
 	res := new(http.Response)
 	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Tunnels.New(
+	_, err = r.client.ZeroTrust.Tunnels.Edit(
 		ctx,
-		zero_trust.TunnelNewParams{
+		data.TunnelID.ValueString(),
+		zero_trust.TunnelEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -93,38 +94,7 @@ func (r *ZeroTrustTunnelCloudflaredResource) Create(ctx context.Context, req res
 }
 
 func (r *ZeroTrustTunnelCloudflaredResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ZeroTrustTunnelCloudflaredModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := ZeroTrustTunnelCloudflaredResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Tunnels.Get(
-		ctx,
-		data.ID.ValueString(),
-		zero_trust.TunnelGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -177,30 +147,23 @@ func (r *ZeroTrustTunnelCloudflaredResource) Update(ctx context.Context, req res
 }
 
 func (r *ZeroTrustTunnelCloudflaredResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *ZeroTrustTunnelCloudflaredModel
 
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	_, err := r.client.ZeroTrust.Tunnels.Delete(
-		ctx,
-		data.ID.ValueString(),
-		zero_trust.TunnelDeleteParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustTunnelCloudflaredResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
-
+func (r *ZeroTrustTunnelCloudflaredResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.State.Raw.IsNull() {
+		resp.Diagnostics.AddWarning(
+			"Resource Destruction Considerations",
+			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
+				"present in the API until manually deleted.",
+		)
+	}
+	if req.Plan.Raw.IsNull() {
+		resp.Diagnostics.AddWarning(
+			"Resource Destruction Considerations",
+			"Applying this resource destruction will remove the resource from the Terraform state "+
+				"but will not change it in the API. If you would like to destroy or reset this resource "+
+				"in the API, refer to the documentation for how to do it manually.",
+		)
+	}
 }
