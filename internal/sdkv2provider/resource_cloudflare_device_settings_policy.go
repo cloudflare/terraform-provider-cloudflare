@@ -59,6 +59,7 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 		Enabled:             req.Enabled,
 		ExcludeOfficeIps:    req.ExcludeOfficeIps,
 		Description:         req.Description,
+		TunnelProtocol:      req.TunnelProtocol,
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy %q: %w", accountID, err))
@@ -100,6 +101,7 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 			Enabled:             req.Enabled,
 			ExcludeOfficeIps:    req.ExcludeOfficeIps,
 			Description:         req.Description,
+			TunnelProtocol:      req.TunnelProtocol,
 		})
 	} else {
 		_, err = client.UpdateDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateDeviceSettingsPolicyParams{
@@ -119,6 +121,7 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 			Enabled:             req.Enabled,
 			ExcludeOfficeIps:    req.ExcludeOfficeIps,
 			Description:         req.Description,
+			TunnelProtocol:      req.TunnelProtocol,
 		})
 	}
 	if err != nil {
