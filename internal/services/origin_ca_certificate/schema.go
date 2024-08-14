@@ -5,7 +5,7 @@ package origin_ca_certificate
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = &OriginCACertificateResource{}
@@ -23,10 +24,10 @@ var _ resource.ResourceWithConfigValidators = &OriginCACertificateResource{}
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"certificate_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description:   "Identifier",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"csr": schema.StringAttribute{
 				Description:   "The Certificate Signing Request (CSR). Must be newline-encoded.",
@@ -48,7 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"hostnames": schema.ListAttribute{
 				Description:   "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
 				Optional:      true,
-				ElementType:   jsontypes.NewNormalizedNull().Type(ctx),
+				ElementType:   types.StringType,
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"requested_validity": schema.Float64Attribute{
@@ -69,9 +70,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 				Default:       float64default.StaticFloat64(5475),
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
+			"certificate": schema.StringAttribute{
+				Description: "The Origin CA certificate. Will be newline-encoded.",
 				Computed:    true,
+			},
+			"expires_on": schema.StringAttribute{
+				Description: "When the certificate will expire.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

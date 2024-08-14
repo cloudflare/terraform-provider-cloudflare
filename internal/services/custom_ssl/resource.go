@@ -105,7 +105,7 @@ func (r *CustomSSLResource) Read(ctx context.Context, req resource.ReadRequest, 
 	env := CustomSSLResultEnvelope{*data}
 	_, err := r.client.CustomCertificates.Get(
 		ctx,
-		data.CustomCertificateID.ValueString(),
+		data.ID.ValueString(),
 		custom_certificates.CustomCertificateGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -153,7 +153,7 @@ func (r *CustomSSLResource) Update(ctx context.Context, req resource.UpdateReque
 	env := CustomSSLResultEnvelope{*data}
 	_, err = r.client.CustomCertificates.Edit(
 		ctx,
-		data.CustomCertificateID.ValueString(),
+		data.ID.ValueString(),
 		custom_certificates.CustomCertificateEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -187,7 +187,7 @@ func (r *CustomSSLResource) Delete(ctx context.Context, req resource.DeleteReque
 
 	_, err := r.client.CustomCertificates.Delete(
 		ctx,
-		data.CustomCertificateID.ValueString(),
+		data.ID.ValueString(),
 		custom_certificates.CustomCertificateDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},

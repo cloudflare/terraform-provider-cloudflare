@@ -3,7 +3,6 @@
 package keyless_certificate
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,7 +26,7 @@ type KeylessCertificateDataSourceModel struct {
 	Name                 types.String                                `tfsdk:"name" json:"name,computed"`
 	Port                 types.Float64                               `tfsdk:"port" json:"port,computed"`
 	Status               types.String                                `tfsdk:"status" json:"status,computed"`
-	Permissions          *[]jsontypes.Normalized                     `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions          *[]types.String                             `tfsdk:"permissions" json:"permissions,computed"`
 	Tunnel               *KeylessCertificateTunnelDataSourceModel    `tfsdk:"tunnel" json:"tunnel"`
 	Filter               *KeylessCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }

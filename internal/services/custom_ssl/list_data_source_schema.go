@@ -5,7 +5,6 @@ package custom_ssl
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -167,7 +166,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"permissions": schema.ListAttribute{
 									Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
 									Computed:    true,
-									ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+									ElementType: types.StringType,
 								},
 								"port": schema.Float64Attribute{
 									Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",

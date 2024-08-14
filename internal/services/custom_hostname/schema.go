@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -193,7 +192,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"verification_errors": schema.ListAttribute{
 				Description: "These are errors that were encountered while trying to activate a hostname.",
 				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+				ElementType: types.StringType,
 			},
 			"ownership_verification": schema.SingleNestedAttribute{
 				Description: "This is a record which can be placed to activate a hostname.",
