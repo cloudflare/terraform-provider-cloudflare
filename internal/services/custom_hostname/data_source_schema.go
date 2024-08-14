@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -101,7 +100,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "A list of Hostnames on a custom uploaded certificate.",
 						Computed:    true,
 						Optional:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						ElementType: types.StringType,
 					},
 					"issuer": schema.StringAttribute{
 						Description: "The issuer on a custom uploaded certificate.",
@@ -246,7 +245,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
 									Computed:    true,
 									Optional:    true,
-									ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+									ElementType: types.StringType,
 								},
 								"http_body": schema.StringAttribute{
 									Description: "The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.",
@@ -317,7 +316,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "These are errors that were encountered while trying to activate a hostname.",
 				Computed:    true,
 				Optional:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+				ElementType: types.StringType,
 			},
 			"custom_metadata": schema.SingleNestedAttribute{
 				Description: "These are per-hostname (customer) settings.",

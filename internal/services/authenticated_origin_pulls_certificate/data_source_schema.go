@@ -25,29 +25,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"certificate": schema.StringAttribute{
-				Description: "The zone's leaf certificate.",
-				Optional:    true,
-			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate from the authority expires.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
 			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"signature": schema.StringAttribute{
 				Description: "The type of hash used for the certificate.",
+				Computed:    true,
+			},
+			"certificate": schema.StringAttribute{
+				Description: "The zone's leaf certificate.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
 				Optional:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the certificate activation.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -63,6 +66,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"uploaded_on": schema.StringAttribute{
 				Description: "This is the time the certificate was uploaded.",
+				Computed:    true,
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},

@@ -5,12 +5,12 @@ package keyless_certificate
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &KeylessCertificateDataSource{}
@@ -66,7 +66,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"permissions": schema.ListAttribute{
 				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
 				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+				ElementType: types.StringType,
 			},
 			"tunnel": schema.SingleNestedAttribute{
 				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",

@@ -5,13 +5,17 @@ package custom_ssl
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = &CustomSSLResource{}
@@ -19,14 +23,14 @@ var _ resource.ResourceWithConfigValidators = &CustomSSLResource{}
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"custom_certificate_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
@@ -80,9 +84,114 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: stringdefault.StaticString("ubiquitous"),
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
+			"expires_on": schema.StringAttribute{
+				Description: "When the certificate from the authority expires.",
 				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"issuer": schema.StringAttribute{
+				Description: "The certificate authority that issued the certificate.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the certificate was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"priority": schema.Float64Attribute{
+				Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
+				Computed:    true,
+				Default:     float64default.StaticFloat64(20),
+			},
+			"signature": schema.StringAttribute{
+				Description: "The type of hash used for the certificate.",
+				Computed:    true,
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the zone's custom SSL.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"expired",
+						"deleted",
+						"pending",
+						"initializing",
+					),
+				},
+			},
+			"uploaded_on": schema.StringAttribute{
+				Description: "When the certificate was uploaded to Cloudflare.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"hosts": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"keyless_server": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[CustomSSLKeylessServerModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "Keyless certificate identifier tag.",
+						Computed:    true,
+					},
+					"created_on": schema.StringAttribute{
+						Description: "When the Keyless SSL was created.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"enabled": schema.BoolAttribute{
+						Description: "Whether or not the Keyless SSL is on or off.",
+						Computed:    true,
+					},
+					"host": schema.StringAttribute{
+						Description: "The keyless SSL name.",
+						Required:    true,
+					},
+					"modified_on": schema.StringAttribute{
+						Description: "When the Keyless SSL was last modified.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"name": schema.StringAttribute{
+						Description: "The keyless SSL name.",
+						Computed:    true,
+					},
+					"permissions": schema.ListAttribute{
+						Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
+						Computed:    true,
+						ElementType: types.StringType,
+					},
+					"port": schema.Float64Attribute{
+						Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
+						Computed:    true,
+						Optional:    true,
+						Default:     float64default.StaticFloat64(24008),
+					},
+					"status": schema.StringAttribute{
+						Description: "Status of the Keyless SSL.",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("active", "deleted"),
+						},
+					},
+					"tunnel": schema.SingleNestedAttribute{
+						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"private_ip": schema.StringAttribute{
+								Description: "Private IP of the Key Server Host",
+								Required:    true,
+							},
+							"vnet_id": schema.StringAttribute{
+								Description: "Cloudflare Tunnel Virtual Network ID",
+								Required:    true,
+							},
+						},
+					},
+				},
 			},
 		},
 	}

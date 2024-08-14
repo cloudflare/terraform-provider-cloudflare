@@ -5,10 +5,13 @@ package authenticated_origin_pulls_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = &AuthenticatedOriginPullsCertificateResource{}
@@ -16,14 +19,14 @@ var _ resource.ResourceWithConfigValidators = &AuthenticatedOriginPullsCertifica
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "Identifier",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"certificate_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"certificate": schema.StringAttribute{
@@ -35,6 +38,39 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The zone's private key.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"expires_on": schema.StringAttribute{
+				Description: "When the certificate from the authority expires.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"issuer": schema.StringAttribute{
+				Description: "The certificate authority that issued the certificate.",
+				Computed:    true,
+			},
+			"signature": schema.StringAttribute{
+				Description: "The type of hash used for the certificate.",
+				Computed:    true,
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the certificate activation.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending_deployment",
+						"pending_deletion",
+						"active",
+						"deleted",
+						"deployment_timed_out",
+						"deletion_timed_out",
+					),
+				},
+			},
+			"uploaded_on": schema.StringAttribute{
+				Description: "This is the time the certificate was uploaded.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

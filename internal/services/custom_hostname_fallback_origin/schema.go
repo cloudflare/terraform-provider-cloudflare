@@ -5,10 +5,14 @@ package custom_hostname_fallback_origin
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = &CustomHostnameFallbackOriginResource{}
@@ -29,6 +33,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"origin": schema.StringAttribute{
 				Description: "Your origin hostname that requests to your custom hostnames will be sent to.",
 				Required:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Description: "This is the time the fallback origin was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the fallback origin's activation.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending_deployment",
+						"pending_deletion",
+						"active",
+						"deployment_timed_out",
+						"deletion_timed_out",
+					),
+				},
+			},
+			"updated_at": schema.StringAttribute{
+				Description: "This is the time the fallback origin was updated.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"errors": schema.ListAttribute{
+				Description: "These are errors that were encountered while trying to activate a fallback origin.",
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 		},
 	}
