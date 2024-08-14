@@ -112,7 +112,7 @@ func (p *CloudflareProvider) Schema(ctx context.Context, req provider.SchemaRequ
 				MarkdownDescription: fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
-						regexp.MustCompile(`[A-Za-z0-9-_]{40}`),
+						regexp.MustCompile(`[A-Za-z0-9-_]{40}|^$`),
 						"API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores",
 					),
 				},

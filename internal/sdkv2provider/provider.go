@@ -107,7 +107,7 @@ func New(version string) func() *schema.Provider {
 					Type:         schema.TypeString,
 					Optional:     true,
 					Description:  fmt.Sprintf("The API Token for operations. Alternatively, can be configured using the `%s` environment variable. Must provide only one of `api_key`, `api_token`, `api_user_service_key`.", consts.APITokenEnvVarKey),
-					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}"), "API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
+					ValidateFunc: validation.StringMatch(regexp.MustCompile("[A-Za-z0-9-_]{40}|^$"), "API tokens must be 40 characters long and only contain characters a-z, A-Z, 0-9, hyphens and underscores"),
 				},
 
 				consts.APIUserServiceKeySchemaKey: {
