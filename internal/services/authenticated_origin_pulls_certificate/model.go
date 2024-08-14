@@ -3,6 +3,7 @@
 package authenticated_origin_pulls_certificate
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,8 +12,13 @@ type AuthenticatedOriginPullsCertificateResultEnvelope struct {
 }
 
 type AuthenticatedOriginPullsCertificateModel struct {
-	ZoneID        types.String `tfsdk:"zone_id" path:"zone_id"`
-	CertificateID types.String `tfsdk:"certificate_id" path:"certificate_id"`
-	Certificate   types.String `tfsdk:"certificate" json:"certificate"`
-	PrivateKey    types.String `tfsdk:"private_key" json:"private_key"`
+	ID          types.String      `tfsdk:"id" json:"id,computed"`
+	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id"`
+	Certificate types.String      `tfsdk:"certificate" json:"certificate"`
+	PrivateKey  types.String      `tfsdk:"private_key" json:"private_key"`
+	ExpiresOn   timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed"`
+	Issuer      types.String      `tfsdk:"issuer" json:"issuer,computed"`
+	Signature   types.String      `tfsdk:"signature" json:"signature,computed"`
+	Status      types.String      `tfsdk:"status" json:"status,computed"`
+	UploadedOn  timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
 }

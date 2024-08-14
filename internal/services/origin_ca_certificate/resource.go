@@ -103,7 +103,7 @@ func (r *OriginCACertificateResource) Read(ctx context.Context, req resource.Rea
 	env := OriginCACertificateResultEnvelope{*data}
 	_, err := r.client.OriginCACertificates.Get(
 		ctx,
-		data.CertificateID.ValueString(),
+		data.ID.ValueString(),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -179,7 +179,7 @@ func (r *OriginCACertificateResource) Delete(ctx context.Context, req resource.D
 
 	_, err := r.client.OriginCACertificates.Delete(
 		ctx,
-		data.CertificateID.ValueString(),
+		data.ID.ValueString(),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

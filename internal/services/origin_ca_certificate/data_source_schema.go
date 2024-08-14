@@ -5,13 +5,13 @@ package origin_ca_certificate
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &OriginCACertificateDataSource{}
@@ -25,24 +25,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"certificate": schema.StringAttribute{
 				Description: "The Origin CA certificate. Will be newline-encoded.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"csr": schema.StringAttribute{
 				Description: "The Certificate Signing Request (CSR). Must be newline-encoded.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate will expire.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Optional:    true,
 			},
 			"request_type": schema.StringAttribute{
 				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"origin-rsa",
@@ -51,15 +47,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"hostnames": schema.ListAttribute{
-				Description: "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
-				Optional:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
-			},
 			"requested_validity": schema.Float64Attribute{
 				Description: "The number of days for which the certificate should be valid.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.OneOf(
 						7,
@@ -71,6 +61,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						5475,
 					),
 				},
+			},
+			"hostnames": schema.ListAttribute{
+				Description: "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

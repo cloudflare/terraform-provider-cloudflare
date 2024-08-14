@@ -4,7 +4,6 @@ package custom_hostname
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -35,7 +34,7 @@ type CustomHostnamesResultDataSourceModel struct {
 	OwnershipVerification     *CustomHostnamesOwnershipVerificationDataSourceModel        `tfsdk:"ownership_verification" json:"ownership_verification"`
 	OwnershipVerificationHTTP *CustomHostnamesOwnershipVerificationHTTPDataSourceModel    `tfsdk:"ownership_verification_http" json:"ownership_verification_http"`
 	Status                    types.String                                                `tfsdk:"status" json:"status"`
-	VerificationErrors        *[]jsontypes.Normalized                                     `tfsdk:"verification_errors" json:"verification_errors"`
+	VerificationErrors        *[]types.String                                             `tfsdk:"verification_errors" json:"verification_errors"`
 }
 
 type CustomHostnamesSSLDataSourceModel struct {
@@ -46,7 +45,7 @@ type CustomHostnamesSSLDataSourceModel struct {
 	CustomCsrID          types.String                                           `tfsdk:"custom_csr_id" json:"custom_csr_id"`
 	CustomKey            types.String                                           `tfsdk:"custom_key" json:"custom_key"`
 	ExpiresOn            timetypes.RFC3339                                      `tfsdk:"expires_on" json:"expires_on"`
-	Hosts                *[]jsontypes.Normalized                                `tfsdk:"hosts" json:"hosts"`
+	Hosts                *[]types.String                                        `tfsdk:"hosts" json:"hosts"`
 	Issuer               types.String                                           `tfsdk:"issuer" json:"issuer"`
 	Method               types.String                                           `tfsdk:"method" json:"method"`
 	SerialNumber         types.String                                           `tfsdk:"serial_number" json:"serial_number"`
@@ -73,11 +72,11 @@ type CustomHostnamesSSLValidationErrorsDataSourceModel struct {
 }
 
 type CustomHostnamesSSLValidationRecordsDataSourceModel struct {
-	Emails   *[]jsontypes.Normalized `tfsdk:"emails" json:"emails"`
-	HTTPBody types.String            `tfsdk:"http_body" json:"http_body"`
-	HTTPURL  types.String            `tfsdk:"http_url" json:"http_url"`
-	TXTName  types.String            `tfsdk:"txt_name" json:"txt_name"`
-	TXTValue types.String            `tfsdk:"txt_value" json:"txt_value"`
+	Emails   *[]types.String `tfsdk:"emails" json:"emails"`
+	HTTPBody types.String    `tfsdk:"http_body" json:"http_body"`
+	HTTPURL  types.String    `tfsdk:"http_url" json:"http_url"`
+	TXTName  types.String    `tfsdk:"txt_name" json:"txt_name"`
+	TXTValue types.String    `tfsdk:"txt_value" json:"txt_value"`
 }
 
 type CustomHostnamesCustomMetadataDataSourceModel struct {

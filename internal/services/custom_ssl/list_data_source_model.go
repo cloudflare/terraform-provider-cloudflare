@@ -3,7 +3,6 @@
 package custom_ssl
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -48,7 +47,7 @@ type CustomSSLsKeylessServerDataSourceModel struct {
 	Host        types.String                                  `tfsdk:"host" json:"host,computed"`
 	ModifiedOn  timetypes.RFC3339                             `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                                  `tfsdk:"name" json:"name,computed"`
-	Permissions *[]jsontypes.Normalized                       `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions *[]types.String                               `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                                 `tfsdk:"port" json:"port,computed"`
 	Status      types.String                                  `tfsdk:"status" json:"status,computed"`
 	Tunnel      *CustomSSLsKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`
