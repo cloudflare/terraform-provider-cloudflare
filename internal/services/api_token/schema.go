@@ -5,6 +5,7 @@ package api_token
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -19,7 +20,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"token_id": schema.StringAttribute{
-				Optional: true,
+				Optional:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 			"name": schema.StringAttribute{
 				Description: "Token name.",
@@ -53,6 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"meta": schema.StringAttribute{
 										Description: "Attributes associated to the permission group.",
 										Optional:    true,
+										CustomType:  jsontypes.NormalizedType{},
 									},
 									"name": schema.StringAttribute{
 										Description: "Name of the group.",
@@ -64,6 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"resources": schema.StringAttribute{
 							Description: "A list of resource names that the policy applies to.",
 							Required:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 					},
 				},

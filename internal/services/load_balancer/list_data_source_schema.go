@@ -5,6 +5,7 @@ package load_balancer
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -51,6 +52,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"created_on": schema.StringAttribute{
 							Computed:   true,
@@ -75,6 +77,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The pool ID to use when all other pools are detected as unhealthy.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"location_strategy": schema.SingleNestedAttribute{
 							Description: "Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected.",
@@ -115,6 +118,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"proxied": schema.BoolAttribute{
 							Description: "Whether the hostname should be gray clouded (false) or orange clouded (true).",
@@ -136,6 +140,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
 									Computed:    true,
 									Optional:    true,
+									CustomType:  jsontypes.NormalizedType{},
 								},
 							},
 						},
@@ -143,6 +148,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"rules": schema.ListNestedAttribute{
 							Description: "BETA Field Not General Access: A list of rules for this load balancer to execute.",
@@ -211,6 +217,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 												Computed:    true,
 												Optional:    true,
+												CustomType:  jsontypes.NormalizedType{},
 											},
 											"default_pools": schema.ListAttribute{
 												Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
@@ -222,6 +229,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												Description: "The pool ID to use when all other pools are detected as unhealthy.",
 												Computed:    true,
 												Optional:    true,
+												CustomType:  jsontypes.NormalizedType{},
 											},
 											"location_strategy": schema.SingleNestedAttribute{
 												Description: "Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected.",
@@ -253,6 +261,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 												Computed:    true,
 												Optional:    true,
+												CustomType:  jsontypes.NormalizedType{},
 											},
 											"random_steering": schema.SingleNestedAttribute{
 												Description: "Configures pool weights.\n- `steering_policy=\"random\"`: A random pool is selected with probability proportional to pool weights.\n- `steering_policy=\"least_outstanding_requests\"`: Use pool weights to scale each pool's outstanding requests.\n- `steering_policy=\"least_connections\"`: Use pool weights to scale each pool's open connections.",
@@ -270,6 +279,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 														Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
 														Computed:    true,
 														Optional:    true,
+														CustomType:  jsontypes.NormalizedType{},
 													},
 												},
 											},
@@ -277,6 +287,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 												Computed:    true,
 												Optional:    true,
+												CustomType:  jsontypes.NormalizedType{},
 											},
 											"session_affinity": schema.StringAttribute{
 												Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"` or \"\" (default). The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.",

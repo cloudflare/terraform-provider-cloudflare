@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -116,6 +117,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"env_vars": schema.StringAttribute{
 							Description: "A dict of env variables to build this deploy.",
 							Computed:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"environment": schema.StringAttribute{
 							Description: "Type of deploy.",

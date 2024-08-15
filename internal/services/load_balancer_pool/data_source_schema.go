@@ -5,6 +5,7 @@ package load_balancer_pool
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -253,6 +254,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 				Computed:    true,
 				Optional:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
@@ -264,6 +266,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"monitor": schema.StringAttribute{
 						Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 						Optional:    true,
+						CustomType:  jsontypes.NormalizedType{},
 					},
 				},
 			},

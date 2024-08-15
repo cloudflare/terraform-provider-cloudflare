@@ -5,6 +5,7 @@ package zero_trust_access_policy
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -94,6 +95,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"everyone": schema.StringAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Optional: true,
@@ -114,7 +116,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate": schema.StringAttribute{
-							Optional: true,
+							Optional:   true,
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -202,6 +205,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"any_valid_service_token": schema.StringAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Optional: true,
@@ -313,6 +317,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"everyone": schema.StringAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Optional: true,
@@ -333,7 +338,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate": schema.StringAttribute{
-							Optional: true,
+							Optional:   true,
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -421,6 +427,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"any_valid_service_token": schema.StringAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Optional: true,
@@ -500,6 +507,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"everyone": schema.StringAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Optional: true,
@@ -520,7 +528,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate": schema.StringAttribute{
-							Optional: true,
+							Optional:   true,
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -608,6 +617,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"any_valid_service_token": schema.StringAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Optional: true,
