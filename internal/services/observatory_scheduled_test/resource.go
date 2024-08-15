@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ObservatoryScheduledTestResource{}
 var _ resource.ResourceWithModifyPlan = &ObservatoryScheduledTestResource{}
+var _ resource.ResourceWithImportState = &ObservatoryScheduledTestResource{}
 
 func NewResource() resource.Resource {
 	return &ObservatoryScheduledTestResource{}
@@ -110,6 +113,53 @@ func (r *ObservatoryScheduledTestResource) Read(ctx context.Context, req resourc
 		data.URL.ValueString(),
 		speed.ScheduleGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.URL
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ObservatoryScheduledTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ObservatoryScheduledTestModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<url>")
+		return
+	}
+	path_zone_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_url, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <url>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ObservatoryScheduledTestResultEnvelope{*data}
+	_, err = r.client.Speed.Schedule.Get(
+		ctx,
+		path_url,
+		speed.ScheduleGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

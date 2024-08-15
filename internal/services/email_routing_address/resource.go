@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
@@ -19,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &EmailRoutingAddressResource{}
 var _ resource.ResourceWithModifyPlan = &EmailRoutingAddressResource{}
+var _ resource.ResourceWithImportState = &EmailRoutingAddressResource{}
 
 func NewResource() resource.Resource {
 	return &EmailRoutingAddressResource{}
@@ -106,6 +109,50 @@ func (r *EmailRoutingAddressResource) Read(ctx context.Context, req resource.Rea
 		ctx,
 		data.AccountIdentifier.ValueString(),
 		data.ID.ValueString(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *EmailRoutingAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *EmailRoutingAddressModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_identifier>/<destination_address_identifier>")
+		return
+	}
+	path_account_identifier, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account_identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_destination_address_identifier, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <destination_address_identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := EmailRoutingAddressResultEnvelope{*data}
+	_, err = r.client.EmailRouting.Addresses.Get(
+		ctx,
+		path_account_identifier,
+		path_destination_address_identifier,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

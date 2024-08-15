@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &Web3HostnameResource{}
 var _ resource.ResourceWithModifyPlan = &Web3HostnameResource{}
+var _ resource.ResourceWithImportState = &Web3HostnameResource{}
 
 func NewResource() resource.Resource {
 	return &Web3HostnameResource{}
@@ -106,6 +109,50 @@ func (r *Web3HostnameResource) Read(ctx context.Context, req resource.ReadReques
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *Web3HostnameResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *Web3HostnameModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_identifier>/<identifier>")
+		return
+	}
+	path_zone_identifier, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_identifier, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := Web3HostnameResultEnvelope{*data}
+	_, err = r.client.Web3.Hostnames.Get(
+		ctx,
+		path_zone_identifier,
+		path_identifier,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

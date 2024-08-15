@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/logpush"
@@ -19,6 +22,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &LogpushJobResource{}
 var _ resource.ResourceWithModifyPlan = &LogpushJobResource{}
+var _ resource.ResourceWithImportState = &LogpushJobResource{}
 
 func NewResource() resource.Resource {
 	return &LogpushJobResource{}
@@ -120,6 +124,59 @@ func (r *LogpushJobResource) Read(ctx context.Context, req resource.ReadRequest,
 	_, err := r.client.Logpush.Jobs.Get(
 		ctx,
 		data.ID.ValueInt64(),
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *LogpushJobResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *LogpushJobModel
+	params := logpush.JobGetParams{}
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 3 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account/account_id | zone/zone_id>/<job_id>")
+		return
+	}
+	path_account_id_or_zone_id, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	switch path[0] {
+	case "account":
+		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
+	case "zone":
+		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
+	default:
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", "expected segment to be one of account/zone")
+	}
+	path_job_id, err := strconv.ParseInt(path[2], 10, 64)
+	if err != nil {
+		resp.Diagnostics.AddError("unable to parse - <job_id>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := LogpushJobResultEnvelope{*data}
+	_, err = r.client.Logpush.Jobs.Get(
+		ctx,
+		path_job_id,
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

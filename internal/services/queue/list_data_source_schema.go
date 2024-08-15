@@ -5,7 +5,6 @@ package queue
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
@@ -76,9 +75,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"modified_on": schema.StringAttribute{
 							Computed: true,
 						},
-						"producers": schema.ListAttribute{
-							Computed:    true,
-							ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						"producers": schema.ListNestedAttribute{
+							Computed: true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"environment": schema.StringAttribute{
+										Computed: true,
+									},
+									"service": schema.StringAttribute{
+										Computed: true,
+									},
+								},
+							},
 						},
 						"producers_total_count": schema.Float64Attribute{
 							Computed: true,

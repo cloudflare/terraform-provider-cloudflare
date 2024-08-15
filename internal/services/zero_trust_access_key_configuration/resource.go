@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ZeroTrustAccessKeyConfigurationResource{}
 var _ resource.ResourceWithModifyPlan = &ZeroTrustAccessKeyConfigurationResource{}
+var _ resource.ResourceWithImportState = &ZeroTrustAccessKeyConfigurationResource{}
 
 func NewResource() resource.Resource {
 	return &ZeroTrustAccessKeyConfigurationResource{}
@@ -108,6 +110,41 @@ func (r *ZeroTrustAccessKeyConfigurationResource) Read(ctx context.Context, req 
 		ctx,
 		zero_trust.AccessKeyGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.AccountID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustAccessKeyConfigurationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustAccessKeyConfigurationModel
+
+	path, err := url.PathUnescape(req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustAccessKeyConfigurationResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Keys.Get(
+		ctx,
+		zero_trust.AccessKeyGetParams{
+			AccountID: cloudflare.F(path),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

@@ -6,12 +6,12 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &PagesProjectDataSource{}
@@ -68,51 +68,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"aliases": schema.ListAttribute{
 				Description: "A list of alias URLs pointing to this deployment.",
 				Optional:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+				ElementType: types.StringType,
 			},
 			"domains": schema.ListAttribute{
 				Description: "A list of associated custom domains for the project.",
 				Optional:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
-			},
-			"build_config": schema.SingleNestedAttribute{
-				Description: "Configs for the project build process.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"build_caching": schema.BoolAttribute{
-						Description: "Enable build caching for the project.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"build_command": schema.StringAttribute{
-						Description: "Command used to build project.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"destination_dir": schema.StringAttribute{
-						Description: "Output directory of the build.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"root_dir": schema.StringAttribute{
-						Description: "Directory to run the command.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"web_analytics_tag": schema.StringAttribute{
-						Description: "The classifying tag for analytics.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"web_analytics_token": schema.StringAttribute{
-						Description: "The auth token for analytics.",
-						Computed:    true,
-						Optional:    true,
-					},
-				},
+				ElementType: types.StringType,
 			},
 			"canonical_deployment": schema.SingleNestedAttribute{
-				Optional: true,
+				Description: "Most recent deployment to the repo.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Id of the deployment.",
@@ -121,10 +86,44 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						ElementType: types.StringType,
 					},
-					"build_config": schema.StringAttribute{
-						Computed: true,
+					"build_config": schema.SingleNestedAttribute{
+						Description: "Configs for the project build process.",
+						Computed:    true,
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"build_caching": schema.BoolAttribute{
+								Description: "Enable build caching for the project.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"build_command": schema.StringAttribute{
+								Description: "Command used to build project.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"destination_dir": schema.StringAttribute{
+								Description: "Output directory of the build.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"root_dir": schema.StringAttribute{
+								Description: "Directory to run the command.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"web_analytics_tag": schema.StringAttribute{
+								Description: "The classifying tag for analytics.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"web_analytics_token": schema.StringAttribute{
+								Description: "The auth token for analytics.",
+								Computed:    true,
+								Optional:    true,
+							},
+						},
 					},
 					"created_on": schema.StringAttribute{
 						Description: "When the deployment was created.",
@@ -173,8 +172,31 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "If the deployment has been skipped.",
 						Computed:    true,
 					},
-					"latest_stage": schema.StringAttribute{
-						Computed: true,
+					"latest_stage": schema.SingleNestedAttribute{
+						Description: "The status of the deployment.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentLatestStageDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"ended_on": schema.StringAttribute{
+								Description: "When the stage ended.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"name": schema.StringAttribute{
+								Description: "The current build stage.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"started_on": schema.StringAttribute{
+								Description: "When the stage started.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"status": schema.StringAttribute{
+								Description: "State of the current stage.",
+								Computed:    true,
+							},
+						},
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "When the deployment was last modified.",
@@ -193,8 +215,76 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Short Id (8 character) of the deployment.",
 						Computed:    true,
 					},
-					"source": schema.StringAttribute{
-						Computed: true,
+					"source": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentSourceDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"config": schema.SingleNestedAttribute{
+								Computed: true,
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"deployments_enabled": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"owner": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"path_excludes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"path_includes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"pr_comments_enabled": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"preview_branch_excludes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_branch_includes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_deployment_setting": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"none",
+												"custom",
+											),
+										},
+									},
+									"production_branch": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"production_deployments_enabled": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"repo_name": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+									},
+								},
+							},
+							"type": schema.StringAttribute{
+								Computed: true,
+								Optional: true,
+							},
+						},
 					},
 					"stages": schema.ListNestedAttribute{
 						Description: "List of past stages.",
@@ -296,7 +386,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "Compatibility flags used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+								ElementType: types.StringType,
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -585,7 +675,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Description: "Compatibility flags used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+								ElementType: types.StringType,
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -843,7 +933,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"latest_deployment": schema.SingleNestedAttribute{
-				Optional: true,
+				Description: "Most recent deployment to the repo.",
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Id of the deployment.",
@@ -852,10 +943,44 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						ElementType: types.StringType,
 					},
-					"build_config": schema.StringAttribute{
-						Computed: true,
+					"build_config": schema.SingleNestedAttribute{
+						Description: "Configs for the project build process.",
+						Computed:    true,
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"build_caching": schema.BoolAttribute{
+								Description: "Enable build caching for the project.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"build_command": schema.StringAttribute{
+								Description: "Command used to build project.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"destination_dir": schema.StringAttribute{
+								Description: "Output directory of the build.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"root_dir": schema.StringAttribute{
+								Description: "Directory to run the command.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"web_analytics_tag": schema.StringAttribute{
+								Description: "The classifying tag for analytics.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"web_analytics_token": schema.StringAttribute{
+								Description: "The auth token for analytics.",
+								Computed:    true,
+								Optional:    true,
+							},
+						},
 					},
 					"created_on": schema.StringAttribute{
 						Description: "When the deployment was created.",
@@ -904,8 +1029,31 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "If the deployment has been skipped.",
 						Computed:    true,
 					},
-					"latest_stage": schema.StringAttribute{
-						Computed: true,
+					"latest_stage": schema.SingleNestedAttribute{
+						Description: "The status of the deployment.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[PagesProjectLatestDeploymentLatestStageDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"ended_on": schema.StringAttribute{
+								Description: "When the stage ended.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"name": schema.StringAttribute{
+								Description: "The current build stage.",
+								Computed:    true,
+								Optional:    true,
+							},
+							"started_on": schema.StringAttribute{
+								Description: "When the stage started.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"status": schema.StringAttribute{
+								Description: "State of the current stage.",
+								Computed:    true,
+							},
+						},
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "When the deployment was last modified.",
@@ -924,8 +1072,76 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "Short Id (8 character) of the deployment.",
 						Computed:    true,
 					},
-					"source": schema.StringAttribute{
-						Computed: true,
+					"source": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[PagesProjectLatestDeploymentSourceDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"config": schema.SingleNestedAttribute{
+								Computed: true,
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"deployments_enabled": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"owner": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"path_excludes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"path_includes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"pr_comments_enabled": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"preview_branch_excludes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_branch_includes": schema.ListAttribute{
+										Computed:    true,
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_deployment_setting": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"none",
+												"custom",
+											),
+										},
+									},
+									"production_branch": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"production_deployments_enabled": schema.BoolAttribute{
+										Computed: true,
+										Optional: true,
+									},
+									"repo_name": schema.StringAttribute{
+										Computed: true,
+										Optional: true,
+									},
+								},
+							},
+							"type": schema.StringAttribute{
+								Computed: true,
+								Optional: true,
+							},
+						},
 					},
 					"stages": schema.ListNestedAttribute{
 						Description: "List of past stages.",
@@ -956,6 +1172,31 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"url": schema.StringAttribute{
 						Description: "The live URL to view this deployment.",
+						Computed:    true,
+					},
+				},
+			},
+			"latest_stage": schema.SingleNestedAttribute{
+				Description: "The status of the deployment.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"ended_on": schema.StringAttribute{
+						Description: "When the stage ended.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"name": schema.StringAttribute{
+						Description: "The current build stage.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"started_on": schema.StringAttribute{
+						Description: "When the stage started.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"status": schema.StringAttribute{
+						Description: "State of the current stage.",
 						Computed:    true,
 					},
 				},
@@ -991,9 +1232,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A dict of env variables to build this deploy.",
 				Optional:    true,
 			},
-			"latest_stage": schema.StringAttribute{
-				Optional: true,
-			},
 			"created_on": schema.StringAttribute{
 				Description: "When the project was created.",
 				Computed:    true,
@@ -1003,8 +1241,113 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Id of the project.",
 				Computed:    true,
 			},
-			"source": schema.StringAttribute{
-				Computed: true,
+			"source": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[PagesProjectSourceDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"config": schema.SingleNestedAttribute{
+						Computed: true,
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"deployments_enabled": schema.BoolAttribute{
+								Computed: true,
+								Optional: true,
+							},
+							"owner": schema.StringAttribute{
+								Computed: true,
+								Optional: true,
+							},
+							"path_excludes": schema.ListAttribute{
+								Computed:    true,
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"path_includes": schema.ListAttribute{
+								Computed:    true,
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"pr_comments_enabled": schema.BoolAttribute{
+								Computed: true,
+								Optional: true,
+							},
+							"preview_branch_excludes": schema.ListAttribute{
+								Computed:    true,
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_branch_includes": schema.ListAttribute{
+								Computed:    true,
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_deployment_setting": schema.StringAttribute{
+								Computed: true,
+								Optional: true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"all",
+										"none",
+										"custom",
+									),
+								},
+							},
+							"production_branch": schema.StringAttribute{
+								Computed: true,
+								Optional: true,
+							},
+							"production_deployments_enabled": schema.BoolAttribute{
+								Computed: true,
+								Optional: true,
+							},
+							"repo_name": schema.StringAttribute{
+								Computed: true,
+								Optional: true,
+							},
+						},
+					},
+					"type": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+					},
+				},
+			},
+			"build_config": schema.SingleNestedAttribute{
+				Description: "Configs for the project build process.",
+				Computed:    true,
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"build_caching": schema.BoolAttribute{
+						Description: "Enable build caching for the project.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"build_command": schema.StringAttribute{
+						Description: "Command used to build project.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"destination_dir": schema.StringAttribute{
+						Description: "Output directory of the build.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"root_dir": schema.StringAttribute{
+						Description: "Directory to run the command.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"web_analytics_tag": schema.StringAttribute{
+						Description: "The classifying tag for analytics.",
+						Computed:    true,
+						Optional:    true,
+					},
+					"web_analytics_token": schema.StringAttribute{
+						Description: "The auth token for analytics.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

@@ -5,10 +5,13 @@ package pages_domain
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = &PagesDomainResource{}
@@ -16,6 +19,10 @@ var _ resource.ResourceWithConfigValidators = &PagesDomainResource{}
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
@@ -26,10 +33,91 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"domain_name": schema.StringAttribute{
-				Description:   "Name of the domain.",
+			"name": schema.StringAttribute{
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"certificate_authority": schema.StringAttribute{
+				Computed: true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
+				},
+			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"domain_id": schema.StringAttribute{
+				Computed: true,
+			},
+			"status": schema.StringAttribute{
+				Computed: true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending",
+						"active",
+						"deactivated",
+						"blocked",
+						"error",
+					),
+				},
+			},
+			"zone_tag": schema.StringAttribute{
+				Computed: true,
+			},
+			"validation_data": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[PagesDomainValidationDataModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"error_message": schema.StringAttribute{
+						Optional: true,
+					},
+					"method": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("http", "txt"),
+						},
+					},
+					"status": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"initializing",
+								"pending",
+								"active",
+								"deactivated",
+								"error",
+							),
+						},
+					},
+					"txt_name": schema.StringAttribute{
+						Optional: true,
+					},
+					"txt_value": schema.StringAttribute{
+						Optional: true,
+					},
+				},
+			},
+			"verification_data": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[PagesDomainVerificationDataModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"error_message": schema.StringAttribute{
+						Optional: true,
+					},
+					"status": schema.StringAttribute{
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"pending",
+								"active",
+								"deactivated",
+								"blocked",
+								"error",
+							),
+						},
+					},
+				},
 			},
 		},
 	}
