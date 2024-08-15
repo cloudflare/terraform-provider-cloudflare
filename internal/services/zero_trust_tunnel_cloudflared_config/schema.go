@@ -5,6 +5,9 @@ package zero_trust_tunnel_cloudflared_config
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -12,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -31,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
-				Description:   "Cloudflare account ID",
+				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -40,7 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"ingress": schema.ListNestedAttribute{
-						Description: "List of public hostname definitions",
+						Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
 						Optional:    true,
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
@@ -68,7 +72,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												"team_name": schema.StringAttribute{
 													Computed: true,
 													Optional: true,
-													Default:  stringdefault.StaticString("Your Zero Trust authentication domain."),
+													Default:  stringdefault.StaticString("Your Zero Trust organization name."),
 												},
 												"required": schema.BoolAttribute{
 													Description: "Deny traffic that has not fulfilled Access authorization.",
@@ -177,7 +181,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									"team_name": schema.StringAttribute{
 										Computed: true,
 										Optional: true,
-										Default:  stringdefault.StaticString("Your Zero Trust authentication domain."),
+										Default:  stringdefault.StaticString("Your Zero Trust organization name."),
 									},
 									"required": schema.BoolAttribute{
 										Description: "Deny traffic that has not fulfilled Access authorization.",
@@ -262,8 +266,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"warp_routing": schema.SingleNestedAttribute{
-						Description: "Enable private network access from WARP users to private network routes",
-						Optional:    true,
+						Description: "Enable private network access from WARP users to private network routes. This is enabled if the tunnel has an assigned route.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Computed: true,
@@ -273,6 +278,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
+			},
+			"created_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
+			},
+			"source": schema.StringAttribute{
+				Description: "Indicates if this is a locally or remotely configured tunnel. If `local`, manage the tunnel using a YAML file on the origin machine. If `cloudflare`, manage the tunnel's configuration on the Zero Trust dashboard.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("local", "cloudflare"),
+				},
+				Default: stringdefault.StaticString("local"),
+			},
+			"version": schema.Int64Attribute{
+				Description: "The version of the Tunnel Configuration.",
+				Computed:    true,
 			},
 		},
 	}

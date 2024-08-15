@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ZeroTrustAccessPolicyResource{}
 var _ resource.ResourceWithModifyPlan = &ZeroTrustAccessPolicyResource{}
+var _ resource.ResourceWithImportState = &ZeroTrustAccessPolicyResource{}
 
 func NewResource() resource.Resource {
 	return &ZeroTrustAccessPolicyResource{}
@@ -122,6 +125,64 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 		ctx,
 		data.AppID.ValueString(),
 		data.ID.ValueString(),
+		params,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustAccessPolicyModel
+	params := zero_trust.AccessApplicationPolicyGetParams{}
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 4 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account/account_id | zone/zone_id>/<app_id>/<policy_id>")
+		return
+	}
+	path_account_id_or_zone_id, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	switch path[0] {
+	case "account":
+		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
+	case "zone":
+		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
+	default:
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", "expected segment to be one of account/zone")
+	}
+	path_app_id, err := url.PathUnescape(path[2])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <app_id>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
+	}
+	path_policy_id, err := url.PathUnescape(path[3])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <policy_id>", fmt.Sprintf("%s -> %q", err.Error(), path[3]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustAccessPolicyResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Access.Applications.Policies.Get(
+		ctx,
+		path_app_id,
+		path_policy_id,
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

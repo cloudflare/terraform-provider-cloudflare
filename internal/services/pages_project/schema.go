@@ -6,15 +6,14 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = &PagesProjectResource{}
@@ -38,9 +37,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"production_branch": schema.StringAttribute{
-				Description:   "Production branch of the project. Used to identify production deployments.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Description: "Production branch of the project. Used to identify production deployments.",
+				Optional:    true,
 			},
 			"build_config": schema.SingleNestedAttribute{
 				Description: "Configs for the project build process.",
@@ -71,124 +69,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
-			},
-			"canonical_deployment": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Description: "Id of the deployment.",
-						Computed:    true,
-					},
-					"aliases": schema.ListAttribute{
-						Description: "A list of alias URLs pointing to this deployment.",
-						Computed:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
-					},
-					"build_config": schema.StringAttribute{
-						Computed: true,
-					},
-					"created_on": schema.StringAttribute{
-						Description: "When the deployment was created.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"deployment_trigger": schema.SingleNestedAttribute{
-						Description: "Info about what caused the deployment.",
-						Computed:    true,
-						CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentDeploymentTriggerModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"metadata": schema.SingleNestedAttribute{
-								Description: "Additional info about the trigger.",
-								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"branch": schema.StringAttribute{
-										Description: "Where the trigger happened.",
-										Computed:    true,
-									},
-									"commit_hash": schema.StringAttribute{
-										Description: "Hash of the deployment trigger commit.",
-										Computed:    true,
-									},
-									"commit_message": schema.StringAttribute{
-										Description: "Message of the deployment trigger commit.",
-										Computed:    true,
-									},
-								},
-							},
-							"type": schema.StringAttribute{
-								Description: "What caused the deployment.",
-								Computed:    true,
-							},
-						},
-					},
-					"env_vars": schema.StringAttribute{
-						Description: "A dict of env variables to build this deploy.",
-						Computed:    true,
-					},
-					"environment": schema.StringAttribute{
-						Description: "Type of deploy.",
-						Computed:    true,
-					},
-					"is_skipped": schema.BoolAttribute{
-						Description: "If the deployment has been skipped.",
-						Computed:    true,
-					},
-					"latest_stage": schema.StringAttribute{
-						Computed: true,
-					},
-					"modified_on": schema.StringAttribute{
-						Description: "When the deployment was last modified.",
-						Computed:    true,
-						CustomType:  timetypes.RFC3339Type{},
-					},
-					"project_id": schema.StringAttribute{
-						Description: "Id of the project.",
-						Computed:    true,
-					},
-					"project_name": schema.StringAttribute{
-						Description: "Name of the project.",
-						Computed:    true,
-					},
-					"short_id": schema.StringAttribute{
-						Description: "Short Id (8 character) of the deployment.",
-						Computed:    true,
-					},
-					"source": schema.StringAttribute{
-						Computed: true,
-					},
-					"stages": schema.ListNestedAttribute{
-						Description: "List of past stages.",
-						Computed:    true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"ended_on": schema.StringAttribute{
-									Description: "When the stage ended.",
-									Computed:    true,
-									CustomType:  timetypes.RFC3339Type{},
-								},
-								"name": schema.StringAttribute{
-									Description: "The current build stage.",
-									Optional:    true,
-								},
-								"started_on": schema.StringAttribute{
-									Description: "When the stage started.",
-									Computed:    true,
-									CustomType:  timetypes.RFC3339Type{},
-								},
-								"status": schema.StringAttribute{
-									Description: "State of the current stage.",
-									Computed:    true,
-								},
-							},
-						},
-					},
-					"url": schema.StringAttribute{
-						Description: "The live URL to view this deployment.",
-						Computed:    true,
-					},
-				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"deployment_configs": schema.SingleNestedAttribute{
 				Description: "Configs for deployments in a project.",
@@ -246,7 +126,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
 								Optional:    true,
-								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+								ElementType: types.StringType,
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -488,7 +368,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
 								Optional:    true,
-								ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+								ElementType: types.StringType,
 							},
 							"d1_databases": schema.SingleNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
@@ -679,10 +559,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
-			"latest_deployment": schema.SingleNestedAttribute{
-				Optional: true,
+			"created_on": schema.StringAttribute{
+				Description: "When the project was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"subdomain": schema.StringAttribute{
+				Description: "The Cloudflare subdomain associated with the project.",
+				Computed:    true,
+			},
+			"domains": schema.ListAttribute{
+				Description: "A list of associated custom domains for the project.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"canonical_deployment": schema.SingleNestedAttribute{
+				Description: "Most recent deployment to the repo.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Id of the deployment.",
@@ -691,10 +586,259 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						ElementType: types.StringType,
 					},
-					"build_config": schema.StringAttribute{
-						Computed: true,
+					"build_config": schema.SingleNestedAttribute{
+						Description: "Configs for the project build process.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"build_caching": schema.BoolAttribute{
+								Description: "Enable build caching for the project.",
+								Optional:    true,
+							},
+							"build_command": schema.StringAttribute{
+								Description: "Command used to build project.",
+								Optional:    true,
+							},
+							"destination_dir": schema.StringAttribute{
+								Description: "Output directory of the build.",
+								Optional:    true,
+							},
+							"root_dir": schema.StringAttribute{
+								Description: "Directory to run the command.",
+								Optional:    true,
+							},
+							"web_analytics_tag": schema.StringAttribute{
+								Description: "The classifying tag for analytics.",
+								Optional:    true,
+							},
+							"web_analytics_token": schema.StringAttribute{
+								Description: "The auth token for analytics.",
+								Optional:    true,
+							},
+						},
+					},
+					"created_on": schema.StringAttribute{
+						Description: "When the deployment was created.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"deployment_trigger": schema.SingleNestedAttribute{
+						Description: "Info about what caused the deployment.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentDeploymentTriggerModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"metadata": schema.SingleNestedAttribute{
+								Description: "Additional info about the trigger.",
+								Optional:    true,
+								Attributes: map[string]schema.Attribute{
+									"branch": schema.StringAttribute{
+										Description: "Where the trigger happened.",
+										Computed:    true,
+									},
+									"commit_hash": schema.StringAttribute{
+										Description: "Hash of the deployment trigger commit.",
+										Computed:    true,
+									},
+									"commit_message": schema.StringAttribute{
+										Description: "Message of the deployment trigger commit.",
+										Computed:    true,
+									},
+								},
+							},
+							"type": schema.StringAttribute{
+								Description: "What caused the deployment.",
+								Computed:    true,
+							},
+						},
+					},
+					"env_vars": schema.StringAttribute{
+						Description: "A dict of env variables to build this deploy.",
+						Computed:    true,
+					},
+					"environment": schema.StringAttribute{
+						Description: "Type of deploy.",
+						Computed:    true,
+					},
+					"is_skipped": schema.BoolAttribute{
+						Description: "If the deployment has been skipped.",
+						Computed:    true,
+					},
+					"latest_stage": schema.SingleNestedAttribute{
+						Description: "The status of the deployment.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentLatestStageModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"ended_on": schema.StringAttribute{
+								Description: "When the stage ended.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"name": schema.StringAttribute{
+								Description: "The current build stage.",
+								Optional:    true,
+							},
+							"started_on": schema.StringAttribute{
+								Description: "When the stage started.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"status": schema.StringAttribute{
+								Description: "State of the current stage.",
+								Computed:    true,
+							},
+						},
+					},
+					"modified_on": schema.StringAttribute{
+						Description: "When the deployment was last modified.",
+						Computed:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"project_id": schema.StringAttribute{
+						Description: "Id of the project.",
+						Computed:    true,
+					},
+					"project_name": schema.StringAttribute{
+						Description: "Name of the project.",
+						Computed:    true,
+					},
+					"short_id": schema.StringAttribute{
+						Description: "Short Id (8 character) of the deployment.",
+						Computed:    true,
+					},
+					"source": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[PagesProjectCanonicalDeploymentSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"config": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"deployments_enabled": schema.BoolAttribute{
+										Optional: true,
+									},
+									"owner": schema.StringAttribute{
+										Optional: true,
+									},
+									"path_excludes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"path_includes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"pr_comments_enabled": schema.BoolAttribute{
+										Optional: true,
+									},
+									"preview_branch_excludes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_branch_includes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_deployment_setting": schema.StringAttribute{
+										Optional: true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"none",
+												"custom",
+											),
+										},
+									},
+									"production_branch": schema.StringAttribute{
+										Optional: true,
+									},
+									"production_deployments_enabled": schema.BoolAttribute{
+										Optional: true,
+									},
+									"repo_name": schema.StringAttribute{
+										Optional: true,
+									},
+								},
+							},
+							"type": schema.StringAttribute{
+								Optional: true,
+							},
+						},
+					},
+					"stages": schema.ListNestedAttribute{
+						Description: "List of past stages.",
+						Computed:    true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"ended_on": schema.StringAttribute{
+									Description: "When the stage ended.",
+									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
+								},
+								"name": schema.StringAttribute{
+									Description: "The current build stage.",
+									Optional:    true,
+								},
+								"started_on": schema.StringAttribute{
+									Description: "When the stage started.",
+									Computed:    true,
+									CustomType:  timetypes.RFC3339Type{},
+								},
+								"status": schema.StringAttribute{
+									Description: "State of the current stage.",
+									Computed:    true,
+								},
+							},
+						},
+					},
+					"url": schema.StringAttribute{
+						Description: "The live URL to view this deployment.",
+						Computed:    true,
+					},
+				},
+			},
+			"latest_deployment": schema.SingleNestedAttribute{
+				Description: "Most recent deployment to the repo.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[PagesProjectLatestDeploymentModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "Id of the deployment.",
+						Computed:    true,
+					},
+					"aliases": schema.ListAttribute{
+						Description: "A list of alias URLs pointing to this deployment.",
+						Computed:    true,
+						ElementType: types.StringType,
+					},
+					"build_config": schema.SingleNestedAttribute{
+						Description: "Configs for the project build process.",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"build_caching": schema.BoolAttribute{
+								Description: "Enable build caching for the project.",
+								Optional:    true,
+							},
+							"build_command": schema.StringAttribute{
+								Description: "Command used to build project.",
+								Optional:    true,
+							},
+							"destination_dir": schema.StringAttribute{
+								Description: "Output directory of the build.",
+								Optional:    true,
+							},
+							"root_dir": schema.StringAttribute{
+								Description: "Directory to run the command.",
+								Optional:    true,
+							},
+							"web_analytics_tag": schema.StringAttribute{
+								Description: "The classifying tag for analytics.",
+								Optional:    true,
+							},
+							"web_analytics_token": schema.StringAttribute{
+								Description: "The auth token for analytics.",
+								Optional:    true,
+							},
+						},
 					},
 					"created_on": schema.StringAttribute{
 						Description: "When the deployment was created.",
@@ -742,8 +886,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "If the deployment has been skipped.",
 						Computed:    true,
 					},
-					"latest_stage": schema.StringAttribute{
-						Computed: true,
+					"latest_stage": schema.SingleNestedAttribute{
+						Description: "The status of the deployment.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[PagesProjectLatestDeploymentLatestStageModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"ended_on": schema.StringAttribute{
+								Description: "When the stage ended.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"name": schema.StringAttribute{
+								Description: "The current build stage.",
+								Optional:    true,
+							},
+							"started_on": schema.StringAttribute{
+								Description: "When the stage started.",
+								Computed:    true,
+								CustomType:  timetypes.RFC3339Type{},
+							},
+							"status": schema.StringAttribute{
+								Description: "State of the current stage.",
+								Computed:    true,
+							},
+						},
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "When the deployment was last modified.",
@@ -762,8 +928,63 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Short Id (8 character) of the deployment.",
 						Computed:    true,
 					},
-					"source": schema.StringAttribute{
-						Computed: true,
+					"source": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[PagesProjectLatestDeploymentSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"config": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"deployments_enabled": schema.BoolAttribute{
+										Optional: true,
+									},
+									"owner": schema.StringAttribute{
+										Optional: true,
+									},
+									"path_excludes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"path_includes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"pr_comments_enabled": schema.BoolAttribute{
+										Optional: true,
+									},
+									"preview_branch_excludes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_branch_includes": schema.ListAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"preview_deployment_setting": schema.StringAttribute{
+										Optional: true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"all",
+												"none",
+												"custom",
+											),
+										},
+									},
+									"production_branch": schema.StringAttribute{
+										Optional: true,
+									},
+									"production_deployments_enabled": schema.BoolAttribute{
+										Optional: true,
+									},
+									"repo_name": schema.StringAttribute{
+										Optional: true,
+									},
+								},
+							},
+							"type": schema.StringAttribute{
+								Optional: true,
+							},
+						},
 					},
 					"stages": schema.ListNestedAttribute{
 						Description: "List of past stages.",
@@ -796,24 +1017,64 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 				},
-				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
-			"created_on": schema.StringAttribute{
-				Description: "When the project was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"subdomain": schema.StringAttribute{
-				Description: "The Cloudflare subdomain associated with the project.",
-				Computed:    true,
-			},
-			"domains": schema.ListAttribute{
-				Description: "A list of associated custom domains for the project.",
-				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
-			},
-			"source": schema.StringAttribute{
-				Computed: true,
+			"source": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[PagesProjectSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"config": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"deployments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"owner": schema.StringAttribute{
+								Optional: true,
+							},
+							"path_excludes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"path_includes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"pr_comments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"preview_branch_excludes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_branch_includes": schema.ListAttribute{
+								Optional:    true,
+								ElementType: types.StringType,
+							},
+							"preview_deployment_setting": schema.StringAttribute{
+								Optional: true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"all",
+										"none",
+										"custom",
+									),
+								},
+							},
+							"production_branch": schema.StringAttribute{
+								Optional: true,
+							},
+							"production_deployments_enabled": schema.BoolAttribute{
+								Optional: true,
+							},
+							"repo_name": schema.StringAttribute{
+								Optional: true,
+							},
+						},
+					},
+					"type": schema.StringAttribute{
+						Optional: true,
+					},
+				},
 			},
 		},
 	}

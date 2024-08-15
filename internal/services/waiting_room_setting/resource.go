@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WaitingRoomSettingResource{}
 var _ resource.ResourceWithModifyPlan = &WaitingRoomSettingResource{}
+var _ resource.ResourceWithImportState = &WaitingRoomSettingResource{}
 
 func NewResource() resource.Resource {
 	return &WaitingRoomSettingResource{}
@@ -108,6 +110,41 @@ func (r *WaitingRoomSettingResource) Read(ctx context.Context, req resource.Read
 		ctx,
 		waiting_rooms.SettingGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WaitingRoomSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WaitingRoomSettingModel
+
+	path, err := url.PathUnescape(req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+		return
+	}
+
+	res := new(http.Response)
+	env := WaitingRoomSettingResultEnvelope{*data}
+	_, err = r.client.WaitingRooms.Settings.Get(
+		ctx,
+		waiting_rooms.SettingGetParams{
+			ZoneID: cloudflare.F(path),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

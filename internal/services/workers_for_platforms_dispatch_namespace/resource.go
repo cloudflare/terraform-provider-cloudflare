@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WorkersForPlatformsDispatchNamespaceResource{}
 var _ resource.ResourceWithModifyPlan = &WorkersForPlatformsDispatchNamespaceResource{}
+var _ resource.ResourceWithImportState = &WorkersForPlatformsDispatchNamespaceResource{}
 
 func NewResource() resource.Resource {
 	return &WorkersForPlatformsDispatchNamespaceResource{}
@@ -109,6 +112,53 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Read(ctx context.Context,
 		data.NamespaceID.ValueString(),
 		workers_for_platforms.DispatchNamespaceGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.NamespaceID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WorkersForPlatformsDispatchNamespaceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WorkersForPlatformsDispatchNamespaceModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<dispatch_namespace>")
+		return
+	}
+	path_account_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_dispatch_namespace, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <dispatch_namespace>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := WorkersForPlatformsDispatchNamespaceResultEnvelope{*data}
+	_, err = r.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
+		ctx,
+		path_dispatch_namespace,
+		workers_for_platforms.DispatchNamespaceGetParams{
+			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

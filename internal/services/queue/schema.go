@@ -5,7 +5,6 @@ package queue
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -45,10 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"producers_total_count": schema.Float64Attribute{
 				Computed: true,
 			},
-			"producers": schema.ListAttribute{
-				Computed:    true,
-				ElementType: jsontypes.NewNormalizedNull().Type(ctx),
-			},
 			"consumers": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -80,6 +75,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 								},
 							},
+						},
+					},
+				},
+			},
+			"producers": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"environment": schema.StringAttribute{
+							Computed: true,
+						},
+						"service": schema.StringAttribute{
+							Computed: true,
 						},
 					},
 				},
