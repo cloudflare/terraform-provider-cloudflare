@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &WaitingRoomEventResource{}
 var _ resource.ResourceWithModifyPlan = &WaitingRoomEventResource{}
+var _ resource.ResourceWithImportState = &WaitingRoomEventResource{}
 
 func NewResource() resource.Resource {
 	return &WaitingRoomEventResource{}
@@ -110,6 +113,57 @@ func (r *WaitingRoomEventResource) Read(ctx context.Context, req resource.ReadRe
 		data.ID.ValueString(),
 		waiting_rooms.EventGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WaitingRoomEventResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *WaitingRoomEventModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 3 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<waiting_room_id>/<event_id>")
+		return
+	}
+	path_zone_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_waiting_room_id, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <waiting_room_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	path_event_id, err := url.PathUnescape(path[2])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <event_id>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := WaitingRoomEventResultEnvelope{*data}
+	_, err = r.client.WaitingRooms.Events.Get(
+		ctx,
+		path_waiting_room_id,
+		path_event_id,
+		waiting_rooms.EventGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

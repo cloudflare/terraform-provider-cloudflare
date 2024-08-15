@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -19,6 +21,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &PagesDomainResource{}
 var _ resource.ResourceWithModifyPlan = &PagesDomainResource{}
+var _ resource.ResourceWithImportState = &PagesDomainResource{}
 
 func NewResource() resource.Resource {
 	return &PagesDomainResource{}
@@ -107,9 +110,60 @@ func (r *PagesDomainResource) Read(ctx context.Context, req resource.ReadRequest
 	_, err := r.client.Pages.Projects.Domains.Get(
 		ctx,
 		data.ProjectName.ValueString(),
-		data.DomainName.ValueString(),
+		data.ID.ValueString(),
 		pages.ProjectDomainGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *PagesDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *PagesDomainModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 3 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<project_name>/<domain_name>")
+		return
+	}
+	path_account_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_project_name, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <project_name>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	path_domain_name, err := url.PathUnescape(path[2])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <domain_name>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := PagesDomainResultEnvelope{*data}
+	_, err = r.client.Pages.Projects.Domains.Get(
+		ctx,
+		path_project_name,
+		path_domain_name,
+		pages.ProjectDomainGetParams{
+			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -156,7 +210,7 @@ func (r *PagesDomainResource) Update(ctx context.Context, req resource.UpdateReq
 	_, err = r.client.Pages.Projects.Domains.Edit(
 		ctx,
 		data.ProjectName.ValueString(),
-		data.DomainName.ValueString(),
+		data.ID.ValueString(),
 		pages.ProjectDomainEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -191,7 +245,7 @@ func (r *PagesDomainResource) Delete(ctx context.Context, req resource.DeleteReq
 	_, err := r.client.Pages.Projects.Domains.Delete(
 		ctx,
 		data.ProjectName.ValueString(),
-		data.DomainName.ValueString(),
+		data.ID.ValueString(),
 		pages.ProjectDomainDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},

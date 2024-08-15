@@ -5,8 +5,11 @@ package pages_domain
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &PagesDomainDataSource{}
@@ -25,6 +28,102 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"project_name": schema.StringAttribute{
 				Description: "Name of the project.",
 				Optional:    true,
+			},
+			"certificate_authority": schema.StringAttribute{
+				Computed: true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt"),
+				},
+			},
+			"created_on": schema.StringAttribute{
+				Computed: true,
+			},
+			"domain_id": schema.StringAttribute{
+				Computed: true,
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
+			},
+			"status": schema.StringAttribute{
+				Computed: true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending",
+						"active",
+						"deactivated",
+						"blocked",
+						"error",
+					),
+				},
+			},
+			"zone_tag": schema.StringAttribute{
+				Computed: true,
+			},
+			"validation_data": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[PagesDomainValidationDataDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"error_message": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+					},
+					"method": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("http", "txt"),
+						},
+					},
+					"status": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"initializing",
+								"pending",
+								"active",
+								"deactivated",
+								"error",
+							),
+						},
+					},
+					"txt_name": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+					},
+					"txt_value": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+					},
+				},
+			},
+			"verification_data": schema.SingleNestedAttribute{
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[PagesDomainVerificationDataDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"error_message": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+					},
+					"status": schema.StringAttribute{
+						Computed: true,
+						Optional: true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"pending",
+								"active",
+								"deactivated",
+								"blocked",
+								"error",
+							),
+						},
+					},
+				},
+			},
+			"name": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

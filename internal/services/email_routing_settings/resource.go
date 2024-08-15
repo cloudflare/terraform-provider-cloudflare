@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &EmailRoutingSettingsResource{}
 var _ resource.ResourceWithModifyPlan = &EmailRoutingSettingsResource{}
+var _ resource.ResourceWithImportState = &EmailRoutingSettingsResource{}
 
 func NewResource() resource.Resource {
 	return &EmailRoutingSettingsResource{}
@@ -106,6 +108,39 @@ func (r *EmailRoutingSettingsResource) Read(ctx context.Context, req resource.Re
 	_, err := r.client.EmailRouting.Get(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneIdentifier
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *EmailRoutingSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *EmailRoutingSettingsModel
+
+	path, err := url.PathUnescape(req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded - <zone_identifier>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+		return
+	}
+
+	res := new(http.Response)
+	env := EmailRoutingSettingsResultEnvelope{*data}
+	_, err = r.client.EmailRouting.Get(
+		ctx,
+		path,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

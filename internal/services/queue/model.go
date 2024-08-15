@@ -3,7 +3,6 @@
 package queue
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,8 +19,8 @@ type QueueModel struct {
 	CreatedOn           types.String            `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn          types.String            `tfsdk:"modified_on" json:"modified_on,computed"`
 	ProducersTotalCount types.Float64           `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
-	Producers           *[]jsontypes.Normalized `tfsdk:"producers" json:"producers,computed"`
 	Consumers           *[]*QueueConsumersModel `tfsdk:"consumers" json:"consumers,computed"`
+	Producers           *[]*QueueProducersModel `tfsdk:"producers" json:"producers,computed"`
 }
 
 type QueueConsumersModel struct {
@@ -36,4 +35,9 @@ type QueueConsumersSettingsModel struct {
 	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size"`
 	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries"`
 	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms"`
+}
+
+type QueueProducersModel struct {
+	Environment types.String `tfsdk:"environment" json:"environment,computed"`
+	Service     types.String `tfsdk:"service" json:"service,computed"`
 }
