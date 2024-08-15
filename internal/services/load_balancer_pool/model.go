@@ -3,7 +3,6 @@
 package load_balancer_pool
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,12 +19,12 @@ type LoadBalancerPoolModel struct {
 	Description        types.String                             `tfsdk:"description" json:"description"`
 	Latitude           types.Float64                            `tfsdk:"latitude" json:"latitude"`
 	Longitude          types.Float64                            `tfsdk:"longitude" json:"longitude"`
+	Monitor            types.String                             `tfsdk:"monitor" json:"monitor"`
 	NotificationEmail  types.String                             `tfsdk:"notification_email" json:"notification_email"`
 	CheckRegions       *[]types.String                          `tfsdk:"check_regions" json:"check_regions"`
 	LoadShedding       *LoadBalancerPoolLoadSheddingModel       `tfsdk:"load_shedding" json:"load_shedding"`
 	NotificationFilter *LoadBalancerPoolNotificationFilterModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringModel     `tfsdk:"origin_steering" json:"origin_steering"`
-	Monitor            jsontypes.Normalized                     `tfsdk:"monitor" json:"monitor"`
 	Enabled            types.Bool                               `tfsdk:"enabled" json:"enabled"`
 	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins"`
 	CreatedOn          timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed"`

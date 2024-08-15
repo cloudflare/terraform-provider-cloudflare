@@ -3,7 +3,6 @@
 package load_balancer_pool
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +13,7 @@ type LoadBalancerPoolsResultListDataSourceEnvelope struct {
 
 type LoadBalancerPoolsDataSourceModel struct {
 	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
-	Monitor   jsontypes.Normalized                       `tfsdk:"monitor" query:"monitor"`
+	Monitor   types.String                               `tfsdk:"monitor" query:"monitor"`
 	MaxItems  types.Int64                                `tfsdk:"max_items"`
 	Result    *[]*LoadBalancerPoolsResultDataSourceModel `tfsdk:"result"`
 }
@@ -31,7 +30,7 @@ type LoadBalancerPoolsResultDataSourceModel struct {
 	Longitude          types.Float64                                       `tfsdk:"longitude" json:"longitude"`
 	MinimumOrigins     types.Int64                                         `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
 	ModifiedOn         timetypes.RFC3339                                   `tfsdk:"modified_on" json:"modified_on,computed"`
-	Monitor            jsontypes.Normalized                                `tfsdk:"monitor" json:"monitor"`
+	Monitor            types.String                                        `tfsdk:"monitor" json:"monitor"`
 	Name               types.String                                        `tfsdk:"name" json:"name"`
 	NotificationEmail  types.String                                        `tfsdk:"notification_email" json:"notification_email"`
 	NotificationFilter *LoadBalancerPoolsNotificationFilterDataSourceModel `tfsdk:"notification_filter" json:"notification_filter"`
