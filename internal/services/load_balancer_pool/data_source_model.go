@@ -3,7 +3,6 @@
 package load_balancer_pool
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -28,6 +27,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	ID                 types.String                                       `tfsdk:"id" json:"id"`
 	Latitude           types.Float64                                      `tfsdk:"latitude" json:"latitude"`
 	Longitude          types.Float64                                      `tfsdk:"longitude" json:"longitude"`
+	Monitor            types.String                                       `tfsdk:"monitor" json:"monitor"`
 	Name               types.String                                       `tfsdk:"name" json:"name"`
 	NotificationEmail  types.String                                       `tfsdk:"notification_email" json:"notification_email"`
 	CheckRegions       *[]types.String                                    `tfsdk:"check_regions" json:"check_regions"`
@@ -35,7 +35,6 @@ type LoadBalancerPoolDataSourceModel struct {
 	NotificationFilter *LoadBalancerPoolNotificationFilterDataSourceModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringDataSourceModel     `tfsdk:"origin_steering" json:"origin_steering"`
 	Origins            *[]*LoadBalancerPoolOriginsDataSourceModel         `tfsdk:"origins" json:"origins"`
-	Monitor            jsontypes.Normalized                               `tfsdk:"monitor" json:"monitor"`
 	Filter             *LoadBalancerPoolFindOneByDataSourceModel          `tfsdk:"filter"`
 }
 
@@ -80,6 +79,6 @@ type LoadBalancerPoolOriginsHeaderDataSourceModel struct {
 }
 
 type LoadBalancerPoolFindOneByDataSourceModel struct {
-	AccountID types.String         `tfsdk:"account_id" path:"account_id"`
-	Monitor   jsontypes.Normalized `tfsdk:"monitor" query:"monitor"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	Monitor   types.String `tfsdk:"monitor" query:"monitor"`
 }

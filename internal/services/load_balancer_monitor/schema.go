@@ -5,7 +5,6 @@ package load_balancer_monitor
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -16,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = &LoadBalancerMonitorResource{}
@@ -44,10 +44,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
 				Optional:    true,
 			},
-			"header": schema.StringAttribute{
+			"header": schema.MapAttribute{
 				Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.",
 				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
 			},
 			"allow_insecure": schema.BoolAttribute{
 				Description: "Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS monitors.",
