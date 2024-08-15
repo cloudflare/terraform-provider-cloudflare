@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+~> It's required that an `account_id` or `zone_id` is provided and in most cases using either is fine.
+   However, if you're using a scoped access token, you must provide the argument that matches the token's
+   scope. For example, an access token that is scoped to the "example.com" zone needs to use the `zone_id` argument.
+   If 'application_id' is omitted, the policy created can be reused by multiple access applications.
+   Any cloudflare_access_application resource can reference reusable policies through its `policies` argument.
+   To destroy a reusable policy and remove it from all applications' policies lists on the same apply, preemptively set the
+   lifecycle option `create_before_destroy` to true on the 'cloudflare_access_policy' resource.
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+## Import
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}
+{{- end }}
