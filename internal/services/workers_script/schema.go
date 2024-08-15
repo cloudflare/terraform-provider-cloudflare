@@ -52,7 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"bindings": schema.ListAttribute{
 						Description: "List of bindings available to the worker.",
 						Optional:    true,
-						ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+						ElementType: jsontypes.NormalizedType{},
 					},
 					"body_part": schema.StringAttribute{
 						Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
@@ -231,6 +231,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"version_tags": schema.StringAttribute{
 						Description: "Key-value pairs to use as tags for this version of this Worker",
 						Optional:    true,
+						CustomType:  jsontypes.NormalizedType{},
 					},
 				},
 			},

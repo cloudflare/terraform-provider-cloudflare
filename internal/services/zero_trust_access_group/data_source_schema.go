@@ -5,6 +5,7 @@ package zero_trust_access_group
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -85,6 +86,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all users.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed: true,
@@ -107,8 +109,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
+							Computed:   true,
+							Optional:   true,
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed: true,
@@ -204,6 +207,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all service tokens.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed: true,
@@ -292,6 +296,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all users.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed: true,
@@ -314,8 +319,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
+							Computed:   true,
+							Optional:   true,
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed: true,
@@ -411,6 +417,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all service tokens.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed: true,
@@ -499,6 +506,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all users.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed: true,
@@ -521,8 +529,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
+							Computed:   true,
+							Optional:   true,
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed: true,
@@ -618,6 +627,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all service tokens.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed: true,
@@ -706,6 +716,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all users.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed: true,
@@ -728,8 +739,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"certificate": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
+							Computed:   true,
+							Optional:   true,
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed: true,
@@ -825,6 +837,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "An empty object which matches on all service tokens.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed: true,

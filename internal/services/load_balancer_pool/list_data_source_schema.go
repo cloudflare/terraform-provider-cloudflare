@@ -5,6 +5,7 @@ package load_balancer_pool
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -27,6 +28,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"monitor": schema.StringAttribute{
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 				Optional:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -142,6 +144,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"name": schema.StringAttribute{
 							Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",

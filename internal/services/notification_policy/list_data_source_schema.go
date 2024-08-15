@@ -393,7 +393,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Optional:    true,
 							ElementType: types.ListType{
-								ElemType: jsontypes.NewNormalizedNull().Type(ctx),
+								ElemType: jsontypes.NormalizedType{},
 							},
 						},
 						"modified": schema.StringAttribute{

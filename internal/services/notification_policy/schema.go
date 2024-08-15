@@ -113,7 +113,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 				Required:    true,
 				ElementType: types.ListType{
-					ElemType: jsontypes.NewNormalizedNull().Type(ctx),
+					ElemType: jsontypes.NormalizedType{},
 				},
 			},
 			"alert_interval": schema.StringAttribute{

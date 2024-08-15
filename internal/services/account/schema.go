@@ -5,6 +5,7 @@ package account
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,10 +20,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 			"account_id": schema.StringAttribute{
-				Required: true,
+				Required:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 			"name": schema.StringAttribute{
 				Description: "Account name",
