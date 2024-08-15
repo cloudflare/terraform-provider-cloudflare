@@ -43,7 +43,15 @@ func (d *ZeroTrustDevicePostureIntegrationDataSource) Schema(ctx context.Context
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s"),
+					stringvalidator.OneOfCaseInsensitive(
+						"workspace_one",
+						"crowdstrike_s2s",
+						"uptycs",
+						"intune",
+						"kolide",
+						"tanium",
+						"sentinelone_s2s",
+					),
 				},
 			},
 			"config": schema.SingleNestedAttribute{

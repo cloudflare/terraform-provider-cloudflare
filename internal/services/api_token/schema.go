@@ -82,7 +82,11 @@ func (r *APITokenResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Status of the token.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "disabled", "expired"),
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"disabled",
+						"expired",
+					),
 				},
 			},
 			"condition": schema.SingleNestedAttribute{

@@ -72,14 +72,23 @@ func (d *WaitingRoomsDataSource) Schema(ctx context.Context, req datasource.Sche
 									Description: "Configures the SameSite attribute on the waiting room cookie. Value `auto` will be translated to `lax` or `none` depending if **Always Use HTTPS** is enabled. Note that when using value `none`, the secure attribute cannot be set to `never`.",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("auto", "lax", "none", "strict"),
+										stringvalidator.OneOfCaseInsensitive(
+											"auto",
+											"lax",
+											"none",
+											"strict",
+										),
 									},
 								},
 								"secure": schema.StringAttribute{
 									Description: "Configures the Secure attribute on the waiting room cookie. Value `always` indicates that the Secure attribute will be set in the Set-Cookie header, `never` indicates that the Secure attribute will not be set, and `auto` will set the Secure attribute depending if **Always Use HTTPS** is enabled.",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("auto", "always", "never"),
+										stringvalidator.OneOfCaseInsensitive(
+											"auto",
+											"always",
+											"never",
+										),
 									},
 								},
 							},
@@ -101,7 +110,25 @@ func (d *WaitingRoomsDataSource) Schema(ctx context.Context, req datasource.Sche
 							Description: "The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("en-US", "es-ES", "de-DE", "fr-FR", "it-IT", "ja-JP", "ko-KR", "pt-BR", "zh-CN", "zh-TW", "nl-NL", "pl-PL", "id-ID", "tr-TR", "ar-EG", "ru-RU", "fa-IR"),
+								stringvalidator.OneOfCaseInsensitive(
+									"en-US",
+									"es-ES",
+									"de-DE",
+									"fr-FR",
+									"it-IT",
+									"ja-JP",
+									"ko-KR",
+									"pt-BR",
+									"zh-CN",
+									"zh-TW",
+									"nl-NL",
+									"pl-PL",
+									"id-ID",
+									"tr-TR",
+									"ar-EG",
+									"ru-RU",
+									"fa-IR",
+								),
 							},
 						},
 						"description": schema.StringAttribute{
@@ -160,14 +187,23 @@ func (d *WaitingRoomsDataSource) Schema(ctx context.Context, req datasource.Sche
 							Description: "Sets the queueing method used by the waiting room. Changing this parameter from the **default** queueing method is only available for the Waiting Room Advanced subscription. Regardless of the queueing method, if `queue_all` is enabled or an event is prequeueing, users in the waiting room will not be accepted to the origin. These users will always see a waiting room page that refreshes automatically. The valid queueing methods are:\n1. `fifo` **(default)**: First-In-First-Out queue where customers gain access in the order they arrived.\n2. `random`: Random queue where customers gain access randomly, regardless of arrival time.\n3. `passthrough`: Users will pass directly through the waiting room and into the origin website. As a result, any configured limits will not be respected while this is enabled. This method can be used as an alternative to disabling a waiting room (with `suspended`) so that analytics are still reported. This can be used if you wish to allow all traffic normally, but want to restrict traffic during a waiting room event, or vice versa.\n4. `reject`: Users will be immediately rejected from the waiting room. As a result, no users will reach the origin website while this is enabled. This can be used if you wish to reject all traffic while performing maintenance, block traffic during a specified period of time (an event), or block traffic while events are not occurring. Consider a waiting room used for vaccine distribution that only allows traffic during sign-up events, and otherwise blocks all traffic. For this case, the waiting room uses `reject`, and its events override this with `fifo`, `random`, or `passthrough`. When this queueing method is enabled and neither `queueAll` is enabled nor an event is prequeueing, the waiting room page **will not refresh automatically**.",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("fifo", "random", "passthrough", "reject"),
+								stringvalidator.OneOfCaseInsensitive(
+									"fifo",
+									"random",
+									"passthrough",
+									"reject",
+								),
 							},
 						},
 						"queueing_status_code": schema.Int64Attribute{
 							Description: "HTTP status code returned to a user while in the queue.",
 							Computed:    true,
 							Validators: []validator.Int64{
-								int64validator.OneOf(200, 202, 429),
+								int64validator.OneOf(
+									200,
+									202,
+									429,
+								),
 							},
 						},
 						"session_duration": schema.Int64Attribute{

@@ -5,6 +5,7 @@ package zero_trust_device_posture_rule
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -54,7 +55,28 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("file", "application", "tanium", "gateway", "warp", "disk_encryption", "sentinelone", "carbonblack", "firewall", "os_version", "domain_joined", "client_certificate", "client_certificate_v2", "unique_client_id", "kolide", "tanium_s2s", "crowdstrike_s2s", "intune", "workspace_one", "sentinelone_s2s"),
+					stringvalidator.OneOfCaseInsensitive(
+						"file",
+						"application",
+						"tanium",
+						"gateway",
+						"warp",
+						"disk_encryption",
+						"sentinelone",
+						"carbonblack",
+						"firewall",
+						"os_version",
+						"domain_joined",
+						"client_certificate",
+						"client_certificate_v2",
+						"unique_client_id",
+						"kolide",
+						"tanium_s2s",
+						"crowdstrike_s2s",
+						"intune",
+						"workspace_one",
+						"sentinelone_s2s",
+					),
 				},
 			},
 			"input": schema.SingleNestedAttribute{
@@ -67,7 +89,14 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("windows", "linux", "mac", "android", "ios", "chromeos"),
+							stringvalidator.OneOfCaseInsensitive(
+								"windows",
+								"linux",
+								"mac",
+								"android",
+								"ios",
+								"chromeos",
+							),
 						},
 					},
 					"path": schema.StringAttribute{
@@ -105,7 +134,13 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"version": schema.StringAttribute{
@@ -163,6 +198,11 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Description: "List of values indicating purposes for which the certificate public key can be used",
 						Computed:    true,
 						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive("clientAuth", "emailProtection"),
+							),
+						},
 						ElementType: types.StringType,
 					},
 					"locations": schema.SingleNestedAttribute{
@@ -179,6 +219,11 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 								Description: "List of trust stores to check for client certificate.",
 								Computed:    true,
 								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive("system", "user"),
+									),
+								},
 								ElementType: types.StringType,
 							},
 						},
@@ -188,7 +233,14 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("compliant", "noncompliant", "unknown", "notapplicable", "ingraceperiod", "error"),
+							stringvalidator.OneOfCaseInsensitive(
+								"compliant",
+								"noncompliant",
+								"unknown",
+								"notapplicable",
+								"ingraceperiod",
+								"error",
+							),
 						},
 					},
 					"connection_id": schema.StringAttribute{
@@ -221,7 +273,11 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("online", "offline", "unknown"),
+							stringvalidator.OneOfCaseInsensitive(
+								"online",
+								"offline",
+								"unknown",
+							),
 						},
 					},
 					"version_operator": schema.StringAttribute{
@@ -229,7 +285,13 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"count_operator": schema.StringAttribute{
@@ -237,7 +299,13 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"issue_count": schema.StringAttribute{
@@ -255,7 +323,12 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("low", "medium", "high", "critical"),
+							stringvalidator.OneOfCaseInsensitive(
+								"low",
+								"medium",
+								"high",
+								"critical",
+							),
 						},
 					},
 					"score_operator": schema.StringAttribute{
@@ -263,7 +336,13 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("<", "<=", ">", ">=", "=="),
+							stringvalidator.OneOfCaseInsensitive(
+								"<",
+								"<=",
+								">",
+								">=",
+								"==",
+							),
 						},
 					},
 					"total_score": schema.Float64Attribute{
@@ -291,7 +370,12 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("connected", "disconnected", "disconnecting", "connecting"),
+							stringvalidator.OneOfCaseInsensitive(
+								"connected",
+								"disconnected",
+								"disconnecting",
+								"connecting",
+							),
 						},
 					},
 				},
@@ -306,7 +390,13 @@ func (d *ZeroTrustDevicePostureRuleDataSource) Schema(ctx context.Context, req d
 							Computed: true,
 							Optional: true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("windows", "mac", "linux", "android", "ios"),
+								stringvalidator.OneOfCaseInsensitive(
+									"windows",
+									"mac",
+									"linux",
+									"android",
+									"ios",
+								),
 							},
 						},
 					},

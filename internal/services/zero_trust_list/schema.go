@@ -33,7 +33,13 @@ func (r *ZeroTrustListResource) Schema(ctx context.Context, req resource.SchemaR
 				Description: "The type of list.",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
+					stringvalidator.OneOfCaseInsensitive(
+						"SERIAL",
+						"URL",
+						"DOMAIN",
+						"EMAIL",
+						"IP",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

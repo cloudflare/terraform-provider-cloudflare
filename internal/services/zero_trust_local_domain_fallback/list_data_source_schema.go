@@ -5,9 +5,9 @@ package zero_trust_local_domain_fallback
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustLocalDomainFallbacksDataSource{}
@@ -40,7 +40,7 @@ func (d *ZeroTrustLocalDomainFallbacksDataSource) Schema(ctx context.Context, re
 							Description: "A list of IP addresses to handle domain resolution.",
 							Computed:    true,
 							Optional:    true,
-							ElementType: jsontypes.NewNormalizedNull().Type(ctx),
+							ElementType: types.StringType,
 						},
 					},
 				},

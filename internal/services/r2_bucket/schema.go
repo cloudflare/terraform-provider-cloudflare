@@ -38,7 +38,13 @@ func (r *R2BucketResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Location of the bucket",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("apac", "eeur", "enam", "weur", "wnam"),
+					stringvalidator.OneOfCaseInsensitive(
+						"apac",
+						"eeur",
+						"enam",
+						"weur",
+						"wnam",
+					),
 				},
 			},
 			"storage_class": schema.StringAttribute{

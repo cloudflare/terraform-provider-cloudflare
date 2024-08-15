@@ -33,7 +33,13 @@ func (d *SpectrumApplicationsDataSource) Schema(ctx context.Context, req datasou
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("protocol", "app_id", "created_on", "modified_on", "dns"),
+					stringvalidator.OneOfCaseInsensitive(
+						"protocol",
+						"app_id",
+						"created_on",
+						"modified_on",
+						"dns",
+					),
 				},
 			},
 			"max_items": schema.Int64Attribute{

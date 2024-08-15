@@ -40,7 +40,13 @@ func (r *R2BucketResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Description: "Location of the bucket",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("apac", "eeur", "enam", "weur", "wnam"),
+							stringvalidator.OneOfCaseInsensitive(
+								"apac",
+								"eeur",
+								"enam",
+								"weur",
+								"wnam",
+							),
 						},
 					},
 					"storage_class": schema.StringAttribute{

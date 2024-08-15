@@ -58,7 +58,13 @@ func (d *CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "Status of the zone's custom SSL.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "expired", "deleted", "pending", "initializing"),
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"expired",
+						"deleted",
+						"pending",
+						"initializing",
+					),
 				},
 			},
 			"uploaded_on": schema.StringAttribute{
@@ -78,7 +84,11 @@ func (d *CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						Computed: true,
 						Optional: true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("us", "eu", "highest_security"),
+							stringvalidator.OneOfCaseInsensitive(
+								"us",
+								"eu",
+								"highest_security",
+							),
 						},
 					},
 				},
@@ -150,7 +160,11 @@ func (d *CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ubiquitous",
+						"optimal",
+						"force",
+					),
 				},
 			},
 			"priority": schema.Float64Attribute{
@@ -177,7 +191,13 @@ func (d *CustomSSLDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						Description: "Status of the zone's custom SSL.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("active", "expired", "deleted", "pending", "initializing"),
+							stringvalidator.OneOfCaseInsensitive(
+								"active",
+								"expired",
+								"deleted",
+								"pending",
+								"initializing",
+							),
 						},
 					},
 				},

@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -110,6 +111,26 @@ func (r *LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]r
 					"check_regions": schema.ListAttribute{
 						Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
 						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"WNAM",
+									"ENAM",
+									"WEU",
+									"EEU",
+									"NSAM",
+									"SSAM",
+									"OC",
+									"ME",
+									"NAF",
+									"SAF",
+									"SAS",
+									"SEAS",
+									"NEAS",
+									"ALL_REGIONS",
+								),
+							),
+						},
 						ElementType: types.StringType,
 					},
 					"load_shedding": schema.SingleNestedAttribute{
@@ -201,7 +222,12 @@ func (r *LoadBalancerPoolResource) UpgradeState(ctx context.Context) map[int64]r
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("random", "hash", "least_outstanding_requests", "least_connections"),
+									stringvalidator.OneOfCaseInsensitive(
+										"random",
+										"hash",
+										"least_outstanding_requests",
+										"least_connections",
+									),
 								},
 								Default: stringdefault.StaticString("random"),
 							},

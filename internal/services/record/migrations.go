@@ -44,7 +44,28 @@ func (r *RecordResource) UpgradeState(ctx context.Context) map[int64]resource.St
 						Description: "Record type.",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS", "LOC", "MX", "NAPTR", "NS", "PTR", "SMIMEA", "SRV", "SSHFP", "SVCB", "TLSA", "TXT", "URI"),
+							stringvalidator.OneOfCaseInsensitive(
+								"A",
+								"AAAA",
+								"CAA",
+								"CERT",
+								"CNAME",
+								"DNSKEY",
+								"DS",
+								"HTTPS",
+								"LOC",
+								"MX",
+								"NAPTR",
+								"NS",
+								"PTR",
+								"SMIMEA",
+								"SRV",
+								"SSHFP",
+								"SVCB",
+								"TLSA",
+								"TXT",
+								"URI",
+							),
 						},
 					},
 					"comment": schema.StringAttribute{
@@ -69,7 +90,9 @@ func (r *RecordResource) UpgradeState(ctx context.Context) map[int64]resource.St
 							"flags": schema.DynamicAttribute{
 								Description: "Flags for the CAA record.",
 								Optional:    true,
-								Validators:  []validator.Dynamic{customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{})},
+								Validators: []validator.Dynamic{
+									customvalidator.AllowedSubtypes(basetypes.Float64Type{}, basetypes.StringType{}),
+								},
 							},
 							"tag": schema.StringAttribute{
 								Description: "Name of the property controlled by this record (e.g.: issue, issuewild, iodef).",

@@ -41,7 +41,11 @@ func (r *EmailRoutingRuleResource) Schema(ctx context.Context, req resource.Sche
 							Description: "Type of supported action.",
 							Required:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("drop", "forward", "worker"),
+								stringvalidator.OneOfCaseInsensitive(
+									"drop",
+									"forward",
+									"worker",
+								),
 							},
 						},
 						"value": schema.ListAttribute{

@@ -44,7 +44,13 @@ func (d *SpectrumApplicationDataSource) Schema(ctx context.Context, req datasour
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("protocol", "app_id", "created_on", "modified_on", "dns"),
+							stringvalidator.OneOfCaseInsensitive(
+								"protocol",
+								"app_id",
+								"created_on",
+								"modified_on",
+								"dns",
+							),
 						},
 					},
 				},

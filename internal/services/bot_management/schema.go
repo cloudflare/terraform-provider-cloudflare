@@ -49,14 +49,22 @@ func (r *BotManagementResource) Schema(ctx context.Context, req resource.SchemaR
 				Description: "Super Bot Fight Mode (SBFM) action to take on definitely automated requests.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("allow", "block", "managed_challenge"),
+					stringvalidator.OneOfCaseInsensitive(
+						"allow",
+						"block",
+						"managed_challenge",
+					),
 				},
 			},
 			"sbfm_likely_automated": schema.StringAttribute{
 				Description: "Super Bot Fight Mode (SBFM) action to take on likely automated requests.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("allow", "block", "managed_challenge"),
+					stringvalidator.OneOfCaseInsensitive(
+						"allow",
+						"block",
+						"managed_challenge",
+					),
 				},
 			},
 			"sbfm_static_resource_protection": schema.BoolAttribute{

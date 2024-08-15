@@ -68,7 +68,11 @@ func (r *NotificationPolicyWebhooksResource) UpgradeState(ctx context.Context) m
 						Description: "Type of webhook endpoint.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("slack", "generic", "gchat"),
+							stringvalidator.OneOfCaseInsensitive(
+								"slack",
+								"generic",
+								"gchat",
+							),
 						},
 					},
 					"errors": schema.ListNestedAttribute{

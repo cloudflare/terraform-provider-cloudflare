@@ -35,7 +35,13 @@ func (d *AccessRulesDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "The action to apply to a matched request.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "challenge", "whitelist", "js_challenge", "managed_challenge"),
+					stringvalidator.OneOfCaseInsensitive(
+						"block",
+						"challenge",
+						"whitelist",
+						"js_challenge",
+						"managed_challenge",
+					),
 				},
 			},
 			"notes": schema.StringAttribute{
@@ -46,7 +52,11 @@ func (d *AccessRulesDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "The field used to sort returned rules.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("configuration.target", "configuration.value", "mode"),
+					stringvalidator.OneOfCaseInsensitive(
+						"configuration.target",
+						"configuration.value",
+						"mode",
+					),
 				},
 			},
 			"configuration": schema.SingleNestedAttribute{
@@ -56,7 +66,12 @@ func (d *AccessRulesDataSource) Schema(ctx context.Context, req datasource.Schem
 						Description: "The target to search in existing rules.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ip", "ip_range", "asn", "country"),
+							stringvalidator.OneOfCaseInsensitive(
+								"ip",
+								"ip_range",
+								"asn",
+								"country",
+							),
 						},
 					},
 					"value": schema.StringAttribute{

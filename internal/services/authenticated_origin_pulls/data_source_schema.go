@@ -33,7 +33,15 @@ func (d *AuthenticatedOriginPullsDataSource) Schema(ctx context.Context, req dat
 				Description: "Status of the certificate or the association.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out"),
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending_deployment",
+						"pending_deletion",
+						"active",
+						"deleted",
+						"deployment_timed_out",
+						"deletion_timed_out",
+					),
 				},
 			},
 			"cert_updated_at": schema.StringAttribute{
@@ -80,7 +88,15 @@ func (d *AuthenticatedOriginPullsDataSource) Schema(ctx context.Context, req dat
 				Description: "Status of the certificate or the association.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("initializing", "pending_deployment", "pending_deletion", "active", "deleted", "deployment_timed_out", "deletion_timed_out"),
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending_deployment",
+						"pending_deletion",
+						"active",
+						"deleted",
+						"deployment_timed_out",
+						"deletion_timed_out",
+					),
 				},
 			},
 			"updated_at": schema.StringAttribute{
