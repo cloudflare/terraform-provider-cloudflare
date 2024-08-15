@@ -5,6 +5,7 @@ package load_balancer_monitor
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -72,6 +73,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"interval": schema.Int64Attribute{
 							Description: "The interval between each health check. Shorter intervals may improve failover time, but will increase load on the origins as we check from multiple locations.",

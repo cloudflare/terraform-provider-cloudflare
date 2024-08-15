@@ -5,6 +5,7 @@ package account
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -17,7 +18,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Optional: true,
+				Optional:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
