@@ -42,7 +42,11 @@ func (r *KeylessCertificateResource) Schema(ctx context.Context, req resource.Sc
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ubiquitous",
+						"optimal",
+						"force",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Default:       stringdefault.StaticString("ubiquitous"),

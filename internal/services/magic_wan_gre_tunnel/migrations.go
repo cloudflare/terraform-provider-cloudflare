@@ -77,7 +77,11 @@ func (r *MagicWANGRETunnelResource) UpgradeState(ctx context.Context) map[int64]
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("low", "mid", "high"),
+									stringvalidator.OneOfCaseInsensitive(
+										"low",
+										"mid",
+										"high",
+									),
 								},
 								Default: stringdefault.StaticString("mid"),
 							},
@@ -170,7 +174,11 @@ func (r *MagicWANGRETunnelResource) UpgradeState(ctx context.Context) map[int64]
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("low", "mid", "high"),
+												stringvalidator.OneOfCaseInsensitive(
+													"low",
+													"mid",
+													"high",
+												),
 											},
 											Default: stringdefault.StaticString("mid"),
 										},

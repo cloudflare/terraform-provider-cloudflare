@@ -56,7 +56,11 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+							stringvalidator.OneOfCaseInsensitive(
+								"ubiquitous",
+								"optimal",
+								"force",
+							),
 						},
 					},
 					"certificate_authority": schema.StringAttribute{
@@ -64,7 +68,12 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("digicert", "google", "lets_encrypt", "ssl_com"),
+							stringvalidator.OneOfCaseInsensitive(
+								"digicert",
+								"google",
+								"lets_encrypt",
+								"ssl_com",
+							),
 						},
 					},
 					"custom_certificate": schema.StringAttribute{
@@ -104,7 +113,11 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("http", "txt", "email"),
+							stringvalidator.OneOfCaseInsensitive(
+								"http",
+								"txt",
+								"email",
+							),
 						},
 					},
 					"serial_number": schema.StringAttribute{
@@ -144,7 +157,12 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("1.0", "1.1", "1.2", "1.3"),
+									stringvalidator.OneOfCaseInsensitive(
+										"1.0",
+										"1.1",
+										"1.2",
+										"1.3",
+									),
 								},
 							},
 							"tls_1_3": schema.StringAttribute{
@@ -166,7 +184,29 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 						Description: "Status of the hostname's SSL certificates.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("initializing", "pending_validation", "deleted", "pending_issuance", "pending_deployment", "pending_deletion", "pending_expiration", "expired", "active", "initializing_timed_out", "validation_timed_out", "issuance_timed_out", "deployment_timed_out", "deletion_timed_out", "pending_cleanup", "staging_deployment", "staging_active", "deactivating", "inactive", "backup_issued", "holding_deployment"),
+							stringvalidator.OneOfCaseInsensitive(
+								"initializing",
+								"pending_validation",
+								"deleted",
+								"pending_issuance",
+								"pending_deployment",
+								"pending_deletion",
+								"pending_expiration",
+								"expired",
+								"active",
+								"initializing_timed_out",
+								"validation_timed_out",
+								"issuance_timed_out",
+								"deployment_timed_out",
+								"deletion_timed_out",
+								"pending_cleanup",
+								"staging_deployment",
+								"staging_active",
+								"deactivating",
+								"inactive",
+								"backup_issued",
+								"holding_deployment",
+							),
 						},
 					},
 					"type": schema.StringAttribute{
@@ -253,7 +293,24 @@ func (d *CustomHostnameDataSource) Schema(ctx context.Context, req datasource.Sc
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"pending",
+						"active_redeploying",
+						"moved",
+						"pending_deletion",
+						"deleted",
+						"pending_blocked",
+						"pending_migration",
+						"pending_provisioned",
+						"test_pending",
+						"test_active",
+						"test_active_apex",
+						"test_blocked",
+						"test_failed",
+						"provisioned",
+						"blocked",
+					),
 				},
 			},
 			"verification_errors": schema.ListAttribute{

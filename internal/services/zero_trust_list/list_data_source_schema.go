@@ -24,7 +24,13 @@ func (d *ZeroTrustListsDataSource) Schema(ctx context.Context, req datasource.Sc
 				Description: "The type of list.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
+					stringvalidator.OneOfCaseInsensitive(
+						"SERIAL",
+						"URL",
+						"DOMAIN",
+						"EMAIL",
+						"IP",
+					),
 				},
 			},
 			"max_items": schema.Int64Attribute{
@@ -64,7 +70,13 @@ func (d *ZeroTrustListsDataSource) Schema(ctx context.Context, req datasource.Sc
 							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
+								stringvalidator.OneOfCaseInsensitive(
+									"SERIAL",
+									"URL",
+									"DOMAIN",
+									"EMAIL",
+									"IP",
+								),
 							},
 						},
 						"updated_at": schema.StringAttribute{

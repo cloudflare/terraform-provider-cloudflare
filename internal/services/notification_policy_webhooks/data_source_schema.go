@@ -59,7 +59,11 @@ func (d *NotificationPolicyWebhooksDataSource) Schema(ctx context.Context, req d
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("slack", "generic", "gchat"),
+					stringvalidator.OneOfCaseInsensitive(
+						"slack",
+						"generic",
+						"gchat",
+					),
 				},
 			},
 			"url": schema.StringAttribute{

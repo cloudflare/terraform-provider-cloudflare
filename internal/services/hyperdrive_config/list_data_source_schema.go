@@ -70,7 +70,11 @@ func (d *HyperdriveConfigsDataSource) Schema(ctx context.Context, req datasource
 									Description: "Specifies the URL scheme used to connect to your origin database.",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("postgres", "postgresql", "mysql"),
+										stringvalidator.OneOfCaseInsensitive(
+											"postgres",
+											"postgresql",
+											"mysql",
+										),
 									},
 								},
 								"user": schema.StringAttribute{

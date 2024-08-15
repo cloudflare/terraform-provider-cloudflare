@@ -43,7 +43,13 @@ func (d *EmailRoutingSettingsDataSource) Schema(ctx context.Context, req datasou
 				Description: "Show the state of your account, and the type or configuration error.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ready", "unconfigured", "misconfigured", "misconfigured/locked", "unlocked"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ready",
+						"unconfigured",
+						"misconfigured",
+						"misconfigured/locked",
+						"unlocked",
+					),
 				},
 			},
 			"tag": schema.StringAttribute{

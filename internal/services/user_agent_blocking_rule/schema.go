@@ -32,7 +32,13 @@ func (r *UserAgentBlockingRuleResource) Schema(ctx context.Context, req resource
 				Description: "The action to apply to a matched request.",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "challenge", "whitelist", "js_challenge", "managed_challenge"),
+					stringvalidator.OneOfCaseInsensitive(
+						"block",
+						"challenge",
+						"whitelist",
+						"js_challenge",
+						"managed_challenge",
+					),
 				},
 			},
 			"configuration": schema.SingleNestedAttribute{
@@ -43,7 +49,13 @@ func (r *UserAgentBlockingRuleResource) Schema(ctx context.Context, req resource
 						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ip", "ip6", "ip_range", "asn", "country"),
+							stringvalidator.OneOfCaseInsensitive(
+								"ip",
+								"ip6",
+								"ip_range",
+								"asn",
+								"country",
+							),
 						},
 					},
 					"value": schema.StringAttribute{

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -52,7 +53,13 @@ func (r *RateLimitResource) Schema(ctx context.Context, req resource.SchemaReque
 						Description: "The action to perform.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("simulate", "ban", "challenge", "js_challenge", "managed_challenge"),
+							stringvalidator.OneOfCaseInsensitive(
+								"simulate",
+								"ban",
+								"challenge",
+								"js_challenge",
+								"managed_challenge",
+							),
 						},
 					},
 					"response": schema.SingleNestedAttribute{
@@ -110,6 +117,19 @@ func (r *RateLimitResource) Schema(ctx context.Context, req resource.SchemaReque
 							"methods": schema.ListAttribute{
 								Description: "The HTTP methods to match. You can specify a subset (for example, `['POST','PUT']`) or all methods (`['_ALL_']`). This field is optional when creating a rate limit.",
 								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive(
+											"GET",
+											"POST",
+											"PUT",
+											"DELETE",
+											"PATCH",
+											"HEAD",
+											"_ALL_",
+										),
+									),
+								},
 								ElementType: types.StringType,
 							},
 							"schemes": schema.ListAttribute{

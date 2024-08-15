@@ -49,7 +49,11 @@ func (r *CustomHostnameResource) UpgradeState(ctx context.Context) map[int64]res
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("ubiquitous", "optimal", "force"),
+									stringvalidator.OneOfCaseInsensitive(
+										"ubiquitous",
+										"optimal",
+										"force",
+									),
 								},
 								Default: stringdefault.StaticString("ubiquitous"),
 							},
@@ -57,7 +61,12 @@ func (r *CustomHostnameResource) UpgradeState(ctx context.Context) map[int64]res
 								Description: "The Certificate Authority that will issue the certificate",
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("digicert", "google", "lets_encrypt", "ssl_com"),
+									stringvalidator.OneOfCaseInsensitive(
+										"digicert",
+										"google",
+										"lets_encrypt",
+										"ssl_com",
+									),
 								},
 							},
 							"custom_certificate": schema.StringAttribute{
@@ -72,7 +81,11 @@ func (r *CustomHostnameResource) UpgradeState(ctx context.Context) map[int64]res
 								Description: "Domain control validation (DCV) method used for this hostname.",
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("http", "txt", "email"),
+									stringvalidator.OneOfCaseInsensitive(
+										"http",
+										"txt",
+										"email",
+									),
 								},
 							},
 							"settings": schema.SingleNestedAttribute{
@@ -102,7 +115,12 @@ func (r *CustomHostnameResource) UpgradeState(ctx context.Context) map[int64]res
 										Description: "The minimum TLS version supported.",
 										Optional:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("1.0", "1.1", "1.2", "1.3"),
+											stringvalidator.OneOfCaseInsensitive(
+												"1.0",
+												"1.1",
+												"1.2",
+												"1.3",
+											),
 										},
 									},
 									"tls_1_3": schema.StringAttribute{
@@ -154,7 +172,24 @@ func (r *CustomHostnameResource) UpgradeState(ctx context.Context) map[int64]res
 						Description: "Status of the hostname's activation.",
 						Computed:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("active", "pending", "active_redeploying", "moved", "pending_deletion", "deleted", "pending_blocked", "pending_migration", "pending_provisioned", "test_pending", "test_active", "test_active_apex", "test_blocked", "test_failed", "provisioned", "blocked"),
+							stringvalidator.OneOfCaseInsensitive(
+								"active",
+								"pending",
+								"active_redeploying",
+								"moved",
+								"pending_deletion",
+								"deleted",
+								"pending_blocked",
+								"pending_migration",
+								"pending_provisioned",
+								"test_pending",
+								"test_active",
+								"test_active_apex",
+								"test_blocked",
+								"test_failed",
+								"provisioned",
+								"blocked",
+							),
 						},
 					},
 					"verification_errors": schema.ListAttribute{

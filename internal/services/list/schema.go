@@ -32,7 +32,12 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: "The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ip", "redirect", "hostname", "asn"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ip",
+						"redirect",
+						"hostname",
+						"asn",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

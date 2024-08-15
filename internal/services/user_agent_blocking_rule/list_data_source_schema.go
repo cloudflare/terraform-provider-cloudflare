@@ -72,7 +72,12 @@ func (d *UserAgentBlockingRulesDataSource) Schema(ctx context.Context, req datas
 							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge"),
+								stringvalidator.OneOfCaseInsensitive(
+									"block",
+									"challenge",
+									"js_challenge",
+									"managed_challenge",
+								),
 							},
 						},
 						"paused": schema.BoolAttribute{

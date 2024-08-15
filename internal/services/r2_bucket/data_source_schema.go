@@ -41,7 +41,13 @@ func (d *R2BucketDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("apac", "eeur", "enam", "weur", "wnam"),
+					stringvalidator.OneOfCaseInsensitive(
+						"apac",
+						"eeur",
+						"enam",
+						"weur",
+						"wnam",
+					),
 				},
 			},
 			"name": schema.StringAttribute{

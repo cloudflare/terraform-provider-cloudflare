@@ -42,7 +42,11 @@ func (d *EmailRoutingCatchAllDataSource) Schema(ctx context.Context, req datasou
 							Description: "Type of action for catch-all rule.",
 							Computed:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("drop", "forward", "worker"),
+								stringvalidator.OneOfCaseInsensitive(
+									"drop",
+									"forward",
+									"worker",
+								),
 							},
 						},
 						"value": schema.ListAttribute{

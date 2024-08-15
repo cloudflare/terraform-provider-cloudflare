@@ -23,7 +23,11 @@ func (r *HostnameTLSSettingResource) Schema(ctx context.Context, req resource.Sc
 				Description: "The TLS Setting name.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ciphers",
+						"min_tls_version",
+						"http2",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -31,7 +35,11 @@ func (r *HostnameTLSSettingResource) Schema(ctx context.Context, req resource.Sc
 				Description: "The TLS Setting name.",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("ciphers", "min_tls_version", "http2"),
+					stringvalidator.OneOfCaseInsensitive(
+						"ciphers",
+						"min_tls_version",
+						"http2",
+					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},

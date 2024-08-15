@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -44,6 +45,26 @@ func (d *LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource
 							Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
 							Computed:    true,
 							Optional:    true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive(
+										"WNAM",
+										"ENAM",
+										"WEU",
+										"EEU",
+										"NSAM",
+										"SSAM",
+										"OC",
+										"ME",
+										"NAF",
+										"SAF",
+										"SAS",
+										"SEAS",
+										"NEAS",
+										"ALL_REGIONS",
+									),
+								),
+							},
 							ElementType: types.StringType,
 						},
 						"created_on": schema.StringAttribute{
@@ -180,7 +201,12 @@ func (d *LoadBalancerPoolsDataSource) Schema(ctx context.Context, req datasource
 									Description: "The type of origin steering policy to use.\n- `\"random\"`: Select an origin randomly.\n- `\"hash\"`: Select an origin by computing a hash over the CF-Connecting-IP address.\n- `\"least_outstanding_requests\"`: Select an origin by taking into consideration origin weights, as well as each origin's number of outstanding requests. Origins with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select an origin by taking into consideration origin weights, as well as each origin's number of open connections. Origins with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("random", "hash", "least_outstanding_requests", "least_connections"),
+										stringvalidator.OneOfCaseInsensitive(
+											"random",
+											"hash",
+											"least_outstanding_requests",
+											"least_connections",
+										),
 									},
 								},
 							},

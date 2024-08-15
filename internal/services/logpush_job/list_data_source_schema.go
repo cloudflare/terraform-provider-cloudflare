@@ -186,7 +186,11 @@ func (d *LogpushJobsDataSource) Schema(ctx context.Context, req datasource.Schem
 									Description: "String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.",
 									Computed:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("unixnano", "unix", "rfc3339"),
+										stringvalidator.OneOfCaseInsensitive(
+											"unixnano",
+											"unix",
+											"rfc3339",
+										),
 									},
 								},
 							},
