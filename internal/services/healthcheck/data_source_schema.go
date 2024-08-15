@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -62,7 +63,12 @@ func (d *HealthcheckDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "The current status of the origin server according to the health check.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("unknown", "healthy", "unhealthy", "suspended"),
+					stringvalidator.OneOfCaseInsensitive(
+						"unknown",
+						"healthy",
+						"unhealthy",
+						"suspended",
+					),
 				},
 			},
 			"suspended": schema.BoolAttribute{
@@ -96,6 +102,26 @@ func (d *HealthcheckDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
 				Computed:    true,
 				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"WNAM",
+							"ENAM",
+							"WEU",
+							"EEU",
+							"NSAM",
+							"SSAM",
+							"OC",
+							"ME",
+							"NAF",
+							"SAF",
+							"IN",
+							"SEAS",
+							"NEAS",
+							"ALL_REGIONS",
+						),
+					),
+				},
 				ElementType: types.StringType,
 			},
 			"http_config": schema.SingleNestedAttribute{

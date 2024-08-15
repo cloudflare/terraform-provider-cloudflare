@@ -66,7 +66,11 @@ func (r *NotificationPolicyWebhooksResource) Schema(ctx context.Context, req res
 				Description: "Type of webhook endpoint.",
 				Computed:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("slack", "generic", "gchat"),
+					stringvalidator.OneOfCaseInsensitive(
+						"slack",
+						"generic",
+						"gchat",
+					),
 				},
 			},
 			"errors": schema.ListNestedAttribute{

@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -35,7 +36,23 @@ func (r *ZeroTrustGatewayPolicyResource) UpgradeState(ctx context.Context) map[i
 						Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",
 						Required:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("on", "off", "allow", "block", "scan", "noscan", "safesearch", "ytrestricted", "isolate", "noisolate", "override", "l4_override", "egress", "audit_ssh", "resolve"),
+							stringvalidator.OneOfCaseInsensitive(
+								"on",
+								"off",
+								"allow",
+								"block",
+								"scan",
+								"noscan",
+								"safesearch",
+								"ytrestricted",
+								"isolate",
+								"noisolate",
+								"override",
+								"l4_override",
+								"egress",
+								"audit_ssh",
+								"resolve",
+							),
 						},
 					},
 					"name": schema.StringAttribute{
@@ -69,6 +86,16 @@ func (r *ZeroTrustGatewayPolicyResource) UpgradeState(ctx context.Context) map[i
 					"filters": schema.ListAttribute{
 						Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
 						Optional:    true,
+						Validators: []validator.List{
+							listvalidator.ValueStringsAre(
+								stringvalidator.OneOfCaseInsensitive(
+									"http",
+									"dns",
+									"l4",
+									"egress",
+								),
+							),
+						},
 						ElementType: types.StringType,
 					},
 					"rule_settings": schema.SingleNestedAttribute{
@@ -295,7 +322,11 @@ func (r *ZeroTrustGatewayPolicyResource) UpgradeState(ctx context.Context) map[i
 										Description: "The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.",
 										Optional:    true,
 										Validators: []validator.String{
-											stringvalidator.OneOfCaseInsensitive("pass_through", "block", "error"),
+											stringvalidator.OneOfCaseInsensitive(
+												"pass_through",
+												"block",
+												"error",
+											),
 										},
 									},
 								},

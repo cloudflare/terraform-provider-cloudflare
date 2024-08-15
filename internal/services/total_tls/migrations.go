@@ -39,7 +39,11 @@ func (r *TotalTLSResource) UpgradeState(ctx context.Context) map[int64]resource.
 						Description: "The Certificate Authority that Total TLS certificates will be issued through.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("google", "lets_encrypt", "ssl_com"),
+							stringvalidator.OneOfCaseInsensitive(
+								"google",
+								"lets_encrypt",
+								"ssl_com",
+							),
 						},
 					},
 					"validity_period": schema.Int64Attribute{

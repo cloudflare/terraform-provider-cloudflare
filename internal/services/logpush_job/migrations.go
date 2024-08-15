@@ -167,7 +167,11 @@ func (r *LogpushJobResource) UpgradeState(ctx context.Context) map[int64]resourc
 								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("unixnano", "unix", "rfc3339"),
+									stringvalidator.OneOfCaseInsensitive(
+										"unixnano",
+										"unix",
+										"rfc3339",
+									),
 								},
 								Default: stringdefault.StaticString("unixnano"),
 							},

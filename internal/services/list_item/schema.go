@@ -90,7 +90,12 @@ func (r *ListItemResource) Schema(ctx context.Context, req resource.SchemaReques
 						Computed: true,
 						Optional: true,
 						Validators: []validator.Int64{
-							int64validator.OneOf(301, 302, 307, 308),
+							int64validator.OneOf(
+								301,
+								302,
+								307,
+								308,
+							),
 						},
 						Default: int64default.StaticInt64(301),
 					},

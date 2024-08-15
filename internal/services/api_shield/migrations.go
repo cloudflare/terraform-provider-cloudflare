@@ -43,7 +43,11 @@ func (r *APIShieldResource) UpgradeState(ctx context.Context) map[int64]resource
 									Description: "The type of characteristic.",
 									Required:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("header", "cookie", "jwt"),
+										stringvalidator.OneOfCaseInsensitive(
+											"header",
+											"cookie",
+											"jwt",
+										),
 									},
 								},
 							},

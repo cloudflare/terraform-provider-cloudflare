@@ -39,7 +39,15 @@ func (r *ZeroTrustDevicePostureIntegrationResource) Schema(ctx context.Context, 
 				Description: "The type of device posture integration.",
 				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("workspace_one", "crowdstrike_s2s", "uptycs", "intune", "kolide", "tanium", "sentinelone_s2s"),
+					stringvalidator.OneOfCaseInsensitive(
+						"workspace_one",
+						"crowdstrike_s2s",
+						"uptycs",
+						"intune",
+						"kolide",
+						"tanium",
+						"sentinelone_s2s",
+					),
 				},
 			},
 			"config": schema.SingleNestedAttribute{

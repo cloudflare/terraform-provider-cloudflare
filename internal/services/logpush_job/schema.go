@@ -165,7 +165,11 @@ func (r *LogpushJobResource) Schema(ctx context.Context, req resource.SchemaRequ
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("unixnano", "unix", "rfc3339"),
+							stringvalidator.OneOfCaseInsensitive(
+								"unixnano",
+								"unix",
+								"rfc3339",
+							),
 						},
 						Default: stringdefault.StaticString("unixnano"),
 					},

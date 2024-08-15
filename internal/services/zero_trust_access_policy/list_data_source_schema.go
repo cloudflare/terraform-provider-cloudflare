@@ -85,7 +85,12 @@ func (d *ZeroTrustAccessPoliciesDataSource) Schema(ctx context.Context, req data
 							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("allow", "deny", "non_identity", "bypass"),
+								stringvalidator.OneOfCaseInsensitive(
+									"allow",
+									"deny",
+									"non_identity",
+									"bypass",
+								),
 							},
 						},
 						"exclude": schema.ListNestedAttribute{

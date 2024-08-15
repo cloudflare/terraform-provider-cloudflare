@@ -41,7 +41,11 @@ func (r *EmailRoutingCatchAllResource) UpgradeState(ctx context.Context) map[int
 									Description: "Type of action for catch-all rule.",
 									Required:    true,
 									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive("drop", "forward", "worker"),
+										stringvalidator.OneOfCaseInsensitive(
+											"drop",
+											"forward",
+											"worker",
+										),
 									},
 								},
 								"value": schema.ListAttribute{

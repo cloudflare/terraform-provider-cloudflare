@@ -56,7 +56,13 @@ func (d *ZeroTrustListDataSource) Schema(ctx context.Context, req datasource.Sch
 				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
+					stringvalidator.OneOfCaseInsensitive(
+						"SERIAL",
+						"URL",
+						"DOMAIN",
+						"EMAIL",
+						"IP",
+					),
 				},
 			},
 			"filter": schema.SingleNestedAttribute{
@@ -69,7 +75,13 @@ func (d *ZeroTrustListDataSource) Schema(ctx context.Context, req datasource.Sch
 						Description: "The type of list.",
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("SERIAL", "URL", "DOMAIN", "EMAIL", "IP"),
+							stringvalidator.OneOfCaseInsensitive(
+								"SERIAL",
+								"URL",
+								"DOMAIN",
+								"EMAIL",
+								"IP",
+							),
 						},
 					},
 				},

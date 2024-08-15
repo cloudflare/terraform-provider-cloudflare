@@ -41,7 +41,11 @@ func (r *AccountResource) Schema(ctx context.Context, req resource.SchemaRequest
 						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("cloudflare.standard", "custom.account", "custom.tenant"),
+							stringvalidator.OneOfCaseInsensitive(
+								"cloudflare.standard",
+								"custom.account",
+								"custom.tenant",
+							),
 						},
 						Default: stringdefault.StaticString("cloudflare.standard"),
 					},

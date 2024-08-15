@@ -83,7 +83,13 @@ func (r *PageRuleResource) UpgradeState(ctx context.Context) map[int64]resource.
 											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
-												stringvalidator.OneOfCaseInsensitive("matches", "contains", "equals", "not_equal", "not_contain"),
+												stringvalidator.OneOfCaseInsensitive(
+													"matches",
+													"contains",
+													"equals",
+													"not_equal",
+													"not_contain",
+												),
 											},
 											Default: stringdefault.StaticString("contains"),
 										},

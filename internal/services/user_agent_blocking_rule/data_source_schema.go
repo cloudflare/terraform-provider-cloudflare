@@ -33,7 +33,12 @@ func (d *UserAgentBlockingRuleDataSource) Schema(ctx context.Context, req dataso
 				Description: "The action to apply to a matched request.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("block", "challenge", "js_challenge", "managed_challenge"),
+					stringvalidator.OneOfCaseInsensitive(
+						"block",
+						"challenge",
+						"js_challenge",
+						"managed_challenge",
+					),
 				},
 			},
 			"paused": schema.BoolAttribute{

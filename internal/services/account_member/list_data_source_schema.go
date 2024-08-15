@@ -33,14 +33,23 @@ func (d *AccountMembersDataSource) Schema(ctx context.Context, req datasource.Sc
 				Description: "Field to order results by.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("user.first_name", "user.last_name", "user.email", "status"),
+					stringvalidator.OneOfCaseInsensitive(
+						"user.first_name",
+						"user.last_name",
+						"user.email",
+						"status",
+					),
 				},
 			},
 			"status": schema.StringAttribute{
 				Description: "A member's status in the account.",
 				Optional:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("accepted", "pending", "rejected"),
+					stringvalidator.OneOfCaseInsensitive(
+						"accepted",
+						"pending",
+						"rejected",
+					),
 				},
 			},
 			"max_items": schema.Int64Attribute{
