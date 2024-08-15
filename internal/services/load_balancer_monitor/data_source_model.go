@@ -3,7 +3,6 @@
 package load_balancer_monitor
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -37,7 +36,7 @@ type LoadBalancerMonitorDataSourceModel struct {
 	ExpectedBody    types.String                                 `tfsdk:"expected_body" json:"expected_body"`
 	ID              types.String                                 `tfsdk:"id" json:"id"`
 	ProbeZone       types.String                                 `tfsdk:"probe_zone" json:"probe_zone"`
-	Header          jsontypes.Normalized                         `tfsdk:"header" json:"header"`
+	Header          map[string]*[]types.String                   `tfsdk:"header" json:"header"`
 	Filter          *LoadBalancerMonitorFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

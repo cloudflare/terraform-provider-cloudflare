@@ -5,7 +5,6 @@ package load_balancer_pool
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -101,6 +100,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"longitude": schema.Float64Attribute{
 				Description: "The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.",
+				Optional:    true,
+			},
+			"monitor": schema.StringAttribute{
+				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
 				Optional:    true,
 			},
 			"notification_email": schema.StringAttribute{
@@ -231,11 +234,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("random"),
 					},
 				},
-			},
-			"monitor": schema.StringAttribute{
-				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",

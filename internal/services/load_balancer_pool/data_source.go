@@ -87,7 +87,7 @@ func (d *LoadBalancerPoolDataSource) Read(ctx context.Context, req datasource.Re
 
 		page, err := d.client.LoadBalancers.Pools.List(ctx, load_balancers.PoolListParams{
 			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-			Monitor:   cloudflare.F[any](data.Filter.Monitor.ValueString()),
+			Monitor:   cloudflare.F(data.Filter.Monitor.ValueString()),
 		})
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
