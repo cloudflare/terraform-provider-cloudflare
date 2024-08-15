@@ -277,7 +277,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 									Description: "List of paths to check for client certificate rule.",
 								},
 								"trust_stores": {
-									Type:     schema.TypeString,
+									Type:     schema.TypeSet,
 									Optional: true,
 									Elem: &schema.Schema{
 										Type: schema.TypeString,

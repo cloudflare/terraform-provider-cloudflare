@@ -329,6 +329,21 @@ func convertMatchToSchema(matches []cloudflare.DevicePostureRuleMatch) []map[str
 }
 
 func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]interface{} {
+
+	formatLocationsToSchema := []map[string]interface{}{}
+	if len(input.Locations.Paths) > 0 && len(input.Locations.TrustStores) > 0 {
+		loc := map[string]interface{}{}
+
+		if len(input.Locations.Paths) > 0 {
+			loc["paths"] = input.Locations.Paths
+		}
+		if len(input.Locations.TrustStores) > 0 {
+			loc["trust_stores"] = input.Locations.TrustStores
+		}
+
+		formatLocationsToSchema = []map[string]interface{}{loc}
+	}
+
 	m := map[string]interface{}{
 		"id":                 input.ID,
 		"path":               input.Path,
@@ -364,7 +379,7 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"total_score":        input.TotalScore,
 		"check_private_key":  input.CheckPrivateKey,
 		"extended_key_usage": input.ExtendedKeyUsage,
-		"locations":          input.Locations,
+		"locations":          formatLocationsToSchema,
 	}
 
 	return []map[string]interface{}{m}
