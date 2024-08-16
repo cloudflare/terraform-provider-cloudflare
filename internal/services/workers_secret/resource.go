@@ -95,10 +95,6 @@ func (r *WorkersSecretResource) Create(ctx context.Context, req resource.CreateR
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WorkersSecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-
-}
-
 func (r *WorkersSecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *WorkersSecretModel
 
@@ -148,6 +144,10 @@ func (r *WorkersSecretResource) Update(ctx context.Context, req resource.UpdateR
 	data.ID = data.ScriptName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WorkersSecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+
 }
 
 func (r *WorkersSecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

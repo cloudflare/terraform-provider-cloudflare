@@ -98,10 +98,6 @@ func (r *LogpushOwnershipChallengeResource) Create(ctx context.Context, req reso
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *LogpushOwnershipChallengeResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-
-}
-
 func (r *LogpushOwnershipChallengeResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *LogpushOwnershipChallengeModel
 
@@ -154,6 +150,10 @@ func (r *LogpushOwnershipChallengeResource) Update(ctx context.Context, req reso
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *LogpushOwnershipChallengeResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+
 }
 
 func (r *LogpushOwnershipChallengeResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
