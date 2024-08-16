@@ -70,6 +70,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 		return
 	}
 	res := new(http.Response)
+	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.Update(
 		ctx,
 		data.ProfileID.ValueString(),
@@ -85,11 +86,12 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Create(ctx context.Context, req 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -118,6 +120,7 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Update(ctx context.Context, req 
 		return
 	}
 	res := new(http.Response)
+	env := ZeroTrustDLPPredefinedProfileResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Profiles.Predefined.Update(
 		ctx,
 		data.ProfileID.ValueString(),
@@ -133,11 +136,12 @@ func (r *ZeroTrustDLPPredefinedProfileResource) Update(ctx context.Context, req 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.Unmarshal(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 	data.ID = data.ProfileID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
