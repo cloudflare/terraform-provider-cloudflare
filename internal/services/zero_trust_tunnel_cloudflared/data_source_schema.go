@@ -17,54 +17,6 @@ var _ datasource.DataSourceWithConfigValidators = &ZeroTrustTunnelCloudflaredDat
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "Cloudflare account ID",
-				Optional:    true,
-			},
-			"tunnel_id": schema.StringAttribute{
-				Description: "UUID of the tunnel.",
-				Optional:    true,
-			},
-			"created_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was created.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"deleted_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
-				Description: "UUID of the tunnel.",
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "A user-friendly name for a tunnel.",
-				Optional:    true,
-			},
-			"connections": schema.ListNestedAttribute{
-				Description: "The tunnel connections between your origin and Cloudflare's edge.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"colo_name": schema.StringAttribute{
-							Description: "The Cloudflare data center used for this connection.",
-							Computed:    true,
-							Optional:    true,
-						},
-						"is_pending_reconnect": schema.BoolAttribute{
-							Description: "Cloudflare continues to track connections for several minutes after they disconnect. This is an optimization to improve latency and reliability of reconnecting.  If `true`, the connection has disconnected but is still being tracked. If `false`, the connection is actively serving traffic.",
-							Computed:    true,
-							Optional:    true,
-						},
-						"uuid": schema.StringAttribute{
-							Description: "UUID of the Cloudflare Tunnel connection.",
-							Computed:    true,
-						},
-					},
-				},
-			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
