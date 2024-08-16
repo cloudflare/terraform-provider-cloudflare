@@ -64,7 +64,7 @@ func (d *AccountDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		_, err := d.client.Accounts.Get(
 			ctx,
 			accounts.AccountGetParams{
-				AccountID: cloudflare.F[any](data.AccountID.ValueString()),
+				AccountID: cloudflare.F(data.AccountID.ValueString()),
 			},
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
