@@ -95,85 +95,6 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Create(ctx context.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *APIShieldOperationSchemaValidationSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *APIShieldOperationSchemaValidationSettingsModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	_, err := r.client.APIGateway.Operations.SchemaValidation.Get(
-		ctx,
-		data.OperationID.ValueString(),
-		api_gateway.OperationSchemaValidationGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data.ID = data.OperationID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *APIShieldOperationSchemaValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *APIShieldOperationSchemaValidationSettingsModel
-
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<operation_id>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_operation_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <operation_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	_, err = r.client.APIGateway.Operations.SchemaValidation.Get(
-		ctx,
-		path_operation_id,
-		api_gateway.OperationSchemaValidationGetParams{
-			ZoneID: cloudflare.F(path_zone_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data.ID = data.OperationID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
 func (r *APIShieldOperationSchemaValidationSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *APIShieldOperationSchemaValidationSettingsModel
 
@@ -222,8 +143,87 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Update(ctx context.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *APIShieldOperationSchemaValidationSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *APIShieldOperationSchemaValidationSettingsModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	_, err := r.client.APIGateway.Operations.SchemaValidation.Get(
+		ctx,
+		data.OperationID.ValueString(),
+		api_gateway.OperationSchemaValidationGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data.ID = data.OperationID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *APIShieldOperationSchemaValidationSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *APIShieldOperationSchemaValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *APIShieldOperationSchemaValidationSettingsModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<operation_id>")
+		return
+	}
+	path_zone_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_operation_id, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <operation_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	_, err = r.client.APIGateway.Operations.SchemaValidation.Get(
+		ctx,
+		path_operation_id,
+		api_gateway.OperationSchemaValidationGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &data)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data.ID = data.OperationID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *APIShieldOperationSchemaValidationSettingsResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

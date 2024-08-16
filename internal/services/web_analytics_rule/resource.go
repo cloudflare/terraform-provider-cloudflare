@@ -93,10 +93,6 @@ func (r *WebAnalyticsRuleResource) Create(ctx context.Context, req resource.Crea
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *WebAnalyticsRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-
-}
-
 func (r *WebAnalyticsRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *WebAnalyticsRuleModel
 
@@ -145,6 +141,10 @@ func (r *WebAnalyticsRuleResource) Update(ctx context.Context, req resource.Upda
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WebAnalyticsRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+
 }
 
 func (r *WebAnalyticsRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

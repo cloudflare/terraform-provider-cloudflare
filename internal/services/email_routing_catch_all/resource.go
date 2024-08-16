@@ -94,72 +94,6 @@ func (r *EmailRoutingCatchAllResource) Create(ctx context.Context, req resource.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *EmailRoutingCatchAllResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *EmailRoutingCatchAllModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := EmailRoutingCatchAllResultEnvelope{*data}
-	_, err := r.client.EmailRouting.Rules.CatchAlls.Get(
-		ctx,
-		data.ZoneIdentifier.ValueString(),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ZoneIdentifier
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *EmailRoutingCatchAllResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *EmailRoutingCatchAllModel
-
-	path, err := url.PathUnescape(req.ID)
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded - <zone_identifier>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
-		return
-	}
-
-	res := new(http.Response)
-	env := EmailRoutingCatchAllResultEnvelope{*data}
-	_, err = r.client.EmailRouting.Rules.CatchAlls.Get(
-		ctx,
-		path,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ZoneIdentifier
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
 func (r *EmailRoutingCatchAllResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *EmailRoutingCatchAllModel
 
@@ -208,8 +142,74 @@ func (r *EmailRoutingCatchAllResource) Update(ctx context.Context, req resource.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *EmailRoutingCatchAllResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *EmailRoutingCatchAllModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := EmailRoutingCatchAllResultEnvelope{*data}
+	_, err := r.client.EmailRouting.Rules.CatchAlls.Get(
+		ctx,
+		data.ZoneIdentifier.ValueString(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneIdentifier
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *EmailRoutingCatchAllResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *EmailRoutingCatchAllResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *EmailRoutingCatchAllModel
+
+	path, err := url.PathUnescape(req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded - <zone_identifier>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+		return
+	}
+
+	res := new(http.Response)
+	env := EmailRoutingCatchAllResultEnvelope{*data}
+	_, err = r.client.EmailRouting.Rules.CatchAlls.Get(
+		ctx,
+		path,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneIdentifier
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *EmailRoutingCatchAllResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

@@ -96,89 +96,6 @@ func (r *ZeroTrustDEXTestResource) Create(ctx context.Context, req resource.Crea
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDEXTestResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ZeroTrustDEXTestModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := ZeroTrustDEXTestResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
-		ctx,
-		data.Name.ValueString(),
-		zero_trust.DeviceDEXTestGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.Name
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ZeroTrustDEXTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDEXTestModel
-
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<dex_test_id>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_dex_test_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <dex_test_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := ZeroTrustDEXTestResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Devices.DEXTests.Get(
-		ctx,
-		path_dex_test_id,
-		zero_trust.DeviceDEXTestGetParams{
-			AccountID: cloudflare.F(path_account_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.Name
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
 func (r *ZeroTrustDEXTestResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustDEXTestModel
 
@@ -229,6 +146,42 @@ func (r *ZeroTrustDEXTestResource) Update(ctx context.Context, req resource.Upda
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *ZeroTrustDEXTestResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZeroTrustDEXTestModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDEXTestResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
+		ctx,
+		data.Name.ValueString(),
+		zero_trust.DeviceDEXTestGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.Name
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *ZeroTrustDEXTestResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data *ZeroTrustDEXTestModel
 
@@ -250,6 +203,53 @@ func (r *ZeroTrustDEXTestResource) Delete(ctx context.Context, req resource.Dele
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.Name
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustDEXTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDEXTestModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<dex_test_id>")
+		return
+	}
+	path_account_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_dex_test_id, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <dex_test_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDEXTestResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Devices.DEXTests.Get(
+		ctx,
+		path_dex_test_id,
+		zero_trust.DeviceDEXTestGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

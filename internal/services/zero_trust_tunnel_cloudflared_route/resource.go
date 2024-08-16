@@ -92,10 +92,6 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) Create(ctx context.Context, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustTunnelCloudflaredRouteResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-
-}
-
 func (r *ZeroTrustTunnelCloudflaredRouteResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustTunnelCloudflaredRouteModel
 
@@ -143,6 +139,10 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) Update(ctx context.Context, re
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustTunnelCloudflaredRouteResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+
 }
 
 func (r *ZeroTrustTunnelCloudflaredRouteResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

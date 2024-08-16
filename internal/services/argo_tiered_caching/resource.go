@@ -95,76 +95,6 @@ func (r *ArgoTieredCachingResource) Create(ctx context.Context, req resource.Cre
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ArgoTieredCachingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ArgoTieredCachingModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := ArgoTieredCachingResultEnvelope{*data}
-	_, err := r.client.Argo.TieredCaching.Get(
-		ctx,
-		argo.TieredCachingGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ZoneID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ArgoTieredCachingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ArgoTieredCachingModel
-
-	path, err := url.PathUnescape(req.ID)
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
-		return
-	}
-
-	res := new(http.Response)
-	env := ArgoTieredCachingResultEnvelope{*data}
-	_, err = r.client.Argo.TieredCaching.Get(
-		ctx,
-		argo.TieredCachingGetParams{
-			ZoneID: cloudflare.F(path),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.ZoneID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
 func (r *ArgoTieredCachingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ArgoTieredCachingModel
 
@@ -214,8 +144,78 @@ func (r *ArgoTieredCachingResource) Update(ctx context.Context, req resource.Upd
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *ArgoTieredCachingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ArgoTieredCachingModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ArgoTieredCachingResultEnvelope{*data}
+	_, err := r.client.Argo.TieredCaching.Get(
+		ctx,
+		argo.TieredCachingGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *ArgoTieredCachingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 
+}
+
+func (r *ArgoTieredCachingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ArgoTieredCachingModel
+
+	path, err := url.PathUnescape(req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+		return
+	}
+
+	res := new(http.Response)
+	env := ArgoTieredCachingResultEnvelope{*data}
+	_, err = r.client.Argo.TieredCaching.Get(
+		ctx,
+		argo.TieredCachingGetParams{
+			ZoneID: cloudflare.F(path),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.ZoneID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ArgoTieredCachingResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {

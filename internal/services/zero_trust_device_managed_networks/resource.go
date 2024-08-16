@@ -96,89 +96,6 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Create(ctx context.Context, req
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *ZeroTrustDeviceManagedNetworksResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *ZeroTrustDeviceManagedNetworksModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := ZeroTrustDeviceManagedNetworksResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Devices.Networks.Get(
-		ctx,
-		data.NetworkID.ValueString(),
-		zero_trust.DeviceNetworkGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.NetworkID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ZeroTrustDeviceManagedNetworksResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *ZeroTrustDeviceManagedNetworksModel
-
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<network_id>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_network_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <network_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := ZeroTrustDeviceManagedNetworksResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Devices.Networks.Get(
-		ctx,
-		path_network_id,
-		zero_trust.DeviceNetworkGetParams{
-			AccountID: cloudflare.F(path_account_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.NetworkID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
 func (r *ZeroTrustDeviceManagedNetworksResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustDeviceManagedNetworksModel
 
@@ -229,6 +146,42 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Update(ctx context.Context, req
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *ZeroTrustDeviceManagedNetworksResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZeroTrustDeviceManagedNetworksModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDeviceManagedNetworksResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Devices.Networks.Get(
+		ctx,
+		data.NetworkID.ValueString(),
+		zero_trust.DeviceNetworkGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.NetworkID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *ZeroTrustDeviceManagedNetworksResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data *ZeroTrustDeviceManagedNetworksModel
 
@@ -250,6 +203,53 @@ func (r *ZeroTrustDeviceManagedNetworksResource) Delete(ctx context.Context, req
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.NetworkID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustDeviceManagedNetworksResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDeviceManagedNetworksModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<network_id>")
+		return
+	}
+	path_account_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_network_id, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <network_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDeviceManagedNetworksResultEnvelope{*data}
+	_, err = r.client.ZeroTrust.Devices.Networks.Get(
+		ctx,
+		path_network_id,
+		zero_trust.DeviceNetworkGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 	data.ID = data.NetworkID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

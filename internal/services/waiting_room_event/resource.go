@@ -96,6 +96,56 @@ func (r *WaitingRoomEventResource) Create(ctx context.Context, req resource.Crea
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *WaitingRoomEventResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *WaitingRoomEventModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state *WaitingRoomEventModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	dataBytes, err := apijson.MarshalForUpdate(data, state)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
+	res := new(http.Response)
+	env := WaitingRoomEventResultEnvelope{*data}
+	_, err = r.client.WaitingRooms.Events.Update(
+		ctx,
+		data.WaitingRoomID.ValueString(),
+		data.ID.ValueString(),
+		waiting_rooms.EventUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithRequestBody("application/json", dataBytes),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *WaitingRoomEventResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *WaitingRoomEventModel
 
@@ -128,6 +178,32 @@ func (r *WaitingRoomEventResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *WaitingRoomEventResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *WaitingRoomEventModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.WaitingRooms.Events.Delete(
+		ctx,
+		data.WaitingRoomID.ValueString(),
+		data.ID.ValueString(),
+		waiting_rooms.EventDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -179,82 +255,6 @@ func (r *WaitingRoomEventResource) ImportState(ctx context.Context, req resource
 		return
 	}
 	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *WaitingRoomEventResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *WaitingRoomEventModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *WaitingRoomEventModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := apijson.MarshalForUpdate(data, state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := WaitingRoomEventResultEnvelope{*data}
-	_, err = r.client.WaitingRooms.Events.Update(
-		ctx,
-		data.WaitingRoomID.ValueString(),
-		data.ID.ValueString(),
-		waiting_rooms.EventUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *WaitingRoomEventResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *WaitingRoomEventModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	_, err := r.client.WaitingRooms.Events.Delete(
-		ctx,
-		data.WaitingRoomID.ValueString(),
-		data.ID.ValueString(),
-		waiting_rooms.EventDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

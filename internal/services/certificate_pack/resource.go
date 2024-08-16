@@ -97,89 +97,6 @@ func (r *CertificatePackResource) Create(ctx context.Context, req resource.Creat
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *CertificatePackModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := CertificatePackResultEnvelope{*data}
-	_, err := r.client.SSL.CertificatePacks.Get(
-		ctx,
-		data.CertificatePackID.ValueString(),
-		ssl.CertificatePackGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.CertificatePackID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *CertificatePackResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	var data *CertificatePackModel
-
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<certificate_pack_id>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_certificate_pack_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <certificate_pack_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := CertificatePackResultEnvelope{*data}
-	_, err = r.client.SSL.CertificatePacks.Get(
-		ctx,
-		path_certificate_pack_id,
-		ssl.CertificatePackGetParams{
-			ZoneID: cloudflare.F(path_zone_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-	data.ID = data.CertificatePackID
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
 func (r *CertificatePackResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *CertificatePackModel
 
@@ -230,6 +147,42 @@ func (r *CertificatePackResource) Update(ctx context.Context, req resource.Updat
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *CertificatePackModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := CertificatePackResultEnvelope{*data}
+	_, err := r.client.SSL.CertificatePacks.Get(
+		ctx,
+		data.CertificatePackID.ValueString(),
+		ssl.CertificatePackGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.CertificatePackID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *CertificatePackResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data *CertificatePackModel
 
@@ -251,6 +204,53 @@ func (r *CertificatePackResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.CertificatePackID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *CertificatePackResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *CertificatePackModel
+
+	path := strings.Split(req.ID, "/")
+	if len(path) != 2 {
+		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<certificate_pack_id>")
+		return
+	}
+	path_zone_id, err := url.PathUnescape(path[0])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
+	}
+	path_certificate_pack_id, err := url.PathUnescape(path[1])
+	if err != nil {
+		resp.Diagnostics.AddError("invalid urlencoded segment - <certificate_pack_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
+	}
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := CertificatePackResultEnvelope{*data}
+	_, err = r.client.SSL.CertificatePacks.Get(
+		ctx,
+		path_certificate_pack_id,
+		ssl.CertificatePackGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 	data.ID = data.CertificatePackID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

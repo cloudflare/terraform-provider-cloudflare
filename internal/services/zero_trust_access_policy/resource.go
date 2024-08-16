@@ -102,6 +102,62 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *ZeroTrustAccessPolicyModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state *ZeroTrustAccessPolicyModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	dataBytes, err := apijson.MarshalForUpdate(data, state)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
+	res := new(http.Response)
+	env := ZeroTrustAccessPolicyResultEnvelope{*data}
+	params := zero_trust.AccessApplicationPolicyUpdateParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
+	_, err = r.client.ZeroTrust.Access.Applications.Policies.Update(
+		ctx,
+		data.AppID.ValueString(),
+		data.ID.ValueString(),
+		params,
+		option.WithRequestBody("application/json", dataBytes),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
 func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *ZeroTrustAccessPolicyModel
 
@@ -140,6 +196,38 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 		return
 	}
 	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *ZeroTrustAccessPolicyModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	params := zero_trust.AccessApplicationPolicyDeleteParams{}
+
+	if !data.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	}
+
+	_, err := r.client.ZeroTrust.Access.Applications.Policies.Delete(
+		ctx,
+		data.AppID.ValueString(),
+		data.ID.ValueString(),
+		params,
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -198,94 +286,6 @@ func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req res
 		return
 	}
 	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *ZeroTrustAccessPolicyModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *ZeroTrustAccessPolicyModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := apijson.MarshalForUpdate(data, state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := ZeroTrustAccessPolicyResultEnvelope{*data}
-	params := zero_trust.AccessApplicationPolicyUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err = r.client.ZeroTrust.Access.Applications.Policies.Update(
-		ctx,
-		data.AppID.ValueString(),
-		data.ID.ValueString(),
-		params,
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *ZeroTrustAccessPolicyModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	params := zero_trust.AccessApplicationPolicyDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err := r.client.ZeroTrust.Access.Applications.Policies.Delete(
-		ctx,
-		data.AppID.ValueString(),
-		data.ID.ValueString(),
-		params,
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
