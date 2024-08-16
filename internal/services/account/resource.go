@@ -73,7 +73,7 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 	_, err = r.client.Accounts.Update(
 		ctx,
 		accounts.AccountUpdateParams{
-			AccountID: cloudflare.F[any](data.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -109,7 +109,7 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 	_, err := r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
-			AccountID: cloudflare.F[any](data.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -144,7 +144,7 @@ func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportSt
 	_, err = r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
-			AccountID: cloudflare.F[any](path),
+			AccountID: cloudflare.F(path),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -192,7 +192,7 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 	_, err = r.client.Accounts.Update(
 		ctx,
 		accounts.AccountUpdateParams{
-			AccountID: cloudflare.F[any](data.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
