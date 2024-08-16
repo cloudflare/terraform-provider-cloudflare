@@ -100,11 +100,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
+			"country_pools": schema.MapAttribute{
+				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
+			},
 			"default_pools": schema.ListAttribute{
 				Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
 				Computed:    true,
 				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"pop_pools": schema.MapAttribute{
+				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
+			},
+			"region_pools": schema.MapAttribute{
+				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
 			},
 			"adaptive_routing": schema.SingleNestedAttribute{
 				Description: "Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin.",
@@ -114,18 +138,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"failover_across_pools": schema.BoolAttribute{
 						Description: "Extends zero-downtime failover of requests to healthy origins from alternate pools, when no healthy alternate exists in the same pool, according to the failover order defined by traffic and origin steering. When set false (the default) zero-downtime failover will only occur between origins within the same pool. See `session_affinity_attributes` for control over when sessions are broken or reassigned.",
 						Computed:    true,
-					},
-				},
-			},
-			"country_pools": schema.SingleNestedAttribute{
-				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
-				Computed:    true,
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"country_code": schema.ListAttribute{
-						Computed:    true,
-						Optional:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},
@@ -152,18 +164,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"geo",
 							),
 						},
-					},
-				},
-			},
-			"pop_pools": schema.SingleNestedAttribute{
-				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
-				Computed:    true,
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"pop": schema.ListAttribute{
-						Computed:    true,
-						Optional:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},
@@ -195,18 +195,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 						},
-					},
-				},
-			},
-			"region_pools": schema.SingleNestedAttribute{
-				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
-				Computed:    true,
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"region_code": schema.ListAttribute{
-						Computed:    true,
-						Optional:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},
@@ -273,16 +261,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"country_pools": schema.SingleNestedAttribute{
+								"country_pools": schema.MapAttribute{
 									Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 									Computed:    true,
 									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"country_code": schema.ListAttribute{
-											Computed:    true,
-											Optional:    true,
-											ElementType: types.StringType,
-										},
+									ElementType: types.ListType{
+										ElemType: types.StringType,
 									},
 								},
 								"default_pools": schema.ListAttribute{
@@ -322,16 +306,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"pop_pools": schema.SingleNestedAttribute{
+								"pop_pools": schema.MapAttribute{
 									Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 									Computed:    true,
 									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"pop": schema.ListAttribute{
-											Computed:    true,
-											Optional:    true,
-											ElementType: types.StringType,
-										},
+									ElementType: types.ListType{
+										ElemType: types.StringType,
 									},
 								},
 								"random_steering": schema.SingleNestedAttribute{
@@ -365,16 +345,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"region_pools": schema.SingleNestedAttribute{
+								"region_pools": schema.MapAttribute{
 									Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 									Computed:    true,
 									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"region_code": schema.ListAttribute{
-											Computed:    true,
-											Optional:    true,
-											ElementType: types.StringType,
-										},
+									ElementType: types.ListType{
+										ElemType: types.StringType,
 									},
 								},
 								"session_affinity": schema.StringAttribute{
