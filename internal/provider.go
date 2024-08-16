@@ -67,6 +67,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
@@ -337,6 +338,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		managed_headers.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
+		spectrum_application.NewResource,
 		regional_hostname.NewResource,
 		address_map.NewResource,
 		byo_ip_prefix.NewResource,
@@ -488,6 +490,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ruleset.NewRulesetDataSource,
 		ruleset.NewRulesetsDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
+		spectrum_application.NewSpectrumApplicationDataSource,
 		regional_hostname.NewRegionalHostnameDataSource,
 		regional_hostname.NewRegionalHostnamesDataSource,
 		address_map.NewAddressMapDataSource,
