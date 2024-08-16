@@ -59,6 +59,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 				Optional:    true,
 			},
+			"country_pools": schema.MapAttribute{
+				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
+			},
+			"pop_pools": schema.MapAttribute{
+				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
+			},
+			"region_pools": schema.MapAttribute{
+				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
+				Optional:    true,
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
+			},
 			"adaptive_routing": schema.SingleNestedAttribute{
 				Description: "Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin.",
 				Optional:    true,
@@ -68,16 +89,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(false),
-					},
-				},
-			},
-			"country_pools": schema.SingleNestedAttribute{
-				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"country_code": schema.ListAttribute{
-						Optional:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},
@@ -110,16 +121,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"pop_pools": schema.SingleNestedAttribute{
-				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"pop": schema.ListAttribute{
-						Optional:    true,
-						ElementType: types.StringType,
-					},
-				},
-			},
 			"random_steering": schema.SingleNestedAttribute{
 				Description: "Configures pool weights.\n- `steering_policy=\"random\"`: A random pool is selected with probability proportional to pool weights.\n- `steering_policy=\"least_outstanding_requests\"`: Use pool weights to scale each pool's outstanding requests.\n- `steering_policy=\"least_connections\"`: Use pool weights to scale each pool's open connections.",
 				Optional:    true,
@@ -146,16 +147,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 							},
 						},
-					},
-				},
-			},
-			"region_pools": schema.SingleNestedAttribute{
-				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"region_code": schema.ListAttribute{
-						Optional:    true,
-						ElementType: types.StringType,
 					},
 				},
 			},
@@ -216,14 +207,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"country_pools": schema.SingleNestedAttribute{
+								"country_pools": schema.MapAttribute{
 									Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"country_code": schema.ListAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-										},
+									ElementType: types.ListType{
+										ElemType: types.StringType,
 									},
 								},
 								"default_pools": schema.ListAttribute{
@@ -264,14 +252,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"pop_pools": schema.SingleNestedAttribute{
+								"pop_pools": schema.MapAttribute{
 									Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"pop": schema.ListAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-										},
+									ElementType: types.ListType{
+										ElemType: types.StringType,
 									},
 								},
 								"random_steering": schema.SingleNestedAttribute{
@@ -303,14 +288,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"region_pools": schema.SingleNestedAttribute{
+								"region_pools": schema.MapAttribute{
 									Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 									Optional:    true,
-									Attributes: map[string]schema.Attribute{
-										"region_code": schema.ListAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-										},
+									ElementType: types.ListType{
+										ElemType: types.StringType,
 									},
 								},
 								"session_affinity": schema.StringAttribute{

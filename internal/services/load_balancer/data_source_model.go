@@ -30,13 +30,13 @@ type LoadBalancerDataSourceModel struct {
 	Name                      types.String                                          `tfsdk:"name" json:"name"`
 	SessionAffinityTTL        types.Float64                                         `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl"`
 	TTL                       types.Float64                                         `tfsdk:"ttl" json:"ttl"`
+	CountryPools              map[string]*[]types.String                            `tfsdk:"country_pools" json:"country_pools"`
 	DefaultPools              *[]types.String                                       `tfsdk:"default_pools" json:"default_pools"`
+	PopPools                  map[string]*[]types.String                            `tfsdk:"pop_pools" json:"pop_pools"`
+	RegionPools               map[string]*[]types.String                            `tfsdk:"region_pools" json:"region_pools"`
 	AdaptiveRouting           *LoadBalancerAdaptiveRoutingDataSourceModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
-	CountryPools              *LoadBalancerCountryPoolsDataSourceModel              `tfsdk:"country_pools" json:"country_pools"`
 	LocationStrategy          *LoadBalancerLocationStrategyDataSourceModel          `tfsdk:"location_strategy" json:"location_strategy"`
-	PopPools                  *LoadBalancerPopPoolsDataSourceModel                  `tfsdk:"pop_pools" json:"pop_pools"`
 	RandomSteering            *LoadBalancerRandomSteeringDataSourceModel            `tfsdk:"random_steering" json:"random_steering"`
-	RegionPools               *LoadBalancerRegionPoolsDataSourceModel               `tfsdk:"region_pools" json:"region_pools"`
 	Rules                     *[]*LoadBalancerRulesDataSourceModel                  `tfsdk:"rules" json:"rules"`
 	SessionAffinityAttributes *LoadBalancerSessionAffinityAttributesDataSourceModel `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes"`
 	Filter                    *LoadBalancerFindOneByDataSourceModel                 `tfsdk:"filter"`
@@ -46,17 +46,9 @@ type LoadBalancerAdaptiveRoutingDataSourceModel struct {
 	FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed"`
 }
 
-type LoadBalancerCountryPoolsDataSourceModel struct {
-	CountryCode *[]types.String `tfsdk:"country_code" json:"country_code"`
-}
-
 type LoadBalancerLocationStrategyDataSourceModel struct {
 	Mode      types.String `tfsdk:"mode" json:"mode,computed"`
 	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
-}
-
-type LoadBalancerPopPoolsDataSourceModel struct {
-	Pop *[]types.String `tfsdk:"pop" json:"pop"`
 }
 
 type LoadBalancerRandomSteeringDataSourceModel struct {
@@ -67,10 +59,6 @@ type LoadBalancerRandomSteeringDataSourceModel struct {
 type LoadBalancerRandomSteeringPoolWeightsDataSourceModel struct {
 	Key   types.String  `tfsdk:"key" json:"key"`
 	Value types.Float64 `tfsdk:"value" json:"value"`
-}
-
-type LoadBalancerRegionPoolsDataSourceModel struct {
-	RegionCode *[]types.String `tfsdk:"region_code" json:"region_code"`
 }
 
 type LoadBalancerRulesDataSourceModel struct {
@@ -92,13 +80,13 @@ type LoadBalancerRulesFixedResponseDataSourceModel struct {
 
 type LoadBalancerRulesOverridesDataSourceModel struct {
 	AdaptiveRouting           *LoadBalancerRulesOverridesAdaptiveRoutingDataSourceModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
-	CountryPools              *LoadBalancerRulesOverridesCountryPoolsDataSourceModel              `tfsdk:"country_pools" json:"country_pools"`
+	CountryPools              map[string]*[]types.String                                          `tfsdk:"country_pools" json:"country_pools"`
 	DefaultPools              *[]types.String                                                     `tfsdk:"default_pools" json:"default_pools"`
 	FallbackPool              types.String                                                        `tfsdk:"fallback_pool" json:"fallback_pool"`
 	LocationStrategy          *LoadBalancerRulesOverridesLocationStrategyDataSourceModel          `tfsdk:"location_strategy" json:"location_strategy"`
-	PopPools                  *LoadBalancerRulesOverridesPopPoolsDataSourceModel                  `tfsdk:"pop_pools" json:"pop_pools"`
+	PopPools                  map[string]*[]types.String                                          `tfsdk:"pop_pools" json:"pop_pools"`
 	RandomSteering            *LoadBalancerRulesOverridesRandomSteeringDataSourceModel            `tfsdk:"random_steering" json:"random_steering"`
-	RegionPools               *LoadBalancerRulesOverridesRegionPoolsDataSourceModel               `tfsdk:"region_pools" json:"region_pools"`
+	RegionPools               map[string]*[]types.String                                          `tfsdk:"region_pools" json:"region_pools"`
 	SessionAffinity           types.String                                                        `tfsdk:"session_affinity" json:"session_affinity,computed"`
 	SessionAffinityAttributes *LoadBalancerRulesOverridesSessionAffinityAttributesDataSourceModel `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes"`
 	SessionAffinityTTL        types.Float64                                                       `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl"`
@@ -110,17 +98,9 @@ type LoadBalancerRulesOverridesAdaptiveRoutingDataSourceModel struct {
 	FailoverAcrossPools types.Bool `tfsdk:"failover_across_pools" json:"failover_across_pools,computed"`
 }
 
-type LoadBalancerRulesOverridesCountryPoolsDataSourceModel struct {
-	CountryCode *[]types.String `tfsdk:"country_code" json:"country_code"`
-}
-
 type LoadBalancerRulesOverridesLocationStrategyDataSourceModel struct {
 	Mode      types.String `tfsdk:"mode" json:"mode,computed"`
 	PreferECS types.String `tfsdk:"prefer_ecs" json:"prefer_ecs,computed"`
-}
-
-type LoadBalancerRulesOverridesPopPoolsDataSourceModel struct {
-	Pop *[]types.String `tfsdk:"pop" json:"pop"`
 }
 
 type LoadBalancerRulesOverridesRandomSteeringDataSourceModel struct {
@@ -131,10 +111,6 @@ type LoadBalancerRulesOverridesRandomSteeringDataSourceModel struct {
 type LoadBalancerRulesOverridesRandomSteeringPoolWeightsDataSourceModel struct {
 	Key   types.String  `tfsdk:"key" json:"key"`
 	Value types.Float64 `tfsdk:"value" json:"value"`
-}
-
-type LoadBalancerRulesOverridesRegionPoolsDataSourceModel struct {
-	RegionCode *[]types.String `tfsdk:"region_code" json:"region_code"`
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesDataSourceModel struct {
