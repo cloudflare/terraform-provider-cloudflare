@@ -122,7 +122,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Update(ctx context.Co
 	env := ZeroTrustTunnelCloudflaredVirtualNetworkResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Networks.VirtualNetworks.Edit(
 		ctx,
-		data.VirtualNetworkID.ValueString(),
+		data.ID.ValueString(),
 		zero_trust.NetworkVirtualNetworkEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -156,7 +156,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Delete(ctx context.Co
 
 	_, err := r.client.ZeroTrust.Networks.VirtualNetworks.Delete(
 		ctx,
-		data.VirtualNetworkID.ValueString(),
+		data.ID.ValueString(),
 		zero_trust.NetworkVirtualNetworkDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
