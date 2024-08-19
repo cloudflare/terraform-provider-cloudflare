@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -207,26 +206,22 @@ func (r *ZeroTrustGatewayPolicyResource) Delete(ctx context.Context, req resourc
 func (r *ZeroTrustGatewayPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *ZeroTrustGatewayPolicyModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<rule_id>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_rule_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <rule_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_account_id := ""
+	path_rule_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<rule_id>",
+		&path_account_id,
+		&path_rule_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := ZeroTrustGatewayPolicyResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Gateway.Rules.Get(
+	_, err := r.client.ZeroTrust.Gateway.Rules.Get(
 		ctx,
 		path_rule_id,
 		zero_trust.GatewayRuleGetParams{

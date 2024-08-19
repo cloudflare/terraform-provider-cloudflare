@@ -7,14 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/logpush"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -233,26 +231,23 @@ func (r *LogpushJobResource) ImportState(ctx context.Context, req resource.Impor
 	var data *LogpushJobModel
 	params := logpush.JobGetParams{}
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 3 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account/account_id | zone/zone_id>/<job_id>")
-		return
-	}
-	path_account_id_or_zone_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	switch path[0] {
-	case "account":
+	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
+	path_job_id := int64(0)
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<{accounts|zones}/{account_id|zone_id}>/<job_id>",
+		&path_accounts_or_zones,
+		&path_account_id_or_zone_id,
+		&path_job_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	switch path_accounts_or_zones {
+	case "accounts":
 		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
-	case "zone":
+	case "zones":
 		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
 	default:
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", "expected segment to be one of account/zone")
-	}
-	path_job_id, err := strconv.ParseInt(path[2], 10, 64)
-	if err != nil {
-		resp.Diagnostics.AddError("unable to parse - <job_id>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
+		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
 	}
 	if resp.Diagnostics.HasError() {
 		return
@@ -260,7 +255,7 @@ func (r *LogpushJobResource) ImportState(ctx context.Context, req resource.Impor
 
 	res := new(http.Response)
 	env := LogpushJobResultEnvelope{*data}
-	_, err = r.client.Logpush.Jobs.Get(
+	_, err := r.client.Logpush.Jobs.Get(
 		ctx,
 		path_job_id,
 		params,

@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -202,15 +202,20 @@ func (r *EmailRoutingSettingsResource) Delete(ctx context.Context, req resource.
 func (r *EmailRoutingSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *EmailRoutingSettingsModel
 
-	path, err := url.PathUnescape(req.ID)
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded - <zone_identifier>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_identifier>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := EmailRoutingSettingsResultEnvelope{*data}
-	_, err = r.client.EmailRouting.Get(
+	_, err := r.client.EmailRouting.Get(
 		ctx,
 		path,
 		option.WithResponseBodyInto(&res),

@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -207,26 +206,22 @@ func (r *NotificationPolicyWebhooksResource) Delete(ctx context.Context, req res
 func (r *NotificationPolicyWebhooksResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *NotificationPolicyWebhooksModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<webhook_id>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_webhook_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <webhook_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_account_id := ""
+	path_webhook_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<webhook_id>",
+		&path_account_id,
+		&path_webhook_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := NotificationPolicyWebhooksResultEnvelope{*data}
-	_, err = r.client.Alerting.Destinations.Webhooks.Get(
+	_, err := r.client.Alerting.Destinations.Webhooks.Get(
 		ctx,
 		path_webhook_id,
 		alerting.DestinationWebhookGetParams{
