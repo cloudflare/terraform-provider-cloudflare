@@ -90,10 +90,11 @@ func (d *ZeroTrustAccessPolicyDataSource) Read(ctx context.Context, req datasour
 		data = &env.Result
 	} else {
 		params := zero_trust.AccessApplicationPolicyListParams{}
-		if !data.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.AccountID.ValueString())
+
+		if !data.Filter.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.Filter.AccountID.ValueString())
 		} else {
-			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+			params.ZoneID = cloudflare.F(data.Filter.ZoneID.ValueString())
 		}
 
 		items := &[]*ZeroTrustAccessPolicyDataSourceModel{}

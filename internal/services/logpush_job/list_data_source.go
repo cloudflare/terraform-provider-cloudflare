@@ -55,6 +55,7 @@ func (d *LogpushJobsDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	params := logpush.JobListParams{}
+
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {

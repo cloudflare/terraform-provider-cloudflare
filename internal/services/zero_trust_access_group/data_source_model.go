@@ -28,6 +28,7 @@ type ZeroTrustAccessGroupDataSourceModel struct {
 	Include   *[]*ZeroTrustAccessGroupIncludeDataSourceModel   `tfsdk:"include" json:"include"`
 	IsDefault *[]*ZeroTrustAccessGroupIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default"`
 	Require   *[]*ZeroTrustAccessGroupRequireDataSourceModel   `tfsdk:"require" json:"require"`
+	Filter    *ZeroTrustAccessGroupFindOneByDataSourceModel    `tfsdk:"filter"`
 }
 
 type ZeroTrustAccessGroupExcludeDataSourceModel struct {
@@ -396,4 +397,9 @@ type ZeroTrustAccessGroupRequireAuthMethodDataSourceModel struct {
 
 type ZeroTrustAccessGroupRequireDevicePostureDataSourceModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed"`
+}
+
+type ZeroTrustAccessGroupFindOneByDataSourceModel struct {
+	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 }

@@ -64,9 +64,9 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	dataBytes, err := apijson.Marshal(data)
+	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
 	res := new(http.Response)
@@ -77,7 +77,7 @@ func (r *WorkersScriptResource) Create(ctx context.Context, req resource.CreateR
 		workers.ScriptUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -114,9 +114,9 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	dataBytes, err := apijson.MarshalForUpdate(data, state)
+	dataBytes, contentType, err := data.MarshalMultipart()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		resp.Diagnostics.AddError("failed to serialize multipart http request", err.Error())
 		return
 	}
 	res := new(http.Response)
@@ -127,7 +127,7 @@ func (r *WorkersScriptResource) Update(ctx context.Context, req resource.UpdateR
 		workers.ScriptUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
-		option.WithRequestBody("application/json", dataBytes),
+		option.WithRequestBody(contentType, dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

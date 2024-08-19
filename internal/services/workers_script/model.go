@@ -3,6 +3,10 @@
 package workers_script
 
 import (
+	"bytes"
+	"mime/multipart"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -27,6 +31,21 @@ type WorkersScriptModel struct {
 	StartupTimeMs types.Int64                         `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
 	UsageModel    types.String                        `tfsdk:"usage_model" json:"usage_model,computed"`
 	TailConsumers *[]*WorkersScriptTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+}
+
+func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string, err error) {
+	buf := bytes.NewBuffer(nil)
+	writer := multipart.NewWriter(buf)
+	err = apiform.MarshalRoot(r, writer)
+	if err != nil {
+		writer.Close()
+		return nil, "", err
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, "", err
+	}
+	return buf.Bytes(), writer.FormDataContentType(), nil
 }
 
 type WorkersScriptMetadataModel struct {

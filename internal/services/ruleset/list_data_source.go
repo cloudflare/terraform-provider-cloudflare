@@ -55,6 +55,7 @@ func (d *RulesetsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	params := rulesets.RulesetListParams{}
+
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {

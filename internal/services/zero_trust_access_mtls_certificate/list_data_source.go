@@ -55,6 +55,7 @@ func (d *ZeroTrustAccessMTLSCertificatesDataSource) Read(ctx context.Context, re
 	}
 
 	params := zero_trust.AccessCertificateListParams{}
+
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {

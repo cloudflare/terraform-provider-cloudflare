@@ -65,6 +65,7 @@ func (d *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 		Notes:     cloudflare.F(data.Notes.ValueString()),
 		Order:     cloudflare.F(firewall.AccessRuleListParamsOrder(data.Order.ValueString())),
 	}
+
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {

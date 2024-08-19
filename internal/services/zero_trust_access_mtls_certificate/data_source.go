@@ -58,34 +58,66 @@ func (d *ZeroTrustAccessMTLSCertificateDataSource) Read(ctx context.Context, req
 		return
 	}
 
-	res := new(http.Response)
-	env := ZeroTrustAccessMTLSCertificateResultDataSourceEnvelope{*data}
-	params := zero_trust.AccessCertificateGetParams{}
+	if data.Filter == nil {
+		res := new(http.Response)
+		env := ZeroTrustAccessMTLSCertificateResultDataSourceEnvelope{*data}
+		params := zero_trust.AccessCertificateGetParams{}
 
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		if !data.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		}
+
+		_, err := d.client.ZeroTrust.Access.Certificates.Get(
+			ctx,
+			data.CertificateID.ValueString(),
+			params,
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+		bytes, _ := io.ReadAll(res.Body)
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+			return
+		}
+		data = &env.Result
 	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
+		params := zero_trust.AccessCertificateListParams{}
 
-	_, err := d.client.ZeroTrust.Access.Certificates.Get(
-		ctx,
-		data.CertificateID.ValueString(),
-		params,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
+		if !data.Filter.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.Filter.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(data.Filter.ZoneID.ValueString())
+		}
+
+		items := &[]*ZeroTrustAccessMTLSCertificateDataSourceModel{}
+		env := ZeroTrustAccessMTLSCertificateResultListDataSourceEnvelope{items}
+
+		page, err := d.client.ZeroTrust.Access.Certificates.List(ctx, params)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+
+		if count := len(*items); count != 1 {
+			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
+			return
+		}
+		data = (*items)[0]
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

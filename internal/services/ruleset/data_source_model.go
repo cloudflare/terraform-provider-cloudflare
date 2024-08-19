@@ -16,17 +16,18 @@ type RulesetResultListDataSourceEnvelope struct {
 }
 
 type RulesetDataSourceModel struct {
-	AccountID   types.String                    `tfsdk:"account_id" path:"account_id"`
-	RulesetID   types.String                    `tfsdk:"ruleset_id" path:"ruleset_id"`
-	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id"`
-	Rules       *[]*RulesetRulesDataSourceModel `tfsdk:"rules" json:"rules"`
-	Description types.String                    `tfsdk:"description" json:"description,computed"`
-	ID          types.String                    `tfsdk:"id" json:"id,computed"`
-	Kind        types.String                    `tfsdk:"kind" json:"kind,computed"`
-	LastUpdated timetypes.RFC3339               `tfsdk:"last_updated" json:"last_updated,computed"`
-	Name        types.String                    `tfsdk:"name" json:"name,computed"`
-	Phase       types.String                    `tfsdk:"phase" json:"phase,computed"`
-	Version     types.String                    `tfsdk:"version" json:"version,computed"`
+	AccountID   types.String                     `tfsdk:"account_id" path:"account_id"`
+	RulesetID   types.String                     `tfsdk:"ruleset_id" path:"ruleset_id"`
+	ZoneID      types.String                     `tfsdk:"zone_id" path:"zone_id"`
+	Rules       *[]*RulesetRulesDataSourceModel  `tfsdk:"rules" json:"rules"`
+	Description types.String                     `tfsdk:"description" json:"description,computed"`
+	ID          types.String                     `tfsdk:"id" json:"id,computed"`
+	Kind        types.String                     `tfsdk:"kind" json:"kind,computed"`
+	LastUpdated timetypes.RFC3339                `tfsdk:"last_updated" json:"last_updated,computed"`
+	Name        types.String                     `tfsdk:"name" json:"name,computed"`
+	Phase       types.String                     `tfsdk:"phase" json:"phase,computed"`
+	Version     types.String                     `tfsdk:"version" json:"version,computed"`
+	Filter      *RulesetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 type RulesetRulesDataSourceModel struct {
@@ -55,4 +56,9 @@ type RulesetRulesActionParametersResponseDataSourceModel struct {
 
 type RulesetRulesLoggingDataSourceModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type RulesetFindOneByDataSourceModel struct {
+	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 }
