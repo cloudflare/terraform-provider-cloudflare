@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -207,26 +206,22 @@ func (r *AddressMapResource) Delete(ctx context.Context, req resource.DeleteRequ
 func (r *AddressMapResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *AddressMapModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<address_map_id>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_address_map_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <address_map_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_account_id := ""
+	path_address_map_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<address_map_id>",
+		&path_account_id,
+		&path_address_map_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := AddressMapResultEnvelope{*data}
-	_, err = r.client.Addressing.AddressMaps.Get(
+	_, err := r.client.Addressing.AddressMaps.Get(
 		ctx,
 		path_address_map_id,
 		addressing.AddressMapGetParams{

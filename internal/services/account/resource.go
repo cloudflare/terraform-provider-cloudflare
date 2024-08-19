@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -186,15 +186,20 @@ func (r *AccountResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *AccountModel
 
-	path, err := url.PathUnescape(req.ID)
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := AccountResultEnvelope{*data}
-	_, err = r.client.Accounts.Get(
+	_, err := r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
 			AccountID: cloudflare.F(path),

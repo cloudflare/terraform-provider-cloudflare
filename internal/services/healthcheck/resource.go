@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/healthchecks"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -207,26 +206,22 @@ func (r *HealthcheckResource) Delete(ctx context.Context, req resource.DeleteReq
 func (r *HealthcheckResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *HealthcheckModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<healthcheck_id>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_healthcheck_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <healthcheck_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_zone_id := ""
+	path_healthcheck_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<healthcheck_id>",
+		&path_zone_id,
+		&path_healthcheck_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := HealthcheckResultEnvelope{*data}
-	_, err = r.client.Healthchecks.Get(
+	_, err := r.client.Healthchecks.Get(
 		ctx,
 		path_healthcheck_id,
 		healthchecks.HealthcheckGetParams{

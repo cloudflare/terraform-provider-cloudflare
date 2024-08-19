@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -186,15 +186,20 @@ func (r *ZeroTrustGatewaySettingsResource) Delete(ctx context.Context, req resou
 func (r *ZeroTrustGatewaySettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *ZeroTrustGatewaySettingsModel
 
-	path, err := url.PathUnescape(req.ID)
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := ZeroTrustGatewaySettingsResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Gateway.Configurations.Get(
+	_, err := r.client.ZeroTrust.Gateway.Configurations.Get(
 		ctx,
 		zero_trust.GatewayConfigurationGetParams{
 			AccountID: cloudflare.F(path),

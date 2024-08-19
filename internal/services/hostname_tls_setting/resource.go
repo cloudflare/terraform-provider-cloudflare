@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/hostnames"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -215,26 +214,22 @@ func (r *HostnameTLSSettingResource) Delete(ctx context.Context, req resource.De
 func (r *HostnameTLSSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *HostnameTLSSettingModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<setting_id>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_setting_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <setting_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_zone_id := ""
+	path_setting_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<setting_id>",
+		&path_zone_id,
+		&path_setting_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := HostnameTLSSettingResultEnvelope{*data}
-	_, err = r.client.Hostnames.Settings.TLS.Get(
+	_, err := r.client.Hostnames.Settings.TLS.Get(
 		ctx,
 		hostnames.SettingTLSGetParamsSettingID(path_setting_id),
 		hostnames.SettingTLSGetParams{

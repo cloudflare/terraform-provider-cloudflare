@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -186,15 +186,20 @@ func (r *WaitingRoomSettingResource) Delete(ctx context.Context, req resource.De
 func (r *WaitingRoomSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *WaitingRoomSettingModel
 
-	path, err := url.PathUnescape(req.ID)
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := WaitingRoomSettingResultEnvelope{*data}
-	_, err = r.client.WaitingRooms.Settings.Get(
+	_, err := r.client.WaitingRooms.Settings.Get(
 		ctx,
 		waiting_rooms.SettingGetParams{
 			ZoneID: cloudflare.F(path),

@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -207,15 +207,20 @@ func (r *ZoneHoldResource) Delete(ctx context.Context, req resource.DeleteReques
 func (r *ZoneHoldResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *ZoneHoldModel
 
-	path, err := url.PathUnescape(req.ID)
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), req.ID))
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := ZoneHoldResultEnvelope{*data}
-	_, err = r.client.Zones.Holds.Get(
+	_, err := r.client.Zones.Holds.Get(
 		ctx,
 		zones.HoldGetParams{
 			ZoneID: cloudflare.F(path),

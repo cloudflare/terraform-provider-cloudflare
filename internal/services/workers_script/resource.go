@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -210,25 +209,21 @@ func (r *WorkersScriptResource) Delete(ctx context.Context, req resource.DeleteR
 func (r *WorkersScriptResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *WorkersScriptModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<script_name>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_script_name, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <script_name>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_account_id := ""
+	path_script_name := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<script_name>",
+		&path_account_id,
+		&path_script_name,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
-	_, err = r.client.Workers.Scripts.Get(
+	_, err := r.client.Workers.Scripts.Get(
 		ctx,
 		path_script_name,
 		workers.ScriptGetParams{

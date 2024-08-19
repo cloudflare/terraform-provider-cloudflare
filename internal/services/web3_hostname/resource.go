@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/web3"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -201,26 +200,22 @@ func (r *Web3HostnameResource) Delete(ctx context.Context, req resource.DeleteRe
 func (r *Web3HostnameResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *Web3HostnameModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_identifier>/<identifier>")
-		return
-	}
-	path_zone_identifier, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_identifier, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_zone_identifier := ""
+	path_identifier := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_identifier>/<identifier>",
+		&path_zone_identifier,
+		&path_identifier,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := Web3HostnameResultEnvelope{*data}
-	_, err = r.client.Web3.Hostnames.Get(
+	_, err := r.client.Web3.Hostnames.Get(
 		ctx,
 		path_zone_identifier,
 		path_identifier,

@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/kv"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -214,29 +213,23 @@ func (r *WorkersKVResource) Delete(ctx context.Context, req resource.DeleteReque
 func (r *WorkersKVResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *WorkersKVModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 3 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<namespace_id>/<key_name>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_namespace_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <namespace_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	path_key_name, err := url.PathUnescape(path[2])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <key_name>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
-	}
+	path_account_id := ""
+	path_namespace_id := ""
+	path_key_name := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<namespace_id>/<key_name>",
+		&path_account_id,
+		&path_namespace_id,
+		&path_key_name,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
-	_, err = r.client.KV.Namespaces.Values.Get(
+	_, err := r.client.KV.Namespaces.Values.Get(
 		ctx,
 		path_namespace_id,
 		path_key_name,
