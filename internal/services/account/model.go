@@ -3,6 +3,7 @@
 package account
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +16,7 @@ type AccountModel struct {
 	AccountID types.String          `tfsdk:"account_id" path:"account_id"`
 	Name      types.String          `tfsdk:"name" json:"name"`
 	Settings  *AccountSettingsModel `tfsdk:"settings" json:"settings"`
+	CreatedOn timetypes.RFC3339     `tfsdk:"created_on" json:"created_on,computed"`
 }
 
 type AccountSettingsModel struct {

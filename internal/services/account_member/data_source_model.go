@@ -4,7 +4,6 @@ package account_member
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -43,15 +42,20 @@ type AccountMemberPoliciesDataSourceModel struct {
 }
 
 type AccountMemberPoliciesPermissionGroupsDataSourceModel struct {
-	ID   types.String         `tfsdk:"id" json:"id,computed"`
-	Meta jsontypes.Normalized `tfsdk:"meta" json:"meta"`
-	Name types.String         `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                              `tfsdk:"id" json:"id,computed"`
+	Meta *AccountMemberPoliciesPermissionGroupsMetaDataSourceModel `tfsdk:"meta" json:"meta"`
+	Name types.String                                              `tfsdk:"name" json:"name,computed"`
+}
+
+type AccountMemberPoliciesPermissionGroupsMetaDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key"`
+	Value types.String `tfsdk:"value" json:"value"`
 }
 
 type AccountMemberPoliciesResourceGroupsDataSourceModel struct {
 	ID    types.String                                                `tfsdk:"id" json:"id,computed"`
 	Scope *[]*AccountMemberPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope,computed"`
-	Meta  jsontypes.Normalized                                        `tfsdk:"meta" json:"meta"`
+	Meta  *AccountMemberPoliciesResourceGroupsMetaDataSourceModel     `tfsdk:"meta" json:"meta"`
 	Name  types.String                                                `tfsdk:"name" json:"name,computed"`
 }
 
@@ -62,6 +66,11 @@ type AccountMemberPoliciesResourceGroupsScopeDataSourceModel struct {
 
 type AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
 	Key types.String `tfsdk:"key" json:"key,computed"`
+}
+
+type AccountMemberPoliciesResourceGroupsMetaDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key"`
+	Value types.String `tfsdk:"value" json:"value"`
 }
 
 type AccountMemberRolesDataSourceModel struct {

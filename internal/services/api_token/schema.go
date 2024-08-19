@@ -5,7 +5,6 @@ package api_token
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,10 +20,10 @@ var _ resource.ResourceWithConfigValidators = &APITokenResource{}
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"token_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description:   "Token identifier tag.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"name": schema.StringAttribute{
 				Description: "Token name.",
@@ -55,10 +54,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description: "Identifier of the group.",
 										Computed:    true,
 									},
-									"meta": schema.StringAttribute{
+									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
 										Optional:    true,
-										CustomType:  jsontypes.NormalizedType{},
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Optional: true,
+											},
+											"value": schema.StringAttribute{
+												Optional: true,
+											},
+										},
 									},
 									"name": schema.StringAttribute{
 										Description: "Name of the group.",
@@ -67,10 +73,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"resources": schema.StringAttribute{
+						"resources": schema.SingleNestedAttribute{
 							Description: "A list of resource names that the policy applies to.",
 							Required:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							Attributes: map[string]schema.Attribute{
+								"resource": schema.StringAttribute{
+									Optional: true,
+								},
+								"scope": schema.StringAttribute{
+									Optional: true,
+								},
+							},
 						},
 					},
 				},
@@ -117,8 +130,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
+			"issued_on": schema.StringAttribute{
+				Description: "The time on which the token was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"last_used_on": schema.StringAttribute{
+				Description: "Last time the token was used.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "Last time the token was modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"value": schema.StringAttribute{
+				Description: "The token value.",
 				Computed:    true,
 			},
 		},

@@ -5,7 +5,7 @@ package api_token
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -122,11 +122,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													Description: "Identifier of the group.",
 													Computed:    true,
 												},
-												"meta": schema.StringAttribute{
+												"meta": schema.SingleNestedAttribute{
 													Description: "Attributes associated to the permission group.",
 													Computed:    true,
 													Optional:    true,
-													CustomType:  jsontypes.NormalizedType{},
+													Attributes: map[string]schema.Attribute{
+														"key": schema.StringAttribute{
+															Computed: true,
+															Optional: true,
+														},
+														"value": schema.StringAttribute{
+															Computed: true,
+															Optional: true,
+														},
+													},
 												},
 												"name": schema.StringAttribute{
 													Description: "Name of the group.",
@@ -135,10 +144,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"resources": schema.StringAttribute{
+									"resources": schema.SingleNestedAttribute{
 										Description: "A list of resource names that the policy applies to.",
 										Computed:    true,
-										CustomType:  jsontypes.NormalizedType{},
+										CustomType:  customfield.NewNestedObjectType[APITokensPoliciesResourcesDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"resource": schema.StringAttribute{
+												Computed: true,
+												Optional: true,
+											},
+											"scope": schema.StringAttribute{
+												Computed: true,
+												Optional: true,
+											},
+										},
 									},
 								},
 							},

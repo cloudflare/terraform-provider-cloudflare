@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -94,11 +93,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													Description: "Identifier of the group.",
 													Computed:    true,
 												},
-												"meta": schema.StringAttribute{
+												"meta": schema.SingleNestedAttribute{
 													Description: "Attributes associated to the permission group.",
 													Computed:    true,
 													Optional:    true,
-													CustomType:  jsontypes.NormalizedType{},
+													Attributes: map[string]schema.Attribute{
+														"key": schema.StringAttribute{
+															Computed: true,
+															Optional: true,
+														},
+														"value": schema.StringAttribute{
+															Computed: true,
+															Optional: true,
+														},
+													},
 												},
 												"name": schema.StringAttribute{
 													Description: "Name of the group.",
@@ -141,11 +149,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 														},
 													},
 												},
-												"meta": schema.StringAttribute{
+												"meta": schema.SingleNestedAttribute{
 													Description: "Attributes associated to the resource group.",
 													Computed:    true,
 													Optional:    true,
-													CustomType:  jsontypes.NormalizedType{},
+													Attributes: map[string]schema.Attribute{
+														"key": schema.StringAttribute{
+															Computed: true,
+															Optional: true,
+														},
+														"value": schema.StringAttribute{
+															Computed: true,
+															Optional: true,
+														},
+													},
 												},
 												"name": schema.StringAttribute{
 													Description: "Name of the resource group.",
