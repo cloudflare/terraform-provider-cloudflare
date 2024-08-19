@@ -17,6 +17,14 @@ var _ datasource.DataSourceWithConfigValidators = &ZeroTrustTunnelCloudflaredDat
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"account_id": schema.StringAttribute{
+				Description: "Cloudflare account ID",
+				Optional:    true,
+			},
+			"tunnel_id": schema.StringAttribute{
+				Description: "UUID of the tunnel.",
+				Optional:    true,
+			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
@@ -40,7 +48,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"name": schema.StringAttribute{
-						Description: "A user-friendly name for the tunnel.",
+						Description: "A user-friendly name for a tunnel.",
 						Optional:    true,
 					},
 					"status": schema.StringAttribute{
@@ -54,10 +62,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"down",
 							),
 						},
-					},
-					"tun_types": schema.StringAttribute{
-						Description: "The types of tunnels to filter separated by a comma.",
-						Optional:    true,
 					},
 					"uuid": schema.StringAttribute{
 						Description: "UUID of the tunnel.",
