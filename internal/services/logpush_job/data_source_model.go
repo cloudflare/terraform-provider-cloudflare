@@ -34,6 +34,7 @@ type LogpushJobDataSourceModel struct {
 	MaxUploadBytes           types.Int64                             `tfsdk:"max_upload_bytes" json:"max_upload_bytes"`
 	Name                     types.String                            `tfsdk:"name" json:"name"`
 	OutputOptions            *LogpushJobOutputOptionsDataSourceModel `tfsdk:"output_options" json:"output_options"`
+	Filter                   *LogpushJobFindOneByDataSourceModel     `tfsdk:"filter"`
 }
 
 type LogpushJobOutputOptionsDataSourceModel struct {
@@ -49,4 +50,9 @@ type LogpushJobOutputOptionsDataSourceModel struct {
 	RecordTemplate  types.String    `tfsdk:"record_template" json:"record_template,computed"`
 	SampleRate      types.Float64   `tfsdk:"sample_rate" json:"sample_rate,computed"`
 	TimestampFormat types.String    `tfsdk:"timestamp_format" json:"timestamp_format,computed"`
+}
+
+type LogpushJobFindOneByDataSourceModel struct {
+	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 }

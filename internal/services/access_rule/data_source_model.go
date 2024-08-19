@@ -22,6 +22,8 @@ type AccessRuleDataSourceModel struct {
 }
 
 type AccessRuleFindOneByDataSourceModel struct {
+	AccountID     types.String                            `tfsdk:"account_id" path:"account_id"`
+	ZoneID        types.String                            `tfsdk:"zone_id" path:"zone_id"`
 	Configuration *AccessRuleConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration"`
 	Direction     types.String                            `tfsdk:"direction" query:"direction"`
 	Match         types.String                            `tfsdk:"match" query:"match"`

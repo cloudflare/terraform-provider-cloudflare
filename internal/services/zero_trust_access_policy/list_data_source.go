@@ -55,6 +55,7 @@ func (d *ZeroTrustAccessPoliciesDataSource) Read(ctx context.Context, req dataso
 	}
 
 	params := zero_trust.AccessApplicationPolicyListParams{}
+
 	if !data.AccountID.IsNull() {
 		params.AccountID = cloudflare.F(data.AccountID.ValueString())
 	} else {

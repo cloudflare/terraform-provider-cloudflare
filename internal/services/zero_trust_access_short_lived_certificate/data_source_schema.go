@@ -38,6 +38,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The public key to add to your SSH server configuration.",
 				Optional:    true,
 			},
+			"filter": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"account_id": schema.StringAttribute{
+						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+						Optional:    true,
+					},
+					"zone_id": schema.StringAttribute{
+						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:    true,
+					},
+				},
+			},
 		},
 	}
 }
