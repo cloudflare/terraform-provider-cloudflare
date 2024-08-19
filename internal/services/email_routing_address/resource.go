@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -200,26 +199,22 @@ func (r *EmailRoutingAddressResource) Delete(ctx context.Context, req resource.D
 func (r *EmailRoutingAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *EmailRoutingAddressModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_identifier>/<destination_address_identifier>")
-		return
-	}
-	path_account_identifier, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_destination_address_identifier, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <destination_address_identifier>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_account_identifier := ""
+	path_destination_address_identifier := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_identifier>/<destination_address_identifier>",
+		&path_account_identifier,
+		&path_destination_address_identifier,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := EmailRoutingAddressResultEnvelope{*data}
-	_, err = r.client.EmailRouting.Addresses.Get(
+	_, err := r.client.EmailRouting.Addresses.Get(
 		ctx,
 		path_account_identifier,
 		path_destination_address_identifier,

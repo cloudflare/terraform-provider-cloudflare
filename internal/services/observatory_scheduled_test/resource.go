@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/speed"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -212,26 +211,22 @@ func (r *ObservatoryScheduledTestResource) Delete(ctx context.Context, req resou
 func (r *ObservatoryScheduledTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *ObservatoryScheduledTestModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<url>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_url, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <url>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_zone_id := ""
+	path_url := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<url>",
+		&path_zone_id,
+		&path_url,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := ObservatoryScheduledTestResultEnvelope{*data}
-	_, err = r.client.Speed.Schedule.Get(
+	_, err := r.client.Speed.Schedule.Get(
 		ctx,
 		path_url,
 		speed.ScheduleGetParams{

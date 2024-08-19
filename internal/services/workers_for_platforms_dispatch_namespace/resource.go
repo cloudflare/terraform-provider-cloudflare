@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -210,26 +209,22 @@ func (r *WorkersForPlatformsDispatchNamespaceResource) Delete(ctx context.Contex
 func (r *WorkersForPlatformsDispatchNamespaceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *WorkersForPlatformsDispatchNamespaceModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account_id>/<dispatch_namespace>")
-		return
-	}
-	path_account_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_dispatch_namespace, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <dispatch_namespace>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_account_id := ""
+	path_dispatch_namespace := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<dispatch_namespace>",
+		&path_account_id,
+		&path_dispatch_namespace,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := WorkersForPlatformsDispatchNamespaceResultEnvelope{*data}
-	_, err = r.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
+	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
 		ctx,
 		path_dispatch_namespace,
 		workers_for_platforms.DispatchNamespaceGetParams{

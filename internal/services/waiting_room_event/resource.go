@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -211,30 +210,24 @@ func (r *WaitingRoomEventResource) Delete(ctx context.Context, req resource.Dele
 func (r *WaitingRoomEventResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *WaitingRoomEventModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 3 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<waiting_room_id>/<event_id>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_waiting_room_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <waiting_room_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	path_event_id, err := url.PathUnescape(path[2])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <event_id>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
-	}
+	path_zone_id := ""
+	path_waiting_room_id := ""
+	path_event_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<waiting_room_id>/<event_id>",
+		&path_zone_id,
+		&path_waiting_room_id,
+		&path_event_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := WaitingRoomEventResultEnvelope{*data}
-	_, err = r.client.WaitingRooms.Events.Get(
+	_, err := r.client.WaitingRooms.Events.Get(
 		ctx,
 		path_waiting_room_id,
 		path_event_id,

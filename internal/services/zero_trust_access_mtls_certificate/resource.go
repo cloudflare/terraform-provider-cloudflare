@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -232,26 +231,23 @@ func (r *ZeroTrustAccessMTLSCertificateResource) ImportState(ctx context.Context
 	var data *ZeroTrustAccessMTLSCertificateModel
 	params := zero_trust.AccessCertificateGetParams{}
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 3 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <account/account_id | zone/zone_id>/<certificate_id>")
-		return
-	}
-	path_account_id_or_zone_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
-	switch path[0] {
-	case "account":
+	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
+	path_certificate_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<{accounts|zones}/{account_id|zone_id}>/<certificate_id>",
+		&path_accounts_or_zones,
+		&path_account_id_or_zone_id,
+		&path_certificate_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	switch path_accounts_or_zones {
+	case "accounts":
 		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
-	case "zone":
+	case "zones":
 		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
 	default:
-		resp.Diagnostics.AddError("invalid urlencoded segment - <account/account_id | zone/zone_id>", "expected segment to be one of account/zone")
-	}
-	path_certificate_id, err := url.PathUnescape(path[2])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <certificate_id>", fmt.Sprintf("%s -> %q", err.Error(), path[2]))
+		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
 	}
 	if resp.Diagnostics.HasError() {
 		return
@@ -259,7 +255,7 @@ func (r *ZeroTrustAccessMTLSCertificateResource) ImportState(ctx context.Context
 
 	res := new(http.Response)
 	env := ZeroTrustAccessMTLSCertificateResultEnvelope{*data}
-	_, err = r.client.ZeroTrust.Access.Certificates.Get(
+	_, err := r.client.ZeroTrust.Access.Certificates.Get(
 		ctx,
 		path_certificate_id,
 		params,

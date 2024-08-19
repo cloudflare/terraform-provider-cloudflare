@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -184,25 +183,21 @@ func (r *APIShieldOperationSchemaValidationSettingsResource) Delete(ctx context.
 func (r *APIShieldOperationSchemaValidationSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *APIShieldOperationSchemaValidationSettingsModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<operation_id>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_operation_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <operation_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_zone_id := ""
+	path_operation_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<operation_id>",
+		&path_zone_id,
+		&path_operation_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
-	_, err = r.client.APIGateway.Operations.SchemaValidation.Get(
+	_, err := r.client.APIGateway.Operations.SchemaValidation.Get(
 		ctx,
 		path_operation_id,
 		api_gateway.OperationSchemaValidationGetParams{

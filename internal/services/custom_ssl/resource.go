@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/custom_certificates"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -207,26 +206,22 @@ func (r *CustomSSLResource) Delete(ctx context.Context, req resource.DeleteReque
 func (r *CustomSSLResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *CustomSSLModel
 
-	path := strings.Split(req.ID, "/")
-	if len(path) != 2 {
-		resp.Diagnostics.AddError("Invalid ID", "expected urlencoded segments <zone_id>/<custom_certificate_id>")
-		return
-	}
-	path_zone_id, err := url.PathUnescape(path[0])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <zone_id>", fmt.Sprintf("%s -> %q", err.Error(), path[0]))
-	}
-	path_custom_certificate_id, err := url.PathUnescape(path[1])
-	if err != nil {
-		resp.Diagnostics.AddError("invalid urlencoded segment - <custom_certificate_id>", fmt.Sprintf("%s -> %q", err.Error(), path[1]))
-	}
+	path_zone_id := ""
+	path_custom_certificate_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<custom_certificate_id>",
+		&path_zone_id,
+		&path_custom_certificate_id,
+	)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := CustomSSLResultEnvelope{*data}
-	_, err = r.client.CustomCertificates.Get(
+	_, err := r.client.CustomCertificates.Get(
 		ctx,
 		path_custom_certificate_id,
 		custom_certificates.CustomCertificateGetParams{
