@@ -77,7 +77,6 @@ func (d *ZeroTrustTunnelCloudflaredsDataSource) Read(ctx context.Context, req da
 		IsDeleted:     cloudflare.F(data.IsDeleted.ValueBool()),
 		Name:          cloudflare.F(data.Name.ValueString()),
 		Status:        cloudflare.F(zero_trust.TunnelListParamsStatus(data.Status.ValueString())),
-		TunTypes:      cloudflare.F(data.TunTypes.ValueString()),
 		UUID:          cloudflare.F(data.UUID.ValueString()),
 		WasActiveAt:   cloudflare.F(dataWasActiveAt),
 		WasInactiveAt: cloudflare.F(dataWasInactiveAt),
