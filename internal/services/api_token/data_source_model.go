@@ -3,7 +3,7 @@
 package api_token
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,11 +18,11 @@ type APITokenResultListDataSourceEnvelope struct {
 
 type APITokenDataSourceModel struct {
 	TokenID    types.String                        `tfsdk:"token_id" path:"token_id"`
+	ID         types.String                        `tfsdk:"id" json:"id,computed"`
+	IssuedOn   timetypes.RFC3339                   `tfsdk:"issued_on" json:"issued_on,computed"`
+	LastUsedOn timetypes.RFC3339                   `tfsdk:"last_used_on" json:"last_used_on,computed"`
+	ModifiedOn timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on,computed"`
 	ExpiresOn  timetypes.RFC3339                   `tfsdk:"expires_on" json:"expires_on"`
-	ID         types.String                        `tfsdk:"id" json:"id"`
-	IssuedOn   timetypes.RFC3339                   `tfsdk:"issued_on" json:"issued_on"`
-	LastUsedOn timetypes.RFC3339                   `tfsdk:"last_used_on" json:"last_used_on"`
-	ModifiedOn timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on"`
 	Name       types.String                        `tfsdk:"name" json:"name"`
 	NotBefore  timetypes.RFC3339                   `tfsdk:"not_before" json:"not_before"`
 	Status     types.String                        `tfsdk:"status" json:"status"`
@@ -41,16 +41,26 @@ type APITokenConditionRequestIPDataSourceModel struct {
 }
 
 type APITokenPoliciesDataSourceModel struct {
-	ID               types.String                                        `tfsdk:"id" json:"id,computed"`
-	Effect           types.String                                        `tfsdk:"effect" json:"effect,computed"`
-	PermissionGroups *[]*APITokenPoliciesPermissionGroupsDataSourceModel `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        jsontypes.Normalized                                `tfsdk:"resources" json:"resources,computed"`
+	ID               types.String                                                       `tfsdk:"id" json:"id,computed"`
+	Effect           types.String                                                       `tfsdk:"effect" json:"effect,computed"`
+	PermissionGroups *[]*APITokenPoliciesPermissionGroupsDataSourceModel                `tfsdk:"permission_groups" json:"permission_groups,computed"`
+	Resources        customfield.NestedObject[APITokenPoliciesResourcesDataSourceModel] `tfsdk:"resources" json:"resources,computed"`
 }
 
 type APITokenPoliciesPermissionGroupsDataSourceModel struct {
-	ID   types.String         `tfsdk:"id" json:"id,computed"`
-	Meta jsontypes.Normalized `tfsdk:"meta" json:"meta"`
-	Name types.String         `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                         `tfsdk:"id" json:"id,computed"`
+	Meta *APITokenPoliciesPermissionGroupsMetaDataSourceModel `tfsdk:"meta" json:"meta"`
+	Name types.String                                         `tfsdk:"name" json:"name,computed"`
+}
+
+type APITokenPoliciesPermissionGroupsMetaDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key"`
+	Value types.String `tfsdk:"value" json:"value"`
+}
+
+type APITokenPoliciesResourcesDataSourceModel struct {
+	Resource types.String `tfsdk:"resource" json:"resource"`
+	Scope    types.String `tfsdk:"scope" json:"scope"`
 }
 
 type APITokenFindOneByDataSourceModel struct {

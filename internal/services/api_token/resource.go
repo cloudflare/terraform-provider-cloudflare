@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &APITokenResource{}
 var _ resource.ResourceWithModifyPlan = &APITokenResource{}
+var _ resource.ResourceWithImportState = &APITokenResource{}
 
 func NewResource() resource.Resource {
 	return &APITokenResource{}
@@ -116,7 +118,7 @@ func (r *APITokenResource) Update(ctx context.Context, req resource.UpdateReques
 	env := APITokenResultEnvelope{*data}
 	_, err = r.client.User.Tokens.Update(
 		ctx,
-		data.TokenID.ValueString(),
+		data.ID.ValueString(),
 		user.TokenUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -150,7 +152,7 @@ func (r *APITokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 	env := APITokenResultEnvelope{*data}
 	_, err := r.client.User.Tokens.Get(
 		ctx,
-		data.TokenID.ValueString(),
+		data.ID.ValueString(),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -180,13 +182,50 @@ func (r *APITokenResource) Delete(ctx context.Context, req resource.DeleteReques
 
 	_, err := r.client.User.Tokens.Delete(
 		ctx,
-		data.TokenID.ValueString(),
+		data.ID.ValueString(),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *APITokenResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *APITokenModel
+
+	path := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<token_id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := APITokenResultEnvelope{*data}
+	_, err := r.client.User.Tokens.Get(
+		ctx,
+		path,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

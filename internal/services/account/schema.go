@@ -5,6 +5,7 @@ package account
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -68,6 +69,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 				},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "Timestamp for the creation of the account",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}
