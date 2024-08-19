@@ -6,8 +6,10 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessServiceTokenDataSource{}
@@ -81,5 +83,9 @@ func (d *ZeroTrustAccessServiceTokenDataSource) Schema(ctx context.Context, req 
 }
 
 func (d *ZeroTrustAccessServiceTokenDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("service_token_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+	}
 }

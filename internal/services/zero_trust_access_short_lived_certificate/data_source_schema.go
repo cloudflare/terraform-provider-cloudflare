@@ -5,8 +5,10 @@ package zero_trust_access_short_lived_certificate
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessShortLivedCertificateDataSource{}
@@ -60,5 +62,9 @@ func (d *ZeroTrustAccessShortLivedCertificateDataSource) Schema(ctx context.Cont
 }
 
 func (d *ZeroTrustAccessShortLivedCertificateDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("app_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+	}
 }
