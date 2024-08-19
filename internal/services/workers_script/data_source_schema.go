@@ -6,8 +6,10 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WorkersScriptDataSource{}
@@ -93,5 +95,9 @@ func (d *WorkersScriptDataSource) Schema(ctx context.Context, req datasource.Sch
 }
 
 func (d *WorkersScriptDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("script_name")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("script_name")),
+	}
 }
