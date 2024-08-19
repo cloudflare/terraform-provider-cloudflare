@@ -3,6 +3,10 @@
 package api_shield_schema
 
 import (
+	"bytes"
+	"mime/multipart"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,6 +30,21 @@ type APIShieldSchemaModel struct {
 	Messages          *[]*APIShieldSchemaMessagesModel                            `tfsdk:"messages" json:"messages,computed"`
 	Schema            customfield.NestedObject[APIShieldSchemaSchemaModel]        `tfsdk:"schema" json:"schema,computed"`
 	UploadDetails     customfield.NestedObject[APIShieldSchemaUploadDetailsModel] `tfsdk:"upload_details" json:"upload_details,computed"`
+}
+
+func (r APIShieldSchemaModel) MarshalMultipart() (data []byte, contentType string, err error) {
+	buf := bytes.NewBuffer(nil)
+	writer := multipart.NewWriter(buf)
+	err = apiform.MarshalRoot(r, writer)
+	if err != nil {
+		writer.Close()
+		return nil, "", err
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, "", err
+	}
+	return buf.Bytes(), writer.FormDataContentType(), nil
 }
 
 type APIShieldSchemaErrorsModel struct {

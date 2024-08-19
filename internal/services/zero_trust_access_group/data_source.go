@@ -58,34 +58,66 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	res := new(http.Response)
-	env := ZeroTrustAccessGroupResultDataSourceEnvelope{*data}
-	params := zero_trust.AccessGroupGetParams{}
+	if data.Filter == nil {
+		res := new(http.Response)
+		env := ZeroTrustAccessGroupResultDataSourceEnvelope{*data}
+		params := zero_trust.AccessGroupGetParams{}
 
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		if !data.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		}
+
+		_, err := d.client.ZeroTrust.Access.Groups.Get(
+			ctx,
+			data.GroupID.ValueString(),
+			params,
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+		bytes, _ := io.ReadAll(res.Body)
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+			return
+		}
+		data = &env.Result
 	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
+		params := zero_trust.AccessGroupListParams{}
 
-	_, err := d.client.ZeroTrust.Access.Groups.Get(
-		ctx,
-		data.GroupID.ValueString(),
-		params,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
+		if !data.Filter.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.Filter.AccountID.ValueString())
+		} else {
+			params.ZoneID = cloudflare.F(data.Filter.ZoneID.ValueString())
+		}
+
+		items := &[]*ZeroTrustAccessGroupDataSourceModel{}
+		env := ZeroTrustAccessGroupResultListDataSourceEnvelope{items}
+
+		page, err := d.client.ZeroTrust.Access.Groups.List(ctx, params)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+
+		if count := len(*items); count != 1 {
+			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
+			return
+		}
+		data = (*items)[0]
 	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

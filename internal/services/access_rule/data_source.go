@@ -99,10 +99,11 @@ func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			Notes:     cloudflare.F(data.Filter.Notes.ValueString()),
 			Order:     cloudflare.F(firewall.AccessRuleListParamsOrder(data.Filter.Order.ValueString())),
 		}
-		if !data.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.AccountID.ValueString())
+
+		if !data.Filter.AccountID.IsNull() {
+			params.AccountID = cloudflare.F(data.Filter.AccountID.ValueString())
 		} else {
-			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+			params.ZoneID = cloudflare.F(data.Filter.ZoneID.ValueString())
 		}
 
 		items := &[]*AccessRuleDataSourceModel{}
