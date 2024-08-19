@@ -3,7 +3,7 @@
 package api_token
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -41,14 +41,24 @@ type APITokensConditionRequestIPDataSourceModel struct {
 }
 
 type APITokensPoliciesDataSourceModel struct {
-	ID               types.String                                         `tfsdk:"id" json:"id,computed"`
-	Effect           types.String                                         `tfsdk:"effect" json:"effect,computed"`
-	PermissionGroups *[]*APITokensPoliciesPermissionGroupsDataSourceModel `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        jsontypes.Normalized                                 `tfsdk:"resources" json:"resources,computed"`
+	ID               types.String                                                        `tfsdk:"id" json:"id,computed"`
+	Effect           types.String                                                        `tfsdk:"effect" json:"effect,computed"`
+	PermissionGroups *[]*APITokensPoliciesPermissionGroupsDataSourceModel                `tfsdk:"permission_groups" json:"permission_groups,computed"`
+	Resources        customfield.NestedObject[APITokensPoliciesResourcesDataSourceModel] `tfsdk:"resources" json:"resources,computed"`
 }
 
 type APITokensPoliciesPermissionGroupsDataSourceModel struct {
-	ID   types.String         `tfsdk:"id" json:"id,computed"`
-	Meta jsontypes.Normalized `tfsdk:"meta" json:"meta"`
-	Name types.String         `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                          `tfsdk:"id" json:"id,computed"`
+	Meta *APITokensPoliciesPermissionGroupsMetaDataSourceModel `tfsdk:"meta" json:"meta"`
+	Name types.String                                          `tfsdk:"name" json:"name,computed"`
+}
+
+type APITokensPoliciesPermissionGroupsMetaDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key"`
+	Value types.String `tfsdk:"value" json:"value"`
+}
+
+type APITokensPoliciesResourcesDataSourceModel struct {
+	Resource types.String `tfsdk:"resource" json:"resource"`
+	Scope    types.String `tfsdk:"scope" json:"scope"`
 }

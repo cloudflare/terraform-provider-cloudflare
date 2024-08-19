@@ -5,7 +5,7 @@ package api_token
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -25,41 +25,45 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Token identifier tag.",
 				Optional:    true,
 			},
-			"expires_on": schema.StringAttribute{
-				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
 			"id": schema.StringAttribute{
 				Description: "Token identifier tag.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"issued_on": schema.StringAttribute{
 				Description: "The time on which the token was created.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"last_used_on": schema.StringAttribute{
 				Description: "Last time the token was used.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "Last time the token was modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"expires_on": schema.StringAttribute{
+				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
+				Computed:    true,
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "Token name.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"not_before": schema.StringAttribute{
 				Description: "The time before which the token MUST NOT be accepted for processing.",
+				Computed:    true,
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the token.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -70,6 +74,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"condition": schema.SingleNestedAttribute{
+				Computed: true,
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"request_ip": schema.SingleNestedAttribute{
@@ -95,6 +100,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"policies": schema.ListNestedAttribute{
 				Description: "List of access policies assigned to the token.",
+				Computed:    true,
 				Optional:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -118,11 +124,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										Description: "Identifier of the group.",
 										Computed:    true,
 									},
-									"meta": schema.StringAttribute{
+									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
 										Computed:    true,
 										Optional:    true,
-										CustomType:  jsontypes.NormalizedType{},
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Computed: true,
+												Optional: true,
+											},
+											"value": schema.StringAttribute{
+												Computed: true,
+												Optional: true,
+											},
+										},
 									},
 									"name": schema.StringAttribute{
 										Description: "Name of the group.",
@@ -131,10 +146,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"resources": schema.StringAttribute{
+						"resources": schema.SingleNestedAttribute{
 							Description: "A list of resource names that the policy applies to.",
 							Computed:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							CustomType:  customfield.NewNestedObjectType[APITokenPoliciesResourcesDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"resource": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+								},
+								"scope": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+								},
+							},
 						},
 					},
 				},

@@ -4,7 +4,6 @@ package account_member
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -37,15 +36,20 @@ type AccountMembersPoliciesDataSourceModel struct {
 }
 
 type AccountMembersPoliciesPermissionGroupsDataSourceModel struct {
-	ID   types.String         `tfsdk:"id" json:"id,computed"`
-	Meta jsontypes.Normalized `tfsdk:"meta" json:"meta"`
-	Name types.String         `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                               `tfsdk:"id" json:"id,computed"`
+	Meta *AccountMembersPoliciesPermissionGroupsMetaDataSourceModel `tfsdk:"meta" json:"meta"`
+	Name types.String                                               `tfsdk:"name" json:"name,computed"`
+}
+
+type AccountMembersPoliciesPermissionGroupsMetaDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key"`
+	Value types.String `tfsdk:"value" json:"value"`
 }
 
 type AccountMembersPoliciesResourceGroupsDataSourceModel struct {
 	ID    types.String                                                 `tfsdk:"id" json:"id,computed"`
 	Scope *[]*AccountMembersPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope,computed"`
-	Meta  jsontypes.Normalized                                         `tfsdk:"meta" json:"meta"`
+	Meta  *AccountMembersPoliciesResourceGroupsMetaDataSourceModel     `tfsdk:"meta" json:"meta"`
 	Name  types.String                                                 `tfsdk:"name" json:"name,computed"`
 }
 
@@ -56,6 +60,11 @@ type AccountMembersPoliciesResourceGroupsScopeDataSourceModel struct {
 
 type AccountMembersPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
 	Key types.String `tfsdk:"key" json:"key,computed"`
+}
+
+type AccountMembersPoliciesResourceGroupsMetaDataSourceModel struct {
+	Key   types.String `tfsdk:"key" json:"key"`
+	Value types.String `tfsdk:"value" json:"value"`
 }
 
 type AccountMembersRolesDataSourceModel struct {
