@@ -5,8 +5,10 @@ package zero_trust_access_identity_provider
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessIdentityProviderDataSource{}
@@ -48,5 +50,9 @@ func (d *ZeroTrustAccessIdentityProviderDataSource) Schema(ctx context.Context, 
 }
 
 func (d *ZeroTrustAccessIdentityProviderDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("identity_provider_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+	}
 }
