@@ -31,13 +31,13 @@ type PagesProjectDataSourceModel struct {
 	URL                 types.String                                                `tfsdk:"url" json:"url"`
 	Aliases             *[]types.String                                             `tfsdk:"aliases" json:"aliases"`
 	Domains             *[]types.String                                             `tfsdk:"domains" json:"domains"`
+	EnvVars             map[string]jsontypes.Normalized                             `tfsdk:"env_vars" json:"env_vars"`
 	CanonicalDeployment *PagesProjectCanonicalDeploymentDataSourceModel             `tfsdk:"canonical_deployment" json:"canonical_deployment"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsDataSourceModel               `tfsdk:"deployment_configs" json:"deployment_configs"`
 	DeploymentTrigger   *PagesProjectDeploymentTriggerDataSourceModel               `tfsdk:"deployment_trigger" json:"deployment_trigger"`
 	LatestDeployment    *PagesProjectLatestDeploymentDataSourceModel                `tfsdk:"latest_deployment" json:"latest_deployment"`
 	LatestStage         *PagesProjectLatestStageDataSourceModel                     `tfsdk:"latest_stage" json:"latest_stage"`
 	Stages              *[]*PagesProjectStagesDataSourceModel                       `tfsdk:"stages" json:"stages"`
-	EnvVars             jsontypes.Normalized                                        `tfsdk:"env_vars" json:"env_vars"`
 	CreatedOn           timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed"`
 	ID                  types.String                                                `tfsdk:"id" json:"id,computed"`
 	Source              customfield.NestedObject[PagesProjectSourceDataSourceModel] `tfsdk:"source" json:"source,computed"`
@@ -51,7 +51,7 @@ type PagesProjectCanonicalDeploymentDataSourceModel struct {
 	BuildConfig       *PagesProjectCanonicalDeploymentBuildConfigDataSourceModel                                `tfsdk:"build_config" json:"build_config"`
 	CreatedOn         timetypes.RFC3339                                                                         `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectCanonicalDeploymentDeploymentTriggerDataSourceModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
-	EnvVars           jsontypes.Normalized                                                                      `tfsdk:"env_vars" json:"env_vars,computed"`
+	EnvVars           map[string]jsontypes.Normalized                                                           `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment       types.String                                                                              `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped         types.Bool                                                                                `tfsdk:"is_skipped" json:"is_skipped,computed"`
 	LatestStage       customfield.NestedObject[PagesProjectCanonicalDeploymentLatestStageDataSourceModel]       `tfsdk:"latest_stage" json:"latest_stage,computed"`
@@ -123,257 +123,49 @@ type PagesProjectDeploymentConfigsDataSourceModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewDataSourceModel struct {
-	AIBindings              *PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel              `tfsdk:"ai_bindings" json:"ai_bindings"`
-	AnalyticsEngineDatasets *PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets"`
-	Browsers                *PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel                `tfsdk:"browsers" json:"browsers"`
-	CompatibilityDate       types.String                                                                `tfsdk:"compatibility_date" json:"compatibility_date"`
-	CompatibilityFlags      *[]types.String                                                             `tfsdk:"compatibility_flags" json:"compatibility_flags"`
-	D1Databases             *PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel             `tfsdk:"d1_databases" json:"d1_databases"`
-	DurableObjectNamespaces *PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDataSourceModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces"`
-	EnvVars                 *PagesProjectDeploymentConfigsPreviewEnvVarsDataSourceModel                 `tfsdk:"env_vars" json:"env_vars"`
-	HyperdriveBindings      *PagesProjectDeploymentConfigsPreviewHyperdriveBindingsDataSourceModel      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings"`
-	KVNamespaces            *PagesProjectDeploymentConfigsPreviewKVNamespacesDataSourceModel            `tfsdk:"kv_namespaces" json:"kv_namespaces"`
-	MTLSCertificates        *PagesProjectDeploymentConfigsPreviewMTLSCertificatesDataSourceModel        `tfsdk:"mtls_certificates" json:"mtls_certificates"`
-	Placement               *PagesProjectDeploymentConfigsPreviewPlacementDataSourceModel               `tfsdk:"placement" json:"placement"`
-	QueueProducers          *PagesProjectDeploymentConfigsPreviewQueueProducersDataSourceModel          `tfsdk:"queue_producers" json:"queue_producers"`
-	R2Buckets               *PagesProjectDeploymentConfigsPreviewR2BucketsDataSourceModel               `tfsdk:"r2_buckets" json:"r2_buckets"`
-	Services                *PagesProjectDeploymentConfigsPreviewServicesDataSourceModel                `tfsdk:"services" json:"services"`
-	VectorizeBindings       *PagesProjectDeploymentConfigsPreviewVectorizeBindingsDataSourceModel       `tfsdk:"vectorize_bindings" json:"vectorize_bindings"`
-}
-
-type PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel struct {
-	AIBinding *PagesProjectDeploymentConfigsPreviewAIBindingsAIBindingDataSourceModel `tfsdk:"ai_binding" json:"AI_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewAIBindingsAIBindingDataSourceModel struct {
-	ProjectID types.String `tfsdk:"project_id" json:"project_id"`
-}
-
-type PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel struct {
-	AnalyticsEngineBinding *PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsAnalyticsEngineBindingDataSourceModel `tfsdk:"analytics_engine_binding" json:"ANALYTICS_ENGINE_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsAnalyticsEngineBindingDataSourceModel struct {
-	Dataset types.String `tfsdk:"dataset" json:"dataset"`
-}
-
-type PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel struct {
-	Browser jsontypes.Normalized `tfsdk:"browser" json:"BROWSER"`
-}
-
-type PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel struct {
-	D1Binding *PagesProjectDeploymentConfigsPreviewD1DatabasesD1BindingDataSourceModel `tfsdk:"d1_binding" json:"D1_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewD1DatabasesD1BindingDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDataSourceModel struct {
-	DoBinding *PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDoBindingDataSourceModel `tfsdk:"do_binding" json:"DO_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDoBindingDataSourceModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id"`
-}
-
-type PagesProjectDeploymentConfigsPreviewEnvVarsDataSourceModel struct {
-	EnvironmentVariable *PagesProjectDeploymentConfigsPreviewEnvVarsEnvironmentVariableDataSourceModel `tfsdk:"environment_variable" json:"ENVIRONMENT_VARIABLE"`
-}
-
-type PagesProjectDeploymentConfigsPreviewEnvVarsEnvironmentVariableDataSourceModel struct {
-	Type  types.String `tfsdk:"type" json:"type"`
-	Value types.String `tfsdk:"value" json:"value"`
-}
-
-type PagesProjectDeploymentConfigsPreviewHyperdriveBindingsDataSourceModel struct {
-	Hyperdrive *PagesProjectDeploymentConfigsPreviewHyperdriveBindingsHyperdriveDataSourceModel `tfsdk:"hyperdrive" json:"HYPERDRIVE"`
-}
-
-type PagesProjectDeploymentConfigsPreviewHyperdriveBindingsHyperdriveDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type PagesProjectDeploymentConfigsPreviewKVNamespacesDataSourceModel struct {
-	KVBinding *PagesProjectDeploymentConfigsPreviewKVNamespacesKVBindingDataSourceModel `tfsdk:"kv_binding" json:"KV_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewKVNamespacesKVBindingDataSourceModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id"`
-}
-
-type PagesProjectDeploymentConfigsPreviewMTLSCertificatesDataSourceModel struct {
-	MTLS *PagesProjectDeploymentConfigsPreviewMTLSCertificatesMTLSDataSourceModel `tfsdk:"mtls" json:"MTLS"`
-}
-
-type PagesProjectDeploymentConfigsPreviewMTLSCertificatesMTLSDataSourceModel struct {
-	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id"`
+	AIBindings              map[string]jsontypes.Normalized                               `tfsdk:"ai_bindings" json:"ai_bindings"`
+	AnalyticsEngineDatasets map[string]jsontypes.Normalized                               `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets"`
+	Browsers                map[string]jsontypes.Normalized                               `tfsdk:"browsers" json:"browsers"`
+	CompatibilityDate       types.String                                                  `tfsdk:"compatibility_date" json:"compatibility_date"`
+	CompatibilityFlags      *[]types.String                                               `tfsdk:"compatibility_flags" json:"compatibility_flags"`
+	D1Databases             map[string]jsontypes.Normalized                               `tfsdk:"d1_databases" json:"d1_databases"`
+	DurableObjectNamespaces map[string]jsontypes.Normalized                               `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces"`
+	EnvVars                 map[string]jsontypes.Normalized                               `tfsdk:"env_vars" json:"env_vars"`
+	HyperdriveBindings      map[string]jsontypes.Normalized                               `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings"`
+	KVNamespaces            map[string]jsontypes.Normalized                               `tfsdk:"kv_namespaces" json:"kv_namespaces"`
+	MTLSCertificates        map[string]jsontypes.Normalized                               `tfsdk:"mtls_certificates" json:"mtls_certificates"`
+	Placement               *PagesProjectDeploymentConfigsPreviewPlacementDataSourceModel `tfsdk:"placement" json:"placement"`
+	QueueProducers          map[string]jsontypes.Normalized                               `tfsdk:"queue_producers" json:"queue_producers"`
+	R2Buckets               map[string]jsontypes.Normalized                               `tfsdk:"r2_buckets" json:"r2_buckets"`
+	Services                map[string]jsontypes.Normalized                               `tfsdk:"services" json:"services"`
+	VectorizeBindings       map[string]jsontypes.Normalized                               `tfsdk:"vectorize_bindings" json:"vectorize_bindings"`
 }
 
 type PagesProjectDeploymentConfigsPreviewPlacementDataSourceModel struct {
 	Mode types.String `tfsdk:"mode" json:"mode"`
 }
 
-type PagesProjectDeploymentConfigsPreviewQueueProducersDataSourceModel struct {
-	QueueProducerBinding *PagesProjectDeploymentConfigsPreviewQueueProducersQueueProducerBindingDataSourceModel `tfsdk:"queue_producer_binding" json:"QUEUE_PRODUCER_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewQueueProducersQueueProducerBindingDataSourceModel struct {
-	Name types.String `tfsdk:"name" json:"name"`
-}
-
-type PagesProjectDeploymentConfigsPreviewR2BucketsDataSourceModel struct {
-	R2Binding *PagesProjectDeploymentConfigsPreviewR2BucketsR2BindingDataSourceModel `tfsdk:"r2_binding" json:"R2_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewR2BucketsR2BindingDataSourceModel struct {
-	Jurisdiction types.String `tfsdk:"jurisdiction" json:"jurisdiction"`
-	Name         types.String `tfsdk:"name" json:"name"`
-}
-
-type PagesProjectDeploymentConfigsPreviewServicesDataSourceModel struct {
-	ServiceBinding *PagesProjectDeploymentConfigsPreviewServicesServiceBindingDataSourceModel `tfsdk:"service_binding" json:"SERVICE_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsPreviewServicesServiceBindingDataSourceModel struct {
-	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint"`
-	Environment types.String `tfsdk:"environment" json:"environment"`
-	Service     types.String `tfsdk:"service" json:"service"`
-}
-
-type PagesProjectDeploymentConfigsPreviewVectorizeBindingsDataSourceModel struct {
-	Vectorize *PagesProjectDeploymentConfigsPreviewVectorizeBindingsVectorizeDataSourceModel `tfsdk:"vectorize" json:"VECTORIZE"`
-}
-
-type PagesProjectDeploymentConfigsPreviewVectorizeBindingsVectorizeDataSourceModel struct {
-	IndexName types.String `tfsdk:"index_name" json:"index_name"`
-}
-
 type PagesProjectDeploymentConfigsProductionDataSourceModel struct {
-	AIBindings              *PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel              `tfsdk:"ai_bindings" json:"ai_bindings"`
-	AnalyticsEngineDatasets *PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets"`
-	Browsers                *PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel                `tfsdk:"browsers" json:"browsers"`
-	CompatibilityDate       types.String                                                                   `tfsdk:"compatibility_date" json:"compatibility_date"`
-	CompatibilityFlags      *[]types.String                                                                `tfsdk:"compatibility_flags" json:"compatibility_flags"`
-	D1Databases             *PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel             `tfsdk:"d1_databases" json:"d1_databases"`
-	DurableObjectNamespaces *PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDataSourceModel `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces"`
-	EnvVars                 *PagesProjectDeploymentConfigsProductionEnvVarsDataSourceModel                 `tfsdk:"env_vars" json:"env_vars"`
-	HyperdriveBindings      *PagesProjectDeploymentConfigsProductionHyperdriveBindingsDataSourceModel      `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings"`
-	KVNamespaces            *PagesProjectDeploymentConfigsProductionKVNamespacesDataSourceModel            `tfsdk:"kv_namespaces" json:"kv_namespaces"`
-	MTLSCertificates        *PagesProjectDeploymentConfigsProductionMTLSCertificatesDataSourceModel        `tfsdk:"mtls_certificates" json:"mtls_certificates"`
-	Placement               *PagesProjectDeploymentConfigsProductionPlacementDataSourceModel               `tfsdk:"placement" json:"placement"`
-	QueueProducers          *PagesProjectDeploymentConfigsProductionQueueProducersDataSourceModel          `tfsdk:"queue_producers" json:"queue_producers"`
-	R2Buckets               *PagesProjectDeploymentConfigsProductionR2BucketsDataSourceModel               `tfsdk:"r2_buckets" json:"r2_buckets"`
-	Services                *PagesProjectDeploymentConfigsProductionServicesDataSourceModel                `tfsdk:"services" json:"services"`
-	VectorizeBindings       *PagesProjectDeploymentConfigsProductionVectorizeBindingsDataSourceModel       `tfsdk:"vectorize_bindings" json:"vectorize_bindings"`
-}
-
-type PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel struct {
-	AIBinding *PagesProjectDeploymentConfigsProductionAIBindingsAIBindingDataSourceModel `tfsdk:"ai_binding" json:"AI_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionAIBindingsAIBindingDataSourceModel struct {
-	ProjectID types.String `tfsdk:"project_id" json:"project_id"`
-}
-
-type PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel struct {
-	AnalyticsEngineBinding *PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsAnalyticsEngineBindingDataSourceModel `tfsdk:"analytics_engine_binding" json:"ANALYTICS_ENGINE_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsAnalyticsEngineBindingDataSourceModel struct {
-	Dataset types.String `tfsdk:"dataset" json:"dataset"`
-}
-
-type PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel struct {
-	Browser jsontypes.Normalized `tfsdk:"browser" json:"BROWSER"`
-}
-
-type PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel struct {
-	D1Binding *PagesProjectDeploymentConfigsProductionD1DatabasesD1BindingDataSourceModel `tfsdk:"d1_binding" json:"D1_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionD1DatabasesD1BindingDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDataSourceModel struct {
-	DoBinding *PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDoBindingDataSourceModel `tfsdk:"do_binding" json:"DO_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDoBindingDataSourceModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id"`
-}
-
-type PagesProjectDeploymentConfigsProductionEnvVarsDataSourceModel struct {
-	EnvironmentVariable *PagesProjectDeploymentConfigsProductionEnvVarsEnvironmentVariableDataSourceModel `tfsdk:"environment_variable" json:"ENVIRONMENT_VARIABLE"`
-}
-
-type PagesProjectDeploymentConfigsProductionEnvVarsEnvironmentVariableDataSourceModel struct {
-	Type  types.String `tfsdk:"type" json:"type"`
-	Value types.String `tfsdk:"value" json:"value"`
-}
-
-type PagesProjectDeploymentConfigsProductionHyperdriveBindingsDataSourceModel struct {
-	Hyperdrive *PagesProjectDeploymentConfigsProductionHyperdriveBindingsHyperdriveDataSourceModel `tfsdk:"hyperdrive" json:"HYPERDRIVE"`
-}
-
-type PagesProjectDeploymentConfigsProductionHyperdriveBindingsHyperdriveDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type PagesProjectDeploymentConfigsProductionKVNamespacesDataSourceModel struct {
-	KVBinding *PagesProjectDeploymentConfigsProductionKVNamespacesKVBindingDataSourceModel `tfsdk:"kv_binding" json:"KV_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionKVNamespacesKVBindingDataSourceModel struct {
-	NamespaceID types.String `tfsdk:"namespace_id" json:"namespace_id"`
-}
-
-type PagesProjectDeploymentConfigsProductionMTLSCertificatesDataSourceModel struct {
-	MTLS *PagesProjectDeploymentConfigsProductionMTLSCertificatesMTLSDataSourceModel `tfsdk:"mtls" json:"MTLS"`
-}
-
-type PagesProjectDeploymentConfigsProductionMTLSCertificatesMTLSDataSourceModel struct {
-	CertificateID types.String `tfsdk:"certificate_id" json:"certificate_id"`
+	AIBindings              map[string]jsontypes.Normalized                                  `tfsdk:"ai_bindings" json:"ai_bindings"`
+	AnalyticsEngineDatasets map[string]jsontypes.Normalized                                  `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets"`
+	Browsers                map[string]jsontypes.Normalized                                  `tfsdk:"browsers" json:"browsers"`
+	CompatibilityDate       types.String                                                     `tfsdk:"compatibility_date" json:"compatibility_date"`
+	CompatibilityFlags      *[]types.String                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags"`
+	D1Databases             map[string]jsontypes.Normalized                                  `tfsdk:"d1_databases" json:"d1_databases"`
+	DurableObjectNamespaces map[string]jsontypes.Normalized                                  `tfsdk:"durable_object_namespaces" json:"durable_object_namespaces"`
+	EnvVars                 map[string]jsontypes.Normalized                                  `tfsdk:"env_vars" json:"env_vars"`
+	HyperdriveBindings      map[string]jsontypes.Normalized                                  `tfsdk:"hyperdrive_bindings" json:"hyperdrive_bindings"`
+	KVNamespaces            map[string]jsontypes.Normalized                                  `tfsdk:"kv_namespaces" json:"kv_namespaces"`
+	MTLSCertificates        map[string]jsontypes.Normalized                                  `tfsdk:"mtls_certificates" json:"mtls_certificates"`
+	Placement               *PagesProjectDeploymentConfigsProductionPlacementDataSourceModel `tfsdk:"placement" json:"placement"`
+	QueueProducers          map[string]jsontypes.Normalized                                  `tfsdk:"queue_producers" json:"queue_producers"`
+	R2Buckets               map[string]jsontypes.Normalized                                  `tfsdk:"r2_buckets" json:"r2_buckets"`
+	Services                map[string]jsontypes.Normalized                                  `tfsdk:"services" json:"services"`
+	VectorizeBindings       map[string]jsontypes.Normalized                                  `tfsdk:"vectorize_bindings" json:"vectorize_bindings"`
 }
 
 type PagesProjectDeploymentConfigsProductionPlacementDataSourceModel struct {
 	Mode types.String `tfsdk:"mode" json:"mode"`
-}
-
-type PagesProjectDeploymentConfigsProductionQueueProducersDataSourceModel struct {
-	QueueProducerBinding *PagesProjectDeploymentConfigsProductionQueueProducersQueueProducerBindingDataSourceModel `tfsdk:"queue_producer_binding" json:"QUEUE_PRODUCER_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionQueueProducersQueueProducerBindingDataSourceModel struct {
-	Name types.String `tfsdk:"name" json:"name"`
-}
-
-type PagesProjectDeploymentConfigsProductionR2BucketsDataSourceModel struct {
-	R2Binding *PagesProjectDeploymentConfigsProductionR2BucketsR2BindingDataSourceModel `tfsdk:"r2_binding" json:"R2_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionR2BucketsR2BindingDataSourceModel struct {
-	Jurisdiction types.String `tfsdk:"jurisdiction" json:"jurisdiction"`
-	Name         types.String `tfsdk:"name" json:"name"`
-}
-
-type PagesProjectDeploymentConfigsProductionServicesDataSourceModel struct {
-	ServiceBinding *PagesProjectDeploymentConfigsProductionServicesServiceBindingDataSourceModel `tfsdk:"service_binding" json:"SERVICE_BINDING"`
-}
-
-type PagesProjectDeploymentConfigsProductionServicesServiceBindingDataSourceModel struct {
-	Entrypoint  types.String `tfsdk:"entrypoint" json:"entrypoint"`
-	Environment types.String `tfsdk:"environment" json:"environment"`
-	Service     types.String `tfsdk:"service" json:"service"`
-}
-
-type PagesProjectDeploymentConfigsProductionVectorizeBindingsDataSourceModel struct {
-	Vectorize *PagesProjectDeploymentConfigsProductionVectorizeBindingsVectorizeDataSourceModel `tfsdk:"vectorize" json:"VECTORIZE"`
-}
-
-type PagesProjectDeploymentConfigsProductionVectorizeBindingsVectorizeDataSourceModel struct {
-	IndexName types.String `tfsdk:"index_name" json:"index_name"`
 }
 
 type PagesProjectDeploymentTriggerDataSourceModel struct {
@@ -393,7 +185,7 @@ type PagesProjectLatestDeploymentDataSourceModel struct {
 	BuildConfig       *PagesProjectLatestDeploymentBuildConfigDataSourceModel                                `tfsdk:"build_config" json:"build_config"`
 	CreatedOn         timetypes.RFC3339                                                                      `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectLatestDeploymentDeploymentTriggerDataSourceModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
-	EnvVars           jsontypes.Normalized                                                                   `tfsdk:"env_vars" json:"env_vars,computed"`
+	EnvVars           map[string]jsontypes.Normalized                                                        `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment       types.String                                                                           `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped         types.Bool                                                                             `tfsdk:"is_skipped" json:"is_skipped,computed"`
 	LatestStage       customfield.NestedObject[PagesProjectLatestDeploymentLatestStageDataSourceModel]       `tfsdk:"latest_stage" json:"latest_stage,computed"`
