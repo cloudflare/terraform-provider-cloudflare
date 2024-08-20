@@ -7,7 +7,6 @@ import (
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -49,7 +48,7 @@ func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string,
 }
 
 type WorkersScriptMetadataModel struct {
-	Bindings           *[]jsontypes.Normalized                     `tfsdk:"bindings" json:"bindings"`
+	Bindings           *[]*WorkersScriptMetadataBindingsModel      `tfsdk:"bindings" json:"bindings"`
 	BodyPart           types.String                                `tfsdk:"body_part" json:"body_part"`
 	CompatibilityDate  types.String                                `tfsdk:"compatibility_date" json:"compatibility_date"`
 	CompatibilityFlags *[]types.String                             `tfsdk:"compatibility_flags" json:"compatibility_flags"`
@@ -61,7 +60,12 @@ type WorkersScriptMetadataModel struct {
 	Tags               *[]types.String                             `tfsdk:"tags" json:"tags"`
 	TailConsumers      *[]*WorkersScriptMetadataTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers"`
 	UsageModel         types.String                                `tfsdk:"usage_model" json:"usage_model"`
-	VersionTags        jsontypes.Normalized                        `tfsdk:"version_tags" json:"version_tags"`
+	VersionTags        map[string]types.String                     `tfsdk:"version_tags" json:"version_tags"`
+}
+
+type WorkersScriptMetadataBindingsModel struct {
+	Name types.String `tfsdk:"name" json:"name"`
+	Type types.String `tfsdk:"type" json:"type"`
 }
 
 type WorkersScriptMetadataMigrationsModel struct {
