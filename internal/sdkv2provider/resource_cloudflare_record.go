@@ -71,15 +71,6 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		newRecord.Content = content.(string)
 	}
 
-	if contentOk == valueOk {
-		return diag.FromErr(fmt.Errorf(
-			"'content' (present: %t) must not be set with 'value' (present: %t)",
-			contentOk, valueOk))
-	}
-	if valueOk {
-		contentOk = true
-	}
-
 	data, dataOk := d.GetOk("data")
 	tflog.Debug(ctx, fmt.Sprintf("Data found in config: %#v", data))
 
@@ -98,12 +89,6 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		}
 
 		newRecord.Data = newDataMap
-	}
-
-	if contentOk == dataOk {
-		return diag.FromErr(fmt.Errorf(
-			"either 'content' (present: %t) or 'data' (present: %t) must be provided",
-			contentOk, dataOk))
 	}
 
 	if priority, ok := d.GetOkExists("priority"); ok {
