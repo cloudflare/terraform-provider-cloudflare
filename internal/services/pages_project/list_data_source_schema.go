@@ -114,10 +114,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"env_vars": schema.StringAttribute{
+						"env_vars": schema.MapAttribute{
 							Description: "A dict of env variables to build this deploy.",
 							Computed:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							ElementType: jsontypes.NormalizedType{},
 						},
 						"environment": schema.StringAttribute{
 							Description: "Type of deploy.",

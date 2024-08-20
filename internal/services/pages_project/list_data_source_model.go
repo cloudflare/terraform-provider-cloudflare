@@ -25,7 +25,7 @@ type PagesProjectsResultDataSourceModel struct {
 	BuildConfig       *PagesProjectsBuildConfigDataSourceModel                                `tfsdk:"build_config" json:"build_config"`
 	CreatedOn         timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectsDeploymentTriggerDataSourceModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
-	EnvVars           jsontypes.Normalized                                                    `tfsdk:"env_vars" json:"env_vars,computed"`
+	EnvVars           map[string]jsontypes.Normalized                                         `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment       types.String                                                            `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped         types.Bool                                                              `tfsdk:"is_skipped" json:"is_skipped,computed"`
 	LatestStage       customfield.NestedObject[PagesProjectsLatestStageDataSourceModel]       `tfsdk:"latest_stage" json:"latest_stage,computed"`
