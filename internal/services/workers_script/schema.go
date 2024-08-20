@@ -5,7 +5,6 @@ package workers_script
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -49,10 +48,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "JSON encoded metadata about the uploaded parts and Worker configuration.",
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
-					"bindings": schema.ListAttribute{
+					"bindings": schema.ListNestedAttribute{
 						Description: "List of bindings available to the worker.",
 						Optional:    true,
-						ElementType: jsontypes.NormalizedType{},
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"name": schema.StringAttribute{
+									Description: "Name of the binding variable.",
+									Optional:    true,
+								},
+								"type": schema.StringAttribute{
+									Description: "Type of binding. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.",
+									Optional:    true,
+								},
+							},
+						},
 					},
 					"body_part": schema.StringAttribute{
 						Description: "Name of the part in the multipart request that contains the script (e.g. the file adding a listener to the `fetch` event). Indicates a `service worker syntax` Worker.",
@@ -228,10 +238,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("bundled", "unbound"),
 						},
 					},
-					"version_tags": schema.StringAttribute{
+					"version_tags": schema.MapAttribute{
 						Description: "Key-value pairs to use as tags for this version of this Worker",
 						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
+						ElementType: types.StringType,
 					},
 				},
 			},
