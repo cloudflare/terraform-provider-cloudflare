@@ -5,15 +5,16 @@ package waiting_room
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WaitingRoomDataSource{}
@@ -119,6 +120,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Suspends or allows traffic going to the waiting room. If set to `true`, the traffic will not go to the waiting room.",
 				Computed:    true,
 			},
+			"enabled_origin_commands": schema.ListAttribute{
+				Description: "A list of enabled origin commands.",
+				Computed:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive("revoke"),
+					),
+				},
+				ElementType: types.StringType,
+			},
 			"cookie_suffix": schema.StringAttribute{
 				Description: "Appends a '_' + a custom suffix to the end of Cloudflare Waiting Room's cookie name(__cf_waitingroom). If `cookie_suffix` is \"abcd\", the cookie name will be `__cf_waitingroom_abcd`. This field is required if using `additional_routes`.",
 				Computed:    true,
@@ -218,18 +229,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"zone_id": schema.StringAttribute{
 						Description: "Identifier",
 						Required:    true,
-					},
-					"page": schema.StringAttribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
-					},
-					"per_page": schema.StringAttribute{
-						Description: "Maximum number of results per page. Must be a multiple of 5.",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
 					},
 				},
 			},
