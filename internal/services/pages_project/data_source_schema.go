@@ -78,6 +78,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"env_vars": schema.MapAttribute{
+				Description: "A dict of env variables to build this deploy.",
+				Optional:    true,
+				ElementType: jsontypes.NormalizedType{},
+			},
 			"canonical_deployment": schema.SingleNestedAttribute{
 				Description: "Most recent deployment to the repo.",
 				Optional:    true,
@@ -163,10 +168,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"env_vars": schema.StringAttribute{
+					"env_vars": schema.MapAttribute{
 						Description: "A dict of env variables to build this deploy.",
 						Computed:    true,
-						CustomType:  jsontypes.NormalizedType{},
+						ElementType: jsontypes.NormalizedType{},
 					},
 					"environment": schema.StringAttribute{
 						Description: "Type of deploy.",
@@ -332,55 +337,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
-							"ai_bindings": schema.SingleNestedAttribute{
+							"ai_bindings": schema.MapAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"ai_binding": schema.SingleNestedAttribute{
-										Description: "AI binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"project_id": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"analytics_engine_datasets": schema.SingleNestedAttribute{
+							"analytics_engine_datasets": schema.MapAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"analytics_engine_binding": schema.SingleNestedAttribute{
-										Description: "Analytics Engine binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"dataset": schema.StringAttribute{
-												Description: "Name of the dataset.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"browsers": schema.SingleNestedAttribute{
+							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"browser": schema.StringAttribute{
-										Description: "Browser binding.",
-										Computed:    true,
-										Optional:    true,
-										CustomType:  jsontypes.NormalizedType{},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",
@@ -393,125 +366,41 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								ElementType: types.StringType,
 							},
-							"d1_databases": schema.SingleNestedAttribute{
+							"d1_databases": schema.MapAttribute{
 								Description: "D1 databases used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"d1_binding": schema.SingleNestedAttribute{
-										Description: "D1 binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"id": schema.StringAttribute{
-												Description: "UUID of the D1 database.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"durable_object_namespaces": schema.SingleNestedAttribute{
+							"durable_object_namespaces": schema.MapAttribute{
 								Description: "Durabble Object namespaces used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"do_binding": schema.SingleNestedAttribute{
-										Description: "Durabble Object binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"namespace_id": schema.StringAttribute{
-												Description: "ID of the Durabble Object namespace.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"env_vars": schema.SingleNestedAttribute{
+							"env_vars": schema.MapAttribute{
 								Description: "Environment variables for build configs.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"environment_variable": schema.SingleNestedAttribute{
-										Description: "Environment variable.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"type": schema.StringAttribute{
-												Description: "The type of environment variable (plain text or secret)",
-												Computed:    true,
-												Optional:    true,
-												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
-												},
-											},
-											"value": schema.StringAttribute{
-												Description: "Environment variable value.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"hyperdrive_bindings": schema.SingleNestedAttribute{
+							"hyperdrive_bindings": schema.MapAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"hyperdrive": schema.SingleNestedAttribute{
-										Description: "Hyperdrive binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"id": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"kv_namespaces": schema.SingleNestedAttribute{
+							"kv_namespaces": schema.MapAttribute{
 								Description: "KV namespaces used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"kv_binding": schema.SingleNestedAttribute{
-										Description: "KV binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"namespace_id": schema.StringAttribute{
-												Description: "ID of the KV namespace.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"mtls_certificates": schema.SingleNestedAttribute{
+							"mtls_certificates": schema.MapAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"mtls": schema.SingleNestedAttribute{
-										Description: "mTLS binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"certificate_id": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
 							"placement": schema.SingleNestedAttribute{
 								Description: "Placement setting used for Pages Functions.",
@@ -525,95 +414,29 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"queue_producers": schema.SingleNestedAttribute{
+							"queue_producers": schema.MapAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"queue_producer_binding": schema.SingleNestedAttribute{
-										Description: "Queue Producer binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"name": schema.StringAttribute{
-												Description: "Name of the Queue.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"r2_buckets": schema.SingleNestedAttribute{
+							"r2_buckets": schema.MapAttribute{
 								Description: "R2 buckets used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"r2_binding": schema.SingleNestedAttribute{
-										Description: "R2 binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"jurisdiction": schema.StringAttribute{
-												Description: "Jurisdiction of the R2 bucket.",
-												Computed:    true,
-												Optional:    true,
-											},
-											"name": schema.StringAttribute{
-												Description: "Name of the R2 bucket.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"services": schema.SingleNestedAttribute{
+							"services": schema.MapAttribute{
 								Description: "Services used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"service_binding": schema.SingleNestedAttribute{
-										Description: "Service binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"entrypoint": schema.StringAttribute{
-												Description: "The entrypoint to bind to.",
-												Computed:    true,
-												Optional:    true,
-											},
-											"environment": schema.StringAttribute{
-												Description: "The Service environment.",
-												Computed:    true,
-												Optional:    true,
-											},
-											"service": schema.StringAttribute{
-												Description: "The Service name.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"vectorize_bindings": schema.SingleNestedAttribute{
+							"vectorize_bindings": schema.MapAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"vectorize": schema.SingleNestedAttribute{
-										Description: "Vectorize binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"index_name": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
 						},
 					},
@@ -622,55 +445,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
-							"ai_bindings": schema.SingleNestedAttribute{
+							"ai_bindings": schema.MapAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"ai_binding": schema.SingleNestedAttribute{
-										Description: "AI binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"project_id": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"analytics_engine_datasets": schema.SingleNestedAttribute{
+							"analytics_engine_datasets": schema.MapAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"analytics_engine_binding": schema.SingleNestedAttribute{
-										Description: "Analytics Engine binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"dataset": schema.StringAttribute{
-												Description: "Name of the dataset.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"browsers": schema.SingleNestedAttribute{
+							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"browser": schema.StringAttribute{
-										Description: "Browser binding.",
-										Computed:    true,
-										Optional:    true,
-										CustomType:  jsontypes.NormalizedType{},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",
@@ -683,125 +474,41 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								ElementType: types.StringType,
 							},
-							"d1_databases": schema.SingleNestedAttribute{
+							"d1_databases": schema.MapAttribute{
 								Description: "D1 databases used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"d1_binding": schema.SingleNestedAttribute{
-										Description: "D1 binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"id": schema.StringAttribute{
-												Description: "UUID of the D1 database.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"durable_object_namespaces": schema.SingleNestedAttribute{
+							"durable_object_namespaces": schema.MapAttribute{
 								Description: "Durabble Object namespaces used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"do_binding": schema.SingleNestedAttribute{
-										Description: "Durabble Object binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"namespace_id": schema.StringAttribute{
-												Description: "ID of the Durabble Object namespace.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"env_vars": schema.SingleNestedAttribute{
+							"env_vars": schema.MapAttribute{
 								Description: "Environment variables for build configs.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"environment_variable": schema.SingleNestedAttribute{
-										Description: "Environment variable.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"type": schema.StringAttribute{
-												Description: "The type of environment variable (plain text or secret)",
-												Computed:    true,
-												Optional:    true,
-												Validators: []validator.String{
-													stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
-												},
-											},
-											"value": schema.StringAttribute{
-												Description: "Environment variable value.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"hyperdrive_bindings": schema.SingleNestedAttribute{
+							"hyperdrive_bindings": schema.MapAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"hyperdrive": schema.SingleNestedAttribute{
-										Description: "Hyperdrive binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"id": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"kv_namespaces": schema.SingleNestedAttribute{
+							"kv_namespaces": schema.MapAttribute{
 								Description: "KV namespaces used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"kv_binding": schema.SingleNestedAttribute{
-										Description: "KV binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"namespace_id": schema.StringAttribute{
-												Description: "ID of the KV namespace.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"mtls_certificates": schema.SingleNestedAttribute{
+							"mtls_certificates": schema.MapAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"mtls": schema.SingleNestedAttribute{
-										Description: "mTLS binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"certificate_id": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
 							"placement": schema.SingleNestedAttribute{
 								Description: "Placement setting used for Pages Functions.",
@@ -815,95 +522,29 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"queue_producers": schema.SingleNestedAttribute{
+							"queue_producers": schema.MapAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"queue_producer_binding": schema.SingleNestedAttribute{
-										Description: "Queue Producer binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"name": schema.StringAttribute{
-												Description: "Name of the Queue.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"r2_buckets": schema.SingleNestedAttribute{
+							"r2_buckets": schema.MapAttribute{
 								Description: "R2 buckets used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"r2_binding": schema.SingleNestedAttribute{
-										Description: "R2 binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"jurisdiction": schema.StringAttribute{
-												Description: "Jurisdiction of the R2 bucket.",
-												Computed:    true,
-												Optional:    true,
-											},
-											"name": schema.StringAttribute{
-												Description: "Name of the R2 bucket.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"services": schema.SingleNestedAttribute{
+							"services": schema.MapAttribute{
 								Description: "Services used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"service_binding": schema.SingleNestedAttribute{
-										Description: "Service binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"entrypoint": schema.StringAttribute{
-												Description: "The entrypoint to bind to.",
-												Computed:    true,
-												Optional:    true,
-											},
-											"environment": schema.StringAttribute{
-												Description: "The Service environment.",
-												Computed:    true,
-												Optional:    true,
-											},
-											"service": schema.StringAttribute{
-												Description: "The Service name.",
-												Computed:    true,
-												Optional:    true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
-							"vectorize_bindings": schema.SingleNestedAttribute{
+							"vectorize_bindings": schema.MapAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Computed:    true,
 								Optional:    true,
-								Attributes: map[string]schema.Attribute{
-									"vectorize": schema.SingleNestedAttribute{
-										Description: "Vectorize binding.",
-										Computed:    true,
-										Optional:    true,
-										Attributes: map[string]schema.Attribute{
-											"index_name": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-								},
+								ElementType: jsontypes.NormalizedType{},
 							},
 						},
 					},
@@ -1023,10 +664,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"env_vars": schema.StringAttribute{
+					"env_vars": schema.MapAttribute{
 						Description: "A dict of env variables to build this deploy.",
 						Computed:    true,
-						CustomType:  jsontypes.NormalizedType{},
+						ElementType: jsontypes.NormalizedType{},
 					},
 					"environment": schema.StringAttribute{
 						Description: "Type of deploy.",
@@ -1234,11 +875,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"env_vars": schema.StringAttribute{
-				Description: "A dict of env variables to build this deploy.",
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the project was created.",
