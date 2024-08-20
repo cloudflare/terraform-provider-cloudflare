@@ -3,7 +3,6 @@
 package waiting_room
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,8 +13,6 @@ type WaitingRoomsResultListDataSourceEnvelope struct {
 
 type WaitingRoomsDataSourceModel struct {
 	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id"`
-	Page     jsontypes.Normalized                  `tfsdk:"page" query:"page"`
-	PerPage  jsontypes.Normalized                  `tfsdk:"per_page" query:"per_page"`
 	MaxItems types.Int64                           `tfsdk:"max_items"`
 	Result   *[]*WaitingRoomsResultDataSourceModel `tfsdk:"result"`
 }
@@ -30,6 +27,7 @@ type WaitingRoomsResultDataSourceModel struct {
 	DefaultTemplateLanguage    types.String                                    `tfsdk:"default_template_language" json:"default_template_language,computed"`
 	Description                types.String                                    `tfsdk:"description" json:"description,computed"`
 	DisableSessionRenewal      types.Bool                                      `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed"`
+	EnabledOriginCommands      *[]types.String                                 `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	Host                       types.String                                    `tfsdk:"host" json:"host"`
 	JsonResponseEnabled        types.Bool                                      `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
 	ModifiedOn                 timetypes.RFC3339                               `tfsdk:"modified_on" json:"modified_on,computed"`

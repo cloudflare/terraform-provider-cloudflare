@@ -63,9 +63,7 @@ func (d *WaitingRoomEventsDataSource) Read(ctx context.Context, req datasource.R
 		ctx,
 		data.WaitingRoomID.ValueString(),
 		waiting_rooms.EventListParams{
-			ZoneID:  cloudflare.F(data.ZoneID.ValueString()),
-			Page:    cloudflare.F[any](data.Page.ValueString()),
-			PerPage: cloudflare.F[any](data.PerPage.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 	)
 	if err != nil {

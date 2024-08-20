@@ -5,7 +5,6 @@ package waiting_room_event
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -122,18 +121,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"waiting_room_id": schema.StringAttribute{
 						Required: true,
-					},
-					"page": schema.StringAttribute{
-						Description: "Page number of paginated results.",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
-					},
-					"per_page": schema.StringAttribute{
-						Description: "Maximum number of results per page. Must be a multiple of 5.",
-						Computed:    true,
-						Optional:    true,
-						CustomType:  jsontypes.NormalizedType{},
 					},
 				},
 			},

@@ -3,7 +3,6 @@
 package waiting_room
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -32,6 +31,7 @@ type WaitingRoomDataSourceModel struct {
 	QueueingStatusCode         types.Int64                                    `tfsdk:"queueing_status_code" json:"queueing_status_code,computed"`
 	SessionDuration            types.Int64                                    `tfsdk:"session_duration" json:"session_duration,computed"`
 	Suspended                  types.Bool                                     `tfsdk:"suspended" json:"suspended,computed"`
+	EnabledOriginCommands      *[]types.String                                `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	CookieSuffix               types.String                                   `tfsdk:"cookie_suffix" json:"cookie_suffix"`
 	Host                       types.String                                   `tfsdk:"host" json:"host"`
 	ID                         types.String                                   `tfsdk:"id" json:"id"`
@@ -56,7 +56,5 @@ type WaitingRoomCookieAttributesDataSourceModel struct {
 }
 
 type WaitingRoomFindOneByDataSourceModel struct {
-	ZoneID  types.String         `tfsdk:"zone_id" path:"zone_id"`
-	Page    jsontypes.Normalized `tfsdk:"page" query:"page"`
-	PerPage jsontypes.Normalized `tfsdk:"per_page" query:"per_page"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
 }

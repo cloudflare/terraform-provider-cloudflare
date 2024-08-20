@@ -5,13 +5,14 @@ package waiting_room
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &WaitingRoomsDataSource{}
@@ -22,18 +23,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"page": schema.StringAttribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
-			},
-			"per_page": schema.StringAttribute{
-				Description: "Maximum number of results per page. Must be a multiple of 5.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
@@ -141,6 +130,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"disable_session_renewal": schema.BoolAttribute{
 							Description: "Only available for the Waiting Room Advanced subscription. Disables automatic renewal of session cookies. If `true`, an accepted user will have session_duration minutes to browse the site. After that, they will have to go through the waiting room again. If `false`, a user's session cookie will be automatically renewed on every request.",
 							Computed:    true,
+						},
+						"enabled_origin_commands": schema.ListAttribute{
+							Description: "A list of enabled origin commands.",
+							Computed:    true,
+							Validators: []validator.List{
+								listvalidator.ValueStringsAre(
+									stringvalidator.OneOfCaseInsensitive("revoke"),
+								),
+							},
+							ElementType: types.StringType,
 						},
 						"host": schema.StringAttribute{
 							Description: "The host name to which the waiting room will be applied (no wildcards). Please do not include the scheme (http:// or https://). The host and path combination must be unique.",
