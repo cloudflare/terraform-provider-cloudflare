@@ -146,7 +146,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
-								Description: "UUID of certificate to be used for interception. Certificate must be active on the edge.",
+								Description: "UUID of certificate to be used for interception. Certificate must be active on the edge. A nil UUID will indicate the Cloudflare Root CA should be used.",
 								Required:    true,
 							},
 						},
