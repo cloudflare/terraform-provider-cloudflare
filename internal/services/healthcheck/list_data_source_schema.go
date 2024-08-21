@@ -5,7 +5,6 @@ package healthcheck
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -23,18 +22,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
-			},
-			"page": schema.StringAttribute{
-				Description: "Page number of paginated results.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
-			},
-			"per_page": schema.StringAttribute{
-				Description: "Maximum number of results per page. Must be a multiple of 5.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
