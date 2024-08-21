@@ -30,6 +30,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_rule"
@@ -63,7 +65,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/record"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
@@ -119,7 +120,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
@@ -299,8 +299,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		custom_ssl.NewResource,
 		custom_hostname.NewResource,
 		custom_hostname_fallback_origin.NewResource,
-		record.NewResource,
-		zone_dnssec.NewResource,
+		dns_record.NewResource,
+		dns_zone_dnssec.NewResource,
 		email_routing_settings.NewResource,
 		email_routing_rule.NewResource,
 		email_routing_catch_all.NewResource,
@@ -429,9 +429,9 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		custom_hostname.NewCustomHostnameDataSource,
 		custom_hostname.NewCustomHostnamesDataSource,
 		custom_hostname_fallback_origin.NewCustomHostnameFallbackOriginDataSource,
-		record.NewRecordDataSource,
-		record.NewRecordsDataSource,
-		zone_dnssec.NewZoneDNSSECDataSource,
+		dns_record.NewDNSRecordDataSource,
+		dns_record.NewDNSRecordsDataSource,
+		dns_zone_dnssec.NewDNSZoneDNSSECDataSource,
 		email_routing_settings.NewEmailRoutingSettingsDataSource,
 		email_routing_rule.NewEmailRoutingRuleDataSource,
 		email_routing_rule.NewEmailRoutingRulesDataSource,
