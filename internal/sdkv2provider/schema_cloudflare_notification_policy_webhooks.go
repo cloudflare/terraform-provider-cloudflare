@@ -45,7 +45,7 @@ func resourceCloudflareNotificationPolicyWebhookSchema() map[string]*schema.Sche
 		"last_failure": {
 			Type:        schema.TypeString,
 			Computed:    true,
-			Description: "Timestamp of when the notification webhook last faiuled.",
+			Description: "Timestamp of when the notification webhook last failed.",
 		},
 	}
 }
