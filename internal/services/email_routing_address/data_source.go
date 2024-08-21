@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -80,16 +79,19 @@ func (d *EmailRoutingAddressDataSource) Read(ctx context.Context, req datasource
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*EmailRoutingAddressDataSourceModel{}
 		env := EmailRoutingAddressResultListDataSourceEnvelope{items}
 
 		page, err := d.client.EmailRouting.Addresses.List(
 			ctx,
 			data.Filter.AccountIdentifier.ValueString(),
-			email_routing.AddressListParams{
-				Direction: cloudflare.F(email_routing.AddressListParamsDirection(data.Filter.Direction.ValueString())),
-				Verified:  cloudflare.F(email_routing.AddressListParamsVerified(data.Filter.Verified.ValueBool())),
-			},
+			params,
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

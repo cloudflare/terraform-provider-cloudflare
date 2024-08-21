@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,8 @@ func (d *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	dataFilterHost := []string{}
-	for _, item := range *data.Filter.Host {
-		dataFilterHost = append(dataFilterHost, item.ValueString())
-	}
-	dataFilterMethod := []string{}
-	for _, item := range *data.Filter.Method {
-		dataFilterMethod = append(dataFilterMethod, item.ValueString())
-	}
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -69,17 +62,7 @@ func (d *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.
 	items := &[]*APIShieldOperationDataSourceModel{}
 	env := APIShieldOperationResultListDataSourceEnvelope{items}
 
-	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, api_gateway.DiscoveryOperationListParams{
-		ZoneID:    cloudflare.F(data.Filter.ZoneID.ValueString()),
-		Diff:      cloudflare.F(data.Filter.Diff.ValueBool()),
-		Direction: cloudflare.F(api_gateway.DiscoveryOperationListParamsDirection(data.Filter.Direction.ValueString())),
-		Endpoint:  cloudflare.F(data.Filter.Endpoint.ValueString()),
-		Host:      cloudflare.F(dataFilterHost),
-		Method:    cloudflare.F(dataFilterMethod),
-		Order:     cloudflare.F(api_gateway.DiscoveryOperationListParamsOrder(data.Filter.Order.ValueString())),
-		Origin:    cloudflare.F(api_gateway.DiscoveryOperationListParamsOrigin(data.Filter.Origin.ValueString())),
-		State:     cloudflare.F(api_gateway.DiscoveryOperationListParamsState(data.Filter.State.ValueString())),
-	})
+	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

@@ -3,7 +3,10 @@
 package zone_cache_reserve
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/cache"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,4 +19,12 @@ type ZoneCacheReserveDataSourceModel struct {
 	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on"`
 	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id"`
 	Value         types.String      `tfsdk:"value" json:"value"`
+}
+
+func (m *ZoneCacheReserveDataSourceModel) toReadParams() (params cache.CacheReserveGetParams, diags diag.Diagnostics) {
+	params = cache.CacheReserveGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

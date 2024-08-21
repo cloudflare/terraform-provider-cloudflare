@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req dat
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := NotificationPolicyWebhooksResultDataSourceEnvelope{*data}
 		_, err := d.client.Alerting.Destinations.Webhooks.Get(
 			ctx,
 			data.WebhookID.ValueString(),
-			alerting.DestinationWebhookGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *NotificationPolicyWebhooksDataSource) Read(ctx context.Context, req dat
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*NotificationPolicyWebhooksDataSourceModel{}
 		env := NotificationPolicyWebhooksResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Alerting.Destinations.Webhooks.List(ctx, alerting.DestinationWebhookListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.Alerting.Destinations.Webhooks.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

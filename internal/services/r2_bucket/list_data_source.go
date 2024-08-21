@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,18 +53,18 @@ func (d *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*R2BucketsResultDataSourceModel{}
 	env := R2BucketsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*R2BucketsResultDataSourceModel{}
 
-	page, err := d.client.R2.Buckets.List(ctx, r2.BucketListParams{
-		AccountID:    cloudflare.F(data.AccountID.ValueString()),
-		Direction:    cloudflare.F(r2.BucketListParamsDirection(data.Direction.ValueString())),
-		NameContains: cloudflare.F(data.NameContains.ValueString()),
-		Order:        cloudflare.F(r2.BucketListParamsOrder(data.Order.ValueString())),
-		StartAfter:   cloudflare.F(data.StartAfter.ValueString()),
-	})
+	page, err := d.client.R2.Buckets.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

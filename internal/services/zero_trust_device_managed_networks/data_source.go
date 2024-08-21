@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *ZeroTrustDeviceManagedNetworksDataSource) Read(ctx context.Context, req
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZeroTrustDeviceManagedNetworksResultDataSourceEnvelope{*data}
 		_, err := d.client.ZeroTrust.Devices.Networks.Get(
 			ctx,
 			data.NetworkID.ValueString(),
-			zero_trust.DeviceNetworkGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *ZeroTrustDeviceManagedNetworksDataSource) Read(ctx context.Context, req
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ZeroTrustDeviceManagedNetworksDataSourceModel{}
 		env := ZeroTrustDeviceManagedNetworksResultListDataSourceEnvelope{items}
 
-		page, err := d.client.ZeroTrust.Devices.Networks.List(ctx, zero_trust.DeviceNetworkListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.ZeroTrust.Devices.Networks.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

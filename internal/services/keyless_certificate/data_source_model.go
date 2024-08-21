@@ -3,7 +3,10 @@
 package keyless_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/keyless_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -29,6 +32,22 @@ type KeylessCertificateDataSourceModel struct {
 	Permissions          *[]types.String                             `tfsdk:"permissions" json:"permissions,computed"`
 	Tunnel               *KeylessCertificateTunnelDataSourceModel    `tfsdk:"tunnel" json:"tunnel"`
 	Filter               *KeylessCertificateFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *KeylessCertificateDataSourceModel) toReadParams() (params keyless_certificates.KeylessCertificateGetParams, diags diag.Diagnostics) {
+	params = keyless_certificates.KeylessCertificateGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *KeylessCertificateDataSourceModel) toListParams() (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
+	params = keyless_certificates.KeylessCertificateListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type KeylessCertificateTunnelDataSourceModel struct {

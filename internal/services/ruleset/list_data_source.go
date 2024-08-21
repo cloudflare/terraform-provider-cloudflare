@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,12 +53,10 @@ func (d *RulesetsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	params := rulesets.RulesetListParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	items := &[]*RulesetsResultDataSourceModel{}

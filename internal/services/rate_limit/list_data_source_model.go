@@ -3,6 +3,8 @@
 package rate_limit
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2/rate_limits"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,6 +16,12 @@ type RateLimitsDataSourceModel struct {
 	ZoneIdentifier types.String                        `tfsdk:"zone_identifier" path:"zone_identifier"`
 	MaxItems       types.Int64                         `tfsdk:"max_items"`
 	Result         *[]*RateLimitsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *RateLimitsDataSourceModel) toListParams() (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
+	params = rate_limits.RateLimitListParams{}
+
+	return
 }
 
 type RateLimitsResultDataSourceModel struct {

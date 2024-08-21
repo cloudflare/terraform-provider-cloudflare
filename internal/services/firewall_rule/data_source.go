@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -58,14 +57,18 @@ func (d *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
+	params, diags := data.toReadParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := FirewallRuleResultDataSourceEnvelope{*data}
 	_, err := d.client.Firewall.Rules.Get(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		firewall.RuleGetParams{
-			PathID: cloudflare.F(data.PathID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

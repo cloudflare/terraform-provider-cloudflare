@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/challenges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,16 +53,18 @@ func (d *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*TurnstileWidgetsResultDataSourceModel{}
 	env := TurnstileWidgetsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*TurnstileWidgetsResultDataSourceModel{}
 
-	page, err := d.client.Challenges.Widgets.List(ctx, challenges.WidgetListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-		Direction: cloudflare.F(challenges.WidgetListParamsDirection(data.Direction.ValueString())),
-		Order:     cloudflare.F(challenges.WidgetListParamsOrder(data.Order.ValueString())),
-	})
+	page, err := d.client.Challenges.Widgets.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

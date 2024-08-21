@@ -3,7 +3,10 @@
 package zero_trust_gateway_settings
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,14 @@ type ZeroTrustGatewaySettingsDataSourceModel struct {
 	CreatedAt timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at"`
 	UpdatedAt timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at"`
 	Settings  *ZeroTrustGatewaySettingsSettingsDataSourceModel `tfsdk:"settings" json:"settings"`
+}
+
+func (m *ZeroTrustGatewaySettingsDataSourceModel) toReadParams() (params zero_trust.GatewayConfigurationGetParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayConfigurationGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustGatewaySettingsSettingsDataSourceModel struct {

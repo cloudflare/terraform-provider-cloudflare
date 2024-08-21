@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -58,13 +57,17 @@ func (d *ZeroTrustGatewaySettingsDataSource) Read(ctx context.Context, req datas
 		return
 	}
 
+	params, diags := data.toReadParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustGatewaySettingsResultDataSourceEnvelope{*data}
 	_, err := d.client.ZeroTrust.Gateway.Configurations.Get(
 		ctx,
-		zero_trust.GatewayConfigurationGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

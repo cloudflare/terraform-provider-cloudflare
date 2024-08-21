@@ -3,7 +3,10 @@
 package zero_trust_dns_location
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -32,6 +35,22 @@ type ZeroTrustDNSLocationDataSourceModel struct {
 	Endpoints             *ZeroTrustDNSLocationEndpointsDataSourceModel   `tfsdk:"endpoints" json:"endpoints"`
 	Networks              *[]*ZeroTrustDNSLocationNetworksDataSourceModel `tfsdk:"networks" json:"networks"`
 	Filter                *ZeroTrustDNSLocationFindOneByDataSourceModel   `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams() (params zero_trust.GatewayLocationGetParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayLocationGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustDNSLocationDataSourceModel) toListParams() (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayLocationListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustDNSLocationEndpointsDataSourceModel struct {

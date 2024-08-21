@@ -3,7 +3,10 @@
 package account_member
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,6 +27,32 @@ type AccountMemberDataSourceModel struct {
 	Policies  *[]*AccountMemberPoliciesDataSourceModel                   `tfsdk:"policies" json:"policies"`
 	Roles     *[]*AccountMemberRolesDataSourceModel                      `tfsdk:"roles" json:"roles"`
 	Filter    *AccountMemberFindOneByDataSourceModel                     `tfsdk:"filter"`
+}
+
+func (m *AccountMemberDataSourceModel) toReadParams() (params accounts.MemberGetParams, diags diag.Diagnostics) {
+	params = accounts.MemberGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *AccountMemberDataSourceModel) toListParams() (params accounts.MemberListParams, diags diag.Diagnostics) {
+	params = accounts.MemberListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(accounts.MemberListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.Order.IsNull() {
+		params.Order = cloudflare.F(accounts.MemberListParamsOrder(m.Filter.Order.ValueString()))
+	}
+	if !m.Filter.Status.IsNull() {
+		params.Status = cloudflare.F(accounts.MemberListParamsStatus(m.Filter.Status.ValueString()))
+	}
+
+	return
 }
 
 type AccountMemberUserDataSourceModel struct {

@@ -3,7 +3,10 @@
 package ruleset
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rulesets"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,18 @@ type RulesetsDataSourceModel struct {
 	ZoneID    types.String                      `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems  types.Int64                       `tfsdk:"max_items"`
 	Result    *[]*RulesetsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *RulesetsDataSourceModel) toListParams() (params rulesets.RulesetListParams, diags diag.Diagnostics) {
+	params = rulesets.RulesetListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type RulesetsResultDataSourceModel struct {

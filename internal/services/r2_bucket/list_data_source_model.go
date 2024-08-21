@@ -3,6 +3,9 @@
 package r2_bucket
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/r2"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,6 +21,27 @@ type R2BucketsDataSourceModel struct {
 	StartAfter   types.String                       `tfsdk:"start_after" query:"start_after"`
 	MaxItems     types.Int64                        `tfsdk:"max_items"`
 	Result       *[]*R2BucketsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *R2BucketsDataSourceModel) toListParams() (params r2.BucketListParams, diags diag.Diagnostics) {
+	params = r2.BucketListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(r2.BucketListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.NameContains.IsNull() {
+		params.NameContains = cloudflare.F(m.NameContains.ValueString())
+	}
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(r2.BucketListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.StartAfter.IsNull() {
+		params.StartAfter = cloudflare.F(m.StartAfter.ValueString())
+	}
+
+	return
 }
 
 type R2BucketsResultDataSourceModel struct {

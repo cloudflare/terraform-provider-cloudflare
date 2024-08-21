@@ -3,7 +3,10 @@
 package origin_ca_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/origin_ca_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,16 @@ type OriginCACertificatesDataSourceModel struct {
 	ZoneID   types.String                                  `tfsdk:"zone_id" query:"zone_id"`
 	MaxItems types.Int64                                   `tfsdk:"max_items"`
 	Result   *[]*OriginCACertificatesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *OriginCACertificatesDataSourceModel) toListParams() (params origin_ca_certificates.OriginCACertificateListParams, diags diag.Diagnostics) {
+	params = origin_ca_certificates.OriginCACertificateListParams{}
+
+	if !m.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type OriginCACertificatesResultDataSourceModel struct {

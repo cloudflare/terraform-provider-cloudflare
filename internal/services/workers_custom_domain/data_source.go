@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *WorkersCustomDomainDataSource) Read(ctx context.Context, req datasource
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := WorkersCustomDomainResultDataSourceEnvelope{*data}
 		_, err := d.client.Workers.Domains.Get(
 			ctx,
 			data.DomainID.ValueString(),
-			workers.DomainGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,17 +85,16 @@ func (d *WorkersCustomDomainDataSource) Read(ctx context.Context, req datasource
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*WorkersCustomDomainDataSourceModel{}
 		env := WorkersCustomDomainResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Workers.Domains.List(ctx, workers.DomainListParams{
-			AccountID:   cloudflare.F(data.Filter.AccountID.ValueString()),
-			Environment: cloudflare.F(data.Filter.Environment.ValueString()),
-			Hostname:    cloudflare.F(data.Filter.Hostname.ValueString()),
-			Service:     cloudflare.F(data.Filter.Service.ValueString()),
-			ZoneID:      cloudflare.F(data.Filter.ZoneID.ValueString()),
-			ZoneName:    cloudflare.F(data.Filter.ZoneName.ValueString()),
-		})
+		page, err := d.client.Workers.Domains.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

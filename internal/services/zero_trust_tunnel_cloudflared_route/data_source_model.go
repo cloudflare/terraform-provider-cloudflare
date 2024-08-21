@@ -3,7 +3,10 @@
 package zero_trust_tunnel_cloudflared_route
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,6 +26,45 @@ type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
 	VirtualNetworkID   types.String                                             `tfsdk:"virtual_network_id" json:"virtual_network_id"`
 	VirtualNetworkName types.String                                             `tfsdk:"virtual_network_name" json:"virtual_network_name"`
 	Filter             *ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams() (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
+	mFilterExistedAt, errs := m.Filter.ExistedAt.ValueRFC3339Time()
+	diags.Append(errs...)
+
+	params = zero_trust.NetworkRouteListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Comment.IsNull() {
+		params.Comment = cloudflare.F(m.Filter.Comment.ValueString())
+	}
+	if !m.Filter.ExistedAt.IsNull() {
+		params.ExistedAt = cloudflare.F(mFilterExistedAt)
+	}
+	if !m.Filter.IsDeleted.IsNull() {
+		params.IsDeleted = cloudflare.F(m.Filter.IsDeleted.ValueBool())
+	}
+	if !m.Filter.NetworkSubset.IsNull() {
+		params.NetworkSubset = cloudflare.F(m.Filter.NetworkSubset.ValueString())
+	}
+	if !m.Filter.NetworkSuperset.IsNull() {
+		params.NetworkSuperset = cloudflare.F(m.Filter.NetworkSuperset.ValueString())
+	}
+	if !m.Filter.RouteID.IsNull() {
+		params.RouteID = cloudflare.F(m.Filter.RouteID.ValueString())
+	}
+	if !m.Filter.TunTypes.IsNull() {
+		params.TunTypes = cloudflare.F(m.Filter.TunTypes.ValueString())
+	}
+	if !m.Filter.TunnelID.IsNull() {
+		params.TunnelID = cloudflare.F(m.Filter.TunnelID.ValueString())
+	}
+	if !m.Filter.VirtualNetworkID.IsNull() {
+		params.VirtualNetworkID = cloudflare.F(m.Filter.VirtualNetworkID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel struct {

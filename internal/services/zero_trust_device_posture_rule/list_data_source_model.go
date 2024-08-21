@@ -3,6 +3,9 @@
 package zero_trust_device_posture_rule
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,6 +17,14 @@ type ZeroTrustDevicePostureRulesDataSourceModel struct {
 	AccountID types.String                                         `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                                          `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustDevicePostureRulesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustDevicePostureRulesDataSourceModel) toListParams() (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
+	params = zero_trust.DevicePostureListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustDevicePostureRulesResultDataSourceModel struct {

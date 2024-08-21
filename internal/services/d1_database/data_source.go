@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/d1"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := D1DatabaseResultDataSourceEnvelope{*data}
 		_, err := d.client.D1.Database.Get(
 			ctx,
 			data.DatabaseID.ValueString(),
-			d1.DatabaseGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,13 +85,16 @@ func (d *D1DatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*D1DatabaseDataSourceModel{}
 		env := D1DatabaseResultListDataSourceEnvelope{items}
 
-		page, err := d.client.D1.Database.List(ctx, d1.DatabaseListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-			Name:      cloudflare.F(data.Filter.Name.ValueString()),
-		})
+		page, err := d.client.D1.Database.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

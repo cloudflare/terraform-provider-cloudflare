@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,12 +53,10 @@ func (d *ZeroTrustAccessServiceTokensDataSource) Read(ctx context.Context, req d
 		return
 	}
 
-	params := zero_trust.AccessServiceTokenListParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	items := &[]*ZeroTrustAccessServiceTokensResultDataSourceModel{}

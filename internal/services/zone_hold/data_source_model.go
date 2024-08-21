@@ -3,6 +3,9 @@
 package zone_hold
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zones"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,4 +18,12 @@ type ZoneHoldDataSourceModel struct {
 	Hold              types.Bool   `tfsdk:"hold" json:"hold"`
 	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after"`
 	IncludeSubdomains types.String `tfsdk:"include_subdomains" json:"include_subdomains"`
+}
+
+func (m *ZoneHoldDataSourceModel) toReadParams() (params zones.HoldGetParams, diags diag.Diagnostics) {
+	params = zones.HoldGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

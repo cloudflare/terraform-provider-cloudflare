@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,13 +58,17 @@ func (d *AccountDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := AccountResultDataSourceEnvelope{*data}
 		_, err := d.client.Accounts.Get(
 			ctx,
-			accounts.AccountGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -81,13 +84,16 @@ func (d *AccountDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*AccountDataSourceModel{}
 		env := AccountResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Accounts.List(ctx, accounts.AccountListParams{
-			Direction: cloudflare.F(accounts.AccountListParamsDirection(data.Filter.Direction.ValueString())),
-			Name:      cloudflare.F(data.Filter.Name.ValueString()),
-		})
+		page, err := d.client.Accounts.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

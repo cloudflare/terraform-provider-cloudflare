@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,13 +58,17 @@ func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZoneResultDataSourceEnvelope{*data}
 		_, err := d.client.Zones.Get(
 			ctx,
-			zones.ZoneGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -81,20 +84,16 @@ func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ZoneDataSourceModel{}
 		env := ZoneResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Zones.List(ctx, zones.ZoneListParams{
-			Account: cloudflare.F(zones.ZoneListParamsAccount{
-				ID:   cloudflare.F(data.Filter.Account.ID.ValueString()),
-				Name: cloudflare.F(data.Filter.Account.Name.ValueString()),
-			}),
-			Direction: cloudflare.F(zones.ZoneListParamsDirection(data.Filter.Direction.ValueString())),
-			Match:     cloudflare.F(zones.ZoneListParamsMatch(data.Filter.Match.ValueString())),
-			Name:      cloudflare.F(data.Filter.Name.ValueString()),
-			Order:     cloudflare.F(zones.ZoneListParamsOrder(data.Filter.Order.ValueString())),
-			Status:    cloudflare.F(zones.ZoneListParamsStatus(data.Filter.Status.ValueString())),
-		})
+		page, err := d.client.Zones.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

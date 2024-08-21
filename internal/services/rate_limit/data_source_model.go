@@ -3,6 +3,8 @@
 package rate_limit
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2/rate_limits"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +27,12 @@ type RateLimitDataSourceModel struct {
 	Bypass         *[]*RateLimitBypassDataSourceModel `tfsdk:"bypass" json:"bypass"`
 	Match          *RateLimitMatchDataSourceModel     `tfsdk:"match" json:"match"`
 	Filter         *RateLimitFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *RateLimitDataSourceModel) toListParams() (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
+	params = rate_limits.RateLimitListParams{}
+
+	return
 }
 
 type RateLimitActionDataSourceModel struct {

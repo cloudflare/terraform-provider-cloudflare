@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -58,14 +57,18 @@ func (d *MagicWANIPSECTunnelDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
+	params, diags := data.toReadParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := MagicWANIPSECTunnelResultDataSourceEnvelope{*data}
 	_, err := d.client.MagicTransit.IPSECTunnels.Get(
 		ctx,
 		data.IPSECTunnelID.ValueString(),
-		magic_transit.IPSECTunnelGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

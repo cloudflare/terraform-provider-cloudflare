@@ -3,7 +3,10 @@
 package argo_tiered_caching
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/argo"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,4 +20,12 @@ type ArgoTieredCachingDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" json:"id"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on"`
 	Value      types.String      `tfsdk:"value" json:"value"`
+}
+
+func (m *ArgoTieredCachingDataSourceModel) toReadParams() (params argo.TieredCachingGetParams, diags diag.Diagnostics) {
+	params = argo.TieredCachingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

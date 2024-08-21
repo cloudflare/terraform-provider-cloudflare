@@ -3,8 +3,11 @@
 package zone_lockdown
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +29,45 @@ type ZoneLockdownDataSourceModel struct {
 	URLs           *[]types.String                                                     `tfsdk:"urls" json:"urls,computed"`
 	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
 	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
+}
+
+func (m *ZoneLockdownDataSourceModel) toListParams() (params firewall.LockdownListParams, diags diag.Diagnostics) {
+	mFilterCreatedOn, errs := m.Filter.CreatedOn.ValueRFC3339Time()
+	diags.Append(errs...)
+	mFilterModifiedOn, errs := m.Filter.ModifiedOn.ValueRFC3339Time()
+	diags.Append(errs...)
+
+	params = firewall.LockdownListParams{}
+
+	if !m.Filter.CreatedOn.IsNull() {
+		params.CreatedOn = cloudflare.F(mFilterCreatedOn)
+	}
+	if !m.Filter.Description.IsNull() {
+		params.Description = cloudflare.F(m.Filter.Description.ValueString())
+	}
+	if !m.Filter.DescriptionSearch.IsNull() {
+		params.DescriptionSearch = cloudflare.F(m.Filter.DescriptionSearch.ValueString())
+	}
+	if !m.Filter.IP.IsNull() {
+		params.IP = cloudflare.F(m.Filter.IP.ValueString())
+	}
+	if !m.Filter.IPRangeSearch.IsNull() {
+		params.IPRangeSearch = cloudflare.F(m.Filter.IPRangeSearch.ValueString())
+	}
+	if !m.Filter.IPSearch.IsNull() {
+		params.IPSearch = cloudflare.F(m.Filter.IPSearch.ValueString())
+	}
+	if !m.Filter.ModifiedOn.IsNull() {
+		params.ModifiedOn = cloudflare.F(mFilterModifiedOn)
+	}
+	if !m.Filter.Priority.IsNull() {
+		params.Priority = cloudflare.F(m.Filter.Priority.ValueFloat64())
+	}
+	if !m.Filter.URISearch.IsNull() {
+		params.URISearch = cloudflare.F(m.Filter.URISearch.ValueString())
+	}
+
+	return
 }
 
 type ZoneLockdownConfigurationsDataSourceModel struct {

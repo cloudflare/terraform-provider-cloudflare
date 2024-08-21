@@ -3,7 +3,10 @@
 package keyless_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/keyless_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type KeylessCertificatesDataSourceModel struct {
 	ZoneID   types.String                                 `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems types.Int64                                  `tfsdk:"max_items"`
 	Result   *[]*KeylessCertificatesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *KeylessCertificatesDataSourceModel) toListParams() (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
+	params = keyless_certificates.KeylessCertificateListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type KeylessCertificatesResultDataSourceModel struct {

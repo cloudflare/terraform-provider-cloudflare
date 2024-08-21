@@ -3,7 +3,10 @@
 package zero_trust_gateway_policy
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -34,6 +37,22 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	RuleSettings  *ZeroTrustGatewayPolicyRuleSettingsDataSourceModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *ZeroTrustGatewayPolicyScheduleDataSourceModel     `tfsdk:"schedule" json:"schedule"`
 	Filter        *ZeroTrustGatewayPolicyFindOneByDataSourceModel    `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustGatewayPolicyDataSourceModel) toReadParams() (params zero_trust.GatewayRuleGetParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayRuleGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustGatewayPolicyDataSourceModel) toListParams() (params zero_trust.GatewayRuleListParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayRuleListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {

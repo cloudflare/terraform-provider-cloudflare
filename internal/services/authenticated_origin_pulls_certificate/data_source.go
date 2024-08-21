@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := AuthenticatedOriginPullsCertificateResultDataSourceEnvelope{*data}
 		_, err := d.client.OriginTLSClientAuth.Get(
 			ctx,
 			data.CertificateID.ValueString(),
-			origin_tls_client_auth.OriginTLSClientAuthGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *AuthenticatedOriginPullsCertificateDataSource) Read(ctx context.Context
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*AuthenticatedOriginPullsCertificateDataSourceModel{}
 		env := AuthenticatedOriginPullsCertificateResultListDataSourceEnvelope{items}
 
-		page, err := d.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
-			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
-		})
+		page, err := d.client.OriginTLSClientAuth.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

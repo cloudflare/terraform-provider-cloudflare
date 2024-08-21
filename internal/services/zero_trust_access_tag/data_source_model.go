@@ -3,7 +3,10 @@
 package zero_trust_access_tag
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,6 +26,22 @@ type ZeroTrustAccessTagDataSourceModel struct {
 	UpdatedAt timetypes.RFC3339                           `tfsdk:"updated_at" json:"updated_at,computed"`
 	AppCount  types.Int64                                 `tfsdk:"app_count" json:"app_count"`
 	Filter    *ZeroTrustAccessTagFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustAccessTagDataSourceModel) toReadParams() (params zero_trust.AccessTagGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessTagGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustAccessTagDataSourceModel) toListParams() (params zero_trust.AccessTagListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessTagListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustAccessTagFindOneByDataSourceModel struct {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,10 +53,8 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	dataCreatedOn, errs := data.CreatedOn.ValueRFC3339Time()
-	resp.Diagnostics.Append(errs...)
-	dataModifiedOn, errs := data.ModifiedOn.ValueRFC3339Time()
-	resp.Diagnostics.Append(errs...)
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -70,17 +67,7 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 	page, err := d.client.Firewall.Lockdowns.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		firewall.LockdownListParams{
-			CreatedOn:         cloudflare.F(dataCreatedOn),
-			Description:       cloudflare.F(data.Description.ValueString()),
-			DescriptionSearch: cloudflare.F(data.DescriptionSearch.ValueString()),
-			IP:                cloudflare.F(data.IP.ValueString()),
-			IPRangeSearch:     cloudflare.F(data.IPRangeSearch.ValueString()),
-			IPSearch:          cloudflare.F(data.IPSearch.ValueString()),
-			ModifiedOn:        cloudflare.F(dataModifiedOn),
-			Priority:          cloudflare.F(data.Priority.ValueFloat64()),
-			URISearch:         cloudflare.F(data.URISearch.ValueString()),
-		},
+		params,
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

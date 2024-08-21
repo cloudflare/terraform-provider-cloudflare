@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,15 +53,18 @@ func (d *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*AccountsResultDataSourceModel{}
 	env := AccountsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AccountsResultDataSourceModel{}
 
-	page, err := d.client.Accounts.List(ctx, accounts.AccountListParams{
-		Direction: cloudflare.F(accounts.AccountListParamsDirection(data.Direction.ValueString())),
-		Name:      cloudflare.F(data.Name.ValueString()),
-	})
+	page, err := d.client.Accounts.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

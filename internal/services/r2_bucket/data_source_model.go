@@ -3,6 +3,9 @@
 package r2_bucket
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/r2"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,6 +25,35 @@ type R2BucketDataSourceModel struct {
 	Location     types.String                      `tfsdk:"location" json:"location"`
 	Name         types.String                      `tfsdk:"name" json:"name"`
 	Filter       *R2BucketFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *R2BucketDataSourceModel) toReadParams() (params r2.BucketGetParams, diags diag.Diagnostics) {
+	params = r2.BucketGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *R2BucketDataSourceModel) toListParams() (params r2.BucketListParams, diags diag.Diagnostics) {
+	params = r2.BucketListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(r2.BucketListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.NameContains.IsNull() {
+		params.NameContains = cloudflare.F(m.Filter.NameContains.ValueString())
+	}
+	if !m.Filter.Order.IsNull() {
+		params.Order = cloudflare.F(r2.BucketListParamsOrder(m.Filter.Order.ValueString()))
+	}
+	if !m.Filter.StartAfter.IsNull() {
+		params.StartAfter = cloudflare.F(m.Filter.StartAfter.ValueString())
+	}
+
+	return
 }
 
 type R2BucketFindOneByDataSourceModel struct {

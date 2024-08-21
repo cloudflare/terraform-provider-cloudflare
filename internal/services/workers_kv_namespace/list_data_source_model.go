@@ -3,6 +3,9 @@
 package workers_kv_namespace
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/kv"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,21 @@ type WorkersKVNamespacesDataSourceModel struct {
 	Order     types.String                                 `tfsdk:"order" query:"order"`
 	MaxItems  types.Int64                                  `tfsdk:"max_items"`
 	Result    *[]*WorkersKVNamespacesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *WorkersKVNamespacesDataSourceModel) toListParams() (params kv.NamespaceListParams, diags diag.Diagnostics) {
+	params = kv.NamespaceListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(kv.NamespaceListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(kv.NamespaceListParamsOrder(m.Order.ValueString()))
+	}
+
+	return
 }
 
 type WorkersKVNamespacesResultDataSourceModel struct {

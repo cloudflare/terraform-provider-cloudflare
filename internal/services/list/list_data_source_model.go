@@ -3,6 +3,9 @@
 package list
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rules"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,6 +17,14 @@ type ListsDataSourceModel struct {
 	AccountID types.String                   `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                    `tfsdk:"max_items"`
 	Result    *[]*ListsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ListsDataSourceModel) toListParams() (params rules.ListListParams, diags diag.Diagnostics) {
+	params = rules.ListListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ListsResultDataSourceModel struct {

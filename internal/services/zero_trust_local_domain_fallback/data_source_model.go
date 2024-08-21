@@ -3,6 +3,9 @@
 package zero_trust_local_domain_fallback
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +24,22 @@ type ZeroTrustLocalDomainFallbackDataSourceModel struct {
 	Suffix      types.String                                          `tfsdk:"suffix" json:"suffix"`
 	DNSServer   *[]types.String                                       `tfsdk:"dns_server" json:"dns_server"`
 	Filter      *ZeroTrustLocalDomainFallbackFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toReadParams() (params zero_trust.DevicePolicyFallbackDomainGetParams, diags diag.Diagnostics) {
+	params = zero_trust.DevicePolicyFallbackDomainGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toListParams() (params zero_trust.DevicePolicyFallbackDomainListParams, diags diag.Diagnostics) {
+	params = zero_trust.DevicePolicyFallbackDomainListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustLocalDomainFallbackFindOneByDataSourceModel struct {

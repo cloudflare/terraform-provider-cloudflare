@@ -3,7 +3,10 @@
 package load_balancer
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type LoadBalancersDataSourceModel struct {
 	ZoneID   types.String                           `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems types.Int64                            `tfsdk:"max_items"`
 	Result   *[]*LoadBalancersResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *LoadBalancersDataSourceModel) toListParams() (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
+	params = load_balancers.LoadBalancerListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type LoadBalancersResultDataSourceModel struct {

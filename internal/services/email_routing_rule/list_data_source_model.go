@@ -3,6 +3,9 @@
 package email_routing_rule
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/email_routing"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,16 @@ type EmailRoutingRulesDataSourceModel struct {
 	Enabled        types.Bool                                 `tfsdk:"enabled" query:"enabled"`
 	MaxItems       types.Int64                                `tfsdk:"max_items"`
 	Result         *[]*EmailRoutingRulesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *EmailRoutingRulesDataSourceModel) toListParams() (params email_routing.RuleListParams, diags diag.Diagnostics) {
+	params = email_routing.RuleListParams{}
+
+	if !m.Enabled.IsNull() {
+		params.Enabled = cloudflare.F(email_routing.RuleListParamsEnabled(m.Enabled.ValueBool()))
+	}
+
+	return
 }
 
 type EmailRoutingRulesResultDataSourceModel struct {

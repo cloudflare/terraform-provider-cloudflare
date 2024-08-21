@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *ZeroTrustAccessTagDataSource) Read(ctx context.Context, req datasource.
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZeroTrustAccessTagResultDataSourceEnvelope{*data}
 		_, err := d.client.ZeroTrust.Access.Tags.Get(
 			ctx,
 			data.TagName.ValueString(),
-			zero_trust.AccessTagGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *ZeroTrustAccessTagDataSource) Read(ctx context.Context, req datasource.
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ZeroTrustAccessTagDataSourceModel{}
 		env := ZeroTrustAccessTagResultListDataSourceEnvelope{items}
 
-		page, err := d.client.ZeroTrust.Access.Tags.List(ctx, zero_trust.AccessTagListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.ZeroTrust.Access.Tags.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

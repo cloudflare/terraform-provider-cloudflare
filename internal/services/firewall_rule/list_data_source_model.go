@@ -3,7 +3,10 @@
 package firewall_rule
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,6 +22,25 @@ type FirewallRulesDataSourceModel struct {
 	Paused         types.Bool                             `tfsdk:"paused" query:"paused"`
 	MaxItems       types.Int64                            `tfsdk:"max_items"`
 	Result         *[]*FirewallRulesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *FirewallRulesDataSourceModel) toListParams() (params firewall.RuleListParams, diags diag.Diagnostics) {
+	params = firewall.RuleListParams{}
+
+	if !m.ID.IsNull() {
+		params.ID = cloudflare.F(m.ID.ValueString())
+	}
+	if !m.Action.IsNull() {
+		params.Action = cloudflare.F(m.Action.ValueString())
+	}
+	if !m.Description.IsNull() {
+		params.Description = cloudflare.F(m.Description.ValueString())
+	}
+	if !m.Paused.IsNull() {
+		params.Paused = cloudflare.F(m.Paused.ValueBool())
+	}
+
+	return
 }
 
 type FirewallRulesResultDataSourceModel struct {

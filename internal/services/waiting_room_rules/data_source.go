@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -58,14 +57,18 @@ func (d *WaitingRoomRulesDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
+	params, diags := data.toReadParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := WaitingRoomRulesResultDataSourceEnvelope{*data}
 	_, err := d.client.WaitingRooms.Rules.Get(
 		ctx,
 		data.WaitingRoomID.ValueString(),
-		waiting_rooms.RuleGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

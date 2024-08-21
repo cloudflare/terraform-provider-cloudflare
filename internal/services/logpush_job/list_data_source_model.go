@@ -3,7 +3,10 @@
 package logpush_job
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/logpush"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,18 @@ type LogpushJobsDataSourceModel struct {
 	ZoneID    types.String                         `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems  types.Int64                          `tfsdk:"max_items"`
 	Result    *[]*LogpushJobsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *LogpushJobsDataSourceModel) toListParams() (params logpush.JobListParams, diags diag.Diagnostics) {
+	params = logpush.JobListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type LogpushJobsResultDataSourceModel struct {

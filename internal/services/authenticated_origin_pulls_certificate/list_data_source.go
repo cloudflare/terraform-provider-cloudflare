@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,18 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*AuthenticatedOriginPullsCertificatesResultDataSourceModel{}
 	env := AuthenticatedOriginPullsCertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*AuthenticatedOriginPullsCertificatesResultDataSourceModel{}
 
-	page, err := d.client.OriginTLSClientAuth.List(ctx, origin_tls_client_auth.OriginTLSClientAuthListParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	})
+	page, err := d.client.OriginTLSClientAuth.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

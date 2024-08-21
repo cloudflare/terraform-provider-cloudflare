@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *APIShieldSchemaDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := APIShieldSchemaResultDataSourceEnvelope{*data}
 		_, err := d.client.APIGateway.UserSchemas.Get(
 			ctx,
 			data.SchemaID.ValueString(),
-			api_gateway.UserSchemaGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,14 +85,16 @@ func (d *APIShieldSchemaDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*APIShieldSchemaDataSourceModel{}
 		env := APIShieldSchemaResultListDataSourceEnvelope{items}
 
-		page, err := d.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
-			ZoneID:            cloudflare.F(data.Filter.ZoneID.ValueString()),
-			OmitSource:        cloudflare.F(data.Filter.OmitSource.ValueBool()),
-			ValidationEnabled: cloudflare.F(data.Filter.ValidationEnabled.ValueBool()),
-		})
+		page, err := d.client.APIGateway.UserSchemas.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

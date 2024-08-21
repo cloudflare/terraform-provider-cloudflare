@@ -3,7 +3,10 @@
 package zero_trust_access_key_configuration
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,4 +19,12 @@ type ZeroTrustAccessKeyConfigurationDataSourceModel struct {
 	DaysUntilNextRotation   types.Float64     `tfsdk:"days_until_next_rotation" json:"days_until_next_rotation"`
 	KeyRotationIntervalDays types.Float64     `tfsdk:"key_rotation_interval_days" json:"key_rotation_interval_days"`
 	LastKeyRotationAt       timetypes.RFC3339 `tfsdk:"last_key_rotation_at" json:"last_key_rotation_at"`
+}
+
+func (m *ZeroTrustAccessKeyConfigurationDataSourceModel) toReadParams() (params zero_trust.AccessKeyGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessKeyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }

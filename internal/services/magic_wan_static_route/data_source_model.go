@@ -3,7 +3,10 @@
 package magic_wan_static_route
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type MagicWANStaticRouteDataSourceModel struct {
 	AccountID types.String                             `tfsdk:"account_id" path:"account_id"`
 	RouteID   types.String                             `tfsdk:"route_id" path:"route_id"`
 	Route     *MagicWANStaticRouteRouteDataSourceModel `tfsdk:"route" json:"route"`
+}
+
+func (m *MagicWANStaticRouteDataSourceModel) toReadParams() (params magic_transit.RouteGetParams, diags diag.Diagnostics) {
+	params = magic_transit.RouteGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type MagicWANStaticRouteRouteDataSourceModel struct {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,19 +53,18 @@ func (d *WorkersCustomDomainsDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*WorkersCustomDomainsResultDataSourceModel{}
 	env := WorkersCustomDomainsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WorkersCustomDomainsResultDataSourceModel{}
 
-	page, err := d.client.Workers.Domains.List(ctx, workers.DomainListParams{
-		AccountID:   cloudflare.F(data.AccountID.ValueString()),
-		Environment: cloudflare.F(data.Environment.ValueString()),
-		Hostname:    cloudflare.F(data.Hostname.ValueString()),
-		Service:     cloudflare.F(data.Service.ValueString()),
-		ZoneID:      cloudflare.F(data.ZoneID.ValueString()),
-		ZoneName:    cloudflare.F(data.ZoneName.ValueString()),
-	})
+	page, err := d.client.Workers.Domains.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

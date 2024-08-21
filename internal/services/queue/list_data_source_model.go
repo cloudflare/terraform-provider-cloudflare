@@ -3,6 +3,9 @@
 package queue
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/queues"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,6 +17,14 @@ type QueuesDataSourceModel struct {
 	AccountID types.String                    `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                     `tfsdk:"max_items"`
 	Result    *[]*QueuesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *QueuesDataSourceModel) toListParams() (params queues.QueueListParams, diags diag.Diagnostics) {
+	params = queues.QueueListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type QueuesResultDataSourceModel struct {

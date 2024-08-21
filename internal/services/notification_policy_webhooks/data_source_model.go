@@ -3,7 +3,10 @@
 package notification_policy_webhooks
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,6 +30,22 @@ type NotificationPolicyWebhooksDataSourceModel struct {
 	Type        types.String                                        `tfsdk:"type" json:"type"`
 	URL         types.String                                        `tfsdk:"url" json:"url"`
 	Filter      *NotificationPolicyWebhooksFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *NotificationPolicyWebhooksDataSourceModel) toReadParams() (params alerting.DestinationWebhookGetParams, diags diag.Diagnostics) {
+	params = alerting.DestinationWebhookGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *NotificationPolicyWebhooksDataSourceModel) toListParams() (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {
+	params = alerting.DestinationWebhookListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type NotificationPolicyWebhooksFindOneByDataSourceModel struct {

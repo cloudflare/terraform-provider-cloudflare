@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -58,16 +57,14 @@ func (d *ZeroTrustAccessMTLSHostnameSettingsDataSource) Read(ctx context.Context
 		return
 	}
 
-	res := new(http.Response)
-	env := ZeroTrustAccessMTLSHostnameSettingsResultDataSourceEnvelope{*data}
-	params := zero_trust.AccessCertificateSettingGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	params, diags := data.toReadParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
+	res := new(http.Response)
+	env := ZeroTrustAccessMTLSHostnameSettingsResultDataSourceEnvelope{*data}
 	_, err := d.client.ZeroTrust.Access.Certificates.Settings.Get(
 		ctx,
 		params,

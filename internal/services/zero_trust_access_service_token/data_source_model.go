@@ -3,7 +3,10 @@
 package zero_trust_access_service_token
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,6 +30,30 @@ type ZeroTrustAccessServiceTokenDataSourceModel struct {
 	ID             types.String                                         `tfsdk:"id" json:"id"`
 	Name           types.String                                         `tfsdk:"name" json:"name"`
 	Filter         *ZeroTrustAccessServiceTokenFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustAccessServiceTokenDataSourceModel) toReadParams() (params zero_trust.AccessServiceTokenGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessServiceTokenGetParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
+}
+
+func (m *ZeroTrustAccessServiceTokenDataSourceModel) toListParams() (params zero_trust.AccessServiceTokenListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessServiceTokenListParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustAccessServiceTokenFindOneByDataSourceModel struct {

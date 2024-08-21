@@ -3,8 +3,11 @@
 package zone
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -33,6 +36,46 @@ type ZoneDataSourceModel struct {
 	Owner               customfield.NestedObject[ZoneOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`
 	VanityNameServers   *[]types.String                                      `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
 	Filter              *ZoneFindOneByDataSourceModel                        `tfsdk:"filter"`
+}
+
+func (m *ZoneDataSourceModel) toReadParams() (params zones.ZoneGetParams, diags diag.Diagnostics) {
+	params = zones.ZoneGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZoneDataSourceModel) toListParams() (params zones.ZoneListParams, diags diag.Diagnostics) {
+	params = zones.ZoneListParams{}
+
+	if m.Filter.Account != nil {
+		paramsAccount := zones.ZoneListParamsAccount{}
+		if !m.Filter.Account.ID.IsNull() {
+			paramsAccount.ID = cloudflare.F(m.Filter.Account.ID.ValueString())
+		}
+		if !m.Filter.Account.Name.IsNull() {
+			paramsAccount.Name = cloudflare.F(m.Filter.Account.Name.ValueString())
+		}
+		params.Account = cloudflare.F(paramsAccount)
+	}
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(zones.ZoneListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.Match.IsNull() {
+		params.Match = cloudflare.F(zones.ZoneListParamsMatch(m.Filter.Match.ValueString()))
+	}
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+	if !m.Filter.Order.IsNull() {
+		params.Order = cloudflare.F(zones.ZoneListParamsOrder(m.Filter.Order.ValueString()))
+	}
+	if !m.Filter.Status.IsNull() {
+		params.Status = cloudflare.F(zones.ZoneListParamsStatus(m.Filter.Status.ValueString()))
+	}
+
+	return
 }
 
 type ZoneAccountDataSourceModel struct {

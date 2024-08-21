@@ -3,7 +3,10 @@
 package mtls_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/mtls_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,6 +31,22 @@ type MTLSCertificateDataSourceModel struct {
 	Name              types.String                             `tfsdk:"name" json:"name"`
 	UploadedOn        timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on"`
 	Filter            *MTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *MTLSCertificateDataSourceModel) toReadParams() (params mtls_certificates.MTLSCertificateGetParams, diags diag.Diagnostics) {
+	params = mtls_certificates.MTLSCertificateGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *MTLSCertificateDataSourceModel) toListParams() (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
+	params = mtls_certificates.MTLSCertificateListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type MTLSCertificateFindOneByDataSourceModel struct {

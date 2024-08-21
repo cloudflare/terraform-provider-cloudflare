@@ -3,6 +3,9 @@
 package total_tls
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/acm"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,4 +18,12 @@ type TotalTLSDataSourceModel struct {
 	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority"`
 	Enabled              types.Bool   `tfsdk:"enabled" json:"enabled"`
 	ValidityPeriod       types.Int64  `tfsdk:"validity_period" json:"validity_period"`
+}
+
+func (m *TotalTLSDataSourceModel) toReadParams() (params acm.TotalTLSGetParams, diags diag.Diagnostics) {
+	params = acm.TotalTLSGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

@@ -3,7 +3,10 @@
 package api_shield_operation
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +24,44 @@ type APIShieldOperationDataSourceModel struct {
 	Origin      *[]types.String                             `tfsdk:"origin" json:"origin"`
 	Features    *APIShieldOperationFeaturesDataSourceModel  `tfsdk:"features" json:"features"`
 	Filter      *APIShieldOperationFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *APIShieldOperationDataSourceModel) toListParams() (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
+	mFilterHost := []string{}
+	for _, item := range *m.Filter.Host {
+		mFilterHost = append(mFilterHost, item.ValueString())
+	}
+	mFilterMethod := []string{}
+	for _, item := range *m.Filter.Method {
+		mFilterMethod = append(mFilterMethod, item.ValueString())
+	}
+
+	params = api_gateway.DiscoveryOperationListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		Host:   cloudflare.F(mFilterHost),
+		Method: cloudflare.F(mFilterMethod),
+	}
+
+	if !m.Filter.Diff.IsNull() {
+		params.Diff = cloudflare.F(m.Filter.Diff.ValueBool())
+	}
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(api_gateway.DiscoveryOperationListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.Endpoint.IsNull() {
+		params.Endpoint = cloudflare.F(m.Filter.Endpoint.ValueString())
+	}
+	if !m.Filter.Order.IsNull() {
+		params.Order = cloudflare.F(api_gateway.DiscoveryOperationListParamsOrder(m.Filter.Order.ValueString()))
+	}
+	if !m.Filter.Origin.IsNull() {
+		params.Origin = cloudflare.F(api_gateway.DiscoveryOperationListParamsOrigin(m.Filter.Origin.ValueString()))
+	}
+	if !m.Filter.State.IsNull() {
+		params.State = cloudflare.F(api_gateway.DiscoveryOperationListParamsState(m.Filter.State.ValueString()))
+	}
+
+	return
 }
 
 type APIShieldOperationFeaturesDataSourceModel struct {

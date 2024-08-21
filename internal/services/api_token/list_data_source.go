@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,18 @@ func (d *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*APITokensResultDataSourceModel{}
 	env := APITokensResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*APITokensResultDataSourceModel{}
 
-	page, err := d.client.User.Tokens.List(ctx, user.TokenListParams{
-		Direction: cloudflare.F(user.TokenListParamsDirection(data.Direction.ValueString())),
-	})
+	page, err := d.client.User.Tokens.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

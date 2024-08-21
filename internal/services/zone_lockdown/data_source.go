@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -80,10 +79,8 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 		data = &env.Result
 	} else {
-		dataFilterCreatedOn, errs := data.Filter.CreatedOn.ValueRFC3339Time()
-		resp.Diagnostics.Append(errs...)
-		dataFilterModifiedOn, errs := data.Filter.ModifiedOn.ValueRFC3339Time()
-		resp.Diagnostics.Append(errs...)
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
 		}
@@ -94,17 +91,7 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		page, err := d.client.Firewall.Lockdowns.List(
 			ctx,
 			data.Filter.ZoneIdentifier.ValueString(),
-			firewall.LockdownListParams{
-				CreatedOn:         cloudflare.F(dataFilterCreatedOn),
-				Description:       cloudflare.F(data.Filter.Description.ValueString()),
-				DescriptionSearch: cloudflare.F(data.Filter.DescriptionSearch.ValueString()),
-				IP:                cloudflare.F(data.Filter.IP.ValueString()),
-				IPRangeSearch:     cloudflare.F(data.Filter.IPRangeSearch.ValueString()),
-				IPSearch:          cloudflare.F(data.Filter.IPSearch.ValueString()),
-				ModifiedOn:        cloudflare.F(dataFilterModifiedOn),
-				Priority:          cloudflare.F(data.Filter.Priority.ValueFloat64()),
-				URISearch:         cloudflare.F(data.Filter.URISearch.ValueString()),
-			},
+			params,
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

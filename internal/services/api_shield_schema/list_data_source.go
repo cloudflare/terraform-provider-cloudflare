@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,16 +53,18 @@ func (d *APIShieldSchemasDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*APIShieldSchemasResultDataSourceModel{}
 	env := APIShieldSchemasResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*APIShieldSchemasResultDataSourceModel{}
 
-	page, err := d.client.APIGateway.UserSchemas.List(ctx, api_gateway.UserSchemaListParams{
-		ZoneID:            cloudflare.F(data.ZoneID.ValueString()),
-		OmitSource:        cloudflare.F(data.OmitSource.ValueBool()),
-		ValidationEnabled: cloudflare.F(data.ValidationEnabled.ValueBool()),
-	})
+	page, err := d.client.APIGateway.UserSchemas.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

@@ -3,7 +3,10 @@
 package zero_trust_list
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,18 @@ type ZeroTrustListsDataSourceModel struct {
 	Type      types.String                            `tfsdk:"type" query:"type"`
 	MaxItems  types.Int64                             `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustListsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustListsDataSourceModel) toListParams() (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayListListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Type.IsNull() {
+		params.Type = cloudflare.F(zero_trust.GatewayListListParamsType(m.Type.ValueString()))
+	}
+
+	return
 }
 
 type ZeroTrustListsResultDataSourceModel struct {

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *WorkersForPlatformsDispatchNamespaceDataSource) Read(ctx context.Contex
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := WorkersForPlatformsDispatchNamespaceResultDataSourceEnvelope{*data}
 		_, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Get(
 			ctx,
 			data.DispatchNamespace.ValueString(),
-			workers_for_platforms.DispatchNamespaceGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *WorkersForPlatformsDispatchNamespaceDataSource) Read(ctx context.Contex
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*WorkersForPlatformsDispatchNamespaceDataSourceModel{}
 		env := WorkersForPlatformsDispatchNamespaceResultListDataSourceEnvelope{items}
 
-		page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -80,17 +79,19 @@ func (d *UserAgentBlockingRuleDataSource) Read(ctx context.Context, req datasour
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*UserAgentBlockingRuleDataSourceModel{}
 		env := UserAgentBlockingRuleResultListDataSourceEnvelope{items}
 
 		page, err := d.client.Firewall.UARules.List(
 			ctx,
 			data.Filter.ZoneIdentifier.ValueString(),
-			firewall.UARuleListParams{
-				Description:       cloudflare.F(data.Filter.Description.ValueString()),
-				DescriptionSearch: cloudflare.F(data.Filter.DescriptionSearch.ValueString()),
-				UASearch:          cloudflare.F(data.Filter.UASearch.ValueString()),
-			},
+			params,
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

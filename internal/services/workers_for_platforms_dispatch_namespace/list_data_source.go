@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,18 @@ func (d *WorkersForPlatformsDispatchNamespacesDataSource) Read(ctx context.Conte
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*WorkersForPlatformsDispatchNamespacesResultDataSourceModel{}
 	env := WorkersForPlatformsDispatchNamespacesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WorkersForPlatformsDispatchNamespacesResultDataSourceModel{}
 
-	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, workers_for_platforms.DispatchNamespaceListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	})
+	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

@@ -3,7 +3,10 @@
 package ruleset
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rulesets"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,6 +31,30 @@ type RulesetDataSourceModel struct {
 	Phase       types.String                     `tfsdk:"phase" json:"phase,computed"`
 	Version     types.String                     `tfsdk:"version" json:"version,computed"`
 	Filter      *RulesetFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *RulesetDataSourceModel) toReadParams() (params rulesets.RulesetGetParams, diags diag.Diagnostics) {
+	params = rulesets.RulesetGetParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
+}
+
+func (m *RulesetDataSourceModel) toListParams() (params rulesets.RulesetListParams, diags diag.Diagnostics) {
+	params = rulesets.RulesetListParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type RulesetRulesDataSourceModel struct {

@@ -3,6 +3,9 @@
 package email_routing_rule
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/email_routing"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +28,16 @@ type EmailRoutingRuleDataSourceModel struct {
 	Actions        *[]*EmailRoutingRuleActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
 	Matchers       *[]*EmailRoutingRuleMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
 	Filter         *EmailRoutingRuleFindOneByDataSourceModel   `tfsdk:"filter"`
+}
+
+func (m *EmailRoutingRuleDataSourceModel) toListParams() (params email_routing.RuleListParams, diags diag.Diagnostics) {
+	params = email_routing.RuleListParams{}
+
+	if !m.Filter.Enabled.IsNull() {
+		params.Enabled = cloudflare.F(email_routing.RuleListParamsEnabled(m.Filter.Enabled.ValueBool()))
+	}
+
+	return
 }
 
 type EmailRoutingRuleActionsDataSourceModel struct {

@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/healthchecks"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *HealthcheckDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := HealthcheckResultDataSourceEnvelope{*data}
 		_, err := d.client.Healthchecks.Get(
 			ctx,
 			data.HealthcheckID.ValueString(),
-			healthchecks.HealthcheckGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *HealthcheckDataSource) Read(ctx context.Context, req datasource.ReadReq
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*HealthcheckDataSourceModel{}
 		env := HealthcheckResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Healthchecks.List(ctx, healthchecks.HealthcheckListParams{
-			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
-		})
+		page, err := d.client.Healthchecks.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

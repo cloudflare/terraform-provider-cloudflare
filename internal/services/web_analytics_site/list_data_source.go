@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/rum"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,15 +53,18 @@ func (d *WebAnalyticsSitesDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*WebAnalyticsSitesResultDataSourceModel{}
 	env := WebAnalyticsSitesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WebAnalyticsSitesResultDataSourceModel{}
 
-	page, err := d.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-		OrderBy:   cloudflare.F(rum.SiteInfoListParamsOrderBy(data.OrderBy.ValueString())),
-	})
+	page, err := d.client.RUM.SiteInfo.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

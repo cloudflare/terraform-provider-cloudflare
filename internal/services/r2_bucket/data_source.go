@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/r2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *R2BucketDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := R2BucketResultDataSourceEnvelope{*data}
 		_, err := d.client.R2.Buckets.Get(
 			ctx,
 			data.BucketName.ValueString(),
-			r2.BucketGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,16 +85,16 @@ func (d *R2BucketDataSource) Read(ctx context.Context, req datasource.ReadReques
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*R2BucketDataSourceModel{}
 		env := R2BucketResultListDataSourceEnvelope{items}
 
-		page, err := d.client.R2.Buckets.List(ctx, r2.BucketListParams{
-			AccountID:    cloudflare.F(data.Filter.AccountID.ValueString()),
-			Direction:    cloudflare.F(r2.BucketListParamsDirection(data.Filter.Direction.ValueString())),
-			NameContains: cloudflare.F(data.Filter.NameContains.ValueString()),
-			Order:        cloudflare.F(r2.BucketListParamsOrder(data.Filter.Order.ValueString())),
-			StartAfter:   cloudflare.F(data.Filter.StartAfter.ValueString()),
-		})
+		page, err := d.client.R2.Buckets.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

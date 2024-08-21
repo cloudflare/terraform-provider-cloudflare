@@ -3,7 +3,10 @@
 package account
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,6 +25,27 @@ type AccountDataSourceModel struct {
 	Name      types.String                     `tfsdk:"name" json:"name,computed"`
 	Settings  *AccountSettingsDataSourceModel  `tfsdk:"settings" json:"settings"`
 	Filter    *AccountFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *AccountDataSourceModel) toReadParams() (params accounts.AccountGetParams, diags diag.Diagnostics) {
+	params = accounts.AccountGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *AccountDataSourceModel) toListParams() (params accounts.AccountListParams, diags diag.Diagnostics) {
+	params = accounts.AccountListParams{}
+
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(accounts.AccountListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+
+	return
 }
 
 type AccountSettingsDataSourceModel struct {
