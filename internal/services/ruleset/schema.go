@@ -164,11 +164,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "An informative description of the rule.",
 							Computed:    true,
+							Optional:    true,
 							Default:     stringdefault.StaticString(""),
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether the rule should be executed.",
 							Computed:    true,
+							Optional:    true,
 							Default:     booldefault.StaticBool(true),
 						},
 						"expression": schema.StringAttribute{
