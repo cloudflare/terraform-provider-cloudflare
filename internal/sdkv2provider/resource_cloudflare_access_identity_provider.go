@@ -31,6 +31,25 @@ func resourceCloudflareAccessIdentityProvider() *schema.Resource {
 			Providers are used as an authentication or authorisation source
 			within Access.
 		`),
+		DeprecationMessage: "`cloudflare_access_identity_provider` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_identity_provider` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessIdentityProvider() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessIdentityProviderSchema(),
+		CreateContext: resourceCloudflareAccessIdentityProviderCreate,
+		ReadContext:   resourceCloudflareAccessIdentityProviderRead,
+		UpdateContext: resourceCloudflareAccessIdentityProviderUpdate,
+		DeleteContext: resourceCloudflareAccessIdentityProviderDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessIdentityProviderImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Identity Provider resource. Identity
+			Providers are used as an authentication or authorisation source
+			within Access.
+		`),
 	}
 }
 

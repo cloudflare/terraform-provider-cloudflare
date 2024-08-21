@@ -29,6 +29,25 @@ func resourceCloudflareTeamsList() *schema.Resource {
 			referenced when creating secure web gateway policies or device
 			posture rules.
 		`),
+		DeprecationMessage: "`cloudflare_teams_list` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_list` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustList() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTeamsListSchema(),
+		CreateContext: resourceCloudflareTeamsListCreate,
+		ReadContext:   resourceCloudflareTeamsListRead,
+		UpdateContext: resourceCloudflareTeamsListUpdate,
+		DeleteContext: resourceCloudflareTeamsListDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTeamsListImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams List resource. Teams lists are
+			referenced when creating secure web gateway policies or device
+			posture rules.
+		`),
 	}
 }
 

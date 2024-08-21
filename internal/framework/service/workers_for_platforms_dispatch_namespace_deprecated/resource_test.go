@@ -18,8 +18,8 @@ func TestMain(m *testing.M) {
 }
 
 func init() {
-	resource.AddTestSweepers("cloudflare_workers_for_platforms_namespace", &resource.Sweeper{
-		Name: "cloudflare_workers_for_platforms_namespace",
+	resource.AddTestSweepers("cloudflare_workers_for_platforms_dispatch_namespace", &resource.Sweeper{
+		Name: "cloudflare_workers_for_platforms_dispatch_namespace",
 		F: func(region string) error {
 			client, err := acctest.SharedV1Client()
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -49,7 +49,7 @@ func init() {
 func TestAccCloudflareWorkersForPlatforms_NamespaceManagement(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_workers_for_platforms_namespace." + rnd
+	resourceName := "cloudflare_workers_for_platforms_dispatch_namespace." + rnd
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
@@ -74,7 +74,7 @@ func TestAccCloudflareWorkersForPlatforms_NamespaceManagement(t *testing.T) {
 
 func testAccCheckCloudflareWorkersForPlatformsNamespaceManagement(rnd, accountID string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_workers_for_platforms_namespace" "%[1]s" {
+  resource "cloudflare_workers_for_platforms_dispatch_namespace" "%[1]s" {
     account_id = "%[2]s"
     name       = "%[1]s"
   }`, rnd, accountID)
@@ -83,8 +83,8 @@ func testAccCheckCloudflareWorkersForPlatformsNamespaceManagement(rnd, accountID
 func TestAccCloudflareWorkersForPlatforms_UploadUserWorker(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resourceName := "cloudflare_workers_for_platforms_namespace." + rnd
-	workerResource := "cloudflare_worker_script.script_" + rnd
+	resourceName := "cloudflare_workers_for_platforms_dispatch_namespace." + rnd
+	workerResource := "cloudflare_workers_script.script_" + rnd
 
 	scriptContent := `<<EOT
 	export default {
@@ -127,12 +127,12 @@ func TestAccCloudflareWorkersForPlatforms_UploadUserWorker(t *testing.T) {
 
 func testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, moduleContent, compatibilityDate string, tags []string) string {
 	return fmt.Sprintf(`
-	  resource "cloudflare_workers_for_platforms_namespace" "%[1]s" {
+	  resource "cloudflare_workers_for_platforms_dispatch_namespace" "%[1]s" {
 		account_id = "%[2]s"
 		name       = "%[1]s"
 	  }
 
-	  resource "cloudflare_worker_script" "script_%[1]s" {
+	  resource "cloudflare_workers_script" "script_%[1]s" {
 		account_id          = "%[2]s"
 		name                = "script_%[1]s"
 		content             = %[3]s
@@ -141,7 +141,7 @@ func testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, m
 		dispatch_namespace  = "%[1]s"
 		tags                = %[5]q
 
-		depends_on = [cloudflare_workers_for_platforms_namespace.%[1]s]
+		depends_on = [cloudflare_workers_for_platforms_dispatch_namespace.%[1]s]
 	  }`, rnd, accountID, moduleContent, compatibilityDate, tags)
 }
 
@@ -149,7 +149,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_script" {
+		if rs.Type != "cloudflare_workers_script" {
 			continue
 		}
 

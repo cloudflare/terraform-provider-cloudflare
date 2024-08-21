@@ -14,7 +14,7 @@ func TestAccCloudflareAccessTag_Basic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_access_tag.%s", rnd)
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_tag.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -36,7 +36,7 @@ func TestAccCloudflareAccessTag_Basic(t *testing.T) {
 
 func testAccCheckCloudflareAccessTag(rnd, zoneID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_tag" "%[1]s" {
+resource "cloudflare_zero_trust_access_tag" "%[1]s" {
 	zone_id = "%[2]s"
 	name = "%[1]s"
 }

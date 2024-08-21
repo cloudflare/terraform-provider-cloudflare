@@ -19,7 +19,7 @@ func TestAccCloudflareSplitTunnel_Include(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_split_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_split_tunnels.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -77,7 +77,7 @@ func TestAccCloudflareSplitTunnel_ConflictingTunnelProperties(t *testing.T) {
 
 func testAccCloudflareDefaultSplitTunnelInclude(rnd, accountID string, description string, host string, mode string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_split_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_split_tunnels" "%[1]s" {
   account_id = "%[2]s"
   mode = "%[5]s"
   tunnels {
@@ -90,7 +90,7 @@ resource "cloudflare_split_tunnel" "%[1]s" {
 
 func testAccCloudflareSplitTunnelInclude(rnd, accountID string, description string, host string, mode string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_settings_policy" "%[1]s" {
+resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	account_id                = "%[2]s"
 	allow_mode_switch         = true
 	allow_updates             = true
@@ -107,7 +107,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	exclude_office_ips        = false
 }
 
-resource "cloudflare_split_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_split_tunnels" "%[1]s" {
   account_id = "%[2]s"
   mode = "%[5]s"
   tunnels {
@@ -120,7 +120,7 @@ resource "cloudflare_split_tunnel" "%[1]s" {
 
 func testAccCloudflareSplitTunnelConflictingTunnelProperties(rnd, accountID string, description string, mode string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_split_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_split_tunnels" "%[1]s" {
   account_id = "%[2]s"
   mode = "%[4]s"
   tunnels {
@@ -141,7 +141,7 @@ func TestAccCloudflareSplitTunnel_Exclude(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_split_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_split_tunnels.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -190,7 +190,7 @@ func TestAccCloudflareSplitTunnel_IncludeTunnelOrdering(t *testing.T) {
 
 func testAccCloudflareSplitTunnelExclude(rnd, accountID string, description string, host string, mode string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_split_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_split_tunnels" "%[1]s" {
   account_id = "%[2]s"
   mode = "%[5]s"
   tunnels {
@@ -203,7 +203,7 @@ resource "cloudflare_split_tunnel" "%[1]s" {
 
 func testAccCloudflareDefaultSplitTunnelIncludeMultiplesOrdered(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_split_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_split_tunnels" "%[1]s" {
   account_id = "%[2]s"
   mode = "include"
   tunnels {
@@ -221,7 +221,7 @@ resource "cloudflare_split_tunnel" "%[1]s" {
 
 func testAccCloudflareDefaultSplitTunnelIncludeMultiplesFlippedOrder(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_split_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_split_tunnels" "%[1]s" {
   account_id = "%[2]s"
   mode = "include"
   tunnels {

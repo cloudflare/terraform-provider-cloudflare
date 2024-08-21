@@ -16,8 +16,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_tunnel_route", &resource.Sweeper{
-		Name: "cloudflare_tunnel_route",
+	resource.AddTestSweepers("cloudflare_zero_trust_tunnel_cloudflared_route", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_tunnel_cloudflared_route",
 		F:    testSweepCloudflareTunnelRoute,
 	})
 }
@@ -55,7 +55,7 @@ func testSweepCloudflareTunnelRoute(r string) error {
 
 func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_tunnel_route.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var TunnelRoute cloudflare.TunnelRoute
@@ -111,7 +111,7 @@ func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.Tunn
 
 func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_tunnel_route.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var TunnelRoute cloudflare.TunnelRoute
@@ -143,15 +143,15 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 
 func testAccCloudflareTunnelRouteSimple(ID, comment, accountID, network string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_tunnel" "%[1]s" {
+resource "cloudflare_zero_trust_tunnel_cloudflared" "%[1]s" {
 	account_id = "%[3]s"
 	name       = "%[1]s"
 	secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
 }
 
-resource "cloudflare_tunnel_route" "%[1]s" {
+resource "cloudflare_zero_trust_tunnel_cloudflared_route" "%[1]s" {
     account_id = "%[3]s"
-    tunnel_id = cloudflare_tunnel.%[1]s.id
+    tunnel_id = cloudflare_zero_trust_tunnel_cloudflared.%[1]s.id
     network = "%[4]s"
     comment = "%[2]s"
 }`, ID, comment, accountID, network)

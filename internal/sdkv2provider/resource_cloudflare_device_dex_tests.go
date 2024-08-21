@@ -24,6 +24,21 @@ func resourceCloudflareDeviceDexTest() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDeviceDexTestImport,
 		},
+		Description:        "Provides a Cloudflare Device Dex Test resource. Device Dex Tests allow for building location-aware device settings policies.",
+		DeprecationMessage: "`cloudflare_device_dex_test` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_dex_test` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDexTest() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDeviceDexTestSchema(),
+		CreateContext: resourceCloudflareDeviceDexTestCreate,
+		ReadContext:   resourceCloudflareDeviceDexTestRead,
+		UpdateContext: resourceCloudflareDeviceDexTestUpdate,
+		DeleteContext: resourceCloudflareDeviceDexTestDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDeviceDexTestImport,
+		},
 		Description: "Provides a Cloudflare Device Dex Test resource. Device Dex Tests allow for building location-aware device settings policies.",
 	}
 }

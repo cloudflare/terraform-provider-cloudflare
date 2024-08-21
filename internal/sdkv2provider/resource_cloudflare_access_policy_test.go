@@ -104,26 +104,26 @@ func TestAccCloudflareAccessPolicy_WithZoneID(t *testing.T) {
 
 func testAccessPolicyServiceTokenConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
-    resource "cloudflare_access_service_token" "%[1]s" {
+    resource "cloudflare_zero_trust_access_service_token" "%[1]s" {
       account_id = "%[3]s"
       name       = "%[1]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "non_identity"
       precedence     = "10"
 
       include {
-        service_token = ["${cloudflare_access_service_token.%[1]s.id}"]
+        service_token = ["${cloudflare_zero_trust_access_service_token.%[1]s.id}"]
       }
     }
 
@@ -132,14 +132,14 @@ func testAccessPolicyServiceTokenConfig(resourceID, zone, accountID string) stri
 
 func testAccessPolicyAnyServiceTokenConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "non_identity"
@@ -155,14 +155,14 @@ func testAccessPolicyAnyServiceTokenConfig(resourceID, zone, accountID string) s
 
 func testAccessPolicyWithZoneID(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name    = "%[1]s"
       zone_id = "%[3]s"
       domain  = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       zone_id        = "%[3]s"
       decision       = "non_identity"
@@ -178,14 +178,14 @@ func testAccessPolicyWithZoneID(resourceID, zone, zoneID string) string {
 
 func testAccessPolicyWithZoneIDUpdated(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name    = "%[1]s"
       zone_id = "%[3]s"
       domain  = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s-updated"
       zone_id        = "%[3]s"
       decision       = "non_identity"
@@ -226,13 +226,13 @@ func TestAccCloudflareAccessPolicy_Group(t *testing.T) {
 
 func testAccessPolicyGroupConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
-    resource "cloudflare_access_group" "%[1]s" {
+    resource "cloudflare_zero_trust_access_group" "%[1]s" {
         account_id     = "%[3]s"
         name           = "%[1]s"
 
@@ -242,14 +242,14 @@ func testAccessPolicyGroupConfig(resourceID, zone, accountID string) string {
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "non_identity"
       precedence     = "10"
 
       include {
-        group = [cloudflare_access_group.%[1]s.id]
+        group = [cloudflare_zero_trust_access_group.%[1]s.id]
       }
     }
 
@@ -283,14 +283,14 @@ func TestAccCloudflareAccessPolicy_MTLS(t *testing.T) {
 
 func testAccessPolicyMTLSConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "non_identity"
@@ -331,14 +331,14 @@ func TestAccCloudflareAccessPolicy_CommonName(t *testing.T) {
 
 func testAccessPolicyCommonNameConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -380,14 +380,14 @@ func TestAccCloudflareAccessPolicy_EmailDomain(t *testing.T) {
 
 func testAccessPolicyEmailDomainConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -431,14 +431,14 @@ func TestAccCloudflareAccessPolicy_Emails(t *testing.T) {
 
 func testAccessPolicyEmailsConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -479,14 +479,14 @@ func TestAccCloudflareAccessPolicy_Everyone(t *testing.T) {
 
 func testAccessPolicyEveryoneConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -529,14 +529,14 @@ func TestAccCloudflareAccessPolicy_IPs(t *testing.T) {
 
 func testAccessPolicyIPsConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -577,14 +577,14 @@ func TestAccCloudflareAccessPolicy_AuthMethod(t *testing.T) {
 
 func testAccessPolicyAuthMethodConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -627,14 +627,14 @@ func TestAccCloudflareAccessPolicy_Geo(t *testing.T) {
 
 func testAccessPolicyGeoConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -678,14 +678,14 @@ func TestAccCloudflareAccessPolicy_Okta(t *testing.T) {
 
 func testAccessPolicyOktaConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -767,14 +767,14 @@ func testAccCheckCloudflareAccessPolicyHasPJ(n string, accessIdentifier *cloudfl
 
 func testAccessPolicyPurposeJustificationConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -886,14 +886,14 @@ func testAccCheckCloudflareAccessPolicyHasApprovalGroups(n string, accessIdentif
 
 func testAccessPolicyApprovalGroupConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = "${cloudflare_access_application.%[1]s.id}"
+      application_id = "${cloudflare_zero_trust_access_application.%[1]s.id}"
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -948,14 +948,14 @@ func TestAccCloudflareAccessPolicy_ExternalEvaluation(t *testing.T) {
 
 func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = cloudflare_access_application.%[1]s.id
+      application_id = cloudflare_zero_trust_access_application.%[1]s.id
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"
@@ -999,7 +999,7 @@ func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 
 func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_teams_account" "%[1]s" {
+	resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
 		account_id = "%[3]s"
 		tls_decrypt_enabled = true
 		protocol_detection_enabled = true
@@ -1059,15 +1059,15 @@ func testAccessPolicyIsolationRequiredConfig(resourceID, zone, accountID string)
 		}
 	  }
 
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name       = "%[1]s"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
-	  depends_on = ["cloudflare_teams_account.%[1]s"]
+	  depends_on = ["cloudflare_zero_trust_gateway_settings.%[1]s"]
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
-      application_id = cloudflare_access_application.%[1]s.id
+      application_id = cloudflare_zero_trust_access_application.%[1]s.id
       name           = "%[1]s"
       account_id     = "%[3]s"
       decision       = "allow"

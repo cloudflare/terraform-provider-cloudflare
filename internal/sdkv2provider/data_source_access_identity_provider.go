@@ -11,6 +11,15 @@ import (
 
 func dataSourceCloudflareAccessIdentityProvider() *schema.Resource {
 	return &schema.Resource{
+		Schema:             dataSourceCloudflareAccessIdentityProviderSchema(),
+		ReadContext:        dataSourceCloudflareAccessIdentityProviderRead,
+		Description:        "Use this data source to lookup a single [Access Identity Provider](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration) by name.",
+		DeprecationMessage: "`cloudflare_access_identity_provider` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_identity_provider` instead.",
+	}
+}
+
+func dataSourceCloudflareZeroTrustAccessIdentityProvider() *schema.Resource {
+	return &schema.Resource{
 		Schema:      dataSourceCloudflareAccessIdentityProviderSchema(),
 		ReadContext: dataSourceCloudflareAccessIdentityProviderRead,
 		Description: "Use this data source to lookup a single [Access Identity Provider](https://developers.cloudflare.com/cloudflare-one/identity/idp-integration) by name.",

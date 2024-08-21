@@ -559,6 +559,12 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"skip_app_launcher_login_page": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Option to skip the App Launcher landing page.",
+		},
 		"allow_authenticate_via_warp": {
 			Type:        schema.TypeBool,
 			Optional:    true,

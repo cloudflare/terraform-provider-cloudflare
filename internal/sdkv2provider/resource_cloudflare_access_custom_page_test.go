@@ -14,7 +14,7 @@ func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_custom_page.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -41,7 +41,7 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_access_custom_page.%s", rnd)
+	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_custom_page.%s", rnd)
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -64,7 +64,7 @@ func TestAccCloudflareAccessCustomPage_Forbidden(t *testing.T) {
 
 func testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, zoneID, pageType, markup string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_custom_page" "%[1]s" {
+resource "cloudflare_zero_trust_access_custom_page" "%[1]s" {
 	zone_id = "%[2]s"
 	name = "%[1]s"
 	type = "%[3]s"
