@@ -70,7 +70,7 @@ type ZeroTrustAccessApplicationLandingPageDesignModel struct {
 	ButtonTextColor types.String `tfsdk:"button_text_color" json:"button_text_color"`
 	ImageURL        types.String `tfsdk:"image_url" json:"image_url"`
 	Message         types.String `tfsdk:"message" json:"message"`
-	Title           types.String `tfsdk:"title" json:"title,computed"`
+	Title           types.String `tfsdk:"title" json:"title"`
 }
 
 type ZeroTrustAccessApplicationPoliciesModel struct {

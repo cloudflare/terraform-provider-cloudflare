@@ -216,6 +216,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"title": schema.StringAttribute{
 						Description: "The title shown on the landing page.",
 						Computed:    true,
+						Optional:    true,
 						Default:     stringdefault.StaticString("Welcome!"),
 					},
 				},
