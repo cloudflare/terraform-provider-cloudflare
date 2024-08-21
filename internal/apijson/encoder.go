@@ -15,6 +15,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/tidwall/sjson"
@@ -157,6 +158,10 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 			return innerEncoder(p.Elem(), s.Elem())
 		}
 	case reflect.Struct:
+		attrType := reflect.TypeOf((*attr.Value)(nil)).Elem()
+		if t.Implements(attrType) {
+			return e.newTerraformTypeEncoder(t)
+		}
 		return e.newStructTypeEncoder(t)
 	case reflect.Array:
 		fallthrough
@@ -243,162 +248,125 @@ func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
 	}
 }
 
-func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
+type terraformUnwrappingFunc func(val attr.Value) any
 
-	if (t == reflect.TypeOf(basetypes.StringValue{})) {
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(basetypes.StringValue)
-			var tfState = state.Interface().(basetypes.StringValue)
-			if tfState.IsNull() && tfPlan.IsNull() {
-				return nil, nil
-			} else if tfPlan.IsNull() {
-				return explicitJsonNull, nil
-			} else if tfPlan.IsUnknown() {
-				return nil, nil
-			} else {
-				return stdjson.Marshal(tfPlan.ValueString())
-			}
-		}
-	}
+func (e *encoder) terraformUnwrappedEncoder(underlyingType reflect.Type, unwrap terraformUnwrappingFunc) encoderFunc {
+	enc := e.typeEncoder(underlyingType)
+	return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
+		unwrappedPlan := unwrap(plan)
+		unwrappedState := unwrap(state)
+		return enc(reflect.ValueOf(unwrappedPlan), reflect.ValueOf(unwrappedState))
+	})
+}
 
-	if (t == reflect.TypeOf(basetypes.Int64Value{})) {
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(basetypes.Int64Value)
-			var tfState = state.Interface().(basetypes.Int64Value)
-			if tfState.IsNull() && tfPlan.IsNull() {
-				return nil, nil
-			} else if tfPlan.IsNull() {
-				return explicitJsonNull, nil
-			} else if tfPlan.IsUnknown() {
-				return nil, nil
-			} else {
-				return []byte(fmt.Sprint(tfPlan.ValueInt64())), nil
-			}
-		}
-	}
+func (e *encoder) terraformUnwrappedDynamicEncoder(unwrap terraformUnwrappingFunc) encoderFunc {
+	return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
+		unwrappedPlan := unwrap(plan)
+		unwrappedState := unwrap(state)
+		enc := e.typeEncoder(reflect.TypeOf(unwrappedPlan))
+		return enc(reflect.ValueOf(unwrappedPlan), reflect.ValueOf(unwrappedState))
+	})
+}
 
-	if (t == reflect.TypeOf(basetypes.NumberValue{})) {
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(basetypes.NumberValue)
-			var tfState = state.Interface().(basetypes.NumberValue)
-			if tfState.IsNull() && tfPlan.IsNull() {
-				return nil, nil
-			} else if tfPlan.IsNull() {
-				return explicitJsonNull, nil
-			} else if tfPlan.IsUnknown() {
-				return nil, nil
-			} else {
-				return []byte(fmt.Sprint(tfPlan.ValueBigFloat().Float64())), nil
-			}
-		}
-	}
-
-	if (t == reflect.TypeOf(basetypes.Float64Value{})) {
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(basetypes.Float64Value)
-			var tfState = state.Interface().(basetypes.Float64Value)
-			if tfState.IsNull() && tfPlan.IsNull() {
-				return nil, nil
-			} else if tfPlan.IsNull() {
-				return explicitJsonNull, nil
-			} else if tfPlan.IsUnknown() {
-				return nil, nil
-			} else {
-				return []byte(fmt.Sprint(tfPlan.ValueFloat64())), nil
-			}
-		}
-	}
-
-	if (t == reflect.TypeOf(basetypes.BoolValue{})) {
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(basetypes.BoolValue)
-			var tfState = state.Interface().(basetypes.BoolValue)
-			if tfState.IsNull() && tfPlan.IsNull() {
-				return nil, nil
-			} else if tfPlan.IsNull() {
-				return explicitJsonNull, nil
-			} else if tfPlan.IsUnknown() {
-				return nil, nil
-			} else {
-				return []byte(fmt.Sprint(tfPlan.ValueBool())), nil
-			}
-		}
-	}
-
-	if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
-		structType := t.Field(0).Type
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(basetypes.ObjectValuable)
-			var tfState = state.Interface().(basetypes.ObjectValuable)
-			if tfState.IsNull() && tfPlan.IsNull() {
-				return nil, nil
-			} else if tfPlan.IsNull() {
-				return explicitJsonNull, nil
-			} else if tfPlan.IsUnknown() {
-				return nil, nil
-			} else {
-				if tfState.IsNull() || tfState.IsUnknown() {
-					state = plan
-				}
-				planStruct, _ := plan.Interface().(customfield.NestedObjectLike).ValueAny(context.TODO())
-				stateStruct, _ := state.Interface().(customfield.NestedObjectLike).ValueAny(context.TODO())
-				return e.newStructTypeEncoder(structType)(reflect.ValueOf(planStruct).Elem(), reflect.ValueOf(stateStruct).Elem())
-			}
-		}
-	}
-
-	if (t == reflect.TypeOf(basetypes.DynamicValue{})) {
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(basetypes.DynamicValue)
-			var tfState = state.Interface().(basetypes.DynamicValue)
-
-			planValue := tfPlan.UnderlyingValue()
-			if tfPlan.IsUnderlyingValueNull() || tfPlan.IsUnderlyingValueUnknown() {
-				planValue = nil
-			}
-
-			stateValue := tfState.UnderlyingValue()
-			if tfState.IsUnderlyingValueNull() || tfState.IsUnderlyingValueUnknown() {
-				stateValue = nil
-			}
-
-			// if the plan is set to a value, use it
-			if planValue != nil {
-				valueType := planValue.Type(context.TODO()).ValueType(context.TODO())
-				if stateValue == nil {
-					// state must be non-nil, so set it to the plan if it is
-					// because the plan is set, the state will be ignored anyway
-					stateValue = planValue
-				}
-				return e.newStructTypeEncoder(reflect.TypeOf(valueType))(reflect.ValueOf(planValue), reflect.ValueOf(stateValue))
-			}
-
-			// if state is set to a value, and the plan is null, explicitly unset it
-			if stateValue != nil && (tfPlan.IsNull() || tfPlan.IsUnderlyingValueNull()) {
-				return []byte("null"), nil
-			}
-
-			// otherwise, omit the field
+func handleNullAndUndefined(innerFunc func(attr.Value, attr.Value) ([]byte, error)) encoderFunc {
+	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+		tfPlan := plan.Interface().(attr.Value)
+		tfState := state.Interface().(attr.Value)
+		if tfState.IsNull() && tfPlan.IsNull() {
 			return nil, nil
+		} else if tfPlan.IsNull() {
+			return explicitJsonNull, nil
+		} else if tfPlan.IsUnknown() {
+			return nil, nil
+		} else {
+			if tfState.IsNull() || tfState.IsUnknown() {
+				tfState = tfPlan
+			}
+			return innerFunc(tfPlan, tfState)
 		}
 	}
+}
 
-	if (t == reflect.TypeOf(jsontypes.Normalized{})) {
-		return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
-			var tfPlan = plan.Interface().(jsontypes.Normalized)
-			var tfState = state.Interface().(jsontypes.Normalized)
-			if tfState.IsNull() && tfPlan.IsNull() {
+func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
+
+	if t == reflect.TypeOf(basetypes.BoolValue{}) {
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(true), func(value attr.Value) any {
+			return value.(basetypes.BoolValue).ValueBool()
+		})
+	} else if t == reflect.TypeOf(basetypes.Int64Value{}) {
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(int64(0)), func(value attr.Value) any {
+			return value.(basetypes.Int64Value).ValueInt64()
+		})
+	} else if t == reflect.TypeOf(basetypes.Float64Value{}) {
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(float64(0)), func(value attr.Value) any {
+			return value.(basetypes.Float64Value).ValueFloat64()
+		})
+	} else if t == reflect.TypeOf(basetypes.StringValue{}) {
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(""), func(value attr.Value) any {
+			return value.(basetypes.StringValue).ValueString()
+		})
+	} else if t == reflect.TypeOf(timetypes.RFC3339{}) {
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(time.Time{}), func(value attr.Value) any {
+			timeValue, _ := value.(timetypes.RFC3339).ValueRFC3339Time()
+			return timeValue
+		})
+	} else if t == reflect.TypeOf(basetypes.ListValue{}) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.ListValue).Elements()
+		})
+	} else if t == reflect.TypeOf(basetypes.SetValue{}) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.SetValue).Elements()
+		})
+	} else if t == reflect.TypeOf(basetypes.MapValue{}) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.MapValue).Elements()
+		})
+	} else if t == reflect.TypeOf(basetypes.ObjectValue{}) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.ObjectValue).Attributes()
+		})
+	} else if t == reflect.TypeOf(basetypes.DynamicValue{}) {
+		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+			tfPlan := plan.Interface().(basetypes.DynamicValue)
+			tfState := state.Interface().(basetypes.DynamicValue)
+			planNull := tfPlan.IsNull() || tfPlan.IsUnderlyingValueNull()
+			stateMissing := tfState.IsNull() || tfState.IsUnderlyingValueNull() || tfState.IsUnderlyingValueNull() || tfState.IsUnderlyingValueUnknown()
+			if stateMissing && planNull {
 				return nil, nil
-			} else if tfPlan.IsNull() {
+			} else if planNull {
 				return explicitJsonNull, nil
-			} else if tfPlan.IsUnknown() {
+			} else if tfPlan.IsUnknown() || tfPlan.IsUnderlyingValueUnknown() {
 				return nil, nil
 			} else {
-				return []byte(tfPlan.ValueString()), nil
+				if stateMissing {
+					tfState = tfPlan
+				}
+				unwrappedPlan := tfPlan.UnderlyingValue()
+				unwrappedState := tfState.UnderlyingValue()
+				enc := e.typeEncoder(reflect.TypeOf(unwrappedPlan))
+				return enc(reflect.ValueOf(unwrappedPlan), reflect.ValueOf(unwrappedState))
 			}
 		}
+	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
+		structType := reflect.PtrTo(t.Field(0).Type)
+		return e.terraformUnwrappedEncoder(structType, func(value attr.Value) any {
+			converted := value.(customfield.NestedObjectLike)
+			structValue, _ := converted.ValueAny(context.TODO())
+			return structValue
+		})
+	} else if t == reflect.TypeOf(jsontypes.Normalized{}) {
+		return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
+			return []byte(plan.(jsontypes.Normalized).ValueString()), nil
+		})
 	}
 
+	return func(plan reflect.Value, state reflect.Value) (json []byte, err error) {
+		return nil, fmt.Errorf("unknown type received at terraform encoder: %s", t.String())
+	}
+}
+
+func (e *encoder) newStructTypeEncoder(t reflect.Type) encoderFunc {
 	encoderFields := []encoderField{}
 	extraEncoder := (*encoderField)(nil)
 
@@ -538,20 +506,19 @@ func (e *encoder) encodeMapEntries(json []byte, p reflect.Value, s reflect.Value
 	keyEncoder := e.typeEncoder(p.Type().Key())
 
 	iter := p.MapRange()
-	sIter := s.MapRange()
 	for iter.Next() {
-		sIter.Next()
 		var encodedKey []byte
 		if iter.Key().Type().Kind() == reflect.String {
 			encodedKey = []byte(iter.Key().String())
 		} else {
 			var err error
-			encodedKey, err = keyEncoder(iter.Key(), sIter.Key())
+			encodedKey, err = keyEncoder(iter.Key(), iter.Key())
 			if err != nil {
 				return nil, err
 			}
 		}
-		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value(), state: sIter.Value()})
+		stateValue := s.MapIndex(iter.Key())
+		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value(), state: stateValue})
 	}
 
 	// Ensure deterministic output
