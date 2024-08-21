@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -35,6 +36,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description:   "The contact email address of the user.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"status": schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+				Default:       stringdefault.StaticString("pending"),
 			},
 			"roles": schema.ListAttribute{
 				Description: "Array of roles associated with this member.",
@@ -82,13 +92,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-				},
-			},
-			"status": schema.StringAttribute{
-				Description: "A member's status in the account.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
 				},
 			},
 			"user": schema.SingleNestedAttribute{
