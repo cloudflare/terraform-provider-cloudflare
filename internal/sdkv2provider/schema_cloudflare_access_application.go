@@ -895,8 +895,13 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 
 			customClaims, _ := d.Get("saas_app.0.custom_claim").([]interface{})
 			for _, customClaims := range customClaims {
-				claimsAsMap := customClaims.(map[string]interface{})
-				SaasConfig.CustomClaims = append(SaasConfig.CustomClaims, convertOIDCClaimSchemaToStruct(claimsAsMap))
+				claimAsMap := customClaims.(map[string]interface{})
+				claim := convertOIDCClaimSchemaToStruct(claimAsMap)
+				if SaasConfig.CustomClaims == nil {
+					SaasConfig.CustomClaims = &[]cloudflare.OIDCClaimConfig{claim}
+				} else {
+					*SaasConfig.CustomClaims = append(*SaasConfig.CustomClaims, claim)
+				}
 			}
 
 			if _, ok := d.GetOk("saas_app.0.hybrid_and_implicit_options"); ok {
@@ -916,7 +921,12 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 			customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
 			for _, customAttributes := range customAttributes {
 				attributeAsMap := customAttributes.(map[string]interface{})
-				SaasConfig.CustomAttributes = append(SaasConfig.CustomAttributes, convertSAMLAttributeSchemaToStruct(attributeAsMap))
+				attribute := convertSAMLAttributeSchemaToStruct(attributeAsMap)
+				if SaasConfig.CustomAttributes == nil {
+					SaasConfig.CustomAttributes = &[]cloudflare.SAMLAttributeConfig{attribute}
+				} else {
+					*SaasConfig.CustomAttributes = append(*SaasConfig.CustomAttributes, convertSAMLAttributeSchemaToStruct(attributeAsMap))
+				}
 			}
 		}
 	}
@@ -1179,8 +1189,10 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 		}
 
 		var customClaims []interface{}
-		for _, claim := range app.CustomClaims {
-			customClaims = append(customClaims, convertOIDCClaimStructToSchema(claim))
+		if app.CustomClaims != nil {
+			for _, claim := range *app.CustomClaims {
+				customClaims = append(customClaims, convertOIDCClaimStructToSchema(claim))
+			}
 		}
 		if len(customClaims) != 0 {
 			m["custom_claim"] = customClaims
@@ -1209,8 +1221,10 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 		}
 
 		var customAttributes []interface{}
-		for _, attr := range app.CustomAttributes {
-			customAttributes = append(customAttributes, convertSAMLAttributeStructToSchema(attr))
+		if app.CustomAttributes != nil {
+			for _, attr := range *app.CustomAttributes {
+				customAttributes = append(customAttributes, convertSAMLAttributeStructToSchema(attr))
+			}
 		}
 		if len(customAttributes) != 0 {
 			m["custom_attribute"] = customAttributes
