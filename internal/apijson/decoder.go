@@ -14,6 +14,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/tidwall/gjson"
@@ -323,12 +324,7 @@ func (d *decoderBuilder) newArrayTypeDecoder(t reflect.Type) decoderFunc {
 	}
 }
 
-func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
-	// map of json field name to struct field decoders
-	decoderFields := map[string]decoderField{}
-	extraDecoder := (*decoderField)(nil)
-	inlineDecoder := (*decoderField)(nil)
-
+func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	if (t == reflect.TypeOf(basetypes.StringValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if node.Type == gjson.Null {
@@ -349,11 +345,12 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				value.Set(reflect.ValueOf(types.Int64Null()))
 				return nil
 			}
-			value.Set(reflect.ValueOf(types.Int64Value(node.Int())))
+			// use ParseFloat just to validate that it's a valid number
 			_, err := strconv.ParseFloat(node.Str, 64)
 			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
 				return fmt.Errorf("apijson: failed to parse types.Int64Value")
 			}
+			value.Set(reflect.ValueOf(types.Int64Value(node.Int())))
 			return nil
 		}
 	}
@@ -364,11 +361,12 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				value.Set(reflect.ValueOf(types.Float64Null()))
 				return nil
 			}
-			value.Set(reflect.ValueOf(types.Float64Value(node.Float())))
+			// use ParseFloat just to validate that it's a valid number
 			_, err := strconv.ParseFloat(node.Str, 64)
 			if node.Type == gjson.JSON || (node.Type == gjson.String && err != nil) {
 				return fmt.Errorf("apijson: failed to parse types.Float64Value")
 			}
+			value.Set(reflect.ValueOf(types.Float64Value(node.Float())))
 			return nil
 		}
 	}
@@ -405,11 +403,124 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 	if (t == reflect.TypeOf(basetypes.ListValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			eleType := value.Interface().(basetypes.ListValue).ElementType(context.TODO())
-			if node.Type == gjson.Null {
+			switch node.Type {
+			case gjson.Null:
 				value.Set(reflect.ValueOf(types.ListNull(eleType)))
 				return nil
+			case gjson.JSON:
+				attr, err := d.inferTerraformAttrFromValue(node)
+				if err != nil {
+					return err
+				}
+				value.Set(reflect.ValueOf(attr))
+				return nil
+			default:
+				return fmt.Errorf("apijson: cannot deserialize unexpected type %s to types.ListValue", node.Type)
 			}
-			return fmt.Errorf("cannot deserialize ListValue")
+		}
+	}
+
+	if (t == reflect.TypeOf(basetypes.SetValue{})) {
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			eleType := value.Interface().(basetypes.SetValue).ElementType(context.TODO())
+			switch node.Type {
+			case gjson.Null:
+				value.Set(reflect.ValueOf(types.ListNull(eleType)))
+				return nil
+			case gjson.JSON:
+				elementType, attributes, err := d.parseArrayOfValues(node)
+				if err != nil {
+					return err
+				}
+				setValue, diags := basetypes.NewSetValue(elementType, attributes)
+				if diags.HasError() {
+					return errorFromDiagnostics(diags)
+				}
+				value.Set(reflect.ValueOf(setValue))
+				return nil
+			default:
+				return fmt.Errorf("apijson: cannot deserialize unexpected type %s to types.ListValue", node.Type)
+			}
+		}
+	}
+
+	if (t == reflect.TypeOf(basetypes.MapValue{})) {
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			eleType := value.Interface().(basetypes.MapValue).ElementType(context.TODO())
+			switch node.Type {
+			case gjson.Null:
+				value.Set(reflect.ValueOf(types.ListNull(eleType)))
+				return nil
+			case gjson.JSON:
+				attributes := map[string]attr.Value{}
+				loopErr := error(nil)
+				node.ForEach(func(key, value gjson.Result) bool {
+					attr, err := d.inferTerraformAttrFromValue(value)
+					if err != nil {
+						loopErr = err
+						return false
+					}
+					attributes[key.String()] = attr
+					return true
+				})
+				if loopErr != nil {
+					return loopErr
+				}
+				mapValue, diags := basetypes.NewMapValue(eleType, attributes)
+				if diags.HasError() {
+					return errorFromDiagnostics(diags)
+				}
+				value.Set(reflect.ValueOf(mapValue))
+				return nil
+			default:
+				return fmt.Errorf("apijson: cannot deserialize unexpected type %s to types.ListValue", node.Type)
+			}
+		}
+	}
+
+	if (t == reflect.TypeOf(basetypes.ObjectValue{})) {
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			objValue := value.Interface().(basetypes.ObjectValue)
+			attrTypes := objValue.AttributeTypes(context.TODO())
+			switch node.Type {
+			case gjson.Null:
+				value.Set(reflect.ValueOf(types.ObjectNull(attrTypes)))
+				return nil
+			case gjson.JSON:
+				if len(attrTypes) > 0 {
+					attributes := objValue.Attributes()
+					newAttributes := map[string]attr.Value{}
+					for key, attrType := range attrTypes {
+						value := attributes[key]
+						jsonValue := node.Get(key)
+						newValue := attrType.ValueType(context.TODO())
+						if value == nil {
+							value = newValue
+						}
+						dec := d.typeDecoder(reflect.TypeOf(value))
+						err := dec(jsonValue, reflect.ValueOf(&newValue).Elem(), state)
+						if err != nil {
+							return err
+						}
+						newAttributes[key] = newValue
+					}
+					newObject, diags := basetypes.NewObjectValue(attrTypes, newAttributes)
+					if diags.HasError() {
+						return errorFromDiagnostics(diags)
+					}
+					value.Set(reflect.ValueOf(newObject))
+					return nil
+				} else {
+					attr, err := d.inferTerraformAttrFromValue(node)
+					if err != nil {
+						return err
+					}
+					value.Set(reflect.ValueOf(attr))
+					return nil
+				}
+			default:
+				return fmt.Errorf("apijson: cannot deserialize unexpected type to types.ObjectValue")
+			}
 		}
 	}
 
@@ -441,34 +552,33 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.DynamicValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			// deserialize based on the type of JSON we have
-			switch node.Type {
-			case gjson.Null:
+			if node.Type == gjson.Null {
+				// special case of null means we don't have an underlying type
 				value.Set(reflect.ValueOf(types.DynamicNull()))
 				return nil
-			case gjson.True:
-				value.Set(reflect.ValueOf(types.DynamicValue(types.BoolValue(true))))
-				return nil
-			case gjson.False:
-				value.Set(reflect.ValueOf(types.DynamicValue(types.BoolValue(false))))
-				return nil
-			case gjson.Number:
-				_, err := strconv.ParseInt(node.String(), 10, 64)
-				if err == nil {
-					value.Set(reflect.ValueOf(types.DynamicValue(types.Int64Value(node.Int()))))
-					return nil
-				} else {
-					value.Set(reflect.ValueOf(types.DynamicValue(types.Float64Value(node.Float()))))
-					return nil
-				}
-			case gjson.String:
-				value.Set(reflect.ValueOf(types.DynamicValue(types.StringValue(node.String()))))
-				return nil
-			case gjson.JSON:
-				return fmt.Errorf("apijson: cannot deserialize nested JSON into types.DynamicValue")
-			default:
-				return fmt.Errorf("apijson: cannot deserialize unexpected type to types.DynamicValue")
 			}
+			dynamic := value.Interface().(basetypes.DynamicValue)
+			underlying := dynamic.UnderlyingValue()
+			if underlying != nil {
+				underlyingValue := reflect.New(reflect.TypeOf(underlying)).Elem()
+				underlyingValue.Set(reflect.ValueOf(underlying)) // set any existing type information
+				// if we have an underlying value, we can use that type to decode
+				dec := d.newTerraformTypeDecoder(reflect.TypeOf(underlying))
+				err := dec(node, underlyingValue, state)
+				if err != nil {
+					return err
+				}
+				value.Set(reflect.ValueOf(types.DynamicValue(underlyingValue.Interface().(attr.Value))))
+			} else {
+				// just decode from the json itself
+				attr, err := d.inferTerraformAttrFromValue(node)
+				if err != nil {
+					return err
+				}
+
+				value.Set(reflect.ValueOf(types.DynamicValue(attr)))
+			}
+			return nil
 		}
 	}
 
@@ -488,6 +598,21 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 			value.Set(reflect.ValueOf(jsontypes.NewNormalizedValue(raw)))
 			return nil
 		}
+	}
+
+	return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+		return fmt.Errorf("apijson: cannot deserialize terraform type %v", t)
+	}
+}
+
+func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
+	// map of json field name to struct field decoders
+	decoderFields := map[string]decoderField{}
+	extraDecoder := (*decoderField)(nil)
+	inlineDecoder := (*decoderField)(nil)
+
+	if t.Implements(reflect.TypeOf((*attr.Value)(nil)).Elem()) {
+		return d.newTerraformTypeDecoder(t)
 	}
 
 	// This helper allows us to recursively collect field encoders into a flat
@@ -768,4 +893,79 @@ func guardUnknown(state *decoderState, v reflect.Value) bool {
 		return true
 	}
 	return false
+}
+
+func (d *decoderBuilder) inferTerraformAttrFromValue(node gjson.Result) (attr.Value, error) {
+	switch node.Type {
+	case gjson.Null:
+		return types.DynamicNull(), nil
+	case gjson.True:
+		return types.BoolValue(true), nil
+	case gjson.False:
+		return types.BoolValue(false), nil
+	case gjson.Number:
+		_, err := strconv.ParseInt(node.String(), 10, 64)
+		if err == nil {
+			return types.Int64Value(node.Int()), nil
+		}
+		return types.Float64Value(node.Float()), nil
+	case gjson.String:
+		return types.StringValue(node.String()), nil
+	case gjson.JSON:
+		if node.IsArray() {
+			elementType, attributes, err := d.parseArrayOfValues(node)
+			if err != nil {
+				return nil, err
+			}
+			newVal, diags := basetypes.NewListValue(elementType, attributes)
+			if diags.HasError() {
+				return nil, errorFromDiagnostics(diags)
+			}
+			return newVal, nil
+		} else if node.IsObject() {
+			attributes := map[string]attr.Value{}
+			attributeTypes := map[string]attr.Type{}
+			loopErr := error(nil)
+			node.ForEach(func(key, value gjson.Result) bool {
+				attr, err := d.inferTerraformAttrFromValue(value)
+				if err != nil {
+					loopErr = err
+					return false
+				}
+				attributes[key.String()] = attr
+				attributeTypes[key.String()] = attr.Type(context.TODO())
+				return true
+			})
+			if loopErr != nil {
+				return nil, loopErr
+			}
+			newVal, diags := basetypes.NewObjectValue(attributeTypes, attributes)
+			if diags.HasError() {
+				return nil, errorFromDiagnostics(diags)
+			}
+			return newVal, nil
+		}
+
+	}
+	return nil, fmt.Errorf("apijson: cannot infer terraform attribute from value")
+}
+
+func (d *decoderBuilder) parseArrayOfValues(node gjson.Result) (attr.Type, []attr.Value, error) {
+	loopErr := error(nil)
+	attributes := []attr.Value{}
+	var elementType attr.Type
+	node.ForEach(func(_, value gjson.Result) bool {
+		val, err := d.inferTerraformAttrFromValue(value)
+		if err != nil {
+			loopErr = err
+			return false
+		}
+		elementType = val.Type(context.TODO())
+		attributes = append(attributes, val)
+		return true
+	})
+	if loopErr != nil {
+		return nil, nil, loopErr
+	}
+	return elementType, attributes, nil
 }

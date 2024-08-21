@@ -10,8 +10,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/tidwall/gjson"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -371,6 +373,32 @@ var tests = map[string]struct {
 	"tfsdk_dynamic_string":     {`"hey"`, types.DynamicValue(types.StringValue("hey"))},
 	"tfsdk_dynamic_int":        {"5", types.DynamicValue(types.Int64Value(5))},
 
+	"tfsdk_list": {
+		"[1,2,3]",
+		types.ListValueMust(
+			basetypes.Int64Type{},
+			[]attr.Value{basetypes.NewInt64Value(1), basetypes.NewInt64Value(2), basetypes.NewInt64Value(3)},
+		),
+	},
+
+	"tfsdk_object": {
+		`{"baz":4,"foo":"bar"}`,
+		types.ObjectValueMust(
+			map[string]attr.Type{"baz": basetypes.Int64Type{}, "foo": basetypes.StringType{}},
+			map[string]attr.Value{"baz": basetypes.NewInt64Value(4), "foo": basetypes.NewStringValue("bar")},
+		),
+	},
+
+	"tfsdk_dynamic_object": {
+		`{"baz":4,"foo":"bar"}`,
+		types.DynamicValue(
+			types.ObjectValueMust(
+				map[string]attr.Type{"baz": basetypes.Int64Type{}, "foo": basetypes.StringType{}},
+				map[string]attr.Value{"baz": basetypes.NewInt64Value(4), "foo": basetypes.NewStringValue("bar")},
+			),
+		),
+	},
+
 	"embedded_tfsdk_struct": {
 		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"data_object":{"data_object":{"nested_int":19},"embedded_int":18,"embedded_string":"embedded_data_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
 		TfsdkStructs{
@@ -664,6 +692,56 @@ var decode_from_value_tests = map[string]struct {
 		`14`,
 		types.DynamicValue(types.Int64Value(5)),
 		types.DynamicValue(types.Int64Value(14)),
+	},
+
+	"tfsdk_map_value": {
+		`{"foo":1,"bar":4}`,
+		types.MapNull(types.Int64Type),
+		types.MapValueMust(types.Int64Type, map[string]attr.Value{"foo": types.Int64Value(1), "bar": types.Int64Value(4)}),
+	},
+
+	"tfsdk_map_value_existing_data": {
+		`{"foo":1,"bar":4}`,
+		types.MapValueMust(types.Int64Type, map[string]attr.Value{"baz": types.Int64Value(2)}),
+		types.MapValueMust(types.Int64Type, map[string]attr.Value{"foo": types.Int64Value(1), "bar": types.Int64Value(4)}),
+	},
+
+	"tfsdk_object_with_attributes": {
+		`{"baz":4,"foo":["bar","baz"]}`,
+		types.ObjectNull(
+			map[string]attr.Type{"baz": types.Int64Type, "foo": types.SetType{ElemType: types.StringType}},
+		),
+		types.ObjectValueMust(
+			map[string]attr.Type{"baz": types.Int64Type, "foo": types.SetType{ElemType: types.StringType}},
+			map[string]attr.Value{"baz": types.Int64Value(4), "foo": types.SetValueMust(types.StringType, []attr.Value{types.StringValue("bar"), types.StringValue("baz")})},
+		),
+	},
+
+	"tfsdk_dynamic_object_with_attributes": {
+		`{"baz":4,"foo":["bar","baz"]}`,
+		types.DynamicValue(
+			types.ObjectNull(
+				map[string]attr.Type{"baz": types.Int64Type, "foo": types.SetType{ElemType: types.StringType}},
+			),
+		),
+		types.DynamicValue(
+			types.ObjectValueMust(
+				map[string]attr.Type{"baz": types.Int64Type, "foo": types.SetType{ElemType: types.StringType}},
+				map[string]attr.Value{"baz": types.Int64Value(4), "foo": types.SetValueMust(types.StringType, []attr.Value{types.StringValue("bar"), types.StringValue("baz")})},
+			),
+		),
+	},
+
+	// note it creates a list this time because the dynamic doesn't contain type information
+	"tfsdk_dynamic_object_without_attributes": {
+		`{"baz":4,"foo":["bar","baz"]}`,
+		types.DynamicNull(),
+		types.DynamicValue(
+			types.ObjectValueMust(
+				map[string]attr.Type{"baz": types.Int64Type, "foo": types.ListType{ElemType: types.StringType}},
+				map[string]attr.Value{"baz": types.Int64Value(4), "foo": types.ListValueMust(types.StringType, []attr.Value{types.StringValue("bar"), types.StringValue("baz")})},
+			),
+		),
 	},
 }
 
