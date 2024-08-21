@@ -471,7 +471,7 @@ func inflateDeviceSettings(device interface{}) *cloudflare.TeamsDeviceSettings {
 		GatewayProxyUDPEnabled:             deviceSettings["udp"].(bool),
 		RootCertificateInstallationEnabled: deviceSettings["root_ca"].(bool),
 		UseZTVirtualIP:                     cloudflare.BoolPtr(deviceSettings["virtual_ip"].(bool)),
-		DisableForTime:                     deviceSettings["disable_for_time"].(int32),
+		DisableForTime:                     int32(deviceSettings["disable_for_time"].(int)),
 	}
 }
 func flattenSSHSessionLogSettings(logSettings *cloudflare.AuditSSHSettings) []interface{} {
