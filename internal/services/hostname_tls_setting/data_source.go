@@ -58,14 +58,18 @@ func (d *HostnameTLSSettingDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
+	params, diags := data.toReadParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := HostnameTLSSettingResultDataSourceEnvelope{*data}
 	_, err := d.client.Hostnames.Settings.TLS.Get(
 		ctx,
 		hostnames.SettingTLSGetParamsSettingID(data.SettingID.ValueString()),
-		hostnames.SettingTLSGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

@@ -3,7 +3,10 @@
 package magic_wan_ipsec_tunnel
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type MagicWANIPSECTunnelDataSourceModel struct {
 	AccountID     types.String                                   `tfsdk:"account_id" path:"account_id"`
 	IPSECTunnelID types.String                                   `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id"`
 	IPSECTunnel   *MagicWANIPSECTunnelIPSECTunnelDataSourceModel `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel"`
+}
+
+func (m *MagicWANIPSECTunnelDataSourceModel) toReadParams() (params magic_transit.IPSECTunnelGetParams, diags diag.Diagnostics) {
+	params = magic_transit.IPSECTunnelGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type MagicWANIPSECTunnelIPSECTunnelDataSourceModel struct {

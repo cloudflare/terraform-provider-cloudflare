@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -81,16 +80,19 @@ func (d *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ListItemDataSourceModel{}
 		env := ListItemResultListDataSourceEnvelope{items}
 
 		page, err := d.client.Rules.Lists.Items.List(
 			ctx,
 			data.Filter.ListID.ValueString(),
-			rules.ListItemListParams{
-				AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-				Search:    cloudflare.F(data.Filter.Search.ValueString()),
-			},
+			params,
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

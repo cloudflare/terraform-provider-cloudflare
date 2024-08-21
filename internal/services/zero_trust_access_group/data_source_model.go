@@ -3,8 +3,11 @@
 package zero_trust_access_group
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -29,6 +32,30 @@ type ZeroTrustAccessGroupDataSourceModel struct {
 	IsDefault *[]*ZeroTrustAccessGroupIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default"`
 	Require   *[]*ZeroTrustAccessGroupRequireDataSourceModel   `tfsdk:"require" json:"require"`
 	Filter    *ZeroTrustAccessGroupFindOneByDataSourceModel    `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams() (params zero_trust.AccessGroupGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessGroupGetParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
+}
+
+func (m *ZeroTrustAccessGroupDataSourceModel) toListParams() (params zero_trust.AccessGroupListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessGroupListParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustAccessGroupExcludeDataSourceModel struct {

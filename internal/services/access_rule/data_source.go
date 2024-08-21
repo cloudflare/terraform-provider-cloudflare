@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,16 +58,14 @@ func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	if data.Filter == nil {
-		res := new(http.Response)
-		env := AccessRuleResultDataSourceEnvelope{*data}
-		params := firewall.AccessRuleGetParams{}
-
-		if !data.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.AccountID.ValueString())
-		} else {
-			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
 		}
 
+		res := new(http.Response)
+		env := AccessRuleResultDataSourceEnvelope{*data}
 		_, err := d.client.Firewall.AccessRules.Get(
 			ctx,
 			data.Identifier.ValueString(),
@@ -88,22 +85,10 @@ func (d *AccessRuleDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		}
 		data = &env.Result
 	} else {
-		params := firewall.AccessRuleListParams{
-			Configuration: cloudflare.F(firewall.AccessRuleListParamsConfiguration{
-				Target: cloudflare.F(firewall.AccessRuleListParamsConfigurationTarget(data.Filter.Configuration.Target.ValueString())),
-				Value:  cloudflare.F(data.Filter.Configuration.Value.ValueString()),
-			}),
-			Direction: cloudflare.F(firewall.AccessRuleListParamsDirection(data.Filter.Direction.ValueString())),
-			Match:     cloudflare.F(firewall.AccessRuleListParamsMatch(data.Filter.Match.ValueString())),
-			Mode:      cloudflare.F(firewall.AccessRuleListParamsMode(data.Filter.Mode.ValueString())),
-			Notes:     cloudflare.F(data.Filter.Notes.ValueString()),
-			Order:     cloudflare.F(firewall.AccessRuleListParamsOrder(data.Filter.Order.ValueString())),
-		}
-
-		if !data.Filter.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.Filter.AccountID.ValueString())
-		} else {
-			params.ZoneID = cloudflare.F(data.Filter.ZoneID.ValueString())
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
 		}
 
 		items := &[]*AccessRuleDataSourceModel{}

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,15 +53,18 @@ func (d *ZeroTrustListsDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*ZeroTrustListsResultDataSourceModel{}
 	env := ZeroTrustListsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ZeroTrustListsResultDataSourceModel{}
 
-	page, err := d.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-		Type:      cloudflare.F(zero_trust.GatewayListListParamsType(data.Type.ValueString())),
-	})
+	page, err := d.client.ZeroTrust.Gateway.Lists.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

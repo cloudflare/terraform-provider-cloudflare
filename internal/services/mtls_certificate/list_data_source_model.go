@@ -3,7 +3,10 @@
 package mtls_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/mtls_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type MTLSCertificatesDataSourceModel struct {
 	AccountID types.String                              `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                               `tfsdk:"max_items"`
 	Result    *[]*MTLSCertificatesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *MTLSCertificatesDataSourceModel) toListParams() (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
+	params = mtls_certificates.MTLSCertificateListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type MTLSCertificatesResultDataSourceModel struct {

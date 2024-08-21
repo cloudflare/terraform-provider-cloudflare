@@ -3,6 +3,9 @@
 package zero_trust_device_profiles
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -42,6 +45,22 @@ type ZeroTrustDeviceProfilesDataSourceModel struct {
 	ServiceModeV2       *ZeroTrustDeviceProfilesServiceModeV2DataSourceModel      `tfsdk:"service_mode_v2" json:"service_mode_v2"`
 	TargetTests         *[]*ZeroTrustDeviceProfilesTargetTestsDataSourceModel     `tfsdk:"target_tests" json:"target_tests"`
 	Filter              *ZeroTrustDeviceProfilesFindOneByDataSourceModel          `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustDeviceProfilesDataSourceModel) toReadParams() (params zero_trust.DevicePolicyGetParams, diags diag.Diagnostics) {
+	params = zero_trust.DevicePolicyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustDeviceProfilesDataSourceModel) toListParams() (params zero_trust.DevicePolicyListParams, diags diag.Diagnostics) {
+	params = zero_trust.DevicePolicyListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustDeviceProfilesExcludeDataSourceModel struct {

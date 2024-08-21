@@ -3,7 +3,10 @@
 package zero_trust_list
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +29,26 @@ type ZeroTrustListDataSourceModel struct {
 	Name        types.String                           `tfsdk:"name" json:"name"`
 	Type        types.String                           `tfsdk:"type" json:"type"`
 	Filter      *ZeroTrustListFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustListDataSourceModel) toReadParams() (params zero_trust.GatewayListGetParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayListGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustListDataSourceModel) toListParams() (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayListListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Type.IsNull() {
+		params.Type = cloudflare.F(zero_trust.GatewayListListParamsType(m.Filter.Type.ValueString()))
+	}
+
+	return
 }
 
 type ZeroTrustListFindOneByDataSourceModel struct {

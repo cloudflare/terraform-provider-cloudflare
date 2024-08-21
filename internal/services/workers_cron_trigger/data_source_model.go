@@ -3,6 +3,9 @@
 package workers_cron_trigger
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/workers"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,6 +17,14 @@ type WorkersCronTriggerDataSourceModel struct {
 	AccountID  types.String                                   `tfsdk:"account_id" path:"account_id"`
 	ScriptName types.String                                   `tfsdk:"script_name" path:"script_name"`
 	Schedules  *[]*WorkersCronTriggerSchedulesDataSourceModel `tfsdk:"schedules" json:"schedules"`
+}
+
+func (m *WorkersCronTriggerDataSourceModel) toReadParams() (params workers.ScriptScheduleGetParams, diags diag.Diagnostics) {
+	params = workers.ScriptScheduleGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type WorkersCronTriggerSchedulesDataSourceModel struct {

@@ -3,8 +3,11 @@
 package notification_policy
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -30,6 +33,22 @@ type NotificationPolicyDataSourceModel struct {
 	Mechanisms    map[string]*[]jsontypes.Normalized          `tfsdk:"mechanisms" json:"mechanisms"`
 	Filters       *NotificationPolicyFiltersDataSourceModel   `tfsdk:"filters" json:"filters"`
 	Filter        *NotificationPolicyFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *NotificationPolicyDataSourceModel) toReadParams() (params alerting.PolicyGetParams, diags diag.Diagnostics) {
+	params = alerting.PolicyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *NotificationPolicyDataSourceModel) toListParams() (params alerting.PolicyListParams, diags diag.Diagnostics) {
+	params = alerting.PolicyListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type NotificationPolicyFiltersDataSourceModel struct {

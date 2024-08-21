@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,16 +53,16 @@ func (d *ZeroTrustTunnelCloudflaredVirtualNetworkDataSource) Read(ctx context.Co
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel{}
 	env := ZeroTrustTunnelCloudflaredVirtualNetworkResultListDataSourceEnvelope{items}
 
-	page, err := d.client.ZeroTrust.Networks.VirtualNetworks.List(ctx, zero_trust.NetworkVirtualNetworkListParams{
-		AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		ID:        cloudflare.F(data.Filter.ID.ValueString()),
-		IsDefault: cloudflare.F(data.Filter.IsDefault.ValueBool()),
-		IsDeleted: cloudflare.F(data.Filter.IsDeleted.ValueBool()),
-		Name:      cloudflare.F(data.Filter.Name.ValueString()),
-	})
+	page, err := d.client.ZeroTrust.Networks.VirtualNetworks.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

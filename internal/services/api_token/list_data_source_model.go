@@ -3,8 +3,11 @@
 package api_token
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,16 @@ type APITokensDataSourceModel struct {
 	Direction types.String                       `tfsdk:"direction" query:"direction"`
 	MaxItems  types.Int64                        `tfsdk:"max_items"`
 	Result    *[]*APITokensResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *APITokensDataSourceModel) toListParams() (params user.TokenListParams, diags diag.Diagnostics) {
+	params = user.TokenListParams{}
+
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(user.TokenListParamsDirection(m.Direction.ValueString()))
+	}
+
+	return
 }
 
 type APITokensResultDataSourceModel struct {

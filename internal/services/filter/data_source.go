@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/filters"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -80,19 +79,19 @@ func (d *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*FilterDataSourceModel{}
 		env := FilterResultListDataSourceEnvelope{items}
 
 		page, err := d.client.Filters.List(
 			ctx,
 			data.Filter.ZoneIdentifier.ValueString(),
-			filters.FilterListParams{
-				ID:          cloudflare.F(data.Filter.ID.ValueString()),
-				Description: cloudflare.F(data.Filter.Description.ValueString()),
-				Expression:  cloudflare.F(data.Filter.Expression.ValueString()),
-				Paused:      cloudflare.F(data.Filter.Paused.ValueBool()),
-				Ref:         cloudflare.F(data.Filter.Ref.ValueString()),
-			},
+			params,
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

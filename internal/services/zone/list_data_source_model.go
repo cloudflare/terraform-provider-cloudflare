@@ -3,8 +3,11 @@
 package zone
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +24,38 @@ type ZonesDataSourceModel struct {
 	Match     types.String                   `tfsdk:"match" query:"match"`
 	MaxItems  types.Int64                    `tfsdk:"max_items"`
 	Result    *[]*ZonesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZonesDataSourceModel) toListParams() (params zones.ZoneListParams, diags diag.Diagnostics) {
+	params = zones.ZoneListParams{}
+
+	if m.Account != nil {
+		paramsAccount := zones.ZoneListParamsAccount{}
+		if !m.Account.ID.IsNull() {
+			paramsAccount.ID = cloudflare.F(m.Account.ID.ValueString())
+		}
+		if !m.Account.Name.IsNull() {
+			paramsAccount.Name = cloudflare.F(m.Account.Name.ValueString())
+		}
+		params.Account = cloudflare.F(paramsAccount)
+	}
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(zones.ZoneListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Match.IsNull() {
+		params.Match = cloudflare.F(zones.ZoneListParamsMatch(m.Match.ValueString()))
+	}
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
+	}
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(zones.ZoneListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.Status.IsNull() {
+		params.Status = cloudflare.F(zones.ZoneListParamsStatus(m.Status.ValueString()))
+	}
+
+	return
 }
 
 type ZonesAccountDataSourceModel struct {

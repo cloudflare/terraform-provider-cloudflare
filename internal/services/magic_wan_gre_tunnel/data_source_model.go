@@ -3,7 +3,10 @@
 package magic_wan_gre_tunnel
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type MagicWANGRETunnelDataSourceModel struct {
 	AccountID   types.String                               `tfsdk:"account_id" path:"account_id"`
 	GRETunnelID types.String                               `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id"`
 	GRETunnel   *MagicWANGRETunnelGRETunnelDataSourceModel `tfsdk:"gre_tunnel" json:"gre_tunnel"`
+}
+
+func (m *MagicWANGRETunnelDataSourceModel) toReadParams() (params magic_transit.GRETunnelGetParams, diags diag.Diagnostics) {
+	params = magic_transit.GRETunnelGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type MagicWANGRETunnelGRETunnelDataSourceModel struct {

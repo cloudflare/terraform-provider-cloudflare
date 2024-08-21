@@ -3,7 +3,10 @@
 package notification_policy_webhooks
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type NotificationPolicyWebhooksListDataSourceModel struct {
 	AccountID types.String                                            `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                                             `tfsdk:"max_items"`
 	Result    *[]*NotificationPolicyWebhooksListResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *NotificationPolicyWebhooksListDataSourceModel) toListParams() (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {
+	params = alerting.DestinationWebhookListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type NotificationPolicyWebhooksListResultDataSourceModel struct {

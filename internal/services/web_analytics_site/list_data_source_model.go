@@ -3,7 +3,10 @@
 package web_analytics_site
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rum"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,18 @@ type WebAnalyticsSitesDataSourceModel struct {
 	OrderBy   types.String                               `tfsdk:"order_by" query:"order_by"`
 	MaxItems  types.Int64                                `tfsdk:"max_items"`
 	Result    *[]*WebAnalyticsSitesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *WebAnalyticsSitesDataSourceModel) toListParams() (params rum.SiteInfoListParams, diags diag.Diagnostics) {
+	params = rum.SiteInfoListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(rum.SiteInfoListParamsOrderBy(m.OrderBy.ValueString()))
+	}
+
+	return
 }
 
 type WebAnalyticsSitesResultDataSourceModel struct {

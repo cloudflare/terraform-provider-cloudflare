@@ -3,8 +3,11 @@
 package zero_trust_tunnel_cloudflared_config
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,6 +22,14 @@ type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
 	Version   types.Int64                                            `tfsdk:"version" json:"version"`
 	Config    *ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel `tfsdk:"config" json:"config"`
 	Source    types.String                                           `tfsdk:"source" json:"source"`
+}
+
+func (m *ZeroTrustTunnelCloudflaredConfigDataSourceModel) toReadParams() (params zero_trust.TunnelConfigurationGetParams, diags diag.Diagnostics) {
+	params = zero_trust.TunnelConfigurationGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel struct {

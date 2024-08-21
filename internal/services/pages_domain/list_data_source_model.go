@@ -3,7 +3,10 @@
 package pages_domain
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,14 @@ type PagesDomainsDataSourceModel struct {
 	ProjectName types.String                          `tfsdk:"project_name" path:"project_name"`
 	MaxItems    types.Int64                           `tfsdk:"max_items"`
 	Result      *[]*PagesDomainsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *PagesDomainsDataSourceModel) toListParams() (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
+	params = pages.ProjectDomainListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type PagesDomainsResultDataSourceModel struct {

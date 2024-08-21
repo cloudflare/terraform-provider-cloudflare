@@ -3,7 +3,10 @@
 package zero_trust_access_mtls_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,6 +30,30 @@ type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
 	Name                types.String                                            `tfsdk:"name" json:"name"`
 	AssociatedHostnames *[]types.String                                         `tfsdk:"associated_hostnames" json:"associated_hostnames"`
 	Filter              *ZeroTrustAccessMTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustAccessMTLSCertificateDataSourceModel) toReadParams() (params zero_trust.AccessCertificateGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessCertificateGetParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
+}
+
+func (m *ZeroTrustAccessMTLSCertificateDataSourceModel) toListParams() (params zero_trust.AccessCertificateListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessCertificateListParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustAccessMTLSCertificateFindOneByDataSourceModel struct {

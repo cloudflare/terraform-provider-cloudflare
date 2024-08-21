@@ -3,7 +3,10 @@
 package regional_hostname
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +24,22 @@ type RegionalHostnameDataSourceModel struct {
 	CreatedOn timetypes.RFC3339                         `tfsdk:"created_on" json:"created_on,computed"`
 	RegionKey types.String                              `tfsdk:"region_key" json:"region_key,computed"`
 	Filter    *RegionalHostnameFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *RegionalHostnameDataSourceModel) toReadParams() (params addressing.RegionalHostnameGetParams, diags diag.Diagnostics) {
+	params = addressing.RegionalHostnameGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *RegionalHostnameDataSourceModel) toListParams() (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {
+	params = addressing.RegionalHostnameListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type RegionalHostnameFindOneByDataSourceModel struct {

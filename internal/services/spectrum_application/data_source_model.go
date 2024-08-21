@@ -3,6 +3,9 @@
 package spectrum_application
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/spectrum"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,4 +16,12 @@ type SpectrumApplicationResultDataSourceEnvelope struct {
 type SpectrumApplicationDataSourceModel struct {
 	AppID  types.String `tfsdk:"app_id" path:"app_id"`
 	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+}
+
+func (m *SpectrumApplicationDataSourceModel) toReadParams() (params spectrum.AppGetParams, diags diag.Diagnostics) {
+	params = spectrum.AppGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

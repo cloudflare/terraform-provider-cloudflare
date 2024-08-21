@@ -3,7 +3,10 @@
 package workers_script
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,6 +26,22 @@ type WorkersScriptDataSourceModel struct {
 	UsageModel    types.String                                  `tfsdk:"usage_model" json:"usage_model"`
 	TailConsumers *[]*WorkersScriptTailConsumersDataSourceModel `tfsdk:"tail_consumers" json:"tail_consumers"`
 	Filter        *WorkersScriptFindOneByDataSourceModel        `tfsdk:"filter"`
+}
+
+func (m *WorkersScriptDataSourceModel) toReadParams() (params workers.ScriptGetParams, diags diag.Diagnostics) {
+	params = workers.ScriptGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WorkersScriptDataSourceModel) toListParams() (params workers.ScriptListParams, diags diag.Diagnostics) {
+	params = workers.ScriptListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type WorkersScriptTailConsumersDataSourceModel struct {

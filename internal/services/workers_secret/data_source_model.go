@@ -3,6 +3,9 @@
 package workers_secret
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,6 +17,14 @@ type WorkersSecretDataSourceModel struct {
 	Name   types.String                           `tfsdk:"name" json:"name"`
 	Type   types.String                           `tfsdk:"type" json:"type"`
 	Filter *WorkersSecretFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *WorkersSecretDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {
+	params = workers_for_platforms.DispatchNamespaceScriptSecretListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type WorkersSecretFindOneByDataSourceModel struct {

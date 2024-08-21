@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,15 +58,19 @@ func (d *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := PagesDomainResultDataSourceEnvelope{*data}
 		_, err := d.client.Pages.Projects.Domains.Get(
 			ctx,
 			data.ProjectName.ValueString(),
 			data.DomainName.ValueString(),
-			pages.ProjectDomainGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -83,15 +86,19 @@ func (d *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*PagesDomainDataSourceModel{}
 		env := PagesDomainResultListDataSourceEnvelope{items}
 
 		page, err := d.client.Pages.Projects.Domains.List(
 			ctx,
 			data.Filter.ProjectName.ValueString(),
-			pages.ProjectDomainListParams{
-				AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-			},
+			params,
 		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())

@@ -3,7 +3,10 @@
 package zero_trust_dns_location
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type ZeroTrustDNSLocationsDataSourceModel struct {
 	AccountID types.String                                   `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                                    `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustDNSLocationsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams() (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
+	params = zero_trust.GatewayLocationListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustDNSLocationsResultDataSourceModel struct {

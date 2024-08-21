@@ -3,7 +3,10 @@
 package load_balancer_monitor
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -38,6 +41,22 @@ type LoadBalancerMonitorDataSourceModel struct {
 	ProbeZone       types.String                                 `tfsdk:"probe_zone" json:"probe_zone"`
 	Header          map[string]*[]types.String                   `tfsdk:"header" json:"header"`
 	Filter          *LoadBalancerMonitorFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *LoadBalancerMonitorDataSourceModel) toReadParams() (params load_balancers.MonitorGetParams, diags diag.Diagnostics) {
+	params = load_balancers.MonitorGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *LoadBalancerMonitorDataSourceModel) toListParams() (params load_balancers.MonitorListParams, diags diag.Diagnostics) {
+	params = load_balancers.MonitorListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type LoadBalancerMonitorFindOneByDataSourceModel struct {

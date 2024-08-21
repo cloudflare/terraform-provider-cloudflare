@@ -3,7 +3,10 @@
 package zone_cache_variants
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/cache"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,14 @@ type ZoneCacheVariantsDataSourceModel struct {
 	ID         types.String                           `tfsdk:"id" json:"id"`
 	ModifiedOn timetypes.RFC3339                      `tfsdk:"modified_on" json:"modified_on"`
 	Value      *ZoneCacheVariantsValueDataSourceModel `tfsdk:"value" json:"value"`
+}
+
+func (m *ZoneCacheVariantsDataSourceModel) toReadParams() (params cache.VariantGetParams, diags diag.Diagnostics) {
+	params = cache.VariantGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type ZoneCacheVariantsValueDataSourceModel struct {

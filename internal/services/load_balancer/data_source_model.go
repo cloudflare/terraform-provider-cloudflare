@@ -3,7 +3,10 @@
 package load_balancer
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -40,6 +43,22 @@ type LoadBalancerDataSourceModel struct {
 	Rules                     *[]*LoadBalancerRulesDataSourceModel                  `tfsdk:"rules" json:"rules"`
 	SessionAffinityAttributes *LoadBalancerSessionAffinityAttributesDataSourceModel `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes"`
 	Filter                    *LoadBalancerFindOneByDataSourceModel                 `tfsdk:"filter"`
+}
+
+func (m *LoadBalancerDataSourceModel) toReadParams() (params load_balancers.LoadBalancerGetParams, diags diag.Diagnostics) {
+	params = load_balancers.LoadBalancerGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *LoadBalancerDataSourceModel) toListParams() (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
+	params = load_balancers.LoadBalancerListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type LoadBalancerAdaptiveRoutingDataSourceModel struct {

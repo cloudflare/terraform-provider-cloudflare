@@ -3,7 +3,10 @@
 package zero_trust_access_custom_page
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +29,22 @@ type ZeroTrustAccessCustomPageDataSourceModel struct {
 	AppCount     types.Int64                                        `tfsdk:"app_count" json:"app_count"`
 	UID          types.String                                       `tfsdk:"uid" json:"uid"`
 	Filter       *ZeroTrustAccessCustomPageFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustAccessCustomPageDataSourceModel) toReadParams() (params zero_trust.AccessCustomPageGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessCustomPageGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustAccessCustomPageDataSourceModel) toListParams() (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessCustomPageListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustAccessCustomPageFindOneByDataSourceModel struct {

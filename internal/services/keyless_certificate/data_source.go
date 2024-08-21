@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/keyless_certificates"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *KeylessCertificateDataSource) Read(ctx context.Context, req datasource.
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := KeylessCertificateResultDataSourceEnvelope{*data}
 		_, err := d.client.KeylessCertificates.Get(
 			ctx,
 			data.KeylessCertificateID.ValueString(),
-			keyless_certificates.KeylessCertificateGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *KeylessCertificateDataSource) Read(ctx context.Context, req datasource.
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*KeylessCertificateDataSourceModel{}
 		env := KeylessCertificateResultListDataSourceEnvelope{items}
 
-		page, err := d.client.KeylessCertificates.List(ctx, keyless_certificates.KeylessCertificateListParams{
-			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
-		})
+		page, err := d.client.KeylessCertificates.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

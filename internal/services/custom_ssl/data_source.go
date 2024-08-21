@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/custom_certificates"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := CustomSSLResultDataSourceEnvelope{*data}
 		_, err := d.client.CustomCertificates.Get(
 			ctx,
 			data.CustomCertificateID.ValueString(),
-			custom_certificates.CustomCertificateGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,14 +85,16 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*CustomSSLDataSourceModel{}
 		env := CustomSSLResultListDataSourceEnvelope{items}
 
-		page, err := d.client.CustomCertificates.List(ctx, custom_certificates.CustomCertificateListParams{
-			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
-			Match:  cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(data.Filter.Match.ValueString())),
-			Status: cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(data.Filter.Status.ValueString())),
-		})
+		page, err := d.client.CustomCertificates.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

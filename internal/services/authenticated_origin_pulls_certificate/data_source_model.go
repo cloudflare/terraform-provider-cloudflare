@@ -3,7 +3,10 @@
 package authenticated_origin_pulls_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +29,22 @@ type AuthenticatedOriginPullsCertificateDataSourceModel struct {
 	Status        types.String                                                 `tfsdk:"status" json:"status"`
 	UploadedOn    timetypes.RFC3339                                            `tfsdk:"uploaded_on" json:"uploaded_on"`
 	Filter        *AuthenticatedOriginPullsCertificateFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toReadParams() (params origin_tls_client_auth.OriginTLSClientAuthGetParams, diags diag.Diagnostics) {
+	params = origin_tls_client_auth.OriginTLSClientAuthGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toListParams() (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {
+	params = origin_tls_client_auth.OriginTLSClientAuthListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type AuthenticatedOriginPullsCertificateFindOneByDataSourceModel struct {

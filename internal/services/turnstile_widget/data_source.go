@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/challenges"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := TurnstileWidgetResultDataSourceEnvelope{*data}
 		_, err := d.client.Challenges.Widgets.Get(
 			ctx,
 			data.Sitekey.ValueString(),
-			challenges.WidgetGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,14 +85,16 @@ func (d *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*TurnstileWidgetDataSourceModel{}
 		env := TurnstileWidgetResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Challenges.Widgets.List(ctx, challenges.WidgetListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-			Direction: cloudflare.F(challenges.WidgetListParamsDirection(data.Filter.Direction.ValueString())),
-			Order:     cloudflare.F(challenges.WidgetListParamsOrder(data.Filter.Order.ValueString())),
-		})
+		page, err := d.client.Challenges.Widgets.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

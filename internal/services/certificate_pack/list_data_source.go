@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,15 +53,18 @@ func (d *CertificatePacksDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*CertificatePacksResultDataSourceModel{}
 	env := CertificatePacksResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*CertificatePacksResultDataSourceModel{}
 
-	page, err := d.client.SSL.CertificatePacks.List(ctx, ssl.CertificatePackListParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		Status: cloudflare.F(ssl.CertificatePackListParamsStatus(data.Status.ValueString())),
-	})
+	page, err := d.client.SSL.CertificatePacks.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

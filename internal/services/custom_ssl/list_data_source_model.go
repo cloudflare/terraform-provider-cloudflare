@@ -3,7 +3,10 @@
 package custom_ssl
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/custom_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +20,21 @@ type CustomSSLsDataSourceModel struct {
 	Match    types.String                        `tfsdk:"match" query:"match"`
 	MaxItems types.Int64                         `tfsdk:"max_items"`
 	Result   *[]*CustomSSLsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *CustomSSLsDataSourceModel) toListParams() (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
+	params = custom_certificates.CustomCertificateListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	if !m.Match.IsNull() {
+		params.Match = cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(m.Match.ValueString()))
+	}
+	if !m.Status.IsNull() {
+		params.Status = cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(m.Status.ValueString()))
+	}
+
+	return
 }
 
 type CustomSSLsResultDataSourceModel struct {

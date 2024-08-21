@@ -3,6 +3,9 @@
 package list_item
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rules"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,6 +22,18 @@ type ListItemDataSourceModel struct {
 	ItemID            types.String                      `tfsdk:"item_id" path:"item_id"`
 	ListID            types.String                      `tfsdk:"list_id" path:"list_id"`
 	Filter            *ListItemFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ListItemDataSourceModel) toListParams() (params rules.ListItemListParams, diags diag.Diagnostics) {
+	params = rules.ListItemListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Search.IsNull() {
+		params.Search = cloudflare.F(m.Filter.Search.ValueString())
+	}
+
+	return
 }
 
 type ListItemFindOneByDataSourceModel struct {

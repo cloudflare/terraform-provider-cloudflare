@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,6 +53,12 @@ func (d *EmailRoutingRulesDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*EmailRoutingRulesResultDataSourceModel{}
 	env := EmailRoutingRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
@@ -62,9 +67,7 @@ func (d *EmailRoutingRulesDataSource) Read(ctx context.Context, req datasource.R
 	page, err := d.client.EmailRouting.Rules.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		email_routing.RuleListParams{
-			Enabled: cloudflare.F(email_routing.RuleListParamsEnabled(data.Enabled.ValueBool())),
-		},
+		params,
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

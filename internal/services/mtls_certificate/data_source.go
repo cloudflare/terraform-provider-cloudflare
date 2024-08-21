@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/mtls_certificates"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := MTLSCertificateResultDataSourceEnvelope{*data}
 		_, err := d.client.MTLSCertificates.Get(
 			ctx,
 			data.MTLSCertificateID.ValueString(),
-			mtls_certificates.MTLSCertificateGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *MTLSCertificateDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*MTLSCertificateDataSourceModel{}
 		env := MTLSCertificateResultListDataSourceEnvelope{items}
 
-		page, err := d.client.MTLSCertificates.List(ctx, mtls_certificates.MTLSCertificateListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.MTLSCertificates.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

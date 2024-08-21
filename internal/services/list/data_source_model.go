@@ -3,6 +3,9 @@
 package list
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rules"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +29,22 @@ type ListDataSourceModel struct {
 	NumItems              types.Float64                 `tfsdk:"num_items" json:"num_items"`
 	NumReferencingFilters types.Float64                 `tfsdk:"num_referencing_filters" json:"num_referencing_filters"`
 	Filter                *ListFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ListDataSourceModel) toReadParams() (params rules.ListGetParams, diags diag.Diagnostics) {
+	params = rules.ListGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ListDataSourceModel) toListParams() (params rules.ListListParams, diags diag.Diagnostics) {
+	params = rules.ListListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ListFindOneByDataSourceModel struct {

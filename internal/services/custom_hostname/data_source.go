@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/custom_hostnames"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *CustomHostnameDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := CustomHostnameResultDataSourceEnvelope{*data}
 		_, err := d.client.CustomHostnames.Get(
 			ctx,
 			data.CustomHostnameID.ValueString(),
-			custom_hostnames.CustomHostnameGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,17 +85,16 @@ func (d *CustomHostnameDataSource) Read(ctx context.Context, req datasource.Read
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*CustomHostnameDataSourceModel{}
 		env := CustomHostnameResultListDataSourceEnvelope{items}
 
-		page, err := d.client.CustomHostnames.List(ctx, custom_hostnames.CustomHostnameListParams{
-			ZoneID:    cloudflare.F(data.Filter.ZoneID.ValueString()),
-			ID:        cloudflare.F(data.Filter.ID.ValueString()),
-			Direction: cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(data.Filter.Direction.ValueString())),
-			Hostname:  cloudflare.F(data.Filter.Hostname.ValueString()),
-			Order:     cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(data.Filter.Order.ValueString())),
-			SSL:       cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(data.Filter.SSL.ValueFloat64())),
-		})
+		page, err := d.client.CustomHostnames.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

@@ -3,6 +3,9 @@
 package user_agent_blocking_rule
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/firewall"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,6 +25,22 @@ type UserAgentBlockingRuleDataSourceModel struct {
 	Paused         types.Bool                                         `tfsdk:"paused" json:"paused"`
 	Configuration  *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration"`
 	Filter         *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
+}
+
+func (m *UserAgentBlockingRuleDataSourceModel) toListParams() (params firewall.UARuleListParams, diags diag.Diagnostics) {
+	params = firewall.UARuleListParams{}
+
+	if !m.Filter.Description.IsNull() {
+		params.Description = cloudflare.F(m.Filter.Description.ValueString())
+	}
+	if !m.Filter.DescriptionSearch.IsNull() {
+		params.DescriptionSearch = cloudflare.F(m.Filter.DescriptionSearch.ValueString())
+	}
+	if !m.Filter.UASearch.IsNull() {
+		params.UASearch = cloudflare.F(m.Filter.UASearch.ValueString())
+	}
+
+	return
 }
 
 type UserAgentBlockingRuleConfigurationDataSourceModel struct {

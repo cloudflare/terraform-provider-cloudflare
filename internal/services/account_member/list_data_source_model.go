@@ -3,7 +3,10 @@
 package account_member
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,6 +21,24 @@ type AccountMembersDataSourceModel struct {
 	Status    types.String                            `tfsdk:"status" query:"status"`
 	MaxItems  types.Int64                             `tfsdk:"max_items"`
 	Result    *[]*AccountMembersResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *AccountMembersDataSourceModel) toListParams() (params accounts.MemberListParams, diags diag.Diagnostics) {
+	params = accounts.MemberListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(accounts.MemberListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(accounts.MemberListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.Status.IsNull() {
+		params.Status = cloudflare.F(accounts.MemberListParamsStatus(m.Status.ValueString()))
+	}
+
+	return
 }
 
 type AccountMembersResultDataSourceModel struct {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/custom_hostnames"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,19 +53,18 @@ func (d *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*CustomHostnamesResultDataSourceModel{}
 	env := CustomHostnamesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*CustomHostnamesResultDataSourceModel{}
 
-	page, err := d.client.CustomHostnames.List(ctx, custom_hostnames.CustomHostnameListParams{
-		ZoneID:    cloudflare.F(data.ZoneID.ValueString()),
-		ID:        cloudflare.F(data.ID.ValueString()),
-		Direction: cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(data.Direction.ValueString())),
-		Hostname:  cloudflare.F(data.Hostname.ValueString()),
-		Order:     cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(data.Order.ValueString())),
-		SSL:       cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(data.SSL.ValueFloat64())),
-	})
+	page, err := d.client.CustomHostnames.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

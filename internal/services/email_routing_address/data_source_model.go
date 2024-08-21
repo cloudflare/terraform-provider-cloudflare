@@ -3,7 +3,10 @@
 package email_routing_address
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +28,19 @@ type EmailRoutingAddressDataSourceModel struct {
 	Verified                     timetypes.RFC3339                            `tfsdk:"verified" json:"verified,computed"`
 	Email                        types.String                                 `tfsdk:"email" json:"email"`
 	Filter                       *EmailRoutingAddressFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *EmailRoutingAddressDataSourceModel) toListParams() (params email_routing.AddressListParams, diags diag.Diagnostics) {
+	params = email_routing.AddressListParams{}
+
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(email_routing.AddressListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.Verified.IsNull() {
+		params.Verified = cloudflare.F(email_routing.AddressListParamsVerified(m.Filter.Verified.ValueBool()))
+	}
+
+	return
 }
 
 type EmailRoutingAddressFindOneByDataSourceModel struct {

@@ -3,7 +3,10 @@
 package pages_domain
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -29,6 +32,22 @@ type PagesDomainDataSourceModel struct {
 	VerificationData     customfield.NestedObject[PagesDomainVerificationDataDataSourceModel] `tfsdk:"verification_data" json:"verification_data,computed"`
 	Name                 types.String                                                         `tfsdk:"name" json:"name"`
 	Filter               *PagesDomainFindOneByDataSourceModel                                 `tfsdk:"filter"`
+}
+
+func (m *PagesDomainDataSourceModel) toReadParams() (params pages.ProjectDomainGetParams, diags diag.Diagnostics) {
+	params = pages.ProjectDomainGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *PagesDomainDataSourceModel) toListParams() (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
+	params = pages.ProjectDomainListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type PagesDomainValidationDataDataSourceModel struct {

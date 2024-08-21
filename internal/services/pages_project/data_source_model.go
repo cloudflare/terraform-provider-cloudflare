@@ -3,9 +3,12 @@
 package pages_project
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -43,6 +46,22 @@ type PagesProjectDataSourceModel struct {
 	Source              customfield.NestedObject[PagesProjectSourceDataSourceModel] `tfsdk:"source" json:"source,computed"`
 	BuildConfig         *PagesProjectBuildConfigDataSourceModel                     `tfsdk:"build_config" json:"build_config"`
 	Filter              *PagesProjectFindOneByDataSourceModel                       `tfsdk:"filter"`
+}
+
+func (m *PagesProjectDataSourceModel) toReadParams() (params pages.ProjectGetParams, diags diag.Diagnostics) {
+	params = pages.ProjectGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *PagesProjectDataSourceModel) toListParams() (params pages.ProjectListParams, diags diag.Diagnostics) {
+	params = pages.ProjectListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type PagesProjectCanonicalDeploymentDataSourceModel struct {

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -58,14 +57,18 @@ func (d *ZeroTrustGatewayProxyEndpointDataSource) Read(ctx context.Context, req 
 		return
 	}
 
+	params, diags := data.toReadParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	res := new(http.Response)
 	env := ZeroTrustGatewayProxyEndpointResultDataSourceEnvelope{*data}
 	_, err := d.client.ZeroTrust.Gateway.ProxyEndpoints.Get(
 		ctx,
 		data.ProxyEndpointID.ValueString(),
-		zero_trust.GatewayProxyEndpointGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

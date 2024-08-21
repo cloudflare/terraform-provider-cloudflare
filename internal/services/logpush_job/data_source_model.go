@@ -3,7 +3,10 @@
 package logpush_job
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/logpush"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -35,6 +38,30 @@ type LogpushJobDataSourceModel struct {
 	Name                     types.String                            `tfsdk:"name" json:"name"`
 	OutputOptions            *LogpushJobOutputOptionsDataSourceModel `tfsdk:"output_options" json:"output_options"`
 	Filter                   *LogpushJobFindOneByDataSourceModel     `tfsdk:"filter"`
+}
+
+func (m *LogpushJobDataSourceModel) toReadParams() (params logpush.JobGetParams, diags diag.Diagnostics) {
+	params = logpush.JobGetParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
+}
+
+func (m *LogpushJobDataSourceModel) toListParams() (params logpush.JobListParams, diags diag.Diagnostics) {
+	params = logpush.JobListParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type LogpushJobOutputOptionsDataSourceModel struct {

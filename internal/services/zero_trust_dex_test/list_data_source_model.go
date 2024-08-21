@@ -3,7 +3,10 @@
 package zero_trust_dex_test
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type ZeroTrustDEXTestsDataSourceModel struct {
 	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                                `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustDEXTestsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustDEXTestsDataSourceModel) toListParams() (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {
+	params = zero_trust.DeviceDEXTestListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustDEXTestsResultDataSourceModel struct {

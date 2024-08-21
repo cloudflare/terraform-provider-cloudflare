@@ -3,7 +3,10 @@
 package regional_hostname
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type RegionalHostnamesDataSourceModel struct {
 	ZoneID   types.String                               `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems types.Int64                                `tfsdk:"max_items"`
 	Result   *[]*RegionalHostnamesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *RegionalHostnamesDataSourceModel) toListParams() (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {
+	params = addressing.RegionalHostnameListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type RegionalHostnamesResultDataSourceModel struct {

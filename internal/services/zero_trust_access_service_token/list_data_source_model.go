@@ -3,7 +3,10 @@
 package zero_trust_access_service_token
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,18 @@ type ZeroTrustAccessServiceTokensDataSourceModel struct {
 	ZoneID    types.String                                          `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems  types.Int64                                           `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustAccessServiceTokensResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustAccessServiceTokensDataSourceModel) toListParams() (params zero_trust.AccessServiceTokenListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessServiceTokenListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustAccessServiceTokensResultDataSourceModel struct {

@@ -3,7 +3,10 @@
 package waiting_room
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type WaitingRoomsDataSourceModel struct {
 	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems types.Int64                           `tfsdk:"max_items"`
 	Result   *[]*WaitingRoomsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *WaitingRoomsDataSourceModel) toListParams() (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
+	params = waiting_rooms.WaitingRoomListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type WaitingRoomsResultDataSourceModel struct {

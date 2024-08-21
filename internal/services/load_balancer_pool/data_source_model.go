@@ -3,7 +3,10 @@
 package load_balancer_pool
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -36,6 +39,26 @@ type LoadBalancerPoolDataSourceModel struct {
 	OriginSteering     *LoadBalancerPoolOriginSteeringDataSourceModel     `tfsdk:"origin_steering" json:"origin_steering"`
 	Origins            *[]*LoadBalancerPoolOriginsDataSourceModel         `tfsdk:"origins" json:"origins"`
 	Filter             *LoadBalancerPoolFindOneByDataSourceModel          `tfsdk:"filter"`
+}
+
+func (m *LoadBalancerPoolDataSourceModel) toReadParams() (params load_balancers.PoolGetParams, diags diag.Diagnostics) {
+	params = load_balancers.PoolGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *LoadBalancerPoolDataSourceModel) toListParams() (params load_balancers.PoolListParams, diags diag.Diagnostics) {
+	params = load_balancers.PoolListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Monitor.IsNull() {
+		params.Monitor = cloudflare.F(m.Filter.Monitor.ValueString())
+	}
+
+	return
 }
 
 type LoadBalancerPoolLoadSheddingDataSourceModel struct {

@@ -3,6 +3,9 @@
 package workers_custom_domain
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/workers"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,6 +27,38 @@ type WorkersCustomDomainDataSourceModel struct {
 	ZoneID      types.String                                 `tfsdk:"zone_id" json:"zone_id"`
 	ZoneName    types.String                                 `tfsdk:"zone_name" json:"zone_name"`
 	Filter      *WorkersCustomDomainFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *WorkersCustomDomainDataSourceModel) toReadParams() (params workers.DomainGetParams, diags diag.Diagnostics) {
+	params = workers.DomainGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WorkersCustomDomainDataSourceModel) toListParams() (params workers.DomainListParams, diags diag.Diagnostics) {
+	params = workers.DomainListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Environment.IsNull() {
+		params.Environment = cloudflare.F(m.Filter.Environment.ValueString())
+	}
+	if !m.Filter.Hostname.IsNull() {
+		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
+	}
+	if !m.Filter.Service.IsNull() {
+		params.Service = cloudflare.F(m.Filter.Service.ValueString())
+	}
+	if !m.Filter.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+	if !m.Filter.ZoneName.IsNull() {
+		params.ZoneName = cloudflare.F(m.Filter.ZoneName.ValueString())
+	}
+
+	return
 }
 
 type WorkersCustomDomainFindOneByDataSourceModel struct {

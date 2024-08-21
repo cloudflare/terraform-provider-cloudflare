@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *ZeroTrustTunnelCloudflaredDataSource) Read(ctx context.Context, req dat
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZeroTrustTunnelCloudflaredResultDataSourceEnvelope{*data}
 		_, err := d.client.ZeroTrust.Tunnels.Get(
 			ctx,
 			data.TunnelID.ValueString(),
-			zero_trust.TunnelGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,8 @@ func (d *ZeroTrustTunnelCloudflaredDataSource) Read(ctx context.Context, req dat
 		}
 		data = &env.Result
 	} else {
-		dataFilterExistedAt, errs := data.Filter.ExistedAt.ValueRFC3339Time()
-		resp.Diagnostics.Append(errs...)
-		dataFilterWasActiveAt, errs := data.Filter.WasActiveAt.ValueRFC3339Time()
-		resp.Diagnostics.Append(errs...)
-		dataFilterWasInactiveAt, errs := data.Filter.WasInactiveAt.ValueRFC3339Time()
-		resp.Diagnostics.Append(errs...)
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
 		}
@@ -95,18 +94,7 @@ func (d *ZeroTrustTunnelCloudflaredDataSource) Read(ctx context.Context, req dat
 		items := &[]*ZeroTrustTunnelCloudflaredDataSourceModel{}
 		env := ZeroTrustTunnelCloudflaredResultListDataSourceEnvelope{items}
 
-		page, err := d.client.ZeroTrust.Tunnels.List(ctx, zero_trust.TunnelListParams{
-			AccountID:     cloudflare.F(data.Filter.AccountID.ValueString()),
-			ExcludePrefix: cloudflare.F(data.Filter.ExcludePrefix.ValueString()),
-			ExistedAt:     cloudflare.F(dataFilterExistedAt),
-			IncludePrefix: cloudflare.F(data.Filter.IncludePrefix.ValueString()),
-			IsDeleted:     cloudflare.F(data.Filter.IsDeleted.ValueBool()),
-			Name:          cloudflare.F(data.Filter.Name.ValueString()),
-			Status:        cloudflare.F(zero_trust.TunnelListParamsStatus(data.Filter.Status.ValueString())),
-			UUID:          cloudflare.F(data.Filter.UUID.ValueString()),
-			WasActiveAt:   cloudflare.F(dataFilterWasActiveAt),
-			WasInactiveAt: cloudflare.F(dataFilterWasInactiveAt),
-		})
+		page, err := d.client.ZeroTrust.Tunnels.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

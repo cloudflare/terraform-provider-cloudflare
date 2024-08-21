@@ -3,7 +3,10 @@
 package zero_trust_tunnel_cloudflared_virtual_network
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,6 +22,27 @@ type ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel struct {
 	Name      types.String                                                       `tfsdk:"name" query:"name"`
 	MaxItems  types.Int64                                                        `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel) toListParams() (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
+	params = zero_trust.NetworkVirtualNetworkListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.ID.IsNull() {
+		params.ID = cloudflare.F(m.ID.ValueString())
+	}
+	if !m.IsDefault.IsNull() {
+		params.IsDefault = cloudflare.F(m.IsDefault.ValueBool())
+	}
+	if !m.IsDeleted.IsNull() {
+		params.IsDeleted = cloudflare.F(m.IsDeleted.ValueBool())
+	}
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel struct {

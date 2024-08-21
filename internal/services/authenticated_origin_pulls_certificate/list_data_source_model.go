@@ -3,7 +3,10 @@
 package authenticated_origin_pulls_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type AuthenticatedOriginPullsCertificatesDataSourceModel struct {
 	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems types.Int64                                                   `tfsdk:"max_items"`
 	Result   *[]*AuthenticatedOriginPullsCertificatesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *AuthenticatedOriginPullsCertificatesDataSourceModel) toListParams() (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {
+	params = origin_tls_client_auth.OriginTLSClientAuthListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type AuthenticatedOriginPullsCertificatesResultDataSourceModel struct {
