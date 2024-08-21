@@ -1,4 +1,6 @@
-## 4.40.0 (Unreleased)
+## 4.41.0 (Unreleased)
+
+## 4.40.0 (August 21st, 2024)
 
 NOTES:
 
