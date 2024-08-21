@@ -1,0 +1,3 @@
+```release-note:bug
+resource/hyperdrive_config: use hyperdrive_config id when updating resource
+```
