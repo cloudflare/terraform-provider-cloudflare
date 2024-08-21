@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = &ZeroTrustDeviceProfilesResource{}
@@ -106,6 +107,86 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"port": schema.Float64Attribute{
 						Description: "The port number when used with proxy mode.",
 						Optional:    true,
+					},
+				},
+			},
+			"default": schema.BoolAttribute{
+				Description: "Whether the policy is the default policy for an account.",
+				Computed:    true,
+			},
+			"gateway_unique_id": schema.StringAttribute{
+				Computed: true,
+			},
+			"exclude": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							Description: "The address in CIDR format to exclude from the tunnel. If `address` is present, `host` must not be present.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the Split Tunnel item, displayed in the client UI.",
+							Required:    true,
+						},
+						"host": schema.StringAttribute{
+							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"fallback_domains": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The domain suffix to match when resolving locally.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the fallback domain, displayed in the client UI.",
+							Optional:    true,
+						},
+						"dns_server": schema.ListAttribute{
+							Description: "A list of IP addresses to handle domain resolution.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+					},
+				},
+			},
+			"include": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							Description: "The address in CIDR format to include in the tunnel. If address is present, host must not be present.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the split tunnel item, displayed in the client UI.",
+							Required:    true,
+						},
+						"host": schema.StringAttribute{
+							Description: "The domain name to include in the tunnel. If host is present, address must not be present.",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"target_tests": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "The id of the DEX test targeting this policy",
+							Optional:    true,
+						},
+						"name": schema.StringAttribute{
+							Description: "The name of the DEX test targeting this policy",
+							Optional:    true,
+						},
 					},
 				},
 			},
