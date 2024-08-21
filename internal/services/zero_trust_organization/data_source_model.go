@@ -3,7 +3,10 @@
 package zero_trust_organization
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,6 +30,18 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	CustomPages                    *ZeroTrustOrganizationCustomPagesDataSourceModel `tfsdk:"custom_pages" json:"custom_pages"`
 	LoginDesign                    *ZeroTrustOrganizationLoginDesignDataSourceModel `tfsdk:"login_design" json:"login_design"`
 	AutoRedirectToIdentity         types.Bool                                       `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
+}
+
+func (m *ZeroTrustOrganizationDataSourceModel) toReadParams() (params zero_trust.OrganizationListParams, diags diag.Diagnostics) {
+	params = zero_trust.OrganizationListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustOrganizationCustomPagesDataSourceModel struct {

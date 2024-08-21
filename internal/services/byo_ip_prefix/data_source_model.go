@@ -3,7 +3,10 @@
 package byo_ip_prefix
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -31,6 +34,22 @@ type ByoIPPrefixDataSourceModel struct {
 	OnDemandEnabled      types.Bool                           `tfsdk:"on_demand_enabled" json:"on_demand_enabled"`
 	OnDemandLocked       types.Bool                           `tfsdk:"on_demand_locked" json:"on_demand_locked"`
 	Filter               *ByoIPPrefixFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ByoIPPrefixDataSourceModel) toReadParams() (params addressing.PrefixGetParams, diags diag.Diagnostics) {
+	params = addressing.PrefixGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ByoIPPrefixDataSourceModel) toListParams() (params addressing.PrefixListParams, diags diag.Diagnostics) {
+	params = addressing.PrefixListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ByoIPPrefixFindOneByDataSourceModel struct {

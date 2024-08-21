@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/hyperdrive"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,18 @@ func (d *HyperdriveConfigsDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*HyperdriveConfigsResultDataSourceModel{}
 	env := HyperdriveConfigsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*HyperdriveConfigsResultDataSourceModel{}
 
-	page, err := d.client.Hyperdrive.Configs.List(ctx, hyperdrive.ConfigListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	})
+	page, err := d.client.Hyperdrive.Configs.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

@@ -3,7 +3,10 @@
 package workers_for_platforms_dispatch_namespace
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +29,22 @@ type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
 	NamespaceName     types.String                                                  `tfsdk:"namespace_name" json:"namespace_name"`
 	ScriptCount       types.Int64                                                   `tfsdk:"script_count" json:"script_count"`
 	Filter            *WorkersForPlatformsDispatchNamespaceFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams() (params workers_for_platforms.DispatchNamespaceGetParams, diags diag.Diagnostics) {
+	params = workers_for_platforms.DispatchNamespaceGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
+	params = workers_for_platforms.DispatchNamespaceListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type WorkersForPlatformsDispatchNamespaceFindOneByDataSourceModel struct {

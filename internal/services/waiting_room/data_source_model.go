@@ -3,7 +3,10 @@
 package waiting_room
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -43,6 +46,22 @@ type WaitingRoomDataSourceModel struct {
 	AdditionalRoutes           *[]*WaitingRoomAdditionalRoutesDataSourceModel `tfsdk:"additional_routes" json:"additional_routes"`
 	CookieAttributes           *WaitingRoomCookieAttributesDataSourceModel    `tfsdk:"cookie_attributes" json:"cookie_attributes"`
 	Filter                     *WaitingRoomFindOneByDataSourceModel           `tfsdk:"filter"`
+}
+
+func (m *WaitingRoomDataSourceModel) toReadParams() (params waiting_rooms.WaitingRoomGetParams, diags diag.Diagnostics) {
+	params = waiting_rooms.WaitingRoomGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WaitingRoomDataSourceModel) toListParams() (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
+	params = waiting_rooms.WaitingRoomListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type WaitingRoomAdditionalRoutesDataSourceModel struct {

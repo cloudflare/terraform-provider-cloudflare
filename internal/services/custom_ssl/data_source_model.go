@@ -3,7 +3,10 @@
 package custom_ssl
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/custom_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -32,6 +35,29 @@ type CustomSSLDataSourceModel struct {
 	GeoRestrictions     *CustomSSLGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions"`
 	KeylessServer       *CustomSSLKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server"`
 	Filter              *CustomSSLFindOneByDataSourceModel       `tfsdk:"filter"`
+}
+
+func (m *CustomSSLDataSourceModel) toReadParams() (params custom_certificates.CustomCertificateGetParams, diags diag.Diagnostics) {
+	params = custom_certificates.CustomCertificateGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *CustomSSLDataSourceModel) toListParams() (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
+	params = custom_certificates.CustomCertificateListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	if !m.Filter.Match.IsNull() {
+		params.Match = cloudflare.F(custom_certificates.CustomCertificateListParamsMatch(m.Filter.Match.ValueString()))
+	}
+	if !m.Filter.Status.IsNull() {
+		params.Status = cloudflare.F(custom_certificates.CustomCertificateListParamsStatus(m.Filter.Status.ValueString()))
+	}
+
+	return
 }
 
 type CustomSSLGeoRestrictionsDataSourceModel struct {

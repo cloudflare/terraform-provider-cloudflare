@@ -3,7 +3,10 @@
 package web_analytics_site
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rum"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +29,26 @@ type WebAnalyticsSiteDataSourceModel struct {
 	Rules       *[]*WebAnalyticsSiteRulesDataSourceModel  `tfsdk:"rules" json:"rules"`
 	Ruleset     *WebAnalyticsSiteRulesetDataSourceModel   `tfsdk:"ruleset" json:"ruleset"`
 	Filter      *WebAnalyticsSiteFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *WebAnalyticsSiteDataSourceModel) toReadParams() (params rum.SiteInfoGetParams, diags diag.Diagnostics) {
+	params = rum.SiteInfoGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WebAnalyticsSiteDataSourceModel) toListParams() (params rum.SiteInfoListParams, diags diag.Diagnostics) {
+	params = rum.SiteInfoListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.OrderBy.IsNull() {
+		params.OrderBy = cloudflare.F(rum.SiteInfoListParamsOrderBy(m.Filter.OrderBy.ValueString()))
+	}
+
+	return
 }
 
 type WebAnalyticsSiteRulesDataSourceModel struct {

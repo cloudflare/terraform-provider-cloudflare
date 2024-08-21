@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,6 +53,12 @@ func (d *FirewallRulesDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*FirewallRulesResultDataSourceModel{}
 	env := FirewallRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
@@ -62,12 +67,7 @@ func (d *FirewallRulesDataSource) Read(ctx context.Context, req datasource.ReadR
 	page, err := d.client.Firewall.Rules.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		firewall.RuleListParams{
-			ID:          cloudflare.F(data.ID.ValueString()),
-			Action:      cloudflare.F(data.Action.ValueString()),
-			Description: cloudflare.F(data.Description.ValueString()),
-			Paused:      cloudflare.F(data.Paused.ValueBool()),
-		},
+		params,
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

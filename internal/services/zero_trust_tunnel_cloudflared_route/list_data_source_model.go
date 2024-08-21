@@ -3,7 +3,10 @@
 package zero_trust_tunnel_cloudflared_route
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,6 +27,45 @@ type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 	VirtualNetworkID types.String                                              `tfsdk:"virtual_network_id" query:"virtual_network_id"`
 	MaxItems         types.Int64                                               `tfsdk:"max_items"`
 	Result           *[]*ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams() (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
+	mExistedAt, errs := m.ExistedAt.ValueRFC3339Time()
+	diags.Append(errs...)
+
+	params = zero_trust.NetworkRouteListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Comment.IsNull() {
+		params.Comment = cloudflare.F(m.Comment.ValueString())
+	}
+	if !m.ExistedAt.IsNull() {
+		params.ExistedAt = cloudflare.F(mExistedAt)
+	}
+	if !m.IsDeleted.IsNull() {
+		params.IsDeleted = cloudflare.F(m.IsDeleted.ValueBool())
+	}
+	if !m.NetworkSubset.IsNull() {
+		params.NetworkSubset = cloudflare.F(m.NetworkSubset.ValueString())
+	}
+	if !m.NetworkSuperset.IsNull() {
+		params.NetworkSuperset = cloudflare.F(m.NetworkSuperset.ValueString())
+	}
+	if !m.RouteID.IsNull() {
+		params.RouteID = cloudflare.F(m.RouteID.ValueString())
+	}
+	if !m.TunTypes.IsNull() {
+		params.TunTypes = cloudflare.F(m.TunTypes.ValueString())
+	}
+	if !m.TunnelID.IsNull() {
+		params.TunnelID = cloudflare.F(m.TunnelID.ValueString())
+	}
+	if !m.VirtualNetworkID.IsNull() {
+		params.VirtualNetworkID = cloudflare.F(m.VirtualNetworkID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel struct {

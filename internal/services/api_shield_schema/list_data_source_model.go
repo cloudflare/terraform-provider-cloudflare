@@ -3,7 +3,10 @@
 package api_shield_schema
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +20,21 @@ type APIShieldSchemasDataSourceModel struct {
 	OmitSource        types.Bool                                `tfsdk:"omit_source" query:"omit_source"`
 	MaxItems          types.Int64                               `tfsdk:"max_items"`
 	Result            *[]*APIShieldSchemasResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *APIShieldSchemasDataSourceModel) toListParams() (params api_gateway.UserSchemaListParams, diags diag.Diagnostics) {
+	params = api_gateway.UserSchemaListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	if !m.OmitSource.IsNull() {
+		params.OmitSource = cloudflare.F(m.OmitSource.ValueBool())
+	}
+	if !m.ValidationEnabled.IsNull() {
+		params.ValidationEnabled = cloudflare.F(m.ValidationEnabled.ValueBool())
+	}
+
+	return
 }
 
 type APIShieldSchemasResultDataSourceModel struct {

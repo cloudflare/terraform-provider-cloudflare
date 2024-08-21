@@ -3,7 +3,10 @@
 package zero_trust_access_custom_page
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type ZeroTrustAccessCustomPagesDataSourceModel struct {
 	AccountID types.String                                        `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                                         `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustAccessCustomPagesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustAccessCustomPagesDataSourceModel) toListParams() (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessCustomPageListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustAccessCustomPagesResultDataSourceModel struct {

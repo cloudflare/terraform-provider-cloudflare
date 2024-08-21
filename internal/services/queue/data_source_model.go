@@ -3,6 +3,9 @@
 package queue
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/queues"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +28,22 @@ type QueueDataSourceModel struct {
 	Producers           *[]*QueueProducersDataSourceModel `tfsdk:"producers" json:"producers,computed"`
 	QueueName           types.String                      `tfsdk:"queue_name" json:"queue_name"`
 	Filter              *QueueFindOneByDataSourceModel    `tfsdk:"filter"`
+}
+
+func (m *QueueDataSourceModel) toReadParams() (params queues.QueueGetParams, diags diag.Diagnostics) {
+	params = queues.QueueGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *QueueDataSourceModel) toListParams() (params queues.QueueListParams, diags diag.Diagnostics) {
+	params = queues.QueueListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type QueueConsumersDataSourceModel struct {

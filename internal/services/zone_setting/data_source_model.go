@@ -3,6 +3,9 @@
 package zone_setting
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zones"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,4 +16,12 @@ type ZoneSettingResultDataSourceEnvelope struct {
 type ZoneSettingDataSourceModel struct {
 	SettingID types.String `tfsdk:"setting_id" path:"setting_id"`
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+}
+
+func (m *ZoneSettingDataSourceModel) toReadParams() (params zones.SettingGetParams, diags diag.Diagnostics) {
+	params = zones.SettingGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,6 +53,12 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*WorkersSecretsResultDataSourceModel{}
 	env := WorkersSecretsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
@@ -63,9 +68,7 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 		ctx,
 		data.DispatchNamespace.ValueString(),
 		data.ScriptName.ValueString(),
-		workers_for_platforms.DispatchNamespaceScriptSecretListParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		params,
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())

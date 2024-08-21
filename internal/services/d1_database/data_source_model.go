@@ -3,7 +3,10 @@
 package d1_database
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/d1"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +28,26 @@ type D1DatabaseDataSourceModel struct {
 	Name       types.String                        `tfsdk:"name" json:"name"`
 	Version    types.String                        `tfsdk:"version" json:"version"`
 	Filter     *D1DatabaseFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *D1DatabaseDataSourceModel) toReadParams() (params d1.DatabaseGetParams, diags diag.Diagnostics) {
+	params = d1.DatabaseGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *D1DatabaseDataSourceModel) toListParams() (params d1.DatabaseListParams, diags diag.Diagnostics) {
+	params = d1.DatabaseListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+
+	return
 }
 
 type D1DatabaseFindOneByDataSourceModel struct {

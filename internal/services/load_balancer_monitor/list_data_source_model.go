@@ -3,7 +3,10 @@
 package load_balancer_monitor
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type LoadBalancerMonitorsDataSourceModel struct {
 	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                                   `tfsdk:"max_items"`
 	Result    *[]*LoadBalancerMonitorsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *LoadBalancerMonitorsDataSourceModel) toListParams() (params load_balancers.MonitorListParams, diags diag.Diagnostics) {
+	params = load_balancers.MonitorListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type LoadBalancerMonitorsResultDataSourceModel struct {

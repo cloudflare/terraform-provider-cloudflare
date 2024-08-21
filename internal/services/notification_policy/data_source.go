@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := NotificationPolicyResultDataSourceEnvelope{*data}
 		_, err := d.client.Alerting.Policies.Get(
 			ctx,
 			data.PolicyID.ValueString(),
-			alerting.PolicyGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *NotificationPolicyDataSource) Read(ctx context.Context, req datasource.
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*NotificationPolicyDataSourceModel{}
 		env := NotificationPolicyResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Alerting.Policies.List(ctx, alerting.PolicyListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.Alerting.Policies.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

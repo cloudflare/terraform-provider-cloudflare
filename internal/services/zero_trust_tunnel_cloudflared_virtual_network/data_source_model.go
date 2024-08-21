@@ -3,7 +3,10 @@
 package zero_trust_tunnel_cloudflared_virtual_network
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,6 +22,27 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {
 	IsDefaultNetwork types.Bool                                                        `tfsdk:"is_default_network" json:"is_default_network"`
 	Name             types.String                                                      `tfsdk:"name" json:"name"`
 	Filter           *ZeroTrustTunnelCloudflaredVirtualNetworkFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toListParams() (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
+	params = zero_trust.NetworkVirtualNetworkListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.ID.IsNull() {
+		params.ID = cloudflare.F(m.Filter.ID.ValueString())
+	}
+	if !m.Filter.IsDefault.IsNull() {
+		params.IsDefault = cloudflare.F(m.Filter.IsDefault.ValueBool())
+	}
+	if !m.Filter.IsDeleted.IsNull() {
+		params.IsDeleted = cloudflare.F(m.Filter.IsDeleted.ValueBool())
+	}
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworkFindOneByDataSourceModel struct {

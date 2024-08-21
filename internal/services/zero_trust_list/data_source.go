@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *ZeroTrustListDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZeroTrustListResultDataSourceEnvelope{*data}
 		_, err := d.client.ZeroTrust.Gateway.Lists.Get(
 			ctx,
 			data.ListID.ValueString(),
-			zero_trust.GatewayListGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,13 +85,16 @@ func (d *ZeroTrustListDataSource) Read(ctx context.Context, req datasource.ReadR
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ZeroTrustListDataSourceModel{}
 		env := ZeroTrustListResultListDataSourceEnvelope{items}
 
-		page, err := d.client.ZeroTrust.Gateway.Lists.List(ctx, zero_trust.GatewayListListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-			Type:      cloudflare.F(zero_trust.GatewayListListParamsType(data.Filter.Type.ValueString())),
-		})
+		page, err := d.client.ZeroTrust.Gateway.Lists.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

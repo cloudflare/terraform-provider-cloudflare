@@ -3,7 +3,10 @@
 package account
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,19 @@ type AccountsDataSourceModel struct {
 	Name      types.String                      `tfsdk:"name" query:"name"`
 	MaxItems  types.Int64                       `tfsdk:"max_items"`
 	Result    *[]*AccountsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *AccountsDataSourceModel) toListParams() (params accounts.AccountListParams, diags diag.Diagnostics) {
+	params = accounts.AccountListParams{}
+
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(accounts.AccountListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
+	}
+
+	return
 }
 
 type AccountsResultDataSourceModel struct {

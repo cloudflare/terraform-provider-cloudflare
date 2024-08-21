@@ -3,7 +3,10 @@
 package origin_ca_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/origin_ca_certificates"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +28,16 @@ type OriginCACertificateDataSourceModel struct {
 	Hostnames         *[]types.String                              `tfsdk:"hostnames" json:"hostnames,computed"`
 	ID                types.String                                 `tfsdk:"id" json:"id"`
 	Filter            *OriginCACertificateFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *OriginCACertificateDataSourceModel) toListParams() (params origin_ca_certificates.OriginCACertificateListParams, diags diag.Diagnostics) {
+	params = origin_ca_certificates.OriginCACertificateListParams{}
+
+	if !m.Filter.ZoneID.IsNull() {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type OriginCACertificateFindOneByDataSourceModel struct {

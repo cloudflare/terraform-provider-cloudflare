@@ -3,7 +3,10 @@
 package api_shield_schema
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +28,29 @@ type APIShieldSchemaDataSourceModel struct {
 	Source            types.String                             `tfsdk:"source" json:"source"`
 	ValidationEnabled types.Bool                               `tfsdk:"validation_enabled" json:"validation_enabled"`
 	Filter            *APIShieldSchemaFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *APIShieldSchemaDataSourceModel) toReadParams() (params api_gateway.UserSchemaGetParams, diags diag.Diagnostics) {
+	params = api_gateway.UserSchemaGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *APIShieldSchemaDataSourceModel) toListParams() (params api_gateway.UserSchemaListParams, diags diag.Diagnostics) {
+	params = api_gateway.UserSchemaListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	if !m.Filter.OmitSource.IsNull() {
+		params.OmitSource = cloudflare.F(m.Filter.OmitSource.ValueBool())
+	}
+	if !m.Filter.ValidationEnabled.IsNull() {
+		params.ValidationEnabled = cloudflare.F(m.Filter.ValidationEnabled.ValueBool())
+	}
+
+	return
 }
 
 type APIShieldSchemaFindOneByDataSourceModel struct {

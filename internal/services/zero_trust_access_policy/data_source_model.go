@@ -3,8 +3,11 @@
 package zero_trust_access_policy
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -36,6 +39,30 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 	Include                      *[]*ZeroTrustAccessPolicyIncludeDataSourceModel        `tfsdk:"include" json:"include"`
 	Require                      *[]*ZeroTrustAccessPolicyRequireDataSourceModel        `tfsdk:"require" json:"require"`
 	Filter                       *ZeroTrustAccessPolicyFindOneByDataSourceModel         `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams() (params zero_trust.AccessApplicationPolicyGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessApplicationPolicyGetParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
+}
+
+func (m *ZeroTrustAccessPolicyDataSourceModel) toListParams() (params zero_trust.AccessApplicationPolicyListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessApplicationPolicyListParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustAccessPolicyApprovalGroupsDataSourceModel struct {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,22 +53,18 @@ func (d *ZonesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*ZonesResultDataSourceModel{}
 	env := ZonesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ZonesResultDataSourceModel{}
 
-	page, err := d.client.Zones.List(ctx, zones.ZoneListParams{
-		Account: cloudflare.F(zones.ZoneListParamsAccount{
-			ID:   cloudflare.F(data.Account.ID.ValueString()),
-			Name: cloudflare.F(data.Account.Name.ValueString()),
-		}),
-		Direction: cloudflare.F(zones.ZoneListParamsDirection(data.Direction.ValueString())),
-		Match:     cloudflare.F(zones.ZoneListParamsMatch(data.Match.ValueString())),
-		Name:      cloudflare.F(data.Name.ValueString()),
-		Order:     cloudflare.F(zones.ZoneListParamsOrder(data.Order.ValueString())),
-		Status:    cloudflare.F(zones.ZoneListParamsStatus(data.Status.ValueString())),
-	})
+	page, err := d.client.Zones.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

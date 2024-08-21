@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,16 +53,18 @@ func (d *WorkersKVNamespacesDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*WorkersKVNamespacesResultDataSourceModel{}
 	env := WorkersKVNamespacesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WorkersKVNamespacesResultDataSourceModel{}
 
-	page, err := d.client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-		Direction: cloudflare.F(kv.NamespaceListParamsDirection(data.Direction.ValueString())),
-		Order:     cloudflare.F(kv.NamespaceListParamsOrder(data.Order.ValueString())),
-	})
+	page, err := d.client.KV.Namespaces.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

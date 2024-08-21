@@ -3,7 +3,10 @@
 package healthcheck
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/healthchecks"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,14 @@ type HealthchecksDataSourceModel struct {
 	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems types.Int64                           `tfsdk:"max_items"`
 	Result   *[]*HealthchecksResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *HealthchecksDataSourceModel) toListParams() (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
+	params = healthchecks.HealthcheckListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type HealthchecksResultDataSourceModel struct {

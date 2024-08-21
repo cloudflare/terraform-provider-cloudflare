@@ -3,7 +3,10 @@
 package turnstile_widget
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/challenges"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +20,21 @@ type TurnstileWidgetsDataSourceModel struct {
 	Order     types.String                              `tfsdk:"order" query:"order"`
 	MaxItems  types.Int64                               `tfsdk:"max_items"`
 	Result    *[]*TurnstileWidgetsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *TurnstileWidgetsDataSourceModel) toListParams() (params challenges.WidgetListParams, diags diag.Diagnostics) {
+	params = challenges.WidgetListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(challenges.WidgetListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(challenges.WidgetListParamsOrder(m.Order.ValueString()))
+	}
+
+	return
 }
 
 type TurnstileWidgetsResultDataSourceModel struct {

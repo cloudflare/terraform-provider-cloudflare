@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,18 @@ func (d *WaitingRoomsDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*WaitingRoomsResultDataSourceModel{}
 	env := WaitingRoomsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*WaitingRoomsResultDataSourceModel{}
 
-	page, err := d.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	})
+	page, err := d.client.WaitingRooms.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

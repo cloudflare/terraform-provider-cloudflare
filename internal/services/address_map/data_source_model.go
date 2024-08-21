@@ -3,7 +3,10 @@
 package address_map
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -29,6 +32,22 @@ type AddressMapDataSourceModel struct {
 	Description  types.String                             `tfsdk:"description" json:"description"`
 	ID           types.String                             `tfsdk:"id" json:"id"`
 	Filter       *AddressMapFindOneByDataSourceModel      `tfsdk:"filter"`
+}
+
+func (m *AddressMapDataSourceModel) toReadParams() (params addressing.AddressMapGetParams, diags diag.Diagnostics) {
+	params = addressing.AddressMapGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *AddressMapDataSourceModel) toListParams() (params addressing.AddressMapListParams, diags diag.Diagnostics) {
+	params = addressing.AddressMapListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type AddressMapIPsDataSourceModel struct {

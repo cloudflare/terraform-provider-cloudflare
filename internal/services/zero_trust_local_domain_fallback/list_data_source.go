@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,18 @@ func (d *ZeroTrustLocalDomainFallbacksDataSource) Read(ctx context.Context, req 
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*ZeroTrustLocalDomainFallbacksResultDataSourceModel{}
 	env := ZeroTrustLocalDomainFallbacksResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*ZeroTrustLocalDomainFallbacksResultDataSourceModel{}
 
-	page, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, zero_trust.DevicePolicyFallbackDomainListParams{
-		AccountID: cloudflare.F(data.AccountID.ValueString()),
-	})
+	page, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

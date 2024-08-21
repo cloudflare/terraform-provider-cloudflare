@@ -3,7 +3,10 @@
 package d1_database
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/d1"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,6 +19,18 @@ type D1DatabasesDataSourceModel struct {
 	Name      types.String                         `tfsdk:"name" query:"name"`
 	MaxItems  types.Int64                          `tfsdk:"max_items"`
 	Result    *[]*D1DatabasesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *D1DatabasesDataSourceModel) toListParams() (params d1.DatabaseListParams, diags diag.Diagnostics) {
+	params = d1.DatabaseListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	if !m.Name.IsNull() {
+		params.Name = cloudflare.F(m.Name.ValueString())
+	}
+
+	return
 }
 
 type D1DatabasesResultDataSourceModel struct {

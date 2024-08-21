@@ -3,6 +3,9 @@
 package zero_trust_access_short_lived_certificate
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,6 +25,30 @@ type ZeroTrustAccessShortLivedCertificateDataSourceModel struct {
 	ID        types.String                                                  `tfsdk:"id" json:"id"`
 	PublicKey types.String                                                  `tfsdk:"public_key" json:"public_key"`
 	Filter    *ZeroTrustAccessShortLivedCertificateFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toReadParams() (params zero_trust.AccessApplicationCAGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessApplicationCAGetParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
+}
+
+func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toListParams() (params zero_trust.AccessApplicationCAListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessApplicationCAListParams{}
+
+	if !m.Filter.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustAccessShortLivedCertificateFindOneByDataSourceModel struct {

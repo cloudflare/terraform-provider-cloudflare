@@ -3,8 +3,11 @@
 package zone_lockdown
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,6 +28,45 @@ type ZoneLockdownsDataSourceModel struct {
 	URISearch         types.String                           `tfsdk:"uri_search" query:"uri_search"`
 	MaxItems          types.Int64                            `tfsdk:"max_items"`
 	Result            *[]*ZoneLockdownsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZoneLockdownsDataSourceModel) toListParams() (params firewall.LockdownListParams, diags diag.Diagnostics) {
+	mCreatedOn, errs := m.CreatedOn.ValueRFC3339Time()
+	diags.Append(errs...)
+	mModifiedOn, errs := m.ModifiedOn.ValueRFC3339Time()
+	diags.Append(errs...)
+
+	params = firewall.LockdownListParams{}
+
+	if !m.CreatedOn.IsNull() {
+		params.CreatedOn = cloudflare.F(mCreatedOn)
+	}
+	if !m.Description.IsNull() {
+		params.Description = cloudflare.F(m.Description.ValueString())
+	}
+	if !m.DescriptionSearch.IsNull() {
+		params.DescriptionSearch = cloudflare.F(m.DescriptionSearch.ValueString())
+	}
+	if !m.IP.IsNull() {
+		params.IP = cloudflare.F(m.IP.ValueString())
+	}
+	if !m.IPRangeSearch.IsNull() {
+		params.IPRangeSearch = cloudflare.F(m.IPRangeSearch.ValueString())
+	}
+	if !m.IPSearch.IsNull() {
+		params.IPSearch = cloudflare.F(m.IPSearch.ValueString())
+	}
+	if !m.ModifiedOn.IsNull() {
+		params.ModifiedOn = cloudflare.F(mModifiedOn)
+	}
+	if !m.Priority.IsNull() {
+		params.Priority = cloudflare.F(m.Priority.ValueFloat64())
+	}
+	if !m.URISearch.IsNull() {
+		params.URISearch = cloudflare.F(m.URISearch.ValueString())
+	}
+
+	return
 }
 
 type ZoneLockdownsResultDataSourceModel struct {

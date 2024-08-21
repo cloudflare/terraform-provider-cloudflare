@@ -3,7 +3,10 @@
 package authenticated_origin_pulls
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -27,4 +30,12 @@ type AuthenticatedOriginPullsDataSourceModel struct {
 	Signature      types.String      `tfsdk:"signature" json:"signature"`
 	Status         types.String      `tfsdk:"status" json:"status"`
 	UpdatedAt      timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at"`
+}
+
+func (m *AuthenticatedOriginPullsDataSourceModel) toReadParams() (params origin_tls_client_auth.HostnameGetParams, diags diag.Diagnostics) {
+	params = origin_tls_client_auth.HostnameGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }

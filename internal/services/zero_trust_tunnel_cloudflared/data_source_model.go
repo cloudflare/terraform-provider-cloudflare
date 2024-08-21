@@ -3,7 +3,10 @@
 package zero_trust_tunnel_cloudflared
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,6 +22,57 @@ type ZeroTrustTunnelCloudflaredDataSourceModel struct {
 	AccountID types.String                                        `tfsdk:"account_id" path:"account_id"`
 	TunnelID  types.String                                        `tfsdk:"tunnel_id" path:"tunnel_id"`
 	Filter    *ZeroTrustTunnelCloudflaredFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toReadParams() (params zero_trust.TunnelGetParams, diags diag.Diagnostics) {
+	params = zero_trust.TunnelGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams() (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
+	mFilterExistedAt, errs := m.Filter.ExistedAt.ValueRFC3339Time()
+	diags.Append(errs...)
+	mFilterWasActiveAt, errs := m.Filter.WasActiveAt.ValueRFC3339Time()
+	diags.Append(errs...)
+	mFilterWasInactiveAt, errs := m.Filter.WasInactiveAt.ValueRFC3339Time()
+	diags.Append(errs...)
+
+	params = zero_trust.TunnelListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	if !m.Filter.ExcludePrefix.IsNull() {
+		params.ExcludePrefix = cloudflare.F(m.Filter.ExcludePrefix.ValueString())
+	}
+	if !m.Filter.ExistedAt.IsNull() {
+		params.ExistedAt = cloudflare.F(mFilterExistedAt)
+	}
+	if !m.Filter.IncludePrefix.IsNull() {
+		params.IncludePrefix = cloudflare.F(m.Filter.IncludePrefix.ValueString())
+	}
+	if !m.Filter.IsDeleted.IsNull() {
+		params.IsDeleted = cloudflare.F(m.Filter.IsDeleted.ValueBool())
+	}
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
+	}
+	if !m.Filter.Status.IsNull() {
+		params.Status = cloudflare.F(zero_trust.TunnelListParamsStatus(m.Filter.Status.ValueString()))
+	}
+	if !m.Filter.UUID.IsNull() {
+		params.UUID = cloudflare.F(m.Filter.UUID.ValueString())
+	}
+	if !m.Filter.WasActiveAt.IsNull() {
+		params.WasActiveAt = cloudflare.F(mFilterWasActiveAt)
+	}
+	if !m.Filter.WasInactiveAt.IsNull() {
+		params.WasInactiveAt = cloudflare.F(mFilterWasInactiveAt)
+	}
+
+	return
 }
 
 type ZeroTrustTunnelCloudflaredFindOneByDataSourceModel struct {

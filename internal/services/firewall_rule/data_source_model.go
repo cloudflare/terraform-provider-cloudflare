@@ -3,6 +3,9 @@
 package firewall_rule
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/firewall"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,4 +28,18 @@ type FirewallRuleDataSourceModel struct {
 	Priority       types.Float64   `tfsdk:"priority" json:"priority"`
 	Ref            types.String    `tfsdk:"ref" json:"ref"`
 	Products       *[]types.String `tfsdk:"products" json:"products"`
+}
+
+func (m *FirewallRuleDataSourceModel) toReadParams() (params firewall.RuleGetParams, diags diag.Diagnostics) {
+	params = firewall.RuleGetParams{
+		PathID: cloudflare.F(m.PathID.ValueString()),
+	}
+
+	return
+}
+
+func (m *FirewallRuleDataSourceModel) toListParams() (params firewall.RuleListParams, diags diag.Diagnostics) {
+	params = firewall.RuleListParams{}
+
+	return
 }

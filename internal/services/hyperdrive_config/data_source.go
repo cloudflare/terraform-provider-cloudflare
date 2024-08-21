@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/hyperdrive"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := HyperdriveConfigResultDataSourceEnvelope{*data}
 		_, err := d.client.Hyperdrive.Configs.Get(
 			ctx,
 			data.HyperdriveID.ValueString(),
-			hyperdrive.ConfigGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *HyperdriveConfigDataSource) Read(ctx context.Context, req datasource.Re
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*HyperdriveConfigDataSourceModel{}
 		env := HyperdriveConfigResultListDataSourceEnvelope{items}
 
-		page, err := d.client.Hyperdrive.Configs.List(ctx, hyperdrive.ConfigListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.Hyperdrive.Configs.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

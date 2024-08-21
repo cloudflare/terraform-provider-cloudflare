@@ -3,6 +3,9 @@
 package zero_trust_device_posture_integration
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,6 +26,22 @@ type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
 	Type          types.String                                               `tfsdk:"type" json:"type"`
 	Config        *ZeroTrustDevicePostureIntegrationConfigDataSourceModel    `tfsdk:"config" json:"config"`
 	Filter        *ZeroTrustDevicePostureIntegrationFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toReadParams() (params zero_trust.DevicePostureIntegrationGetParams, diags diag.Diagnostics) {
+	params = zero_trust.DevicePostureIntegrationGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toListParams() (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {
+	params = zero_trust.DevicePostureIntegrationListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type ZeroTrustDevicePostureIntegrationConfigDataSourceModel struct {

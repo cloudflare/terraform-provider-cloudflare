@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := WaitingRoomResultDataSourceEnvelope{*data}
 		_, err := d.client.WaitingRooms.Get(
 			ctx,
 			data.WaitingRoomID.ValueString(),
-			waiting_rooms.WaitingRoomGetParams{
-				ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *WaitingRoomDataSource) Read(ctx context.Context, req datasource.ReadReq
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*WaitingRoomDataSourceModel{}
 		env := WaitingRoomResultListDataSourceEnvelope{items}
 
-		page, err := d.client.WaitingRooms.List(ctx, waiting_rooms.WaitingRoomListParams{
-			ZoneID: cloudflare.F(data.Filter.ZoneID.ValueString()),
-		})
+		page, err := d.client.WaitingRooms.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

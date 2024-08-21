@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/logpush"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,16 +58,14 @@ func (d *LogpushJobDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	if data.Filter == nil {
-		res := new(http.Response)
-		env := LogpushJobResultDataSourceEnvelope{*data}
-		params := logpush.JobGetParams{}
-
-		if !data.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.AccountID.ValueString())
-		} else {
-			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
 		}
 
+		res := new(http.Response)
+		env := LogpushJobResultDataSourceEnvelope{*data}
 		_, err := d.client.Logpush.Jobs.Get(
 			ctx,
 			data.JobID.ValueInt64(),
@@ -88,12 +85,10 @@ func (d *LogpushJobDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		}
 		data = &env.Result
 	} else {
-		params := logpush.JobListParams{}
-
-		if !data.Filter.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.Filter.AccountID.ValueString())
-		} else {
-			params.ZoneID = cloudflare.F(data.Filter.ZoneID.ValueString())
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
 		}
 
 		items := &[]*LogpushJobDataSourceModel{}

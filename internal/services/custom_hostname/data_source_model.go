@@ -3,8 +3,11 @@
 package custom_hostname
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/custom_hostnames"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -31,6 +34,38 @@ type CustomHostnameDataSourceModel struct {
 	OwnershipVerification     *CustomHostnameOwnershipVerificationDataSourceModel        `tfsdk:"ownership_verification" json:"ownership_verification"`
 	OwnershipVerificationHTTP *CustomHostnameOwnershipVerificationHTTPDataSourceModel    `tfsdk:"ownership_verification_http" json:"ownership_verification_http"`
 	Filter                    *CustomHostnameFindOneByDataSourceModel                    `tfsdk:"filter"`
+}
+
+func (m *CustomHostnameDataSourceModel) toReadParams() (params custom_hostnames.CustomHostnameGetParams, diags diag.Diagnostics) {
+	params = custom_hostnames.CustomHostnameGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *CustomHostnameDataSourceModel) toListParams() (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
+	params = custom_hostnames.CustomHostnameListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	if !m.Filter.ID.IsNull() {
+		params.ID = cloudflare.F(m.Filter.ID.ValueString())
+	}
+	if !m.Filter.Direction.IsNull() {
+		params.Direction = cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(m.Filter.Direction.ValueString()))
+	}
+	if !m.Filter.Hostname.IsNull() {
+		params.Hostname = cloudflare.F(m.Filter.Hostname.ValueString())
+	}
+	if !m.Filter.Order.IsNull() {
+		params.Order = cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(m.Filter.Order.ValueString()))
+	}
+	if !m.Filter.SSL.IsNull() {
+		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.Filter.SSL.ValueFloat64()))
+	}
+
+	return
 }
 
 type CustomHostnameSSLDataSourceModel struct {

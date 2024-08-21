@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,8 +53,8 @@ func (d *ZeroTrustTunnelCloudflaredRouteDataSource) Read(ctx context.Context, re
 		return
 	}
 
-	dataFilterExistedAt, errs := data.Filter.ExistedAt.ValueRFC3339Time()
-	resp.Diagnostics.Append(errs...)
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -63,18 +62,7 @@ func (d *ZeroTrustTunnelCloudflaredRouteDataSource) Read(ctx context.Context, re
 	items := &[]*ZeroTrustTunnelCloudflaredRouteDataSourceModel{}
 	env := ZeroTrustTunnelCloudflaredRouteResultListDataSourceEnvelope{items}
 
-	page, err := d.client.ZeroTrust.Networks.Routes.List(ctx, zero_trust.NetworkRouteListParams{
-		AccountID:        cloudflare.F(data.Filter.AccountID.ValueString()),
-		Comment:          cloudflare.F(data.Filter.Comment.ValueString()),
-		ExistedAt:        cloudflare.F(dataFilterExistedAt),
-		IsDeleted:        cloudflare.F(data.Filter.IsDeleted.ValueBool()),
-		NetworkSubset:    cloudflare.F(data.Filter.NetworkSubset.ValueString()),
-		NetworkSuperset:  cloudflare.F(data.Filter.NetworkSuperset.ValueString()),
-		RouteID:          cloudflare.F(data.Filter.RouteID.ValueString()),
-		TunTypes:         cloudflare.F(data.Filter.TunTypes.ValueString()),
-		TunnelID:         cloudflare.F(data.Filter.TunnelID.ValueString()),
-		VirtualNetworkID: cloudflare.F(data.Filter.VirtualNetworkID.ValueString()),
-	})
+	page, err := d.client.ZeroTrust.Networks.Routes.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

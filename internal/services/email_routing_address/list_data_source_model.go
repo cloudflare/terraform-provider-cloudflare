@@ -3,7 +3,10 @@
 package email_routing_address
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +20,19 @@ type EmailRoutingAddressesDataSourceModel struct {
 	Verified          types.Bool                                     `tfsdk:"verified" query:"verified"`
 	MaxItems          types.Int64                                    `tfsdk:"max_items"`
 	Result            *[]*EmailRoutingAddressesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *EmailRoutingAddressesDataSourceModel) toListParams() (params email_routing.AddressListParams, diags diag.Diagnostics) {
+	params = email_routing.AddressListParams{}
+
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(email_routing.AddressListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Verified.IsNull() {
+		params.Verified = cloudflare.F(email_routing.AddressListParamsVerified(m.Verified.ValueBool()))
+	}
+
+	return
 }
 
 type EmailRoutingAddressesResultDataSourceModel struct {

@@ -3,6 +3,9 @@
 package zero_trust_access_application
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +18,18 @@ type ZeroTrustAccessApplicationsDataSourceModel struct {
 	ZoneID    types.String                                         `tfsdk:"zone_id" path:"zone_id"`
 	MaxItems  types.Int64                                          `tfsdk:"max_items"`
 	Result    *[]*ZeroTrustAccessApplicationsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *ZeroTrustAccessApplicationsDataSourceModel) toListParams() (params zero_trust.AccessApplicationListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessApplicationListParams{}
+
+	if !m.AccountID.IsNull() {
+		params.AccountID = cloudflare.F(m.AccountID.ValueString())
+	} else {
+		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+	}
+
+	return
 }
 
 type ZeroTrustAccessApplicationsResultDataSourceModel struct {

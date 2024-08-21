@@ -3,7 +3,10 @@
 package waiting_room_event
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -36,6 +39,22 @@ type WaitingRoomEventDataSourceModel struct {
 	SessionDuration       types.Int64                               `tfsdk:"session_duration" json:"session_duration"`
 	TotalActiveUsers      types.Int64                               `tfsdk:"total_active_users" json:"total_active_users"`
 	Filter                *WaitingRoomEventFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *WaitingRoomEventDataSourceModel) toReadParams() (params waiting_rooms.EventGetParams, diags diag.Diagnostics) {
+	params = waiting_rooms.EventGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *WaitingRoomEventDataSourceModel) toListParams() (params waiting_rooms.EventListParams, diags diag.Diagnostics) {
+	params = waiting_rooms.EventListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type WaitingRoomEventFindOneByDataSourceModel struct {

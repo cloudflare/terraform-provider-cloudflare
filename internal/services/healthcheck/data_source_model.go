@@ -3,7 +3,10 @@
 package healthcheck
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/healthchecks"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -37,6 +40,22 @@ type HealthcheckDataSourceModel struct {
 	HTTPConfig           *HealthcheckHTTPConfigDataSourceModel `tfsdk:"http_config" json:"http_config"`
 	TCPConfig            *HealthcheckTCPConfigDataSourceModel  `tfsdk:"tcp_config" json:"tcp_config"`
 	Filter               *HealthcheckFindOneByDataSourceModel  `tfsdk:"filter"`
+}
+
+func (m *HealthcheckDataSourceModel) toReadParams() (params healthchecks.HealthcheckGetParams, diags diag.Diagnostics) {
+	params = healthchecks.HealthcheckGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
+}
+
+func (m *HealthcheckDataSourceModel) toListParams() (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
+	params = healthchecks.HealthcheckListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 type HealthcheckHTTPConfigDataSourceModel struct {

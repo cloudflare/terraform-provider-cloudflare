@@ -3,8 +3,11 @@
 package custom_hostname
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/custom_hostnames"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +24,30 @@ type CustomHostnamesDataSourceModel struct {
 	Order     types.String                             `tfsdk:"order" query:"order"`
 	MaxItems  types.Int64                              `tfsdk:"max_items"`
 	Result    *[]*CustomHostnamesResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *CustomHostnamesDataSourceModel) toListParams() (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
+	params = custom_hostnames.CustomHostnameListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	if !m.ID.IsNull() {
+		params.ID = cloudflare.F(m.ID.ValueString())
+	}
+	if !m.Direction.IsNull() {
+		params.Direction = cloudflare.F(custom_hostnames.CustomHostnameListParamsDirection(m.Direction.ValueString()))
+	}
+	if !m.Hostname.IsNull() {
+		params.Hostname = cloudflare.F(m.Hostname.ValueString())
+	}
+	if !m.Order.IsNull() {
+		params.Order = cloudflare.F(custom_hostnames.CustomHostnameListParamsOrder(m.Order.ValueString()))
+	}
+	if !m.SSL.IsNull() {
+		params.SSL = cloudflare.F(custom_hostnames.CustomHostnameListParamsSSL(m.SSL.ValueFloat64()))
+	}
+
+	return
 }
 
 type CustomHostnamesResultDataSourceModel struct {

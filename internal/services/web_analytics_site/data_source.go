@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/rum"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := WebAnalyticsSiteResultDataSourceEnvelope{*data}
 		_, err := d.client.RUM.SiteInfo.Get(
 			ctx,
 			data.SiteID.ValueString(),
-			rum.SiteInfoGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,13 +85,16 @@ func (d *WebAnalyticsSiteDataSource) Read(ctx context.Context, req datasource.Re
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*WebAnalyticsSiteDataSourceModel{}
 		env := WebAnalyticsSiteResultListDataSourceEnvelope{items}
 
-		page, err := d.client.RUM.SiteInfo.List(ctx, rum.SiteInfoListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-			OrderBy:   cloudflare.F(rum.SiteInfoListParamsOrderBy(data.Filter.OrderBy.ValueString())),
-		})
+		page, err := d.client.RUM.SiteInfo.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

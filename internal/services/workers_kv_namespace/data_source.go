@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/kv"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -59,14 +58,18 @@ func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := WorkersKVNamespaceResultDataSourceEnvelope{*data}
 		_, err := d.client.KV.Namespaces.Get(
 			ctx,
 			data.NamespaceID.ValueString(),
-			kv.NamespaceGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,14 +85,16 @@ func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*WorkersKVNamespaceDataSourceModel{}
 		env := WorkersKVNamespaceResultListDataSourceEnvelope{items}
 
-		page, err := d.client.KV.Namespaces.List(ctx, kv.NamespaceListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-			Direction: cloudflare.F(kv.NamespaceListParamsDirection(data.Filter.Direction.ValueString())),
-			Order:     cloudflare.F(kv.NamespaceListParamsOrder(data.Filter.Order.ValueString())),
-		})
+		page, err := d.client.KV.Namespaces.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

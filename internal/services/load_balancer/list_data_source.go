@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,14 +53,18 @@ func (d *LoadBalancersDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	items := &[]*LoadBalancersResultDataSourceModel{}
 	env := LoadBalancersResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []*LoadBalancersResultDataSourceModel{}
 
-	page, err := d.client.LoadBalancers.List(ctx, load_balancers.LoadBalancerListParams{
-		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-	})
+	page, err := d.client.LoadBalancers.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

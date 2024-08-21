@@ -3,9 +3,12 @@
 package pages_project
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +20,14 @@ type PagesProjectsDataSourceModel struct {
 	AccountID types.String                           `tfsdk:"account_id" path:"account_id"`
 	MaxItems  types.Int64                            `tfsdk:"max_items"`
 	Result    *[]*PagesProjectsResultDataSourceModel `tfsdk:"result"`
+}
+
+func (m *PagesProjectsDataSourceModel) toListParams() (params pages.ProjectListParams, diags diag.Diagnostics) {
+	params = pages.ProjectListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type PagesProjectsResultDataSourceModel struct {

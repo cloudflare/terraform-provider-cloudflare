@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -54,22 +53,10 @@ func (d *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	params := firewall.AccessRuleListParams{
-		Configuration: cloudflare.F(firewall.AccessRuleListParamsConfiguration{
-			Target: cloudflare.F(firewall.AccessRuleListParamsConfigurationTarget(data.Configuration.Target.ValueString())),
-			Value:  cloudflare.F(data.Configuration.Value.ValueString()),
-		}),
-		Direction: cloudflare.F(firewall.AccessRuleListParamsDirection(data.Direction.ValueString())),
-		Match:     cloudflare.F(firewall.AccessRuleListParamsMatch(data.Match.ValueString())),
-		Mode:      cloudflare.F(firewall.AccessRuleListParamsMode(data.Mode.ValueString())),
-		Notes:     cloudflare.F(data.Notes.ValueString()),
-		Order:     cloudflare.F(firewall.AccessRuleListParamsOrder(data.Order.ValueString())),
-	}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+	params, diags := data.toListParams()
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	items := &[]*AccessRulesResultDataSourceModel{}

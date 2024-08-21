@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,16 +58,14 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	if data.Filter == nil {
-		res := new(http.Response)
-		env := ZeroTrustAccessGroupResultDataSourceEnvelope{*data}
-		params := zero_trust.AccessGroupGetParams{}
-
-		if !data.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.AccountID.ValueString())
-		} else {
-			params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
 		}
 
+		res := new(http.Response)
+		env := ZeroTrustAccessGroupResultDataSourceEnvelope{*data}
 		_, err := d.client.ZeroTrust.Access.Groups.Get(
 			ctx,
 			data.GroupID.ValueString(),
@@ -88,12 +85,10 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 		}
 		data = &env.Result
 	} else {
-		params := zero_trust.AccessGroupListParams{}
-
-		if !data.Filter.AccountID.IsNull() {
-			params.AccountID = cloudflare.F(data.Filter.AccountID.ValueString())
-		} else {
-			params.ZoneID = cloudflare.F(data.Filter.ZoneID.ValueString())
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
 		}
 
 		items := &[]*ZeroTrustAccessGroupDataSourceModel{}

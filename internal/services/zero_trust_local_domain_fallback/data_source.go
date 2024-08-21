@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *ZeroTrustLocalDomainFallbackDataSource) Read(ctx context.Context, req d
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZeroTrustLocalDomainFallbackResultDataSourceEnvelope{*data}
 		_, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.Get(
 			ctx,
 			data.PolicyID.ValueString(),
-			zero_trust.DevicePolicyFallbackDomainGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *ZeroTrustLocalDomainFallbackDataSource) Read(ctx context.Context, req d
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ZeroTrustLocalDomainFallbackDataSourceModel{}
 		env := ZeroTrustLocalDomainFallbackResultListDataSourceEnvelope{items}
 
-		page, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, zero_trust.DevicePolicyFallbackDomainListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.ZeroTrust.Devices.Policies.FallbackDomains.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

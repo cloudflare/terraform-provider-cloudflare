@@ -3,6 +3,9 @@
 package hyperdrive_config
 
 import (
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/hyperdrive"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +24,22 @@ type HyperdriveConfigDataSourceModel struct {
 	Caching      *HyperdriveConfigCachingDataSourceModel   `tfsdk:"caching" json:"caching"`
 	Origin       *HyperdriveConfigOriginDataSourceModel    `tfsdk:"origin" json:"origin"`
 	Filter       *HyperdriveConfigFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *HyperdriveConfigDataSourceModel) toReadParams() (params hyperdrive.ConfigGetParams, diags diag.Diagnostics) {
+	params = hyperdrive.ConfigGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
+}
+
+func (m *HyperdriveConfigDataSourceModel) toListParams() (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
+	params = hyperdrive.ConfigListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+	}
+
+	return
 }
 
 type HyperdriveConfigCachingDataSourceModel struct {

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -59,14 +58,18 @@ func (d *ZeroTrustDevicePostureIntegrationDataSource) Read(ctx context.Context, 
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZeroTrustDevicePostureIntegrationResultDataSourceEnvelope{*data}
 		_, err := d.client.ZeroTrust.Devices.Posture.Integrations.Get(
 			ctx,
 			data.IntegrationID.ValueString(),
-			zero_trust.DevicePostureIntegrationGetParams{
-				AccountID: cloudflare.F(data.AccountID.ValueString()),
-			},
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -82,12 +85,16 @@ func (d *ZeroTrustDevicePostureIntegrationDataSource) Read(ctx context.Context, 
 		}
 		data = &env.Result
 	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		items := &[]*ZeroTrustDevicePostureIntegrationDataSourceModel{}
 		env := ZeroTrustDevicePostureIntegrationResultListDataSourceEnvelope{items}
 
-		page, err := d.client.ZeroTrust.Devices.Posture.Integrations.List(ctx, zero_trust.DevicePostureIntegrationListParams{
-			AccountID: cloudflare.F(data.Filter.AccountID.ValueString()),
-		})
+		page, err := d.client.ZeroTrust.Devices.Posture.Integrations.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
