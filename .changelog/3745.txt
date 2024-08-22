@@ -1,3 +1,3 @@
 ```release-note:note
-resource/cloudflare_logpush_job: Deprecate Remove frequency in cloudflare_logpush_job
+resource/cloudflare_logpush_job: Deprecate `frequency` in favour of `max_upload_interval_seconds`
 ```
