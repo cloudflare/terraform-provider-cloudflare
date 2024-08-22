@@ -1,0 +1,41 @@
+version: 0.0.1
+patterns:
+  - name: version_5_upgrade
+    file: ../templates/guides/version-5-upgrade.md
+  - name: github.com/getgrit/stdlib#*
+  - name: extract_tests
+    description: Extract tests from Go files into their own files
+    body: |
+      language go
+
+      function extract_code($raw_code) js {
+          return $raw_code.text.substring(1, $raw_code.text.length - 1)
+      }
+
+      function dir_name($file_name) js {
+          return $file_name.text.split("/").slice(0, -1).join("/")
+      }
+
+      function test_name($func_name) js {
+          if ($func_name.text.toLowerCase().split("_").length > 1) {
+            return $func_name.text.toLowerCase().split(/_(.*)/)[1]
+          } else {
+            return $func_name.text.toLowerCase().replaceAll("testacccheckcloudflare", "").replaceAll("testacccloudflare", "").replaceAll(/^test/g, "")
+          }
+      }
+
+      file($name, $body) where {
+        $body <: contains bubble($name) `fmt.Sprintf($args)` as $match where {
+          $args <: [$template, $...],
+          $template <: includes "resource",
+          $string = extract_code($template),
+          $test_text = text($string),
+          $test_dir = dir_name($name),
+          $match <: within `func $func_name($_) $_ { $_ }`,
+          $test_name = test_name($func_name),
+          $test_file_name = `$test_name.tf`,
+          $new_files += file(name = `$test_dir/testdata/$test_file_name`, body = $test_text),
+          $template => `"$test_file_name"`,
+          $match => `acctest.LoadTestCase($args)`
+        }
+      }
