@@ -20,7 +20,7 @@ or products provided by Cloudflare please follow the respective company's securi
 
 ### Cloudflare Terms and Policies
 
-Please contact api@cloudflare.com for any questions or concerns regarding security of our services.
+Please contact api@cloudflare.com. for any questions or concerns regarding security of our services.
 
 ---
 
