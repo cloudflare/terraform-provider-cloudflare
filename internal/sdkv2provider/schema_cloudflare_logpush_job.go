@@ -30,7 +30,6 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 		"magic_ids_detections",
 		"page_shield_events",
 	}
-	frequencyAllowedValues := []string{"high", "low"}
 	outputTypeAllowedValues := []string{"ndjson", "csv"}
 	timestampFormatAllowedValues := []string{"unixnano", "unix", "rfc3339"}
 	return map[string]*schema.Schema{
@@ -91,13 +90,6 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Use filters to select the events to include and/or remove from your logs. For more information, refer to [Filters](https://developers.cloudflare.com/logs/reference/logpush-api-configuration/filters/).",
-		},
-		"frequency": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			Default:      "high",
-			ValidateFunc: validation.StringInSlice(frequencyAllowedValues, false),
-			Description:  fmt.Sprintf("A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. %s", renderAvailableDocumentationValuesStringSlice(frequencyAllowedValues)),
 		},
 		"max_upload_bytes": {
 			Type:         schema.TypeInt,

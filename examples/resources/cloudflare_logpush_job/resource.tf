@@ -74,5 +74,4 @@ resource "cloudflare_logpush_job" "example_job" {
   destination_conf    = "s3://my-bucket-path?region=us-west-2"
   ownership_challenge = "0000000000000"
   dataset             = "http_requests"
-  frequency           = "high"
 }

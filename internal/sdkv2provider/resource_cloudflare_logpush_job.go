@@ -127,7 +127,6 @@ func resourceCloudflareLogpushJobRead(ctx context.Context, d *schema.ResourceDat
 	d.Set("dataset", job.Dataset)
 	d.Set("destination_conf", job.DestinationConf)
 	d.Set("ownership_challenge", d.Get("ownership_challenge"))
-	d.Set("frequency", job.Frequency)
 	d.Set("filter", filter)
 	d.Set("max_upload_bytes", job.MaxUploadBytes)
 	d.Set("max_upload_records", job.MaxUploadRecords)
@@ -189,7 +188,6 @@ func resourceCloudflareLogpushJobCreate(ctx context.Context, d *schema.ResourceD
 		LogpullOptions:           d.Get("logpull_options").(string),
 		DestinationConf:          destConf,
 		OwnershipChallenge:       ownershipChallenge,
-		Frequency:                d.Get("frequency").(string),
 		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
 		MaxUploadRecords:         d.Get("max_upload_records").(int),
 		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
@@ -262,7 +260,6 @@ func resourceCloudflareLogpushJobUpdate(ctx context.Context, d *schema.ResourceD
 		LogpullOptions:           d.Get("logpull_options").(string),
 		DestinationConf:          destConf,
 		OwnershipChallenge:       ownershipChallenge,
-		Frequency:                d.Get("frequency").(string),
 		MaxUploadBytes:           d.Get("max_upload_bytes").(int),
 		MaxUploadRecords:         d.Get("max_upload_records").(int),
 		MaxUploadIntervalSeconds: d.Get("max_upload_interval_seconds").(int),
