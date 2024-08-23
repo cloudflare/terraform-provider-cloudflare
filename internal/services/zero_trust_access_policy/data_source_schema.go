@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -749,6 +750,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
+				Validators: []validator.Object{
+					objectvalidator.ExactlyOneOf(path.MatchRelative().AtName("account_id"), path.MatchRelative().AtName("zone_id")),
+				},
 				Attributes: map[string]schema.Attribute{
 					"app_id": schema.StringAttribute{
 						Description: "UUID",
@@ -777,6 +781,7 @@ func (d *ZeroTrustAccessPolicyDataSource) ConfigValidators(_ context.Context) []
 		datasourcevalidator.RequiredTogether(path.MatchRoot("app_id"), path.MatchRoot("policy_id")),
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("app_id")),
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("policy_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
 		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
 		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
 	}
