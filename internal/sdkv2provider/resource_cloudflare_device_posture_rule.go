@@ -28,6 +28,23 @@ func resourceCloudflareDevicePostureRule() *schema.Resource {
 		Description: heredoc.Doc(`
 			Provides a Cloudflare Device Posture Rule resource. Device posture rules configure security policies for device posture checks.
 		`),
+		DeprecationMessage: "`cloudflare_device_posture_rule` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_device_posture_rule` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDevicePostureRule() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDevicePostureRuleSchema(),
+		CreateContext: resourceCloudflareDevicePostureRuleCreate,
+		ReadContext:   resourceCloudflareDevicePostureRuleRead,
+		UpdateContext: resourceCloudflareDevicePostureRuleUpdate,
+		DeleteContext: resourceCloudflareDevicePostureRuleDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDevicePostureRuleImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Device Posture Rule resource. Device posture rules configure security policies for device posture checks.
+		`),
 	}
 }
 
@@ -264,6 +281,18 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if totalScore, ok := d.GetOk("input.0.total_score"); ok {
 			input.TotalScore = totalScore.(int)
 		}
+		if checkPrivateKey, ok := d.GetOk("input.0.check_private_key"); ok {
+			input.CheckPrivateKey = cloudflare.BoolPtr(checkPrivateKey.(bool))
+		}
+		if extendedKeyUsage, ok := d.GetOk("input.0.extended_key_usage"); ok {
+			values := extendedKeyUsage.(*schema.Set).List()
+			for _, value := range values {
+				input.ExtendedKeyUsage = append(input.ExtendedKeyUsage, value.(string))
+			}
+		}
+		if locations, ok := d.GetOk("input.0.locations"); ok {
+			input.Locations = locations.(cloudflare.CertificateLocations)
+		}
 		rule.Input = input
 	}
 }
@@ -300,6 +329,21 @@ func convertMatchToSchema(matches []cloudflare.DevicePostureRuleMatch) []map[str
 }
 
 func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]interface{} {
+
+	formatLocationsToSchema := []map[string]interface{}{}
+	if len(input.Locations.Paths) > 0 && len(input.Locations.TrustStores) > 0 {
+		loc := map[string]interface{}{}
+
+		if len(input.Locations.Paths) > 0 {
+			loc["paths"] = input.Locations.Paths
+		}
+		if len(input.Locations.TrustStores) > 0 {
+			loc["trust_stores"] = input.Locations.TrustStores
+		}
+
+		formatLocationsToSchema = []map[string]interface{}{loc}
+	}
+
 	m := map[string]interface{}{
 		"id":                 input.ID,
 		"path":               input.Path,
@@ -333,6 +377,9 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"eid_last_seen":      input.EidLastSeen,
 		"risk_level":         input.RiskLevel,
 		"total_score":        input.TotalScore,
+		"check_private_key":  input.CheckPrivateKey,
+		"extended_key_usage": input.ExtendedKeyUsage,
+		"locations":          formatLocationsToSchema,
 	}
 
 	return []map[string]interface{}{m}

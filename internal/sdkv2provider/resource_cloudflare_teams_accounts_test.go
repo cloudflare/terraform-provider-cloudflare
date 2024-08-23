@@ -18,7 +18,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_account.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_settings.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -75,7 +75,7 @@ func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
 
 func testAccCloudflareTeamsAccountBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_account" "%[1]s" {
+resource "cloudflare_zero_trust_gateway_settings" "%[1]s" {
   account_id = "%[2]s"
   tls_decrypt_enabled = true
   protocol_detection_enabled = true

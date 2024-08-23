@@ -29,6 +29,25 @@ func resourceCloudflareStaticRoute() *schema.Resource {
 			Transit or Magic WAN. Static routes are used to route traffic
 			through GRE tunnels.
 		`),
+		DeprecationMessage: "`cloudflare_static_route` is now deprecated and will be removed in the next major version. Use `cloudflare_magic_wan_static_route` instead.",
+	}
+}
+
+func resourceCloudflareMagicWANStaticRoute() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareStaticRouteSchema(),
+		CreateContext: resourceCloudflareStaticRouteCreate,
+		ReadContext:   resourceCloudflareStaticRouteRead,
+		UpdateContext: resourceCloudflareStaticRouteUpdate,
+		DeleteContext: resourceCloudflareStaticRouteDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareStaticRouteImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a resource, that manages Cloudflare static routes for Magic
+			Transit or Magic WAN. Static routes are used to route traffic
+			through GRE tunnels.
+		`),
 	}
 }
 

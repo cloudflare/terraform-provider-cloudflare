@@ -27,6 +27,24 @@ func resourceCloudflareTeamsLocation() *schema.Resource {
 			Provides a Cloudflare Teams Location resource. Teams Locations are
 			referenced when creating secure web gateway policies.
 		`),
+		DeprecationMessage: "`cloudflare_teams_location` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_dns_location` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDNSLocation() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTeamsLocationSchema(),
+		CreateContext: resourceCloudflareTeamsLocationCreate,
+		ReadContext:   resourceCloudflareTeamsLocationRead,
+		UpdateContext: resourceCloudflareTeamsLocationUpdate,
+		DeleteContext: resourceCloudflareTeamsLocationDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTeamsLocationImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams Location resource. Teams Locations are
+			referenced when creating secure web gateway policies.
+		`),
 	}
 }
 

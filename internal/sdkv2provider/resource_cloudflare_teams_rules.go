@@ -24,6 +24,21 @@ func resourceCloudflareTeamsRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTeamsRuleImport,
 		},
+		Description:        "Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gateway policies.",
+		DeprecationMessage: "`cloudflare_teams_rule` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_gateway_policy` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustGatewayPolicy() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTeamsRuleSchema(),
+		ReadContext:   resourceCloudflareTeamsRuleRead,
+		UpdateContext: resourceCloudflareTeamsRuleUpdate,
+		CreateContext: resourceCloudflareTeamsRuleCreate,
+		DeleteContext: resourceCloudflareTeamsRuleDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTeamsRuleImport,
+		},
 		Description: "Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gateway policies.",
 	}
 }

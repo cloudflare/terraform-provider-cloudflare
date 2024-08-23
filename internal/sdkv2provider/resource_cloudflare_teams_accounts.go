@@ -30,6 +30,25 @@ func resourceCloudflareTeamsAccount() *schema.Resource {
 			Provides a Cloudflare Teams Account resource. The Teams Account
 			resource defines configuration for secure web gateway.
 		`),
+		DeprecationMessage: "`cloudflare_teams_account` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_gateway_settings` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustGatewaySettings() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTeamsAccountSchema(),
+		ReadContext:   resourceCloudflareTeamsAccountRead,
+		UpdateContext: resourceCloudflareTeamsAccountUpdate,
+		CreateContext: resourceCloudflareTeamsAccountUpdate,
+		// This resource is a top-level account configuration and cant be "deleted"
+		Delete: func(_ *schema.ResourceData, _ interface{}) error { return nil },
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTeamsAccountImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Teams Account resource. The Teams Account
+			resource defines configuration for secure web gateway.
+		`),
 	}
 }
 

@@ -84,7 +84,7 @@ func TestAccCloudflareWorkersForPlatforms_UploadUserWorker(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resourceName := "cloudflare_workers_for_platforms_dispatch_namespace." + rnd
-	workerResource := "cloudflare_worker_script.script_" + rnd
+	workerResource := "cloudflare_workers_script.script_" + rnd
 
 	scriptContent := `<<EOT
 	export default {
@@ -132,7 +132,7 @@ func testAccCheckCloudflareWorkersForPlatformsUploadUserWorker(rnd, accountID, m
 		name       = "%[1]s"
 	  }
 
-	  resource "cloudflare_worker_script" "script_%[1]s" {
+	  resource "cloudflare_workers_script" "script_%[1]s" {
 		account_id          = "%[2]s"
 		name                = "script_%[1]s"
 		content             = %[3]s
@@ -149,7 +149,7 @@ func testAccCheckCloudflareWorkerScriptDestroy(s *terraform.State) error {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_script" {
+		if rs.Type != "cloudflare_workers_script" {
 			continue
 		}
 

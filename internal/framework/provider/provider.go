@@ -33,6 +33,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace_deprecated"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_access_mtls_hostname_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_behavior"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_score_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -367,11 +370,14 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		list_item.NewResource,
 		r2_bucket.NewResource,
 		risk_behavior.NewResource,
+		zero_trust_risk_behavior.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
 		access_mutual_tls_hostname_settings.NewResource,
+		zero_trust_access_mtls_hostname_settings.NewResource,
 		workers_for_platforms_dispatch_namespace_deprecated.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
+		zero_trust_risk_score_integration.NewResource,
 	}
 }
 

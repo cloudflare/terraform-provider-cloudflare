@@ -30,6 +30,24 @@ func resourceCloudflareTunnel() *schema.Resource {
 			network with an internet connection without manually adding DNS
 			records or configuring a firewall or router.
 		`),
+		DeprecationMessage: "`cloudflare_tunnel` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_tunnel_cloudflared` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustTunnelCloudflared() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTunnelSchema(),
+		CreateContext: resourceCloudflareTunnelCreate,
+		ReadContext:   resourceCloudflareTunnelRead,
+		DeleteContext: resourceCloudflareTunnelDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTunnelImport,
+		},
+		Description: heredoc.Doc(`
+			Tunnel exposes applications running on your local web server on any
+			network with an internet connection without manually adding DNS
+			records or configuring a firewall or router.
+		`),
 	}
 }
 
