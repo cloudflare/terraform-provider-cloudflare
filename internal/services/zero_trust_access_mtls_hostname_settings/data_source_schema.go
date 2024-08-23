@@ -5,8 +5,10 @@ package zero_trust_access_mtls_hostname_settings
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessMTLSHostnameSettingsDataSource{}
@@ -31,5 +33,7 @@ func (d *ZeroTrustAccessMTLSHostnameSettingsDataSource) Schema(ctx context.Conte
 }
 
 func (d *ZeroTrustAccessMTLSHostnameSettingsDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
+	}
 }

@@ -8,9 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessGroupDataSource{}
@@ -890,6 +892,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
+				Validators: []validator.Object{
+					objectvalidator.ExactlyOneOf(path.MatchRelative().AtName("account_id"), path.MatchRelative().AtName("zone_id")),
+				},
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
 						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
@@ -912,6 +917,7 @@ func (d *ZeroTrustAccessGroupDataSource) Schema(ctx context.Context, req datasou
 func (d *ZeroTrustAccessGroupDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("group_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
 		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
 		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
 	}
