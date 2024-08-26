@@ -24,30 +24,10 @@ func TestAccCloudflareTieredCache_Smart(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testTieredCacheConfig(rnd, zoneID, "smart"),
+				Config: testTieredCacheConfig(rnd, zoneID, "on"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "cache_type", "smart"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareTieredCache_Generic(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_tiered_cache." + rnd
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testTieredCacheConfig(rnd, zoneID, "generic"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "cache_type", "generic"),
+					resource.TestCheckResourceAttr(name, "value", "on"),
 				),
 			},
 		},
