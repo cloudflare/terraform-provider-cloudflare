@@ -520,7 +520,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		d1_database.NewD1DatabaseDataSource,
 		d1_database.NewD1DatabasesDataSource,
 		r2_bucket.NewR2BucketDataSource,
-		r2_bucket.NewR2BucketsDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespaceDataSource,
 		workers_for_platforms_dispatch_namespace.NewWorkersForPlatformsDispatchNamespacesDataSource,
 		workers_secret.NewWorkersSecretDataSource,
