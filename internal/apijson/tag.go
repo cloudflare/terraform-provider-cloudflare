@@ -9,12 +9,13 @@ const jsonStructTag = "json"
 const formatStructTag = "format"
 
 type parsedStructTag struct {
-	name     string
-	required bool
-	extras   bool
-	metadata bool
-	inline   bool
-	computed bool
+	name              string
+	required          bool
+	extras            bool
+	metadata          bool
+	inline            bool
+	computed          bool
+	computed_optional bool
 }
 
 func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool) {
@@ -39,6 +40,8 @@ func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool
 			tag.inline = true
 		case "computed":
 			tag.computed = true
+		case "computed_optional":
+			tag.computed_optional = true
 		}
 	}
 	return

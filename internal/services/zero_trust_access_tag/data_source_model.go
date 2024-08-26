@@ -25,7 +25,7 @@ type ZeroTrustAccessTagDataSourceModel struct {
 	CreatedAt timetypes.RFC3339                           `tfsdk:"created_at" json:"created_at,computed"`
 	Name      types.String                                `tfsdk:"name" json:"name,computed"`
 	UpdatedAt timetypes.RFC3339                           `tfsdk:"updated_at" json:"updated_at,computed"`
-	AppCount  types.Int64                                 `tfsdk:"app_count" json:"app_count"`
+	AppCount  types.Int64                                 `tfsdk:"app_count" json:"app_count,computed_optional"`
 	Filter    *ZeroTrustAccessTagFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

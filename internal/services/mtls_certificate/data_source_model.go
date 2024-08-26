@@ -26,11 +26,11 @@ type MTLSCertificateDataSourceModel struct {
 	Issuer            types.String                             `tfsdk:"issuer" json:"issuer,computed"`
 	SerialNumber      types.String                             `tfsdk:"serial_number" json:"serial_number,computed"`
 	Signature         types.String                             `tfsdk:"signature" json:"signature,computed"`
-	CA                types.Bool                               `tfsdk:"ca" json:"ca"`
-	Certificates      types.String                             `tfsdk:"certificates" json:"certificates"`
-	ID                types.String                             `tfsdk:"id" json:"id"`
-	Name              types.String                             `tfsdk:"name" json:"name"`
-	UploadedOn        timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on"`
+	CA                types.Bool                               `tfsdk:"ca" json:"ca,computed_optional"`
+	Certificates      types.String                             `tfsdk:"certificates" json:"certificates,computed_optional"`
+	ID                types.String                             `tfsdk:"id" json:"id,computed_optional"`
+	Name              types.String                             `tfsdk:"name" json:"name,computed_optional"`
+	UploadedOn        timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on,computed_optional"`
 	Filter            *MTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

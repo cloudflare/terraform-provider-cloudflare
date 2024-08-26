@@ -18,7 +18,7 @@ type CustomSSLsResultListDataSourceEnvelope struct {
 type CustomSSLsDataSourceModel struct {
 	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
 	Status   types.String                                                  `tfsdk:"status" query:"status"`
-	Match    types.String                                                  `tfsdk:"match" query:"match"`
+	Match    types.String                                                  `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems types.Int64                                                   `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[CustomSSLsResultDataSourceModel] `tfsdk:"result"`
 }
@@ -50,13 +50,13 @@ type CustomSSLsResultDataSourceModel struct {
 	Status          types.String                              `tfsdk:"status" json:"status,computed"`
 	UploadedOn      timetypes.RFC3339                         `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
 	ZoneID          types.String                              `tfsdk:"zone_id" json:"zone_id,computed"`
-	GeoRestrictions *CustomSSLsGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions"`
-	KeylessServer   *CustomSSLsKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server"`
-	Policy          types.String                              `tfsdk:"policy" json:"policy"`
+	GeoRestrictions *CustomSSLsGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions,computed_optional"`
+	KeylessServer   *CustomSSLsKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server,computed_optional"`
+	Policy          types.String                              `tfsdk:"policy" json:"policy,computed_optional"`
 }
 
 type CustomSSLsGeoRestrictionsDataSourceModel struct {
-	Label types.String `tfsdk:"label" json:"label"`
+	Label types.String `tfsdk:"label" json:"label,computed_optional"`
 }
 
 type CustomSSLsKeylessServerDataSourceModel struct {
@@ -69,7 +69,7 @@ type CustomSSLsKeylessServerDataSourceModel struct {
 	Permissions types.List                                    `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                                 `tfsdk:"port" json:"port,computed"`
 	Status      types.String                                  `tfsdk:"status" json:"status,computed"`
-	Tunnel      *CustomSSLsKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`
+	Tunnel      *CustomSSLsKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel,computed_optional"`
 }
 
 type CustomSSLsKeylessServerTunnelDataSourceModel struct {

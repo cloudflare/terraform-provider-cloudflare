@@ -24,11 +24,11 @@ type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
 	DispatchNamespace types.String                                                  `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
 	CreatedOn         timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn        timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed"`
-	CreatedBy         types.String                                                  `tfsdk:"created_by" json:"created_by"`
-	ModifiedBy        types.String                                                  `tfsdk:"modified_by" json:"modified_by"`
-	NamespaceID       types.String                                                  `tfsdk:"namespace_id" json:"namespace_id"`
-	NamespaceName     types.String                                                  `tfsdk:"namespace_name" json:"namespace_name"`
-	ScriptCount       types.Int64                                                   `tfsdk:"script_count" json:"script_count"`
+	CreatedBy         types.String                                                  `tfsdk:"created_by" json:"created_by,computed_optional"`
+	ModifiedBy        types.String                                                  `tfsdk:"modified_by" json:"modified_by,computed_optional"`
+	NamespaceID       types.String                                                  `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
+	NamespaceName     types.String                                                  `tfsdk:"namespace_name" json:"namespace_name,computed_optional"`
+	ScriptCount       types.Int64                                                   `tfsdk:"script_count" json:"script_count,computed_optional"`
 	Filter            *WorkersForPlatformsDispatchNamespaceFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

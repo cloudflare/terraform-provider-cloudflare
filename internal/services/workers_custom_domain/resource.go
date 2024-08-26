@@ -84,7 +84,7 @@ func (r *WorkersCustomDomainResource) Create(ctx context.Context, req resource.C
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -133,7 +133,7 @@ func (r *WorkersCustomDomainResource) Update(ctx context.Context, req resource.U
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -169,7 +169,7 @@ func (r *WorkersCustomDomainResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -238,7 +238,7 @@ func (r *WorkersCustomDomainResource) ImportState(ctx context.Context, req resou
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

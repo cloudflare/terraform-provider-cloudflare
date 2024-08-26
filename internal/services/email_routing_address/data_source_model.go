@@ -27,7 +27,7 @@ type EmailRoutingAddressDataSourceModel struct {
 	Modified                     timetypes.RFC3339                            `tfsdk:"modified" json:"modified,computed"`
 	Tag                          types.String                                 `tfsdk:"tag" json:"tag,computed"`
 	Verified                     timetypes.RFC3339                            `tfsdk:"verified" json:"verified,computed"`
-	Email                        types.String                                 `tfsdk:"email" json:"email"`
+	Email                        types.String                                 `tfsdk:"email" json:"email,computed_optional"`
 	Filter                       *EmailRoutingAddressFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -46,6 +46,6 @@ func (m *EmailRoutingAddressDataSourceModel) toListParams() (params email_routin
 
 type EmailRoutingAddressFindOneByDataSourceModel struct {
 	AccountIdentifier types.String `tfsdk:"account_identifier" path:"account_identifier"`
-	Direction         types.String `tfsdk:"direction" query:"direction"`
-	Verified          types.Bool   `tfsdk:"verified" query:"verified"`
+	Direction         types.String `tfsdk:"direction" query:"direction,computed_optional"`
+	Verified          types.Bool   `tfsdk:"verified" query:"verified,computed_optional"`
 }

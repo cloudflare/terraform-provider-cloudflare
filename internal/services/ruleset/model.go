@@ -19,7 +19,7 @@ type RulesetModel struct {
 	Name        types.String          `tfsdk:"name" json:"name"`
 	Phase       types.String          `tfsdk:"phase" json:"phase"`
 	Rules       *[]*RulesetRulesModel `tfsdk:"rules" json:"rules"`
-	Description types.String          `tfsdk:"description" json:"description"`
+	Description types.String          `tfsdk:"description" json:"description,computed_optional"`
 	LastUpdated timetypes.RFC3339     `tfsdk:"last_updated" json:"last_updated,computed"`
 	Version     types.String          `tfsdk:"version" json:"version,computed"`
 }
@@ -31,8 +31,8 @@ type RulesetRulesModel struct {
 	Action           types.String                       `tfsdk:"action" json:"action"`
 	ActionParameters *RulesetRulesActionParametersModel `tfsdk:"action_parameters" json:"action_parameters"`
 	Categories       types.List                         `tfsdk:"categories" json:"categories,computed"`
-	Description      types.String                       `tfsdk:"description" json:"description"`
-	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled"`
+	Description      types.String                       `tfsdk:"description" json:"description,computed_optional"`
+	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Expression       types.String                       `tfsdk:"expression" json:"expression"`
 	Logging          *RulesetRulesLoggingModel          `tfsdk:"logging" json:"logging"`
 	Ref              types.String                       `tfsdk:"ref" json:"ref"`

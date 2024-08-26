@@ -30,11 +30,11 @@ func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams() (p
 }
 
 type WorkersForPlatformsDispatchNamespacesResultDataSourceModel struct {
-	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by"`
+	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by,computed_optional"`
 	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedBy    types.String      `tfsdk:"modified_by" json:"modified_by"`
+	ModifiedBy    types.String      `tfsdk:"modified_by" json:"modified_by,computed_optional"`
 	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
-	NamespaceID   types.String      `tfsdk:"namespace_id" json:"namespace_id"`
-	NamespaceName types.String      `tfsdk:"namespace_name" json:"namespace_name"`
-	ScriptCount   types.Int64       `tfsdk:"script_count" json:"script_count"`
+	NamespaceID   types.String      `tfsdk:"namespace_id" json:"namespace_id,computed_optional"`
+	NamespaceName types.String      `tfsdk:"namespace_name" json:"namespace_name,computed_optional"`
+	ScriptCount   types.Int64       `tfsdk:"script_count" json:"script_count,computed_optional"`
 }

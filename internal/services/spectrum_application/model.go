@@ -21,9 +21,9 @@ type SpectrumApplicationModel struct {
 	EdgeIPs          *SpectrumApplicationEdgeIPsModel   `tfsdk:"edge_ips" json:"edge_ips"`
 	OriginDNS        *SpectrumApplicationOriginDNSModel `tfsdk:"origin_dns" json:"origin_dns"`
 	OriginPort       types.Dynamic                      `tfsdk:"origin_port" json:"origin_port"`
-	ArgoSmartRouting types.Bool                         `tfsdk:"argo_smart_routing" json:"argo_smart_routing"`
-	ProxyProtocol    types.String                       `tfsdk:"proxy_protocol" json:"proxy_protocol"`
-	TrafficType      types.String                       `tfsdk:"traffic_type" json:"traffic_type"`
+	ArgoSmartRouting types.Bool                         `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed_optional"`
+	ProxyProtocol    types.String                       `tfsdk:"proxy_protocol" json:"proxy_protocol,computed_optional"`
+	TrafficType      types.String                       `tfsdk:"traffic_type" json:"traffic_type,computed_optional"`
 }
 
 type SpectrumApplicationDNSModel struct {

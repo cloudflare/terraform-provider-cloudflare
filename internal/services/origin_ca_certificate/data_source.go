@@ -72,7 +72,7 @@ func (d *OriginCACertificateDataSource) Read(ctx context.Context, req datasource
 			return
 		}
 		bytes, _ := io.ReadAll(res.Body)
-		err = apijson.Unmarshal(bytes, &env)
+		err = apijson.UnmarshalComputed(bytes, &env)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 			return
@@ -95,7 +95,7 @@ func (d *OriginCACertificateDataSource) Read(ctx context.Context, req datasource
 		}
 
 		bytes := []byte(page.JSON.RawJSON())
-		err = apijson.Unmarshal(bytes, &env)
+		err = apijson.UnmarshalComputed(bytes, &env)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return

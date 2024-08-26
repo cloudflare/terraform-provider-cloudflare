@@ -21,7 +21,7 @@ type ZonesDataSourceModel struct {
 	Order     types.String                                             `tfsdk:"order" query:"order"`
 	Status    types.String                                             `tfsdk:"status" query:"status"`
 	Account   *ZonesAccountDataSourceModel                             `tfsdk:"account" query:"account"`
-	Match     types.String                                             `tfsdk:"match" query:"match"`
+	Match     types.String                                             `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems  types.Int64                                              `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZonesResultDataSourceModel] `tfsdk:"result"`
 }
@@ -59,8 +59,8 @@ func (m *ZonesDataSourceModel) toListParams() (params zones.ZoneListParams, diag
 }
 
 type ZonesAccountDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id"`
-	Name types.String `tfsdk:"name" json:"name"`
+	ID   types.String `tfsdk:"id" json:"id,computed_optional"`
+	Name types.String `tfsdk:"name" json:"name,computed_optional"`
 }
 
 type ZonesResultDataSourceModel struct {
@@ -77,21 +77,21 @@ type ZonesResultDataSourceModel struct {
 	OriginalNameServers types.List                                            `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	OriginalRegistrar   types.String                                          `tfsdk:"original_registrar" json:"original_registrar,computed"`
 	Owner               customfield.NestedObject[ZonesOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`
-	VanityNameServers   *[]types.String                                       `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
+	VanityNameServers   *[]types.String                                       `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed_optional"`
 }
 
 type ZonesMetaDataSourceModel struct {
-	CDNOnly                types.Bool  `tfsdk:"cdn_only" json:"cdn_only"`
-	CustomCertificateQuota types.Int64 `tfsdk:"custom_certificate_quota" json:"custom_certificate_quota"`
-	DNSOnly                types.Bool  `tfsdk:"dns_only" json:"dns_only"`
-	FoundationDNS          types.Bool  `tfsdk:"foundation_dns" json:"foundation_dns"`
-	PageRuleQuota          types.Int64 `tfsdk:"page_rule_quota" json:"page_rule_quota"`
-	PhishingDetected       types.Bool  `tfsdk:"phishing_detected" json:"phishing_detected"`
-	Step                   types.Int64 `tfsdk:"step" json:"step"`
+	CDNOnly                types.Bool  `tfsdk:"cdn_only" json:"cdn_only,computed_optional"`
+	CustomCertificateQuota types.Int64 `tfsdk:"custom_certificate_quota" json:"custom_certificate_quota,computed_optional"`
+	DNSOnly                types.Bool  `tfsdk:"dns_only" json:"dns_only,computed_optional"`
+	FoundationDNS          types.Bool  `tfsdk:"foundation_dns" json:"foundation_dns,computed_optional"`
+	PageRuleQuota          types.Int64 `tfsdk:"page_rule_quota" json:"page_rule_quota,computed_optional"`
+	PhishingDetected       types.Bool  `tfsdk:"phishing_detected" json:"phishing_detected,computed_optional"`
+	Step                   types.Int64 `tfsdk:"step" json:"step,computed_optional"`
 }
 
 type ZonesOwnerDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id"`
-	Name types.String `tfsdk:"name" json:"name"`
-	Type types.String `tfsdk:"type" json:"type"`
+	ID   types.String `tfsdk:"id" json:"id,computed_optional"`
+	Name types.String `tfsdk:"name" json:"name,computed_optional"`
+	Type types.String `tfsdk:"type" json:"type,computed_optional"`
 }

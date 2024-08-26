@@ -31,7 +31,7 @@ func (m *ZeroTrustAccessTagsDataSourceModel) toListParams() (params zero_trust.A
 
 type ZeroTrustAccessTagsResultDataSourceModel struct {
 	Name      types.String      `tfsdk:"name" json:"name,computed"`
-	AppCount  types.Int64       `tfsdk:"app_count" json:"app_count"`
+	AppCount  types.Int64       `tfsdk:"app_count" json:"app_count,computed_optional"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
 }

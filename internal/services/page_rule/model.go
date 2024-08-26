@@ -16,8 +16,8 @@ type PageRuleModel struct {
 	PageruleID types.String             `tfsdk:"pagerule_id" path:"pagerule_id"`
 	Actions    *[]*PageRuleActionsModel `tfsdk:"actions" json:"actions"`
 	Targets    *[]*PageRuleTargetsModel `tfsdk:"targets" json:"targets"`
-	Priority   types.Int64              `tfsdk:"priority" json:"priority"`
-	Status     types.String             `tfsdk:"status" json:"status"`
+	Priority   types.Int64              `tfsdk:"priority" json:"priority,computed_optional"`
+	Status     types.String             `tfsdk:"status" json:"status,computed_optional"`
 	ID         types.String             `tfsdk:"id" json:"id,computed"`
 }
 
@@ -38,6 +38,6 @@ type PageRuleTargetsModel struct {
 }
 
 type PageRuleTargetsConstraintModel struct {
-	Operator types.String `tfsdk:"operator" json:"operator"`
+	Operator types.String `tfsdk:"operator" json:"operator,computed_optional"`
 	Value    types.String `tfsdk:"value" json:"value"`
 }

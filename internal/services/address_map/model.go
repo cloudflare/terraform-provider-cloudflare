@@ -19,7 +19,7 @@ type AddressMapModel struct {
 	Memberships  *[]*AddressMapMembershipsModel                        `tfsdk:"memberships" json:"memberships"`
 	DefaultSNI   types.String                                          `tfsdk:"default_sni" json:"default_sni"`
 	Description  types.String                                          `tfsdk:"description" json:"description"`
-	Enabled      types.Bool                                            `tfsdk:"enabled" json:"enabled"`
+	Enabled      types.Bool                                            `tfsdk:"enabled" json:"enabled,computed_optional"`
 	CanDelete    types.Bool                                            `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                                            `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
 	CreatedAt    timetypes.RFC3339                                     `tfsdk:"created_at" json:"created_at,computed"`

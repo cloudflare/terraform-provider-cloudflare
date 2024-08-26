@@ -17,12 +17,12 @@ type EmailRoutingCatchAllDataSourceModel struct {
 	Tag            types.String                                    `tfsdk:"tag" json:"tag"`
 	Actions        *[]*EmailRoutingCatchAllActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
 	Matchers       *[]*EmailRoutingCatchAllMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
-	Enabled        types.Bool                                      `tfsdk:"enabled" json:"enabled"`
+	Enabled        types.Bool                                      `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
 type EmailRoutingCatchAllActionsDataSourceModel struct {
 	Type  types.String    `tfsdk:"type" json:"type,computed"`
-	Value *[]types.String `tfsdk:"value" json:"value"`
+	Value *[]types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type EmailRoutingCatchAllMatchersDataSourceModel struct {

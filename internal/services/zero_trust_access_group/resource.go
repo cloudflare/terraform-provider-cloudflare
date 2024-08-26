@@ -90,7 +90,7 @@ func (r *ZeroTrustAccessGroupResource) Create(ctx context.Context, req resource.
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -145,7 +145,7 @@ func (r *ZeroTrustAccessGroupResource) Update(ctx context.Context, req resource.
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -186,7 +186,7 @@ func (r *ZeroTrustAccessGroupResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -267,7 +267,7 @@ func (r *ZeroTrustAccessGroupResource) ImportState(ctx context.Context, req reso
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

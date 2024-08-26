@@ -21,19 +21,19 @@ type ByoIPPrefixResultListDataSourceEnvelope struct {
 
 type ByoIPPrefixDataSourceModel struct {
 	PrefixID             types.String                         `tfsdk:"prefix_id" path:"prefix_id"`
-	AccountID            types.String                         `tfsdk:"account_id" path:"account_id"`
+	AccountID            types.String                         `tfsdk:"account_id" path:"account_id,computed_optional"`
 	AdvertisedModifiedAt timetypes.RFC3339                    `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed"`
 	CreatedAt            timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed"`
 	ModifiedAt           timetypes.RFC3339                    `tfsdk:"modified_at" json:"modified_at,computed"`
-	Advertised           types.Bool                           `tfsdk:"advertised" json:"advertised"`
-	Approved             types.String                         `tfsdk:"approved" json:"approved"`
-	ASN                  types.Int64                          `tfsdk:"asn" json:"asn"`
-	CIDR                 types.String                         `tfsdk:"cidr" json:"cidr"`
-	Description          types.String                         `tfsdk:"description" json:"description"`
-	ID                   types.String                         `tfsdk:"id" json:"id"`
-	LOADocumentID        types.String                         `tfsdk:"loa_document_id" json:"loa_document_id"`
-	OnDemandEnabled      types.Bool                           `tfsdk:"on_demand_enabled" json:"on_demand_enabled"`
-	OnDemandLocked       types.Bool                           `tfsdk:"on_demand_locked" json:"on_demand_locked"`
+	Advertised           types.Bool                           `tfsdk:"advertised" json:"advertised,computed_optional"`
+	Approved             types.String                         `tfsdk:"approved" json:"approved,computed_optional"`
+	ASN                  types.Int64                          `tfsdk:"asn" json:"asn,computed_optional"`
+	CIDR                 types.String                         `tfsdk:"cidr" json:"cidr,computed_optional"`
+	Description          types.String                         `tfsdk:"description" json:"description,computed_optional"`
+	ID                   types.String                         `tfsdk:"id" json:"id,computed_optional"`
+	LOADocumentID        types.String                         `tfsdk:"loa_document_id" json:"loa_document_id,computed_optional"`
+	OnDemandEnabled      types.Bool                           `tfsdk:"on_demand_enabled" json:"on_demand_enabled,computed_optional"`
+	OnDemandLocked       types.Bool                           `tfsdk:"on_demand_locked" json:"on_demand_locked,computed_optional"`
 	Filter               *ByoIPPrefixFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

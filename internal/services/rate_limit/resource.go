@@ -81,7 +81,7 @@ func (r *RateLimitResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -129,7 +129,7 @@ func (r *RateLimitResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -162,7 +162,7 @@ func (r *RateLimitResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

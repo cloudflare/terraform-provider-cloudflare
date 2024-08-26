@@ -84,7 +84,7 @@ func (r *KeylessCertificateResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -133,7 +133,7 @@ func (r *KeylessCertificateResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -168,7 +168,7 @@ func (r *KeylessCertificateResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -235,7 +235,7 @@ func (r *KeylessCertificateResource) ImportState(ctx context.Context, req resour
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

@@ -70,7 +70,7 @@ func (d *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.
 	}
 
 	bytes := []byte(page.JSON.RawJSON())
-	err = apijson.Unmarshal(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 		return

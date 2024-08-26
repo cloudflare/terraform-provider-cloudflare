@@ -34,12 +34,12 @@ type HealthcheckDataSourceModel struct {
 	Suspended            types.Bool                            `tfsdk:"suspended" json:"suspended,computed"`
 	Timeout              types.Int64                           `tfsdk:"timeout" json:"timeout,computed"`
 	Type                 types.String                          `tfsdk:"type" json:"type,computed"`
-	Address              types.String                          `tfsdk:"address" json:"address"`
-	Description          types.String                          `tfsdk:"description" json:"description"`
-	Name                 types.String                          `tfsdk:"name" json:"name"`
-	CheckRegions         *[]types.String                       `tfsdk:"check_regions" json:"check_regions"`
-	HTTPConfig           *HealthcheckHTTPConfigDataSourceModel `tfsdk:"http_config" json:"http_config"`
-	TCPConfig            *HealthcheckTCPConfigDataSourceModel  `tfsdk:"tcp_config" json:"tcp_config"`
+	Address              types.String                          `tfsdk:"address" json:"address,computed_optional"`
+	Description          types.String                          `tfsdk:"description" json:"description,computed_optional"`
+	Name                 types.String                          `tfsdk:"name" json:"name,computed_optional"`
+	CheckRegions         *[]types.String                       `tfsdk:"check_regions" json:"check_regions,computed_optional"`
+	HTTPConfig           *HealthcheckHTTPConfigDataSourceModel `tfsdk:"http_config" json:"http_config,computed_optional"`
+	TCPConfig            *HealthcheckTCPConfigDataSourceModel  `tfsdk:"tcp_config" json:"tcp_config,computed_optional"`
 	Filter               *HealthcheckFindOneByDataSourceModel  `tfsdk:"filter"`
 }
 
@@ -61,10 +61,10 @@ func (m *HealthcheckDataSourceModel) toListParams() (params healthchecks.Healthc
 
 type HealthcheckHTTPConfigDataSourceModel struct {
 	AllowInsecure   types.Bool                 `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
-	ExpectedBody    types.String               `tfsdk:"expected_body" json:"expected_body"`
-	ExpectedCodes   *[]types.String            `tfsdk:"expected_codes" json:"expected_codes"`
+	ExpectedBody    types.String               `tfsdk:"expected_body" json:"expected_body,computed_optional"`
+	ExpectedCodes   *[]types.String            `tfsdk:"expected_codes" json:"expected_codes,computed_optional"`
 	FollowRedirects types.Bool                 `tfsdk:"follow_redirects" json:"follow_redirects,computed"`
-	Header          map[string]*[]types.String `tfsdk:"header" json:"header"`
+	Header          map[string]*[]types.String `tfsdk:"header" json:"header,computed_optional"`
 	Method          types.String               `tfsdk:"method" json:"method,computed"`
 	Path            types.String               `tfsdk:"path" json:"path,computed"`
 	Port            types.Int64                `tfsdk:"port" json:"port,computed"`

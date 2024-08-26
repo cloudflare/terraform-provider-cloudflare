@@ -15,12 +15,12 @@ type CustomSSLResultEnvelope struct {
 type CustomSSLModel struct {
 	ID              types.String                                          `tfsdk:"id" json:"id,computed"`
 	ZoneID          types.String                                          `tfsdk:"zone_id" path:"zone_id"`
-	Type            types.String                                          `tfsdk:"type" json:"type"`
+	Type            types.String                                          `tfsdk:"type" json:"type,computed_optional"`
 	Certificate     types.String                                          `tfsdk:"certificate" json:"certificate"`
 	PrivateKey      types.String                                          `tfsdk:"private_key" json:"private_key"`
 	Policy          types.String                                          `tfsdk:"policy" json:"policy"`
 	GeoRestrictions *CustomSSLGeoRestrictionsModel                        `tfsdk:"geo_restrictions" json:"geo_restrictions"`
-	BundleMethod    types.String                                          `tfsdk:"bundle_method" json:"bundle_method"`
+	BundleMethod    types.String                                          `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
 	ExpiresOn       timetypes.RFC3339                                     `tfsdk:"expires_on" json:"expires_on,computed"`
 	Issuer          types.String                                          `tfsdk:"issuer" json:"issuer,computed"`
 	ModifiedOn      timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
@@ -44,7 +44,7 @@ type CustomSSLKeylessServerModel struct {
 	ModifiedOn  timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                       `tfsdk:"name" json:"name,computed"`
 	Permissions types.List                         `tfsdk:"permissions" json:"permissions,computed"`
-	Port        types.Float64                      `tfsdk:"port" json:"port"`
+	Port        types.Float64                      `tfsdk:"port" json:"port,computed_optional"`
 	Status      types.String                       `tfsdk:"status" json:"status,computed"`
 	Tunnel      *CustomSSLKeylessServerTunnelModel `tfsdk:"tunnel" json:"tunnel"`
 }

@@ -24,7 +24,7 @@ type AccountDataSourceModel struct {
 	CreatedOn timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed"`
 	ID        types.String                     `tfsdk:"id" json:"id,computed"`
 	Name      types.String                     `tfsdk:"name" json:"name,computed"`
-	Settings  *AccountSettingsDataSourceModel  `tfsdk:"settings" json:"settings"`
+	Settings  *AccountSettingsDataSourceModel  `tfsdk:"settings" json:"settings,computed_optional"`
 	Filter    *AccountFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -50,7 +50,7 @@ func (m *AccountDataSourceModel) toListParams() (params accounts.AccountListPara
 }
 
 type AccountSettingsDataSourceModel struct {
-	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email"`
+	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email,computed_optional"`
 	DefaultNameservers          types.String `tfsdk:"default_nameservers" json:"default_nameservers,computed"`
 	EnforceTwofactor            types.Bool   `tfsdk:"enforce_twofactor" json:"enforce_twofactor,computed"`
 	UseAccountCustomNSByDefault types.Bool   `tfsdk:"use_account_custom_ns_by_default" json:"use_account_custom_ns_by_default,computed"`

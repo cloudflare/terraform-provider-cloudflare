@@ -27,49 +27,49 @@ func (m *RateLimitsDataSourceModel) toListParams() (params rate_limits.RateLimit
 
 type RateLimitsResultDataSourceModel struct {
 	ID          types.String                        `tfsdk:"id" json:"id,computed"`
-	Action      *RateLimitsActionDataSourceModel    `tfsdk:"action" json:"action"`
-	Bypass      *[]*RateLimitsBypassDataSourceModel `tfsdk:"bypass" json:"bypass"`
-	Description types.String                        `tfsdk:"description" json:"description"`
-	Disabled    types.Bool                          `tfsdk:"disabled" json:"disabled"`
-	Match       *RateLimitsMatchDataSourceModel     `tfsdk:"match" json:"match"`
-	Period      types.Float64                       `tfsdk:"period" json:"period"`
-	Threshold   types.Float64                       `tfsdk:"threshold" json:"threshold"`
+	Action      *RateLimitsActionDataSourceModel    `tfsdk:"action" json:"action,computed_optional"`
+	Bypass      *[]*RateLimitsBypassDataSourceModel `tfsdk:"bypass" json:"bypass,computed_optional"`
+	Description types.String                        `tfsdk:"description" json:"description,computed_optional"`
+	Disabled    types.Bool                          `tfsdk:"disabled" json:"disabled,computed_optional"`
+	Match       *RateLimitsMatchDataSourceModel     `tfsdk:"match" json:"match,computed_optional"`
+	Period      types.Float64                       `tfsdk:"period" json:"period,computed_optional"`
+	Threshold   types.Float64                       `tfsdk:"threshold" json:"threshold,computed_optional"`
 }
 
 type RateLimitsActionDataSourceModel struct {
-	Mode     types.String                             `tfsdk:"mode" json:"mode"`
-	Response *RateLimitsActionResponseDataSourceModel `tfsdk:"response" json:"response"`
-	Timeout  types.Float64                            `tfsdk:"timeout" json:"timeout"`
+	Mode     types.String                             `tfsdk:"mode" json:"mode,computed_optional"`
+	Response *RateLimitsActionResponseDataSourceModel `tfsdk:"response" json:"response,computed_optional"`
+	Timeout  types.Float64                            `tfsdk:"timeout" json:"timeout,computed_optional"`
 }
 
 type RateLimitsActionResponseDataSourceModel struct {
-	Body        types.String `tfsdk:"body" json:"body"`
-	ContentType types.String `tfsdk:"content_type" json:"content_type"`
+	Body        types.String `tfsdk:"body" json:"body,computed_optional"`
+	ContentType types.String `tfsdk:"content_type" json:"content_type,computed_optional"`
 }
 
 type RateLimitsBypassDataSourceModel struct {
-	Name  types.String `tfsdk:"name" json:"name"`
-	Value types.String `tfsdk:"value" json:"value"`
+	Name  types.String `tfsdk:"name" json:"name,computed_optional"`
+	Value types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type RateLimitsMatchDataSourceModel struct {
-	Headers  *[]*RateLimitsMatchHeadersDataSourceModel `tfsdk:"headers" json:"headers"`
-	Request  *RateLimitsMatchRequestDataSourceModel    `tfsdk:"request" json:"request"`
-	Response *RateLimitsMatchResponseDataSourceModel   `tfsdk:"response" json:"response"`
+	Headers  *[]*RateLimitsMatchHeadersDataSourceModel `tfsdk:"headers" json:"headers,computed_optional"`
+	Request  *RateLimitsMatchRequestDataSourceModel    `tfsdk:"request" json:"request,computed_optional"`
+	Response *RateLimitsMatchResponseDataSourceModel   `tfsdk:"response" json:"response,computed_optional"`
 }
 
 type RateLimitsMatchHeadersDataSourceModel struct {
-	Name  types.String `tfsdk:"name" json:"name"`
-	Op    types.String `tfsdk:"op" json:"op"`
-	Value types.String `tfsdk:"value" json:"value"`
+	Name  types.String `tfsdk:"name" json:"name,computed_optional"`
+	Op    types.String `tfsdk:"op" json:"op,computed_optional"`
+	Value types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type RateLimitsMatchRequestDataSourceModel struct {
-	Methods *[]types.String `tfsdk:"methods" json:"methods"`
-	Schemes *[]types.String `tfsdk:"schemes" json:"schemes"`
-	URL     types.String    `tfsdk:"url" json:"url"`
+	Methods *[]types.String `tfsdk:"methods" json:"methods,computed_optional"`
+	Schemes *[]types.String `tfsdk:"schemes" json:"schemes,computed_optional"`
+	URL     types.String    `tfsdk:"url" json:"url,computed_optional"`
 }
 
 type RateLimitsMatchResponseDataSourceModel struct {
-	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic"`
+	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic,computed_optional"`
 }

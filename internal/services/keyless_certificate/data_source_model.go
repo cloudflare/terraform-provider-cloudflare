@@ -31,7 +31,7 @@ type KeylessCertificateDataSourceModel struct {
 	Port                 types.Float64                               `tfsdk:"port" json:"port,computed"`
 	Status               types.String                                `tfsdk:"status" json:"status,computed"`
 	Permissions          types.List                                  `tfsdk:"permissions" json:"permissions,computed"`
-	Tunnel               *KeylessCertificateTunnelDataSourceModel    `tfsdk:"tunnel" json:"tunnel"`
+	Tunnel               *KeylessCertificateTunnelDataSourceModel    `tfsdk:"tunnel" json:"tunnel,computed_optional"`
 	Filter               *KeylessCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

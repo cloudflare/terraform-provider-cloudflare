@@ -21,8 +21,8 @@ type MagicWANGRETunnelModel struct {
 	InterfaceAddress      types.String                                                      `tfsdk:"interface_address" json:"interface_address"`
 	Name                  types.String                                                      `tfsdk:"name" json:"name"`
 	HealthCheck           *MagicWANGRETunnelHealthCheckModel                                `tfsdk:"health_check" json:"health_check"`
-	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu"`
-	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl"`
+	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional"`
+	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional"`
 	Deleted               types.Bool                                                        `tfsdk:"deleted" json:"deleted,computed"`
 	Modified              types.Bool                                                        `tfsdk:"modified" json:"modified,computed"`
 	DeletedGRETunnel      customfield.NestedObject[MagicWANGRETunnelDeletedGRETunnelModel]  `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
@@ -32,11 +32,11 @@ type MagicWANGRETunnelModel struct {
 }
 
 type MagicWANGRETunnelHealthCheckModel struct {
-	Direction types.String `tfsdk:"direction" json:"direction"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate      types.String `tfsdk:"rate" json:"rate"`
+	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target    types.String `tfsdk:"target" json:"target"`
-	Type      types.String `tfsdk:"type" json:"type"`
+	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANGRETunnelDeletedGRETunnelModel struct {
@@ -49,16 +49,16 @@ type MagicWANGRETunnelDeletedGRETunnelModel struct {
 	Description           types.String                                       `tfsdk:"description" json:"description"`
 	HealthCheck           *MagicWANGRETunnelDeletedGRETunnelHealthCheckModel `tfsdk:"health_check" json:"health_check"`
 	ModifiedOn            timetypes.RFC3339                                  `tfsdk:"modified_on" json:"modified_on,computed"`
-	Mtu                   types.Int64                                        `tfsdk:"mtu" json:"mtu"`
-	TTL                   types.Int64                                        `tfsdk:"ttl" json:"ttl"`
+	Mtu                   types.Int64                                        `tfsdk:"mtu" json:"mtu,computed_optional"`
+	TTL                   types.Int64                                        `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type MagicWANGRETunnelDeletedGRETunnelHealthCheckModel struct {
-	Direction types.String `tfsdk:"direction" json:"direction"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate      types.String `tfsdk:"rate" json:"rate"`
+	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target    types.String `tfsdk:"target" json:"target"`
-	Type      types.String `tfsdk:"type" json:"type"`
+	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANGRETunnelGRETunnelModel struct {
@@ -71,16 +71,16 @@ type MagicWANGRETunnelGRETunnelModel struct {
 	Description           types.String                                `tfsdk:"description" json:"description"`
 	HealthCheck           *MagicWANGRETunnelGRETunnelHealthCheckModel `tfsdk:"health_check" json:"health_check"`
 	ModifiedOn            timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed"`
-	Mtu                   types.Int64                                 `tfsdk:"mtu" json:"mtu"`
-	TTL                   types.Int64                                 `tfsdk:"ttl" json:"ttl"`
+	Mtu                   types.Int64                                 `tfsdk:"mtu" json:"mtu,computed_optional"`
+	TTL                   types.Int64                                 `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type MagicWANGRETunnelGRETunnelHealthCheckModel struct {
-	Direction types.String `tfsdk:"direction" json:"direction"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate      types.String `tfsdk:"rate" json:"rate"`
+	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target    types.String `tfsdk:"target" json:"target"`
-	Type      types.String `tfsdk:"type" json:"type"`
+	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANGRETunnelGRETunnelsModel struct {
@@ -93,16 +93,16 @@ type MagicWANGRETunnelGRETunnelsModel struct {
 	Description           types.String                                 `tfsdk:"description" json:"description"`
 	HealthCheck           *MagicWANGRETunnelGRETunnelsHealthCheckModel `tfsdk:"health_check" json:"health_check"`
 	ModifiedOn            timetypes.RFC3339                            `tfsdk:"modified_on" json:"modified_on,computed"`
-	Mtu                   types.Int64                                  `tfsdk:"mtu" json:"mtu"`
-	TTL                   types.Int64                                  `tfsdk:"ttl" json:"ttl"`
+	Mtu                   types.Int64                                  `tfsdk:"mtu" json:"mtu,computed_optional"`
+	TTL                   types.Int64                                  `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type MagicWANGRETunnelGRETunnelsHealthCheckModel struct {
-	Direction types.String `tfsdk:"direction" json:"direction"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate      types.String `tfsdk:"rate" json:"rate"`
+	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target    types.String `tfsdk:"target" json:"target"`
-	Type      types.String `tfsdk:"type" json:"type"`
+	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANGRETunnelModifiedGRETunnelModel struct {
@@ -115,14 +115,14 @@ type MagicWANGRETunnelModifiedGRETunnelModel struct {
 	Description           types.String                                        `tfsdk:"description" json:"description"`
 	HealthCheck           *MagicWANGRETunnelModifiedGRETunnelHealthCheckModel `tfsdk:"health_check" json:"health_check"`
 	ModifiedOn            timetypes.RFC3339                                   `tfsdk:"modified_on" json:"modified_on,computed"`
-	Mtu                   types.Int64                                         `tfsdk:"mtu" json:"mtu"`
-	TTL                   types.Int64                                         `tfsdk:"ttl" json:"ttl"`
+	Mtu                   types.Int64                                         `tfsdk:"mtu" json:"mtu,computed_optional"`
+	TTL                   types.Int64                                         `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type MagicWANGRETunnelModifiedGRETunnelHealthCheckModel struct {
-	Direction types.String `tfsdk:"direction" json:"direction"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate      types.String `tfsdk:"rate" json:"rate"`
+	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target    types.String `tfsdk:"target" json:"target"`
-	Type      types.String `tfsdk:"type" json:"type"`
+	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }

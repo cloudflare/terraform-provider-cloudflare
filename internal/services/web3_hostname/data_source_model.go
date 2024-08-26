@@ -24,9 +24,9 @@ type Web3HostnameDataSourceModel struct {
 	ModifiedOn     timetypes.RFC3339                     `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name           types.String                          `tfsdk:"name" json:"name,computed"`
 	Status         types.String                          `tfsdk:"status" json:"status,computed"`
-	Description    types.String                          `tfsdk:"description" json:"description"`
-	Dnslink        types.String                          `tfsdk:"dnslink" json:"dnslink"`
-	Target         types.String                          `tfsdk:"target" json:"target"`
+	Description    types.String                          `tfsdk:"description" json:"description,computed_optional"`
+	Dnslink        types.String                          `tfsdk:"dnslink" json:"dnslink,computed_optional"`
+	Target         types.String                          `tfsdk:"target" json:"target,computed_optional"`
 	Filter         *Web3HostnameFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

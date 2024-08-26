@@ -25,9 +25,9 @@ type WaitingRoomEventModel struct {
 	QueueingMethod        types.String      `tfsdk:"queueing_method" json:"queueing_method"`
 	SessionDuration       types.Int64       `tfsdk:"session_duration" json:"session_duration"`
 	TotalActiveUsers      types.Int64       `tfsdk:"total_active_users" json:"total_active_users"`
-	Description           types.String      `tfsdk:"description" json:"description"`
-	ShuffleAtEventStart   types.Bool        `tfsdk:"shuffle_at_event_start" json:"shuffle_at_event_start"`
-	Suspended             types.Bool        `tfsdk:"suspended" json:"suspended"`
+	Description           types.String      `tfsdk:"description" json:"description,computed_optional"`
+	ShuffleAtEventStart   types.Bool        `tfsdk:"shuffle_at_event_start" json:"shuffle_at_event_start,computed_optional"`
+	Suspended             types.Bool        `tfsdk:"suspended" json:"suspended,computed_optional"`
 	CreatedOn             timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn            timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
 }

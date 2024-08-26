@@ -83,7 +83,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Create(ctx context.Context, 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -130,7 +130,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Update(ctx context.Context, 
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -163,7 +163,7 @@ func (r *APIShieldSchemaValidationSettingsResource) Read(ctx context.Context, re
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -205,7 +205,7 @@ func (r *APIShieldSchemaValidationSettingsResource) ImportState(ctx context.Cont
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.Unmarshal(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

@@ -50,10 +50,10 @@ func (m *WorkersCustomDomainsDataSourceModel) toListParams() (params workers.Dom
 }
 
 type WorkersCustomDomainsResultDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id"`
-	Environment types.String `tfsdk:"environment" json:"environment"`
-	Hostname    types.String `tfsdk:"hostname" json:"hostname"`
-	Service     types.String `tfsdk:"service" json:"service"`
-	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id"`
-	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name"`
+	ID          types.String `tfsdk:"id" json:"id,computed_optional"`
+	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
+	Hostname    types.String `tfsdk:"hostname" json:"hostname,computed_optional"`
+	Service     types.String `tfsdk:"service" json:"service,computed_optional"`
+	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id,computed_optional"`
+	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name,computed_optional"`
 }

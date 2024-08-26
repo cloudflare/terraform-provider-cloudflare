@@ -21,13 +21,13 @@ type APIShieldSchemaResultListDataSourceEnvelope struct {
 
 type APIShieldSchemaDataSourceModel struct {
 	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	SchemaID          types.String                             `tfsdk:"schema_id" path:"schema_id"`
+	SchemaID          types.String                             `tfsdk:"schema_id" path:"schema_id,computed_optional"`
 	OmitSource        types.Bool                               `tfsdk:"omit_source" query:"omit_source"`
 	CreatedAt         timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed"`
 	Kind              types.String                             `tfsdk:"kind" json:"kind,computed"`
 	Name              types.String                             `tfsdk:"name" json:"name,computed"`
-	Source            types.String                             `tfsdk:"source" json:"source"`
-	ValidationEnabled types.Bool                               `tfsdk:"validation_enabled" json:"validation_enabled"`
+	Source            types.String                             `tfsdk:"source" json:"source,computed_optional"`
+	ValidationEnabled types.Bool                               `tfsdk:"validation_enabled" json:"validation_enabled,computed_optional"`
 	Filter            *APIShieldSchemaFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -56,6 +56,6 @@ func (m *APIShieldSchemaDataSourceModel) toListParams() (params api_gateway.User
 
 type APIShieldSchemaFindOneByDataSourceModel struct {
 	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id"`
-	OmitSource        types.Bool   `tfsdk:"omit_source" query:"omit_source"`
+	OmitSource        types.Bool   `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	ValidationEnabled types.Bool   `tfsdk:"validation_enabled" query:"validation_enabled"`
 }

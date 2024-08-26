@@ -29,15 +29,15 @@ func (m *HyperdriveConfigsDataSourceModel) toListParams() (params hyperdrive.Con
 }
 
 type HyperdriveConfigsResultDataSourceModel struct {
-	Caching *HyperdriveConfigsCachingDataSourceModel `tfsdk:"caching" json:"caching"`
-	Name    types.String                             `tfsdk:"name" json:"name"`
-	Origin  *HyperdriveConfigsOriginDataSourceModel  `tfsdk:"origin" json:"origin"`
+	Caching *HyperdriveConfigsCachingDataSourceModel `tfsdk:"caching" json:"caching,computed_optional"`
+	Name    types.String                             `tfsdk:"name" json:"name,computed_optional"`
+	Origin  *HyperdriveConfigsOriginDataSourceModel  `tfsdk:"origin" json:"origin,computed_optional"`
 }
 
 type HyperdriveConfigsCachingDataSourceModel struct {
-	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled"`
-	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age"`
-	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate"`
+	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed_optional"`
+	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,computed_optional"`
+	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,computed_optional"`
 }
 
 type HyperdriveConfigsOriginDataSourceModel struct {
@@ -45,6 +45,6 @@ type HyperdriveConfigsOriginDataSourceModel struct {
 	Host           types.String `tfsdk:"host" json:"host,computed"`
 	Scheme         types.String `tfsdk:"scheme" json:"scheme,computed"`
 	User           types.String `tfsdk:"user" json:"user,computed"`
-	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id"`
-	Port           types.Int64  `tfsdk:"port" json:"port"`
+	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,computed_optional"`
+	Port           types.Int64  `tfsdk:"port" json:"port,computed_optional"`
 }

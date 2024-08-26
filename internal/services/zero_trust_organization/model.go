@@ -25,7 +25,7 @@ type ZeroTrustOrganizationModel struct {
 	WARPAuthSessionDuration        types.String                           `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
 	CustomPages                    *ZeroTrustOrganizationCustomPagesModel `tfsdk:"custom_pages" json:"custom_pages"`
 	LoginDesign                    *ZeroTrustOrganizationLoginDesignModel `tfsdk:"login_design" json:"login_design"`
-	AutoRedirectToIdentity         types.Bool                             `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
+	AutoRedirectToIdentity         types.Bool                             `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 	CreatedAt                      timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt                      timetypes.RFC3339                      `tfsdk:"updated_at" json:"updated_at,computed"`
 }

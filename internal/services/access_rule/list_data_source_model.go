@@ -22,7 +22,7 @@ type AccessRulesDataSourceModel struct {
 	Notes         types.String                                                   `tfsdk:"notes" query:"notes"`
 	Order         types.String                                                   `tfsdk:"order" query:"order"`
 	Configuration *AccessRulesConfigurationDataSourceModel                       `tfsdk:"configuration" query:"configuration"`
-	Match         types.String                                                   `tfsdk:"match" query:"match"`
+	Match         types.String                                                   `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems      types.Int64                                                    `tfsdk:"max_items"`
 	Result        customfield.NestedObjectList[AccessRulesResultDataSourceModel] `tfsdk:"result"`
 }

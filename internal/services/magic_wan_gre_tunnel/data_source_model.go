@@ -35,8 +35,8 @@ type MagicWANGRETunnelGRETunnelDataSourceModel struct {
 	Name                  types.String                                          `tfsdk:"name" json:"name,computed"`
 	ID                    types.String                                          `tfsdk:"id" json:"id,computed"`
 	CreatedOn             timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed"`
-	Description           types.String                                          `tfsdk:"description" json:"description"`
-	HealthCheck           *MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel `tfsdk:"health_check" json:"health_check"`
+	Description           types.String                                          `tfsdk:"description" json:"description,computed_optional"`
+	HealthCheck           *MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel `tfsdk:"health_check" json:"health_check,computed_optional"`
 	ModifiedOn            timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
 	Mtu                   types.Int64                                           `tfsdk:"mtu" json:"mtu,computed"`
 	TTL                   types.Int64                                           `tfsdk:"ttl" json:"ttl,computed"`
@@ -46,6 +46,6 @@ type MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel struct {
 	Direction types.String `tfsdk:"direction" json:"direction,computed"`
 	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
 	Rate      types.String `tfsdk:"rate" json:"rate,computed"`
-	Target    types.String `tfsdk:"target" json:"target"`
+	Target    types.String `tfsdk:"target" json:"target,computed_optional"`
 	Type      types.String `tfsdk:"type" json:"type,computed"`
 }
