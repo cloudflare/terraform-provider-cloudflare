@@ -70,11 +70,9 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 	res := new(http.Response)
 	env := AccountResultEnvelope{*data}
-	_, err = r.client.Accounts.Update(
+	_, err = r.client.Accounts.New(
 		ctx,
-		accounts.AccountUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
+		accounts.AccountNewParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -90,7 +88,6 @@ func (r *AccountResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	data = &env.Result
-	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,7 +119,7 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 	_, err = r.client.Accounts.Update(
 		ctx,
 		accounts.AccountUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -139,7 +136,6 @@ func (r *AccountResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	data = &env.Result
-	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -158,7 +154,7 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 	_, err := r.client.Accounts.Get(
 		ctx,
 		accounts.AccountGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
+			AccountID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -174,13 +170,32 @@ func (r *AccountResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	data = &env.Result
-	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AccountResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *AccountModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	_, err := r.client.Accounts.Delete(
+		ctx,
+		accounts.AccountDeleteParams{
+			AccountID: cloudflare.F(data.ID.ValueString()),
+		},
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -218,25 +233,10 @@ func (r *AccountResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 	data = &env.Result
-	data.ID = data.AccountID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccountResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *AccountResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

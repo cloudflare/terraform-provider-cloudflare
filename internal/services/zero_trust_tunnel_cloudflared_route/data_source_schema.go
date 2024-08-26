@@ -6,9 +6,11 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
@@ -17,26 +19,12 @@ var _ datasource.DataSourceWithConfigValidators = &ZeroTrustTunnelCloudflaredRou
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"comment": schema.StringAttribute{
-				Description: "Optional remark describing the route.",
+			"account_id": schema.StringAttribute{
+				Description: "Cloudflare account ID",
 				Optional:    true,
 			},
-			"created_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was created.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"deleted_at": schema.StringAttribute{
-				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.StringAttribute{
+			"route_id": schema.StringAttribute{
 				Description: "UUID of the route.",
-				Optional:    true,
-			},
-			"network": schema.StringAttribute{
-				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
 				Optional:    true,
 			},
 			"tun_type": schema.StringAttribute{
@@ -52,20 +40,47 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"tunnel_id": schema.StringAttribute{
-				Description: "UUID of the tunnel.",
-				Optional:    true,
-			},
 			"tunnel_name": schema.StringAttribute{
 				Description: "A user-friendly name for a tunnel.",
 				Optional:    true,
 			},
-			"virtual_network_id": schema.StringAttribute{
-				Description: "UUID of the virtual network.",
-				Optional:    true,
-			},
 			"virtual_network_name": schema.StringAttribute{
 				Description: "A user-friendly name for the virtual network.",
+				Optional:    true,
+			},
+			"created_at": schema.StringAttribute{
+				Description: "Timestamp of when the resource was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"deleted_at": schema.StringAttribute{
+				Description: "Timestamp of when the resource was deleted. If `null`, the resource has not been deleted.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"comment": schema.StringAttribute{
+				Description: "Optional remark describing the route.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "UUID of the route.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"network": schema.StringAttribute{
+				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"tunnel_id": schema.StringAttribute{
+				Description: "UUID of the tunnel.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"virtual_network_id": schema.StringAttribute{
+				Description: "UUID of the virtual network.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
@@ -123,5 +138,9 @@ func (d *ZeroTrustTunnelCloudflaredRouteDataSource) Schema(ctx context.Context, 
 }
 
 func (d *ZeroTrustTunnelCloudflaredRouteDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{}
+	return []datasource.ConfigValidator{
+		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("route_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("route_id")),
+	}
 }
