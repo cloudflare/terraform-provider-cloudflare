@@ -5,22 +5,23 @@ package r2_bucket
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/r2"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type R2BucketsResultListDataSourceEnvelope struct {
-	Result *[]*R2BucketsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[R2BucketsResultDataSourceModel] `json:"result,computed"`
 }
 
 type R2BucketsDataSourceModel struct {
-	AccountID    types.String                       `tfsdk:"account_id" path:"account_id"`
-	Direction    types.String                       `tfsdk:"direction" query:"direction"`
-	NameContains types.String                       `tfsdk:"name_contains" query:"name_contains"`
-	Order        types.String                       `tfsdk:"order" query:"order"`
-	StartAfter   types.String                       `tfsdk:"start_after" query:"start_after"`
-	MaxItems     types.Int64                        `tfsdk:"max_items"`
-	Result       *[]*R2BucketsResultDataSourceModel `tfsdk:"result"`
+	AccountID    types.String                                                 `tfsdk:"account_id" path:"account_id"`
+	Direction    types.String                                                 `tfsdk:"direction" query:"direction"`
+	NameContains types.String                                                 `tfsdk:"name_contains" query:"name_contains"`
+	Order        types.String                                                 `tfsdk:"order" query:"order"`
+	StartAfter   types.String                                                 `tfsdk:"start_after" query:"start_after"`
+	MaxItems     types.Int64                                                  `tfsdk:"max_items"`
+	Result       customfield.NestedObjectList[R2BucketsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *R2BucketsDataSourceModel) toListParams() (params r2.BucketListParams, diags diag.Diagnostics) {

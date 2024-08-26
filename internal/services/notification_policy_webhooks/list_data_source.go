@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type NotificationPolicyWebhooksListDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &NotificationPolicyWebhooksListDataSource{}
+var _ datasource.DataSourceWithConfigure = (*NotificationPolicyWebhooksListDataSource)(nil)
 
 func NewNotificationPolicyWebhooksListDataSource() datasource.DataSource {
 	return &NotificationPolicyWebhooksListDataSource{}
@@ -59,10 +61,10 @@ func (d *NotificationPolicyWebhooksListDataSource) Read(ctx context.Context, req
 		return
 	}
 
-	items := &[]*NotificationPolicyWebhooksListResultDataSourceModel{}
+	items := customfield.NullObjectList[NotificationPolicyWebhooksListResultDataSourceModel](ctx)
 	env := NotificationPolicyWebhooksListResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*NotificationPolicyWebhooksListResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Alerting.Destinations.Webhooks.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *NotificationPolicyWebhooksListDataSource) Read(ctx context.Context, req
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *NotificationPolicyWebhooksListDataSource) Read(ctx context.Context, req
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[NotificationPolicyWebhooksListResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

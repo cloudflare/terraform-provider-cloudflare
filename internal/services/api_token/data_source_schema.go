@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &APITokenDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*APITokenDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -118,6 +118,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"permission_groups": schema.ListNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Computed:    true,
+							CustomType:  customfield.NewNestedObjectListType[APITokenPoliciesPermissionGroupsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{

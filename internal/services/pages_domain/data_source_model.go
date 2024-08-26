@@ -15,7 +15,7 @@ type PagesDomainResultDataSourceEnvelope struct {
 }
 
 type PagesDomainResultListDataSourceEnvelope struct {
-	Result *[]*PagesDomainDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[PagesDomainDataSourceModel] `json:"result,computed"`
 }
 
 type PagesDomainDataSourceModel struct {

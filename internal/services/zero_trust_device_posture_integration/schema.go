@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustDevicePostureIntegrationResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustDevicePostureIntegrationResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

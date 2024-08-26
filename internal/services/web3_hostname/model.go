@@ -8,7 +8,7 @@ import (
 )
 
 type Web3HostnameResultEnvelope struct {
-	Result Web3HostnameModel `json:"result,computed"`
+	Result Web3HostnameModel `json:"result"`
 }
 
 type Web3HostnameModel struct {

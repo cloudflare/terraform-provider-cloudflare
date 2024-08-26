@@ -19,7 +19,7 @@ type ManagedHeadersDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ManagedHeadersDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ManagedHeadersDataSource)(nil)
 
 func NewManagedHeadersDataSource() datasource.DataSource {
 	return &ManagedHeadersDataSource{}

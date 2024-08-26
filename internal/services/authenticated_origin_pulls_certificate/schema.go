@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &AuthenticatedOriginPullsCertificateResource{}
+var _ resource.ResourceWithConfigValidators = (*AuthenticatedOriginPullsCertificateResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustGatewayProxyEndpointResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustGatewayProxyEndpointResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

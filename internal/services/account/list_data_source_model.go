@@ -5,20 +5,21 @@ package account
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/accounts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type AccountsResultListDataSourceEnvelope struct {
-	Result *[]*AccountsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AccountsResultDataSourceModel] `json:"result,computed"`
 }
 
 type AccountsDataSourceModel struct {
-	Direction types.String                      `tfsdk:"direction" query:"direction"`
-	Name      types.String                      `tfsdk:"name" query:"name"`
-	MaxItems  types.Int64                       `tfsdk:"max_items"`
-	Result    *[]*AccountsResultDataSourceModel `tfsdk:"result"`
+	Direction types.String                                                `tfsdk:"direction" query:"direction"`
+	Name      types.String                                                `tfsdk:"name" query:"name"`
+	MaxItems  types.Int64                                                 `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[AccountsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AccountsDataSourceModel) toListParams() (params accounts.AccountListParams, diags diag.Diagnostics) {

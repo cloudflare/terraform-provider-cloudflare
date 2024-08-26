@@ -8,7 +8,7 @@ import (
 )
 
 type EmailRoutingSettingsResultEnvelope struct {
-	Result EmailRoutingSettingsModel `json:"result,computed"`
+	Result EmailRoutingSettingsModel `json:"result"`
 }
 
 type EmailRoutingSettingsModel struct {

@@ -7,7 +7,7 @@ import (
 )
 
 type FirewallRuleResultEnvelope struct {
-	Result FirewallRuleModel `json:"result,computed"`
+	Result FirewallRuleModel `json:"result"`
 }
 
 type FirewallRuleModel struct {
@@ -20,7 +20,7 @@ type FirewallRuleModel struct {
 	Paused         types.Bool               `tfsdk:"paused" json:"paused,computed"`
 	Priority       types.Float64            `tfsdk:"priority" json:"priority,computed"`
 	Ref            types.String             `tfsdk:"ref" json:"ref,computed"`
-	Products       *[]types.String          `tfsdk:"products" json:"products,computed"`
+	Products       types.List               `tfsdk:"products" json:"products,computed"`
 }
 
 type FirewallRuleActionModel struct {

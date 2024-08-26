@@ -17,8 +17,8 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustAccessMTLSHostnameSettingsResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustAccessMTLSHostnameSettingsResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustAccessMTLSHostnameSettingsResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustAccessMTLSHostnameSettingsResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustAccessMTLSHostnameSettingsResource{}

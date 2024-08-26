@@ -7,29 +7,30 @@ import (
 	"mime/multipart"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apiform"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WorkersScriptResultEnvelope struct {
-	Result WorkersScriptModel `json:"result,computed"`
+	Result WorkersScriptModel `json:"result"`
 }
 
 type WorkersScriptModel struct {
-	ID            types.String                        `tfsdk:"id" json:"-,computed"`
-	ScriptName    types.String                        `tfsdk:"script_name" path:"script_name"`
-	AccountID     types.String                        `tfsdk:"account_id" path:"account_id"`
-	Message       types.String                        `tfsdk:"message" json:"message"`
-	AnyPartName   *[]types.String                     `tfsdk:"any_part_name" json:"<any part name>"`
-	Metadata      *WorkersScriptMetadataModel         `tfsdk:"metadata" json:"metadata"`
-	CreatedOn     timetypes.RFC3339                   `tfsdk:"created_on" json:"created_on,computed"`
-	Etag          types.String                        `tfsdk:"etag" json:"etag,computed"`
-	Logpush       types.Bool                          `tfsdk:"logpush" json:"logpush,computed"`
-	ModifiedOn    timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on,computed"`
-	PlacementMode types.String                        `tfsdk:"placement_mode" json:"placement_mode,computed"`
-	StartupTimeMs types.Int64                         `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
-	UsageModel    types.String                        `tfsdk:"usage_model" json:"usage_model,computed"`
-	TailConsumers *[]*WorkersScriptTailConsumersModel `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
+	ID            types.String                                                  `tfsdk:"id" json:"-,computed"`
+	ScriptName    types.String                                                  `tfsdk:"script_name" path:"script_name"`
+	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id"`
+	Message       types.String                                                  `tfsdk:"message" json:"message"`
+	AnyPartName   *[]types.String                                               `tfsdk:"any_part_name" json:"<any part name>"`
+	Metadata      *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata"`
+	CreatedOn     timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed"`
+	Etag          types.String                                                  `tfsdk:"etag" json:"etag,computed"`
+	Logpush       types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
+	ModifiedOn    timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed"`
+	PlacementMode types.String                                                  `tfsdk:"placement_mode" json:"placement_mode,computed"`
+	StartupTimeMs types.Int64                                                   `tfsdk:"startup_time_ms" json:"startup_time_ms,computed"`
+	UsageModel    types.String                                                  `tfsdk:"usage_model" json:"usage_model,computed"`
+	TailConsumers customfield.NestedObjectList[WorkersScriptTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed"`
 }
 
 func (r WorkersScriptModel) MarshalMultipart() (data []byte, contentType string, err error) {

@@ -10,25 +10,25 @@ import (
 )
 
 type NotificationPolicyResultEnvelope struct {
-	Result NotificationPolicyModel `json:"result,computed"`
+	Result NotificationPolicyModel `json:"result"`
 }
 
 type NotificationPolicyModel struct {
-	ID            types.String                                                `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                                `tfsdk:"account_id" path:"account_id"`
-	AlertType     types.String                                                `tfsdk:"alert_type" json:"alert_type"`
-	Name          types.String                                                `tfsdk:"name" json:"name"`
-	Mechanisms    map[string]*[]jsontypes.Normalized                          `tfsdk:"mechanisms" json:"mechanisms"`
-	AlertInterval types.String                                                `tfsdk:"alert_interval" json:"alert_interval"`
-	Description   types.String                                                `tfsdk:"description" json:"description"`
-	Filters       *NotificationPolicyFiltersModel                             `tfsdk:"filters" json:"filters"`
-	Enabled       types.Bool                                                  `tfsdk:"enabled" json:"enabled"`
-	Created       timetypes.RFC3339                                           `tfsdk:"created" json:"created,computed"`
-	Modified      timetypes.RFC3339                                           `tfsdk:"modified" json:"modified,computed"`
-	Success       types.Bool                                                  `tfsdk:"success" json:"success,computed"`
-	Errors        *[]*NotificationPolicyErrorsModel                           `tfsdk:"errors" json:"errors,computed"`
-	Messages      *[]*NotificationPolicyMessagesModel                         `tfsdk:"messages" json:"messages,computed"`
-	ResultInfo    customfield.NestedObject[NotificationPolicyResultInfoModel] `tfsdk:"result_info" json:"result_info,computed"`
+	ID            types.String                                                  `tfsdk:"id" json:"id,computed"`
+	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id"`
+	AlertType     types.String                                                  `tfsdk:"alert_type" json:"alert_type"`
+	Name          types.String                                                  `tfsdk:"name" json:"name"`
+	Mechanisms    map[string]*[]jsontypes.Normalized                            `tfsdk:"mechanisms" json:"mechanisms"`
+	AlertInterval types.String                                                  `tfsdk:"alert_interval" json:"alert_interval"`
+	Description   types.String                                                  `tfsdk:"description" json:"description"`
+	Filters       *NotificationPolicyFiltersModel                               `tfsdk:"filters" json:"filters"`
+	Enabled       types.Bool                                                    `tfsdk:"enabled" json:"enabled"`
+	Created       timetypes.RFC3339                                             `tfsdk:"created" json:"created,computed"`
+	Modified      timetypes.RFC3339                                             `tfsdk:"modified" json:"modified,computed"`
+	Success       types.Bool                                                    `tfsdk:"success" json:"success,computed"`
+	Errors        customfield.NestedObjectList[NotificationPolicyErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
+	Messages      customfield.NestedObjectList[NotificationPolicyMessagesModel] `tfsdk:"messages" json:"messages,computed"`
+	ResultInfo    customfield.NestedObject[NotificationPolicyResultInfoModel]   `tfsdk:"result_info" json:"result_info,computed"`
 }
 
 type NotificationPolicyFiltersModel struct {

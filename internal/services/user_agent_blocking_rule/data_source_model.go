@@ -5,6 +5,7 @@ package user_agent_blocking_rule
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type UserAgentBlockingRuleResultDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRuleResultListDataSourceEnvelope struct {
-	Result *[]*UserAgentBlockingRuleDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[UserAgentBlockingRuleDataSourceModel] `json:"result,computed"`
 }
 
 type UserAgentBlockingRuleDataSourceModel struct {

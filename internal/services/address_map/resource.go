@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &AddressMapResource{}
-var _ resource.ResourceWithModifyPlan = &AddressMapResource{}
-var _ resource.ResourceWithImportState = &AddressMapResource{}
+var _ resource.ResourceWithConfigure = (*AddressMapResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*AddressMapResource)(nil)
+var _ resource.ResourceWithImportState = (*AddressMapResource)(nil)
 
 func NewResource() resource.Resource {
 	return &AddressMapResource{}

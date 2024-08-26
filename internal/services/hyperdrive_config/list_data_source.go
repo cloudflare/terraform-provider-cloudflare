@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type HyperdriveConfigsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &HyperdriveConfigsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*HyperdriveConfigsDataSource)(nil)
 
 func NewHyperdriveConfigsDataSource() datasource.DataSource {
 	return &HyperdriveConfigsDataSource{}
@@ -59,10 +61,10 @@ func (d *HyperdriveConfigsDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	items := &[]*HyperdriveConfigsResultDataSourceModel{}
+	items := customfield.NullObjectList[HyperdriveConfigsResultDataSourceModel](ctx)
 	env := HyperdriveConfigsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*HyperdriveConfigsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Hyperdrive.Configs.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *HyperdriveConfigsDataSource) Read(ctx context.Context, req datasource.R
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *HyperdriveConfigsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[HyperdriveConfigsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

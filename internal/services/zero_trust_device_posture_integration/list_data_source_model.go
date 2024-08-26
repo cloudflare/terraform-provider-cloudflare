@@ -5,18 +5,19 @@ package zero_trust_device_posture_integration
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustDevicePostureIntegrationsResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustDevicePostureIntegrationsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustDevicePostureIntegrationsResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustDevicePostureIntegrationsDataSourceModel struct {
-	AccountID types.String                                                `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                                 `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustDevicePostureIntegrationsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                          `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                                           `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustDevicePostureIntegrationsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDevicePostureIntegrationsDataSourceModel) toListParams() (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {

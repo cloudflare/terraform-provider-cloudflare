@@ -3,18 +3,19 @@
 package web3_hostname
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type Web3HostnamesResultListDataSourceEnvelope struct {
-	Result *[]*Web3HostnamesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[Web3HostnamesResultDataSourceModel] `json:"result,computed"`
 }
 
 type Web3HostnamesDataSourceModel struct {
-	ZoneIdentifier types.String                           `tfsdk:"zone_identifier" path:"zone_identifier"`
-	MaxItems       types.Int64                            `tfsdk:"max_items"`
-	Result         *[]*Web3HostnamesResultDataSourceModel `tfsdk:"result"`
+	ZoneIdentifier types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier"`
+	MaxItems       types.Int64                                                      `tfsdk:"max_items"`
+	Result         customfield.NestedObjectList[Web3HostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 type Web3HostnamesResultDataSourceModel struct {

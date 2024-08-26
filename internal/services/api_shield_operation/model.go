@@ -7,7 +7,7 @@ import (
 )
 
 type APIShieldOperationResultEnvelope struct {
-	Result APIShieldOperationModel `json:"result,computed"`
+	Result APIShieldOperationModel `json:"result"`
 }
 
 type APIShieldOperationModel struct {

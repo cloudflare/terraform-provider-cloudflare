@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &HyperdriveConfigResource{}
-var _ resource.ResourceWithModifyPlan = &HyperdriveConfigResource{}
-var _ resource.ResourceWithImportState = &HyperdriveConfigResource{}
+var _ resource.ResourceWithConfigure = (*HyperdriveConfigResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*HyperdriveConfigResource)(nil)
+var _ resource.ResourceWithImportState = (*HyperdriveConfigResource)(nil)
 
 func NewResource() resource.Resource {
 	return &HyperdriveConfigResource{}

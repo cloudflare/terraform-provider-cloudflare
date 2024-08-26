@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &WorkersSecretResource{}
+var _ resource.ResourceWithUpgradeState = (*WorkersSecretResource)(nil)
 
 func (r *WorkersSecretResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -7,7 +7,7 @@ import (
 )
 
 type LogpullRetentionResultEnvelope struct {
-	Result LogpullRetentionModel `json:"result,computed"`
+	Result LogpullRetentionModel `json:"result"`
 }
 
 type LogpullRetentionModel struct {

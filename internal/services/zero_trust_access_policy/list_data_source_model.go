@@ -5,6 +5,7 @@ package zero_trust_access_policy
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -12,15 +13,15 @@ import (
 )
 
 type ZeroTrustAccessPoliciesResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessPoliciesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessPoliciesResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessPoliciesDataSourceModel struct {
-	AppID     types.String                                     `tfsdk:"app_id" path:"app_id"`
-	AccountID types.String                                     `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                     `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                                      `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustAccessPoliciesResultDataSourceModel `tfsdk:"result"`
+	AppID     types.String                                                               `tfsdk:"app_id" path:"app_id"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                                               `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                                                `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustAccessPoliciesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessPoliciesDataSourceModel) toListParams() (params zero_trust.AccessApplicationPolicyListParams, diags diag.Diagnostics) {

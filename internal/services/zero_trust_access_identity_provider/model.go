@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustAccessIdentityProviderResultEnvelope struct {
-	Result ZeroTrustAccessIdentityProviderModel `json:"result,computed"`
+	Result ZeroTrustAccessIdentityProviderModel `json:"result"`
 }
 
 type ZeroTrustAccessIdentityProviderModel struct {

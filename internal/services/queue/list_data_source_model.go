@@ -5,18 +5,19 @@ package queue
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/queues"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type QueuesResultListDataSourceEnvelope struct {
-	Result *[]*QueuesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[QueuesResultDataSourceModel] `json:"result,computed"`
 }
 
 type QueuesDataSourceModel struct {
-	AccountID types.String                    `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                     `tfsdk:"max_items"`
-	Result    *[]*QueuesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                              `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                               `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[QueuesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *QueuesDataSourceModel) toListParams() (params queues.QueueListParams, diags diag.Diagnostics) {
@@ -28,14 +29,14 @@ func (m *QueuesDataSourceModel) toListParams() (params queues.QueueListParams, d
 }
 
 type QueuesResultDataSourceModel struct {
-	Consumers           *[]*QueuesConsumersDataSourceModel `tfsdk:"consumers" json:"consumers,computed"`
-	ConsumersTotalCount types.Float64                      `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
-	CreatedOn           types.String                       `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn          types.String                       `tfsdk:"modified_on" json:"modified_on,computed"`
-	Producers           *[]*QueuesProducersDataSourceModel `tfsdk:"producers" json:"producers,computed"`
-	ProducersTotalCount types.Float64                      `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
-	QueueID             types.String                       `tfsdk:"queue_id" json:"queue_id,computed"`
-	QueueName           types.String                       `tfsdk:"queue_name" json:"queue_name"`
+	Consumers           customfield.NestedObjectList[QueuesConsumersDataSourceModel] `tfsdk:"consumers" json:"consumers,computed"`
+	ConsumersTotalCount types.Float64                                                `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
+	CreatedOn           types.String                                                 `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn          types.String                                                 `tfsdk:"modified_on" json:"modified_on,computed"`
+	Producers           customfield.NestedObjectList[QueuesProducersDataSourceModel] `tfsdk:"producers" json:"producers,computed"`
+	ProducersTotalCount types.Float64                                                `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
+	QueueID             types.String                                                 `tfsdk:"queue_id" json:"queue_id,computed"`
+	QueueName           types.String                                                 `tfsdk:"queue_name" json:"queue_name"`
 }
 
 type QueuesConsumersDataSourceModel struct {

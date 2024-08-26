@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &NotificationPolicyResource{}
+var _ resource.ResourceWithUpgradeState = (*NotificationPolicyResource)(nil)
 
 func (r *NotificationPolicyResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type NotificationPoliciesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &NotificationPoliciesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*NotificationPoliciesDataSource)(nil)
 
 func NewNotificationPoliciesDataSource() datasource.DataSource {
 	return &NotificationPoliciesDataSource{}
@@ -59,10 +61,10 @@ func (d *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	items := &[]*NotificationPoliciesResultDataSourceModel{}
+	items := customfield.NullObjectList[NotificationPoliciesResultDataSourceModel](ctx)
 	env := NotificationPoliciesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*NotificationPoliciesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Alerting.Policies.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[NotificationPoliciesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

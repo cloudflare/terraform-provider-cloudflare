@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type APITokensDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &APITokensDataSource{}
+var _ datasource.DataSourceWithConfigure = (*APITokensDataSource)(nil)
 
 func NewAPITokensDataSource() datasource.DataSource {
 	return &APITokensDataSource{}
@@ -59,10 +61,10 @@ func (d *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	items := &[]*APITokensResultDataSourceModel{}
+	items := customfield.NullObjectList[APITokensResultDataSourceModel](ctx)
 	env := APITokensResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*APITokensResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.User.Tokens.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[APITokensResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

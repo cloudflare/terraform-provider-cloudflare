@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type CustomSSLDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &CustomSSLDataSource{}
+var _ datasource.DataSourceWithConfigure = (*CustomSSLDataSource)(nil)
 
 func NewCustomSSLDataSource() datasource.DataSource {
 	return &CustomSSLDataSource{}
@@ -91,7 +92,7 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 			return
 		}
 
-		items := &[]*CustomSSLDataSourceModel{}
+		items := customfield.NullObjectList[CustomSSLDataSourceModel](ctx)
 		env := CustomSSLResultListDataSourceEnvelope{items}
 
 		page, err := d.client.CustomCertificates.List(ctx, params)
@@ -107,11 +108,13 @@ func (d *CustomSSLDataSource) Read(ctx context.Context, req datasource.ReadReque
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

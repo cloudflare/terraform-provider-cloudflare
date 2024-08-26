@@ -5,6 +5,7 @@ package notification_policy_webhooks
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type NotificationPolicyWebhooksResultDataSourceEnvelope struct {
 }
 
 type NotificationPolicyWebhooksResultListDataSourceEnvelope struct {
-	Result *[]*NotificationPolicyWebhooksDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[NotificationPolicyWebhooksDataSourceModel] `json:"result,computed"`
 }
 
 type NotificationPolicyWebhooksDataSourceModel struct {

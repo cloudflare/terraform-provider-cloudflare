@@ -13,7 +13,7 @@ import (
 )
 
 type APIShieldSchemaResultEnvelope struct {
-	Result APIShieldSchemaModel `json:"result,computed"`
+	Result APIShieldSchemaModel `json:"result"`
 }
 
 type APIShieldSchemaModel struct {
@@ -26,8 +26,8 @@ type APIShieldSchemaModel struct {
 	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`
 	Success           types.Bool                                                  `tfsdk:"success" json:"success,computed"`
-	Errors            *[]*APIShieldSchemaErrorsModel                              `tfsdk:"errors" json:"errors,computed"`
-	Messages          *[]*APIShieldSchemaMessagesModel                            `tfsdk:"messages" json:"messages,computed"`
+	Errors            customfield.NestedObjectList[APIShieldSchemaErrorsModel]    `tfsdk:"errors" json:"errors,computed"`
+	Messages          customfield.NestedObjectList[APIShieldSchemaMessagesModel]  `tfsdk:"messages" json:"messages,computed"`
 	Schema            customfield.NestedObject[APIShieldSchemaSchemaModel]        `tfsdk:"schema" json:"schema,computed"`
 	UploadDetails     customfield.NestedObject[APIShieldSchemaUploadDetailsModel] `tfsdk:"upload_details" json:"upload_details,computed"`
 }

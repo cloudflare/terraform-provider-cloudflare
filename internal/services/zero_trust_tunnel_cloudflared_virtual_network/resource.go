@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustTunnelCloudflaredVirtualNetworkResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustTunnelCloudflaredVirtualNetworkResource{}
-var _ resource.ResourceWithImportState = &ZeroTrustTunnelCloudflaredVirtualNetworkResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustTunnelCloudflaredVirtualNetworkResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustTunnelCloudflaredVirtualNetworkResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustTunnelCloudflaredVirtualNetworkResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustTunnelCloudflaredVirtualNetworkResource{}

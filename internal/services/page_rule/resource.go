@@ -17,8 +17,8 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &PageRuleResource{}
-var _ resource.ResourceWithModifyPlan = &PageRuleResource{}
+var _ resource.ResourceWithConfigure = (*PageRuleResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*PageRuleResource)(nil)
 
 func NewResource() resource.Resource {
 	return &PageRuleResource{}

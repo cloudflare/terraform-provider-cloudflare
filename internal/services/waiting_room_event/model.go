@@ -8,7 +8,7 @@ import (
 )
 
 type WaitingRoomEventResultEnvelope struct {
-	Result WaitingRoomEventModel `json:"result,computed"`
+	Result WaitingRoomEventModel `json:"result"`
 }
 
 type WaitingRoomEventModel struct {

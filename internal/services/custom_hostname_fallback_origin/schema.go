@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &CustomHostnameFallbackOriginResource{}
+var _ resource.ResourceWithConfigValidators = (*CustomHostnameFallbackOriginResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

@@ -5,6 +5,7 @@ package access_rule
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type AccessRuleResultDataSourceEnvelope struct {
 }
 
 type AccessRuleResultListDataSourceEnvelope struct {
-	Result *[]*AccessRuleDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AccessRuleDataSourceModel] `json:"result,computed"`
 }
 
 type AccessRuleDataSourceModel struct {

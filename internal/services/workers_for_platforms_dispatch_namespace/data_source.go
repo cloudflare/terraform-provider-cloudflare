@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type WorkersForPlatformsDispatchNamespaceDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WorkersForPlatformsDispatchNamespaceDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WorkersForPlatformsDispatchNamespaceDataSource)(nil)
 
 func NewWorkersForPlatformsDispatchNamespaceDataSource() datasource.DataSource {
 	return &WorkersForPlatformsDispatchNamespaceDataSource{}
@@ -91,7 +92,7 @@ func (d *WorkersForPlatformsDispatchNamespaceDataSource) Read(ctx context.Contex
 			return
 		}
 
-		items := &[]*WorkersForPlatformsDispatchNamespaceDataSourceModel{}
+		items := customfield.NullObjectList[WorkersForPlatformsDispatchNamespaceDataSourceModel](ctx)
 		env := WorkersForPlatformsDispatchNamespaceResultListDataSourceEnvelope{items}
 
 		page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, params)
@@ -107,11 +108,13 @@ func (d *WorkersForPlatformsDispatchNamespaceDataSource) Read(ctx context.Contex
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

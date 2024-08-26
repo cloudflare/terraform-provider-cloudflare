@@ -19,7 +19,7 @@ type TotalTLSDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &TotalTLSDataSource{}
+var _ datasource.DataSourceWithConfigure = (*TotalTLSDataSource)(nil)
 
 func NewTotalTLSDataSource() datasource.DataSource {
 	return &TotalTLSDataSource{}

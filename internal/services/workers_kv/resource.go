@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &WorkersKVResource{}
-var _ resource.ResourceWithModifyPlan = &WorkersKVResource{}
-var _ resource.ResourceWithImportState = &WorkersKVResource{}
+var _ resource.ResourceWithConfigure = (*WorkersKVResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*WorkersKVResource)(nil)
+var _ resource.ResourceWithImportState = (*WorkersKVResource)(nil)
 
 func NewResource() resource.Resource {
 	return &WorkersKVResource{}

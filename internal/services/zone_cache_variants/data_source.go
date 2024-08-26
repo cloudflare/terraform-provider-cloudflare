@@ -19,7 +19,7 @@ type ZoneCacheVariantsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZoneCacheVariantsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZoneCacheVariantsDataSource)(nil)
 
 func NewZoneCacheVariantsDataSource() datasource.DataSource {
 	return &ZoneCacheVariantsDataSource{}

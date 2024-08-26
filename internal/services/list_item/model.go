@@ -7,7 +7,7 @@ import (
 )
 
 type ListItemResultEnvelope struct {
-	Result ListItemModel `json:"result,computed"`
+	Result ListItemModel `json:"result"`
 }
 
 type ListItemModel struct {

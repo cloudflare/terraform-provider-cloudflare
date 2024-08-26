@@ -5,6 +5,7 @@ package r2_bucket
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/r2"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type R2BucketResultDataSourceEnvelope struct {
 }
 
 type R2BucketResultListDataSourceEnvelope struct {
-	Result *[]*R2BucketDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[R2BucketDataSourceModel] `json:"result,computed"`
 }
 
 type R2BucketDataSourceModel struct {

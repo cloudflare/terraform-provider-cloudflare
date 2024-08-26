@@ -5,6 +5,7 @@ package keyless_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/keyless_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type KeylessCertificateResultDataSourceEnvelope struct {
 }
 
 type KeylessCertificateResultListDataSourceEnvelope struct {
-	Result *[]*KeylessCertificateDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[KeylessCertificateDataSourceModel] `json:"result,computed"`
 }
 
 type KeylessCertificateDataSourceModel struct {
@@ -29,7 +30,7 @@ type KeylessCertificateDataSourceModel struct {
 	Name                 types.String                                `tfsdk:"name" json:"name,computed"`
 	Port                 types.Float64                               `tfsdk:"port" json:"port,computed"`
 	Status               types.String                                `tfsdk:"status" json:"status,computed"`
-	Permissions          *[]types.String                             `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions          types.List                                  `tfsdk:"permissions" json:"permissions,computed"`
 	Tunnel               *KeylessCertificateTunnelDataSourceModel    `tfsdk:"tunnel" json:"tunnel"`
 	Filter               *KeylessCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }

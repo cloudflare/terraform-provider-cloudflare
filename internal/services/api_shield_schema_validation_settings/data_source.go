@@ -19,7 +19,7 @@ type APIShieldSchemaValidationSettingsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &APIShieldSchemaValidationSettingsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*APIShieldSchemaValidationSettingsDataSource)(nil)
 
 func NewAPIShieldSchemaValidationSettingsDataSource() datasource.DataSource {
 	return &APIShieldSchemaValidationSettingsDataSource{}

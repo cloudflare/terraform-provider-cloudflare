@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &AccountMembersDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*AccountMembersDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -59,6 +59,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[AccountMembersResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -128,6 +129,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												"scope": schema.ListNestedAttribute{
 													Description: "The scope associated to the resource group",
 													Computed:    true,
+													CustomType:  customfield.NewNestedObjectListType[AccountMembersPoliciesResourceGroupsScopeDataSourceModel](ctx),
 													NestedObject: schema.NestedAttributeObject{
 														Attributes: map[string]schema.Attribute{
 															"key": schema.StringAttribute{
@@ -137,6 +139,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 															"objects": schema.ListNestedAttribute{
 																Description: "A list of scope objects for additional context.",
 																Computed:    true,
+																CustomType:  customfield.NewNestedObjectListType[AccountMembersPoliciesResourceGroupsScopeObjectsDataSourceModel](ctx),
 																NestedObject: schema.NestedAttributeObject{
 																	Attributes: map[string]schema.Attribute{
 																		"key": schema.StringAttribute{

@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustTunnelCloudflaredResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

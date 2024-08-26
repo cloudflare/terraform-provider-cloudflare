@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZoneCacheReserveResource{}
-var _ resource.ResourceWithModifyPlan = &ZoneCacheReserveResource{}
-var _ resource.ResourceWithImportState = &ZoneCacheReserveResource{}
+var _ resource.ResourceWithConfigure = (*ZoneCacheReserveResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZoneCacheReserveResource)(nil)
+var _ resource.ResourceWithImportState = (*ZoneCacheReserveResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZoneCacheReserveResource{}

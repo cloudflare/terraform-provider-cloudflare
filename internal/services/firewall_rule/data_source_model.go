@@ -5,6 +5,7 @@ package firewall_rule
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type FirewallRuleResultDataSourceEnvelope struct {
 }
 
 type FirewallRuleResultListDataSourceEnvelope struct {
-	Result *[]*FirewallRuleDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[FirewallRuleDataSourceModel] `json:"result,computed"`
 }
 
 type FirewallRuleDataSourceModel struct {

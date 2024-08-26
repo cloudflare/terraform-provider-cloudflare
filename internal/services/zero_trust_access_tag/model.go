@@ -8,7 +8,7 @@ import (
 )
 
 type ZeroTrustAccessTagResultEnvelope struct {
-	Result ZeroTrustAccessTagModel `json:"result,computed"`
+	Result ZeroTrustAccessTagModel `json:"result"`
 }
 
 type ZeroTrustAccessTagModel struct {

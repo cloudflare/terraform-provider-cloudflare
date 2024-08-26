@@ -7,7 +7,7 @@ import (
 )
 
 type AccessRuleResultEnvelope struct {
-	Result AccessRuleModel `json:"result,computed"`
+	Result AccessRuleModel `json:"result"`
 }
 
 type AccessRuleModel struct {

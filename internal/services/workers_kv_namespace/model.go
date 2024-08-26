@@ -7,7 +7,7 @@ import (
 )
 
 type WorkersKVNamespaceResultEnvelope struct {
-	Result WorkersKVNamespaceModel `json:"result,computed"`
+	Result WorkersKVNamespaceModel `json:"result"`
 }
 
 type WorkersKVNamespaceModel struct {

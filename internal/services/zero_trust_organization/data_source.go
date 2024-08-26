@@ -19,7 +19,7 @@ type ZeroTrustOrganizationDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustOrganizationDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustOrganizationDataSource)(nil)
 
 func NewZeroTrustOrganizationDataSource() datasource.DataSource {
 	return &ZeroTrustOrganizationDataSource{}

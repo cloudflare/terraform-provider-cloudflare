@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &KeylessCertificateResource{}
-var _ resource.ResourceWithModifyPlan = &KeylessCertificateResource{}
-var _ resource.ResourceWithImportState = &KeylessCertificateResource{}
+var _ resource.ResourceWithConfigure = (*KeylessCertificateResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*KeylessCertificateResource)(nil)
+var _ resource.ResourceWithImportState = (*KeylessCertificateResource)(nil)
 
 func NewResource() resource.Resource {
 	return &KeylessCertificateResource{}

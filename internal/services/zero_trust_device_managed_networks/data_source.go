@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type ZeroTrustDeviceManagedNetworksDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustDeviceManagedNetworksDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustDeviceManagedNetworksDataSource)(nil)
 
 func NewZeroTrustDeviceManagedNetworksDataSource() datasource.DataSource {
 	return &ZeroTrustDeviceManagedNetworksDataSource{}
@@ -91,7 +92,7 @@ func (d *ZeroTrustDeviceManagedNetworksDataSource) Read(ctx context.Context, req
 			return
 		}
 
-		items := &[]*ZeroTrustDeviceManagedNetworksDataSourceModel{}
+		items := customfield.NullObjectList[ZeroTrustDeviceManagedNetworksDataSourceModel](ctx)
 		env := ZeroTrustDeviceManagedNetworksResultListDataSourceEnvelope{items}
 
 		page, err := d.client.ZeroTrust.Devices.Networks.List(ctx, params)
@@ -107,11 +108,13 @@ func (d *ZeroTrustDeviceManagedNetworksDataSource) Read(ctx context.Context, req
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

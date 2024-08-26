@@ -5,6 +5,7 @@ package zero_trust_access_group
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -16,7 +17,7 @@ type ZeroTrustAccessGroupResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessGroupResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessGroupDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessGroupDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessGroupDataSourceModel struct {

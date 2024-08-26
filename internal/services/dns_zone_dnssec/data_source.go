@@ -19,7 +19,7 @@ type DNSZoneDNSSECDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &DNSZoneDNSSECDataSource{}
+var _ datasource.DataSourceWithConfigure = (*DNSZoneDNSSECDataSource)(nil)
 
 func NewDNSZoneDNSSECDataSource() datasource.DataSource {
 	return &DNSZoneDNSSECDataSource{}

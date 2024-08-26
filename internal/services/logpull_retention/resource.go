@@ -17,8 +17,8 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &LogpullRetentionResource{}
-var _ resource.ResourceWithModifyPlan = &LogpullRetentionResource{}
+var _ resource.ResourceWithConfigure = (*LogpullRetentionResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*LogpullRetentionResource)(nil)
 
 func NewResource() resource.Resource {
 	return &LogpullRetentionResource{}

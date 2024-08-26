@@ -5,6 +5,7 @@ package address_map
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/addressing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type AddressMapResultDataSourceEnvelope struct {
 }
 
 type AddressMapResultListDataSourceEnvelope struct {
-	Result *[]*AddressMapDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AddressMapDataSourceModel] `json:"result,computed"`
 }
 
 type AddressMapDataSourceModel struct {

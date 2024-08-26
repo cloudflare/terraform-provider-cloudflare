@@ -6,29 +6,30 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/shared"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type DNSRecordsResultListDataSourceEnvelope struct {
-	Result *[]*DNSRecordsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[DNSRecordsResultDataSourceModel] `json:"result,computed"`
 }
 
 type DNSRecordsDataSourceModel struct {
-	ZoneID    types.String                        `tfsdk:"zone_id" path:"zone_id"`
-	Content   types.String                        `tfsdk:"content" query:"content"`
-	Name      types.String                        `tfsdk:"name" query:"name"`
-	Search    types.String                        `tfsdk:"search" query:"search"`
-	Type      types.String                        `tfsdk:"type" query:"type"`
-	Comment   *DNSRecordsCommentDataSourceModel   `tfsdk:"comment" query:"comment"`
-	Tag       *DNSRecordsTagDataSourceModel       `tfsdk:"tag" query:"tag"`
-	Direction types.String                        `tfsdk:"direction" query:"direction"`
-	Match     types.String                        `tfsdk:"match" query:"match"`
-	Order     types.String                        `tfsdk:"order" query:"order"`
-	Proxied   types.Bool                          `tfsdk:"proxied" query:"proxied"`
-	TagMatch  types.String                        `tfsdk:"tag_match" query:"tag_match"`
-	MaxItems  types.Int64                         `tfsdk:"max_items"`
-	Result    *[]*DNSRecordsResultDataSourceModel `tfsdk:"result"`
+	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
+	Content   types.String                                                  `tfsdk:"content" query:"content"`
+	Name      types.String                                                  `tfsdk:"name" query:"name"`
+	Search    types.String                                                  `tfsdk:"search" query:"search"`
+	Type      types.String                                                  `tfsdk:"type" query:"type"`
+	Comment   *DNSRecordsCommentDataSourceModel                             `tfsdk:"comment" query:"comment"`
+	Tag       *DNSRecordsTagDataSourceModel                                 `tfsdk:"tag" query:"tag"`
+	Direction types.String                                                  `tfsdk:"direction" query:"direction"`
+	Match     types.String                                                  `tfsdk:"match" query:"match"`
+	Order     types.String                                                  `tfsdk:"order" query:"order"`
+	Proxied   types.Bool                                                    `tfsdk:"proxied" query:"proxied"`
+	TagMatch  types.String                                                  `tfsdk:"tag_match" query:"tag_match"`
+	MaxItems  types.Int64                                                   `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[DNSRecordsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *DNSRecordsDataSourceModel) toListParams() (params dns.RecordListParams, diags diag.Diagnostics) {

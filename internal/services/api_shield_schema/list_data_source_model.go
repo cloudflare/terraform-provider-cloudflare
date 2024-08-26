@@ -5,21 +5,22 @@ package api_shield_schema
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type APIShieldSchemasResultListDataSourceEnvelope struct {
-	Result *[]*APIShieldSchemasResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[APIShieldSchemasResultDataSourceModel] `json:"result,computed"`
 }
 
 type APIShieldSchemasDataSourceModel struct {
-	ZoneID            types.String                              `tfsdk:"zone_id" path:"zone_id"`
-	ValidationEnabled types.Bool                                `tfsdk:"validation_enabled" query:"validation_enabled"`
-	OmitSource        types.Bool                                `tfsdk:"omit_source" query:"omit_source"`
-	MaxItems          types.Int64                               `tfsdk:"max_items"`
-	Result            *[]*APIShieldSchemasResultDataSourceModel `tfsdk:"result"`
+	ZoneID            types.String                                                        `tfsdk:"zone_id" path:"zone_id"`
+	ValidationEnabled types.Bool                                                          `tfsdk:"validation_enabled" query:"validation_enabled"`
+	OmitSource        types.Bool                                                          `tfsdk:"omit_source" query:"omit_source"`
+	MaxItems          types.Int64                                                         `tfsdk:"max_items"`
+	Result            customfield.NestedObjectList[APIShieldSchemasResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *APIShieldSchemasDataSourceModel) toListParams() (params api_gateway.UserSchemaListParams, diags diag.Diagnostics) {

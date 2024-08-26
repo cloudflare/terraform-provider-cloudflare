@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustTunnelCloudflaredVirtualNetworkResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustTunnelCloudflaredVirtualNetworkResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

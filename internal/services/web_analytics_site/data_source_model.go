@@ -5,6 +5,7 @@ package web_analytics_site
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rum"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type WebAnalyticsSiteResultDataSourceEnvelope struct {
 }
 
 type WebAnalyticsSiteResultListDataSourceEnvelope struct {
-	Result *[]*WebAnalyticsSiteDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[WebAnalyticsSiteDataSourceModel] `json:"result,computed"`
 }
 
 type WebAnalyticsSiteDataSourceModel struct {

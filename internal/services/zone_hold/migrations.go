@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &ZoneHoldResource{}
+var _ resource.ResourceWithUpgradeState = (*ZoneHoldResource)(nil)
 
 func (r *ZoneHoldResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

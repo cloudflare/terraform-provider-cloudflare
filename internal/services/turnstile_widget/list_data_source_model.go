@@ -5,21 +5,22 @@ package turnstile_widget
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/challenges"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type TurnstileWidgetsResultListDataSourceEnvelope struct {
-	Result *[]*TurnstileWidgetsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[TurnstileWidgetsResultDataSourceModel] `json:"result,computed"`
 }
 
 type TurnstileWidgetsDataSourceModel struct {
-	AccountID types.String                              `tfsdk:"account_id" path:"account_id"`
-	Direction types.String                              `tfsdk:"direction" query:"direction"`
-	Order     types.String                              `tfsdk:"order" query:"order"`
-	MaxItems  types.Int64                               `tfsdk:"max_items"`
-	Result    *[]*TurnstileWidgetsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id"`
+	Direction types.String                                                        `tfsdk:"direction" query:"direction"`
+	Order     types.String                                                        `tfsdk:"order" query:"order"`
+	MaxItems  types.Int64                                                         `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[TurnstileWidgetsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *TurnstileWidgetsDataSourceModel) toListParams() (params challenges.WidgetListParams, diags diag.Diagnostics) {
@@ -41,7 +42,7 @@ type TurnstileWidgetsResultDataSourceModel struct {
 	BotFightMode   types.Bool        `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String      `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
-	Domains        *[]types.String   `tfsdk:"domains" json:"domains,computed"`
+	Domains        types.List        `tfsdk:"domains" json:"domains,computed"`
 	Mode           types.String      `tfsdk:"mode" json:"mode,computed"`
 	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name           types.String      `tfsdk:"name" json:"name,computed"`

@@ -12,22 +12,22 @@ import (
 )
 
 type ZoneLockdownsResultListDataSourceEnvelope struct {
-	Result *[]*ZoneLockdownsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZoneLockdownsResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZoneLockdownsDataSourceModel struct {
-	ZoneIdentifier    types.String                           `tfsdk:"zone_identifier" path:"zone_identifier"`
-	CreatedOn         timetypes.RFC3339                      `tfsdk:"created_on" query:"created_on"`
-	Description       types.String                           `tfsdk:"description" query:"description"`
-	DescriptionSearch types.String                           `tfsdk:"description_search" query:"description_search"`
-	IP                types.String                           `tfsdk:"ip" query:"ip"`
-	IPRangeSearch     types.String                           `tfsdk:"ip_range_search" query:"ip_range_search"`
-	IPSearch          types.String                           `tfsdk:"ip_search" query:"ip_search"`
-	ModifiedOn        timetypes.RFC3339                      `tfsdk:"modified_on" query:"modified_on"`
-	Priority          types.Float64                          `tfsdk:"priority" query:"priority"`
-	URISearch         types.String                           `tfsdk:"uri_search" query:"uri_search"`
-	MaxItems          types.Int64                            `tfsdk:"max_items"`
-	Result            *[]*ZoneLockdownsResultDataSourceModel `tfsdk:"result"`
+	ZoneIdentifier    types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier"`
+	CreatedOn         timetypes.RFC3339                                                `tfsdk:"created_on" query:"created_on"`
+	Description       types.String                                                     `tfsdk:"description" query:"description"`
+	DescriptionSearch types.String                                                     `tfsdk:"description_search" query:"description_search"`
+	IP                types.String                                                     `tfsdk:"ip" query:"ip"`
+	IPRangeSearch     types.String                                                     `tfsdk:"ip_range_search" query:"ip_range_search"`
+	IPSearch          types.String                                                     `tfsdk:"ip_search" query:"ip_search"`
+	ModifiedOn        timetypes.RFC3339                                                `tfsdk:"modified_on" query:"modified_on"`
+	Priority          types.Float64                                                    `tfsdk:"priority" query:"priority"`
+	URISearch         types.String                                                     `tfsdk:"uri_search" query:"uri_search"`
+	MaxItems          types.Int64                                                      `tfsdk:"max_items"`
+	Result            customfield.NestedObjectList[ZoneLockdownsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZoneLockdownsDataSourceModel) toListParams() (params firewall.LockdownListParams, diags diag.Diagnostics) {
@@ -76,7 +76,7 @@ type ZoneLockdownsResultDataSourceModel struct {
 	Description    types.String                                                         `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	Paused         types.Bool                                                           `tfsdk:"paused" json:"paused,computed"`
-	URLs           *[]types.String                                                      `tfsdk:"urls" json:"urls,computed"`
+	URLs           types.List                                                           `tfsdk:"urls" json:"urls,computed"`
 }
 
 type ZoneLockdownsConfigurationsDataSourceModel struct {

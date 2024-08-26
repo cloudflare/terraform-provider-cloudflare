@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustDeviceManagedNetworksResultEnvelope struct {
-	Result ZeroTrustDeviceManagedNetworksModel `json:"result,computed"`
+	Result ZeroTrustDeviceManagedNetworksModel `json:"result"`
 }
 
 type ZeroTrustDeviceManagedNetworksModel struct {

@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type Web3HostnameDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &Web3HostnameDataSource{}
+var _ datasource.DataSourceWithConfigure = (*Web3HostnameDataSource)(nil)
 
 func NewWeb3HostnameDataSource() datasource.DataSource {
 	return &Web3HostnameDataSource{}
@@ -79,7 +80,7 @@ func (d *Web3HostnameDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 		data = &env.Result
 	} else {
-		items := &[]*Web3HostnameDataSourceModel{}
+		items := customfield.NullObjectList[Web3HostnameDataSourceModel](ctx)
 		env := Web3HostnameResultListDataSourceEnvelope{items}
 
 		page, err := d.client.Web3.Hostnames.List(ctx, data.Filter.ZoneIdentifier.ValueString())
@@ -95,11 +96,13 @@ func (d *Web3HostnameDataSource) Read(ctx context.Context, req datasource.ReadRe
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

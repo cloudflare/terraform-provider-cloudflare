@@ -19,7 +19,7 @@ type ArgoTieredCachingDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ArgoTieredCachingDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ArgoTieredCachingDataSource)(nil)
 
 func NewArgoTieredCachingDataSource() datasource.DataSource {
 	return &ArgoTieredCachingDataSource{}

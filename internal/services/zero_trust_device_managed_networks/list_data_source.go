@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type ZeroTrustDeviceManagedNetworksListDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustDeviceManagedNetworksListDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustDeviceManagedNetworksListDataSource)(nil)
 
 func NewZeroTrustDeviceManagedNetworksListDataSource() datasource.DataSource {
 	return &ZeroTrustDeviceManagedNetworksListDataSource{}
@@ -59,10 +61,10 @@ func (d *ZeroTrustDeviceManagedNetworksListDataSource) Read(ctx context.Context,
 		return
 	}
 
-	items := &[]*ZeroTrustDeviceManagedNetworksListResultDataSourceModel{}
+	items := customfield.NullObjectList[ZeroTrustDeviceManagedNetworksListResultDataSourceModel](ctx)
 	env := ZeroTrustDeviceManagedNetworksListResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ZeroTrustDeviceManagedNetworksListResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.ZeroTrust.Devices.Networks.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *ZeroTrustDeviceManagedNetworksListDataSource) Read(ctx context.Context,
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *ZeroTrustDeviceManagedNetworksListDataSource) Read(ctx context.Context,
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[ZeroTrustDeviceManagedNetworksListResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

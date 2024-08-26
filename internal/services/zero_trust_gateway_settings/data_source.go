@@ -19,7 +19,7 @@ type ZeroTrustGatewaySettingsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustGatewaySettingsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustGatewaySettingsDataSource)(nil)
 
 func NewZeroTrustGatewaySettingsDataSource() datasource.DataSource {
 	return &ZeroTrustGatewaySettingsDataSource{}

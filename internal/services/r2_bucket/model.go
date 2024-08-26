@@ -7,7 +7,7 @@ import (
 )
 
 type R2BucketResultEnvelope struct {
-	Result R2BucketModel `json:"result,computed"`
+	Result R2BucketModel `json:"result"`
 }
 
 type R2BucketModel struct {

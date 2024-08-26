@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &APIShieldSchemaValidationSettingsResource{}
+var _ resource.ResourceWithConfigValidators = (*APIShieldSchemaValidationSettingsResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

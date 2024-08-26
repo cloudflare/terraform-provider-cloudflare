@@ -3,20 +3,21 @@
 package api_shield
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type APIShieldResultEnvelope struct {
-	Result APIShieldModel `json:"result,computed"`
+	Result APIShieldModel `json:"result"`
 }
 
 type APIShieldModel struct {
-	ID                    types.String                            `tfsdk:"id" json:"-,computed"`
-	ZoneID                types.String                            `tfsdk:"zone_id" path:"zone_id"`
-	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics"`
-	Success               types.Bool                              `tfsdk:"success" json:"success,computed"`
-	Errors                *[]*APIShieldErrorsModel                `tfsdk:"errors" json:"errors,computed"`
-	Messages              *[]*APIShieldMessagesModel              `tfsdk:"messages" json:"messages,computed"`
+	ID                    types.String                                         `tfsdk:"id" json:"-,computed"`
+	ZoneID                types.String                                         `tfsdk:"zone_id" path:"zone_id"`
+	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsModel              `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics"`
+	Success               types.Bool                                           `tfsdk:"success" json:"success,computed"`
+	Errors                customfield.NestedObjectList[APIShieldErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
+	Messages              customfield.NestedObjectList[APIShieldMessagesModel] `tfsdk:"messages" json:"messages,computed"`
 }
 
 type APIShieldAuthIDCharacteristicsModel struct {

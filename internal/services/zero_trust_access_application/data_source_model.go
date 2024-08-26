@@ -5,6 +5,7 @@ package zero_trust_access_application
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type ZeroTrustAccessApplicationResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessApplicationResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessApplicationDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessApplicationDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessApplicationDataSourceModel struct {

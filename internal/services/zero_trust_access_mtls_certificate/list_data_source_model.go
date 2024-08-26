@@ -5,20 +5,21 @@ package zero_trust_access_mtls_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustAccessMTLSCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessMTLSCertificatesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessMTLSCertificatesResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessMTLSCertificatesDataSourceModel struct {
-	AccountID types.String                                             `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                             `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                                              `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustAccessMTLSCertificatesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                       `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                                                       `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                                                        `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustAccessMTLSCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessMTLSCertificatesDataSourceModel) toListParams() (params zero_trust.AccessCertificateListParams, diags diag.Diagnostics) {

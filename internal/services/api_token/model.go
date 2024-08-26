@@ -8,7 +8,7 @@ import (
 )
 
 type APITokenResultEnvelope struct {
-	Result APITokenModel `json:"result,computed"`
+	Result APITokenModel `json:"result"`
 }
 
 type APITokenModel struct {

@@ -8,7 +8,7 @@ import (
 )
 
 type WorkersForPlatformsDispatchNamespaceResultEnvelope struct {
-	Result WorkersForPlatformsDispatchNamespaceModel `json:"result,computed"`
+	Result WorkersForPlatformsDispatchNamespaceModel `json:"result"`
 }
 
 type WorkersForPlatformsDispatchNamespaceModel struct {

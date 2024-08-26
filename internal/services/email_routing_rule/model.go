@@ -7,7 +7,7 @@ import (
 )
 
 type EmailRoutingRuleResultEnvelope struct {
-	Result EmailRoutingRuleModel `json:"result,computed"`
+	Result EmailRoutingRuleModel `json:"result"`
 }
 
 type EmailRoutingRuleModel struct {

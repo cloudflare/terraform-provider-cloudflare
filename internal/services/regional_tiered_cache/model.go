@@ -8,7 +8,7 @@ import (
 )
 
 type RegionalTieredCacheResultEnvelope struct {
-	Result RegionalTieredCacheModel `json:"result,computed"`
+	Result RegionalTieredCacheModel `json:"result"`
 }
 
 type RegionalTieredCacheModel struct {

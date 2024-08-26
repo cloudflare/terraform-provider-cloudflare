@@ -5,19 +5,20 @@ package zero_trust_access_short_lived_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustAccessShortLivedCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessShortLivedCertificatesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessShortLivedCertificatesResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessShortLivedCertificatesDataSourceModel struct {
-	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                                   `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                                                    `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustAccessShortLivedCertificatesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                                                             `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                                                              `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustAccessShortLivedCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessShortLivedCertificatesDataSourceModel) toListParams() (params zero_trust.AccessApplicationCAListParams, diags diag.Diagnostics) {

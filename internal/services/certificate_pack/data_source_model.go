@@ -5,6 +5,7 @@ package certificate_pack
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/ssl"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type CertificatePackResultDataSourceEnvelope struct {
 }
 
 type CertificatePackResultListDataSourceEnvelope struct {
-	Result *[]*CertificatePackDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[CertificatePackDataSourceModel] `json:"result,computed"`
 }
 
 type CertificatePackDataSourceModel struct {

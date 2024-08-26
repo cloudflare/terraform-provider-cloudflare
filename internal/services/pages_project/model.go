@@ -10,7 +10,7 @@ import (
 )
 
 type PagesProjectResultEnvelope struct {
-	Result PagesProjectModel `json:"result,computed"`
+	Result PagesProjectModel `json:"result"`
 }
 
 type PagesProjectModel struct {
@@ -22,7 +22,7 @@ type PagesProjectModel struct {
 	DeploymentConfigs   *PagesProjectDeploymentConfigsModel                            `tfsdk:"deployment_configs" json:"deployment_configs"`
 	CreatedOn           timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed"`
 	Subdomain           types.String                                                   `tfsdk:"subdomain" json:"subdomain,computed"`
-	Domains             *[]types.String                                                `tfsdk:"domains" json:"domains,computed"`
+	Domains             types.List                                                     `tfsdk:"domains" json:"domains,computed"`
 	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
 	LatestDeployment    customfield.NestedObject[PagesProjectLatestDeploymentModel]    `tfsdk:"latest_deployment" json:"latest_deployment,computed"`
 	Source              customfield.NestedObject[PagesProjectSourceModel]              `tfsdk:"source" json:"source,computed"`
@@ -90,7 +90,7 @@ type PagesProjectDeploymentConfigsProductionPlacementModel struct {
 
 type PagesProjectCanonicalDeploymentModel struct {
 	ID                types.String                                                                    `tfsdk:"id" json:"id,computed"`
-	Aliases           *[]types.String                                                                 `tfsdk:"aliases" json:"aliases,computed"`
+	Aliases           types.List                                                                      `tfsdk:"aliases" json:"aliases,computed"`
 	BuildConfig       *PagesProjectCanonicalDeploymentBuildConfigModel                                `tfsdk:"build_config" json:"build_config"`
 	CreatedOn         timetypes.RFC3339                                                               `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectCanonicalDeploymentDeploymentTriggerModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
@@ -103,7 +103,7 @@ type PagesProjectCanonicalDeploymentModel struct {
 	ProjectName       types.String                                                                    `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID           types.String                                                                    `tfsdk:"short_id" json:"short_id,computed"`
 	Source            customfield.NestedObject[PagesProjectCanonicalDeploymentSourceModel]            `tfsdk:"source" json:"source,computed"`
-	Stages            *[]*PagesProjectCanonicalDeploymentStagesModel                                  `tfsdk:"stages" json:"stages,computed"`
+	Stages            customfield.NestedObjectList[PagesProjectCanonicalDeploymentStagesModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                    `tfsdk:"url" json:"url,computed"`
 }
 
@@ -162,7 +162,7 @@ type PagesProjectCanonicalDeploymentStagesModel struct {
 
 type PagesProjectLatestDeploymentModel struct {
 	ID                types.String                                                                 `tfsdk:"id" json:"id,computed"`
-	Aliases           *[]types.String                                                              `tfsdk:"aliases" json:"aliases,computed"`
+	Aliases           types.List                                                                   `tfsdk:"aliases" json:"aliases,computed"`
 	BuildConfig       *PagesProjectLatestDeploymentBuildConfigModel                                `tfsdk:"build_config" json:"build_config"`
 	CreatedOn         timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectLatestDeploymentDeploymentTriggerModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
@@ -175,7 +175,7 @@ type PagesProjectLatestDeploymentModel struct {
 	ProjectName       types.String                                                                 `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID           types.String                                                                 `tfsdk:"short_id" json:"short_id,computed"`
 	Source            customfield.NestedObject[PagesProjectLatestDeploymentSourceModel]            `tfsdk:"source" json:"source,computed"`
-	Stages            *[]*PagesProjectLatestDeploymentStagesModel                                  `tfsdk:"stages" json:"stages,computed"`
+	Stages            customfield.NestedObjectList[PagesProjectLatestDeploymentStagesModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                                 `tfsdk:"url" json:"url,computed"`
 }
 

@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type ZeroTrustAccessMTLSCertificatesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustAccessMTLSCertificatesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustAccessMTLSCertificatesDataSource)(nil)
 
 func NewZeroTrustAccessMTLSCertificatesDataSource() datasource.DataSource {
 	return &ZeroTrustAccessMTLSCertificatesDataSource{}
@@ -59,10 +61,10 @@ func (d *ZeroTrustAccessMTLSCertificatesDataSource) Read(ctx context.Context, re
 		return
 	}
 
-	items := &[]*ZeroTrustAccessMTLSCertificatesResultDataSourceModel{}
+	items := customfield.NullObjectList[ZeroTrustAccessMTLSCertificatesResultDataSourceModel](ctx)
 	env := ZeroTrustAccessMTLSCertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ZeroTrustAccessMTLSCertificatesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.ZeroTrust.Access.Certificates.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *ZeroTrustAccessMTLSCertificatesDataSource) Read(ctx context.Context, re
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *ZeroTrustAccessMTLSCertificatesDataSource) Read(ctx context.Context, re
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[ZeroTrustAccessMTLSCertificatesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

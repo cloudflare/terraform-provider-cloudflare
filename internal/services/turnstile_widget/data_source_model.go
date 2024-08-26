@@ -5,6 +5,7 @@ package turnstile_widget
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/challenges"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type TurnstileWidgetResultDataSourceEnvelope struct {
 }
 
 type TurnstileWidgetResultListDataSourceEnvelope struct {
-	Result *[]*TurnstileWidgetDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[TurnstileWidgetDataSourceModel] `json:"result,computed"`
 }
 
 type TurnstileWidgetDataSourceModel struct {
@@ -30,7 +31,7 @@ type TurnstileWidgetDataSourceModel struct {
 	Name           types.String                             `tfsdk:"name" json:"name,computed"`
 	Offlabel       types.Bool                               `tfsdk:"offlabel" json:"offlabel,computed"`
 	Region         types.String                             `tfsdk:"region" json:"region,computed"`
-	Domains        *[]types.String                          `tfsdk:"domains" json:"domains,computed"`
+	Domains        types.List                               `tfsdk:"domains" json:"domains,computed"`
 	Filter         *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

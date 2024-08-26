@@ -5,6 +5,7 @@ package zero_trust_access_short_lived_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type ZeroTrustAccessShortLivedCertificateResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessShortLivedCertificateResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessShortLivedCertificateDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessShortLivedCertificateDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessShortLivedCertificateDataSourceModel struct {

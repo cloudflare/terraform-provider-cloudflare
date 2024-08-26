@@ -8,7 +8,7 @@ import (
 )
 
 type ZoneCacheVariantsResultEnvelope struct {
-	Result ZoneCacheVariantsModel `json:"result,computed"`
+	Result ZoneCacheVariantsModel `json:"result"`
 }
 
 type ZoneCacheVariantsModel struct {

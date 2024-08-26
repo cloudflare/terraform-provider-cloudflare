@@ -8,7 +8,7 @@ import (
 )
 
 type TieredCacheResultEnvelope struct {
-	Result TieredCacheModel `json:"result,computed"`
+	Result TieredCacheModel `json:"result"`
 }
 
 type TieredCacheModel struct {

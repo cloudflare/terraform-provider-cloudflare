@@ -8,7 +8,7 @@ import (
 )
 
 type ZeroTrustDNSLocationResultEnvelope struct {
-	Result ZeroTrustDNSLocationModel `json:"result,computed"`
+	Result ZeroTrustDNSLocationModel `json:"result"`
 }
 
 type ZeroTrustDNSLocationModel struct {

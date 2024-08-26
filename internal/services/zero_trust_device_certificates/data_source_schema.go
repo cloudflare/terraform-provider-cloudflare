@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &ZeroTrustDeviceCertificatesDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustDeviceCertificatesDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

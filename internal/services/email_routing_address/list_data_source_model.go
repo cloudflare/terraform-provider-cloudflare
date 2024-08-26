@@ -5,21 +5,22 @@ package email_routing_address
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type EmailRoutingAddressesResultListDataSourceEnvelope struct {
-	Result *[]*EmailRoutingAddressesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[EmailRoutingAddressesResultDataSourceModel] `json:"result,computed"`
 }
 
 type EmailRoutingAddressesDataSourceModel struct {
-	AccountIdentifier types.String                                   `tfsdk:"account_identifier" path:"account_identifier"`
-	Direction         types.String                                   `tfsdk:"direction" query:"direction"`
-	Verified          types.Bool                                     `tfsdk:"verified" query:"verified"`
-	MaxItems          types.Int64                                    `tfsdk:"max_items"`
-	Result            *[]*EmailRoutingAddressesResultDataSourceModel `tfsdk:"result"`
+	AccountIdentifier types.String                                                             `tfsdk:"account_identifier" path:"account_identifier"`
+	Direction         types.String                                                             `tfsdk:"direction" query:"direction"`
+	Verified          types.Bool                                                               `tfsdk:"verified" query:"verified"`
+	MaxItems          types.Int64                                                              `tfsdk:"max_items"`
+	Result            customfield.NestedObjectList[EmailRoutingAddressesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *EmailRoutingAddressesDataSourceModel) toListParams() (params email_routing.AddressListParams, diags diag.Diagnostics) {

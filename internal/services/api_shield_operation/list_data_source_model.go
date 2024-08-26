@@ -12,21 +12,21 @@ import (
 )
 
 type APIShieldOperationsResultListDataSourceEnvelope struct {
-	Result *[]*APIShieldOperationsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[APIShieldOperationsResultDataSourceModel] `json:"result,computed"`
 }
 
 type APIShieldOperationsDataSourceModel struct {
-	ZoneID    types.String                                 `tfsdk:"zone_id" path:"zone_id"`
-	Diff      types.Bool                                   `tfsdk:"diff" query:"diff"`
-	Direction types.String                                 `tfsdk:"direction" query:"direction"`
-	Endpoint  types.String                                 `tfsdk:"endpoint" query:"endpoint"`
-	Order     types.String                                 `tfsdk:"order" query:"order"`
-	Origin    types.String                                 `tfsdk:"origin" query:"origin"`
-	State     types.String                                 `tfsdk:"state" query:"state"`
-	Host      *[]types.String                              `tfsdk:"host" query:"host"`
-	Method    *[]types.String                              `tfsdk:"method" query:"method"`
-	MaxItems  types.Int64                                  `tfsdk:"max_items"`
-	Result    *[]*APIShieldOperationsResultDataSourceModel `tfsdk:"result"`
+	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id"`
+	Diff      types.Bool                                                             `tfsdk:"diff" query:"diff"`
+	Direction types.String                                                           `tfsdk:"direction" query:"direction"`
+	Endpoint  types.String                                                           `tfsdk:"endpoint" query:"endpoint"`
+	Order     types.String                                                           `tfsdk:"order" query:"order"`
+	Origin    types.String                                                           `tfsdk:"origin" query:"origin"`
+	State     types.String                                                           `tfsdk:"state" query:"state"`
+	Host      *[]types.String                                                        `tfsdk:"host" query:"host"`
+	Method    *[]types.String                                                        `tfsdk:"method" query:"method"`
+	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[APIShieldOperationsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *APIShieldOperationsDataSourceModel) toListParams() (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
@@ -73,7 +73,7 @@ type APIShieldOperationsResultDataSourceModel struct {
 	Host        types.String                                                         `tfsdk:"host" json:"host,computed"`
 	LastUpdated timetypes.RFC3339                                                    `tfsdk:"last_updated" json:"last_updated,computed"`
 	Method      types.String                                                         `tfsdk:"method" json:"method,computed"`
-	Origin      *[]types.String                                                      `tfsdk:"origin" json:"origin,computed"`
+	Origin      types.List                                                           `tfsdk:"origin" json:"origin,computed"`
 	State       types.String                                                         `tfsdk:"state" json:"state,computed"`
 	Features    customfield.NestedObject[APIShieldOperationsFeaturesDataSourceModel] `tfsdk:"features" json:"features,computed"`
 }

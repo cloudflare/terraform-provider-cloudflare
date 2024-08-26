@@ -18,7 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &MagicWANGRETunnelResource{}
+var _ resource.ResourceWithConfigValidators = (*MagicWANGRETunnelResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -314,7 +314,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"gre_tunnels": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[MagicWANGRETunnelGRETunnelsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"cloudflare_gre_endpoint": schema.StringAttribute{

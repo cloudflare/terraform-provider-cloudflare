@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &EmailRoutingSettingsResource{}
+var _ resource.ResourceWithUpgradeState = (*EmailRoutingSettingsResource)(nil)
 
 func (r *EmailRoutingSettingsResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &R2BucketResource{}
+var _ resource.ResourceWithUpgradeState = (*R2BucketResource)(nil)
 
 func (r *R2BucketResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

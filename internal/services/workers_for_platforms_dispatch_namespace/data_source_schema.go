@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &WorkersForPlatformsDispatchNamespaceDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*WorkersForPlatformsDispatchNamespaceDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

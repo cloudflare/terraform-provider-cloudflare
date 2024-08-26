@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type HealthchecksDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &HealthchecksDataSource{}
+var _ datasource.DataSourceWithConfigure = (*HealthchecksDataSource)(nil)
 
 func NewHealthchecksDataSource() datasource.DataSource {
 	return &HealthchecksDataSource{}
@@ -59,10 +61,10 @@ func (d *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	items := &[]*HealthchecksResultDataSourceModel{}
+	items := customfield.NullObjectList[HealthchecksResultDataSourceModel](ctx)
 	env := HealthchecksResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*HealthchecksResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Healthchecks.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRe
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *HealthchecksDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[HealthchecksResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

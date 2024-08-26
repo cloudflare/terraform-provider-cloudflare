@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &TieredCacheResource{}
-var _ resource.ResourceWithModifyPlan = &TieredCacheResource{}
-var _ resource.ResourceWithImportState = &TieredCacheResource{}
+var _ resource.ResourceWithConfigure = (*TieredCacheResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*TieredCacheResource)(nil)
+var _ resource.ResourceWithImportState = (*TieredCacheResource)(nil)
 
 func NewResource() resource.Resource {
 	return &TieredCacheResource{}

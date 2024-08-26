@@ -7,7 +7,7 @@ import (
 )
 
 type UserAgentBlockingRuleResultEnvelope struct {
-	Result UserAgentBlockingRuleModel `json:"result,computed"`
+	Result UserAgentBlockingRuleModel `json:"result"`
 }
 
 type UserAgentBlockingRuleModel struct {

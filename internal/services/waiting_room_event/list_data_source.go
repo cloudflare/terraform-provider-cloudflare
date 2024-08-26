@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type WaitingRoomEventsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WaitingRoomEventsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WaitingRoomEventsDataSource)(nil)
 
 func NewWaitingRoomEventsDataSource() datasource.DataSource {
 	return &WaitingRoomEventsDataSource{}
@@ -59,10 +61,10 @@ func (d *WaitingRoomEventsDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	items := &[]*WaitingRoomEventsResultDataSourceModel{}
+	items := customfield.NullObjectList[WaitingRoomEventsResultDataSourceModel](ctx)
 	env := WaitingRoomEventsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WaitingRoomEventsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.WaitingRooms.Events.List(
 		ctx,
@@ -81,7 +83,7 @@ func (d *WaitingRoomEventsDataSource) Read(ctx context.Context, req datasource.R
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -93,7 +95,9 @@ func (d *WaitingRoomEventsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[WaitingRoomEventsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

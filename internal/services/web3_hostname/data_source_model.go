@@ -3,6 +3,7 @@
 package web3_hostname
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -12,7 +13,7 @@ type Web3HostnameResultDataSourceEnvelope struct {
 }
 
 type Web3HostnameResultListDataSourceEnvelope struct {
-	Result *[]*Web3HostnameDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[Web3HostnameDataSourceModel] `json:"result,computed"`
 }
 
 type Web3HostnameDataSourceModel struct {

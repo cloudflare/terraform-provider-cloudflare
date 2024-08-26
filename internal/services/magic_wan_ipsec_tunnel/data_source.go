@@ -19,7 +19,7 @@ type MagicWANIPSECTunnelDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &MagicWANIPSECTunnelDataSource{}
+var _ datasource.DataSourceWithConfigure = (*MagicWANIPSECTunnelDataSource)(nil)
 
 func NewMagicWANIPSECTunnelDataSource() datasource.DataSource {
 	return &MagicWANIPSECTunnelDataSource{}

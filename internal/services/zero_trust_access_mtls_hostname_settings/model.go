@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustAccessMTLSHostnameSettingsResultEnvelope struct {
-	Result ZeroTrustAccessMTLSHostnameSettingsModel `json:"result,computed"`
+	Result ZeroTrustAccessMTLSHostnameSettingsModel `json:"result"`
 }
 
 type ZeroTrustAccessMTLSHostnameSettingsModel struct {

@@ -7,7 +7,7 @@ import (
 )
 
 type BotManagementResultEnvelope struct {
-	Result BotManagementModel `json:"result,computed"`
+	Result BotManagementModel `json:"result"`
 }
 
 type BotManagementModel struct {

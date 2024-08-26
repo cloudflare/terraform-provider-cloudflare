@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &WorkersForPlatformsDispatchNamespaceResource{}
-var _ resource.ResourceWithModifyPlan = &WorkersForPlatformsDispatchNamespaceResource{}
-var _ resource.ResourceWithImportState = &WorkersForPlatformsDispatchNamespaceResource{}
+var _ resource.ResourceWithConfigure = (*WorkersForPlatformsDispatchNamespaceResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*WorkersForPlatformsDispatchNamespaceResource)(nil)
+var _ resource.ResourceWithImportState = (*WorkersForPlatformsDispatchNamespaceResource)(nil)
 
 func NewResource() resource.Resource {
 	return &WorkersForPlatformsDispatchNamespaceResource{}
