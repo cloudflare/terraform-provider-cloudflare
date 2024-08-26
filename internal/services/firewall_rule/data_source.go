@@ -19,7 +19,7 @@ type FirewallRuleDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &FirewallRuleDataSource{}
+var _ datasource.DataSourceWithConfigure = (*FirewallRuleDataSource)(nil)
 
 func NewFirewallRuleDataSource() datasource.DataSource {
 	return &FirewallRuleDataSource{}

@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &AuthenticatedOriginPullsDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*AuthenticatedOriginPullsDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

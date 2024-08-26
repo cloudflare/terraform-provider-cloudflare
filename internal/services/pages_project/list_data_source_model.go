@@ -13,13 +13,13 @@ import (
 )
 
 type PagesProjectsResultListDataSourceEnvelope struct {
-	Result *[]*PagesProjectsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[PagesProjectsResultDataSourceModel] `json:"result,computed"`
 }
 
 type PagesProjectsDataSourceModel struct {
-	AccountID types.String                           `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                            `tfsdk:"max_items"`
-	Result    *[]*PagesProjectsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[PagesProjectsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PagesProjectsDataSourceModel) toListParams() (params pages.ProjectListParams, diags diag.Diagnostics) {
@@ -32,7 +32,7 @@ func (m *PagesProjectsDataSourceModel) toListParams() (params pages.ProjectListP
 
 type PagesProjectsResultDataSourceModel struct {
 	ID                types.String                                                            `tfsdk:"id" json:"id,computed"`
-	Aliases           *[]types.String                                                         `tfsdk:"aliases" json:"aliases,computed"`
+	Aliases           types.List                                                              `tfsdk:"aliases" json:"aliases,computed"`
 	BuildConfig       *PagesProjectsBuildConfigDataSourceModel                                `tfsdk:"build_config" json:"build_config"`
 	CreatedOn         timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectsDeploymentTriggerDataSourceModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
@@ -45,7 +45,7 @@ type PagesProjectsResultDataSourceModel struct {
 	ProjectName       types.String                                                            `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID           types.String                                                            `tfsdk:"short_id" json:"short_id,computed"`
 	Source            customfield.NestedObject[PagesProjectsSourceDataSourceModel]            `tfsdk:"source" json:"source,computed"`
-	Stages            *[]*PagesProjectsStagesDataSourceModel                                  `tfsdk:"stages" json:"stages,computed"`
+	Stages            customfield.NestedObjectList[PagesProjectsStagesDataSourceModel]        `tfsdk:"stages" json:"stages,computed"`
 	URL               types.String                                                            `tfsdk:"url" json:"url,computed"`
 }
 

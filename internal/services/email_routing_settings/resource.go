@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &EmailRoutingSettingsResource{}
-var _ resource.ResourceWithModifyPlan = &EmailRoutingSettingsResource{}
-var _ resource.ResourceWithImportState = &EmailRoutingSettingsResource{}
+var _ resource.ResourceWithConfigure = (*EmailRoutingSettingsResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*EmailRoutingSettingsResource)(nil)
+var _ resource.ResourceWithImportState = (*EmailRoutingSettingsResource)(nil)
 
 func NewResource() resource.Resource {
 	return &EmailRoutingSettingsResource{}

@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type UserAgentBlockingRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &UserAgentBlockingRulesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*UserAgentBlockingRulesDataSource)(nil)
 
 func NewUserAgentBlockingRulesDataSource() datasource.DataSource {
 	return &UserAgentBlockingRulesDataSource{}
@@ -59,10 +61,10 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 		return
 	}
 
-	items := &[]*UserAgentBlockingRulesResultDataSourceModel{}
+	items := customfield.NullObjectList[UserAgentBlockingRulesResultDataSourceModel](ctx)
 	env := UserAgentBlockingRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*UserAgentBlockingRulesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Firewall.UARules.List(
 		ctx,
@@ -81,7 +83,7 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -93,7 +95,9 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[UserAgentBlockingRulesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

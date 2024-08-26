@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &APIShieldSchemaValidationSettingsResource{}
-var _ resource.ResourceWithModifyPlan = &APIShieldSchemaValidationSettingsResource{}
-var _ resource.ResourceWithImportState = &APIShieldSchemaValidationSettingsResource{}
+var _ resource.ResourceWithConfigure = (*APIShieldSchemaValidationSettingsResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*APIShieldSchemaValidationSettingsResource)(nil)
+var _ resource.ResourceWithImportState = (*APIShieldSchemaValidationSettingsResource)(nil)
 
 func NewResource() resource.Resource {
 	return &APIShieldSchemaValidationSettingsResource{}

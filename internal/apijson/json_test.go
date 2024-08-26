@@ -1,13 +1,16 @@
 package apijson
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -22,22 +25,26 @@ import (
 func P[T any](v T) *T { return &v }
 
 type TfsdkStructs struct {
-	BoolValue     types.Bool                                    `tfsdk:"bool_value" json:"bool_value"`
-	StringValue   types.String                                  `tfsdk:"string_value" json:"string_value"`
-	Data          *EmbeddedTfsdkStruct                          `tfsdk:"data" json:"data"`
-	DataObject    customfield.NestedObject[EmbeddedTfsdkStruct] `tfsdk:"data_object" json:"data_object"`
-	FloatValue    types.Float64                                 `tfsdk:"float_value" json:"float_value"`
-	OptionalArray *[]types.String                               `tfsdk:"optional_array" json:"optional_array"`
+	BoolValue        types.Bool                                        `tfsdk:"tfsdk_bool_value" json:"bool_value"`
+	StringValue      types.String                                      `tfsdk:"tfsdk_string_value" json:"string_value"`
+	Data             *EmbeddedTfsdkStruct                              `tfsdk:"tfsdk_data" json:"data"`
+	DataObject       customfield.NestedObject[EmbeddedTfsdkStruct]     `tfsdk:"tfsdk_data_object" json:"data_object"`
+	ListObject       customfield.List[types.String]                    `tfsdk:"tfsdk_list_object" json:"list_object"`
+	NestedObjectList customfield.NestedObjectList[EmbeddedTfsdkStruct] `tfsdk:"tfsdk_nested_object_list" json:"nested_object_list"`
+	SetObject        customfield.Set[types.String]                     `tfsdk:"tfsdk_set_object" json:"set_object"`
+	NestedObjectSet  customfield.NestedObjectSet[EmbeddedTfsdkStruct]  `tfsdk:"tfsdk_nested_object_set" json:"nested_object_set"`
+	FloatValue       types.Float64                                     `tfsdk:"tfsdk_float_value" json:"float_value"`
+	OptionalArray    *[]types.String                                   `tfsdk:"tfsdk_optional_array" json:"optional_array"`
 }
 
 type EmbeddedTfsdkStruct struct {
-	EmbeddedString types.String                                 `tfsdk:"embedded_string" json:"embedded_string"`
-	EmbeddedInt    types.Int64                                  `tfsdk:"embedded_int" json:"embedded_int"`
-	DataObject     customfield.NestedObject[DoubleNestedStruct] `tfsdk:"data_object" json:"data_object"`
+	EmbeddedString types.String                                 `tfsdk:"tfsdk_embedded_string" json:"embedded_string"`
+	EmbeddedInt    types.Int64                                  `tfsdk:"tfsdk_embedded_int" json:"embedded_int"`
+	DataObject     customfield.NestedObject[DoubleNestedStruct] `tfsdk:"tfsdk_data_object" json:"data_object"`
 }
 
 type DoubleNestedStruct struct {
-	NestedInt types.Int64 `tfsdk:"nested_int" json:"nested_int"`
+	NestedInt types.Int64 `tfsdk:"tfsdk_nested_int" json:"nested_int"`
 }
 
 type Primitives struct {
@@ -164,9 +171,9 @@ type ResultEnvelope struct {
 }
 
 type RecordsModel struct {
-	A types.String `tfsdk:"a" json:"a"`
-	B types.String `tfsdk:"b" json:"b"`
-	C types.String `tfsdk:"c" json:"c,computed"`
+	A types.String `tfsdk:"tfsdk_a" json:"a"`
+	B types.String `tfsdk:"tfsdk_b" json:"b"`
+	C types.String `tfsdk:"tfsdk_c" json:"c,computed"`
 }
 
 func DropDiagnostic[resType interface{}](res resType, diags diag.Diagnostics) resType {
@@ -177,14 +184,14 @@ func DropDiagnostic[resType interface{}](res resType, diags diag.Diagnostics) re
 }
 
 type JsonModel struct {
-	Arr  jsontypes.Normalized            `tfsdk:"arr" json:"arr"`
-	Bol  jsontypes.Normalized            `tfsdk:"bol" json:"bol"`
-	Map  jsontypes.Normalized            `tfsdk:"map" json:"map"`
-	Nil  jsontypes.Normalized            `tfsdk:"nil" json:"nil"`
-	Num  jsontypes.Normalized            `tfsdk:"num" json:"num"`
-	Str  jsontypes.Normalized            `tfsdk:"str" json:"str"`
-	Arr2 []jsontypes.Normalized          `tfsdk:"arr2" json:"arr2"`
-	Map2 map[string]jsontypes.Normalized `tfsdk:"map2" json:"map2"`
+	Arr  jsontypes.Normalized            `tfsdk:"tfsdk_arr" json:"arr"`
+	Bol  jsontypes.Normalized            `tfsdk:"tfsdk_bol" json:"bol"`
+	Map  jsontypes.Normalized            `tfsdk:"tfsdk_map" json:"map"`
+	Nil  jsontypes.Normalized            `tfsdk:"tfsdk_nil" json:"nil"`
+	Num  jsontypes.Normalized            `tfsdk:"tfsdk_num" json:"num"`
+	Str  jsontypes.Normalized            `tfsdk:"tfsdk_str" json:"str"`
+	Arr2 []jsontypes.Normalized          `tfsdk:"tfsdk_arr2" json:"arr2"`
+	Map2 map[string]jsontypes.Normalized `tfsdk:"tfsdk_map2" json:"map2"`
 }
 
 func time2time(t time.Time) timetypes.RFC3339 {
@@ -400,15 +407,23 @@ var tests = map[string]struct {
 	},
 
 	"embedded_tfsdk_struct": {
-		`{"bool_value":true,"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},"data_object":{"data_object":{"nested_int":19},"embedded_int":18,"embedded_string":"embedded_data_string_value"},"float_value":3.14,"optional_array":["hi","there"],"string_value":"string_value"}`,
+		`{"bool_value":true,` +
+			`"data":{"embedded_int":17,"embedded_string":"embedded_string_value"},` +
+			`"data_object":{"data_object":{"nested_int":19},"embedded_int":18,"embedded_string":"embedded_data_string_value"},` +
+			`"float_value":3.14,` +
+			`"list_object":["hi_list","there_list"],` +
+			`"nested_object_list":[{"embedded_int":20,"embedded_string":"nested_object_string"}],` +
+			`"nested_object_set":[{"embedded_int":21,"embedded_string":"nested_object_string_in_set"}],` +
+			`"optional_array":["hi","there"],` +
+			`"set_object":["hi_set","there_set"],` +
+			`"string_value":"string_value"}`,
 		TfsdkStructs{
-			BoolValue:     types.BoolValue(true),
-			StringValue:   types.StringValue("string_value"),
-			FloatValue:    types.Float64Value(3.14),
-			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
+			BoolValue:   types.BoolValue(true),
+			StringValue: types.StringValue("string_value"),
 			Data: &EmbeddedTfsdkStruct{
 				EmbeddedString: types.StringValue("embedded_string_value"),
 				EmbeddedInt:    types.Int64Value(17),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
 			},
 			DataObject: customfield.NewObjectMust(context.TODO(), &EmbeddedTfsdkStruct{
 				EmbeddedString: types.StringValue("embedded_data_string_value"),
@@ -417,26 +432,30 @@ var tests = map[string]struct {
 					NestedInt: types.Int64Value(19),
 				}),
 			}),
+			ListObject: customfield.NewListMust[basetypes.StringValue](context.TODO(), []attr.Value{types.StringValue("hi_list"), types.StringValue("there_list")}),
+			NestedObjectList: customfield.NewObjectListMust[EmbeddedTfsdkStruct](context.TODO(), []EmbeddedTfsdkStruct{{
+				EmbeddedString: types.StringValue("nested_object_string"),
+				EmbeddedInt:    types.Int64Value(20),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+			}}),
+			SetObject: customfield.NewSetMust[basetypes.StringValue](context.TODO(), []attr.Value{types.StringValue("hi_set"), types.StringValue("there_set")}),
+			NestedObjectSet: customfield.NewObjectSetMust[EmbeddedTfsdkStruct](context.TODO(), []EmbeddedTfsdkStruct{{
+				EmbeddedString: types.StringValue("nested_object_string_in_set"),
+				EmbeddedInt:    types.Int64Value(21),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+			}}),
+			FloatValue:    types.Float64Value(3.14),
+			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
 		},
 	},
 
-	"json_struct": {
-		`{"arr":[true,1,"one"],"arr2":[true,1,"one"],"bol":false,"map":{"nil":null,"bol":false,"str":"two"},"map2":{"bol":false,"nil":null,"str":"two"},"nil":null,"num":2,"str":"two"}`,
-		JsonModel{
-			Arr:  jsontypes.NewNormalizedValue(`[true,1,"one"]`),
-			Bol:  jsontypes.NewNormalizedValue("false"),
-			Map:  jsontypes.NewNormalizedValue(`{"nil":null,"bol":false,"str":"two"}`),
-			Nil:  jsontypes.NewNormalizedValue("null"),
-			Num:  jsontypes.NewNormalizedValue("2"),
-			Str:  jsontypes.NewNormalizedValue(`"two"`),
-			Arr2: []jsontypes.Normalized{jsontypes.NewNormalizedValue("true"), jsontypes.NewNormalizedValue("1"), jsontypes.NewNormalizedValue(`"one"`)},
-			Map2: map[string]jsontypes.Normalized{"nil": jsontypes.NewNormalizedValue("null"), "bol": jsontypes.NewNormalizedValue("false"), "str": jsontypes.NewNormalizedValue(`"two"`)},
-		},
+	"customfield_null_object": {
+		"",
+		customfield.NullObject[DoubleNestedStruct](context.TODO()),
 	},
 
-	"json_struct_nil1": {`{}`, JsonModel{Nil: jsontypes.NewNormalizedNull()}},
+	"json_struct_nil1": {`{}`, JsonModel{}},
 	"json_struct_nil2": {`{}`, JsonModel{}},
-	"json_struct_nil3": {`{"nil":null}`, JsonModel{Nil: jsontypes.NewNormalizedValue("null")}},
 }
 
 var decode_only_tests = map[string]struct {
@@ -455,11 +474,34 @@ var decode_only_tests = map[string]struct {
 	"embedded_tfsdk_struct_nil": {
 		`{}`,
 		TfsdkStructs{
-			BoolValue:   types.BoolNull(),
-			StringValue: types.StringNull(),
-			FloatValue:  types.Float64Null(),
+			BoolValue:        types.BoolNull(),
+			StringValue:      types.StringNull(),
+			Data:             nil,
+			DataObject:       customfield.NullObject[EmbeddedTfsdkStruct](context.TODO()),
+			ListObject:       customfield.NullList[basetypes.StringValue](context.TODO()),
+			NestedObjectList: customfield.NullObjectList[EmbeddedTfsdkStruct](context.TODO()),
+			SetObject:        customfield.NullSet[basetypes.StringValue](context.TODO()),
+			NestedObjectSet:  customfield.NullObjectSet[EmbeddedTfsdkStruct](context.TODO()),
+			FloatValue:       types.Float64Null(),
+			OptionalArray:    nil,
 		},
 	},
+
+	"json_struct_decode": {
+		`{"arr":[true,1,"one"],"arr2":[true,1,"one"],"bol":false,"map":{"nil":null,"bol":false,"str":"two"},"map2":{"bol":false,"nil":null,"str":"two"},"nil":null,"num":2,"str":"two"}`,
+		JsonModel{
+			Arr:  jsontypes.NewNormalizedValue(`[true,1,"one"]`),
+			Bol:  jsontypes.NewNormalizedValue("false"),
+			Map:  jsontypes.NewNormalizedValue(`{"nil":null,"bol":false,"str":"two"}`),
+			Nil:  jsontypes.NewNormalizedNull(),
+			Num:  jsontypes.NewNormalizedValue("2"),
+			Str:  jsontypes.NewNormalizedValue(`"two"`),
+			Arr2: []jsontypes.Normalized{jsontypes.NewNormalizedValue("true"), jsontypes.NewNormalizedValue("1"), jsontypes.NewNormalizedValue(`"one"`)},
+			Map2: map[string]jsontypes.Normalized{"nil": jsontypes.NewNormalizedNull(), "bol": jsontypes.NewNormalizedValue("false"), "str": jsontypes.NewNormalizedValue(`"two"`)},
+		},
+	},
+
+	"json_struct_nil3": {`{"nil":null}`, JsonModel{}},
 }
 
 var encode_only_tests = map[string]struct {
@@ -483,12 +525,33 @@ var encode_only_tests = map[string]struct {
 			FloatValue:  types.Float64Null(),
 		},
 	},
+
+	"json_struct_encode": {
+		`{"arr":[true,1,"one"],"arr2":[true,1,"one"],"bol":false,"map":{"nil":null,"bol":false,"str":"two"},"map2":{"bol":false,"nil":null,"str":"two"},"nil":null,"num":2,"str":"two"}`,
+		JsonModel{
+			Arr:  jsontypes.NewNormalizedValue(`[true,1,"one"]`),
+			Bol:  jsontypes.NewNormalizedValue("false"),
+			Map:  jsontypes.NewNormalizedValue(`{"nil":null,"bol":false,"str":"two"}`),
+			Nil:  jsontypes.NewNormalizedValue("null"),
+			Num:  jsontypes.NewNormalizedValue("2"),
+			Str:  jsontypes.NewNormalizedValue(`"two"`),
+			Arr2: []jsontypes.Normalized{jsontypes.NewNormalizedValue("true"), jsontypes.NewNormalizedValue("1"), jsontypes.NewNormalizedValue(`"one"`)},
+			Map2: map[string]jsontypes.Normalized{"nil": jsontypes.NewNormalizedNull(), "bol": jsontypes.NewNormalizedValue("false"), "str": jsontypes.NewNormalizedValue(`"two"`)},
+		},
+	},
+
+	"json_struct_nil3": {`{"nil":null}`, JsonModel{Nil: jsontypes.NewNormalizedValue("null")}},
 }
 
 func merge[T interface{}](test_array ...map[string]T) map[string]T {
 	out := make(map[string]T)
 	for _, tests := range test_array {
 		for name, t := range tests {
+			// panic if there are duplicates because otherwise we'd silently
+			// skip some tests
+			if _, existing := out[name]; existing {
+				panic(fmt.Sprintf("duplicate test name: %s", name))
+			}
 			out[name] = t
 		}
 	}
@@ -496,14 +559,16 @@ func merge[T interface{}](test_array ...map[string]T) map[string]T {
 }
 
 func TestDecode(t *testing.T) {
+	spew.Config.SortKeys = true
 	for name, test := range merge(tests, decode_only_tests) {
 		t.Run(name, func(t *testing.T) {
-			result := reflect.New(reflect.TypeOf(test.val))
-			if err := Unmarshal([]byte(test.buf), result.Interface()); err != nil {
-				t.Fatalf("deserialization of %v failed with error %v", result, err)
+			resultValue := reflect.New(reflect.TypeOf(test.val))
+			if err := Unmarshal([]byte(test.buf), resultValue.Interface()); err != nil {
+				t.Fatalf("deserialization of %v failed with error %v", resultValue, err)
 			}
-			if !reflect.DeepEqual(result.Elem().Interface(), test.val) {
-				t.Fatalf("expected '%s' to deserialize to \n%#v\nbut got\n%#v", test.buf, test.val, result.Elem().Interface())
+			result := resultValue.Elem().Interface()
+			if !reflect.DeepEqual(result, test.val) {
+				t.Fatalf("incorrect deserialization for '%s':\nexpected:\n%s\nactual:\n%s\n", test.buf, spew.Sdump(test.val), spew.Sdump(result))
 			}
 		})
 	}
@@ -520,10 +585,31 @@ func TestEncode(t *testing.T) {
 				t.Fatalf("serialization of %v failed with error %v", test.val, err)
 			}
 			if string(raw) != test.buf {
-				t.Fatalf("expected %+#v to serialize to \n%s\n but got \n%s\n", test.val, test.buf, string(raw))
+				var expected, actual string
+				errExpected := formatJson(test.buf, &expected)
+				if errExpected != nil {
+					// invalid json in the expected string is a test error so we panic
+					panic(fmt.Sprintf("invalid expected JSON:\n%s\n%v", test.buf, errExpected))
+				}
+				errActual := formatJson(string(raw), &actual)
+				if errActual != nil {
+					t.Fatalf("invalid actual JSON:\n%s\n%v", string(raw), errActual)
+				}
+				t.Fatalf("expected:\n%s\nto serialize to \n%s\n but got \n%s\n", spew.Sdump(test.val), expected, actual)
 			}
 		})
 	}
+}
+
+func formatJson(jsonString string, out *string) error {
+	var prettyJSON bytes.Buffer
+	err := json.Indent(&prettyJSON, []byte(jsonString), "", "    ")
+	if err != nil {
+		return err
+	}
+
+	*out = prettyJSON.String()
+	return nil
 }
 
 var updateTests = map[string]struct {
@@ -613,6 +699,7 @@ var updateTests = map[string]struct {
 			Data: &EmbeddedTfsdkStruct{
 				EmbeddedString: types.StringValue("embedded_string_value"),
 				EmbeddedInt:    types.Int64Value(17),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
 			},
 		},
 		TfsdkStructs{},
@@ -743,9 +830,38 @@ var decode_from_value_tests = map[string]struct {
 			),
 		),
 	},
+
+	"tfsdk_struct_populates_unknown_to_null_if_missing": {
+		`{"embedded_string":"some_string","data_object":{}}`,
+		EmbeddedTfsdkStruct{
+			EmbeddedString: types.StringUnknown(),
+			EmbeddedInt:    types.Int64Unknown(),
+			DataObject:     customfield.UnknownObject[DoubleNestedStruct](context.TODO()),
+		},
+		EmbeddedTfsdkStruct{
+			EmbeddedString: types.StringValue("some_string"),
+			EmbeddedInt:    types.Int64Null(),
+			DataObject: customfield.NewObjectMust[DoubleNestedStruct](context.TODO(), &DoubleNestedStruct{
+				NestedInt: types.Int64Null(),
+			}),
+		},
+	},
+
+	"tfsdk_date_time_populates_unknown_to_null_if_missing": {
+		`{"date":"2006-01-02"}`,
+		DateTimeCustom{
+			DateCustom:     timetypes.NewRFC3339Unknown(),
+			DateTimeCustom: timetypes.NewRFC3339Unknown(),
+		},
+		DateTimeCustom{
+			DateCustom:     time2time(time.Date(2006, time.January, 2, 0, 0, 0, 0, time.UTC)),
+			DateTimeCustom: timetypes.NewRFC3339Null(),
+		},
+	},
 }
 
 func TestDecodeFromValue(t *testing.T) {
+	spew.Config.ContinueOnMethod = true
 	for name, test := range decode_from_value_tests {
 		t.Run(name, func(t *testing.T) {
 			v := reflect.ValueOf(test.starting)
@@ -755,8 +871,9 @@ func TestDecodeFromValue(t *testing.T) {
 			if err := Unmarshal([]byte(test.buf), starting.Interface()); err != nil {
 				t.Fatalf("deserialization of %v failed with error %v", test.buf, err)
 			}
-			if !reflect.DeepEqual(starting.Elem().Interface(), test.expected) {
-				t.Fatalf("expected '%s' to deserialize to \n%#v\nbut got\n%#v", test.buf, test.expected, starting)
+			startingIFace := starting.Elem().Interface()
+			if !reflect.DeepEqual(startingIFace, test.expected) {
+				t.Fatalf("expected '%s' to deserialize to \n%s\nbut got\n%s", test.buf, spew.Sdump(test.expected), spew.Sdump(startingIFace))
 			}
 		})
 	}

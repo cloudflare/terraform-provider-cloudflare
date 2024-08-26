@@ -5,6 +5,7 @@ package workers_secret
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type WorkersSecretResultDataSourceEnvelope struct {
 }
 
 type WorkersSecretResultListDataSourceEnvelope struct {
-	Result *[]*WorkersSecretDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[WorkersSecretDataSourceModel] `json:"result,computed"`
 }
 
 type WorkersSecretDataSourceModel struct {

@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &RegionalHostnameDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*RegionalHostnameDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

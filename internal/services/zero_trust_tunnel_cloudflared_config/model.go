@@ -9,7 +9,7 @@ import (
 )
 
 type ZeroTrustTunnelCloudflaredConfigResultEnvelope struct {
-	Result ZeroTrustTunnelCloudflaredConfigModel `json:"result,computed"`
+	Result ZeroTrustTunnelCloudflaredConfigModel `json:"result"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigModel struct {

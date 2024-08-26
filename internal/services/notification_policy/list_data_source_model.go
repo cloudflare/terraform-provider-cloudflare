@@ -5,6 +5,7 @@ package notification_policy
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -12,13 +13,13 @@ import (
 )
 
 type NotificationPoliciesResultListDataSourceEnvelope struct {
-	Result *[]*NotificationPoliciesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[NotificationPoliciesResultDataSourceModel] `json:"result,computed"`
 }
 
 type NotificationPoliciesDataSourceModel struct {
-	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                   `tfsdk:"max_items"`
-	Result    *[]*NotificationPoliciesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                            `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                             `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[NotificationPoliciesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *NotificationPoliciesDataSourceModel) toListParams() (params alerting.PolicyListParams, diags diag.Diagnostics) {

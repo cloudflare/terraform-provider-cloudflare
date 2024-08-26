@@ -5,6 +5,7 @@ package authenticated_origin_pulls_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type AuthenticatedOriginPullsCertificateResultDataSourceEnvelope struct {
 }
 
 type AuthenticatedOriginPullsCertificateResultListDataSourceEnvelope struct {
-	Result *[]*AuthenticatedOriginPullsCertificateDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AuthenticatedOriginPullsCertificateDataSourceModel] `json:"result,computed"`
 }
 
 type AuthenticatedOriginPullsCertificateDataSourceModel struct {

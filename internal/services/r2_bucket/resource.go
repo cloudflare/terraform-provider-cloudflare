@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &R2BucketResource{}
-var _ resource.ResourceWithModifyPlan = &R2BucketResource{}
-var _ resource.ResourceWithImportState = &R2BucketResource{}
+var _ resource.ResourceWithConfigure = (*R2BucketResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*R2BucketResource)(nil)
+var _ resource.ResourceWithImportState = (*R2BucketResource)(nil)
 
 func NewResource() resource.Resource {
 	return &R2BucketResource{}

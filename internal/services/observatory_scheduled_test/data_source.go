@@ -19,7 +19,7 @@ type ObservatoryScheduledTestDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ObservatoryScheduledTestDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ObservatoryScheduledTestDataSource)(nil)
 
 func NewObservatoryScheduledTestDataSource() datasource.DataSource {
 	return &ObservatoryScheduledTestDataSource{}

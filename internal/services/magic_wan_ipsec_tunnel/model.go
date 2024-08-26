@@ -9,7 +9,7 @@ import (
 )
 
 type MagicWANIPSECTunnelResultEnvelope struct {
-	Result MagicWANIPSECTunnelModel `json:"result,computed"`
+	Result MagicWANIPSECTunnelModel `json:"result"`
 }
 
 type MagicWANIPSECTunnelModel struct {
@@ -27,7 +27,7 @@ type MagicWANIPSECTunnelModel struct {
 	Modified            types.Bool                                                            `tfsdk:"modified" json:"modified,computed"`
 	DeletedIPSECTunnel  customfield.NestedObject[MagicWANIPSECTunnelDeletedIPSECTunnelModel]  `tfsdk:"deleted_ipsec_tunnel" json:"deleted_ipsec_tunnel,computed"`
 	IPSECTunnel         customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelModel]         `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel,computed"`
-	IPSECTunnels        *[]*MagicWANIPSECTunnelIPSECTunnelsModel                              `tfsdk:"ipsec_tunnels" json:"ipsec_tunnels,computed"`
+	IPSECTunnels        customfield.NestedObjectList[MagicWANIPSECTunnelIPSECTunnelsModel]    `tfsdk:"ipsec_tunnels" json:"ipsec_tunnels,computed"`
 	ModifiedIPSECTunnel customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelModel] `tfsdk:"modified_ipsec_tunnel" json:"modified_ipsec_tunnel,computed"`
 }
 

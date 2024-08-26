@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &APITokensDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*APITokensDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -33,6 +33,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[APITokensResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -116,6 +117,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"permission_groups": schema.ListNestedAttribute{
 										Description: "A set of permission groups that are specified to the policy.",
 										Computed:    true,
+										CustomType:  customfield.NewNestedObjectListType[APITokensPoliciesPermissionGroupsDataSourceModel](ctx),
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
 												"id": schema.StringAttribute{

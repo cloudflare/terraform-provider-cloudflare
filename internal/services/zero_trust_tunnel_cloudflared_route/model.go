@@ -8,7 +8,7 @@ import (
 )
 
 type ZeroTrustTunnelCloudflaredRouteResultEnvelope struct {
-	Result ZeroTrustTunnelCloudflaredRouteModel `json:"result,computed"`
+	Result ZeroTrustTunnelCloudflaredRouteModel `json:"result"`
 }
 
 type ZeroTrustTunnelCloudflaredRouteModel struct {

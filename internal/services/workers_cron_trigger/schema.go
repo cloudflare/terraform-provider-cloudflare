@@ -5,13 +5,14 @@ package workers_cron_trigger
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var _ resource.ResourceWithConfigValidators = &WorkersCronTriggerResource{}
+var _ resource.ResourceWithConfigValidators = (*WorkersCronTriggerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -35,7 +36,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 			},
 			"schedules": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[WorkersCronTriggerSchedulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_on": schema.StringAttribute{

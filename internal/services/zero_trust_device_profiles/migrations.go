@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &ZeroTrustDeviceProfilesResource{}
+var _ resource.ResourceWithUpgradeState = (*ZeroTrustDeviceProfilesResource)(nil)
 
 func (r *ZeroTrustDeviceProfilesResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

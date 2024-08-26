@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type AccessRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &AccessRulesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*AccessRulesDataSource)(nil)
 
 func NewAccessRulesDataSource() datasource.DataSource {
 	return &AccessRulesDataSource{}
@@ -59,10 +61,10 @@ func (d *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	items := &[]*AccessRulesResultDataSourceModel{}
+	items := customfield.NullObjectList[AccessRulesResultDataSourceModel](ctx)
 	env := AccessRulesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccessRulesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Firewall.AccessRules.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *AccessRulesDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[AccessRulesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

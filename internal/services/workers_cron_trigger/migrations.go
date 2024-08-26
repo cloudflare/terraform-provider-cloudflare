@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &WorkersCronTriggerResource{}
+var _ resource.ResourceWithUpgradeState = (*WorkersCronTriggerResource)(nil)
 
 func (r *WorkersCronTriggerResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -5,6 +5,7 @@ package zero_trust_device_managed_networks
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type ZeroTrustDeviceManagedNetworksResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceManagedNetworksResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustDeviceManagedNetworksDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustDeviceManagedNetworksDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustDeviceManagedNetworksDataSourceModel struct {

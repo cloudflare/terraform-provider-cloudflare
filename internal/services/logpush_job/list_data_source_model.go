@@ -5,20 +5,21 @@ package logpush_job
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/logpush"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type LogpushJobsResultListDataSourceEnvelope struct {
-	Result *[]*LogpushJobsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[LogpushJobsResultDataSourceModel] `json:"result,computed"`
 }
 
 type LogpushJobsDataSourceModel struct {
-	AccountID types.String                         `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                         `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems  types.Int64                          `tfsdk:"max_items"`
-	Result    *[]*LogpushJobsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id"`
+	ZoneID    types.String                                                   `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems  types.Int64                                                    `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[LogpushJobsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *LogpushJobsDataSourceModel) toListParams() (params logpush.JobListParams, diags diag.Diagnostics) {

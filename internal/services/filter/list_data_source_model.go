@@ -5,23 +5,24 @@ package filter
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/filters"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type FiltersResultListDataSourceEnvelope struct {
-	Result *[]*FiltersResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[FiltersResultDataSourceModel] `json:"result,computed"`
 }
 
 type FiltersDataSourceModel struct {
-	ZoneIdentifier types.String                     `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Description    types.String                     `tfsdk:"description" query:"description"`
-	Expression     types.String                     `tfsdk:"expression" query:"expression"`
-	ID             types.String                     `tfsdk:"id" query:"id"`
-	Paused         types.Bool                       `tfsdk:"paused" query:"paused"`
-	Ref            types.String                     `tfsdk:"ref" query:"ref"`
-	MaxItems       types.Int64                      `tfsdk:"max_items"`
-	Result         *[]*FiltersResultDataSourceModel `tfsdk:"result"`
+	ZoneIdentifier types.String                                               `tfsdk:"zone_identifier" path:"zone_identifier"`
+	Description    types.String                                               `tfsdk:"description" query:"description"`
+	Expression     types.String                                               `tfsdk:"expression" query:"expression"`
+	ID             types.String                                               `tfsdk:"id" query:"id"`
+	Paused         types.Bool                                                 `tfsdk:"paused" query:"paused"`
+	Ref            types.String                                               `tfsdk:"ref" query:"ref"`
+	MaxItems       types.Int64                                                `tfsdk:"max_items"`
+	Result         customfield.NestedObjectList[FiltersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *FiltersDataSourceModel) toListParams() (params filters.FilterListParams, diags diag.Diagnostics) {

@@ -7,7 +7,7 @@ import (
 )
 
 type DNSRecordResultEnvelope struct {
-	Result DNSRecordModel `json:"result,computed"`
+	Result DNSRecordModel `json:"result"`
 }
 
 type DNSRecordModel struct {

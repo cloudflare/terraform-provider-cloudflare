@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &TotalTLSResource{}
-var _ resource.ResourceWithModifyPlan = &TotalTLSResource{}
-var _ resource.ResourceWithImportState = &TotalTLSResource{}
+var _ resource.ResourceWithConfigure = (*TotalTLSResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*TotalTLSResource)(nil)
+var _ resource.ResourceWithImportState = (*TotalTLSResource)(nil)
 
 func NewResource() resource.Resource {
 	return &TotalTLSResource{}

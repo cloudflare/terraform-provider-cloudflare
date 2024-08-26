@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type WorkersForPlatformsDispatchNamespacesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WorkersForPlatformsDispatchNamespacesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WorkersForPlatformsDispatchNamespacesDataSource)(nil)
 
 func NewWorkersForPlatformsDispatchNamespacesDataSource() datasource.DataSource {
 	return &WorkersForPlatformsDispatchNamespacesDataSource{}
@@ -59,10 +61,10 @@ func (d *WorkersForPlatformsDispatchNamespacesDataSource) Read(ctx context.Conte
 		return
 	}
 
-	items := &[]*WorkersForPlatformsDispatchNamespacesResultDataSourceModel{}
+	items := customfield.NullObjectList[WorkersForPlatformsDispatchNamespacesResultDataSourceModel](ctx)
 	env := WorkersForPlatformsDispatchNamespacesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WorkersForPlatformsDispatchNamespacesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *WorkersForPlatformsDispatchNamespacesDataSource) Read(ctx context.Conte
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *WorkersForPlatformsDispatchNamespacesDataSource) Read(ctx context.Conte
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[WorkersForPlatformsDispatchNamespacesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

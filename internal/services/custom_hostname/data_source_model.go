@@ -16,7 +16,7 @@ type CustomHostnameResultDataSourceEnvelope struct {
 }
 
 type CustomHostnameResultListDataSourceEnvelope struct {
-	Result *[]*CustomHostnameDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[CustomHostnameDataSourceModel] `json:"result,computed"`
 }
 
 type CustomHostnameDataSourceModel struct {

@@ -8,7 +8,7 @@ import (
 )
 
 type PagesDomainResultEnvelope struct {
-	Result PagesDomainModel `json:"result,computed"`
+	Result PagesDomainModel `json:"result"`
 }
 
 type PagesDomainModel struct {

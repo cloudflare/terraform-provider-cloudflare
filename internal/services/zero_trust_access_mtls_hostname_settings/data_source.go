@@ -19,7 +19,7 @@ type ZeroTrustAccessMTLSHostnameSettingsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustAccessMTLSHostnameSettingsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustAccessMTLSHostnameSettingsDataSource)(nil)
 
 func NewZeroTrustAccessMTLSHostnameSettingsDataSource() datasource.DataSource {
 	return &ZeroTrustAccessMTLSHostnameSettingsDataSource{}

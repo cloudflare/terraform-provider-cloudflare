@@ -136,7 +136,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ provider.ProviderWithConfigValidators = &CloudflareProvider{}
+var _ provider.ProviderWithConfigValidators = (*CloudflareProvider)(nil)
 
 // CloudflareProvider defines the provider implementation.
 type CloudflareProvider struct {

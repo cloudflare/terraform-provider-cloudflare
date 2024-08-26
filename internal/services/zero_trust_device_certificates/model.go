@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustDeviceCertificatesResultEnvelope struct {
-	Result ZeroTrustDeviceCertificatesModel `json:"result,computed"`
+	Result ZeroTrustDeviceCertificatesModel `json:"result"`
 }
 
 type ZeroTrustDeviceCertificatesModel struct {

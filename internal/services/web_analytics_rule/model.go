@@ -8,7 +8,7 @@ import (
 )
 
 type WebAnalyticsRuleResultEnvelope struct {
-	Result WebAnalyticsRuleModel `json:"result,computed"`
+	Result WebAnalyticsRuleModel `json:"result"`
 }
 
 type WebAnalyticsRuleModel struct {

@@ -19,7 +19,7 @@ type EmailRoutingCatchAllDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &EmailRoutingCatchAllDataSource{}
+var _ datasource.DataSourceWithConfigure = (*EmailRoutingCatchAllDataSource)(nil)
 
 func NewEmailRoutingCatchAllDataSource() datasource.DataSource {
 	return &EmailRoutingCatchAllDataSource{}

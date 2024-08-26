@@ -19,7 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &AddressMapResource{}
+var _ resource.ResourceWithConfigValidators = (*AddressMapResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -102,7 +102,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"errors": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[AddressMapErrorsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
@@ -118,7 +119,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"messages": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[AddressMapMessagesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{

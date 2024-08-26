@@ -19,7 +19,7 @@ type WorkersCronTriggerDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WorkersCronTriggerDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WorkersCronTriggerDataSource)(nil)
 
 func NewWorkersCronTriggerDataSource() datasource.DataSource {
 	return &WorkersCronTriggerDataSource{}

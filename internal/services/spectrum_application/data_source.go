@@ -19,7 +19,7 @@ type SpectrumApplicationDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &SpectrumApplicationDataSource{}
+var _ datasource.DataSourceWithConfigure = (*SpectrumApplicationDataSource)(nil)
 
 func NewSpectrumApplicationDataSource() datasource.DataSource {
 	return &SpectrumApplicationDataSource{}

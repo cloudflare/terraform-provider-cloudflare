@@ -12,13 +12,13 @@ import (
 )
 
 type APITokensResultListDataSourceEnvelope struct {
-	Result *[]*APITokensResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[APITokensResultDataSourceModel] `json:"result,computed"`
 }
 
 type APITokensDataSourceModel struct {
-	Direction types.String                       `tfsdk:"direction" query:"direction"`
-	MaxItems  types.Int64                        `tfsdk:"max_items"`
-	Result    *[]*APITokensResultDataSourceModel `tfsdk:"result"`
+	Direction types.String                                                 `tfsdk:"direction" query:"direction"`
+	MaxItems  types.Int64                                                  `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[APITokensResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *APITokensDataSourceModel) toListParams() (params user.TokenListParams, diags diag.Diagnostics) {
@@ -54,10 +54,10 @@ type APITokensConditionRequestIPDataSourceModel struct {
 }
 
 type APITokensPoliciesDataSourceModel struct {
-	ID               types.String                                                        `tfsdk:"id" json:"id,computed"`
-	Effect           types.String                                                        `tfsdk:"effect" json:"effect,computed"`
-	PermissionGroups *[]*APITokensPoliciesPermissionGroupsDataSourceModel                `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.NestedObject[APITokensPoliciesResourcesDataSourceModel] `tfsdk:"resources" json:"resources,computed"`
+	ID               types.String                                                                   `tfsdk:"id" json:"id,computed"`
+	Effect           types.String                                                                   `tfsdk:"effect" json:"effect,computed"`
+	PermissionGroups customfield.NestedObjectList[APITokensPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
+	Resources        customfield.NestedObject[APITokensPoliciesResourcesDataSourceModel]            `tfsdk:"resources" json:"resources,computed"`
 }
 
 type APITokensPoliciesPermissionGroupsDataSourceModel struct {

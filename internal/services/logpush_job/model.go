@@ -8,7 +8,7 @@ import (
 )
 
 type LogpushJobResultEnvelope struct {
-	Result LogpushJobModel `json:"result,computed"`
+	Result LogpushJobModel `json:"result"`
 }
 
 type LogpushJobModel struct {

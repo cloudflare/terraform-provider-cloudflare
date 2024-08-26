@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessMTLSCertificateDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessMTLSCertificateDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

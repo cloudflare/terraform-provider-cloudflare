@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type AccountsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &AccountsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*AccountsDataSource)(nil)
 
 func NewAccountsDataSource() datasource.DataSource {
 	return &AccountsDataSource{}
@@ -59,10 +61,10 @@ func (d *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	items := &[]*AccountsResultDataSourceModel{}
+	items := customfield.NullObjectList[AccountsResultDataSourceModel](ctx)
 	env := AccountsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*AccountsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Accounts.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *AccountsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[AccountsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

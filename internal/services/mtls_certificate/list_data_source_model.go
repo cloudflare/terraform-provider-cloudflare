@@ -5,19 +5,20 @@ package mtls_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/mtls_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type MTLSCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*MTLSCertificatesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[MTLSCertificatesResultDataSourceModel] `json:"result,computed"`
 }
 
 type MTLSCertificatesDataSourceModel struct {
-	AccountID types.String                              `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                               `tfsdk:"max_items"`
-	Result    *[]*MTLSCertificatesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                         `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[MTLSCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *MTLSCertificatesDataSourceModel) toListParams() (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {

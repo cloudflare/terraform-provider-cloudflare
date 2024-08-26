@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type ZoneDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZoneDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZoneDataSource)(nil)
 
 func NewZoneDataSource() datasource.DataSource {
 	return &ZoneDataSource{}
@@ -90,7 +91,7 @@ func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 			return
 		}
 
-		items := &[]*ZoneDataSourceModel{}
+		items := customfield.NullObjectList[ZoneDataSourceModel](ctx)
 		env := ZoneResultListDataSourceEnvelope{items}
 
 		page, err := d.client.Zones.List(ctx, params)
@@ -106,11 +107,13 @@ func (d *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

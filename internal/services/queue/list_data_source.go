@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type QueuesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &QueuesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*QueuesDataSource)(nil)
 
 func NewQueuesDataSource() datasource.DataSource {
 	return &QueuesDataSource{}
@@ -59,10 +61,10 @@ func (d *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	items := &[]*QueuesResultDataSourceModel{}
+	items := customfield.NullObjectList[QueuesResultDataSourceModel](ctx)
 	env := QueuesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*QueuesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Queues.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[QueuesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &LoadBalancerMonitorResource{}
-var _ resource.ResourceWithModifyPlan = &LoadBalancerMonitorResource{}
-var _ resource.ResourceWithImportState = &LoadBalancerMonitorResource{}
+var _ resource.ResourceWithConfigure = (*LoadBalancerMonitorResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*LoadBalancerMonitorResource)(nil)
+var _ resource.ResourceWithImportState = (*LoadBalancerMonitorResource)(nil)
 
 func NewResource() resource.Resource {
 	return &LoadBalancerMonitorResource{}

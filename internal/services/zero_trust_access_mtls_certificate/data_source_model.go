@@ -5,6 +5,7 @@ package zero_trust_access_mtls_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type ZeroTrustAccessMTLSCertificateResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessMTLSCertificateResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessMTLSCertificateDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessMTLSCertificateDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessMTLSCertificateDataSourceModel struct {

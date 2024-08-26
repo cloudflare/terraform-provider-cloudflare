@@ -9,7 +9,7 @@ import (
 )
 
 type MagicWANGRETunnelResultEnvelope struct {
-	Result MagicWANGRETunnelModel `json:"result,computed"`
+	Result MagicWANGRETunnelModel `json:"result"`
 }
 
 type MagicWANGRETunnelModel struct {
@@ -27,7 +27,7 @@ type MagicWANGRETunnelModel struct {
 	Modified              types.Bool                                                        `tfsdk:"modified" json:"modified,computed"`
 	DeletedGRETunnel      customfield.NestedObject[MagicWANGRETunnelDeletedGRETunnelModel]  `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
 	GRETunnel             customfield.NestedObject[MagicWANGRETunnelGRETunnelModel]         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
-	GRETunnels            *[]*MagicWANGRETunnelGRETunnelsModel                              `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
+	GRETunnels            customfield.NestedObjectList[MagicWANGRETunnelGRETunnelsModel]    `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
 	ModifiedGRETunnel     customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelModel] `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
 }
 

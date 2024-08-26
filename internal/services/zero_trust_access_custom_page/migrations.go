@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &ZeroTrustAccessCustomPageResource{}
+var _ resource.ResourceWithUpgradeState = (*ZeroTrustAccessCustomPageResource)(nil)
 
 func (r *ZeroTrustAccessCustomPageResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type WorkersSecretsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WorkersSecretsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WorkersSecretsDataSource)(nil)
 
 func NewWorkersSecretsDataSource() datasource.DataSource {
 	return &WorkersSecretsDataSource{}
@@ -59,10 +61,10 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	items := &[]*WorkersSecretsResultDataSourceModel{}
+	items := customfield.NullObjectList[WorkersSecretsResultDataSourceModel](ctx)
 	env := WorkersSecretsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*WorkersSecretsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
 		ctx,
@@ -82,7 +84,7 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -94,7 +96,9 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[WorkersSecretsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

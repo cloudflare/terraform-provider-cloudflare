@@ -8,7 +8,7 @@ import (
 )
 
 type DNSZoneDNSSECResultEnvelope struct {
-	Result DNSZoneDNSSECModel `json:"result,computed"`
+	Result DNSZoneDNSSECModel `json:"result"`
 }
 
 type DNSZoneDNSSECModel struct {

@@ -15,7 +15,7 @@ type ZeroTrustDEXTestResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDEXTestResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustDEXTestDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustDEXTestDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustDEXTestDataSourceModel struct {

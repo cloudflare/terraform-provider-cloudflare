@@ -5,23 +5,24 @@ package zero_trust_tunnel_cloudflared_virtual_network
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustTunnelCloudflaredVirtualNetworksResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel struct {
-	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id"`
-	ID        types.String                                                       `tfsdk:"id" query:"id"`
-	IsDefault types.Bool                                                         `tfsdk:"is_default" query:"is_default"`
-	IsDeleted types.Bool                                                         `tfsdk:"is_deleted" query:"is_deleted"`
-	Name      types.String                                                       `tfsdk:"name" query:"name"`
-	MaxItems  types.Int64                                                        `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                                 `tfsdk:"account_id" path:"account_id"`
+	ID        types.String                                                                                 `tfsdk:"id" query:"id"`
+	IsDefault types.Bool                                                                                   `tfsdk:"is_default" query:"is_default"`
+	IsDeleted types.Bool                                                                                   `tfsdk:"is_deleted" query:"is_deleted"`
+	Name      types.String                                                                                 `tfsdk:"name" query:"name"`
+	MaxItems  types.Int64                                                                                  `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel) toListParams() (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {

@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &SpectrumApplicationResource{}
-var _ resource.ResourceWithModifyPlan = &SpectrumApplicationResource{}
-var _ resource.ResourceWithImportState = &SpectrumApplicationResource{}
+var _ resource.ResourceWithConfigure = (*SpectrumApplicationResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*SpectrumApplicationResource)(nil)
+var _ resource.ResourceWithImportState = (*SpectrumApplicationResource)(nil)
 
 func NewResource() resource.Resource {
 	return &SpectrumApplicationResource{}

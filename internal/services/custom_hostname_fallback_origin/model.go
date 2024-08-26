@@ -8,7 +8,7 @@ import (
 )
 
 type CustomHostnameFallbackOriginResultEnvelope struct {
-	Result CustomHostnameFallbackOriginModel `json:"result,computed"`
+	Result CustomHostnameFallbackOriginModel `json:"result"`
 }
 
 type CustomHostnameFallbackOriginModel struct {
@@ -18,5 +18,5 @@ type CustomHostnameFallbackOriginModel struct {
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
-	Errors    *[]types.String   `tfsdk:"errors" json:"errors,computed"`
+	Errors    types.List        `tfsdk:"errors" json:"errors,computed"`
 }

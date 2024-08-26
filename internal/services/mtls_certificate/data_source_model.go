@@ -5,6 +5,7 @@ package mtls_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/mtls_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type MTLSCertificateResultDataSourceEnvelope struct {
 }
 
 type MTLSCertificateResultListDataSourceEnvelope struct {
-	Result *[]*MTLSCertificateDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[MTLSCertificateDataSourceModel] `json:"result,computed"`
 }
 
 type MTLSCertificateDataSourceModel struct {

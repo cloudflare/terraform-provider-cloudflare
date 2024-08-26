@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustDLPPredefinedProfileResultEnvelope struct {
-	Result ZeroTrustDLPPredefinedProfileModel `json:"result,computed"`
+	Result ZeroTrustDLPPredefinedProfileModel `json:"result"`
 }
 
 type ZeroTrustDLPPredefinedProfileModel struct {

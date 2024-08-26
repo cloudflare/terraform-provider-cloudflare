@@ -5,6 +5,7 @@ package load_balancer_monitor
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type LoadBalancerMonitorResultDataSourceEnvelope struct {
 }
 
 type LoadBalancerMonitorResultListDataSourceEnvelope struct {
-	Result *[]*LoadBalancerMonitorDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[LoadBalancerMonitorDataSourceModel] `json:"result,computed"`
 }
 
 type LoadBalancerMonitorDataSourceModel struct {

@@ -8,7 +8,7 @@ import (
 )
 
 type ZeroTrustAccessMTLSCertificateResultEnvelope struct {
-	Result ZeroTrustAccessMTLSCertificateModel `json:"result,computed"`
+	Result ZeroTrustAccessMTLSCertificateModel `json:"result"`
 }
 
 type ZeroTrustAccessMTLSCertificateModel struct {

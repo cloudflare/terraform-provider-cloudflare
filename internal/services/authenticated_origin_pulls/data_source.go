@@ -19,7 +19,7 @@ type AuthenticatedOriginPullsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &AuthenticatedOriginPullsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*AuthenticatedOriginPullsDataSource)(nil)
 
 func NewAuthenticatedOriginPullsDataSource() datasource.DataSource {
 	return &AuthenticatedOriginPullsDataSource{}

@@ -19,7 +19,7 @@ type ZeroTrustDeviceCertificatesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustDeviceCertificatesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustDeviceCertificatesDataSource)(nil)
 
 func NewZeroTrustDeviceCertificatesDataSource() datasource.DataSource {
 	return &ZeroTrustDeviceCertificatesDataSource{}

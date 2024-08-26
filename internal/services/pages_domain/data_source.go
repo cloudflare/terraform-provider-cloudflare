@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type PagesDomainDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &PagesDomainDataSource{}
+var _ datasource.DataSourceWithConfigure = (*PagesDomainDataSource)(nil)
 
 func NewPagesDomainDataSource() datasource.DataSource {
 	return &PagesDomainDataSource{}
@@ -92,7 +93,7 @@ func (d *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 			return
 		}
 
-		items := &[]*PagesDomainDataSourceModel{}
+		items := customfield.NullObjectList[PagesDomainDataSourceModel](ctx)
 		env := PagesDomainResultListDataSourceEnvelope{items}
 
 		page, err := d.client.Pages.Projects.Domains.List(
@@ -112,11 +113,13 @@ func (d *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

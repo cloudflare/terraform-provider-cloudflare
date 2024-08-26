@@ -11,16 +11,16 @@ import (
 )
 
 type AccountMembersResultListDataSourceEnvelope struct {
-	Result *[]*AccountMembersResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AccountMembersResultDataSourceModel] `json:"result,computed"`
 }
 
 type AccountMembersDataSourceModel struct {
-	AccountID types.String                            `tfsdk:"account_id" path:"account_id"`
-	Direction types.String                            `tfsdk:"direction" query:"direction"`
-	Order     types.String                            `tfsdk:"order" query:"order"`
-	Status    types.String                            `tfsdk:"status" query:"status"`
-	MaxItems  types.Int64                             `tfsdk:"max_items"`
-	Result    *[]*AccountMembersResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id"`
+	Direction types.String                                                      `tfsdk:"direction" query:"direction"`
+	Order     types.String                                                      `tfsdk:"order" query:"order"`
+	Status    types.String                                                      `tfsdk:"status" query:"status"`
+	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[AccountMembersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AccountMembersDataSourceModel) toListParams() (params accounts.MemberListParams, diags diag.Diagnostics) {
@@ -68,15 +68,15 @@ type AccountMembersPoliciesPermissionGroupsMetaDataSourceModel struct {
 }
 
 type AccountMembersPoliciesResourceGroupsDataSourceModel struct {
-	ID    types.String                                                 `tfsdk:"id" json:"id,computed"`
-	Scope *[]*AccountMembersPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope,computed"`
-	Meta  *AccountMembersPoliciesResourceGroupsMetaDataSourceModel     `tfsdk:"meta" json:"meta"`
-	Name  types.String                                                 `tfsdk:"name" json:"name,computed"`
+	ID    types.String                                                                           `tfsdk:"id" json:"id,computed"`
+	Scope customfield.NestedObjectList[AccountMembersPoliciesResourceGroupsScopeDataSourceModel] `tfsdk:"scope" json:"scope,computed"`
+	Meta  *AccountMembersPoliciesResourceGroupsMetaDataSourceModel                               `tfsdk:"meta" json:"meta"`
+	Name  types.String                                                                           `tfsdk:"name" json:"name,computed"`
 }
 
 type AccountMembersPoliciesResourceGroupsScopeDataSourceModel struct {
-	Key     types.String                                                        `tfsdk:"key" json:"key,computed"`
-	Objects *[]*AccountMembersPoliciesResourceGroupsScopeObjectsDataSourceModel `tfsdk:"objects" json:"objects,computed"`
+	Key     types.String                                                                                  `tfsdk:"key" json:"key,computed"`
+	Objects customfield.NestedObjectList[AccountMembersPoliciesResourceGroupsScopeObjectsDataSourceModel] `tfsdk:"objects" json:"objects,computed"`
 }
 
 type AccountMembersPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
@@ -89,10 +89,10 @@ type AccountMembersPoliciesResourceGroupsMetaDataSourceModel struct {
 }
 
 type AccountMembersRolesDataSourceModel struct {
-	ID          types.String    `tfsdk:"id" json:"id,computed"`
-	Description types.String    `tfsdk:"description" json:"description,computed"`
-	Name        types.String    `tfsdk:"name" json:"name,computed"`
-	Permissions *[]types.String `tfsdk:"permissions" json:"permissions,computed"`
+	ID          types.String `tfsdk:"id" json:"id,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
+	Name        types.String `tfsdk:"name" json:"name,computed"`
+	Permissions types.List   `tfsdk:"permissions" json:"permissions,computed"`
 }
 
 type AccountMembersUserDataSourceModel struct {

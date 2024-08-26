@@ -8,7 +8,7 @@ import (
 )
 
 type AccountResultEnvelope struct {
-	Result AccountModel `json:"result,computed"`
+	Result AccountModel `json:"result"`
 }
 
 type AccountModel struct {

@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustDLPCustomProfileResultEnvelope struct {
-	Result ZeroTrustDLPCustomProfileModel `json:"result,computed"`
+	Result ZeroTrustDLPCustomProfileModel `json:"result"`
 }
 
 type ZeroTrustDLPCustomProfileModel struct {

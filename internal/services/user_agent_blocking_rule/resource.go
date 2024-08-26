@@ -17,8 +17,8 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &UserAgentBlockingRuleResource{}
-var _ resource.ResourceWithModifyPlan = &UserAgentBlockingRuleResource{}
+var _ resource.ResourceWithConfigure = (*UserAgentBlockingRuleResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*UserAgentBlockingRuleResource)(nil)
 
 func NewResource() resource.Resource {
 	return &UserAgentBlockingRuleResource{}

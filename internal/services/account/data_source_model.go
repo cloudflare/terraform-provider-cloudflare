@@ -5,6 +5,7 @@ package account
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/accounts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type AccountResultDataSourceEnvelope struct {
 }
 
 type AccountResultListDataSourceEnvelope struct {
-	Result *[]*AccountDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AccountDataSourceModel] `json:"result,computed"`
 }
 
 type AccountDataSourceModel struct {

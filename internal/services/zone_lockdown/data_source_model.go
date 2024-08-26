@@ -16,7 +16,7 @@ type ZoneLockdownResultDataSourceEnvelope struct {
 }
 
 type ZoneLockdownResultListDataSourceEnvelope struct {
-	Result *[]*ZoneLockdownDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZoneLockdownDataSourceModel] `json:"result,computed"`
 }
 
 type ZoneLockdownDataSourceModel struct {
@@ -26,7 +26,7 @@ type ZoneLockdownDataSourceModel struct {
 	Description    types.String                                                        `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed"`
 	Paused         types.Bool                                                          `tfsdk:"paused" json:"paused,computed"`
-	URLs           *[]types.String                                                     `tfsdk:"urls" json:"urls,computed"`
+	URLs           types.List                                                          `tfsdk:"urls" json:"urls,computed"`
 	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
 	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
 }

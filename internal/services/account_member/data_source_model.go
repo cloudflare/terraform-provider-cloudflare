@@ -15,7 +15,7 @@ type AccountMemberResultDataSourceEnvelope struct {
 }
 
 type AccountMemberResultListDataSourceEnvelope struct {
-	Result *[]*AccountMemberDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AccountMemberDataSourceModel] `json:"result,computed"`
 }
 
 type AccountMemberDataSourceModel struct {
@@ -82,15 +82,15 @@ type AccountMemberPoliciesPermissionGroupsMetaDataSourceModel struct {
 }
 
 type AccountMemberPoliciesResourceGroupsDataSourceModel struct {
-	ID    types.String                                                `tfsdk:"id" json:"id,computed"`
-	Scope *[]*AccountMemberPoliciesResourceGroupsScopeDataSourceModel `tfsdk:"scope" json:"scope,computed"`
-	Meta  *AccountMemberPoliciesResourceGroupsMetaDataSourceModel     `tfsdk:"meta" json:"meta"`
-	Name  types.String                                                `tfsdk:"name" json:"name,computed"`
+	ID    types.String                                                                          `tfsdk:"id" json:"id,computed"`
+	Scope customfield.NestedObjectList[AccountMemberPoliciesResourceGroupsScopeDataSourceModel] `tfsdk:"scope" json:"scope,computed"`
+	Meta  *AccountMemberPoliciesResourceGroupsMetaDataSourceModel                               `tfsdk:"meta" json:"meta"`
+	Name  types.String                                                                          `tfsdk:"name" json:"name,computed"`
 }
 
 type AccountMemberPoliciesResourceGroupsScopeDataSourceModel struct {
-	Key     types.String                                                       `tfsdk:"key" json:"key,computed"`
-	Objects *[]*AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel `tfsdk:"objects" json:"objects,computed"`
+	Key     types.String                                                                                 `tfsdk:"key" json:"key,computed"`
+	Objects customfield.NestedObjectList[AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel] `tfsdk:"objects" json:"objects,computed"`
 }
 
 type AccountMemberPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
@@ -103,10 +103,10 @@ type AccountMemberPoliciesResourceGroupsMetaDataSourceModel struct {
 }
 
 type AccountMemberRolesDataSourceModel struct {
-	ID          types.String    `tfsdk:"id" json:"id,computed"`
-	Description types.String    `tfsdk:"description" json:"description,computed"`
-	Name        types.String    `tfsdk:"name" json:"name,computed"`
-	Permissions *[]types.String `tfsdk:"permissions" json:"permissions,computed"`
+	ID          types.String `tfsdk:"id" json:"id,computed"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
+	Name        types.String `tfsdk:"name" json:"name,computed"`
+	Permissions types.List   `tfsdk:"permissions" json:"permissions,computed"`
 }
 
 type AccountMemberFindOneByDataSourceModel struct {

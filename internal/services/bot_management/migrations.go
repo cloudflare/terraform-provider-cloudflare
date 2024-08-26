@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &BotManagementResource{}
+var _ resource.ResourceWithUpgradeState = (*BotManagementResource)(nil)
 
 func (r *BotManagementResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

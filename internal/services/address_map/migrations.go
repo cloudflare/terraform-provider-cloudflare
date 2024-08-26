@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &AddressMapResource{}
+var _ resource.ResourceWithUpgradeState = (*AddressMapResource)(nil)
 
 func (r *AddressMapResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

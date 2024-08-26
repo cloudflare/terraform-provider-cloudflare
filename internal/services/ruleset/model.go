@@ -8,7 +8,7 @@ import (
 )
 
 type RulesetResultEnvelope struct {
-	Result RulesetModel `json:"result,computed"`
+	Result RulesetModel `json:"result"`
 }
 
 type RulesetModel struct {
@@ -30,7 +30,7 @@ type RulesetRulesModel struct {
 	ID               types.String                       `tfsdk:"id" json:"id"`
 	Action           types.String                       `tfsdk:"action" json:"action"`
 	ActionParameters *RulesetRulesActionParametersModel `tfsdk:"action_parameters" json:"action_parameters"`
-	Categories       *[]types.String                    `tfsdk:"categories" json:"categories,computed"`
+	Categories       types.List                         `tfsdk:"categories" json:"categories,computed"`
 	Description      types.String                       `tfsdk:"description" json:"description"`
 	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled"`
 	Expression       types.String                       `tfsdk:"expression" json:"expression"`

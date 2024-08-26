@@ -355,6 +355,18 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			structValue, _ := converted.ValueAny(context.TODO())
 			return structValue
 		})
+	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectListLike)(nil)).Elem()) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.NestedObjectListLike)
+			structSlice, _ := converted.AsStructSlice(context.TODO())
+			return structSlice
+		})
+	} else if t.Implements(reflect.TypeOf((*customfield.ListLike)(nil)).Elem()) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.ListLike)
+			listValue, _ := converted.ValueAttr(context.TODO())
+			return listValue
+		})
 	} else if t == reflect.TypeOf(jsontypes.Normalized{}) {
 		return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
 			return []byte(plan.(jsontypes.Normalized).ValueString()), nil
@@ -531,6 +543,10 @@ func (e *encoder) encodeMapEntries(json []byte, p reflect.Value, s reflect.Value
 		encodedValue, err := elementEncoder(pair.plan, pair.state)
 		if err != nil {
 			return nil, err
+		}
+		if encodedValue == nil {
+			// encode a nil for the property rather than omitting the key entirely
+			encodedValue = explicitJsonNull
 		}
 		json, err = sjson.SetRawBytes(json, string(pair.key), encodedValue)
 		if err != nil {

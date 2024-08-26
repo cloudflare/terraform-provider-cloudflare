@@ -5,20 +5,21 @@ package zero_trust_list
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustListsResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustListsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustListsResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustListsDataSourceModel struct {
-	AccountID types.String                            `tfsdk:"account_id" path:"account_id"`
-	Type      types.String                            `tfsdk:"type" query:"type"`
-	MaxItems  types.Int64                             `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustListsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                      `tfsdk:"account_id" path:"account_id"`
+	Type      types.String                                                      `tfsdk:"type" query:"type"`
+	MaxItems  types.Int64                                                       `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustListsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustListsDataSourceModel) toListParams() (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {

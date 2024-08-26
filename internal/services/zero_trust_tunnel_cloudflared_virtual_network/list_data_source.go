@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworksDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustTunnelCloudflaredVirtualNetworksDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustTunnelCloudflaredVirtualNetworksDataSource)(nil)
 
 func NewZeroTrustTunnelCloudflaredVirtualNetworksDataSource() datasource.DataSource {
 	return &ZeroTrustTunnelCloudflaredVirtualNetworksDataSource{}
@@ -59,10 +61,10 @@ func (d *ZeroTrustTunnelCloudflaredVirtualNetworksDataSource) Read(ctx context.C
 		return
 	}
 
-	items := &[]*ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel{}
+	items := customfield.NullObjectList[ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel](ctx)
 	env := ZeroTrustTunnelCloudflaredVirtualNetworksResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.ZeroTrust.Networks.VirtualNetworks.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *ZeroTrustTunnelCloudflaredVirtualNetworksDataSource) Read(ctx context.C
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *ZeroTrustTunnelCloudflaredVirtualNetworksDataSource) Read(ctx context.C
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

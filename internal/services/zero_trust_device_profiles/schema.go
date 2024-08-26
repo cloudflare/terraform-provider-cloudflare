@@ -5,6 +5,7 @@ package zero_trust_device_profiles
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
@@ -13,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustDeviceProfilesResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustDeviceProfilesResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -118,7 +119,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"exclude": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceProfilesExcludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
@@ -137,7 +139,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"fallback_domains": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceProfilesFallbackDomainsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"suffix": schema.StringAttribute{
@@ -157,7 +160,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"include": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceProfilesIncludeModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
@@ -176,7 +180,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"target_tests": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustDeviceProfilesTargetTestsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

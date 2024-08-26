@@ -16,7 +16,7 @@ type APITokenResultDataSourceEnvelope struct {
 }
 
 type APITokenResultListDataSourceEnvelope struct {
-	Result *[]*APITokenDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[APITokenDataSourceModel] `json:"result,computed"`
 }
 
 type APITokenDataSourceModel struct {
@@ -54,10 +54,10 @@ type APITokenConditionRequestIPDataSourceModel struct {
 }
 
 type APITokenPoliciesDataSourceModel struct {
-	ID               types.String                                                       `tfsdk:"id" json:"id,computed"`
-	Effect           types.String                                                       `tfsdk:"effect" json:"effect,computed"`
-	PermissionGroups *[]*APITokenPoliciesPermissionGroupsDataSourceModel                `tfsdk:"permission_groups" json:"permission_groups,computed"`
-	Resources        customfield.NestedObject[APITokenPoliciesResourcesDataSourceModel] `tfsdk:"resources" json:"resources,computed"`
+	ID               types.String                                                                  `tfsdk:"id" json:"id,computed"`
+	Effect           types.String                                                                  `tfsdk:"effect" json:"effect,computed"`
+	PermissionGroups customfield.NestedObjectList[APITokenPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
+	Resources        customfield.NestedObject[APITokenPoliciesResourcesDataSourceModel]            `tfsdk:"resources" json:"resources,computed"`
 }
 
 type APITokenPoliciesPermissionGroupsDataSourceModel struct {

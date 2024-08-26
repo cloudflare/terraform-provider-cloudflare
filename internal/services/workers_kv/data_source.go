@@ -19,7 +19,7 @@ type WorkersKVDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WorkersKVDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WorkersKVDataSource)(nil)
 
 func NewWorkersKVDataSource() datasource.DataSource {
 	return &WorkersKVDataSource{}

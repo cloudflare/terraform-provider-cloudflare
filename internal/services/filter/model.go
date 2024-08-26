@@ -7,7 +7,7 @@ import (
 )
 
 type FilterResultEnvelope struct {
-	Result FilterModel `json:"result,computed"`
+	Result FilterModel `json:"result"`
 }
 
 type FilterModel struct {

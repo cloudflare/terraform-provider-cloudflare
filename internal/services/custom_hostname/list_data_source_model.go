@@ -12,18 +12,18 @@ import (
 )
 
 type CustomHostnamesResultListDataSourceEnvelope struct {
-	Result *[]*CustomHostnamesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[CustomHostnamesResultDataSourceModel] `json:"result,computed"`
 }
 
 type CustomHostnamesDataSourceModel struct {
-	ZoneID    types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	Direction types.String                             `tfsdk:"direction" query:"direction"`
-	Hostname  types.String                             `tfsdk:"hostname" query:"hostname"`
-	ID        types.String                             `tfsdk:"id" query:"id"`
-	SSL       types.Float64                            `tfsdk:"ssl" query:"ssl"`
-	Order     types.String                             `tfsdk:"order" query:"order"`
-	MaxItems  types.Int64                              `tfsdk:"max_items"`
-	Result    *[]*CustomHostnamesResultDataSourceModel `tfsdk:"result"`
+	ZoneID    types.String                                                       `tfsdk:"zone_id" path:"zone_id"`
+	Direction types.String                                                       `tfsdk:"direction" query:"direction"`
+	Hostname  types.String                                                       `tfsdk:"hostname" query:"hostname"`
+	ID        types.String                                                       `tfsdk:"id" query:"id"`
+	SSL       types.Float64                                                      `tfsdk:"ssl" query:"ssl"`
+	Order     types.String                                                       `tfsdk:"order" query:"order"`
+	MaxItems  types.Int64                                                        `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[CustomHostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CustomHostnamesDataSourceModel) toListParams() (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {

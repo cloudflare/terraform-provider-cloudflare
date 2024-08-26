@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type EmailRoutingAddressesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &EmailRoutingAddressesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*EmailRoutingAddressesDataSource)(nil)
 
 func NewEmailRoutingAddressesDataSource() datasource.DataSource {
 	return &EmailRoutingAddressesDataSource{}
@@ -59,10 +61,10 @@ func (d *EmailRoutingAddressesDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	items := &[]*EmailRoutingAddressesResultDataSourceModel{}
+	items := customfield.NullObjectList[EmailRoutingAddressesResultDataSourceModel](ctx)
 	env := EmailRoutingAddressesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*EmailRoutingAddressesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.EmailRouting.Addresses.List(
 		ctx,
@@ -81,7 +83,7 @@ func (d *EmailRoutingAddressesDataSource) Read(ctx context.Context, req datasour
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -93,7 +95,9 @@ func (d *EmailRoutingAddressesDataSource) Read(ctx context.Context, req datasour
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[EmailRoutingAddressesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

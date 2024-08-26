@@ -5,6 +5,7 @@ package zero_trust_tunnel_cloudflared_virtual_network
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworkResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {

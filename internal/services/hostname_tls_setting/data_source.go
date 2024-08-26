@@ -20,7 +20,7 @@ type HostnameTLSSettingDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &HostnameTLSSettingDataSource{}
+var _ datasource.DataSourceWithConfigure = (*HostnameTLSSettingDataSource)(nil)
 
 func NewHostnameTLSSettingDataSource() datasource.DataSource {
 	return &HostnameTLSSettingDataSource{}

@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessCustomPageDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessCustomPageDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

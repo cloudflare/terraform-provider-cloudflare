@@ -11,14 +11,14 @@ import (
 )
 
 type PagesDomainsResultListDataSourceEnvelope struct {
-	Result *[]*PagesDomainsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[PagesDomainsResultDataSourceModel] `json:"result,computed"`
 }
 
 type PagesDomainsDataSourceModel struct {
-	AccountID   types.String                          `tfsdk:"account_id" path:"account_id"`
-	ProjectName types.String                          `tfsdk:"project_name" path:"project_name"`
-	MaxItems    types.Int64                           `tfsdk:"max_items"`
-	Result      *[]*PagesDomainsResultDataSourceModel `tfsdk:"result"`
+	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id"`
+	ProjectName types.String                                                    `tfsdk:"project_name" path:"project_name"`
+	MaxItems    types.Int64                                                     `tfsdk:"max_items"`
+	Result      customfield.NestedObjectList[PagesDomainsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *PagesDomainsDataSourceModel) toListParams() (params pages.ProjectDomainListParams, diags diag.Diagnostics) {

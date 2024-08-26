@@ -8,7 +8,7 @@ import (
 )
 
 type KeylessCertificateResultEnvelope struct {
-	Result KeylessCertificateModel `json:"result,computed"`
+	Result KeylessCertificateModel `json:"result"`
 }
 
 type KeylessCertificateModel struct {
@@ -24,7 +24,7 @@ type KeylessCertificateModel struct {
 	CreatedOn    timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn   timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed"`
 	Status       types.String                   `tfsdk:"status" json:"status,computed"`
-	Permissions  *[]types.String                `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions  types.List                     `tfsdk:"permissions" json:"permissions,computed"`
 }
 
 type KeylessCertificateTunnelModel struct {

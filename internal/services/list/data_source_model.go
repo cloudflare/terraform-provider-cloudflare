@@ -5,6 +5,7 @@ package list
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type ListResultDataSourceEnvelope struct {
 }
 
 type ListResultListDataSourceEnvelope struct {
-	Result *[]*ListDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ListDataSourceModel] `json:"result,computed"`
 }
 
 type ListDataSourceModel struct {

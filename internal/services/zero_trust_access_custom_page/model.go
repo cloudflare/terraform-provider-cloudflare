@@ -8,7 +8,7 @@ import (
 )
 
 type ZeroTrustAccessCustomPageResultEnvelope struct {
-	Result ZeroTrustAccessCustomPageModel `json:"result,computed"`
+	Result ZeroTrustAccessCustomPageModel `json:"result"`
 }
 
 type ZeroTrustAccessCustomPageModel struct {

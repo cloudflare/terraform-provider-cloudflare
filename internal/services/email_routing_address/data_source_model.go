@@ -5,6 +5,7 @@ package email_routing_address
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type EmailRoutingAddressResultDataSourceEnvelope struct {
 }
 
 type EmailRoutingAddressResultListDataSourceEnvelope struct {
-	Result *[]*EmailRoutingAddressDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[EmailRoutingAddressDataSourceModel] `json:"result,computed"`
 }
 
 type EmailRoutingAddressDataSourceModel struct {

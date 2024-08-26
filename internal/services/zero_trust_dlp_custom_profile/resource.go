@@ -17,8 +17,8 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustDLPCustomProfileResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustDLPCustomProfileResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustDLPCustomProfileResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustDLPCustomProfileResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDLPCustomProfileResource{}

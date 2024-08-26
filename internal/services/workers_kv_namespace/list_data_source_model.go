@@ -5,20 +5,21 @@ package workers_kv_namespace
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/kv"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WorkersKVNamespacesResultListDataSourceEnvelope struct {
-	Result *[]*WorkersKVNamespacesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[WorkersKVNamespacesResultDataSourceModel] `json:"result,computed"`
 }
 
 type WorkersKVNamespacesDataSourceModel struct {
-	AccountID types.String                                 `tfsdk:"account_id" path:"account_id"`
-	Direction types.String                                 `tfsdk:"direction" query:"direction"`
-	Order     types.String                                 `tfsdk:"order" query:"order"`
-	MaxItems  types.Int64                                  `tfsdk:"max_items"`
-	Result    *[]*WorkersKVNamespacesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                           `tfsdk:"account_id" path:"account_id"`
+	Direction types.String                                                           `tfsdk:"direction" query:"direction"`
+	Order     types.String                                                           `tfsdk:"order" query:"order"`
+	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[WorkersKVNamespacesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersKVNamespacesDataSourceModel) toListParams() (params kv.NamespaceListParams, diags diag.Diagnostics) {

@@ -19,7 +19,7 @@ type ArgoSmartRoutingDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ArgoSmartRoutingDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ArgoSmartRoutingDataSource)(nil)
 
 func NewArgoSmartRoutingDataSource() datasource.DataSource {
 	return &ArgoSmartRoutingDataSource{}

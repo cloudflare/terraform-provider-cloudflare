@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustAccessServiceTokenResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessServiceTokenResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

@@ -19,7 +19,7 @@ type MagicWANGRETunnelDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &MagicWANGRETunnelDataSource{}
+var _ datasource.DataSourceWithConfigure = (*MagicWANGRETunnelDataSource)(nil)
 
 func NewMagicWANGRETunnelDataSource() datasource.DataSource {
 	return &MagicWANGRETunnelDataSource{}

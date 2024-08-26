@@ -5,19 +5,20 @@ package keyless_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/keyless_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type KeylessCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*KeylessCertificatesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[KeylessCertificatesResultDataSourceModel] `json:"result,computed"`
 }
 
 type KeylessCertificatesDataSourceModel struct {
-	ZoneID   types.String                                 `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems types.Int64                                  `tfsdk:"max_items"`
-	Result   *[]*KeylessCertificatesResultDataSourceModel `tfsdk:"result"`
+	ZoneID   types.String                                                           `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems types.Int64                                                            `tfsdk:"max_items"`
+	Result   customfield.NestedObjectList[KeylessCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *KeylessCertificatesDataSourceModel) toListParams() (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
@@ -35,7 +36,7 @@ type KeylessCertificatesResultDataSourceModel struct {
 	Host        types.String                              `tfsdk:"host" json:"host,computed"`
 	ModifiedOn  timetypes.RFC3339                         `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                              `tfsdk:"name" json:"name,computed"`
-	Permissions *[]types.String                           `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions types.List                                `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                             `tfsdk:"port" json:"port,computed"`
 	Status      types.String                              `tfsdk:"status" json:"status,computed"`
 	Tunnel      *KeylessCertificatesTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`

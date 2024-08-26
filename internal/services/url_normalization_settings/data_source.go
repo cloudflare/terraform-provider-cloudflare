@@ -19,7 +19,7 @@ type URLNormalizationSettingsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &URLNormalizationSettingsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*URLNormalizationSettingsDataSource)(nil)
 
 func NewURLNormalizationSettingsDataSource() datasource.DataSource {
 	return &URLNormalizationSettingsDataSource{}

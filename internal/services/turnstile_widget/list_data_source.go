@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type TurnstileWidgetsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &TurnstileWidgetsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*TurnstileWidgetsDataSource)(nil)
 
 func NewTurnstileWidgetsDataSource() datasource.DataSource {
 	return &TurnstileWidgetsDataSource{}
@@ -59,10 +61,10 @@ func (d *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	items := &[]*TurnstileWidgetsResultDataSourceModel{}
+	items := customfield.NullObjectList[TurnstileWidgetsResultDataSourceModel](ctx)
 	env := TurnstileWidgetsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*TurnstileWidgetsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Challenges.Widgets.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[TurnstileWidgetsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -5,6 +5,7 @@ package custom_ssl
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/custom_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type CustomSSLResultDataSourceEnvelope struct {
 }
 
 type CustomSSLResultListDataSourceEnvelope struct {
-	Result *[]*CustomSSLDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[CustomSSLDataSourceModel] `json:"result,computed"`
 }
 
 type CustomSSLDataSourceModel struct {
@@ -30,7 +31,7 @@ type CustomSSLDataSourceModel struct {
 	Signature           types.String                             `tfsdk:"signature" json:"signature,computed"`
 	Status              types.String                             `tfsdk:"status" json:"status,computed"`
 	UploadedOn          timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
-	Hosts               *[]types.String                          `tfsdk:"hosts" json:"hosts,computed"`
+	Hosts               types.List                               `tfsdk:"hosts" json:"hosts,computed"`
 	Policy              types.String                             `tfsdk:"policy" json:"policy"`
 	GeoRestrictions     *CustomSSLGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions"`
 	KeylessServer       *CustomSSLKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server"`
@@ -71,7 +72,7 @@ type CustomSSLKeylessServerDataSourceModel struct {
 	Host        types.String                                 `tfsdk:"host" json:"host,computed"`
 	ModifiedOn  timetypes.RFC3339                            `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                                 `tfsdk:"name" json:"name,computed"`
-	Permissions *[]types.String                              `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions types.List                                   `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                                `tfsdk:"port" json:"port,computed"`
 	Status      types.String                                 `tfsdk:"status" json:"status,computed"`
 	Tunnel      *CustomSSLKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`

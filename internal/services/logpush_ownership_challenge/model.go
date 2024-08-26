@@ -7,7 +7,7 @@ import (
 )
 
 type LogpushOwnershipChallengeResultEnvelope struct {
-	Result LogpushOwnershipChallengeModel `json:"result,computed"`
+	Result LogpushOwnershipChallengeModel `json:"result"`
 }
 
 type LogpushOwnershipChallengeModel struct {

@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &NotificationPolicyWebhooksDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*NotificationPolicyWebhooksDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

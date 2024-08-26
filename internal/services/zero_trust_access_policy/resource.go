@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustAccessPolicyResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustAccessPolicyResource{}
-var _ resource.ResourceWithImportState = &ZeroTrustAccessPolicyResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustAccessPolicyResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustAccessPolicyResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustAccessPolicyResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustAccessPolicyResource{}

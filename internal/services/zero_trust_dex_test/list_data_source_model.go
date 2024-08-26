@@ -11,13 +11,13 @@ import (
 )
 
 type ZeroTrustDEXTestsResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustDEXTestsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustDEXTestsResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustDEXTestsDataSourceModel struct {
-	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustDEXTestsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustDEXTestsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDEXTestsDataSourceModel) toListParams() (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {

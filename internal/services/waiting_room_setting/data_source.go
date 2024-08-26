@@ -19,7 +19,7 @@ type WaitingRoomSettingDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WaitingRoomSettingDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WaitingRoomSettingDataSource)(nil)
 
 func NewWaitingRoomSettingDataSource() datasource.DataSource {
 	return &WaitingRoomSettingDataSource{}

@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type DNSRecordsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &DNSRecordsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*DNSRecordsDataSource)(nil)
 
 func NewDNSRecordsDataSource() datasource.DataSource {
 	return &DNSRecordsDataSource{}
@@ -59,10 +61,10 @@ func (d *DNSRecordsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	items := &[]*DNSRecordsResultDataSourceModel{}
+	items := customfield.NullObjectList[DNSRecordsResultDataSourceModel](ctx)
 	env := DNSRecordsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*DNSRecordsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.DNS.Records.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *DNSRecordsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *DNSRecordsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[DNSRecordsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

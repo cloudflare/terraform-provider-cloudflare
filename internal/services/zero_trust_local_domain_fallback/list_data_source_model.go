@@ -5,18 +5,19 @@ package zero_trust_local_domain_fallback
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustLocalDomainFallbacksResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustLocalDomainFallbacksResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustLocalDomainFallbacksResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustLocalDomainFallbacksDataSourceModel struct {
-	AccountID types.String                                           `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                            `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustLocalDomainFallbacksResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                     `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                                      `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustLocalDomainFallbacksResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustLocalDomainFallbacksDataSourceModel) toListParams() (params zero_trust.DevicePolicyFallbackDomainListParams, diags diag.Diagnostics) {
