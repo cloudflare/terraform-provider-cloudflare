@@ -19,7 +19,7 @@ type ZeroTrustTunnelCloudflaredConfigDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustTunnelCloudflaredConfigDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustTunnelCloudflaredConfigDataSource)(nil)
 
 func NewZeroTrustTunnelCloudflaredConfigDataSource() datasource.DataSource {
 	return &ZeroTrustTunnelCloudflaredConfigDataSource{}

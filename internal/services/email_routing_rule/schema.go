@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &EmailRoutingRuleResource{}
+var _ resource.ResourceWithConfigValidators = (*EmailRoutingRuleResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

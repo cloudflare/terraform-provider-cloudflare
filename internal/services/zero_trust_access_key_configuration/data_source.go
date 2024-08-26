@@ -19,7 +19,7 @@ type ZeroTrustAccessKeyConfigurationDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustAccessKeyConfigurationDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustAccessKeyConfigurationDataSource)(nil)
 
 func NewZeroTrustAccessKeyConfigurationDataSource() datasource.DataSource {
 	return &ZeroTrustAccessKeyConfigurationDataSource{}

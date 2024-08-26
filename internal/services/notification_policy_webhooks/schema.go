@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &NotificationPolicyWebhooksResource{}
+var _ resource.ResourceWithConfigValidators = (*NotificationPolicyWebhooksResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -74,7 +74,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"errors": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[NotificationPolicyWebhooksErrorsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
@@ -90,7 +91,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"messages": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[NotificationPolicyWebhooksMessagesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{

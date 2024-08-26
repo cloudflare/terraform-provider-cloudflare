@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &KeylessCertificateResource{}
+var _ resource.ResourceWithConfigValidators = (*KeylessCertificateResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

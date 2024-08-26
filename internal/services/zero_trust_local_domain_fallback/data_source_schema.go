@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &ZeroTrustLocalDomainFallbackDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustLocalDomainFallbackDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

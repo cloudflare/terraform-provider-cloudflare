@@ -18,7 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &LogpushJobDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*LogpushJobDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

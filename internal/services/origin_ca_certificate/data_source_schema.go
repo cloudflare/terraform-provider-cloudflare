@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &OriginCACertificateDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*OriginCACertificateDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

@@ -5,19 +5,20 @@ package notification_policy_webhooks
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type NotificationPolicyWebhooksListResultListDataSourceEnvelope struct {
-	Result *[]*NotificationPolicyWebhooksListResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[NotificationPolicyWebhooksListResultDataSourceModel] `json:"result,computed"`
 }
 
 type NotificationPolicyWebhooksListDataSourceModel struct {
-	AccountID types.String                                            `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                             `tfsdk:"max_items"`
-	Result    *[]*NotificationPolicyWebhooksListResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                      `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                                       `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[NotificationPolicyWebhooksListResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *NotificationPolicyWebhooksListDataSourceModel) toListParams() (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {

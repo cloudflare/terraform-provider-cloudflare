@@ -5,28 +5,29 @@ package zero_trust_tunnel_cloudflared_route
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustTunnelCloudflaredRoutesResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
-	AccountID        types.String                                              `tfsdk:"account_id" path:"account_id"`
-	Comment          types.String                                              `tfsdk:"comment" query:"comment"`
-	ExistedAt        timetypes.RFC3339                                         `tfsdk:"existed_at" query:"existed_at"`
-	IsDeleted        types.Bool                                                `tfsdk:"is_deleted" query:"is_deleted"`
-	NetworkSubset    types.String                                              `tfsdk:"network_subset" query:"network_subset"`
-	NetworkSuperset  types.String                                              `tfsdk:"network_superset" query:"network_superset"`
-	RouteID          types.String                                              `tfsdk:"route_id" query:"route_id"`
-	TunTypes         types.String                                              `tfsdk:"tun_types" query:"tun_types"`
-	TunnelID         types.String                                              `tfsdk:"tunnel_id" query:"tunnel_id"`
-	VirtualNetworkID types.String                                              `tfsdk:"virtual_network_id" query:"virtual_network_id"`
-	MaxItems         types.Int64                                               `tfsdk:"max_items"`
-	Result           *[]*ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel `tfsdk:"result"`
+	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id"`
+	Comment          types.String                                                                        `tfsdk:"comment" query:"comment"`
+	ExistedAt        timetypes.RFC3339                                                                   `tfsdk:"existed_at" query:"existed_at"`
+	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted"`
+	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset"`
+	NetworkSuperset  types.String                                                                        `tfsdk:"network_superset" query:"network_superset"`
+	RouteID          types.String                                                                        `tfsdk:"route_id" query:"route_id"`
+	TunTypes         types.String                                                                        `tfsdk:"tun_types" query:"tun_types"`
+	TunnelID         types.String                                                                        `tfsdk:"tunnel_id" query:"tunnel_id"`
+	VirtualNetworkID types.String                                                                        `tfsdk:"virtual_network_id" query:"virtual_network_id"`
+	MaxItems         types.Int64                                                                         `tfsdk:"max_items"`
+	Result           customfield.NestedObjectList[ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams() (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {

@@ -9,7 +9,7 @@ import (
 )
 
 type ZeroTrustAccessGroupResultEnvelope struct {
-	Result ZeroTrustAccessGroupModel `json:"result,computed"`
+	Result ZeroTrustAccessGroupModel `json:"result"`
 }
 
 type ZeroTrustAccessGroupModel struct {

@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type Web3HostnamesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &Web3HostnamesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*Web3HostnamesDataSource)(nil)
 
 func NewWeb3HostnamesDataSource() datasource.DataSource {
 	return &Web3HostnamesDataSource{}
@@ -53,10 +55,10 @@ func (d *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*Web3HostnamesResultDataSourceModel{}
+	items := customfield.NullObjectList[Web3HostnamesResultDataSourceModel](ctx)
 	env := Web3HostnamesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*Web3HostnamesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Web3.Hostnames.List(ctx, data.ZoneIdentifier.ValueString())
 	if err != nil {
@@ -71,7 +73,7 @@ func (d *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadR
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -83,7 +85,9 @@ func (d *Web3HostnamesDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[Web3HostnamesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type HostnameTLSSettingResultEnvelope struct {
-	Result HostnameTLSSettingModel `json:"result,computed"`
+	Result HostnameTLSSettingModel `json:"result"`
 }
 
 type HostnameTLSSettingModel struct {

@@ -8,7 +8,7 @@ import (
 )
 
 type LoadBalancerPoolResultEnvelope struct {
-	Result LoadBalancerPoolModel `json:"result,computed"`
+	Result LoadBalancerPoolModel `json:"result"`
 }
 
 type LoadBalancerPoolModel struct {

@@ -7,7 +7,7 @@ import (
 )
 
 type SpectrumApplicationResultEnvelope struct {
-	Result SpectrumApplicationModel `json:"result,computed"`
+	Result SpectrumApplicationModel `json:"result"`
 }
 
 type SpectrumApplicationModel struct {

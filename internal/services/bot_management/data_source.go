@@ -19,7 +19,7 @@ type BotManagementDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &BotManagementDataSource{}
+var _ datasource.DataSourceWithConfigure = (*BotManagementDataSource)(nil)
 
 func NewBotManagementDataSource() datasource.DataSource {
 	return &BotManagementDataSource{}

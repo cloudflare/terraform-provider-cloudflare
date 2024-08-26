@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type ListItemsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ListItemsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ListItemsDataSource)(nil)
 
 func NewListItemsDataSource() datasource.DataSource {
 	return &ListItemsDataSource{}
@@ -59,10 +61,10 @@ func (d *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	items := &[]*ListItemsResultDataSourceModel{}
+	items := customfield.NullObjectList[ListItemsResultDataSourceModel](ctx)
 	env := ListItemsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ListItemsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Rules.Lists.Items.List(
 		ctx,
@@ -81,7 +83,7 @@ func (d *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadReque
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -93,7 +95,9 @@ func (d *ListItemsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[ListItemsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

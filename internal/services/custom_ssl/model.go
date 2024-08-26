@@ -9,7 +9,7 @@ import (
 )
 
 type CustomSSLResultEnvelope struct {
-	Result CustomSSLModel `json:"result,computed"`
+	Result CustomSSLModel `json:"result"`
 }
 
 type CustomSSLModel struct {
@@ -28,7 +28,7 @@ type CustomSSLModel struct {
 	Signature       types.String                                          `tfsdk:"signature" json:"signature,computed"`
 	Status          types.String                                          `tfsdk:"status" json:"status,computed"`
 	UploadedOn      timetypes.RFC3339                                     `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
-	Hosts           *[]types.String                                       `tfsdk:"hosts" json:"hosts,computed"`
+	Hosts           types.List                                            `tfsdk:"hosts" json:"hosts,computed"`
 	KeylessServer   customfield.NestedObject[CustomSSLKeylessServerModel] `tfsdk:"keyless_server" json:"keyless_server,computed"`
 }
 
@@ -43,7 +43,7 @@ type CustomSSLKeylessServerModel struct {
 	Host        types.String                       `tfsdk:"host" json:"host"`
 	ModifiedOn  timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                       `tfsdk:"name" json:"name,computed"`
-	Permissions *[]types.String                    `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions types.List                         `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                      `tfsdk:"port" json:"port"`
 	Status      types.String                       `tfsdk:"status" json:"status,computed"`
 	Tunnel      *CustomSSLKeylessServerTunnelModel `tfsdk:"tunnel" json:"tunnel"`

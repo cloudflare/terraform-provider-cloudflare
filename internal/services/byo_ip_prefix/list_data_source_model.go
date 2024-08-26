@@ -5,19 +5,20 @@ package byo_ip_prefix
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/addressing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ByoIPPrefixesResultListDataSourceEnvelope struct {
-	Result *[]*ByoIPPrefixesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ByoIPPrefixesResultDataSourceModel] `json:"result,computed"`
 }
 
 type ByoIPPrefixesDataSourceModel struct {
-	AccountID types.String                           `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                            `tfsdk:"max_items"`
-	Result    *[]*ByoIPPrefixesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ByoIPPrefixesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ByoIPPrefixesDataSourceModel) toListParams() (params addressing.PrefixListParams, diags diag.Diagnostics) {

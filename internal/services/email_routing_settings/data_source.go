@@ -19,7 +19,7 @@ type EmailRoutingSettingsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &EmailRoutingSettingsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*EmailRoutingSettingsDataSource)(nil)
 
 func NewEmailRoutingSettingsDataSource() datasource.DataSource {
 	return &EmailRoutingSettingsDataSource{}

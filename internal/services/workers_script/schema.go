@@ -5,6 +5,7 @@ package workers_script
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -15,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &WorkersScriptResource{}
+var _ resource.ResourceWithConfigValidators = (*WorkersScriptResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -277,6 +278,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"tail_consumers": schema.ListNestedAttribute{
 				Description: "List of Workers that will consume logs from the attached Worker.",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[WorkersScriptTailConsumersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"service": schema.StringAttribute{

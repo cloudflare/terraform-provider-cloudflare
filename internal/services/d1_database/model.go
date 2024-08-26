@@ -8,7 +8,7 @@ import (
 )
 
 type D1DatabaseResultEnvelope struct {
-	Result D1DatabaseModel `json:"result,computed"`
+	Result D1DatabaseModel `json:"result"`
 }
 
 type D1DatabaseModel struct {

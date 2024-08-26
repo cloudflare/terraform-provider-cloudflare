@@ -12,18 +12,18 @@ import (
 )
 
 type ZonesResultListDataSourceEnvelope struct {
-	Result *[]*ZonesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZonesResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZonesDataSourceModel struct {
-	Direction types.String                   `tfsdk:"direction" query:"direction"`
-	Name      types.String                   `tfsdk:"name" query:"name"`
-	Order     types.String                   `tfsdk:"order" query:"order"`
-	Status    types.String                   `tfsdk:"status" query:"status"`
-	Account   *ZonesAccountDataSourceModel   `tfsdk:"account" query:"account"`
-	Match     types.String                   `tfsdk:"match" query:"match"`
-	MaxItems  types.Int64                    `tfsdk:"max_items"`
-	Result    *[]*ZonesResultDataSourceModel `tfsdk:"result"`
+	Direction types.String                                             `tfsdk:"direction" query:"direction"`
+	Name      types.String                                             `tfsdk:"name" query:"name"`
+	Order     types.String                                             `tfsdk:"order" query:"order"`
+	Status    types.String                                             `tfsdk:"status" query:"status"`
+	Account   *ZonesAccountDataSourceModel                             `tfsdk:"account" query:"account"`
+	Match     types.String                                             `tfsdk:"match" query:"match"`
+	MaxItems  types.Int64                                              `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZonesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZonesDataSourceModel) toListParams() (params zones.ZoneListParams, diags diag.Diagnostics) {
@@ -72,9 +72,9 @@ type ZonesResultDataSourceModel struct {
 	Meta                customfield.NestedObject[ZonesMetaDataSourceModel]    `tfsdk:"meta" json:"meta,computed"`
 	ModifiedOn          timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                types.String                                          `tfsdk:"name" json:"name,computed"`
-	NameServers         *[]types.String                                       `tfsdk:"name_servers" json:"name_servers,computed"`
+	NameServers         types.List                                            `tfsdk:"name_servers" json:"name_servers,computed"`
 	OriginalDnshost     types.String                                          `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
-	OriginalNameServers *[]types.String                                       `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	OriginalNameServers types.List                                            `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	OriginalRegistrar   types.String                                          `tfsdk:"original_registrar" json:"original_registrar,computed"`
 	Owner               customfield.NestedObject[ZonesOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`
 	VanityNameServers   *[]types.String                                       `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`

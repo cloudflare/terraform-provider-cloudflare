@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &NotificationPolicyResource{}
-var _ resource.ResourceWithModifyPlan = &NotificationPolicyResource{}
-var _ resource.ResourceWithImportState = &NotificationPolicyResource{}
+var _ resource.ResourceWithConfigure = (*NotificationPolicyResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*NotificationPolicyResource)(nil)
+var _ resource.ResourceWithImportState = (*NotificationPolicyResource)(nil)
 
 func NewResource() resource.Resource {
 	return &NotificationPolicyResource{}

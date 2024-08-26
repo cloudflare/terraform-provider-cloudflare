@@ -7,7 +7,7 @@ import (
 )
 
 type WorkersCustomDomainResultEnvelope struct {
-	Result WorkersCustomDomainModel `json:"result,computed"`
+	Result WorkersCustomDomainModel `json:"result"`
 }
 
 type WorkersCustomDomainModel struct {

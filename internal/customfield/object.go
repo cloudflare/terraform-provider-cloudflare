@@ -201,7 +201,10 @@ func NewObject[T any](ctx context.Context, t *T) (NestedObject[T], diag.Diagnost
 }
 
 func NewObjectMust[T any](ctx context.Context, t *T) NestedObject[T] {
-	o, _ := NewObject(ctx, t)
+	o, diags := NewObject(ctx, t)
+	if diags.HasError() {
+		panic(fmt.Errorf("unexpected error creating NestedObject: %v", diags))
+	}
 	return o
 }
 

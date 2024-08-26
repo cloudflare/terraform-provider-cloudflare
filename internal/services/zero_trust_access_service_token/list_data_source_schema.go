@@ -5,6 +5,7 @@ package zero_trust_access_service_token
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -12,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &ZeroTrustAccessServiceTokensDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessServiceTokensDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -32,6 +33,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessServiceTokensResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

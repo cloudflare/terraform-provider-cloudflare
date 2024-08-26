@@ -7,7 +7,7 @@ import (
 )
 
 type ZoneSettingResultEnvelope struct {
-	Result ZoneSettingModel `json:"result,computed"`
+	Result ZoneSettingModel `json:"result"`
 }
 
 type ZoneSettingModel struct {

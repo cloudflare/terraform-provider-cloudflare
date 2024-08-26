@@ -19,7 +19,7 @@ type ZoneHoldDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZoneHoldDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZoneHoldDataSource)(nil)
 
 func NewZoneHoldDataSource() datasource.DataSource {
 	return &ZoneHoldDataSource{}

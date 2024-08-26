@@ -5,6 +5,7 @@ package healthcheck
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/healthchecks"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type HealthcheckResultDataSourceEnvelope struct {
 }
 
 type HealthcheckResultListDataSourceEnvelope struct {
-	Result *[]*HealthcheckDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[HealthcheckDataSourceModel] `json:"result,computed"`
 }
 
 type HealthcheckDataSourceModel struct {

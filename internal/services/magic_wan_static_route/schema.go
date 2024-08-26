@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &MagicWANStaticRouteResource{}
+var _ resource.ResourceWithConfigValidators = (*MagicWANStaticRouteResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -240,7 +240,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"routes": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[MagicWANStaticRouteRoutesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"nexthop": schema.StringAttribute{

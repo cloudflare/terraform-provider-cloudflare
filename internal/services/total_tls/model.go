@@ -7,7 +7,7 @@ import (
 )
 
 type TotalTLSResultEnvelope struct {
-	Result TotalTLSModel `json:"result,computed"`
+	Result TotalTLSModel `json:"result"`
 }
 
 type TotalTLSModel struct {

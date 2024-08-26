@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &APIShieldSchemaResource{}
+var _ resource.ResourceWithUpgradeState = (*APIShieldSchemaResource)(nil)
 
 func (r *APIShieldSchemaResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -5,18 +5,19 @@ package zero_trust_device_profiles
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustDeviceProfilesListResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustDeviceProfilesListResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustDeviceProfilesListResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustDeviceProfilesListDataSourceModel struct {
-	AccountID types.String                                         `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                          `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustDeviceProfilesListResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                   `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                                    `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustDeviceProfilesListResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustDeviceProfilesListDataSourceModel) toListParams() (params zero_trust.DevicePolicyListParams, diags diag.Diagnostics) {

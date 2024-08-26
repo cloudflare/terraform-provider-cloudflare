@@ -5,19 +5,20 @@ package regional_hostname
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/addressing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RegionalHostnamesResultListDataSourceEnvelope struct {
-	Result *[]*RegionalHostnamesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[RegionalHostnamesResultDataSourceModel] `json:"result,computed"`
 }
 
 type RegionalHostnamesDataSourceModel struct {
-	ZoneID   types.String                               `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems types.Int64                                `tfsdk:"max_items"`
-	Result   *[]*RegionalHostnamesResultDataSourceModel `tfsdk:"result"`
+	ZoneID   types.String                                                         `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems types.Int64                                                          `tfsdk:"max_items"`
+	Result   customfield.NestedObjectList[RegionalHostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *RegionalHostnamesDataSourceModel) toListParams() (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {

@@ -7,7 +7,7 @@ import (
 )
 
 type WaitingRoomRulesResultEnvelope struct {
-	Result WaitingRoomRulesModel `json:"result,computed"`
+	Result WaitingRoomRulesModel `json:"result"`
 }
 
 type WaitingRoomRulesModel struct {

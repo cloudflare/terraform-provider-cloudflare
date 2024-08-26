@@ -8,7 +8,7 @@ import (
 )
 
 type ArgoTieredCachingResultEnvelope struct {
-	Result ArgoTieredCachingModel `json:"result,computed"`
+	Result ArgoTieredCachingModel `json:"result"`
 }
 
 type ArgoTieredCachingModel struct {

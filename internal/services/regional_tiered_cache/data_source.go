@@ -19,7 +19,7 @@ type RegionalTieredCacheDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &RegionalTieredCacheDataSource{}
+var _ datasource.DataSourceWithConfigure = (*RegionalTieredCacheDataSource)(nil)
 
 func NewRegionalTieredCacheDataSource() datasource.DataSource {
 	return &RegionalTieredCacheDataSource{}

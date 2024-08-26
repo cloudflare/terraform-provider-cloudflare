@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &MagicWANGRETunnelResource{}
+var _ resource.ResourceWithUpgradeState = (*MagicWANGRETunnelResource)(nil)
 
 func (r *MagicWANGRETunnelResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &PagesProjectResource{}
+var _ resource.ResourceWithConfigValidators = (*PagesProjectResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -465,6 +465,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"stages": schema.ListNestedAttribute{
 						Description: "List of past stages.",
 						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[PagesProjectCanonicalDeploymentStagesModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"ended_on": schema.StringAttribute{
@@ -688,6 +689,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"stages": schema.ListNestedAttribute{
 						Description: "List of past stages.",
 						Computed:    true,
+						CustomType:  customfield.NewNestedObjectListType[PagesProjectLatestDeploymentStagesModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"ended_on": schema.StringAttribute{

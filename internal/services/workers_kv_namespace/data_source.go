@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type WorkersKVNamespaceDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WorkersKVNamespaceDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WorkersKVNamespaceDataSource)(nil)
 
 func NewWorkersKVNamespaceDataSource() datasource.DataSource {
 	return &WorkersKVNamespaceDataSource{}
@@ -91,7 +92,7 @@ func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 			return
 		}
 
-		items := &[]*WorkersKVNamespaceDataSourceModel{}
+		items := customfield.NullObjectList[WorkersKVNamespaceDataSourceModel](ctx)
 		env := WorkersKVNamespaceResultListDataSourceEnvelope{items}
 
 		page, err := d.client.KV.Namespaces.List(ctx, params)
@@ -107,11 +108,13 @@ func (d *WorkersKVNamespaceDataSource) Read(ctx context.Context, req datasource.
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

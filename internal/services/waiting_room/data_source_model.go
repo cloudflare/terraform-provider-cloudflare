@@ -5,6 +5,7 @@ package waiting_room
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type WaitingRoomResultDataSourceEnvelope struct {
 }
 
 type WaitingRoomResultListDataSourceEnvelope struct {
-	Result *[]*WaitingRoomDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[WaitingRoomDataSourceModel] `json:"result,computed"`
 }
 
 type WaitingRoomDataSourceModel struct {
@@ -34,7 +35,7 @@ type WaitingRoomDataSourceModel struct {
 	QueueingStatusCode         types.Int64                                    `tfsdk:"queueing_status_code" json:"queueing_status_code,computed"`
 	SessionDuration            types.Int64                                    `tfsdk:"session_duration" json:"session_duration,computed"`
 	Suspended                  types.Bool                                     `tfsdk:"suspended" json:"suspended,computed"`
-	EnabledOriginCommands      *[]types.String                                `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
+	EnabledOriginCommands      types.List                                     `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	CookieSuffix               types.String                                   `tfsdk:"cookie_suffix" json:"cookie_suffix"`
 	Host                       types.String                                   `tfsdk:"host" json:"host"`
 	ID                         types.String                                   `tfsdk:"id" json:"id"`

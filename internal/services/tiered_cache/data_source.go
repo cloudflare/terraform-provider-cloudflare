@@ -19,7 +19,7 @@ type TieredCacheDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &TieredCacheDataSource{}
+var _ datasource.DataSourceWithConfigure = (*TieredCacheDataSource)(nil)
 
 func NewTieredCacheDataSource() datasource.DataSource {
 	return &TieredCacheDataSource{}

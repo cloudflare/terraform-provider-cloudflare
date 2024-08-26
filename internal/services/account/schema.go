@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &AccountResource{}
+var _ resource.ResourceWithConfigValidators = (*AccountResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

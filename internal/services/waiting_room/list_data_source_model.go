@@ -5,19 +5,20 @@ package waiting_room
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WaitingRoomsResultListDataSourceEnvelope struct {
-	Result *[]*WaitingRoomsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[WaitingRoomsResultDataSourceModel] `json:"result,computed"`
 }
 
 type WaitingRoomsDataSourceModel struct {
-	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems types.Int64                           `tfsdk:"max_items"`
-	Result   *[]*WaitingRoomsResultDataSourceModel `tfsdk:"result"`
+	ZoneID   types.String                                                    `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems types.Int64                                                     `tfsdk:"max_items"`
+	Result   customfield.NestedObjectList[WaitingRoomsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WaitingRoomsDataSourceModel) toListParams() (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
@@ -38,7 +39,7 @@ type WaitingRoomsResultDataSourceModel struct {
 	DefaultTemplateLanguage    types.String                                    `tfsdk:"default_template_language" json:"default_template_language,computed"`
 	Description                types.String                                    `tfsdk:"description" json:"description,computed"`
 	DisableSessionRenewal      types.Bool                                      `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed"`
-	EnabledOriginCommands      *[]types.String                                 `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
+	EnabledOriginCommands      types.List                                      `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	Host                       types.String                                    `tfsdk:"host" json:"host"`
 	JsonResponseEnabled        types.Bool                                      `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
 	ModifiedOn                 timetypes.RFC3339                               `tfsdk:"modified_on" json:"modified_on,computed"`

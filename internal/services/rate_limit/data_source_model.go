@@ -4,6 +4,7 @@ package rate_limit
 
 import (
 	"github.com/cloudflare/cloudflare-go/v2/rate_limits"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -13,7 +14,7 @@ type RateLimitResultDataSourceEnvelope struct {
 }
 
 type RateLimitResultListDataSourceEnvelope struct {
-	Result *[]*RateLimitDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[RateLimitDataSourceModel] `json:"result,computed"`
 }
 
 type RateLimitDataSourceModel struct {

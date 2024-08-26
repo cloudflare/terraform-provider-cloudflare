@@ -19,7 +19,7 @@ type APIShieldDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &APIShieldDataSource{}
+var _ datasource.DataSourceWithConfigure = (*APIShieldDataSource)(nil)
 
 func NewAPIShieldDataSource() datasource.DataSource {
 	return &APIShieldDataSource{}

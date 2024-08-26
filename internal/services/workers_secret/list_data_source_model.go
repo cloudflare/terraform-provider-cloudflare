@@ -5,20 +5,21 @@ package workers_secret
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WorkersSecretsResultListDataSourceEnvelope struct {
-	Result *[]*WorkersSecretsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[WorkersSecretsResultDataSourceModel] `json:"result,computed"`
 }
 
 type WorkersSecretsDataSourceModel struct {
-	AccountID         types.String                            `tfsdk:"account_id" path:"account_id"`
-	DispatchNamespace types.String                            `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
-	ScriptName        types.String                            `tfsdk:"script_name" path:"script_name"`
-	MaxItems          types.Int64                             `tfsdk:"max_items"`
-	Result            *[]*WorkersSecretsResultDataSourceModel `tfsdk:"result"`
+	AccountID         types.String                                                      `tfsdk:"account_id" path:"account_id"`
+	DispatchNamespace types.String                                                      `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
+	ScriptName        types.String                                                      `tfsdk:"script_name" path:"script_name"`
+	MaxItems          types.Int64                                                       `tfsdk:"max_items"`
+	Result            customfield.NestedObjectList[WorkersSecretsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersSecretsDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {

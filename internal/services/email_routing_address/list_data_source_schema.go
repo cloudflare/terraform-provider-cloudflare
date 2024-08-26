@@ -5,6 +5,7 @@ package email_routing_address
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -12,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &EmailRoutingAddressesDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*EmailRoutingAddressesDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -41,6 +42,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[EmailRoutingAddressesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

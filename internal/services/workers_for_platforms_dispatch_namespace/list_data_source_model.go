@@ -5,19 +5,20 @@ package workers_for_platforms_dispatch_namespace
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WorkersForPlatformsDispatchNamespacesResultListDataSourceEnvelope struct {
-	Result *[]*WorkersForPlatformsDispatchNamespacesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[WorkersForPlatformsDispatchNamespacesResultDataSourceModel] `json:"result,computed"`
 }
 
 type WorkersForPlatformsDispatchNamespacesDataSourceModel struct {
-	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                                    `tfsdk:"max_items"`
-	Result    *[]*WorkersForPlatformsDispatchNamespacesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                                              `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[WorkersForPlatformsDispatchNamespacesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {

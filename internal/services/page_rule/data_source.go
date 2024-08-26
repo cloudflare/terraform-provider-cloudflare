@@ -19,7 +19,7 @@ type PageRuleDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &PageRuleDataSource{}
+var _ datasource.DataSourceWithConfigure = (*PageRuleDataSource)(nil)
 
 func NewPageRuleDataSource() datasource.DataSource {
 	return &PageRuleDataSource{}

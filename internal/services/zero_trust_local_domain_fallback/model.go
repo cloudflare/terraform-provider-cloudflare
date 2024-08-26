@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustLocalDomainFallbackResultEnvelope struct {
-	Result ZeroTrustLocalDomainFallbackModel `json:"result,computed"`
+	Result ZeroTrustLocalDomainFallbackModel `json:"result"`
 }
 
 type ZeroTrustLocalDomainFallbackModel struct {

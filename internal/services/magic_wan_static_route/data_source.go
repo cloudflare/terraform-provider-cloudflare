@@ -19,7 +19,7 @@ type MagicWANStaticRouteDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &MagicWANStaticRouteDataSource{}
+var _ datasource.DataSourceWithConfigure = (*MagicWANStaticRouteDataSource)(nil)
 
 func NewMagicWANStaticRouteDataSource() datasource.DataSource {
 	return &MagicWANStaticRouteDataSource{}

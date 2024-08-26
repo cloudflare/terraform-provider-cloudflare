@@ -5,18 +5,19 @@ package list
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rules"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ListsResultListDataSourceEnvelope struct {
-	Result *[]*ListsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ListsResultDataSourceModel] `json:"result,computed"`
 }
 
 type ListsDataSourceModel struct {
-	AccountID types.String                   `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                    `tfsdk:"max_items"`
-	Result    *[]*ListsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                             `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                              `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ListsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ListsDataSourceModel) toListParams() (params rules.ListListParams, diags diag.Diagnostics) {

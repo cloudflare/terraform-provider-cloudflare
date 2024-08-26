@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &FilterDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*FilterDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

@@ -9,25 +9,25 @@ import (
 )
 
 type AddressMapResultEnvelope struct {
-	Result AddressMapModel `json:"result,computed"`
+	Result AddressMapModel `json:"result"`
 }
 
 type AddressMapModel struct {
-	ID           types.String                                        `tfsdk:"id" json:"id,computed"`
-	AccountID    types.String                                        `tfsdk:"account_id" path:"account_id"`
-	IPs          *[]types.String                                     `tfsdk:"ips" json:"ips"`
-	Memberships  *[]*AddressMapMembershipsModel                      `tfsdk:"memberships" json:"memberships"`
-	DefaultSNI   types.String                                        `tfsdk:"default_sni" json:"default_sni"`
-	Description  types.String                                        `tfsdk:"description" json:"description"`
-	Enabled      types.Bool                                          `tfsdk:"enabled" json:"enabled"`
-	CanDelete    types.Bool                                          `tfsdk:"can_delete" json:"can_delete,computed"`
-	CanModifyIPs types.Bool                                          `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
-	CreatedAt    timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed"`
-	ModifiedAt   timetypes.RFC3339                                   `tfsdk:"modified_at" json:"modified_at,computed"`
-	Success      types.Bool                                          `tfsdk:"success" json:"success,computed"`
-	Errors       *[]*AddressMapErrorsModel                           `tfsdk:"errors" json:"errors,computed"`
-	Messages     *[]*AddressMapMessagesModel                         `tfsdk:"messages" json:"messages,computed"`
-	ResultInfo   customfield.NestedObject[AddressMapResultInfoModel] `tfsdk:"result_info" json:"result_info,computed"`
+	ID           types.String                                          `tfsdk:"id" json:"id,computed"`
+	AccountID    types.String                                          `tfsdk:"account_id" path:"account_id"`
+	IPs          *[]types.String                                       `tfsdk:"ips" json:"ips"`
+	Memberships  *[]*AddressMapMembershipsModel                        `tfsdk:"memberships" json:"memberships"`
+	DefaultSNI   types.String                                          `tfsdk:"default_sni" json:"default_sni"`
+	Description  types.String                                          `tfsdk:"description" json:"description"`
+	Enabled      types.Bool                                            `tfsdk:"enabled" json:"enabled"`
+	CanDelete    types.Bool                                            `tfsdk:"can_delete" json:"can_delete,computed"`
+	CanModifyIPs types.Bool                                            `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
+	CreatedAt    timetypes.RFC3339                                     `tfsdk:"created_at" json:"created_at,computed"`
+	ModifiedAt   timetypes.RFC3339                                     `tfsdk:"modified_at" json:"modified_at,computed"`
+	Success      types.Bool                                            `tfsdk:"success" json:"success,computed"`
+	Errors       customfield.NestedObjectList[AddressMapErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
+	Messages     customfield.NestedObjectList[AddressMapMessagesModel] `tfsdk:"messages" json:"messages,computed"`
+	ResultInfo   customfield.NestedObject[AddressMapResultInfoModel]   `tfsdk:"result_info" json:"result_info,computed"`
 }
 
 type AddressMapMembershipsModel struct {

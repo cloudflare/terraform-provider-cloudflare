@@ -5,20 +5,21 @@ package load_balancer_pool
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type LoadBalancerPoolsResultListDataSourceEnvelope struct {
-	Result *[]*LoadBalancerPoolsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[LoadBalancerPoolsResultDataSourceModel] `json:"result,computed"`
 }
 
 type LoadBalancerPoolsDataSourceModel struct {
-	AccountID types.String                               `tfsdk:"account_id" path:"account_id"`
-	Monitor   types.String                               `tfsdk:"monitor" query:"monitor"`
-	MaxItems  types.Int64                                `tfsdk:"max_items"`
-	Result    *[]*LoadBalancerPoolsResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id"`
+	Monitor   types.String                                                         `tfsdk:"monitor" query:"monitor"`
+	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[LoadBalancerPoolsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *LoadBalancerPoolsDataSourceModel) toListParams() (params load_balancers.PoolListParams, diags diag.Diagnostics) {

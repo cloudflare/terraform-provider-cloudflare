@@ -7,7 +7,7 @@ import (
 )
 
 type EmailRoutingCatchAllResultEnvelope struct {
-	Result EmailRoutingCatchAllModel `json:"result,computed"`
+	Result EmailRoutingCatchAllModel `json:"result"`
 }
 
 type EmailRoutingCatchAllModel struct {

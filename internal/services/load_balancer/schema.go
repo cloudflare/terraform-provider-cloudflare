@@ -21,7 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &LoadBalancerResource{}
+var _ resource.ResourceWithConfigValidators = (*LoadBalancerResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

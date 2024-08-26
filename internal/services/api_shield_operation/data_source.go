@@ -8,6 +8,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +16,7 @@ type APIShieldOperationDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &APIShieldOperationDataSource{}
+var _ datasource.DataSourceWithConfigure = (*APIShieldOperationDataSource)(nil)
 
 func NewAPIShieldOperationDataSource() datasource.DataSource {
 	return &APIShieldOperationDataSource{}
@@ -59,7 +60,7 @@ func (d *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	items := &[]*APIShieldOperationDataSourceModel{}
+	items := customfield.NullObjectList[APIShieldOperationDataSourceModel](ctx)
 	env := APIShieldOperationResultListDataSourceEnvelope{items}
 
 	page, err := d.client.APIGateway.Discovery.Operations.List(ctx, params)
@@ -75,11 +76,13 @@ func (d *APIShieldOperationDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	if count := len(*items); count != 1 {
+	if count := len(items.Elements()); count != 1 {
 		resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 		return
 	}
-	data = (*items)[0]
+	ts, diags := items.AsStructSliceT(ctx)
+	resp.Diagnostics.Append(diags...)
+	data = &ts[0]
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

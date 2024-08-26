@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustAccessShortLivedCertificateResultEnvelope struct {
-	Result ZeroTrustAccessShortLivedCertificateModel `json:"result,computed"`
+	Result ZeroTrustAccessShortLivedCertificateModel `json:"result"`
 }
 
 type ZeroTrustAccessShortLivedCertificateModel struct {

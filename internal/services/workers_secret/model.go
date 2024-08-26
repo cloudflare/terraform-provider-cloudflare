@@ -7,7 +7,7 @@ import (
 )
 
 type WorkersSecretResultEnvelope struct {
-	Result WorkersSecretModel `json:"result,computed"`
+	Result WorkersSecretModel `json:"result"`
 }
 
 type WorkersSecretModel struct {

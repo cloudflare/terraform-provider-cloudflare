@@ -7,7 +7,7 @@ import (
 )
 
 type RateLimitResultEnvelope struct {
-	Result RateLimitModel `json:"result,computed"`
+	Result RateLimitModel `json:"result"`
 }
 
 type RateLimitModel struct {

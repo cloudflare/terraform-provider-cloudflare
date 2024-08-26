@@ -5,19 +5,20 @@ package zero_trust_access_custom_page
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZeroTrustAccessCustomPagesResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustAccessCustomPagesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustAccessCustomPagesResultDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustAccessCustomPagesDataSourceModel struct {
-	AccountID types.String                                        `tfsdk:"account_id" path:"account_id"`
-	MaxItems  types.Int64                                         `tfsdk:"max_items"`
-	Result    *[]*ZeroTrustAccessCustomPagesResultDataSourceModel `tfsdk:"result"`
+	AccountID types.String                                                                  `tfsdk:"account_id" path:"account_id"`
+	MaxItems  types.Int64                                                                   `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[ZeroTrustAccessCustomPagesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *ZeroTrustAccessCustomPagesDataSourceModel) toListParams() (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {

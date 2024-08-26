@@ -5,21 +5,22 @@ package user_agent_blocking_rule
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type UserAgentBlockingRulesResultListDataSourceEnvelope struct {
-	Result *[]*UserAgentBlockingRulesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[UserAgentBlockingRulesResultDataSourceModel] `json:"result,computed"`
 }
 
 type UserAgentBlockingRulesDataSourceModel struct {
-	ZoneIdentifier    types.String                                    `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Description       types.String                                    `tfsdk:"description" query:"description"`
-	DescriptionSearch types.String                                    `tfsdk:"description_search" query:"description_search"`
-	UASearch          types.String                                    `tfsdk:"ua_search" query:"ua_search"`
-	MaxItems          types.Int64                                     `tfsdk:"max_items"`
-	Result            *[]*UserAgentBlockingRulesResultDataSourceModel `tfsdk:"result"`
+	ZoneIdentifier    types.String                                                              `tfsdk:"zone_identifier" path:"zone_identifier"`
+	Description       types.String                                                              `tfsdk:"description" query:"description"`
+	DescriptionSearch types.String                                                              `tfsdk:"description_search" query:"description_search"`
+	UASearch          types.String                                                              `tfsdk:"ua_search" query:"ua_search"`
+	MaxItems          types.Int64                                                               `tfsdk:"max_items"`
+	Result            customfield.NestedObjectList[UserAgentBlockingRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *UserAgentBlockingRulesDataSourceModel) toListParams() (params firewall.UARuleListParams, diags diag.Diagnostics) {

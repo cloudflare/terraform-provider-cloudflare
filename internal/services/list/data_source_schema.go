@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &ListDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*ListDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

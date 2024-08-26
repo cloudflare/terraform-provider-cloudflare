@@ -5,13 +5,14 @@ package api_shield_operation
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type APIShieldOperationResultListDataSourceEnvelope struct {
-	Result *[]*APIShieldOperationDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[APIShieldOperationDataSourceModel] `json:"result,computed"`
 }
 
 type APIShieldOperationDataSourceModel struct {

@@ -5,19 +5,20 @@ package authenticated_origin_pulls_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type AuthenticatedOriginPullsCertificatesResultListDataSourceEnvelope struct {
-	Result *[]*AuthenticatedOriginPullsCertificatesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[AuthenticatedOriginPullsCertificatesResultDataSourceModel] `json:"result,computed"`
 }
 
 type AuthenticatedOriginPullsCertificatesDataSourceModel struct {
-	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
-	MaxItems types.Int64                                                   `tfsdk:"max_items"`
-	Result   *[]*AuthenticatedOriginPullsCertificatesResultDataSourceModel `tfsdk:"result"`
+	ZoneID   types.String                                                                            `tfsdk:"zone_id" path:"zone_id"`
+	MaxItems types.Int64                                                                             `tfsdk:"max_items"`
+	Result   customfield.NestedObjectList[AuthenticatedOriginPullsCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *AuthenticatedOriginPullsCertificatesDataSourceModel) toListParams() (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {

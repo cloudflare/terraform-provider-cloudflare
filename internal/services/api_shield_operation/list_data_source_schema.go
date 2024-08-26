@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &APIShieldOperationsDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*APIShieldOperationsDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -87,6 +87,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[APIShieldOperationsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

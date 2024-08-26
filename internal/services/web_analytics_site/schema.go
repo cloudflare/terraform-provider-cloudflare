@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &WebAnalyticsSiteResource{}
+var _ resource.ResourceWithConfigValidators = (*WebAnalyticsSiteResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -60,6 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"rules": schema.ListNestedAttribute{
 				Description: "A list of rules.",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[WebAnalyticsSiteRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

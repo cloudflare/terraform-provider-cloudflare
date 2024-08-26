@@ -19,7 +19,7 @@ type CustomHostnameFallbackOriginDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &CustomHostnameFallbackOriginDataSource{}
+var _ datasource.DataSourceWithConfigure = (*CustomHostnameFallbackOriginDataSource)(nil)
 
 func NewCustomHostnameFallbackOriginDataSource() datasource.DataSource {
 	return &CustomHostnameFallbackOriginDataSource{}

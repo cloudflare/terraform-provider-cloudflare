@@ -6,6 +6,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/shared"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -15,7 +16,7 @@ type DNSRecordResultDataSourceEnvelope struct {
 }
 
 type DNSRecordResultListDataSourceEnvelope struct {
-	Result *[]*DNSRecordDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[DNSRecordDataSourceModel] `json:"result,computed"`
 }
 
 type DNSRecordDataSourceModel struct {

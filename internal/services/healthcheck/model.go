@@ -8,7 +8,7 @@ import (
 )
 
 type HealthcheckResultEnvelope struct {
-	Result HealthcheckModel `json:"result,computed"`
+	Result HealthcheckModel `json:"result"`
 }
 
 type HealthcheckModel struct {

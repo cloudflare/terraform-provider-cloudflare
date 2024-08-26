@@ -19,7 +19,7 @@ type ZeroTrustDLPPredefinedProfileDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustDLPPredefinedProfileDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustDLPPredefinedProfileDataSource)(nil)
 
 func NewZeroTrustDLPPredefinedProfileDataSource() datasource.DataSource {
 	return &ZeroTrustDLPPredefinedProfileDataSource{}

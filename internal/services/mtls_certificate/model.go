@@ -8,7 +8,7 @@ import (
 )
 
 type MTLSCertificateResultEnvelope struct {
-	Result MTLSCertificateModel `json:"result,computed"`
+	Result MTLSCertificateModel `json:"result"`
 }
 
 type MTLSCertificateModel struct {

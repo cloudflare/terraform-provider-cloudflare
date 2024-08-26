@@ -5,6 +5,7 @@ package origin_ca_certificate
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/origin_ca_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type OriginCACertificateResultDataSourceEnvelope struct {
 }
 
 type OriginCACertificateResultListDataSourceEnvelope struct {
-	Result *[]*OriginCACertificateDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[OriginCACertificateDataSourceModel] `json:"result,computed"`
 }
 
 type OriginCACertificateDataSourceModel struct {
@@ -25,7 +26,7 @@ type OriginCACertificateDataSourceModel struct {
 	ExpiresOn         timetypes.RFC3339                            `tfsdk:"expires_on" json:"expires_on,computed"`
 	RequestType       types.String                                 `tfsdk:"request_type" json:"request_type,computed"`
 	RequestedValidity types.Float64                                `tfsdk:"requested_validity" json:"requested_validity,computed"`
-	Hostnames         *[]types.String                              `tfsdk:"hostnames" json:"hostnames,computed"`
+	Hostnames         types.List                                   `tfsdk:"hostnames" json:"hostnames,computed"`
 	ID                types.String                                 `tfsdk:"id" json:"id"`
 	Filter            *OriginCACertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }

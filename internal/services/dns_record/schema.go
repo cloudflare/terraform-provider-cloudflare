@@ -19,7 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
-var _ resource.ResourceWithConfigValidators = &DNSRecordResource{}
+var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

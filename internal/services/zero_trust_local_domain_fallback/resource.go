@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustLocalDomainFallbackResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustLocalDomainFallbackResource{}
-var _ resource.ResourceWithImportState = &ZeroTrustLocalDomainFallbackResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustLocalDomainFallbackResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustLocalDomainFallbackResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustLocalDomainFallbackResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustLocalDomainFallbackResource{}

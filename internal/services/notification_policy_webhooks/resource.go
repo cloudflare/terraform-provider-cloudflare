@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &NotificationPolicyWebhooksResource{}
-var _ resource.ResourceWithModifyPlan = &NotificationPolicyWebhooksResource{}
-var _ resource.ResourceWithImportState = &NotificationPolicyWebhooksResource{}
+var _ resource.ResourceWithConfigure = (*NotificationPolicyWebhooksResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*NotificationPolicyWebhooksResource)(nil)
+var _ resource.ResourceWithImportState = (*NotificationPolicyWebhooksResource)(nil)
 
 func NewResource() resource.Resource {
 	return &NotificationPolicyWebhooksResource{}

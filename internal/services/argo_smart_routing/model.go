@@ -7,7 +7,7 @@ import (
 )
 
 type ArgoSmartRoutingResultEnvelope struct {
-	Result ArgoSmartRoutingModel `json:"result,computed"`
+	Result ArgoSmartRoutingModel `json:"result"`
 }
 
 type ArgoSmartRoutingModel struct {

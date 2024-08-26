@@ -11,17 +11,17 @@ import (
 )
 
 type FirewallRulesResultListDataSourceEnvelope struct {
-	Result *[]*FirewallRulesResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[FirewallRulesResultDataSourceModel] `json:"result,computed"`
 }
 
 type FirewallRulesDataSourceModel struct {
-	ZoneIdentifier types.String                           `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Action         types.String                           `tfsdk:"action" query:"action"`
-	Description    types.String                           `tfsdk:"description" query:"description"`
-	ID             types.String                           `tfsdk:"id" query:"id"`
-	Paused         types.Bool                             `tfsdk:"paused" query:"paused"`
-	MaxItems       types.Int64                            `tfsdk:"max_items"`
-	Result         *[]*FirewallRulesResultDataSourceModel `tfsdk:"result"`
+	ZoneIdentifier types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier"`
+	Action         types.String                                                     `tfsdk:"action" query:"action"`
+	Description    types.String                                                     `tfsdk:"description" query:"description"`
+	ID             types.String                                                     `tfsdk:"id" query:"id"`
+	Paused         types.Bool                                                       `tfsdk:"paused" query:"paused"`
+	MaxItems       types.Int64                                                      `tfsdk:"max_items"`
+	Result         customfield.NestedObjectList[FirewallRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *FirewallRulesDataSourceModel) toListParams() (params firewall.RuleListParams, diags diag.Diagnostics) {

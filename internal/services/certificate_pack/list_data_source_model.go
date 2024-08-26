@@ -5,19 +5,20 @@ package certificate_pack
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/ssl"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type CertificatePacksResultListDataSourceEnvelope struct {
-	Result *[]*CertificatePacksResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[CertificatePacksResultDataSourceModel] `json:"result,computed"`
 }
 
 type CertificatePacksDataSourceModel struct {
-	ZoneID   types.String                              `tfsdk:"zone_id" path:"zone_id"`
-	Status   types.String                              `tfsdk:"status" query:"status"`
-	MaxItems types.Int64                               `tfsdk:"max_items"`
-	Result   *[]*CertificatePacksResultDataSourceModel `tfsdk:"result"`
+	ZoneID   types.String                                                        `tfsdk:"zone_id" path:"zone_id"`
+	Status   types.String                                                        `tfsdk:"status" query:"status"`
+	MaxItems types.Int64                                                         `tfsdk:"max_items"`
+	Result   customfield.NestedObjectList[CertificatePacksResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CertificatePacksDataSourceModel) toListParams() (params ssl.CertificatePackListParams, diags diag.Diagnostics) {

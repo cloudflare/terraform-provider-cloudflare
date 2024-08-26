@@ -8,7 +8,7 @@ import (
 )
 
 type TurnstileWidgetResultEnvelope struct {
-	Result TurnstileWidgetModel `json:"result,computed"`
+	Result TurnstileWidgetModel `json:"result"`
 }
 
 type TurnstileWidgetModel struct {

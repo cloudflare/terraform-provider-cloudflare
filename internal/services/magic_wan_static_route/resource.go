@@ -17,8 +17,8 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &MagicWANStaticRouteResource{}
-var _ resource.ResourceWithModifyPlan = &MagicWANStaticRouteResource{}
+var _ resource.ResourceWithConfigure = (*MagicWANStaticRouteResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*MagicWANStaticRouteResource)(nil)
 
 func NewResource() resource.Resource {
 	return &MagicWANStaticRouteResource{}

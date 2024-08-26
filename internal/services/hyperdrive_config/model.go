@@ -7,7 +7,7 @@ import (
 )
 
 type HyperdriveConfigResultEnvelope struct {
-	Result HyperdriveConfigModel `json:"result,computed"`
+	Result HyperdriveConfigModel `json:"result"`
 }
 
 type HyperdriveConfigModel struct {

@@ -5,13 +5,14 @@ package hyperdrive_config
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &HyperdriveConfigsDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*HyperdriveConfigsDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -27,6 +28,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[HyperdriveConfigsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"caching": schema.SingleNestedAttribute{

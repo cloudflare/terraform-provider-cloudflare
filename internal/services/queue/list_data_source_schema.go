@@ -5,11 +5,12 @@ package queue
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &QueuesDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*QueuesDataSource)(nil)
 
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -25,10 +26,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",
 				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[QueuesResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"consumers": schema.ListNestedAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectListType[QueuesConsumersDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"created_on": schema.StringAttribute{
@@ -76,7 +79,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"producers": schema.ListNestedAttribute{
-							Computed: true,
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectListType[QueuesProducersDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"environment": schema.StringAttribute{

@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSourceWithConfigValidators = &ZoneCacheVariantsDataSource{}
+var _ datasource.DataSourceWithConfigValidators = (*ZoneCacheVariantsDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

@@ -19,7 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
-var _ resource.ResourceWithConfigValidators = &SpectrumApplicationResource{}
+var _ resource.ResourceWithConfigValidators = (*SpectrumApplicationResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

@@ -7,7 +7,7 @@ import (
 )
 
 type ZeroTrustDevicePostureIntegrationResultEnvelope struct {
-	Result ZeroTrustDevicePostureIntegrationModel `json:"result,computed"`
+	Result ZeroTrustDevicePostureIntegrationModel `json:"result"`
 }
 
 type ZeroTrustDevicePostureIntegrationModel struct {

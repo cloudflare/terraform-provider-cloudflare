@@ -5,6 +5,7 @@ package zero_trust_gateway_policy
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type ZeroTrustGatewayPolicyResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayPolicyResultListDataSourceEnvelope struct {
-	Result *[]*ZeroTrustGatewayPolicyDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[ZeroTrustGatewayPolicyDataSourceModel] `json:"result,computed"`
 }
 
 type ZeroTrustGatewayPolicyDataSourceModel struct {

@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &TurnstileWidgetResource{}
-var _ resource.ResourceWithModifyPlan = &TurnstileWidgetResource{}
-var _ resource.ResourceWithImportState = &TurnstileWidgetResource{}
+var _ resource.ResourceWithConfigure = (*TurnstileWidgetResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*TurnstileWidgetResource)(nil)
+var _ resource.ResourceWithImportState = (*TurnstileWidgetResource)(nil)
 
 func NewResource() resource.Resource {
 	return &TurnstileWidgetResource{}

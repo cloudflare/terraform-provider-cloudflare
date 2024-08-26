@@ -9,7 +9,7 @@ import (
 )
 
 type ObservatoryScheduledTestResultEnvelope struct {
-	Result ObservatoryScheduledTestModel `json:"result,computed"`
+	Result ObservatoryScheduledTestModel `json:"result"`
 }
 
 type ObservatoryScheduledTestModel struct {

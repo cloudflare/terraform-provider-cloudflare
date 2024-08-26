@@ -19,7 +19,7 @@ type WaitingRoomRulesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &WaitingRoomRulesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*WaitingRoomRulesDataSource)(nil)
 
 func NewWaitingRoomRulesDataSource() datasource.DataSource {
 	return &WaitingRoomRulesDataSource{}

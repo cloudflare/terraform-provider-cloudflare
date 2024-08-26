@@ -9,7 +9,7 @@ import (
 )
 
 type ZoneResultEnvelope struct {
-	Result ZoneModel `json:"result,computed"`
+	Result ZoneModel `json:"result"`
 }
 
 type ZoneModel struct {
@@ -25,8 +25,8 @@ type ZoneModel struct {
 	ModifiedOn          timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed"`
 	OriginalDnshost     types.String                             `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
 	OriginalRegistrar   types.String                             `tfsdk:"original_registrar" json:"original_registrar,computed"`
-	NameServers         *[]types.String                          `tfsdk:"name_servers" json:"name_servers,computed"`
-	OriginalNameServers *[]types.String                          `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	NameServers         types.List                               `tfsdk:"name_servers" json:"name_servers,computed"`
+	OriginalNameServers types.List                               `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	Meta                customfield.NestedObject[ZoneMetaModel]  `tfsdk:"meta" json:"meta,computed"`
 	Owner               customfield.NestedObject[ZoneOwnerModel] `tfsdk:"owner" json:"owner,computed"`
 }

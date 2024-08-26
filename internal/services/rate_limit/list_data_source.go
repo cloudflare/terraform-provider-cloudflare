@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type RateLimitsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &RateLimitsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*RateLimitsDataSource)(nil)
 
 func NewRateLimitsDataSource() datasource.DataSource {
 	return &RateLimitsDataSource{}
@@ -59,10 +61,10 @@ func (d *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	items := &[]*RateLimitsResultDataSourceModel{}
+	items := customfield.NullObjectList[RateLimitsResultDataSourceModel](ctx)
 	env := RateLimitsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*RateLimitsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.RateLimits.List(
 		ctx,
@@ -81,7 +83,7 @@ func (d *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -93,7 +95,9 @@ func (d *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[RateLimitsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

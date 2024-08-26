@@ -11,6 +11,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -19,7 +20,7 @@ type ZeroTrustAccessGroupDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustAccessGroupDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustAccessGroupDataSource)(nil)
 
 func NewZeroTrustAccessGroupDataSource() datasource.DataSource {
 	return &ZeroTrustAccessGroupDataSource{}
@@ -91,7 +92,7 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 			return
 		}
 
-		items := &[]*ZeroTrustAccessGroupDataSourceModel{}
+		items := customfield.NullObjectList[ZeroTrustAccessGroupDataSourceModel](ctx)
 		env := ZeroTrustAccessGroupResultListDataSourceEnvelope{items}
 
 		page, err := d.client.ZeroTrust.Access.Groups.List(ctx, params)
@@ -107,11 +108,13 @@ func (d *ZeroTrustAccessGroupDataSource) Read(ctx context.Context, req datasourc
 			return
 		}
 
-		if count := len(*items); count != 1 {
+		if count := len(items.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		data = (*items)[0]
+		ts, diags := items.AsStructSliceT(ctx)
+		resp.Diagnostics.Append(diags...)
+		data = &ts[0]
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

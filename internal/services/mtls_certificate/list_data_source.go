@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type MTLSCertificatesDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &MTLSCertificatesDataSource{}
+var _ datasource.DataSourceWithConfigure = (*MTLSCertificatesDataSource)(nil)
 
 func NewMTLSCertificatesDataSource() datasource.DataSource {
 	return &MTLSCertificatesDataSource{}
@@ -59,10 +61,10 @@ func (d *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	items := &[]*MTLSCertificatesResultDataSourceModel{}
+	items := customfield.NullObjectList[MTLSCertificatesResultDataSourceModel](ctx)
 	env := MTLSCertificatesResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*MTLSCertificatesResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.MTLSCertificates.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.Re
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *MTLSCertificatesDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[MTLSCertificatesResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -5,6 +5,7 @@ package email_routing_rule
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type EmailRoutingRuleResultDataSourceEnvelope struct {
 }
 
 type EmailRoutingRuleResultListDataSourceEnvelope struct {
-	Result *[]*EmailRoutingRuleDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[EmailRoutingRuleDataSourceModel] `json:"result,computed"`
 }
 
 type EmailRoutingRuleDataSourceModel struct {
@@ -41,8 +42,8 @@ func (m *EmailRoutingRuleDataSourceModel) toListParams() (params email_routing.R
 }
 
 type EmailRoutingRuleActionsDataSourceModel struct {
-	Type  types.String    `tfsdk:"type" json:"type,computed"`
-	Value *[]types.String `tfsdk:"value" json:"value,computed"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.List   `tfsdk:"value" json:"value,computed"`
 }
 
 type EmailRoutingRuleMatchersDataSourceModel struct {

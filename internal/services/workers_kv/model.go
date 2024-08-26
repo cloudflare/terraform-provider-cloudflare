@@ -11,7 +11,7 @@ import (
 )
 
 type WorkersKVResultEnvelope struct {
-	Result WorkersKVModel `json:"result,computed"`
+	Result WorkersKVModel `json:"result"`
 }
 
 type WorkersKVModel struct {

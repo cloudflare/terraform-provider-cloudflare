@@ -5,13 +5,14 @@ package queue
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var _ resource.ResourceWithConfigValidators = &QueueResource{}
+var _ resource.ResourceWithConfigValidators = (*QueueResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -45,7 +46,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"consumers": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[QueueConsumersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_on": schema.StringAttribute{
@@ -80,7 +82,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"producers": schema.ListNestedAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectListType[QueueProducersModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"environment": schema.StringAttribute{

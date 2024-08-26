@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type ZoneLockdownsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZoneLockdownsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZoneLockdownsDataSource)(nil)
 
 func NewZoneLockdownsDataSource() datasource.DataSource {
 	return &ZoneLockdownsDataSource{}
@@ -59,10 +61,10 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := &[]*ZoneLockdownsResultDataSourceModel{}
+	items := customfield.NullObjectList[ZoneLockdownsResultDataSourceModel](ctx)
 	env := ZoneLockdownsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ZoneLockdownsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.Firewall.Lockdowns.List(
 		ctx,
@@ -81,7 +83,7 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -93,7 +95,9 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[ZoneLockdownsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

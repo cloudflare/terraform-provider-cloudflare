@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type ZeroTrustAccessTagsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &ZeroTrustAccessTagsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*ZeroTrustAccessTagsDataSource)(nil)
 
 func NewZeroTrustAccessTagsDataSource() datasource.DataSource {
 	return &ZeroTrustAccessTagsDataSource{}
@@ -59,10 +61,10 @@ func (d *ZeroTrustAccessTagsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	items := &[]*ZeroTrustAccessTagsResultDataSourceModel{}
+	items := customfield.NullObjectList[ZeroTrustAccessTagsResultDataSourceModel](ctx)
 	env := ZeroTrustAccessTagsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*ZeroTrustAccessTagsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.ZeroTrust.Access.Tags.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *ZeroTrustAccessTagsDataSource) Read(ctx context.Context, req datasource
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *ZeroTrustAccessTagsDataSource) Read(ctx context.Context, req datasource
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[ZeroTrustAccessTagsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

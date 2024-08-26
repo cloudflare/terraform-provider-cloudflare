@@ -9,7 +9,7 @@ import (
 )
 
 type ZeroTrustAccessPolicyResultEnvelope struct {
-	Result ZeroTrustAccessPolicyModel `json:"result,computed"`
+	Result ZeroTrustAccessPolicyModel `json:"result"`
 }
 
 type ZeroTrustAccessPolicyModel struct {

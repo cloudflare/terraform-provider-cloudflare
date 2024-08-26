@@ -9,7 +9,7 @@ import (
 )
 
 type MagicWANStaticRouteResultEnvelope struct {
-	Result MagicWANStaticRouteModel `json:"result,computed"`
+	Result MagicWANStaticRouteModel `json:"result"`
 }
 
 type MagicWANStaticRouteModel struct {
@@ -26,7 +26,7 @@ type MagicWANStaticRouteModel struct {
 	DeletedRoute  customfield.NestedObject[MagicWANStaticRouteDeletedRouteModel]  `tfsdk:"deleted_route" json:"deleted_route,computed"`
 	ModifiedRoute customfield.NestedObject[MagicWANStaticRouteModifiedRouteModel] `tfsdk:"modified_route" json:"modified_route,computed"`
 	Route         customfield.NestedObject[MagicWANStaticRouteRouteModel]         `tfsdk:"route" json:"route,computed"`
-	Routes        *[]*MagicWANStaticRouteRoutesModel                              `tfsdk:"routes" json:"routes,computed"`
+	Routes        customfield.NestedObjectList[MagicWANStaticRouteRoutesModel]    `tfsdk:"routes" json:"routes,computed"`
 }
 
 type MagicWANStaticRouteScopeModel struct {

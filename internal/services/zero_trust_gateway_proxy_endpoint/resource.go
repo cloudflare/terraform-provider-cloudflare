@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustGatewayProxyEndpointResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustGatewayProxyEndpointResource{}
-var _ resource.ResourceWithImportState = &ZeroTrustGatewayProxyEndpointResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustGatewayProxyEndpointResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustGatewayProxyEndpointResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustGatewayProxyEndpointResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustGatewayProxyEndpointResource{}

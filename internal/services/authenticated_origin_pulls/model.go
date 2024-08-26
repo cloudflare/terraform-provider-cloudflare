@@ -8,7 +8,7 @@ import (
 )
 
 type AuthenticatedOriginPullsResultEnvelope struct {
-	Result AuthenticatedOriginPullsModel `json:"result,computed"`
+	Result AuthenticatedOriginPullsModel `json:"result"`
 }
 
 type AuthenticatedOriginPullsModel struct {

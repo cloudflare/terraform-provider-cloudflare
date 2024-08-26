@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = &CertificatePackResource{}
+var _ resource.ResourceWithUpgradeState = (*CertificatePackResource)(nil)
 
 func (r *CertificatePackResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}

@@ -5,6 +5,7 @@ package filter
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/filters"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -14,7 +15,7 @@ type FilterResultDataSourceEnvelope struct {
 }
 
 type FilterResultListDataSourceEnvelope struct {
-	Result *[]*FilterDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[FilterDataSourceModel] `json:"result,computed"`
 }
 
 type FilterDataSourceModel struct {

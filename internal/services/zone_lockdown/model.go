@@ -8,7 +8,7 @@ import (
 )
 
 type ZoneLockdownResultEnvelope struct {
-	Result ZoneLockdownModel `json:"result,computed"`
+	Result ZoneLockdownModel `json:"result"`
 }
 
 type ZoneLockdownModel struct {

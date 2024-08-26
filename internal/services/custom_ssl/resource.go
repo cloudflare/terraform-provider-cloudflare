@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &CustomSSLResource{}
-var _ resource.ResourceWithModifyPlan = &CustomSSLResource{}
-var _ resource.ResourceWithImportState = &CustomSSLResource{}
+var _ resource.ResourceWithConfigure = (*CustomSSLResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*CustomSSLResource)(nil)
+var _ resource.ResourceWithImportState = (*CustomSSLResource)(nil)
 
 func NewResource() resource.Resource {
 	return &CustomSSLResource{}

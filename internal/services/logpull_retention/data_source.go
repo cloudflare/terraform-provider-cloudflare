@@ -19,7 +19,7 @@ type LogpullRetentionDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &LogpullRetentionDataSource{}
+var _ datasource.DataSourceWithConfigure = (*LogpullRetentionDataSource)(nil)
 
 func NewLogpullRetentionDataSource() datasource.DataSource {
 	return &LogpullRetentionDataSource{}

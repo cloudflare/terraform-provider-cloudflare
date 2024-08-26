@@ -9,21 +9,21 @@ import (
 )
 
 type WebAnalyticsSiteResultEnvelope struct {
-	Result WebAnalyticsSiteModel `json:"result,computed"`
+	Result WebAnalyticsSiteModel `json:"result"`
 }
 
 type WebAnalyticsSiteModel struct {
-	ID          types.String                                           `tfsdk:"id" json:"-,computed"`
-	SiteTag     types.String                                           `tfsdk:"site_tag" json:"site_tag,computed"`
-	AccountID   types.String                                           `tfsdk:"account_id" path:"account_id"`
-	AutoInstall types.Bool                                             `tfsdk:"auto_install" json:"auto_install"`
-	Host        types.String                                           `tfsdk:"host" json:"host"`
-	ZoneTag     types.String                                           `tfsdk:"zone_tag" json:"zone_tag"`
-	Created     timetypes.RFC3339                                      `tfsdk:"created" json:"created,computed"`
-	SiteToken   types.String                                           `tfsdk:"site_token" json:"site_token,computed"`
-	Snippet     types.String                                           `tfsdk:"snippet" json:"snippet,computed"`
-	Rules       *[]*WebAnalyticsSiteRulesModel                         `tfsdk:"rules" json:"rules,computed"`
-	Ruleset     customfield.NestedObject[WebAnalyticsSiteRulesetModel] `tfsdk:"ruleset" json:"ruleset,computed"`
+	ID          types.String                                             `tfsdk:"id" json:"-,computed"`
+	SiteTag     types.String                                             `tfsdk:"site_tag" json:"site_tag,computed"`
+	AccountID   types.String                                             `tfsdk:"account_id" path:"account_id"`
+	AutoInstall types.Bool                                               `tfsdk:"auto_install" json:"auto_install"`
+	Host        types.String                                             `tfsdk:"host" json:"host"`
+	ZoneTag     types.String                                             `tfsdk:"zone_tag" json:"zone_tag"`
+	Created     timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed"`
+	SiteToken   types.String                                             `tfsdk:"site_token" json:"site_token,computed"`
+	Snippet     types.String                                             `tfsdk:"snippet" json:"snippet,computed"`
+	Rules       customfield.NestedObjectList[WebAnalyticsSiteRulesModel] `tfsdk:"rules" json:"rules,computed"`
+	Ruleset     customfield.NestedObject[WebAnalyticsSiteRulesetModel]   `tfsdk:"ruleset" json:"ruleset,computed"`
 }
 
 type WebAnalyticsSiteRulesModel struct {

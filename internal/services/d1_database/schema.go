@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-var _ resource.ResourceWithConfigValidators = &D1DatabaseResource{}
+var _ resource.ResourceWithConfigValidators = (*D1DatabaseResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

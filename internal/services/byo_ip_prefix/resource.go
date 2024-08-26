@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ByoIPPrefixResource{}
-var _ resource.ResourceWithModifyPlan = &ByoIPPrefixResource{}
-var _ resource.ResourceWithImportState = &ByoIPPrefixResource{}
+var _ resource.ResourceWithConfigure = (*ByoIPPrefixResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ByoIPPrefixResource)(nil)
+var _ resource.ResourceWithImportState = (*ByoIPPrefixResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ByoIPPrefixResource{}

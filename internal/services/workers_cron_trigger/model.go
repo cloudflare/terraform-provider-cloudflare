@@ -3,19 +3,20 @@
 package workers_cron_trigger
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type WorkersCronTriggerResultEnvelope struct {
-	Result WorkersCronTriggerModel `json:"result,computed"`
+	Result WorkersCronTriggerModel `json:"result"`
 }
 
 type WorkersCronTriggerModel struct {
-	ID         types.String                         `tfsdk:"id" json:"-,computed"`
-	ScriptName types.String                         `tfsdk:"script_name" path:"script_name"`
-	AccountID  types.String                         `tfsdk:"account_id" path:"account_id"`
-	Cron       types.String                         `tfsdk:"cron" json:"cron"`
-	Schedules  *[]*WorkersCronTriggerSchedulesModel `tfsdk:"schedules" json:"schedules,computed"`
+	ID         types.String                                                   `tfsdk:"id" json:"-,computed"`
+	ScriptName types.String                                                   `tfsdk:"script_name" path:"script_name"`
+	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id"`
+	Cron       types.String                                                   `tfsdk:"cron" json:"cron"`
+	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 
 type WorkersCronTriggerSchedulesModel struct {

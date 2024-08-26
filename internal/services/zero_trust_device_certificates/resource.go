@@ -17,8 +17,8 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustDeviceCertificatesResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustDeviceCertificatesResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustDeviceCertificatesResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustDeviceCertificatesResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDeviceCertificatesResource{}

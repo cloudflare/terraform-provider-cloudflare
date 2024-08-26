@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustAccessIdentityProviderResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustAccessIdentityProviderResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

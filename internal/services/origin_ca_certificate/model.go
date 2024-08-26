@@ -8,7 +8,7 @@ import (
 )
 
 type OriginCACertificateResultEnvelope struct {
-	Result OriginCACertificateModel `json:"result,computed"`
+	Result OriginCACertificateModel `json:"result"`
 }
 
 type OriginCACertificateModel struct {

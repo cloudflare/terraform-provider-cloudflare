@@ -8,6 +8,8 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -15,7 +17,7 @@ type R2BucketsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = &R2BucketsDataSource{}
+var _ datasource.DataSourceWithConfigure = (*R2BucketsDataSource)(nil)
 
 func NewR2BucketsDataSource() datasource.DataSource {
 	return &R2BucketsDataSource{}
@@ -59,10 +61,10 @@ func (d *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	items := &[]*R2BucketsResultDataSourceModel{}
+	items := customfield.NullObjectList[R2BucketsResultDataSourceModel](ctx)
 	env := R2BucketsResultListDataSourceEnvelope{items}
 	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []*R2BucketsResultDataSourceModel{}
+	acc := []attr.Value{}
 
 	page, err := d.client.R2.Buckets.List(ctx, params)
 	if err != nil {
@@ -77,7 +79,7 @@ func (d *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadReque
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, *items...)
+		acc = append(acc, items.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -89,7 +91,9 @@ func (d *R2BucketsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	acc = acc[:maxItems]
-	data.Result = &acc
+	result, diags := customfield.NewObjectListFromAttributes[R2BucketsResultDataSourceModel](ctx, acc)
+	resp.Diagnostics.Append(diags...)
+	data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var _ resource.ResourceWithConfigValidators = &ZeroTrustDLPCustomProfileResource{}
+var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPCustomProfileResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{

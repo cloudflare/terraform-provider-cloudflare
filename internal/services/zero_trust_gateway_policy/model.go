@@ -8,7 +8,7 @@ import (
 )
 
 type ZeroTrustGatewayPolicyResultEnvelope struct {
-	Result ZeroTrustGatewayPolicyModel `json:"result,computed"`
+	Result ZeroTrustGatewayPolicyModel `json:"result"`
 }
 
 type ZeroTrustGatewayPolicyModel struct {

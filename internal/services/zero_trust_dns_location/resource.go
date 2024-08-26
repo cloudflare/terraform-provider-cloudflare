@@ -18,9 +18,9 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = &ZeroTrustDNSLocationResource{}
-var _ resource.ResourceWithModifyPlan = &ZeroTrustDNSLocationResource{}
-var _ resource.ResourceWithImportState = &ZeroTrustDNSLocationResource{}
+var _ resource.ResourceWithConfigure = (*ZeroTrustDNSLocationResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ZeroTrustDNSLocationResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustDNSLocationResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDNSLocationResource{}

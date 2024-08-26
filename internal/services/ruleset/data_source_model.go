@@ -5,6 +5,7 @@ package ruleset
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rulesets"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,7 +16,7 @@ type RulesetResultDataSourceEnvelope struct {
 }
 
 type RulesetResultListDataSourceEnvelope struct {
-	Result *[]*RulesetDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[RulesetDataSourceModel] `json:"result,computed"`
 }
 
 type RulesetDataSourceModel struct {
@@ -63,7 +64,7 @@ type RulesetRulesDataSourceModel struct {
 	ID               types.String                                 `tfsdk:"id" json:"id"`
 	Action           types.String                                 `tfsdk:"action" json:"action"`
 	ActionParameters *RulesetRulesActionParametersDataSourceModel `tfsdk:"action_parameters" json:"action_parameters"`
-	Categories       *[]types.String                              `tfsdk:"categories" json:"categories,computed"`
+	Categories       types.List                                   `tfsdk:"categories" json:"categories,computed"`
 	Description      types.String                                 `tfsdk:"description" json:"description,computed"`
 	Enabled          types.Bool                                   `tfsdk:"enabled" json:"enabled,computed"`
 	Expression       types.String                                 `tfsdk:"expression" json:"expression"`

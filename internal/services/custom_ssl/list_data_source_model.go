@@ -5,21 +5,22 @@ package custom_ssl
 import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/custom_certificates"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type CustomSSLsResultListDataSourceEnvelope struct {
-	Result *[]*CustomSSLsResultDataSourceModel `json:"result,computed"`
+	Result customfield.NestedObjectList[CustomSSLsResultDataSourceModel] `json:"result,computed"`
 }
 
 type CustomSSLsDataSourceModel struct {
-	ZoneID   types.String                        `tfsdk:"zone_id" path:"zone_id"`
-	Status   types.String                        `tfsdk:"status" query:"status"`
-	Match    types.String                        `tfsdk:"match" query:"match"`
-	MaxItems types.Int64                         `tfsdk:"max_items"`
-	Result   *[]*CustomSSLsResultDataSourceModel `tfsdk:"result"`
+	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
+	Status   types.String                                                  `tfsdk:"status" query:"status"`
+	Match    types.String                                                  `tfsdk:"match" query:"match"`
+	MaxItems types.Int64                                                   `tfsdk:"max_items"`
+	Result   customfield.NestedObjectList[CustomSSLsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *CustomSSLsDataSourceModel) toListParams() (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
@@ -41,7 +42,7 @@ type CustomSSLsResultDataSourceModel struct {
 	ID              types.String                              `tfsdk:"id" json:"id,computed"`
 	BundleMethod    types.String                              `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn       timetypes.RFC3339                         `tfsdk:"expires_on" json:"expires_on,computed"`
-	Hosts           *[]types.String                           `tfsdk:"hosts" json:"hosts,computed"`
+	Hosts           types.List                                `tfsdk:"hosts" json:"hosts,computed"`
 	Issuer          types.String                              `tfsdk:"issuer" json:"issuer,computed"`
 	ModifiedOn      timetypes.RFC3339                         `tfsdk:"modified_on" json:"modified_on,computed"`
 	Priority        types.Float64                             `tfsdk:"priority" json:"priority,computed"`
@@ -65,7 +66,7 @@ type CustomSSLsKeylessServerDataSourceModel struct {
 	Host        types.String                                  `tfsdk:"host" json:"host,computed"`
 	ModifiedOn  timetypes.RFC3339                             `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name        types.String                                  `tfsdk:"name" json:"name,computed"`
-	Permissions *[]types.String                               `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions types.List                                    `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                                 `tfsdk:"port" json:"port,computed"`
 	Status      types.String                                  `tfsdk:"status" json:"status,computed"`
 	Tunnel      *CustomSSLsKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`
