@@ -100,6 +100,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_service_token"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_short_lived_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_tag"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_managed_networks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_device_posture_rule"
@@ -360,6 +361,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_dex_test.NewResource,
 		zero_trust_device_managed_networks.NewResource,
 		zero_trust_device_profiles.NewResource,
+		zero_trust_device_certificates.NewResource,
 		zero_trust_local_domain_fallback.NewResource,
 		zero_trust_device_posture_rule.NewResource,
 		zero_trust_device_posture_integration.NewResource,
@@ -529,6 +531,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_device_managed_networks.NewZeroTrustDeviceManagedNetworksListDataSource,
 		zero_trust_device_profiles.NewZeroTrustDeviceProfilesDataSource,
 		zero_trust_device_profiles.NewZeroTrustDeviceProfilesListDataSource,
+		zero_trust_device_certificates.NewZeroTrustDeviceCertificatesDataSource,
 		zero_trust_local_domain_fallback.NewZeroTrustLocalDomainFallbackDataSource,
 		zero_trust_local_domain_fallback.NewZeroTrustLocalDomainFallbacksDataSource,
 		zero_trust_device_posture_rule.NewZeroTrustDevicePostureRuleDataSource,
