@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: handle scenarios where `content` and `value` are both being set in state and erroneously always thinking the `content` field is the source of truth
+```
