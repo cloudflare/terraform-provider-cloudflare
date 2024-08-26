@@ -238,7 +238,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 					"eid_last_seen": {
 						Type:        schema.TypeString,
 						Optional:    true,
-						Description: "The datetime a device last seen in RFC 3339 format from Tanium.",
+						Description: "The time a device last seen in Tanium. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`",
 					},
 					"risk_level": {
 						Type:         schema.TypeString,
