@@ -197,7 +197,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_access_ca_certificate":                           resourceCloudflareAccessCACertificate(),
 				"cloudflare_zero_trust_access_short_lived_certificate":       resourceCloudflareZeroTrustAccessCACertificate(),
 				"cloudflare_access_group":                                    resourceCloudflareAccessGroup(),
-				"cloudflare_zero_trust_access_group":                         resourceCloudflareAccessGroup(),
+				"cloudflare_zero_trust_access_group":                         resourceCloudflareZeroTrustAccessGroup(),
 				"cloudflare_access_identity_provider":                        resourceCloudflareAccessIdentityProvider(),
 				"cloudflare_zero_trust_access_identity_provider":             resourceCloudflareZeroTrustAccessIdentityProvider(),
 				"cloudflare_access_custom_page":                              resourceCloudflareAccessCustomPage(),
