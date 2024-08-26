@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -22,14 +23,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description:   "Account identifier tag.",
+				Description:   "Identifier",
 				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
+			"type": schema.StringAttribute{
+				Description: "the type of account being created. For self-serve customers, use standard. for enterprise customers, use enterprise.",
+				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("standard", "enterprise"),
+				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"account_id": schema.StringAttribute{
-				Description:   "Account identifier tag.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			"unit": schema.SingleNestedAttribute{
+				Description: "information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "Tenant unit ID",
+						Optional:    true,
+					},
+				},
+				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description: "Account name",

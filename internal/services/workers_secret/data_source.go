@@ -5,9 +5,13 @@ package workers_secret
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -53,38 +57,69 @@ func (d *WorkersSecretDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	params, diags := data.toListParams()
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	if data.Filter == nil {
+		params, diags := data.toReadParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 
-	items := &[]*WorkersSecretDataSourceModel{}
-	env := WorkersSecretResultListDataSourceEnvelope{items}
+		res := new(http.Response)
+		env := WorkersSecretResultDataSourceEnvelope{*data}
+		_, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.Get(
+			ctx,
+			data.DispatchNamespace.ValueString(),
+			data.ScriptName.ValueString(),
+			data.SecretName.ValueString(),
+			params,
+			option.WithResponseBodyInto(&res),
+			option.WithMiddleware(logging.Middleware(ctx)),
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
+		bytes, _ := io.ReadAll(res.Body)
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+			return
+		}
+		data = &env.Result
+	} else {
+		params, diags := data.toListParams()
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 
-	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
-		ctx,
-		data.Filter.DispatchNamespace.ValueString(),
-		data.Filter.ScriptName.ValueString(),
-		params,
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+		items := &[]*WorkersSecretDataSourceModel{}
+		env := WorkersSecretResultListDataSourceEnvelope{items}
 
-	bytes := []byte(page.JSON.RawJSON())
-	err = apijson.Unmarshal(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
-		return
-	}
+		page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
+			ctx,
+			data.Filter.DispatchNamespace.ValueString(),
+			data.Filter.ScriptName.ValueString(),
+			params,
+		)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to make http request", err.Error())
+			return
+		}
 
-	if count := len(*items); count != 1 {
-		resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
-		return
+		bytes := []byte(page.JSON.RawJSON())
+		err = apijson.Unmarshal(bytes, &env)
+		if err != nil {
+			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+			return
+		}
+
+		if count := len(*items); count != 1 {
+			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
+			return
+		}
+		data = (*items)[0]
 	}
-	data = (*items)[0]
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

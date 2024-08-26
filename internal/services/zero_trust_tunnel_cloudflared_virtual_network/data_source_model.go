@@ -10,18 +10,32 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type ZeroTrustTunnelCloudflaredVirtualNetworkResultDataSourceEnvelope struct {
+	Result ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel `json:"result,computed"`
+}
+
 type ZeroTrustTunnelCloudflaredVirtualNetworkResultListDataSourceEnvelope struct {
 	Result *[]*ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel `json:"result,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {
-	Comment          types.String                                                      `tfsdk:"comment" json:"comment"`
-	CreatedAt        timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at"`
-	DeletedAt        timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at"`
-	ID               types.String                                                      `tfsdk:"id" json:"id"`
-	IsDefaultNetwork types.Bool                                                        `tfsdk:"is_default_network" json:"is_default_network"`
-	Name             types.String                                                      `tfsdk:"name" json:"name"`
+	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id"`
+	VirtualNetworkID types.String                                                      `tfsdk:"virtual_network_id" path:"virtual_network_id"`
+	Comment          types.String                                                      `tfsdk:"comment" json:"comment,computed"`
+	CreatedAt        timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed"`
+	DeletedAt        timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	ID               types.String                                                      `tfsdk:"id" json:"id,computed"`
+	IsDefaultNetwork types.Bool                                                        `tfsdk:"is_default_network" json:"is_default_network,computed"`
+	Name             types.String                                                      `tfsdk:"name" json:"name,computed"`
 	Filter           *ZeroTrustTunnelCloudflaredVirtualNetworkFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toReadParams() (params zero_trust.NetworkVirtualNetworkGetParams, diags diag.Diagnostics) {
+	params = zero_trust.NetworkVirtualNetworkGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toListParams() (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {

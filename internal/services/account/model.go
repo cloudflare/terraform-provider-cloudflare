@@ -12,11 +12,16 @@ type AccountResultEnvelope struct {
 }
 
 type AccountModel struct {
-	ID        types.String          `tfsdk:"id" json:"-,computed"`
-	AccountID types.String          `tfsdk:"account_id" path:"account_id"`
+	ID        types.String          `tfsdk:"id" json:"id,computed"`
+	Type      types.String          `tfsdk:"type" json:"type"`
+	Unit      *AccountUnitModel     `tfsdk:"unit" json:"unit"`
 	Name      types.String          `tfsdk:"name" json:"name"`
 	Settings  *AccountSettingsModel `tfsdk:"settings" json:"settings"`
 	CreatedOn timetypes.RFC3339     `tfsdk:"created_on" json:"created_on,computed"`
+}
+
+type AccountUnitModel struct {
+	ID types.String `tfsdk:"id" json:"id"`
 }
 
 type AccountSettingsModel struct {
