@@ -33,19 +33,19 @@ type ZeroTrustDEXTestsResultDataSourceModel struct {
 	Enabled        types.Bool                                                     `tfsdk:"enabled" json:"enabled,computed"`
 	Interval       types.String                                                   `tfsdk:"interval" json:"interval,computed"`
 	Name           types.String                                                   `tfsdk:"name" json:"name,computed"`
-	Description    types.String                                                   `tfsdk:"description" json:"description"`
-	TargetPolicies *[]*ZeroTrustDEXTestsTargetPoliciesDataSourceModel             `tfsdk:"target_policies" json:"target_policies"`
-	Targeted       types.Bool                                                     `tfsdk:"targeted" json:"targeted"`
+	Description    types.String                                                   `tfsdk:"description" json:"description,computed_optional"`
+	TargetPolicies *[]*ZeroTrustDEXTestsTargetPoliciesDataSourceModel             `tfsdk:"target_policies" json:"target_policies,computed_optional"`
+	Targeted       types.Bool                                                     `tfsdk:"targeted" json:"targeted,computed_optional"`
 }
 
 type ZeroTrustDEXTestsDataDataSourceModel struct {
-	Host   types.String `tfsdk:"host" json:"host"`
-	Kind   types.String `tfsdk:"kind" json:"kind"`
-	Method types.String `tfsdk:"method" json:"method"`
+	Host   types.String `tfsdk:"host" json:"host,computed_optional"`
+	Kind   types.String `tfsdk:"kind" json:"kind,computed_optional"`
+	Method types.String `tfsdk:"method" json:"method,computed_optional"`
 }
 
 type ZeroTrustDEXTestsTargetPoliciesDataSourceModel struct {
-	ID      types.String `tfsdk:"id" json:"id"`
-	Default types.Bool   `tfsdk:"default" json:"default"`
-	Name    types.String `tfsdk:"name" json:"name"`
+	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
+	Default types.Bool   `tfsdk:"default" json:"default,computed_optional"`
+	Name    types.String `tfsdk:"name" json:"name,computed_optional"`
 }

@@ -36,11 +36,11 @@ type LoadBalancerMonitorDataSourceModel struct {
 	Retries         types.Int64                                  `tfsdk:"retries" json:"retries,computed"`
 	Timeout         types.Int64                                  `tfsdk:"timeout" json:"timeout,computed"`
 	Type            types.String                                 `tfsdk:"type" json:"type,computed"`
-	Description     types.String                                 `tfsdk:"description" json:"description"`
-	ExpectedBody    types.String                                 `tfsdk:"expected_body" json:"expected_body"`
-	ID              types.String                                 `tfsdk:"id" json:"id"`
-	ProbeZone       types.String                                 `tfsdk:"probe_zone" json:"probe_zone"`
-	Header          map[string]*[]types.String                   `tfsdk:"header" json:"header"`
+	Description     types.String                                 `tfsdk:"description" json:"description,computed_optional"`
+	ExpectedBody    types.String                                 `tfsdk:"expected_body" json:"expected_body,computed_optional"`
+	ID              types.String                                 `tfsdk:"id" json:"id,computed_optional"`
+	ProbeZone       types.String                                 `tfsdk:"probe_zone" json:"probe_zone,computed_optional"`
+	Header          map[string]*[]types.String                   `tfsdk:"header" json:"header,computed_optional"`
 	Filter          *LoadBalancerMonitorFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

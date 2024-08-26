@@ -34,8 +34,8 @@ type NotificationPolicyWebhooksListResultDataSourceModel struct {
 	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
 	LastFailure timetypes.RFC3339 `tfsdk:"last_failure" json:"last_failure,computed"`
 	LastSuccess timetypes.RFC3339 `tfsdk:"last_success" json:"last_success,computed"`
-	Name        types.String      `tfsdk:"name" json:"name"`
-	Secret      types.String      `tfsdk:"secret" json:"secret"`
-	Type        types.String      `tfsdk:"type" json:"type"`
-	URL         types.String      `tfsdk:"url" json:"url"`
+	Name        types.String      `tfsdk:"name" json:"name,computed_optional"`
+	Secret      types.String      `tfsdk:"secret" json:"secret,computed_optional"`
+	Type        types.String      `tfsdk:"type" json:"type,computed_optional"`
+	URL         types.String      `tfsdk:"url" json:"url,computed_optional"`
 }

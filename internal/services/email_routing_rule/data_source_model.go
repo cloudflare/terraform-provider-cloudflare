@@ -25,9 +25,9 @@ type EmailRoutingRuleDataSourceModel struct {
 	ID             types.String                                `tfsdk:"id" json:"id,computed"`
 	Priority       types.Float64                               `tfsdk:"priority" json:"priority,computed"`
 	Tag            types.String                                `tfsdk:"tag" json:"tag,computed"`
-	Name           types.String                                `tfsdk:"name" json:"name"`
-	Actions        *[]*EmailRoutingRuleActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
-	Matchers       *[]*EmailRoutingRuleMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
+	Name           types.String                                `tfsdk:"name" json:"name,computed_optional"`
+	Actions        *[]*EmailRoutingRuleActionsDataSourceModel  `tfsdk:"actions" json:"actions,computed_optional"`
+	Matchers       *[]*EmailRoutingRuleMatchersDataSourceModel `tfsdk:"matchers" json:"matchers,computed_optional"`
 	Filter         *EmailRoutingRuleFindOneByDataSourceModel   `tfsdk:"filter"`
 }
 

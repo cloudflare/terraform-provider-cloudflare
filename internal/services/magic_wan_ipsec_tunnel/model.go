@@ -22,7 +22,7 @@ type MagicWANIPSECTunnelModel struct {
 	Description         types.String                                                          `tfsdk:"description" json:"description"`
 	PSK                 types.String                                                          `tfsdk:"psk" json:"psk"`
 	HealthCheck         *MagicWANIPSECTunnelHealthCheckModel                                  `tfsdk:"health_check" json:"health_check"`
-	ReplayProtection    types.Bool                                                            `tfsdk:"replay_protection" json:"replay_protection"`
+	ReplayProtection    types.Bool                                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	Deleted             types.Bool                                                            `tfsdk:"deleted" json:"deleted,computed"`
 	Modified            types.Bool                                                            `tfsdk:"modified" json:"modified,computed"`
 	DeletedIPSECTunnel  customfield.NestedObject[MagicWANIPSECTunnelDeletedIPSECTunnelModel]  `tfsdk:"deleted_ipsec_tunnel" json:"deleted_ipsec_tunnel,computed"`
@@ -32,11 +32,11 @@ type MagicWANIPSECTunnelModel struct {
 }
 
 type MagicWANIPSECTunnelHealthCheckModel struct {
-	Direction types.String `tfsdk:"direction" json:"direction"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate      types.String `tfsdk:"rate" json:"rate"`
+	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
+	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target    types.String `tfsdk:"target" json:"target"`
-	Type      types.String `tfsdk:"type" json:"type"`
+	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelDeletedIPSECTunnelModel struct {
@@ -50,7 +50,7 @@ type MagicWANIPSECTunnelDeletedIPSECTunnelModel struct {
 	Description        types.String                                                 `tfsdk:"description" json:"description"`
 	ModifiedOn         timetypes.RFC3339                                            `tfsdk:"modified_on" json:"modified_on,computed"`
 	PSKMetadata        *MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                                   `tfsdk:"replay_protection" json:"replay_protection"`
+	ReplayProtection   types.Bool                                                   `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
@@ -59,10 +59,10 @@ type MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel struct {
 }
 
 type MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel struct {
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate    types.String `tfsdk:"rate" json:"rate"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target  types.String `tfsdk:"target" json:"target"`
-	Type    types.String `tfsdk:"type" json:"type"`
+	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelModel struct {
@@ -76,7 +76,7 @@ type MagicWANIPSECTunnelIPSECTunnelModel struct {
 	Description        types.String                                          `tfsdk:"description" json:"description"`
 	ModifiedOn         timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
 	PSKMetadata        *MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                            `tfsdk:"replay_protection" json:"replay_protection"`
+	ReplayProtection   types.Bool                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
@@ -85,10 +85,10 @@ type MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel struct {
 }
 
 type MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel struct {
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate    types.String `tfsdk:"rate" json:"rate"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target  types.String `tfsdk:"target" json:"target"`
-	Type    types.String `tfsdk:"type" json:"type"`
+	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelsModel struct {
@@ -102,7 +102,7 @@ type MagicWANIPSECTunnelIPSECTunnelsModel struct {
 	Description        types.String                                           `tfsdk:"description" json:"description"`
 	ModifiedOn         timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed"`
 	PSKMetadata        *MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                             `tfsdk:"replay_protection" json:"replay_protection"`
+	ReplayProtection   types.Bool                                             `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
@@ -111,10 +111,10 @@ type MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel struct {
 }
 
 type MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel struct {
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate    types.String `tfsdk:"rate" json:"rate"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target  types.String `tfsdk:"target" json:"target"`
-	Type    types.String `tfsdk:"type" json:"type"`
+	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelModel struct {
@@ -128,7 +128,7 @@ type MagicWANIPSECTunnelModifiedIPSECTunnelModel struct {
 	Description        types.String                                                  `tfsdk:"description" json:"description"`
 	ModifiedOn         timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed"`
 	PSKMetadata        *MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                                    `tfsdk:"replay_protection" json:"replay_protection"`
+	ReplayProtection   types.Bool                                                    `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
@@ -137,8 +137,8 @@ type MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel struct {
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel struct {
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Rate    types.String `tfsdk:"rate" json:"rate"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
 	Target  types.String `tfsdk:"target" json:"target"`
-	Type    types.String `tfsdk:"type" json:"type"`
+	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }

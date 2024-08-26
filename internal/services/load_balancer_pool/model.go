@@ -25,8 +25,8 @@ type LoadBalancerPoolModel struct {
 	LoadShedding       *LoadBalancerPoolLoadSheddingModel       `tfsdk:"load_shedding" json:"load_shedding"`
 	NotificationFilter *LoadBalancerPoolNotificationFilterModel `tfsdk:"notification_filter" json:"notification_filter"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringModel     `tfsdk:"origin_steering" json:"origin_steering"`
-	Enabled            types.Bool                               `tfsdk:"enabled" json:"enabled"`
-	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins"`
+	Enabled            types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
+	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins,computed_optional"`
 	CreatedOn          timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed"`
 	DisabledAt         timetypes.RFC3339                        `tfsdk:"disabled_at" json:"disabled_at,computed"`
 	ModifiedOn         timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed"`
@@ -35,11 +35,11 @@ type LoadBalancerPoolModel struct {
 type LoadBalancerPoolOriginsModel struct {
 	Address          types.String                        `tfsdk:"address" json:"address"`
 	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed"`
-	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled"`
+	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Header           *LoadBalancerPoolOriginsHeaderModel `tfsdk:"header" json:"header"`
 	Name             types.String                        `tfsdk:"name" json:"name"`
 	VirtualNetworkID types.String                        `tfsdk:"virtual_network_id" json:"virtual_network_id"`
-	Weight           types.Float64                       `tfsdk:"weight" json:"weight"`
+	Weight           types.Float64                       `tfsdk:"weight" json:"weight,computed_optional"`
 }
 
 type LoadBalancerPoolOriginsHeaderModel struct {
@@ -47,10 +47,10 @@ type LoadBalancerPoolOriginsHeaderModel struct {
 }
 
 type LoadBalancerPoolLoadSheddingModel struct {
-	DefaultPercent types.Float64 `tfsdk:"default_percent" json:"default_percent"`
-	DefaultPolicy  types.String  `tfsdk:"default_policy" json:"default_policy"`
-	SessionPercent types.Float64 `tfsdk:"session_percent" json:"session_percent"`
-	SessionPolicy  types.String  `tfsdk:"session_policy" json:"session_policy"`
+	DefaultPercent types.Float64 `tfsdk:"default_percent" json:"default_percent,computed_optional"`
+	DefaultPolicy  types.String  `tfsdk:"default_policy" json:"default_policy,computed_optional"`
+	SessionPercent types.Float64 `tfsdk:"session_percent" json:"session_percent,computed_optional"`
+	SessionPolicy  types.String  `tfsdk:"session_policy" json:"session_policy,computed_optional"`
 }
 
 type LoadBalancerPoolNotificationFilterModel struct {
@@ -59,15 +59,15 @@ type LoadBalancerPoolNotificationFilterModel struct {
 }
 
 type LoadBalancerPoolNotificationFilterOriginModel struct {
-	Disable types.Bool `tfsdk:"disable" json:"disable"`
+	Disable types.Bool `tfsdk:"disable" json:"disable,computed_optional"`
 	Healthy types.Bool `tfsdk:"healthy" json:"healthy"`
 }
 
 type LoadBalancerPoolNotificationFilterPoolModel struct {
-	Disable types.Bool `tfsdk:"disable" json:"disable"`
+	Disable types.Bool `tfsdk:"disable" json:"disable,computed_optional"`
 	Healthy types.Bool `tfsdk:"healthy" json:"healthy"`
 }
 
 type LoadBalancerPoolOriginSteeringModel struct {
-	Policy types.String `tfsdk:"policy" json:"policy"`
+	Policy types.String `tfsdk:"policy" json:"policy,computed_optional"`
 }

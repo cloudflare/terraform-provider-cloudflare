@@ -36,7 +36,7 @@ type QueuesResultDataSourceModel struct {
 	Producers           customfield.NestedObjectList[QueuesProducersDataSourceModel] `tfsdk:"producers" json:"producers,computed"`
 	ProducersTotalCount types.Float64                                                `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
 	QueueID             types.String                                                 `tfsdk:"queue_id" json:"queue_id,computed"`
-	QueueName           types.String                                                 `tfsdk:"queue_name" json:"queue_name"`
+	QueueName           types.String                                                 `tfsdk:"queue_name" json:"queue_name,computed_optional"`
 }
 
 type QueuesConsumersDataSourceModel struct {
@@ -44,13 +44,13 @@ type QueuesConsumersDataSourceModel struct {
 	Environment types.String                            `tfsdk:"environment" json:"environment,computed"`
 	QueueName   types.String                            `tfsdk:"queue_name" json:"queue_name,computed"`
 	Service     types.String                            `tfsdk:"service" json:"service,computed"`
-	Settings    *QueuesConsumersSettingsDataSourceModel `tfsdk:"settings" json:"settings"`
+	Settings    *QueuesConsumersSettingsDataSourceModel `tfsdk:"settings" json:"settings,computed_optional"`
 }
 
 type QueuesConsumersSettingsDataSourceModel struct {
-	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size"`
-	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries"`
-	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms"`
+	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size,computed_optional"`
+	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries,computed_optional"`
+	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed_optional"`
 }
 
 type QueuesProducersDataSourceModel struct {

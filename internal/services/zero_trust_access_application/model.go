@@ -40,13 +40,13 @@ type ZeroTrustAccessApplicationModel struct {
 	Policies                 *[]*ZeroTrustAccessApplicationPoliciesModel       `tfsdk:"policies" json:"policies"`
 	SaaSApp                  *ZeroTrustAccessApplicationSaaSAppModel           `tfsdk:"saas_app" json:"saas_app"`
 	SCIMConfig               *ZeroTrustAccessApplicationSCIMConfigModel        `tfsdk:"scim_config" json:"scim_config"`
-	AppLauncherVisible       types.Bool                                        `tfsdk:"app_launcher_visible" json:"app_launcher_visible"`
-	AutoRedirectToIdentity   types.Bool                                        `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
-	EnableBindingCookie      types.Bool                                        `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie"`
-	HTTPOnlyCookieAttribute  types.Bool                                        `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute"`
-	PathCookieAttribute      types.Bool                                        `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute"`
-	SessionDuration          types.String                                      `tfsdk:"session_duration" json:"session_duration"`
-	SkipAppLauncherLoginPage types.Bool                                        `tfsdk:"skip_app_launcher_login_page" json:"skip_app_launcher_login_page"`
+	AppLauncherVisible       types.Bool                                        `tfsdk:"app_launcher_visible" json:"app_launcher_visible,computed_optional"`
+	AutoRedirectToIdentity   types.Bool                                        `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
+	EnableBindingCookie      types.Bool                                        `tfsdk:"enable_binding_cookie" json:"enable_binding_cookie,computed_optional"`
+	HTTPOnlyCookieAttribute  types.Bool                                        `tfsdk:"http_only_cookie_attribute" json:"http_only_cookie_attribute,computed_optional"`
+	PathCookieAttribute      types.Bool                                        `tfsdk:"path_cookie_attribute" json:"path_cookie_attribute,computed_optional"`
+	SessionDuration          types.String                                      `tfsdk:"session_duration" json:"session_duration,computed_optional"`
+	SkipAppLauncherLoginPage types.Bool                                        `tfsdk:"skip_app_launcher_login_page" json:"skip_app_launcher_login_page,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationCORSHeadersModel struct {
@@ -70,7 +70,7 @@ type ZeroTrustAccessApplicationLandingPageDesignModel struct {
 	ButtonTextColor types.String `tfsdk:"button_text_color" json:"button_text_color"`
 	ImageURL        types.String `tfsdk:"image_url" json:"image_url"`
 	Message         types.String `tfsdk:"message" json:"message"`
-	Title           types.String `tfsdk:"title" json:"title"`
+	Title           types.String `tfsdk:"title" json:"title,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesModel struct {

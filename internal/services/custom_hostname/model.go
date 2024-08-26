@@ -28,7 +28,7 @@ type CustomHostnameModel struct {
 }
 
 type CustomHostnameSSLModel struct {
-	BundleMethod         types.String                    `tfsdk:"bundle_method" json:"bundle_method"`
+	BundleMethod         types.String                    `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
 	CertificateAuthority types.String                    `tfsdk:"certificate_authority" json:"certificate_authority"`
 	CustomCertificate    types.String                    `tfsdk:"custom_certificate" json:"custom_certificate"`
 	CustomKey            types.String                    `tfsdk:"custom_key" json:"custom_key"`

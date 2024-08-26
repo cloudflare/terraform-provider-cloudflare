@@ -21,7 +21,7 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 
 type ZoneLockdownDataSourceModel struct {
 	ZoneIdentifier types.String                                                        `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                                                        `tfsdk:"id" path:"id"`
+	ID             types.String                                                        `tfsdk:"id" path:"id,computed_optional"`
 	CreatedOn      timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed"`
 	Description    types.String                                                        `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed"`
@@ -71,8 +71,8 @@ func (m *ZoneLockdownDataSourceModel) toListParams() (params firewall.LockdownLi
 }
 
 type ZoneLockdownConfigurationsDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	Target types.String `tfsdk:"target" json:"target,computed_optional"`
+	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type ZoneLockdownFindOneByDataSourceModel struct {

@@ -31,6 +31,6 @@ func (m *WorkersSecretsDataSourceModel) toListParams() (params workers_for_platf
 }
 
 type WorkersSecretsResultDataSourceModel struct {
-	Name types.String `tfsdk:"name" json:"name"`
-	Type types.String `tfsdk:"type" json:"type"`
+	Name types.String `tfsdk:"name" json:"name,computed_optional"`
+	Type types.String `tfsdk:"type" json:"type,computed_optional"`
 }

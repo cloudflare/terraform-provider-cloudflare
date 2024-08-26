@@ -16,7 +16,7 @@ type EmailRoutingCatchAllModel struct {
 	Actions        *[]*EmailRoutingCatchAllActionsModel  `tfsdk:"actions" json:"actions"`
 	Matchers       *[]*EmailRoutingCatchAllMatchersModel `tfsdk:"matchers" json:"matchers"`
 	Name           types.String                          `tfsdk:"name" json:"name"`
-	Enabled        types.Bool                            `tfsdk:"enabled" json:"enabled"`
+	Enabled        types.Bool                            `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Tag            types.String                          `tfsdk:"tag" json:"tag,computed"`
 }
 

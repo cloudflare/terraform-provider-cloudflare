@@ -117,14 +117,14 @@ type DNSRecordFindOneByDataSourceModel struct {
 	ZoneID    types.String                     `tfsdk:"zone_id" path:"zone_id"`
 	Comment   *DNSRecordCommentDataSourceModel `tfsdk:"comment" query:"comment"`
 	Content   types.String                     `tfsdk:"content" query:"content"`
-	Direction types.String                     `tfsdk:"direction" query:"direction"`
-	Match     types.String                     `tfsdk:"match" query:"match"`
+	Direction types.String                     `tfsdk:"direction" query:"direction,computed_optional"`
+	Match     types.String                     `tfsdk:"match" query:"match,computed_optional"`
 	Name      types.String                     `tfsdk:"name" query:"name"`
-	Order     types.String                     `tfsdk:"order" query:"order"`
-	Proxied   types.Bool                       `tfsdk:"proxied" query:"proxied"`
+	Order     types.String                     `tfsdk:"order" query:"order,computed_optional"`
+	Proxied   types.Bool                       `tfsdk:"proxied" query:"proxied,computed_optional"`
 	Search    types.String                     `tfsdk:"search" query:"search"`
 	Tag       *DNSRecordTagDataSourceModel     `tfsdk:"tag" query:"tag"`
-	TagMatch  types.String                     `tfsdk:"tag_match" query:"tag_match"`
+	TagMatch  types.String                     `tfsdk:"tag_match" query:"tag_match,computed_optional"`
 	Type      types.String                     `tfsdk:"type" query:"type"`
 }
 

@@ -30,9 +30,9 @@ type ListItemHostnameModel struct {
 type ListItemRedirectModel struct {
 	SourceURL           types.String `tfsdk:"source_url" json:"source_url"`
 	TargetURL           types.String `tfsdk:"target_url" json:"target_url"`
-	IncludeSubdomains   types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains"`
-	PreservePathSuffix  types.Bool   `tfsdk:"preserve_path_suffix" json:"preserve_path_suffix"`
-	PreserveQueryString types.Bool   `tfsdk:"preserve_query_string" json:"preserve_query_string"`
-	StatusCode          types.Int64  `tfsdk:"status_code" json:"status_code"`
-	SubpathMatching     types.Bool   `tfsdk:"subpath_matching" json:"subpath_matching"`
+	IncludeSubdomains   types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional"`
+	PreservePathSuffix  types.Bool   `tfsdk:"preserve_path_suffix" json:"preserve_path_suffix,computed_optional"`
+	PreserveQueryString types.Bool   `tfsdk:"preserve_query_string" json:"preserve_query_string,computed_optional"`
+	StatusCode          types.Int64  `tfsdk:"status_code" json:"status_code,computed_optional"`
+	SubpathMatching     types.Bool   `tfsdk:"subpath_matching" json:"subpath_matching,computed_optional"`
 }

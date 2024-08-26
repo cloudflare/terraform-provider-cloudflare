@@ -25,10 +25,10 @@ type ZeroTrustListDataSourceModel struct {
 	CreatedAt   timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed"`
 	ListCount   types.Float64                          `tfsdk:"list_count" json:"count,computed"`
 	UpdatedAt   timetypes.RFC3339                      `tfsdk:"updated_at" json:"updated_at,computed"`
-	Description types.String                           `tfsdk:"description" json:"description"`
-	ID          types.String                           `tfsdk:"id" json:"id"`
-	Name        types.String                           `tfsdk:"name" json:"name"`
-	Type        types.String                           `tfsdk:"type" json:"type"`
+	Description types.String                           `tfsdk:"description" json:"description,computed_optional"`
+	ID          types.String                           `tfsdk:"id" json:"id,computed_optional"`
+	Name        types.String                           `tfsdk:"name" json:"name,computed_optional"`
+	Type        types.String                           `tfsdk:"type" json:"type,computed_optional"`
 	Filter      *ZeroTrustListFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

@@ -22,7 +22,7 @@ type NotificationPolicyModel struct {
 	AlertInterval types.String                                                  `tfsdk:"alert_interval" json:"alert_interval"`
 	Description   types.String                                                  `tfsdk:"description" json:"description"`
 	Filters       *NotificationPolicyFiltersModel                               `tfsdk:"filters" json:"filters"`
-	Enabled       types.Bool                                                    `tfsdk:"enabled" json:"enabled"`
+	Enabled       types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Created       timetypes.RFC3339                                             `tfsdk:"created" json:"created,computed"`
 	Modified      timetypes.RFC3339                                             `tfsdk:"modified" json:"modified,computed"`
 	Success       types.Bool                                                    `tfsdk:"success" json:"success,computed"`

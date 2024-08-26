@@ -21,12 +21,12 @@ type WorkersCustomDomainResultListDataSourceEnvelope struct {
 type WorkersCustomDomainDataSourceModel struct {
 	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id"`
 	DomainID    types.String                                 `tfsdk:"domain_id" path:"domain_id"`
-	Environment types.String                                 `tfsdk:"environment" json:"environment"`
-	Hostname    types.String                                 `tfsdk:"hostname" json:"hostname"`
-	ID          types.String                                 `tfsdk:"id" json:"id"`
-	Service     types.String                                 `tfsdk:"service" json:"service"`
-	ZoneID      types.String                                 `tfsdk:"zone_id" json:"zone_id"`
-	ZoneName    types.String                                 `tfsdk:"zone_name" json:"zone_name"`
+	Environment types.String                                 `tfsdk:"environment" json:"environment,computed_optional"`
+	Hostname    types.String                                 `tfsdk:"hostname" json:"hostname,computed_optional"`
+	ID          types.String                                 `tfsdk:"id" json:"id,computed_optional"`
+	Service     types.String                                 `tfsdk:"service" json:"service,computed_optional"`
+	ZoneID      types.String                                 `tfsdk:"zone_id" json:"zone_id,computed_optional"`
+	ZoneName    types.String                                 `tfsdk:"zone_name" json:"zone_name,computed_optional"`
 	Filter      *WorkersCustomDomainFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

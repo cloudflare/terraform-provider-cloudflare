@@ -15,7 +15,7 @@ type TurnstileWidgetModel struct {
 	ID             types.String      `tfsdk:"id" json:"-,computed"`
 	Sitekey        types.String      `tfsdk:"sitekey" json:"sitekey,computed"`
 	AccountID      types.String      `tfsdk:"account_id" path:"account_id"`
-	Region         types.String      `tfsdk:"region" json:"region"`
+	Region         types.String      `tfsdk:"region" json:"region,computed_optional"`
 	Mode           types.String      `tfsdk:"mode" json:"mode"`
 	Name           types.String      `tfsdk:"name" json:"name"`
 	Domains        *[]types.String   `tfsdk:"domains" json:"domains"`

@@ -29,7 +29,7 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	WARPAuthSessionDuration        types.String                                     `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
 	CustomPages                    *ZeroTrustOrganizationCustomPagesDataSourceModel `tfsdk:"custom_pages" json:"custom_pages"`
 	LoginDesign                    *ZeroTrustOrganizationLoginDesignDataSourceModel `tfsdk:"login_design" json:"login_design"`
-	AutoRedirectToIdentity         types.Bool                                       `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity"`
+	AutoRedirectToIdentity         types.Bool                                       `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 }
 
 func (m *ZeroTrustOrganizationDataSourceModel) toReadParams() (params zero_trust.OrganizationListParams, diags diag.Diagnostics) {
@@ -45,14 +45,14 @@ func (m *ZeroTrustOrganizationDataSourceModel) toReadParams() (params zero_trust
 }
 
 type ZeroTrustOrganizationCustomPagesDataSourceModel struct {
-	Forbidden      types.String `tfsdk:"forbidden" json:"forbidden"`
-	IdentityDenied types.String `tfsdk:"identity_denied" json:"identity_denied"`
+	Forbidden      types.String `tfsdk:"forbidden" json:"forbidden,computed_optional"`
+	IdentityDenied types.String `tfsdk:"identity_denied" json:"identity_denied,computed_optional"`
 }
 
 type ZeroTrustOrganizationLoginDesignDataSourceModel struct {
-	BackgroundColor types.String `tfsdk:"background_color" json:"background_color"`
-	FooterText      types.String `tfsdk:"footer_text" json:"footer_text"`
-	HeaderText      types.String `tfsdk:"header_text" json:"header_text"`
-	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path"`
-	TextColor       types.String `tfsdk:"text_color" json:"text_color"`
+	BackgroundColor types.String `tfsdk:"background_color" json:"background_color,computed_optional"`
+	FooterText      types.String `tfsdk:"footer_text" json:"footer_text,computed_optional"`
+	HeaderText      types.String `tfsdk:"header_text" json:"header_text,computed_optional"`
+	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,computed_optional"`
+	TextColor       types.String `tfsdk:"text_color" json:"text_color,computed_optional"`
 }

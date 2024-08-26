@@ -41,13 +41,13 @@ func (m *UserAgentBlockingRulesDataSourceModel) toListParams() (params firewall.
 
 type UserAgentBlockingRulesResultDataSourceModel struct {
 	ID            types.String                                        `tfsdk:"id" json:"id,computed"`
-	Configuration *UserAgentBlockingRulesConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration"`
-	Description   types.String                                        `tfsdk:"description" json:"description"`
-	Mode          types.String                                        `tfsdk:"mode" json:"mode"`
-	Paused        types.Bool                                          `tfsdk:"paused" json:"paused"`
+	Configuration *UserAgentBlockingRulesConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration,computed_optional"`
+	Description   types.String                                        `tfsdk:"description" json:"description,computed_optional"`
+	Mode          types.String                                        `tfsdk:"mode" json:"mode,computed_optional"`
+	Paused        types.Bool                                          `tfsdk:"paused" json:"paused,computed_optional"`
 }
 
 type UserAgentBlockingRulesConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	Target types.String `tfsdk:"target" json:"target,computed_optional"`
+	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
 }

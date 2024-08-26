@@ -21,7 +21,7 @@ type HyperdriveConfigModel struct {
 type HyperdriveConfigOriginModel struct {
 	Database       types.String `tfsdk:"database" json:"database"`
 	Host           types.String `tfsdk:"host" json:"host"`
-	Scheme         types.String `tfsdk:"scheme" json:"scheme"`
+	Scheme         types.String `tfsdk:"scheme" json:"scheme,computed_optional"`
 	User           types.String `tfsdk:"user" json:"user"`
 	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id"`
 	Port           types.Int64  `tfsdk:"port" json:"port"`

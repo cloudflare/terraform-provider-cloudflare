@@ -15,7 +15,7 @@ type WaitingRoomSettingResultDataSourceEnvelope struct {
 
 type WaitingRoomSettingDataSourceModel struct {
 	ZoneID                    types.String `tfsdk:"zone_id" path:"zone_id"`
-	SearchEngineCrawlerBypass types.Bool   `tfsdk:"search_engine_crawler_bypass" json:"search_engine_crawler_bypass"`
+	SearchEngineCrawlerBypass types.Bool   `tfsdk:"search_engine_crawler_bypass" json:"search_engine_crawler_bypass,computed_optional"`
 }
 
 func (m *WaitingRoomSettingDataSourceModel) toReadParams() (params waiting_rooms.SettingGetParams, diags diag.Diagnostics) {

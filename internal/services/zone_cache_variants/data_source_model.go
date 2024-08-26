@@ -30,15 +30,15 @@ func (m *ZoneCacheVariantsDataSourceModel) toReadParams() (params cache.VariantG
 }
 
 type ZoneCacheVariantsValueDataSourceModel struct {
-	AVIF *[]types.String `tfsdk:"avif" json:"avif"`
-	BMP  *[]types.String `tfsdk:"bmp" json:"bmp"`
-	GIF  *[]types.String `tfsdk:"gif" json:"gif"`
-	JP2  *[]types.String `tfsdk:"jp2" json:"jp2"`
-	JPEG *[]types.String `tfsdk:"jpeg" json:"jpeg"`
-	JPG  *[]types.String `tfsdk:"jpg" json:"jpg"`
-	JPG2 *[]types.String `tfsdk:"jpg2" json:"jpg2"`
-	PNG  *[]types.String `tfsdk:"png" json:"png"`
-	TIF  *[]types.String `tfsdk:"tif" json:"tif"`
-	TIFF *[]types.String `tfsdk:"tiff" json:"tiff"`
-	WebP *[]types.String `tfsdk:"webp" json:"webp"`
+	AVIF *[]types.String `tfsdk:"avif" json:"avif,computed_optional"`
+	BMP  *[]types.String `tfsdk:"bmp" json:"bmp,computed_optional"`
+	GIF  *[]types.String `tfsdk:"gif" json:"gif,computed_optional"`
+	JP2  *[]types.String `tfsdk:"jp2" json:"jp2,computed_optional"`
+	JPEG *[]types.String `tfsdk:"jpeg" json:"jpeg,computed_optional"`
+	JPG  *[]types.String `tfsdk:"jpg" json:"jpg,computed_optional"`
+	JPG2 *[]types.String `tfsdk:"jpg2" json:"jpg2,computed_optional"`
+	PNG  *[]types.String `tfsdk:"png" json:"png,computed_optional"`
+	TIF  *[]types.String `tfsdk:"tif" json:"tif,computed_optional"`
+	TIFF *[]types.String `tfsdk:"tiff" json:"tiff,computed_optional"`
+	WebP *[]types.String `tfsdk:"webp" json:"webp,computed_optional"`
 }

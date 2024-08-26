@@ -24,11 +24,11 @@ func (m *ManagedHeadersDataSourceModel) toReadParams() (params managed_headers.M
 }
 
 type ManagedHeadersManagedRequestHeadersDataSourceModel struct {
-	ID      types.String `tfsdk:"id" json:"id"`
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
+	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
 type ManagedHeadersManagedResponseHeadersDataSourceModel struct {
-	ID      types.String `tfsdk:"id" json:"id"`
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
+	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 }

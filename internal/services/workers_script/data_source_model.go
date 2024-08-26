@@ -47,8 +47,8 @@ func (m *WorkersScriptDataSourceModel) toListParams() (params workers.ScriptList
 
 type WorkersScriptTailConsumersDataSourceModel struct {
 	Service     types.String `tfsdk:"service" json:"service,computed"`
-	Environment types.String `tfsdk:"environment" json:"environment"`
-	Namespace   types.String `tfsdk:"namespace" json:"namespace"`
+	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
+	Namespace   types.String `tfsdk:"namespace" json:"namespace,computed_optional"`
 }
 
 type WorkersScriptFindOneByDataSourceModel struct {

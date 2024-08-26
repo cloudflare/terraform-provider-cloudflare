@@ -35,11 +35,11 @@ func (m *ZeroTrustAccessMTLSCertificatesDataSourceModel) toListParams() (params 
 }
 
 type ZeroTrustAccessMTLSCertificatesResultDataSourceModel struct {
-	ID                  types.String      `tfsdk:"id" json:"id"`
-	AssociatedHostnames *[]types.String   `tfsdk:"associated_hostnames" json:"associated_hostnames"`
+	ID                  types.String      `tfsdk:"id" json:"id,computed_optional"`
+	AssociatedHostnames *[]types.String   `tfsdk:"associated_hostnames" json:"associated_hostnames,computed_optional"`
 	CreatedAt           timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
-	ExpiresOn           timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on"`
-	Fingerprint         types.String      `tfsdk:"fingerprint" json:"fingerprint"`
-	Name                types.String      `tfsdk:"name" json:"name"`
+	ExpiresOn           timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed_optional"`
+	Fingerprint         types.String      `tfsdk:"fingerprint" json:"fingerprint,computed_optional"`
+	Name                types.String      `tfsdk:"name" json:"name,computed_optional"`
 	UpdatedAt           timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
 }
