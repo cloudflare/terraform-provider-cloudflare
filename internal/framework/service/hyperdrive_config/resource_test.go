@@ -228,6 +228,8 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 }
 
 func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
+	acctest.TestAccSkipForDefaultAccount(t, "Requires real Postgres instance to be available.")
+
 	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	databaseName := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME")
