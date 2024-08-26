@@ -9,14 +9,30 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+type WorkersSecretResultDataSourceEnvelope struct {
+	Result WorkersSecretDataSourceModel `json:"result,computed"`
+}
+
 type WorkersSecretResultListDataSourceEnvelope struct {
 	Result *[]*WorkersSecretDataSourceModel `json:"result,computed"`
 }
 
 type WorkersSecretDataSourceModel struct {
-	Name   types.String                           `tfsdk:"name" json:"name"`
-	Type   types.String                           `tfsdk:"type" json:"type"`
-	Filter *WorkersSecretFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID         types.String                           `tfsdk:"account_id" path:"account_id"`
+	DispatchNamespace types.String                           `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
+	ScriptName        types.String                           `tfsdk:"script_name" path:"script_name"`
+	SecretName        types.String                           `tfsdk:"secret_name" path:"secret_name"`
+	Name              types.String                           `tfsdk:"name" json:"name"`
+	Type              types.String                           `tfsdk:"type" json:"type"`
+	Filter            *WorkersSecretFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *WorkersSecretDataSourceModel) toReadParams() (params workers_for_platforms.DispatchNamespaceScriptSecretGetParams, diags diag.Diagnostics) {
+	params = workers_for_platforms.DispatchNamespaceScriptSecretGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
+	}
+
+	return
 }
 
 func (m *WorkersSecretDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {

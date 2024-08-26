@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = &ZeroTrustTunnelCloudflaredRouteResource{}
 var _ resource.ResourceWithModifyPlan = &ZeroTrustTunnelCloudflaredRouteResource{}
+var _ resource.ResourceWithImportState = &ZeroTrustTunnelCloudflaredRouteResource{}
 
 func NewResource() resource.Resource {
 	return &ZeroTrustTunnelCloudflaredRouteResource{}
@@ -142,7 +144,38 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) Update(ctx context.Context, re
 }
 
 func (r *ZeroTrustTunnelCloudflaredRouteResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZeroTrustTunnelCloudflaredRouteModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustTunnelCloudflaredRouteResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Networks.Routes.Get(
+		ctx,
+		data.ID.ValueString(),
+		zero_trust.NetworkRouteGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustTunnelCloudflaredRouteResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -166,6 +199,48 @@ func (r *ZeroTrustTunnelCloudflaredRouteResource) Delete(ctx context.Context, re
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustTunnelCloudflaredRouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustTunnelCloudflaredRouteModel
+
+	path_account_id := ""
+	path_route_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<route_id>",
+		&path_account_id,
+		&path_route_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustTunnelCloudflaredRouteResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Networks.Routes.Get(
+		ctx,
+		path_route_id,
+		zero_trust.NetworkRouteGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
