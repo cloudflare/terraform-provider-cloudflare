@@ -16,8 +16,8 @@ type EmailRoutingRuleModel struct {
 	Actions        *[]*EmailRoutingRuleActionsModel  `tfsdk:"actions" json:"actions"`
 	Matchers       *[]*EmailRoutingRuleMatchersModel `tfsdk:"matchers" json:"matchers"`
 	Name           types.String                      `tfsdk:"name" json:"name"`
-	Enabled        types.Bool                        `tfsdk:"enabled" json:"enabled"`
-	Priority       types.Float64                     `tfsdk:"priority" json:"priority"`
+	Enabled        types.Bool                        `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Priority       types.Float64                     `tfsdk:"priority" json:"priority,computed_optional"`
 	Tag            types.String                      `tfsdk:"tag" json:"tag,computed"`
 }
 

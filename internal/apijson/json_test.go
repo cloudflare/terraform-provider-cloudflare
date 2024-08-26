@@ -433,13 +433,13 @@ var tests = map[string]struct {
 				}),
 			}),
 			ListObject: customfield.NewListMust[basetypes.StringValue](context.TODO(), []attr.Value{types.StringValue("hi_list"), types.StringValue("there_list")}),
-			NestedObjectList: customfield.NewObjectListMust[EmbeddedTfsdkStruct](context.TODO(), []EmbeddedTfsdkStruct{{
+			NestedObjectList: customfield.NewObjectListMust(context.TODO(), []EmbeddedTfsdkStruct{{
 				EmbeddedString: types.StringValue("nested_object_string"),
 				EmbeddedInt:    types.Int64Value(20),
 				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
 			}}),
 			SetObject: customfield.NewSetMust[basetypes.StringValue](context.TODO(), []attr.Value{types.StringValue("hi_set"), types.StringValue("there_set")}),
-			NestedObjectSet: customfield.NewObjectSetMust[EmbeddedTfsdkStruct](context.TODO(), []EmbeddedTfsdkStruct{{
+			NestedObjectSet: customfield.NewObjectSetMust(context.TODO(), []EmbeddedTfsdkStruct{{
 				EmbeddedString: types.StringValue("nested_object_string_in_set"),
 				EmbeddedInt:    types.Int64Value(21),
 				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
@@ -841,7 +841,7 @@ var decode_from_value_tests = map[string]struct {
 		EmbeddedTfsdkStruct{
 			EmbeddedString: types.StringValue("some_string"),
 			EmbeddedInt:    types.Int64Null(),
-			DataObject: customfield.NewObjectMust[DoubleNestedStruct](context.TODO(), &DoubleNestedStruct{
+			DataObject: customfield.NewObjectMust(context.TODO(), &DoubleNestedStruct{
 				NestedInt: types.Int64Null(),
 			}),
 		},
@@ -869,6 +869,227 @@ func TestDecodeFromValue(t *testing.T) {
 			starting.Elem().Set(v)
 
 			if err := Unmarshal([]byte(test.buf), starting.Interface()); err != nil {
+				t.Fatalf("deserialization of %v failed with error %v", test.buf, err)
+			}
+			startingIFace := starting.Elem().Interface()
+			if !reflect.DeepEqual(startingIFace, test.expected) {
+				t.Fatalf("expected '%s' to deserialize to \n%s\nbut got\n%s", test.buf, spew.Sdump(test.expected), spew.Sdump(startingIFace))
+			}
+		})
+	}
+}
+
+type StructWithComputedFields struct {
+	RegStr            types.String                                             `tfsdk:"str" json:"str"`
+	CompStr           types.String                                             `tfsdk:"comp_str" json:"comp_str,computed"`
+	CompOptStr        types.String                                             `tfsdk:"opt_str" json:"opt_str,computed_optional"`
+	CompTime          timetypes.RFC3339                                        `tfsdk:"time" json:"time,computed"`
+	CompOptTime       timetypes.RFC3339                                        `tfsdk:"opt_time" json:"opt_time,computed_optional"`
+	Nested            NestedStructWithComputedFields                           `tfsdk:"nested" json:"nested"`
+	NestedCust        customfield.NestedObject[NestedStructWithComputedFields] `tfsdk:"nested_obj" json:"nested_obj"`
+	CompOptNestedCust customfield.NestedObject[NestedStructWithComputedFields] `tfsdk:"opt_nested_obj" json:"opt_nested_obj,computed_optional"`
+	NestedList        *[]*NestedStructWithComputedFields                       `tfsdk:"nested_list" json:"nested_list"`
+}
+
+type NestedStructWithComputedFields struct {
+	RegStr     types.String `tfsdk:"nested_str" json:"nested_str"`
+	CompStr    types.String `tfsdk:"nested_comp_str" json:"nested_comp_str,computed"`
+	CompOptInt types.Int64  `tfsdk:"nested_comp_opt_int" json:"nested_comp_opt_int,computed_optional"`
+}
+
+var exampleNestedJson = `{
+	"str":"str",
+	"comp_str":"comp_str",
+	"opt_str":"opt_str",
+	"time":"2006-01-02T15:04:05Z",
+	"opt_time":"2006-01-02T15:04:05Z",
+	"nested":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42},
+	"nested_obj":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42},
+	"opt_nested_obj":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42}
+	"nested_list":[{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_1","nested_comp_opt_int":43},{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_2","nested_comp_opt_int":44}]
+}`
+
+var decode_computed_only_tests = map[string]struct {
+	buf      string
+	starting interface{}
+	expected interface{}
+}{
+	"only_updates_computed_props": {
+		exampleNestedJson,
+		StructWithComputedFields{
+			RegStr:      types.StringNull(),
+			CompStr:     types.StringNull(),
+			CompOptStr:  types.StringNull(),
+			CompTime:    timetypes.NewRFC3339Null(),
+			CompOptTime: timetypes.NewRFC3339Null(),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringNull(),
+				CompOptInt: types.Int64Null(),
+			},
+			NestedCust:        customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
+			CompOptNestedCust: customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
+		},
+		StructWithComputedFields{
+			RegStr:      types.StringNull(),
+			CompStr:     types.StringValue("comp_str"),
+			CompOptStr:  types.StringValue("opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			},
+			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			}),
+			NestedList: &[]*NestedStructWithComputedFields{{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("list_nested_comp_str_1"),
+				CompOptInt: types.Int64Value(43),
+			}, {
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(44),
+			}},
+		},
+	},
+	"only_updates_computed_props_from_unknown": {
+		exampleNestedJson,
+		StructWithComputedFields{
+			RegStr:      types.StringUnknown(),
+			CompStr:     types.StringUnknown(),
+			CompOptStr:  types.StringUnknown(),
+			CompTime:    timetypes.NewRFC3339Unknown(),
+			CompOptTime: timetypes.NewRFC3339Unknown(),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringUnknown(),
+				CompStr:    types.StringUnknown(),
+				CompOptInt: types.Int64Unknown(),
+			},
+			NestedCust:        customfield.UnknownObject[NestedStructWithComputedFields](context.TODO()),
+			CompOptNestedCust: customfield.UnknownObject[NestedStructWithComputedFields](context.TODO()),
+		},
+		StructWithComputedFields{
+			RegStr:      types.StringUnknown(),
+			CompStr:     types.StringValue("comp_str"),
+			CompOptStr:  types.StringValue("opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringUnknown(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			},
+			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(42),
+			}),
+			NestedList: &[]*NestedStructWithComputedFields{{
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("list_nested_comp_str_1"),
+				CompOptInt: types.Int64Value(43),
+			}, {
+				RegStr:     types.StringNull(),
+				CompStr:    types.StringValue("list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(44),
+			}},
+		},
+	},
+
+	"doesnt_update_computed_optional_if_set": {
+		exampleNestedJson,
+		StructWithComputedFields{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringValue("existing_comp_str"),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("existing_nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("existing_nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("existing_nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFields{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringValue("existing_list_nested_comp_str_1"),
+				CompOptInt: types.Int64Value(11),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringValue("existing_list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(12),
+			}},
+		},
+		StructWithComputedFields{
+			RegStr:      types.StringValue("existing_str"),
+			CompStr:     types.StringValue("comp_str"),
+			CompOptStr:  types.StringValue("existing_opt_str"),
+			CompTime:    timetypes.NewRFC3339TimeValue(time.Date(2006, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			CompOptTime: timetypes.NewRFC3339TimeValue(time.Date(1970, time.January, 2, 15, 4, 5, 0, time.UTC)),
+			Nested: NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			},
+			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+				RegStr:     types.StringValue("existing_nested_str"),
+				CompStr:    types.StringValue("nested_comp_str"),
+				CompOptInt: types.Int64Value(10),
+			}),
+			NestedList: &[]*NestedStructWithComputedFields{{
+				RegStr:     types.StringValue("existing_list_nested_str_1"),
+				CompStr:    types.StringValue("list_nested_comp_str_1"),
+				CompOptInt: types.Int64Value(11),
+			}, {
+				RegStr:     types.StringValue("existing_list_nested_str_2"),
+				CompStr:    types.StringValue("list_nested_comp_str_2"),
+				CompOptInt: types.Int64Value(12),
+			}},
+		},
+	},
+}
+
+func TestDecodeComputedOnly(t *testing.T) {
+	spew.Config.ContinueOnMethod = false
+	for name, test := range decode_computed_only_tests {
+		t.Run(name, func(t *testing.T) {
+			v := reflect.ValueOf(test.starting)
+			starting := reflect.New(v.Type())
+			starting.Elem().Set(v)
+
+			x := starting.Elem().Interface().(StructWithComputedFields)
+			fmt.Print(x)
+
+			if err := UnmarshalComputed([]byte(test.buf), starting.Interface()); err != nil {
 				t.Fatalf("deserialization of %v failed with error %v", test.buf, err)
 			}
 			startingIFace := starting.Elem().Interface()

@@ -19,7 +19,7 @@ type R2BucketDataSourceModel struct {
 	CreationDate types.String `tfsdk:"creation_date" json:"creation_date"`
 	Location     types.String `tfsdk:"location" json:"location"`
 	Name         types.String `tfsdk:"name" json:"name"`
-	StorageClass types.String `tfsdk:"storage_class" json:"storage_class"`
+	StorageClass types.String `tfsdk:"storage_class" json:"storage_class,computed_optional"`
 }
 
 func (m *R2BucketDataSourceModel) toReadParams() (params r2.BucketGetParams, diags diag.Diagnostics) {

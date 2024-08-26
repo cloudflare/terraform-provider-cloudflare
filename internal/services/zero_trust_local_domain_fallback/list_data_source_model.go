@@ -30,6 +30,6 @@ func (m *ZeroTrustLocalDomainFallbacksDataSourceModel) toListParams() (params ze
 
 type ZeroTrustLocalDomainFallbacksResultDataSourceModel struct {
 	Suffix      types.String    `tfsdk:"suffix" json:"suffix,computed"`
-	Description types.String    `tfsdk:"description" json:"description"`
-	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server"`
+	Description types.String    `tfsdk:"description" json:"description,computed_optional"`
+	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server,computed_optional"`
 }

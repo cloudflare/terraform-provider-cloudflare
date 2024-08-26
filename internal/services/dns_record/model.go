@@ -19,9 +19,9 @@ type DNSRecordModel struct {
 	Content  types.String        `tfsdk:"content" json:"content"`
 	Priority types.Float64       `tfsdk:"priority" json:"priority"`
 	Data     *DNSRecordDataModel `tfsdk:"data" json:"data"`
-	Proxied  types.Bool          `tfsdk:"proxied" json:"proxied"`
-	TTL      types.Float64       `tfsdk:"ttl" json:"ttl"`
-	Tags     *[]types.String     `tfsdk:"tags" json:"tags"`
+	Proxied  types.Bool          `tfsdk:"proxied" json:"proxied,computed_optional"`
+	TTL      types.Float64       `tfsdk:"ttl" json:"ttl,computed_optional"`
+	Tags     *[]types.String     `tfsdk:"tags" json:"tags,computed_optional"`
 }
 
 type DNSRecordDataModel struct {
@@ -41,15 +41,15 @@ type DNSRecordDataModel struct {
 	Altitude      types.Float64 `tfsdk:"altitude" json:"altitude"`
 	LatDegrees    types.Float64 `tfsdk:"lat_degrees" json:"lat_degrees"`
 	LatDirection  types.String  `tfsdk:"lat_direction" json:"lat_direction"`
-	LatMinutes    types.Float64 `tfsdk:"lat_minutes" json:"lat_minutes"`
-	LatSeconds    types.Float64 `tfsdk:"lat_seconds" json:"lat_seconds"`
+	LatMinutes    types.Float64 `tfsdk:"lat_minutes" json:"lat_minutes,computed_optional"`
+	LatSeconds    types.Float64 `tfsdk:"lat_seconds" json:"lat_seconds,computed_optional"`
 	LongDegrees   types.Float64 `tfsdk:"long_degrees" json:"long_degrees"`
 	LongDirection types.String  `tfsdk:"long_direction" json:"long_direction"`
-	LongMinutes   types.Float64 `tfsdk:"long_minutes" json:"long_minutes"`
-	LongSeconds   types.Float64 `tfsdk:"long_seconds" json:"long_seconds"`
-	PrecisionHorz types.Float64 `tfsdk:"precision_horz" json:"precision_horz"`
-	PrecisionVert types.Float64 `tfsdk:"precision_vert" json:"precision_vert"`
-	Size          types.Float64 `tfsdk:"size" json:"size"`
+	LongMinutes   types.Float64 `tfsdk:"long_minutes" json:"long_minutes,computed_optional"`
+	LongSeconds   types.Float64 `tfsdk:"long_seconds" json:"long_seconds,computed_optional"`
+	PrecisionHorz types.Float64 `tfsdk:"precision_horz" json:"precision_horz,computed_optional"`
+	PrecisionVert types.Float64 `tfsdk:"precision_vert" json:"precision_vert,computed_optional"`
+	Size          types.Float64 `tfsdk:"size" json:"size,computed_optional"`
 	Order         types.Float64 `tfsdk:"order" json:"order"`
 	Preference    types.Float64 `tfsdk:"preference" json:"preference"`
 	Regex         types.String  `tfsdk:"regex" json:"regex"`

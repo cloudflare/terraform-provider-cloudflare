@@ -25,9 +25,9 @@ type ZeroTrustDEXTestDataSourceModel struct {
 	Interval       types.String                                                  `tfsdk:"interval" json:"interval,computed"`
 	Name           types.String                                                  `tfsdk:"name" json:"name,computed"`
 	Data           customfield.NestedObject[ZeroTrustDEXTestDataDataSourceModel] `tfsdk:"data" json:"data,computed"`
-	Description    types.String                                                  `tfsdk:"description" json:"description"`
-	Targeted       types.Bool                                                    `tfsdk:"targeted" json:"targeted"`
-	TargetPolicies *[]*ZeroTrustDEXTestTargetPoliciesDataSourceModel             `tfsdk:"target_policies" json:"target_policies"`
+	Description    types.String                                                  `tfsdk:"description" json:"description,computed_optional"`
+	Targeted       types.Bool                                                    `tfsdk:"targeted" json:"targeted,computed_optional"`
+	TargetPolicies *[]*ZeroTrustDEXTestTargetPoliciesDataSourceModel             `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 	Filter         *ZeroTrustDEXTestFindOneByDataSourceModel                     `tfsdk:"filter"`
 }
 
@@ -48,15 +48,15 @@ func (m *ZeroTrustDEXTestDataSourceModel) toListParams() (params zero_trust.Devi
 }
 
 type ZeroTrustDEXTestDataDataSourceModel struct {
-	Host   types.String `tfsdk:"host" json:"host"`
-	Kind   types.String `tfsdk:"kind" json:"kind"`
-	Method types.String `tfsdk:"method" json:"method"`
+	Host   types.String `tfsdk:"host" json:"host,computed_optional"`
+	Kind   types.String `tfsdk:"kind" json:"kind,computed_optional"`
+	Method types.String `tfsdk:"method" json:"method,computed_optional"`
 }
 
 type ZeroTrustDEXTestTargetPoliciesDataSourceModel struct {
-	ID      types.String `tfsdk:"id" json:"id"`
-	Default types.Bool   `tfsdk:"default" json:"default"`
-	Name    types.String `tfsdk:"name" json:"name"`
+	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
+	Default types.Bool   `tfsdk:"default" json:"default,computed_optional"`
+	Name    types.String `tfsdk:"name" json:"name,computed_optional"`
 }
 
 type ZeroTrustDEXTestFindOneByDataSourceModel struct {

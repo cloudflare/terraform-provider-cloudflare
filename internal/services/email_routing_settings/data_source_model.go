@@ -19,6 +19,6 @@ type EmailRoutingSettingsDataSourceModel struct {
 	Name           types.String      `tfsdk:"name" json:"name"`
 	Status         types.String      `tfsdk:"status" json:"status"`
 	Tag            types.String      `tfsdk:"tag" json:"tag"`
-	Enabled        types.Bool        `tfsdk:"enabled" json:"enabled"`
-	SkipWizard     types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard"`
+	Enabled        types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
+	SkipWizard     types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard,computed_optional"`
 }

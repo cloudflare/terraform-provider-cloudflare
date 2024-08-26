@@ -17,8 +17,8 @@ type EmailRoutingAddressesResultListDataSourceEnvelope struct {
 
 type EmailRoutingAddressesDataSourceModel struct {
 	AccountIdentifier types.String                                                             `tfsdk:"account_identifier" path:"account_identifier"`
-	Direction         types.String                                                             `tfsdk:"direction" query:"direction"`
-	Verified          types.Bool                                                               `tfsdk:"verified" query:"verified"`
+	Direction         types.String                                                             `tfsdk:"direction" query:"direction,computed_optional"`
+	Verified          types.Bool                                                               `tfsdk:"verified" query:"verified,computed_optional"`
 	MaxItems          types.Int64                                                              `tfsdk:"max_items"`
 	Result            customfield.NestedObjectList[EmailRoutingAddressesResultDataSourceModel] `tfsdk:"result"`
 }
@@ -39,7 +39,7 @@ func (m *EmailRoutingAddressesDataSourceModel) toListParams() (params email_rout
 type EmailRoutingAddressesResultDataSourceModel struct {
 	ID       types.String      `tfsdk:"id" json:"id,computed"`
 	Created  timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
-	Email    types.String      `tfsdk:"email" json:"email"`
+	Email    types.String      `tfsdk:"email" json:"email,computed_optional"`
 	Modified timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed"`
 	Tag      types.String      `tfsdk:"tag" json:"tag,computed"`
 	Verified timetypes.RFC3339 `tfsdk:"verified" json:"verified,computed"`

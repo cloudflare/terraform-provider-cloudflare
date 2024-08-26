@@ -21,7 +21,7 @@ type TurnstileWidgetResultListDataSourceEnvelope struct {
 
 type TurnstileWidgetDataSourceModel struct {
 	AccountID      types.String                             `tfsdk:"account_id" path:"account_id"`
-	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey"`
+	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`
 	Secret         types.String                             `tfsdk:"secret" json:"secret"`
 	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`

@@ -21,5 +21,5 @@ type BotManagementModel struct {
 	SBFMLikelyAutomated          types.String `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated"`
 	SBFMStaticResourceProtection types.Bool   `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection"`
 	SBFMVerifiedBots             types.String `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots"`
-	SuppressSessionScore         types.Bool   `tfsdk:"suppress_session_score" json:"suppress_session_score"`
+	SuppressSessionScore         types.Bool   `tfsdk:"suppress_session_score" json:"suppress_session_score,computed_optional"`
 }

@@ -25,10 +25,10 @@ type ZeroTrustAccessPolicyModel struct {
 	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel `tfsdk:"approval_groups" json:"approval_groups"`
 	Exclude                      *[]*ZeroTrustAccessPolicyExcludeModel        `tfsdk:"exclude" json:"exclude"`
 	Require                      *[]*ZeroTrustAccessPolicyRequireModel        `tfsdk:"require" json:"require"`
-	ApprovalRequired             types.Bool                                   `tfsdk:"approval_required" json:"approval_required"`
-	IsolationRequired            types.Bool                                   `tfsdk:"isolation_required" json:"isolation_required"`
-	PurposeJustificationRequired types.Bool                                   `tfsdk:"purpose_justification_required" json:"purpose_justification_required"`
-	SessionDuration              types.String                                 `tfsdk:"session_duration" json:"session_duration"`
+	ApprovalRequired             types.Bool                                   `tfsdk:"approval_required" json:"approval_required,computed_optional"`
+	IsolationRequired            types.Bool                                   `tfsdk:"isolation_required" json:"isolation_required,computed_optional"`
+	PurposeJustificationRequired types.Bool                                   `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed_optional"`
+	SessionDuration              types.String                                 `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	CreatedAt                    timetypes.RFC3339                            `tfsdk:"created_at" json:"created_at,computed"`
 	UpdatedAt                    timetypes.RFC3339                            `tfsdk:"updated_at" json:"updated_at,computed"`
 }

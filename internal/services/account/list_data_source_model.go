@@ -39,11 +39,11 @@ type AccountsResultDataSourceModel struct {
 	ID        types.String                     `tfsdk:"id" json:"id,computed"`
 	Name      types.String                     `tfsdk:"name" json:"name,computed"`
 	CreatedOn timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed"`
-	Settings  *AccountsSettingsDataSourceModel `tfsdk:"settings" json:"settings"`
+	Settings  *AccountsSettingsDataSourceModel `tfsdk:"settings" json:"settings,computed_optional"`
 }
 
 type AccountsSettingsDataSourceModel struct {
-	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email"`
+	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email,computed_optional"`
 	DefaultNameservers          types.String `tfsdk:"default_nameservers" json:"default_nameservers,computed"`
 	EnforceTwofactor            types.Bool   `tfsdk:"enforce_twofactor" json:"enforce_twofactor,computed"`
 	UseAccountCustomNSByDefault types.Bool   `tfsdk:"use_account_custom_ns_by_default" json:"use_account_custom_ns_by_default,computed"`

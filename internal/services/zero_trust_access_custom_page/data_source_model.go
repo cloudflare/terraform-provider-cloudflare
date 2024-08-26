@@ -27,8 +27,8 @@ type ZeroTrustAccessCustomPageDataSourceModel struct {
 	Name         types.String                                       `tfsdk:"name" json:"name,computed"`
 	Type         types.String                                       `tfsdk:"type" json:"type,computed"`
 	UpdatedAt    timetypes.RFC3339                                  `tfsdk:"updated_at" json:"updated_at,computed"`
-	AppCount     types.Int64                                        `tfsdk:"app_count" json:"app_count"`
-	UID          types.String                                       `tfsdk:"uid" json:"uid"`
+	AppCount     types.Int64                                        `tfsdk:"app_count" json:"app_count,computed_optional"`
+	UID          types.String                                       `tfsdk:"uid" json:"uid,computed_optional"`
 	Filter       *ZeroTrustAccessCustomPageFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

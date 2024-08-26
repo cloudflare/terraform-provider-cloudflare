@@ -36,16 +36,16 @@ type WaitingRoomDataSourceModel struct {
 	SessionDuration            types.Int64                                    `tfsdk:"session_duration" json:"session_duration,computed"`
 	Suspended                  types.Bool                                     `tfsdk:"suspended" json:"suspended,computed"`
 	EnabledOriginCommands      types.List                                     `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
-	CookieSuffix               types.String                                   `tfsdk:"cookie_suffix" json:"cookie_suffix"`
-	Host                       types.String                                   `tfsdk:"host" json:"host"`
-	ID                         types.String                                   `tfsdk:"id" json:"id"`
-	Name                       types.String                                   `tfsdk:"name" json:"name"`
-	NewUsersPerMinute          types.Int64                                    `tfsdk:"new_users_per_minute" json:"new_users_per_minute"`
-	NextEventPrequeueStartTime types.String                                   `tfsdk:"next_event_prequeue_start_time" json:"next_event_prequeue_start_time"`
-	NextEventStartTime         types.String                                   `tfsdk:"next_event_start_time" json:"next_event_start_time"`
-	TotalActiveUsers           types.Int64                                    `tfsdk:"total_active_users" json:"total_active_users"`
-	AdditionalRoutes           *[]*WaitingRoomAdditionalRoutesDataSourceModel `tfsdk:"additional_routes" json:"additional_routes"`
-	CookieAttributes           *WaitingRoomCookieAttributesDataSourceModel    `tfsdk:"cookie_attributes" json:"cookie_attributes"`
+	CookieSuffix               types.String                                   `tfsdk:"cookie_suffix" json:"cookie_suffix,computed_optional"`
+	Host                       types.String                                   `tfsdk:"host" json:"host,computed_optional"`
+	ID                         types.String                                   `tfsdk:"id" json:"id,computed_optional"`
+	Name                       types.String                                   `tfsdk:"name" json:"name,computed_optional"`
+	NewUsersPerMinute          types.Int64                                    `tfsdk:"new_users_per_minute" json:"new_users_per_minute,computed_optional"`
+	NextEventPrequeueStartTime types.String                                   `tfsdk:"next_event_prequeue_start_time" json:"next_event_prequeue_start_time,computed_optional"`
+	NextEventStartTime         types.String                                   `tfsdk:"next_event_start_time" json:"next_event_start_time,computed_optional"`
+	TotalActiveUsers           types.Int64                                    `tfsdk:"total_active_users" json:"total_active_users,computed_optional"`
+	AdditionalRoutes           *[]*WaitingRoomAdditionalRoutesDataSourceModel `tfsdk:"additional_routes" json:"additional_routes,computed_optional"`
+	CookieAttributes           *WaitingRoomCookieAttributesDataSourceModel    `tfsdk:"cookie_attributes" json:"cookie_attributes,computed_optional"`
 	Filter                     *WaitingRoomFindOneByDataSourceModel           `tfsdk:"filter"`
 }
 
@@ -66,7 +66,7 @@ func (m *WaitingRoomDataSourceModel) toListParams() (params waiting_rooms.Waitin
 }
 
 type WaitingRoomAdditionalRoutesDataSourceModel struct {
-	Host types.String `tfsdk:"host" json:"host"`
+	Host types.String `tfsdk:"host" json:"host,computed_optional"`
 	Path types.String `tfsdk:"path" json:"path,computed"`
 }
 

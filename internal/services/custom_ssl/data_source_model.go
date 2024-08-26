@@ -21,7 +21,7 @@ type CustomSSLResultListDataSourceEnvelope struct {
 
 type CustomSSLDataSourceModel struct {
 	CustomCertificateID types.String                             `tfsdk:"custom_certificate_id" path:"custom_certificate_id"`
-	ZoneID              types.String                             `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID              types.String                             `tfsdk:"zone_id" path:"zone_id,computed_optional"`
 	BundleMethod        types.String                             `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn           timetypes.RFC3339                        `tfsdk:"expires_on" json:"expires_on,computed"`
 	ID                  types.String                             `tfsdk:"id" json:"id,computed"`
@@ -32,9 +32,9 @@ type CustomSSLDataSourceModel struct {
 	Status              types.String                             `tfsdk:"status" json:"status,computed"`
 	UploadedOn          timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
 	Hosts               types.List                               `tfsdk:"hosts" json:"hosts,computed"`
-	Policy              types.String                             `tfsdk:"policy" json:"policy"`
-	GeoRestrictions     *CustomSSLGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions"`
-	KeylessServer       *CustomSSLKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server"`
+	Policy              types.String                             `tfsdk:"policy" json:"policy,computed_optional"`
+	GeoRestrictions     *CustomSSLGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions,computed_optional"`
+	KeylessServer       *CustomSSLKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server,computed_optional"`
 	Filter              *CustomSSLFindOneByDataSourceModel       `tfsdk:"filter"`
 }
 
@@ -62,7 +62,7 @@ func (m *CustomSSLDataSourceModel) toListParams() (params custom_certificates.Cu
 }
 
 type CustomSSLGeoRestrictionsDataSourceModel struct {
-	Label types.String `tfsdk:"label" json:"label"`
+	Label types.String `tfsdk:"label" json:"label,computed_optional"`
 }
 
 type CustomSSLKeylessServerDataSourceModel struct {
@@ -75,7 +75,7 @@ type CustomSSLKeylessServerDataSourceModel struct {
 	Permissions types.List                                   `tfsdk:"permissions" json:"permissions,computed"`
 	Port        types.Float64                                `tfsdk:"port" json:"port,computed"`
 	Status      types.String                                 `tfsdk:"status" json:"status,computed"`
-	Tunnel      *CustomSSLKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel"`
+	Tunnel      *CustomSSLKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel,computed_optional"`
 }
 
 type CustomSSLKeylessServerTunnelDataSourceModel struct {
@@ -85,6 +85,6 @@ type CustomSSLKeylessServerTunnelDataSourceModel struct {
 
 type CustomSSLFindOneByDataSourceModel struct {
 	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
-	Match  types.String `tfsdk:"match" query:"match"`
+	Match  types.String `tfsdk:"match" query:"match,computed_optional"`
 	Status types.String `tfsdk:"status" query:"status"`
 }

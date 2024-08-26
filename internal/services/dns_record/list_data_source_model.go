@@ -23,11 +23,11 @@ type DNSRecordsDataSourceModel struct {
 	Type      types.String                                                  `tfsdk:"type" query:"type"`
 	Comment   *DNSRecordsCommentDataSourceModel                             `tfsdk:"comment" query:"comment"`
 	Tag       *DNSRecordsTagDataSourceModel                                 `tfsdk:"tag" query:"tag"`
-	Direction types.String                                                  `tfsdk:"direction" query:"direction"`
-	Match     types.String                                                  `tfsdk:"match" query:"match"`
-	Order     types.String                                                  `tfsdk:"order" query:"order"`
-	Proxied   types.Bool                                                    `tfsdk:"proxied" query:"proxied"`
-	TagMatch  types.String                                                  `tfsdk:"tag_match" query:"tag_match"`
+	Direction types.String                                                  `tfsdk:"direction" query:"direction,computed_optional"`
+	Match     types.String                                                  `tfsdk:"match" query:"match,computed_optional"`
+	Order     types.String                                                  `tfsdk:"order" query:"order,computed_optional"`
+	Proxied   types.Bool                                                    `tfsdk:"proxied" query:"proxied,computed_optional"`
+	TagMatch  types.String                                                  `tfsdk:"tag_match" query:"tag_match,computed_optional"`
 	MaxItems  types.Int64                                                   `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[DNSRecordsResultDataSourceModel] `tfsdk:"result"`
 }

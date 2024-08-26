@@ -20,7 +20,7 @@ type UserAgentBlockingRuleResultListDataSourceEnvelope struct {
 
 type UserAgentBlockingRuleDataSourceModel struct {
 	ZoneIdentifier types.String                                       `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                                       `tfsdk:"id" path:"id"`
+	ID             types.String                                       `tfsdk:"id" path:"id,computed_optional"`
 	Description    types.String                                       `tfsdk:"description" json:"description"`
 	Mode           types.String                                       `tfsdk:"mode" json:"mode"`
 	Paused         types.Bool                                         `tfsdk:"paused" json:"paused"`
@@ -45,8 +45,8 @@ func (m *UserAgentBlockingRuleDataSourceModel) toListParams() (params firewall.U
 }
 
 type UserAgentBlockingRuleConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	Target types.String `tfsdk:"target" json:"target,computed_optional"`
+	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type UserAgentBlockingRuleFindOneByDataSourceModel struct {

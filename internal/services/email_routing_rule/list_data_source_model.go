@@ -33,10 +33,10 @@ func (m *EmailRoutingRulesDataSourceModel) toListParams() (params email_routing.
 
 type EmailRoutingRulesResultDataSourceModel struct {
 	ID       types.String                                 `tfsdk:"id" json:"id,computed"`
-	Actions  *[]*EmailRoutingRulesActionsDataSourceModel  `tfsdk:"actions" json:"actions"`
+	Actions  *[]*EmailRoutingRulesActionsDataSourceModel  `tfsdk:"actions" json:"actions,computed_optional"`
 	Enabled  types.Bool                                   `tfsdk:"enabled" json:"enabled,computed"`
-	Matchers *[]*EmailRoutingRulesMatchersDataSourceModel `tfsdk:"matchers" json:"matchers"`
-	Name     types.String                                 `tfsdk:"name" json:"name"`
+	Matchers *[]*EmailRoutingRulesMatchersDataSourceModel `tfsdk:"matchers" json:"matchers,computed_optional"`
+	Name     types.String                                 `tfsdk:"name" json:"name,computed_optional"`
 	Priority types.Float64                                `tfsdk:"priority" json:"priority,computed"`
 	Tag      types.String                                 `tfsdk:"tag" json:"tag,computed"`
 }

@@ -29,13 +29,13 @@ func (m *ZeroTrustDeviceManagedNetworksListDataSourceModel) toListParams() (para
 }
 
 type ZeroTrustDeviceManagedNetworksListResultDataSourceModel struct {
-	Config    *ZeroTrustDeviceManagedNetworksListConfigDataSourceModel `tfsdk:"config" json:"config"`
-	Name      types.String                                             `tfsdk:"name" json:"name"`
-	NetworkID types.String                                             `tfsdk:"network_id" json:"network_id"`
-	Type      types.String                                             `tfsdk:"type" json:"type"`
+	Config    *ZeroTrustDeviceManagedNetworksListConfigDataSourceModel `tfsdk:"config" json:"config,computed_optional"`
+	Name      types.String                                             `tfsdk:"name" json:"name,computed_optional"`
+	NetworkID types.String                                             `tfsdk:"network_id" json:"network_id,computed_optional"`
+	Type      types.String                                             `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type ZeroTrustDeviceManagedNetworksListConfigDataSourceModel struct {
 	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr,computed"`
-	Sha256      types.String `tfsdk:"sha256" json:"sha256"`
+	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed_optional"`
 }

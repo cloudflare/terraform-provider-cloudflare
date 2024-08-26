@@ -25,10 +25,10 @@ type FirewallRuleDataSourceModel struct {
 	Action         types.String    `tfsdk:"action" json:"action,computed"`
 	ID             types.String    `tfsdk:"id" json:"id,computed"`
 	Paused         types.Bool      `tfsdk:"paused" json:"paused,computed"`
-	Description    types.String    `tfsdk:"description" json:"description"`
-	Priority       types.Float64   `tfsdk:"priority" json:"priority"`
-	Ref            types.String    `tfsdk:"ref" json:"ref"`
-	Products       *[]types.String `tfsdk:"products" json:"products"`
+	Description    types.String    `tfsdk:"description" json:"description,computed_optional"`
+	Priority       types.Float64   `tfsdk:"priority" json:"priority,computed_optional"`
+	Ref            types.String    `tfsdk:"ref" json:"ref,computed_optional"`
+	Products       *[]types.String `tfsdk:"products" json:"products,computed_optional"`
 }
 
 func (m *FirewallRuleDataSourceModel) toReadParams() (params firewall.RuleGetParams, diags diag.Diagnostics) {

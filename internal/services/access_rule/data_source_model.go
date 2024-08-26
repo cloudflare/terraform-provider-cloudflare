@@ -80,7 +80,7 @@ type AccessRuleFindOneByDataSourceModel struct {
 	ZoneID        types.String                            `tfsdk:"zone_id" path:"zone_id"`
 	Configuration *AccessRuleConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration"`
 	Direction     types.String                            `tfsdk:"direction" query:"direction"`
-	Match         types.String                            `tfsdk:"match" query:"match"`
+	Match         types.String                            `tfsdk:"match" query:"match,computed_optional"`
 	Mode          types.String                            `tfsdk:"mode" query:"mode"`
 	Notes         types.String                            `tfsdk:"notes" query:"notes"`
 	Order         types.String                            `tfsdk:"order" query:"order"`
