@@ -16,8 +16,8 @@ type ZeroTrustGatewaySettingsResultDataSourceEnvelope struct {
 
 type ZeroTrustGatewaySettingsDataSourceModel struct {
 	AccountID types.String                                     `tfsdk:"account_id" path:"account_id"`
-	CreatedAt timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at"`
-	UpdatedAt timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at"`
+	CreatedAt timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at" format:"date-time"`
+	UpdatedAt timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at" format:"date-time"`
 	Settings  *ZeroTrustGatewaySettingsSettingsDataSourceModel `tfsdk:"settings" json:"settings"`
 }
 
@@ -89,7 +89,7 @@ type ZeroTrustGatewaySettingsSettingsCustomCertificateDataSourceModel struct {
 	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
 	ID            types.String      `tfsdk:"id" json:"id,computed_optional"`
 	BindingStatus types.String      `tfsdk:"binding_status" json:"binding_status,computed"`
-	UpdatedAt     timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt     timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel struct {

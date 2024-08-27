@@ -22,10 +22,10 @@ type NotificationPolicyWebhooksResultListDataSourceEnvelope struct {
 type NotificationPolicyWebhooksDataSourceModel struct {
 	AccountID   types.String                                        `tfsdk:"account_id" path:"account_id"`
 	WebhookID   types.String                                        `tfsdk:"webhook_id" path:"webhook_id"`
-	CreatedAt   timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt   timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ID          types.String                                        `tfsdk:"id" json:"id,computed"`
-	LastFailure timetypes.RFC3339                                   `tfsdk:"last_failure" json:"last_failure,computed"`
-	LastSuccess timetypes.RFC3339                                   `tfsdk:"last_success" json:"last_success,computed"`
+	LastFailure timetypes.RFC3339                                   `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`
+	LastSuccess timetypes.RFC3339                                   `tfsdk:"last_success" json:"last_success,computed" format:"date-time"`
 	Name        types.String                                        `tfsdk:"name" json:"name,computed_optional"`
 	Secret      types.String                                        `tfsdk:"secret" json:"secret,computed_optional"`
 	Type        types.String                                        `tfsdk:"type" json:"type,computed_optional"`

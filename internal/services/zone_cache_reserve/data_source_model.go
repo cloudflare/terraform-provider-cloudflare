@@ -16,7 +16,7 @@ type ZoneCacheReserveResultDataSourceEnvelope struct {
 
 type ZoneCacheReserveDataSourceModel struct {
 	ZoneID        types.String      `tfsdk:"zone_id" path:"zone_id"`
-	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on"`
+	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
 	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id"`
 	Value         types.String      `tfsdk:"value" json:"value,computed_optional"`
 }

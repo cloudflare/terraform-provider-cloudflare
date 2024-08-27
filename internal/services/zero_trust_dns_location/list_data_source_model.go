@@ -32,7 +32,7 @@ func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams() (params zero_trust
 type ZeroTrustDNSLocationsResultDataSourceModel struct {
 	ID                    types.String                                     `tfsdk:"id" json:"id,computed_optional"`
 	ClientDefault         types.Bool                                       `tfsdk:"client_default" json:"client_default,computed_optional"`
-	CreatedAt             timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt             timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DNSDestinationIPsID   types.String                                     `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed_optional"`
 	DOHSubdomain          types.String                                     `tfsdk:"doh_subdomain" json:"doh_subdomain,computed_optional"`
 	ECSSupport            types.Bool                                       `tfsdk:"ecs_support" json:"ecs_support,computed_optional"`
@@ -42,7 +42,7 @@ type ZeroTrustDNSLocationsResultDataSourceModel struct {
 	IPV4DestinationBackup types.String                                     `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed_optional"`
 	Name                  types.String                                     `tfsdk:"name" json:"name,computed_optional"`
 	Networks              *[]*ZeroTrustDNSLocationsNetworksDataSourceModel `tfsdk:"networks" json:"networks,computed_optional"`
-	UpdatedAt             timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt             timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustDNSLocationsEndpointsDataSourceModel struct {

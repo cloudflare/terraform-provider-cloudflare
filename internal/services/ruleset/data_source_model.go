@@ -27,7 +27,7 @@ type RulesetDataSourceModel struct {
 	Description types.String                     `tfsdk:"description" json:"description,computed"`
 	ID          types.String                     `tfsdk:"id" json:"id,computed"`
 	Kind        types.String                     `tfsdk:"kind" json:"kind,computed"`
-	LastUpdated timetypes.RFC3339                `tfsdk:"last_updated" json:"last_updated,computed"`
+	LastUpdated timetypes.RFC3339                `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Name        types.String                     `tfsdk:"name" json:"name,computed"`
 	Phase       types.String                     `tfsdk:"phase" json:"phase,computed"`
 	Version     types.String                     `tfsdk:"version" json:"version,computed"`
@@ -59,7 +59,7 @@ func (m *RulesetDataSourceModel) toListParams() (params rulesets.RulesetListPara
 }
 
 type RulesetRulesDataSourceModel struct {
-	LastUpdated      timetypes.RFC3339                            `tfsdk:"last_updated" json:"last_updated,computed"`
+	LastUpdated      timetypes.RFC3339                            `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Version          types.String                                 `tfsdk:"version" json:"version,computed"`
 	ID               types.String                                 `tfsdk:"id" json:"id,computed_optional"`
 	Action           types.String                                 `tfsdk:"action" json:"action,computed_optional"`

@@ -32,8 +32,8 @@ type LoadBalancerModel struct {
 	Proxied                   types.Bool                                  `tfsdk:"proxied" json:"proxied,computed_optional"`
 	SessionAffinity           types.String                                `tfsdk:"session_affinity" json:"session_affinity,computed_optional"`
 	SteeringPolicy            types.String                                `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
-	CreatedOn                 timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn                timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn                 timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn                timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 type LoadBalancerAdaptiveRoutingModel struct {

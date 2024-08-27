@@ -17,7 +17,7 @@ type RegionalHostnameModel struct {
 	Hostname  types.String                                                `tfsdk:"hostname" json:"hostname"`
 	ZoneID    types.String                                                `tfsdk:"zone_id" path:"zone_id"`
 	RegionKey types.String                                                `tfsdk:"region_key" json:"region_key"`
-	CreatedOn timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Success   types.Bool                                                  `tfsdk:"success" json:"success,computed"`
 	Errors    customfield.NestedObjectList[RegionalHostnameErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages  customfield.NestedObjectList[RegionalHostnameMessagesModel] `tfsdk:"messages" json:"messages,computed"`

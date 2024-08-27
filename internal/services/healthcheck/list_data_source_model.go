@@ -35,12 +35,12 @@ type HealthchecksResultDataSourceModel struct {
 	CheckRegions         *[]types.String                        `tfsdk:"check_regions" json:"check_regions,computed_optional"`
 	ConsecutiveFails     types.Int64                            `tfsdk:"consecutive_fails" json:"consecutive_fails,computed"`
 	ConsecutiveSuccesses types.Int64                            `tfsdk:"consecutive_successes" json:"consecutive_successes,computed"`
-	CreatedOn            timetypes.RFC3339                      `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn            timetypes.RFC3339                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description          types.String                           `tfsdk:"description" json:"description,computed_optional"`
 	FailureReason        types.String                           `tfsdk:"failure_reason" json:"failure_reason,computed"`
 	HTTPConfig           *HealthchecksHTTPConfigDataSourceModel `tfsdk:"http_config" json:"http_config,computed_optional"`
 	Interval             types.Int64                            `tfsdk:"interval" json:"interval,computed"`
-	ModifiedOn           timetypes.RFC3339                      `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn           timetypes.RFC3339                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                 types.String                           `tfsdk:"name" json:"name,computed_optional"`
 	Retries              types.Int64                            `tfsdk:"retries" json:"retries,computed"`
 	Status               types.String                           `tfsdk:"status" json:"status,computed"`

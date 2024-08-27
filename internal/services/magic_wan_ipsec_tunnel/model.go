@@ -45,17 +45,17 @@ type MagicWANIPSECTunnelDeletedIPSECTunnelModel struct {
 	Name               types.String                                                 `tfsdk:"name" json:"name"`
 	ID                 types.String                                                 `tfsdk:"id" json:"id,computed"`
 	AllowNullCipher    types.Bool                                                   `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                            `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn          timetypes.RFC3339                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomerEndpoint   types.String                                                 `tfsdk:"customer_endpoint" json:"customer_endpoint"`
 	Description        types.String                                                 `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                            `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        *MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
 	ReplayProtection   types.Bool                                                   `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
 type MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel struct {
-	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed"`
+	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed" format:"date-time"`
 }
 
 type MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel struct {
@@ -71,17 +71,17 @@ type MagicWANIPSECTunnelIPSECTunnelModel struct {
 	Name               types.String                                          `tfsdk:"name" json:"name"`
 	ID                 types.String                                          `tfsdk:"id" json:"id,computed"`
 	AllowNullCipher    types.Bool                                            `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn          timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomerEndpoint   types.String                                          `tfsdk:"customer_endpoint" json:"customer_endpoint"`
 	Description        types.String                                          `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        *MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
 	ReplayProtection   types.Bool                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel struct {
-	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed"`
+	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed" format:"date-time"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel struct {
@@ -97,17 +97,17 @@ type MagicWANIPSECTunnelIPSECTunnelsModel struct {
 	Name               types.String                                           `tfsdk:"name" json:"name"`
 	ID                 types.String                                           `tfsdk:"id" json:"id,computed"`
 	AllowNullCipher    types.Bool                                             `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn          timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomerEndpoint   types.String                                           `tfsdk:"customer_endpoint" json:"customer_endpoint"`
 	Description        types.String                                           `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        *MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
 	ReplayProtection   types.Bool                                             `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel struct {
-	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed"`
+	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed" format:"date-time"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel struct {
@@ -123,17 +123,17 @@ type MagicWANIPSECTunnelModifiedIPSECTunnelModel struct {
 	Name               types.String                                                  `tfsdk:"name" json:"name"`
 	ID                 types.String                                                  `tfsdk:"id" json:"id,computed"`
 	AllowNullCipher    types.Bool                                                    `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn          timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomerEndpoint   types.String                                                  `tfsdk:"customer_endpoint" json:"customer_endpoint"`
 	Description        types.String                                                  `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        *MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
 	ReplayProtection   types.Bool                                                    `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel struct {
-	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed"`
+	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed" format:"date-time"`
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel struct {

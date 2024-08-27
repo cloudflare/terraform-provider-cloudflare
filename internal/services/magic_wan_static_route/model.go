@@ -39,9 +39,9 @@ type MagicWANStaticRouteDeletedRouteModel struct {
 	Prefix      types.String                               `tfsdk:"prefix" json:"prefix"`
 	Priority    types.Int64                                `tfsdk:"priority" json:"priority"`
 	ID          types.String                               `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                          `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn   timetypes.RFC3339                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description types.String                               `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                          `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn  timetypes.RFC3339                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Scope       *MagicWANStaticRouteDeletedRouteScopeModel `tfsdk:"scope" json:"scope"`
 	Weight      types.Int64                                `tfsdk:"weight" json:"weight"`
 }
@@ -56,9 +56,9 @@ type MagicWANStaticRouteModifiedRouteModel struct {
 	Prefix      types.String                                `tfsdk:"prefix" json:"prefix"`
 	Priority    types.Int64                                 `tfsdk:"priority" json:"priority"`
 	ID          types.String                                `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn   timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description types.String                                `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn  timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Scope       *MagicWANStaticRouteModifiedRouteScopeModel `tfsdk:"scope" json:"scope"`
 	Weight      types.Int64                                 `tfsdk:"weight" json:"weight"`
 }
@@ -73,9 +73,9 @@ type MagicWANStaticRouteRouteModel struct {
 	Prefix      types.String                        `tfsdk:"prefix" json:"prefix"`
 	Priority    types.Int64                         `tfsdk:"priority" json:"priority"`
 	ID          types.String                        `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                   `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn   timetypes.RFC3339                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description types.String                        `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn  timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Scope       *MagicWANStaticRouteRouteScopeModel `tfsdk:"scope" json:"scope"`
 	Weight      types.Int64                         `tfsdk:"weight" json:"weight"`
 }
@@ -90,9 +90,9 @@ type MagicWANStaticRouteRoutesModel struct {
 	Prefix      types.String                         `tfsdk:"prefix" json:"prefix"`
 	Priority    types.Int64                          `tfsdk:"priority" json:"priority"`
 	ID          types.String                         `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                    `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn   timetypes.RFC3339                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description types.String                         `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn  timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Scope       *MagicWANStaticRouteRoutesScopeModel `tfsdk:"scope" json:"scope"`
 	Weight      types.Int64                          `tfsdk:"weight" json:"weight"`
 }

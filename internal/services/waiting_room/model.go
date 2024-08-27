@@ -33,8 +33,8 @@ type WaitingRoomModel struct {
 	SessionDuration            types.Int64                          `tfsdk:"session_duration" json:"session_duration,computed_optional"`
 	Suspended                  types.Bool                           `tfsdk:"suspended" json:"suspended,computed_optional"`
 	EnabledOriginCommands      *[]types.String                      `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed_optional"`
-	CreatedOn                  timetypes.RFC3339                    `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn                 timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn                  timetypes.RFC3339                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn                 timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	NextEventPrequeueStartTime types.String                         `tfsdk:"next_event_prequeue_start_time" json:"next_event_prequeue_start_time,computed"`
 	NextEventStartTime         types.String                         `tfsdk:"next_event_start_time" json:"next_event_start_time,computed"`
 }

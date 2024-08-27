@@ -16,9 +16,9 @@ type ZoneLockdownModel struct {
 	ZoneIdentifier types.String                     `tfsdk:"zone_identifier" path:"zone_identifier"`
 	URLs           *[]types.String                  `tfsdk:"urls" json:"urls"`
 	Configurations *ZoneLockdownConfigurationsModel `tfsdk:"configurations" json:"configurations"`
-	CreatedOn      timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn      timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description    types.String                     `tfsdk:"description" json:"description,computed"`
-	ModifiedOn     timetypes.RFC3339                `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn     timetypes.RFC3339                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Paused         types.Bool                       `tfsdk:"paused" json:"paused,computed"`
 }
 

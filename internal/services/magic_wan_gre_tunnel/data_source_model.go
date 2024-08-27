@@ -34,10 +34,10 @@ type MagicWANGRETunnelGRETunnelDataSourceModel struct {
 	InterfaceAddress      types.String                                          `tfsdk:"interface_address" json:"interface_address,computed"`
 	Name                  types.String                                          `tfsdk:"name" json:"name,computed"`
 	ID                    types.String                                          `tfsdk:"id" json:"id,computed"`
-	CreatedOn             timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn             timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description           types.String                                          `tfsdk:"description" json:"description,computed_optional"`
 	HealthCheck           *MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel `tfsdk:"health_check" json:"health_check,computed_optional"`
-	ModifiedOn            timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn            timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Mtu                   types.Int64                                           `tfsdk:"mtu" json:"mtu,computed"`
 	TTL                   types.Int64                                           `tfsdk:"ttl" json:"ttl,computed"`
 }

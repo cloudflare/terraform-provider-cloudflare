@@ -27,14 +27,14 @@ type LoadBalancerPoolModel struct {
 	OriginSteering     *LoadBalancerPoolOriginSteeringModel     `tfsdk:"origin_steering" json:"origin_steering"`
 	Enabled            types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
 	MinimumOrigins     types.Int64                              `tfsdk:"minimum_origins" json:"minimum_origins,computed_optional"`
-	CreatedOn          timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed"`
-	DisabledAt         timetypes.RFC3339                        `tfsdk:"disabled_at" json:"disabled_at,computed"`
-	ModifiedOn         timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn          timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	DisabledAt         timetypes.RFC3339                        `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
+	ModifiedOn         timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 type LoadBalancerPoolOriginsModel struct {
 	Address          types.String                        `tfsdk:"address" json:"address"`
-	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Header           *LoadBalancerPoolOriginsHeaderModel `tfsdk:"header" json:"header"`
 	Name             types.String                        `tfsdk:"name" json:"name"`

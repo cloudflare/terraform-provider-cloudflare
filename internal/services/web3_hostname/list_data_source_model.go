@@ -20,10 +20,10 @@ type Web3HostnamesDataSourceModel struct {
 
 type Web3HostnamesResultDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description types.String      `tfsdk:"description" json:"description,computed_optional"`
 	Dnslink     types.String      `tfsdk:"dnslink" json:"dnslink,computed_optional"`
-	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name        types.String      `tfsdk:"name" json:"name,computed"`
 	Status      types.String      `tfsdk:"status" json:"status,computed"`
 	Target      types.String      `tfsdk:"target" json:"target,computed_optional"`

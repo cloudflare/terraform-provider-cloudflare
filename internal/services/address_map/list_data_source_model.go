@@ -33,9 +33,9 @@ type AddressMapsResultDataSourceModel struct {
 	ID           types.String      `tfsdk:"id" json:"id,computed_optional"`
 	CanDelete    types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool        `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
-	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DefaultSNI   types.String      `tfsdk:"default_sni" json:"default_sni,computed_optional"`
 	Description  types.String      `tfsdk:"description" json:"description,computed_optional"`
 	Enabled      types.Bool        `tfsdk:"enabled" json:"enabled,computed"`
-	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed"`
+	ModifiedAt   timetypes.RFC3339 `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 }

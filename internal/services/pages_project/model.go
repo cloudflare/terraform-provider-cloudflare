@@ -20,7 +20,7 @@ type PagesProjectModel struct {
 	ProductionBranch    types.String                                                   `tfsdk:"production_branch" json:"production_branch"`
 	BuildConfig         *PagesProjectBuildConfigModel                                  `tfsdk:"build_config" json:"build_config"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsModel                            `tfsdk:"deployment_configs" json:"deployment_configs"`
-	CreatedOn           timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn           timetypes.RFC3339                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Subdomain           types.String                                                   `tfsdk:"subdomain" json:"subdomain,computed"`
 	Domains             types.List                                                     `tfsdk:"domains" json:"domains,computed"`
 	CanonicalDeployment customfield.NestedObject[PagesProjectCanonicalDeploymentModel] `tfsdk:"canonical_deployment" json:"canonical_deployment,computed"`
@@ -92,13 +92,13 @@ type PagesProjectCanonicalDeploymentModel struct {
 	ID                types.String                                                                    `tfsdk:"id" json:"id,computed"`
 	Aliases           types.List                                                                      `tfsdk:"aliases" json:"aliases,computed"`
 	BuildConfig       *PagesProjectCanonicalDeploymentBuildConfigModel                                `tfsdk:"build_config" json:"build_config"`
-	CreatedOn         timetypes.RFC3339                                                               `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn         timetypes.RFC3339                                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectCanonicalDeploymentDeploymentTriggerModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
 	EnvVars           map[string]jsontypes.Normalized                                                 `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment       types.String                                                                    `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped         types.Bool                                                                      `tfsdk:"is_skipped" json:"is_skipped,computed"`
 	LatestStage       customfield.NestedObject[PagesProjectCanonicalDeploymentLatestStageModel]       `tfsdk:"latest_stage" json:"latest_stage,computed"`
-	ModifiedOn        timetypes.RFC3339                                                               `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn        timetypes.RFC3339                                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	ProjectID         types.String                                                                    `tfsdk:"project_id" json:"project_id,computed"`
 	ProjectName       types.String                                                                    `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID           types.String                                                                    `tfsdk:"short_id" json:"short_id,computed"`
@@ -128,9 +128,9 @@ type PagesProjectCanonicalDeploymentDeploymentTriggerMetadataModel struct {
 }
 
 type PagesProjectCanonicalDeploymentLatestStageModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
@@ -154,9 +154,9 @@ type PagesProjectCanonicalDeploymentSourceConfigModel struct {
 }
 
 type PagesProjectCanonicalDeploymentStagesModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
@@ -164,13 +164,13 @@ type PagesProjectLatestDeploymentModel struct {
 	ID                types.String                                                                 `tfsdk:"id" json:"id,computed"`
 	Aliases           types.List                                                                   `tfsdk:"aliases" json:"aliases,computed"`
 	BuildConfig       *PagesProjectLatestDeploymentBuildConfigModel                                `tfsdk:"build_config" json:"build_config"`
-	CreatedOn         timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn         timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectLatestDeploymentDeploymentTriggerModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
 	EnvVars           map[string]jsontypes.Normalized                                              `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment       types.String                                                                 `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped         types.Bool                                                                   `tfsdk:"is_skipped" json:"is_skipped,computed"`
 	LatestStage       customfield.NestedObject[PagesProjectLatestDeploymentLatestStageModel]       `tfsdk:"latest_stage" json:"latest_stage,computed"`
-	ModifiedOn        timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn        timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	ProjectID         types.String                                                                 `tfsdk:"project_id" json:"project_id,computed"`
 	ProjectName       types.String                                                                 `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID           types.String                                                                 `tfsdk:"short_id" json:"short_id,computed"`
@@ -200,9 +200,9 @@ type PagesProjectLatestDeploymentDeploymentTriggerMetadataModel struct {
 }
 
 type PagesProjectLatestDeploymentLatestStageModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
@@ -226,9 +226,9 @@ type PagesProjectLatestDeploymentSourceConfigModel struct {
 }
 
 type PagesProjectLatestDeploymentStagesModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 

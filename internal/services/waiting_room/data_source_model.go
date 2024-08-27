@@ -22,13 +22,13 @@ type WaitingRoomResultListDataSourceEnvelope struct {
 type WaitingRoomDataSourceModel struct {
 	WaitingRoomID              types.String                                   `tfsdk:"waiting_room_id" path:"waiting_room_id"`
 	ZoneID                     types.String                                   `tfsdk:"zone_id" path:"zone_id"`
-	CreatedOn                  timetypes.RFC3339                              `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn                  timetypes.RFC3339                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomPageHTML             types.String                                   `tfsdk:"custom_page_html" json:"custom_page_html,computed"`
 	DefaultTemplateLanguage    types.String                                   `tfsdk:"default_template_language" json:"default_template_language,computed"`
 	Description                types.String                                   `tfsdk:"description" json:"description,computed"`
 	DisableSessionRenewal      types.Bool                                     `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed"`
 	JsonResponseEnabled        types.Bool                                     `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
-	ModifiedOn                 timetypes.RFC3339                              `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn                 timetypes.RFC3339                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Path                       types.String                                   `tfsdk:"path" json:"path,computed"`
 	QueueAll                   types.Bool                                     `tfsdk:"queue_all" json:"queue_all,computed"`
 	QueueingMethod             types.String                                   `tfsdk:"queueing_method" json:"queueing_method,computed"`

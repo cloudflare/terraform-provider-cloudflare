@@ -20,7 +20,7 @@ type CustomHostnameModel struct {
 	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server"`
 	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni"`
 	CustomMetadata            *CustomHostnameCustomMetadataModel                                     `tfsdk:"custom_metadata" json:"custom_metadata"`
-	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status                    types.String                                                           `tfsdk:"status" json:"status,computed"`
 	VerificationErrors        types.List                                                             `tfsdk:"verification_errors" json:"verification_errors,computed"`
 	OwnershipVerification     customfield.NestedObject[CustomHostnameOwnershipVerificationModel]     `tfsdk:"ownership_verification" json:"ownership_verification,computed"`

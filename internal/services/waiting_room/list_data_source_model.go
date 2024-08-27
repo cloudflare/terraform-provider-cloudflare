@@ -34,7 +34,7 @@ type WaitingRoomsResultDataSourceModel struct {
 	AdditionalRoutes           *[]*WaitingRoomsAdditionalRoutesDataSourceModel `tfsdk:"additional_routes" json:"additional_routes,computed_optional"`
 	CookieAttributes           *WaitingRoomsCookieAttributesDataSourceModel    `tfsdk:"cookie_attributes" json:"cookie_attributes,computed_optional"`
 	CookieSuffix               types.String                                    `tfsdk:"cookie_suffix" json:"cookie_suffix,computed_optional"`
-	CreatedOn                  timetypes.RFC3339                               `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn                  timetypes.RFC3339                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomPageHTML             types.String                                    `tfsdk:"custom_page_html" json:"custom_page_html,computed"`
 	DefaultTemplateLanguage    types.String                                    `tfsdk:"default_template_language" json:"default_template_language,computed"`
 	Description                types.String                                    `tfsdk:"description" json:"description,computed"`
@@ -42,7 +42,7 @@ type WaitingRoomsResultDataSourceModel struct {
 	EnabledOriginCommands      types.List                                      `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	Host                       types.String                                    `tfsdk:"host" json:"host,computed_optional"`
 	JsonResponseEnabled        types.Bool                                      `tfsdk:"json_response_enabled" json:"json_response_enabled,computed"`
-	ModifiedOn                 timetypes.RFC3339                               `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn                 timetypes.RFC3339                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                       types.String                                    `tfsdk:"name" json:"name,computed_optional"`
 	NewUsersPerMinute          types.Int64                                     `tfsdk:"new_users_per_minute" json:"new_users_per_minute,computed_optional"`
 	NextEventPrequeueStartTime types.String                                    `tfsdk:"next_event_prequeue_start_time" json:"next_event_prequeue_start_time,computed_optional"`

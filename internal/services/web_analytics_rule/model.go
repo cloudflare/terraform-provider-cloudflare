@@ -19,6 +19,6 @@ type WebAnalyticsRuleModel struct {
 	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive"`
 	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused"`
 	Paths     *[]types.String   `tfsdk:"paths" json:"paths"`
-	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
+	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Priority  types.Float64     `tfsdk:"priority" json:"priority,computed"`
 }

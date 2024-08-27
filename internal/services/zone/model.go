@@ -19,10 +19,10 @@ type ZoneModel struct {
 	Type                types.String                             `tfsdk:"type" json:"type"`
 	VanityNameServers   *[]types.String                          `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
 	Plan                *ZonePlanModel                           `tfsdk:"plan" json:"plan"`
-	ActivatedOn         timetypes.RFC3339                        `tfsdk:"activated_on" json:"activated_on,computed"`
-	CreatedOn           timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed"`
+	ActivatedOn         timetypes.RFC3339                        `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
+	CreatedOn           timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DevelopmentMode     types.Float64                            `tfsdk:"development_mode" json:"development_mode,computed"`
-	ModifiedOn          timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn          timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	OriginalDnshost     types.String                             `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
 	OriginalRegistrar   types.String                             `tfsdk:"original_registrar" json:"original_registrar,computed"`
 	NameServers         types.List                               `tfsdk:"name_servers" json:"name_servers,computed"`

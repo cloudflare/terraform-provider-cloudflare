@@ -22,9 +22,9 @@ type ZeroTrustAccessTagResultListDataSourceEnvelope struct {
 type ZeroTrustAccessTagDataSourceModel struct {
 	AccountID types.String                                `tfsdk:"account_id" path:"account_id"`
 	TagName   types.String                                `tfsdk:"tag_name" path:"tag_name"`
-	CreatedAt timetypes.RFC3339                           `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt timetypes.RFC3339                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Name      types.String                                `tfsdk:"name" json:"name,computed"`
-	UpdatedAt timetypes.RFC3339                           `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt timetypes.RFC3339                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AppCount  types.Int64                                 `tfsdk:"app_count" json:"app_count,computed_optional"`
 	Filter    *ZeroTrustAccessTagFindOneByDataSourceModel `tfsdk:"filter"`
 }

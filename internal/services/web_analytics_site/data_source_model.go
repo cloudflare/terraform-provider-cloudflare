@@ -22,7 +22,7 @@ type WebAnalyticsSiteResultListDataSourceEnvelope struct {
 type WebAnalyticsSiteDataSourceModel struct {
 	AccountID   types.String                              `tfsdk:"account_id" path:"account_id"`
 	SiteID      types.String                              `tfsdk:"site_id" path:"site_id"`
-	Created     timetypes.RFC3339                         `tfsdk:"created" json:"created,computed"`
+	Created     timetypes.RFC3339                         `tfsdk:"created" json:"created,computed" format:"date-time"`
 	AutoInstall types.Bool                                `tfsdk:"auto_install" json:"auto_install,computed_optional"`
 	SiteTag     types.String                              `tfsdk:"site_tag" json:"site_tag,computed_optional"`
 	SiteToken   types.String                              `tfsdk:"site_token" json:"site_token,computed_optional"`
@@ -54,7 +54,7 @@ func (m *WebAnalyticsSiteDataSourceModel) toListParams() (params rum.SiteInfoLis
 
 type WebAnalyticsSiteRulesDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" json:"id,computed_optional"`
-	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
+	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Host      types.String      `tfsdk:"host" json:"host,computed_optional"`
 	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive,computed_optional"`
 	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused,computed_optional"`

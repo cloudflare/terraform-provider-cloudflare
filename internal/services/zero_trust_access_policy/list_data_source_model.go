@@ -40,7 +40,7 @@ type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 	ID                           types.String                                             `tfsdk:"id" json:"id,computed_optional"`
 	ApprovalGroups               *[]*ZeroTrustAccessPoliciesApprovalGroupsDataSourceModel `tfsdk:"approval_groups" json:"approval_groups,computed_optional"`
 	ApprovalRequired             types.Bool                                               `tfsdk:"approval_required" json:"approval_required,computed"`
-	CreatedAt                    timetypes.RFC3339                                        `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt                    timetypes.RFC3339                                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Decision                     types.String                                             `tfsdk:"decision" json:"decision,computed_optional"`
 	Exclude                      *[]*ZeroTrustAccessPoliciesExcludeDataSourceModel        `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include                      *[]*ZeroTrustAccessPoliciesIncludeDataSourceModel        `tfsdk:"include" json:"include,computed_optional"`
@@ -50,7 +50,7 @@ type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 	PurposeJustificationRequired types.Bool                                               `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
 	Require                      *[]*ZeroTrustAccessPoliciesRequireDataSourceModel        `tfsdk:"require" json:"require,computed_optional"`
 	SessionDuration              types.String                                             `tfsdk:"session_duration" json:"session_duration,computed"`
-	UpdatedAt                    timetypes.RFC3339                                        `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt                    timetypes.RFC3339                                        `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustAccessPoliciesApprovalGroupsDataSourceModel struct {

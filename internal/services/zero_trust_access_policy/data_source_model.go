@@ -26,11 +26,11 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 	PolicyID                     types.String                                           `tfsdk:"policy_id" path:"policy_id"`
 	ZoneID                       types.String                                           `tfsdk:"zone_id" path:"zone_id"`
 	ApprovalRequired             types.Bool                                             `tfsdk:"approval_required" json:"approval_required,computed"`
-	CreatedAt                    timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt                    timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	IsolationRequired            types.Bool                                             `tfsdk:"isolation_required" json:"isolation_required,computed"`
 	PurposeJustificationRequired types.Bool                                             `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
 	SessionDuration              types.String                                           `tfsdk:"session_duration" json:"session_duration,computed"`
-	UpdatedAt                    timetypes.RFC3339                                      `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt                    timetypes.RFC3339                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Decision                     types.String                                           `tfsdk:"decision" json:"decision,computed_optional"`
 	ID                           types.String                                           `tfsdk:"id" json:"id,computed_optional"`
 	Name                         types.String                                           `tfsdk:"name" json:"name,computed_optional"`

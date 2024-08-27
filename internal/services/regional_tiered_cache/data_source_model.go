@@ -17,7 +17,7 @@ type RegionalTieredCacheResultDataSourceEnvelope struct {
 type RegionalTieredCacheDataSourceModel struct {
 	ZoneID     types.String                             `tfsdk:"zone_id" path:"zone_id"`
 	ID         types.String                             `tfsdk:"id" json:"id"`
-	ModifiedOn timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on"`
+	ModifiedOn timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
 	Value      *RegionalTieredCacheValueDataSourceModel `tfsdk:"value" json:"value"`
 }
 
@@ -31,5 +31,5 @@ func (m *RegionalTieredCacheDataSourceModel) toReadParams() (params cache.Region
 
 type RegionalTieredCacheValueDataSourceModel struct {
 	ID         types.String      `tfsdk:"id" json:"id,computed"`
-	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }

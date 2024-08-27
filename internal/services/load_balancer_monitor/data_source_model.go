@@ -25,12 +25,12 @@ type LoadBalancerMonitorDataSourceModel struct {
 	AllowInsecure   types.Bool                                   `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
 	ConsecutiveDown types.Int64                                  `tfsdk:"consecutive_down" json:"consecutive_down,computed"`
 	ConsecutiveUp   types.Int64                                  `tfsdk:"consecutive_up" json:"consecutive_up,computed"`
-	CreatedOn       timetypes.RFC3339                            `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn       timetypes.RFC3339                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ExpectedCodes   types.String                                 `tfsdk:"expected_codes" json:"expected_codes,computed"`
 	FollowRedirects types.Bool                                   `tfsdk:"follow_redirects" json:"follow_redirects,computed"`
 	Interval        types.Int64                                  `tfsdk:"interval" json:"interval,computed"`
 	Method          types.String                                 `tfsdk:"method" json:"method,computed"`
-	ModifiedOn      timetypes.RFC3339                            `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn      timetypes.RFC3339                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Path            types.String                                 `tfsdk:"path" json:"path,computed"`
 	Port            types.Int64                                  `tfsdk:"port" json:"port,computed"`
 	Retries         types.Int64                                  `tfsdk:"retries" json:"retries,computed"`

@@ -29,11 +29,11 @@ type LogpushJobDataSourceModel struct {
 	Dataset                  types.String                            `tfsdk:"dataset" json:"dataset,computed_optional"`
 	DestinationConf          types.String                            `tfsdk:"destination_conf" json:"destination_conf,computed_optional"`
 	Enabled                  types.Bool                              `tfsdk:"enabled" json:"enabled,computed_optional"`
-	ErrorMessage             timetypes.RFC3339                       `tfsdk:"error_message" json:"error_message,computed_optional"`
+	ErrorMessage             timetypes.RFC3339                       `tfsdk:"error_message" json:"error_message,computed_optional" format:"date-time"`
 	ID                       types.Int64                             `tfsdk:"id" json:"id,computed_optional"`
 	Kind                     types.String                            `tfsdk:"kind" json:"kind,computed_optional"`
-	LastComplete             timetypes.RFC3339                       `tfsdk:"last_complete" json:"last_complete,computed_optional"`
-	LastError                timetypes.RFC3339                       `tfsdk:"last_error" json:"last_error,computed_optional"`
+	LastComplete             timetypes.RFC3339                       `tfsdk:"last_complete" json:"last_complete,computed_optional" format:"date-time"`
+	LastError                timetypes.RFC3339                       `tfsdk:"last_error" json:"last_error,computed_optional" format:"date-time"`
 	LogpullOptions           types.String                            `tfsdk:"logpull_options" json:"logpull_options,computed_optional"`
 	MaxUploadBytes           types.Int64                             `tfsdk:"max_upload_bytes" json:"max_upload_bytes,computed_optional"`
 	Name                     types.String                            `tfsdk:"name" json:"name,computed_optional"`

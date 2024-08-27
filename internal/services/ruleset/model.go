@@ -20,12 +20,12 @@ type RulesetModel struct {
 	Phase       types.String          `tfsdk:"phase" json:"phase"`
 	Rules       *[]*RulesetRulesModel `tfsdk:"rules" json:"rules"`
 	Description types.String          `tfsdk:"description" json:"description,computed_optional"`
-	LastUpdated timetypes.RFC3339     `tfsdk:"last_updated" json:"last_updated,computed"`
+	LastUpdated timetypes.RFC3339     `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Version     types.String          `tfsdk:"version" json:"version,computed"`
 }
 
 type RulesetRulesModel struct {
-	LastUpdated      timetypes.RFC3339                  `tfsdk:"last_updated" json:"last_updated,computed"`
+	LastUpdated      timetypes.RFC3339                  `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Version          types.String                       `tfsdk:"version" json:"version,computed"`
 	ID               types.String                       `tfsdk:"id" json:"id"`
 	Action           types.String                       `tfsdk:"action" json:"action"`

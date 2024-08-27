@@ -34,17 +34,17 @@ type MagicWANIPSECTunnelIPSECTunnelDataSourceModel struct {
 	Name               types.String                                                    `tfsdk:"name" json:"name,computed"`
 	ID                 types.String                                                    `tfsdk:"id" json:"id,computed"`
 	AllowNullCipher    types.Bool                                                      `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed_optional"`
-	CreatedOn          timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn          timetypes.RFC3339                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomerEndpoint   types.String                                                    `tfsdk:"customer_endpoint" json:"customer_endpoint,computed_optional"`
 	Description        types.String                                                    `tfsdk:"description" json:"description,computed_optional"`
-	ModifiedOn         timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PSKMetadata        *MagicWANIPSECTunnelIPSECTunnelPSKMetadataDataSourceModel       `tfsdk:"psk_metadata" json:"psk_metadata,computed_optional"`
 	ReplayProtection   types.Bool                                                      `tfsdk:"replay_protection" json:"replay_protection,computed"`
 	TunnelHealthCheck  *MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckDataSourceModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check,computed_optional"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelPSKMetadataDataSourceModel struct {
-	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed"`
+	LastGeneratedOn timetypes.RFC3339 `tfsdk:"last_generated_on" json:"last_generated_on,computed" format:"date-time"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckDataSourceModel struct {

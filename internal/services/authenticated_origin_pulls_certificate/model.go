@@ -16,9 +16,9 @@ type AuthenticatedOriginPullsCertificateModel struct {
 	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id"`
 	Certificate types.String      `tfsdk:"certificate" json:"certificate"`
 	PrivateKey  types.String      `tfsdk:"private_key" json:"private_key"`
-	ExpiresOn   timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed"`
+	ExpiresOn   timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer      types.String      `tfsdk:"issuer" json:"issuer,computed"`
 	Signature   types.String      `tfsdk:"signature" json:"signature,computed"`
 	Status      types.String      `tfsdk:"status" json:"status,computed"`
-	UploadedOn  timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed"`
+	UploadedOn  timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 }

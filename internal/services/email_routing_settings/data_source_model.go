@@ -13,9 +13,9 @@ type EmailRoutingSettingsResultDataSourceEnvelope struct {
 
 type EmailRoutingSettingsDataSourceModel struct {
 	ZoneIdentifier types.String      `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Created        timetypes.RFC3339 `tfsdk:"created" json:"created"`
+	Created        timetypes.RFC3339 `tfsdk:"created" json:"created" format:"date-time"`
 	ID             types.String      `tfsdk:"id" json:"id"`
-	Modified       timetypes.RFC3339 `tfsdk:"modified" json:"modified"`
+	Modified       timetypes.RFC3339 `tfsdk:"modified" json:"modified" format:"date-time"`
 	Name           types.String      `tfsdk:"name" json:"name"`
 	Status         types.String      `tfsdk:"status" json:"status"`
 	Tag            types.String      `tfsdk:"tag" json:"tag"`
