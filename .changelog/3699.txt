@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: refactor validation to use `ExactlyOneOf` instead of custom logic
+```

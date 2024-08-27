@@ -24,7 +24,7 @@ func TestAccCloudflareRecord_ImportBasic(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"allow_overwrite"},
+				ImportStateVerifyIgnore: []string{"allow_overwrite", "content"},
 			},
 		},
 	})
@@ -48,7 +48,7 @@ func TestAccCloudflareRecord_ImportSRV(t *testing.T) {
 				ImportStateIdPrefix:     fmt.Sprintf("%s/", zoneID),
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"allow_overwrite"},
+				ImportStateVerifyIgnore: []string{"allow_overwrite", "content"},
 			},
 		},
 	})

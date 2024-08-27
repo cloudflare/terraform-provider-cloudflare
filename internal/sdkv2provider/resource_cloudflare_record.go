@@ -91,12 +91,6 @@ func resourceCloudflareRecordCreate(ctx context.Context, d *schema.ResourceData,
 		newRecord.Data = newDataMap
 	}
 
-	if contentOk == dataOk {
-		return diag.FromErr(fmt.Errorf(
-			"either 'content' (present: %t) or 'data' (present: %t) must be provided",
-			contentOk, dataOk))
-	}
-
 	if priority, ok := d.GetOkExists("priority"); ok {
 		p := uint16(priority.(int))
 		newRecord.Priority = &p
@@ -244,8 +238,18 @@ func resourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData, m
 	d.SetId(record.ID)
 	d.Set("hostname", record.Name)
 	d.Set("type", record.Type)
-	d.Set("value", record.Content)
-	d.Set("content", record.Content)
+
+	_, valueOk := d.GetOk("value")
+	if valueOk {
+		d.Set("value", record.Content)
+	}
+
+	_, contentOk := d.GetOk("content")
+	_, datatOk := d.GetOk("data")
+	if contentOk || datatOk {
+		d.Set("content", record.Content)
+	}
+
 	d.Set("ttl", record.TTL)
 	d.Set("proxied", record.Proxied)
 	d.Set("created_on", record.CreatedOn.Format(time.RFC3339Nano))
