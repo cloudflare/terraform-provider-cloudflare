@@ -55,6 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"MX",
 						"NAPTR",
 						"NS",
+						"OPENPGPKEY",
 						"PTR",
 						"SMIMEA",
 						"SRV",
