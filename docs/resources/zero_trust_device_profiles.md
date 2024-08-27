@@ -59,6 +59,7 @@ resource "cloudflare_zero_trust_device_profiles" "developer_warp_policy" {
 - `service_mode_v2_port` (Number) The port to use for the proxy service mode. Required when using `service_mode_v2_mode`.
 - `support_url` (String) The support URL that will be opened when sending feedback.
 - `switch_locked` (Boolean) Enablement of the ZT client switch lock.
+- `tunnel_protocol` (String) Determines which tunnel protocol to use. Available values: `""`, `wireguard`, `masque`. Defaults to `wireguard`.
 
 ### Read-Only
 

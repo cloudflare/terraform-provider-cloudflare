@@ -78,7 +78,7 @@ Optional:
 - `is_active` (Boolean) True if SentinelOne device is active.
 - `issue_count` (String) The number of issues for kolide.
 - `last_seen` (String) The duration of time that the host was last seen from Crowdstrike. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`.
-- `locations` (Block List) List of locations to check for client certificate posture check. (see [below for nested schema](#nestedblock--certificate_locations))
+- `locations` (Block List) List of locations to check for client certificate. (see [below for nested schema](#nestedblock--input--locations))
 - `network_status` (String) The network status from SentinelOne. Available values: `connected`, `disconnected`, `disconnecting`, `connecting`.
 - `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
@@ -98,6 +98,15 @@ Optional:
 - `version` (String) The operating system semantic version.
 - `version_operator` (String) The version comparison operator for crowdstrike. Available values: `>`, `>=`, `<`, `<=`, `==`.
 
+<a id="nestedblock--input--locations"></a>
+### Nested Schema for `input.locations`
+
+Optional:
+
+- `paths` (Set of String) List of paths to check for client certificate rule.
+- `trust_stores` (Set of String) List of trust stores to check for client certificate rule. Available values: `system`, `user`.
+
+
 
 <a id="nestedblock--match"></a>
 ### Nested Schema for `match`
@@ -105,14 +114,6 @@ Optional:
 Optional:
 
 - `platform` (String) The platform of the device. Available values: `windows`, `mac`, `linux`, `android`, `ios`, `chromeos`.
-
-<a id="nestedblock--certificate_locations"></a>
-### Nested Schema for `locations`
-
-Optional:
-
-- `paths` (Set of String) List of paths to check for client certificate.
-- `trust_stores` (Set of String) List of trust stores to check for client certificate. Available values: `system`, `user`.
 
 ## Import
 

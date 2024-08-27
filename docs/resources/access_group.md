@@ -84,29 +84,29 @@ resource "cloudflare_access_group" "example" {
 
 Optional:
 
-- `any_valid_service_token` (Boolean)
+- `any_valid_service_token` (Boolean) Matches any valid Access Service Token.
 - `auth_context` (Block List) (see [below for nested schema](#nestedblock--include--auth_context))
-- `auth_method` (String)
-- `azure` (Block List) (see [below for nested schema](#nestedblock--include--azure))
-- `certificate` (Boolean)
-- `common_name` (String)
+- `auth_method` (String) The type of authentication method. Refer to https://datatracker.ietf.org/doc/html/rfc8176#section-2 for possible types.
+- `azure` (Block List) Matches an Azure group. Requires an Azure identity provider. (see [below for nested schema](#nestedblock--include--azure))
+- `certificate` (Boolean) Matches any valid client certificate.
+- `common_name` (String) Matches a valid client certificate common name.
 - `common_names` (List of String) Overflow field if you need to have multiple common_name rules in a single policy.  Use in place of the singular common_name field.
-- `device_posture` (List of String)
-- `email` (List of String)
-- `email_domain` (List of String)
-- `email_list` (List of String)
-- `everyone` (Boolean)
-- `external_evaluation` (Block List) (see [below for nested schema](#nestedblock--include--external_evaluation))
-- `geo` (List of String)
-- `github` (Block List) (see [below for nested schema](#nestedblock--include--github))
-- `group` (List of String)
-- `gsuite` (Block List) (see [below for nested schema](#nestedblock--include--gsuite))
+- `device_posture` (List of String) The ID of a device posture integration.
+- `email` (List of String) The email of the user.
+- `email_domain` (List of String) The email domain to match.
+- `email_list` (List of String) The ID of a previously created email list.
+- `everyone` (Boolean) Matches everyone.
+- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/learning-paths/zero-trust-web-access/advanced-workflows/external-evaluation. (see [below for nested schema](#nestedblock--include--external_evaluation))
+- `geo` (List of String) Matches a specific country.
+- `github` (Block List) Matches a Github organization. Requires a Github identity provider. (see [below for nested schema](#nestedblock--include--github))
+- `group` (List of String) The ID of a previously created Access group.
+- `gsuite` (Block List) Matches a group in Google Workspace. Requires a Google Workspace identity provider. (see [below for nested schema](#nestedblock--include--gsuite))
 - `ip` (List of String) An IPv4 or IPv6 CIDR block.
-- `ip_list` (List of String) The ID of an existing IP list to reference.
-- `login_method` (List of String)
-- `okta` (Block List) (see [below for nested schema](#nestedblock--include--okta))
-- `saml` (Block List) (see [below for nested schema](#nestedblock--include--saml))
-- `service_token` (List of String)
+- `ip_list` (List of String) The ID of a previously created IP list.
+- `login_method` (List of String) The ID of a configured Identity Provider.
+- `okta` (Block List) Matches an Okta group. Requires an Okta identity provider. (see [below for nested schema](#nestedblock--include--okta))
+- `saml` (Block List) Matches a SAML group. Requires a SAML identity provider. (see [below for nested schema](#nestedblock--include--saml))
+- `service_token` (List of String) The ID of a Service Token.
 
 <a id="nestedblock--include--auth_context"></a>
 ### Nested Schema for `include.auth_context`
@@ -132,8 +132,8 @@ Optional:
 
 Optional:
 
-- `evaluate_url` (String)
-- `keys_url` (String)
+- `evaluate_url` (String) The API endpoint containing your business logic.
+- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
 
 
 <a id="nestedblock--include--github"></a>
@@ -141,9 +141,9 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-- `name` (String)
-- `teams` (List of String)
+- `identity_provider_id` (String) The ID of your Github identity provider.
+- `name` (String) The name of the organization.
+- `teams` (List of String) The teams that should be matched.
 
 
 <a id="nestedblock--include--gsuite"></a>
@@ -151,8 +151,8 @@ Optional:
 
 Optional:
 
-- `email` (List of String)
-- `identity_provider_id` (String)
+- `email` (List of String) The email of the Google Workspace group.
+- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
 
 
 <a id="nestedblock--include--okta"></a>
@@ -160,8 +160,8 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-- `name` (List of String)
+- `identity_provider_id` (String) The ID of your Okta identity provider.
+- `name` (List of String) The name of the Okta Group.
 
 
 <a id="nestedblock--include--saml"></a>
@@ -169,9 +169,9 @@ Optional:
 
 Optional:
 
-- `attribute_name` (String)
-- `attribute_value` (String)
-- `identity_provider_id` (String)
+- `attribute_name` (String) The name of the SAML attribute.
+- `attribute_value` (String) The SAML attribute value to look for.
+- `identity_provider_id` (String) The ID of your SAML identity provider.
 
 
 
@@ -180,29 +180,29 @@ Optional:
 
 Optional:
 
-- `any_valid_service_token` (Boolean)
+- `any_valid_service_token` (Boolean) Matches any valid Access Service Token.
 - `auth_context` (Block List) (see [below for nested schema](#nestedblock--exclude--auth_context))
-- `auth_method` (String)
-- `azure` (Block List) (see [below for nested schema](#nestedblock--exclude--azure))
-- `certificate` (Boolean)
-- `common_name` (String)
+- `auth_method` (String) The type of authentication method. Refer to https://datatracker.ietf.org/doc/html/rfc8176#section-2 for possible types.
+- `azure` (Block List) Matches an Azure group. Requires an Azure identity provider. (see [below for nested schema](#nestedblock--exclude--azure))
+- `certificate` (Boolean) Matches any valid client certificate.
+- `common_name` (String) Matches a valid client certificate common name.
 - `common_names` (List of String) Overflow field if you need to have multiple common_name rules in a single policy.  Use in place of the singular common_name field.
-- `device_posture` (List of String)
-- `email` (List of String)
-- `email_domain` (List of String)
-- `email_list` (List of String)
-- `everyone` (Boolean)
-- `external_evaluation` (Block List) (see [below for nested schema](#nestedblock--exclude--external_evaluation))
-- `geo` (List of String)
-- `github` (Block List) (see [below for nested schema](#nestedblock--exclude--github))
-- `group` (List of String)
-- `gsuite` (Block List) (see [below for nested schema](#nestedblock--exclude--gsuite))
+- `device_posture` (List of String) The ID of a device posture integration.
+- `email` (List of String) The email of the user.
+- `email_domain` (List of String) The email domain to match.
+- `email_list` (List of String) The ID of a previously created email list.
+- `everyone` (Boolean) Matches everyone.
+- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/learning-paths/zero-trust-web-access/advanced-workflows/external-evaluation. (see [below for nested schema](#nestedblock--exclude--external_evaluation))
+- `geo` (List of String) Matches a specific country.
+- `github` (Block List) Matches a Github organization. Requires a Github identity provider. (see [below for nested schema](#nestedblock--exclude--github))
+- `group` (List of String) The ID of a previously created Access group.
+- `gsuite` (Block List) Matches a group in Google Workspace. Requires a Google Workspace identity provider. (see [below for nested schema](#nestedblock--exclude--gsuite))
 - `ip` (List of String) An IPv4 or IPv6 CIDR block.
-- `ip_list` (List of String) The ID of an existing IP list to reference.
-- `login_method` (List of String)
-- `okta` (Block List) (see [below for nested schema](#nestedblock--exclude--okta))
-- `saml` (Block List) (see [below for nested schema](#nestedblock--exclude--saml))
-- `service_token` (List of String)
+- `ip_list` (List of String) The ID of a previously created IP list.
+- `login_method` (List of String) The ID of a configured Identity Provider.
+- `okta` (Block List) Matches an Okta group. Requires an Okta identity provider. (see [below for nested schema](#nestedblock--exclude--okta))
+- `saml` (Block List) Matches a SAML group. Requires a SAML identity provider. (see [below for nested schema](#nestedblock--exclude--saml))
+- `service_token` (List of String) The ID of a Service Token.
 
 <a id="nestedblock--exclude--auth_context"></a>
 ### Nested Schema for `exclude.auth_context`
@@ -228,8 +228,8 @@ Optional:
 
 Optional:
 
-- `evaluate_url` (String)
-- `keys_url` (String)
+- `evaluate_url` (String) The API endpoint containing your business logic.
+- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
 
 
 <a id="nestedblock--exclude--github"></a>
@@ -237,9 +237,9 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-- `name` (String)
-- `teams` (List of String)
+- `identity_provider_id` (String) The ID of your Github identity provider.
+- `name` (String) The name of the organization.
+- `teams` (List of String) The teams that should be matched.
 
 
 <a id="nestedblock--exclude--gsuite"></a>
@@ -247,8 +247,8 @@ Optional:
 
 Optional:
 
-- `email` (List of String)
-- `identity_provider_id` (String)
+- `email` (List of String) The email of the Google Workspace group.
+- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
 
 
 <a id="nestedblock--exclude--okta"></a>
@@ -256,8 +256,8 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-- `name` (List of String)
+- `identity_provider_id` (String) The ID of your Okta identity provider.
+- `name` (List of String) The name of the Okta Group.
 
 
 <a id="nestedblock--exclude--saml"></a>
@@ -265,9 +265,9 @@ Optional:
 
 Optional:
 
-- `attribute_name` (String)
-- `attribute_value` (String)
-- `identity_provider_id` (String)
+- `attribute_name` (String) The name of the SAML attribute.
+- `attribute_value` (String) The SAML attribute value to look for.
+- `identity_provider_id` (String) The ID of your SAML identity provider.
 
 
 
@@ -276,29 +276,29 @@ Optional:
 
 Optional:
 
-- `any_valid_service_token` (Boolean)
+- `any_valid_service_token` (Boolean) Matches any valid Access Service Token.
 - `auth_context` (Block List) (see [below for nested schema](#nestedblock--require--auth_context))
-- `auth_method` (String)
-- `azure` (Block List) (see [below for nested schema](#nestedblock--require--azure))
-- `certificate` (Boolean)
-- `common_name` (String)
+- `auth_method` (String) The type of authentication method. Refer to https://datatracker.ietf.org/doc/html/rfc8176#section-2 for possible types.
+- `azure` (Block List) Matches an Azure group. Requires an Azure identity provider. (see [below for nested schema](#nestedblock--require--azure))
+- `certificate` (Boolean) Matches any valid client certificate.
+- `common_name` (String) Matches a valid client certificate common name.
 - `common_names` (List of String) Overflow field if you need to have multiple common_name rules in a single policy.  Use in place of the singular common_name field.
-- `device_posture` (List of String)
-- `email` (List of String)
-- `email_domain` (List of String)
-- `email_list` (List of String)
-- `everyone` (Boolean)
-- `external_evaluation` (Block List) (see [below for nested schema](#nestedblock--require--external_evaluation))
-- `geo` (List of String)
-- `github` (Block List) (see [below for nested schema](#nestedblock--require--github))
-- `group` (List of String)
-- `gsuite` (Block List) (see [below for nested schema](#nestedblock--require--gsuite))
+- `device_posture` (List of String) The ID of a device posture integration.
+- `email` (List of String) The email of the user.
+- `email_domain` (List of String) The email domain to match.
+- `email_list` (List of String) The ID of a previously created email list.
+- `everyone` (Boolean) Matches everyone.
+- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/learning-paths/zero-trust-web-access/advanced-workflows/external-evaluation. (see [below for nested schema](#nestedblock--require--external_evaluation))
+- `geo` (List of String) Matches a specific country.
+- `github` (Block List) Matches a Github organization. Requires a Github identity provider. (see [below for nested schema](#nestedblock--require--github))
+- `group` (List of String) The ID of a previously created Access group.
+- `gsuite` (Block List) Matches a group in Google Workspace. Requires a Google Workspace identity provider. (see [below for nested schema](#nestedblock--require--gsuite))
 - `ip` (List of String) An IPv4 or IPv6 CIDR block.
-- `ip_list` (List of String) The ID of an existing IP list to reference.
-- `login_method` (List of String)
-- `okta` (Block List) (see [below for nested schema](#nestedblock--require--okta))
-- `saml` (Block List) (see [below for nested schema](#nestedblock--require--saml))
-- `service_token` (List of String)
+- `ip_list` (List of String) The ID of a previously created IP list.
+- `login_method` (List of String) The ID of a configured Identity Provider.
+- `okta` (Block List) Matches an Okta group. Requires an Okta identity provider. (see [below for nested schema](#nestedblock--require--okta))
+- `saml` (Block List) Matches a SAML group. Requires a SAML identity provider. (see [below for nested schema](#nestedblock--require--saml))
+- `service_token` (List of String) The ID of a Service Token.
 
 <a id="nestedblock--require--auth_context"></a>
 ### Nested Schema for `require.auth_context`
@@ -324,8 +324,8 @@ Optional:
 
 Optional:
 
-- `evaluate_url` (String)
-- `keys_url` (String)
+- `evaluate_url` (String) The API endpoint containing your business logic.
+- `keys_url` (String) The API endpoint containing the key that Access uses to verify that the response came from your API.
 
 
 <a id="nestedblock--require--github"></a>
@@ -333,9 +333,9 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-- `name` (String)
-- `teams` (List of String)
+- `identity_provider_id` (String) The ID of your Github identity provider.
+- `name` (String) The name of the organization.
+- `teams` (List of String) The teams that should be matched.
 
 
 <a id="nestedblock--require--gsuite"></a>
@@ -343,8 +343,8 @@ Optional:
 
 Optional:
 
-- `email` (List of String)
-- `identity_provider_id` (String)
+- `email` (List of String) The email of the Google Workspace group.
+- `identity_provider_id` (String) The ID of your Google Workspace identity provider.
 
 
 <a id="nestedblock--require--okta"></a>
@@ -352,8 +352,8 @@ Optional:
 
 Optional:
 
-- `identity_provider_id` (String)
-- `name` (List of String)
+- `identity_provider_id` (String) The ID of your Okta identity provider.
+- `name` (List of String) The name of the Okta Group.
 
 
 <a id="nestedblock--require--saml"></a>
@@ -361,9 +361,9 @@ Optional:
 
 Optional:
 
-- `attribute_name` (String)
-- `attribute_value` (String)
-- `identity_provider_id` (String)
+- `attribute_name` (String) The name of the SAML attribute.
+- `attribute_value` (String) The SAML attribute value to look for.
+- `identity_provider_id` (String) The ID of your SAML identity provider.
 
 ## Import
 
