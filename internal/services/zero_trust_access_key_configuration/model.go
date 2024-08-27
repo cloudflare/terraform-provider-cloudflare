@@ -16,5 +16,5 @@ type ZeroTrustAccessKeyConfigurationModel struct {
 	AccountID               types.String      `tfsdk:"account_id" path:"account_id"`
 	KeyRotationIntervalDays types.Float64     `tfsdk:"key_rotation_interval_days" json:"key_rotation_interval_days"`
 	DaysUntilNextRotation   types.Float64     `tfsdk:"days_until_next_rotation" json:"days_until_next_rotation,computed"`
-	LastKeyRotationAt       timetypes.RFC3339 `tfsdk:"last_key_rotation_at" json:"last_key_rotation_at,computed"`
+	LastKeyRotationAt       timetypes.RFC3339 `tfsdk:"last_key_rotation_at" json:"last_key_rotation_at,computed" format:"date-time"`
 }

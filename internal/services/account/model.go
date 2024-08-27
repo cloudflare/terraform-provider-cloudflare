@@ -17,7 +17,7 @@ type AccountModel struct {
 	Unit      *AccountUnitModel     `tfsdk:"unit" json:"unit"`
 	Name      types.String          `tfsdk:"name" json:"name"`
 	Settings  *AccountSettingsModel `tfsdk:"settings" json:"settings"`
-	CreatedOn timetypes.RFC3339     `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn timetypes.RFC3339     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 }
 
 type AccountUnitModel struct {

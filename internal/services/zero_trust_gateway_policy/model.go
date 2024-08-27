@@ -25,9 +25,9 @@ type ZeroTrustGatewayPolicyModel struct {
 	Filters       *[]types.String                          `tfsdk:"filters" json:"filters"`
 	RuleSettings  *ZeroTrustGatewayPolicyRuleSettingsModel `tfsdk:"rule_settings" json:"rule_settings"`
 	Schedule      *ZeroTrustGatewayPolicyScheduleModel     `tfsdk:"schedule" json:"schedule"`
-	CreatedAt     timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt     timetypes.RFC3339                        `tfsdk:"deleted_at" json:"deleted_at,computed"`
-	UpdatedAt     timetypes.RFC3339                        `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt     timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DeletedAt     timetypes.RFC3339                        `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
+	UpdatedAt     timetypes.RFC3339                        `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {

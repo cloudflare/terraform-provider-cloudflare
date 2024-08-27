@@ -20,10 +20,10 @@ type ByoIPPrefixModel struct {
 	LOADocumentID        types.String                                           `tfsdk:"loa_document_id" json:"loa_document_id"`
 	Description          types.String                                           `tfsdk:"description" json:"description"`
 	Advertised           types.Bool                                             `tfsdk:"advertised" json:"advertised,computed"`
-	AdvertisedModifiedAt timetypes.RFC3339                                      `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed"`
+	AdvertisedModifiedAt timetypes.RFC3339                                      `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`
 	Approved             types.String                                           `tfsdk:"approved" json:"approved,computed"`
-	CreatedAt            timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at,computed"`
-	ModifiedAt           timetypes.RFC3339                                      `tfsdk:"modified_at" json:"modified_at,computed"`
+	CreatedAt            timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	ModifiedAt           timetypes.RFC3339                                      `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	OnDemandEnabled      types.Bool                                             `tfsdk:"on_demand_enabled" json:"on_demand_enabled,computed"`
 	OnDemandLocked       types.Bool                                             `tfsdk:"on_demand_locked" json:"on_demand_locked,computed"`
 	Success              types.Bool                                             `tfsdk:"success" json:"success,computed"`

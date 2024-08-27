@@ -17,7 +17,7 @@ type HostnameTLSSettingModel struct {
 	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id"`
 	Hostname  types.String      `tfsdk:"hostname" path:"hostname"`
 	Value     types.Float64     `tfsdk:"value" json:"value"`
-	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
-	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }

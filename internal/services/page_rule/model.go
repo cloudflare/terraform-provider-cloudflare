@@ -22,7 +22,7 @@ type PageRuleModel struct {
 }
 
 type PageRuleActionsModel struct {
-	ModifiedOn timetypes.RFC3339          `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn timetypes.RFC3339          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name       types.String               `tfsdk:"name" json:"name"`
 	Value      *PageRuleActionsValueModel `tfsdk:"value" json:"value"`
 }

@@ -38,5 +38,5 @@ type OriginCACertificatesResultDataSourceModel struct {
 	RequestedValidity types.Float64     `tfsdk:"requested_validity" json:"requested_validity,computed"`
 	ID                types.String      `tfsdk:"id" json:"id,computed_optional"`
 	Certificate       types.String      `tfsdk:"certificate" json:"certificate,computed"`
-	ExpiresOn         timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed"`
+	ExpiresOn         timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 }

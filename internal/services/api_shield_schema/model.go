@@ -23,7 +23,7 @@ type APIShieldSchemaModel struct {
 	Kind              types.String                                                `tfsdk:"kind" json:"kind"`
 	Name              types.String                                                `tfsdk:"name" json:"name"`
 	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled"`
-	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`
 	Success           types.Bool                                                  `tfsdk:"success" json:"success,computed"`
 	Errors            customfield.NestedObjectList[APIShieldSchemaErrorsModel]    `tfsdk:"errors" json:"errors,computed"`
@@ -58,7 +58,7 @@ type APIShieldSchemaMessagesModel struct {
 }
 
 type APIShieldSchemaSchemaModel struct {
-	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String      `tfsdk:"kind" json:"kind"`
 	Name              types.String      `tfsdk:"name" json:"name"`
 	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id"`

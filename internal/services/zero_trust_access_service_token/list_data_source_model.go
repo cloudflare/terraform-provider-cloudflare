@@ -37,9 +37,9 @@ func (m *ZeroTrustAccessServiceTokensDataSourceModel) toListParams() (params zer
 type ZeroTrustAccessServiceTokensResultDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" json:"id,computed_optional"`
 	ClientID  types.String      `tfsdk:"client_id" json:"client_id,computed_optional"`
-	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Duration  types.String      `tfsdk:"duration" json:"duration,computed"`
-	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed_optional"`
+	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed_optional" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
-	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }

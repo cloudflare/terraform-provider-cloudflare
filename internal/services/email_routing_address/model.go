@@ -15,8 +15,8 @@ type EmailRoutingAddressModel struct {
 	ID                types.String      `tfsdk:"id" json:"id,computed"`
 	AccountIdentifier types.String      `tfsdk:"account_identifier" path:"account_identifier"`
 	Email             types.String      `tfsdk:"email" json:"email"`
-	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
-	Modified          timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed"`
+	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Modified          timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Tag               types.String      `tfsdk:"tag" json:"tag,computed"`
-	Verified          timetypes.RFC3339 `tfsdk:"verified" json:"verified,computed"`
+	Verified          timetypes.RFC3339 `tfsdk:"verified" json:"verified,computed" format:"date-time"`
 }

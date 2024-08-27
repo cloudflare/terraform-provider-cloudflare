@@ -34,12 +34,12 @@ func (m *APITokensDataSourceModel) toListParams() (params user.TokenListParams, 
 type APITokensResultDataSourceModel struct {
 	ID         types.String                         `tfsdk:"id" json:"id,computed"`
 	Condition  *APITokensConditionDataSourceModel   `tfsdk:"condition" json:"condition,computed_optional"`
-	ExpiresOn  timetypes.RFC3339                    `tfsdk:"expires_on" json:"expires_on,computed_optional"`
-	IssuedOn   timetypes.RFC3339                    `tfsdk:"issued_on" json:"issued_on,computed"`
-	LastUsedOn timetypes.RFC3339                    `tfsdk:"last_used_on" json:"last_used_on,computed"`
-	ModifiedOn timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed"`
+	ExpiresOn  timetypes.RFC3339                    `tfsdk:"expires_on" json:"expires_on,computed_optional" format:"date-time"`
+	IssuedOn   timetypes.RFC3339                    `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
+	LastUsedOn timetypes.RFC3339                    `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
+	ModifiedOn timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name       types.String                         `tfsdk:"name" json:"name,computed_optional"`
-	NotBefore  timetypes.RFC3339                    `tfsdk:"not_before" json:"not_before,computed_optional"`
+	NotBefore  timetypes.RFC3339                    `tfsdk:"not_before" json:"not_before,computed_optional" format:"date-time"`
 	Policies   *[]*APITokensPoliciesDataSourceModel `tfsdk:"policies" json:"policies,computed_optional"`
 	Status     types.String                         `tfsdk:"status" json:"status,computed_optional"`
 }

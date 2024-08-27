@@ -23,8 +23,8 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {
 	AccountID        types.String                                                      `tfsdk:"account_id" path:"account_id"`
 	VirtualNetworkID types.String                                                      `tfsdk:"virtual_network_id" path:"virtual_network_id"`
 	Comment          types.String                                                      `tfsdk:"comment" json:"comment,computed"`
-	CreatedAt        timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt        timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	CreatedAt        timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DeletedAt        timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	ID               types.String                                                      `tfsdk:"id" json:"id,computed"`
 	IsDefaultNetwork types.Bool                                                        `tfsdk:"is_default_network" json:"is_default_network,computed"`
 	Name             types.String                                                      `tfsdk:"name" json:"name,computed"`

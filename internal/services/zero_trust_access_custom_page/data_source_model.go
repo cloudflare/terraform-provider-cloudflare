@@ -23,10 +23,10 @@ type ZeroTrustAccessCustomPageDataSourceModel struct {
 	AccountID    types.String                                       `tfsdk:"account_id" path:"account_id"`
 	CustomPageID types.String                                       `tfsdk:"custom_page_id" path:"custom_page_id"`
 	CustomHTML   types.String                                       `tfsdk:"custom_html" json:"custom_html"`
-	CreatedAt    timetypes.RFC3339                                  `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt    timetypes.RFC3339                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Name         types.String                                       `tfsdk:"name" json:"name,computed"`
 	Type         types.String                                       `tfsdk:"type" json:"type,computed"`
-	UpdatedAt    timetypes.RFC3339                                  `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt    timetypes.RFC3339                                  `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	AppCount     types.Int64                                        `tfsdk:"app_count" json:"app_count,computed_optional"`
 	UID          types.String                                       `tfsdk:"uid" json:"uid,computed_optional"`
 	Filter       *ZeroTrustAccessCustomPageFindOneByDataSourceModel `tfsdk:"filter"`

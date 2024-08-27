@@ -24,8 +24,8 @@ type ZeroTrustAccessGroupDataSourceModel struct {
 	AccountID types.String                                     `tfsdk:"account_id" path:"account_id"`
 	GroupID   types.String                                     `tfsdk:"group_id" path:"group_id"`
 	ZoneID    types.String                                     `tfsdk:"zone_id" path:"zone_id"`
-	CreatedAt timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,computed"`
-	UpdatedAt timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UpdatedAt timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	ID        types.String                                     `tfsdk:"id" json:"id,computed_optional"`
 	Name      types.String                                     `tfsdk:"name" json:"name,computed_optional"`
 	Exclude   *[]*ZeroTrustAccessGroupExcludeDataSourceModel   `tfsdk:"exclude" json:"exclude,computed_optional"`

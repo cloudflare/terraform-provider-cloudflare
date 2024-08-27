@@ -18,6 +18,6 @@ type ZeroTrustTunnelCloudflaredRouteModel struct {
 	TunnelID         types.String      `tfsdk:"tunnel_id" json:"tunnel_id"`
 	Comment          types.String      `tfsdk:"comment" json:"comment"`
 	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" json:"virtual_network_id"`
-	CreatedAt        timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt        timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	CreatedAt        timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DeletedAt        timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 }

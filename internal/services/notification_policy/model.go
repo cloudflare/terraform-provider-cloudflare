@@ -23,8 +23,8 @@ type NotificationPolicyModel struct {
 	Description   types.String                                                  `tfsdk:"description" json:"description"`
 	Filters       *NotificationPolicyFiltersModel                               `tfsdk:"filters" json:"filters"`
 	Enabled       types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Created       timetypes.RFC3339                                             `tfsdk:"created" json:"created,computed"`
-	Modified      timetypes.RFC3339                                             `tfsdk:"modified" json:"modified,computed"`
+	Created       timetypes.RFC3339                                             `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Modified      timetypes.RFC3339                                             `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Success       types.Bool                                                    `tfsdk:"success" json:"success,computed"`
 	Errors        customfield.NestedObjectList[NotificationPolicyErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages      customfield.NestedObjectList[NotificationPolicyMessagesModel] `tfsdk:"messages" json:"messages,computed"`

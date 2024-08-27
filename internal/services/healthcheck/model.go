@@ -27,9 +27,9 @@ type HealthcheckModel struct {
 	Suspended            types.Bool                  `tfsdk:"suspended" json:"suspended,computed_optional"`
 	Timeout              types.Int64                 `tfsdk:"timeout" json:"timeout,computed_optional"`
 	Type                 types.String                `tfsdk:"type" json:"type,computed_optional"`
-	CreatedOn            timetypes.RFC3339           `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn            timetypes.RFC3339           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	FailureReason        types.String                `tfsdk:"failure_reason" json:"failure_reason,computed"`
-	ModifiedOn           timetypes.RFC3339           `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn           timetypes.RFC3339           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Status               types.String                `tfsdk:"status" json:"status,computed"`
 }
 

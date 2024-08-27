@@ -23,10 +23,10 @@ type NotificationPolicyResultListDataSourceEnvelope struct {
 type NotificationPolicyDataSourceModel struct {
 	AccountID     types.String                                `tfsdk:"account_id" path:"account_id"`
 	PolicyID      types.String                                `tfsdk:"policy_id" path:"policy_id"`
-	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed"`
+	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Enabled       types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
 	ID            types.String                                `tfsdk:"id" json:"id,computed"`
-	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed"`
+	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	AlertInterval types.String                                `tfsdk:"alert_interval" json:"alert_interval,computed_optional"`
 	AlertType     types.String                                `tfsdk:"alert_type" json:"alert_type,computed_optional"`
 	Description   types.String                                `tfsdk:"description" json:"description,computed_optional"`

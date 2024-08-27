@@ -24,11 +24,11 @@ type HealthcheckDataSourceModel struct {
 	ZoneID               types.String                          `tfsdk:"zone_id" path:"zone_id"`
 	ConsecutiveFails     types.Int64                           `tfsdk:"consecutive_fails" json:"consecutive_fails,computed"`
 	ConsecutiveSuccesses types.Int64                           `tfsdk:"consecutive_successes" json:"consecutive_successes,computed"`
-	CreatedOn            timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn            timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	FailureReason        types.String                          `tfsdk:"failure_reason" json:"failure_reason,computed"`
 	ID                   types.String                          `tfsdk:"id" json:"id,computed"`
 	Interval             types.Int64                           `tfsdk:"interval" json:"interval,computed"`
-	ModifiedOn           timetypes.RFC3339                     `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn           timetypes.RFC3339                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Retries              types.Int64                           `tfsdk:"retries" json:"retries,computed"`
 	Status               types.String                          `tfsdk:"status" json:"status,computed"`
 	Suspended            types.Bool                            `tfsdk:"suspended" json:"suspended,computed"`

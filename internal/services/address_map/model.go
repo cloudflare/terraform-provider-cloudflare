@@ -22,8 +22,8 @@ type AddressMapModel struct {
 	Enabled      types.Bool                                            `tfsdk:"enabled" json:"enabled,computed_optional"`
 	CanDelete    types.Bool                                            `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                                            `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
-	CreatedAt    timetypes.RFC3339                                     `tfsdk:"created_at" json:"created_at,computed"`
-	ModifiedAt   timetypes.RFC3339                                     `tfsdk:"modified_at" json:"modified_at,computed"`
+	CreatedAt    timetypes.RFC3339                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	ModifiedAt   timetypes.RFC3339                                     `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Success      types.Bool                                            `tfsdk:"success" json:"success,computed"`
 	Errors       customfield.NestedObjectList[AddressMapErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages     customfield.NestedObjectList[AddressMapMessagesModel] `tfsdk:"messages" json:"messages,computed"`
@@ -32,7 +32,7 @@ type AddressMapModel struct {
 
 type AddressMapMembershipsModel struct {
 	CanDelete  types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
-	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Identifier types.String      `tfsdk:"identifier" json:"identifier"`
 	Kind       types.String      `tfsdk:"kind" json:"kind"`
 }

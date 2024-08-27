@@ -22,9 +22,9 @@ type ByoIPPrefixResultListDataSourceEnvelope struct {
 type ByoIPPrefixDataSourceModel struct {
 	PrefixID             types.String                         `tfsdk:"prefix_id" path:"prefix_id"`
 	AccountID            types.String                         `tfsdk:"account_id" path:"account_id,computed_optional"`
-	AdvertisedModifiedAt timetypes.RFC3339                    `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed"`
-	CreatedAt            timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed"`
-	ModifiedAt           timetypes.RFC3339                    `tfsdk:"modified_at" json:"modified_at,computed"`
+	AdvertisedModifiedAt timetypes.RFC3339                    `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`
+	CreatedAt            timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	ModifiedAt           timetypes.RFC3339                    `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
 	Advertised           types.Bool                           `tfsdk:"advertised" json:"advertised,computed_optional"`
 	Approved             types.String                         `tfsdk:"approved" json:"approved,computed_optional"`
 	ASN                  types.Int64                          `tfsdk:"asn" json:"asn,computed_optional"`

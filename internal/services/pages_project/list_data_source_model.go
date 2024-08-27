@@ -34,13 +34,13 @@ type PagesProjectsResultDataSourceModel struct {
 	ID                types.String                                                            `tfsdk:"id" json:"id,computed"`
 	Aliases           types.List                                                              `tfsdk:"aliases" json:"aliases,computed"`
 	BuildConfig       *PagesProjectsBuildConfigDataSourceModel                                `tfsdk:"build_config" json:"build_config,computed_optional"`
-	CreatedOn         timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn         timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectsDeploymentTriggerDataSourceModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
 	EnvVars           map[string]jsontypes.Normalized                                         `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment       types.String                                                            `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped         types.Bool                                                              `tfsdk:"is_skipped" json:"is_skipped,computed"`
 	LatestStage       customfield.NestedObject[PagesProjectsLatestStageDataSourceModel]       `tfsdk:"latest_stage" json:"latest_stage,computed"`
-	ModifiedOn        timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn        timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	ProjectID         types.String                                                            `tfsdk:"project_id" json:"project_id,computed"`
 	ProjectName       types.String                                                            `tfsdk:"project_name" json:"project_name,computed"`
 	ShortID           types.String                                                            `tfsdk:"short_id" json:"short_id,computed"`
@@ -70,9 +70,9 @@ type PagesProjectsDeploymentTriggerMetadataDataSourceModel struct {
 }
 
 type PagesProjectsLatestStageDataSourceModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }
 
@@ -96,8 +96,8 @@ type PagesProjectsSourceConfigDataSourceModel struct {
 }
 
 type PagesProjectsStagesDataSourceModel struct {
-	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed"`
+	EndedOn   timetypes.RFC3339 `tfsdk:"ended_on" json:"ended_on,computed" format:"date-time"`
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
-	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed"`
+	StartedOn timetypes.RFC3339 `tfsdk:"started_on" json:"started_on,computed" format:"date-time"`
 	Status    types.String      `tfsdk:"status" json:"status,computed"`
 }

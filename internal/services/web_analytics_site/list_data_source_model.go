@@ -36,7 +36,7 @@ func (m *WebAnalyticsSitesDataSourceModel) toListParams() (params rum.SiteInfoLi
 
 type WebAnalyticsSitesResultDataSourceModel struct {
 	AutoInstall types.Bool                                `tfsdk:"auto_install" json:"auto_install,computed_optional"`
-	Created     timetypes.RFC3339                         `tfsdk:"created" json:"created,computed"`
+	Created     timetypes.RFC3339                         `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Rules       *[]*WebAnalyticsSitesRulesDataSourceModel `tfsdk:"rules" json:"rules,computed_optional"`
 	Ruleset     *WebAnalyticsSitesRulesetDataSourceModel  `tfsdk:"ruleset" json:"ruleset,computed_optional"`
 	SiteTag     types.String                              `tfsdk:"site_tag" json:"site_tag,computed_optional"`
@@ -46,7 +46,7 @@ type WebAnalyticsSitesResultDataSourceModel struct {
 
 type WebAnalyticsSitesRulesDataSourceModel struct {
 	ID        types.String      `tfsdk:"id" json:"id,computed_optional"`
-	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
+	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Host      types.String      `tfsdk:"host" json:"host,computed_optional"`
 	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive,computed_optional"`
 	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused,computed_optional"`

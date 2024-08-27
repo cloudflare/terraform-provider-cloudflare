@@ -38,7 +38,7 @@ func (m *AccountsDataSourceModel) toListParams() (params accounts.AccountListPar
 type AccountsResultDataSourceModel struct {
 	ID        types.String                     `tfsdk:"id" json:"id,computed"`
 	Name      types.String                     `tfsdk:"name" json:"name,computed"`
-	CreatedOn timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Settings  *AccountsSettingsDataSourceModel `tfsdk:"settings" json:"settings,computed_optional"`
 }
 

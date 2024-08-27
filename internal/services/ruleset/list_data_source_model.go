@@ -37,7 +37,7 @@ func (m *RulesetsDataSourceModel) toListParams() (params rulesets.RulesetListPar
 type RulesetsResultDataSourceModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
 	Kind        types.String      `tfsdk:"kind" json:"kind,computed"`
-	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed"`
+	LastUpdated timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Name        types.String      `tfsdk:"name" json:"name,computed"`
 	Phase       types.String      `tfsdk:"phase" json:"phase,computed"`
 	Version     types.String      `tfsdk:"version" json:"version,computed"`

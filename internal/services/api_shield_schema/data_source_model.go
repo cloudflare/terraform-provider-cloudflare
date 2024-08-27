@@ -23,7 +23,7 @@ type APIShieldSchemaDataSourceModel struct {
 	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
 	SchemaID          types.String                             `tfsdk:"schema_id" path:"schema_id,computed_optional"`
 	OmitSource        types.Bool                               `tfsdk:"omit_source" query:"omit_source"`
-	CreatedAt         timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt         timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String                             `tfsdk:"kind" json:"kind,computed"`
 	Name              types.String                             `tfsdk:"name" json:"name,computed"`
 	Source            types.String                             `tfsdk:"source" json:"source,computed_optional"`

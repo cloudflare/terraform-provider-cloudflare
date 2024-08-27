@@ -22,9 +22,9 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 type ZoneLockdownDataSourceModel struct {
 	ZoneIdentifier types.String                                                        `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String                                                        `tfsdk:"id" path:"id,computed_optional"`
-	CreatedOn      timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn      timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description    types.String                                                        `tfsdk:"description" json:"description,computed"`
-	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Paused         types.Bool                                                          `tfsdk:"paused" json:"paused,computed"`
 	URLs           types.List                                                          `tfsdk:"urls" json:"urls,computed"`
 	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
@@ -77,13 +77,13 @@ type ZoneLockdownConfigurationsDataSourceModel struct {
 
 type ZoneLockdownFindOneByDataSourceModel struct {
 	ZoneIdentifier    types.String      `tfsdk:"zone_identifier" path:"zone_identifier"`
-	CreatedOn         timetypes.RFC3339 `tfsdk:"created_on" query:"created_on"`
+	CreatedOn         timetypes.RFC3339 `tfsdk:"created_on" query:"created_on" format:"date-time"`
 	Description       types.String      `tfsdk:"description" query:"description"`
 	DescriptionSearch types.String      `tfsdk:"description_search" query:"description_search"`
 	IP                types.String      `tfsdk:"ip" query:"ip"`
 	IPRangeSearch     types.String      `tfsdk:"ip_range_search" query:"ip_range_search"`
 	IPSearch          types.String      `tfsdk:"ip_search" query:"ip_search"`
-	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" query:"modified_on"`
+	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" query:"modified_on" format:"date-time"`
 	Priority          types.Float64     `tfsdk:"priority" query:"priority"`
 	URISearch         types.String      `tfsdk:"uri_search" query:"uri_search"`
 }

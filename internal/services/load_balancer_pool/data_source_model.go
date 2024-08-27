@@ -22,11 +22,11 @@ type LoadBalancerPoolResultListDataSourceEnvelope struct {
 type LoadBalancerPoolDataSourceModel struct {
 	AccountID          types.String                                       `tfsdk:"account_id" path:"account_id"`
 	PoolID             types.String                                       `tfsdk:"pool_id" path:"pool_id"`
-	CreatedOn          timetypes.RFC3339                                  `tfsdk:"created_on" json:"created_on,computed"`
-	DisabledAt         timetypes.RFC3339                                  `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	CreatedOn          timetypes.RFC3339                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	DisabledAt         timetypes.RFC3339                                  `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled            types.Bool                                         `tfsdk:"enabled" json:"enabled,computed"`
 	MinimumOrigins     types.Int64                                        `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
-	ModifiedOn         timetypes.RFC3339                                  `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                                  `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Description        types.String                                       `tfsdk:"description" json:"description,computed_optional"`
 	ID                 types.String                                       `tfsdk:"id" json:"id,computed_optional"`
 	Latitude           types.Float64                                      `tfsdk:"latitude" json:"latitude,computed_optional"`
@@ -90,7 +90,7 @@ type LoadBalancerPoolOriginSteeringDataSourceModel struct {
 
 type LoadBalancerPoolOriginsDataSourceModel struct {
 	Address          types.String                                  `tfsdk:"address" json:"address,computed_optional"`
-	DisabledAt       timetypes.RFC3339                             `tfsdk:"disabled_at" json:"disabled_at,computed"`
+	DisabledAt       timetypes.RFC3339                             `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled          types.Bool                                    `tfsdk:"enabled" json:"enabled,computed"`
 	Header           *LoadBalancerPoolOriginsHeaderDataSourceModel `tfsdk:"header" json:"header,computed_optional"`
 	Name             types.String                                  `tfsdk:"name" json:"name,computed_optional"`

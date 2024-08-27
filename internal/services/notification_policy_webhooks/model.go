@@ -18,9 +18,9 @@ type NotificationPolicyWebhooksModel struct {
 	Name        types.String                                                          `tfsdk:"name" json:"name"`
 	URL         types.String                                                          `tfsdk:"url" json:"url"`
 	Secret      types.String                                                          `tfsdk:"secret" json:"secret"`
-	CreatedAt   timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed"`
-	LastFailure timetypes.RFC3339                                                     `tfsdk:"last_failure" json:"last_failure,computed"`
-	LastSuccess timetypes.RFC3339                                                     `tfsdk:"last_success" json:"last_success,computed"`
+	CreatedAt   timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	LastFailure timetypes.RFC3339                                                     `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`
+	LastSuccess timetypes.RFC3339                                                     `tfsdk:"last_success" json:"last_success,computed" format:"date-time"`
 	Success     types.Bool                                                            `tfsdk:"success" json:"success,computed"`
 	Type        types.String                                                          `tfsdk:"type" json:"type,computed"`
 	Errors      customfield.NestedObjectList[NotificationPolicyWebhooksErrorsModel]   `tfsdk:"errors" json:"errors,computed"`

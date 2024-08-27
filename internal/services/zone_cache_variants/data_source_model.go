@@ -17,7 +17,7 @@ type ZoneCacheVariantsResultDataSourceEnvelope struct {
 type ZoneCacheVariantsDataSourceModel struct {
 	ZoneID     types.String                           `tfsdk:"zone_id" path:"zone_id"`
 	ID         types.String                           `tfsdk:"id" json:"id"`
-	ModifiedOn timetypes.RFC3339                      `tfsdk:"modified_on" json:"modified_on"`
+	ModifiedOn timetypes.RFC3339                      `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
 	Value      *ZoneCacheVariantsValueDataSourceModel `tfsdk:"value" json:"value"`
 }
 

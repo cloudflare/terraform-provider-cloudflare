@@ -25,6 +25,6 @@ type DNSZoneDNSSECModel struct {
 	Flags             types.Float64     `tfsdk:"flags" json:"flags,computed"`
 	KeyTag            types.Float64     `tfsdk:"key_tag" json:"key_tag,computed"`
 	KeyType           types.String      `tfsdk:"key_type" json:"key_type,computed"`
-	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PublicKey         types.String      `tfsdk:"public_key" json:"public_key,computed"`
 }
