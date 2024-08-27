@@ -110,6 +110,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 				ElementType: types.StringType,
 			},
+			"networks": schema.ListAttribute{
+				Description: "List of networks where Load Balancer or Pool is enabled.",
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 			"load_shedding": schema.SingleNestedAttribute{
 				Description: "Configures load shedding policies and percentages for the pool.",
 				Computed:    true,
