@@ -1,2 +1,3 @@
 .prism.log
 dist/
+terraform-provider-cloudflare
