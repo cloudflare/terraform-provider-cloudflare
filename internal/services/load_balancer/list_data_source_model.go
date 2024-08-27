@@ -41,6 +41,7 @@ type LoadBalancersResultDataSourceModel struct {
 	LocationStrategy          *LoadBalancersLocationStrategyDataSourceModel          `tfsdk:"location_strategy" json:"location_strategy,computed_optional"`
 	ModifiedOn                timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                      types.String                                           `tfsdk:"name" json:"name,computed_optional"`
+	Networks                  *[]types.String                                        `tfsdk:"networks" json:"networks,computed_optional"`
 	PopPools                  map[string]*[]types.String                             `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	Proxied                   types.Bool                                             `tfsdk:"proxied" json:"proxied,computed"`
 	RandomSteering            *LoadBalancersRandomSteeringDataSourceModel            `tfsdk:"random_steering" json:"random_steering,computed_optional"`

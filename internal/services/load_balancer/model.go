@@ -34,6 +34,7 @@ type LoadBalancerModel struct {
 	SteeringPolicy            types.String                                `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
 	CreatedOn                 timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn                timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Networks                  types.List                                  `tfsdk:"networks" json:"networks,computed"`
 }
 
 type LoadBalancerAdaptiveRoutingModel struct {

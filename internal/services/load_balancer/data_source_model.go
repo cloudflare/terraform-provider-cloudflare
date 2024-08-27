@@ -36,6 +36,7 @@ type LoadBalancerDataSourceModel struct {
 	TTL                       types.Float64                                         `tfsdk:"ttl" json:"ttl,computed_optional"`
 	CountryPools              map[string]*[]types.String                            `tfsdk:"country_pools" json:"country_pools,computed_optional"`
 	DefaultPools              *[]types.String                                       `tfsdk:"default_pools" json:"default_pools,computed_optional"`
+	Networks                  *[]types.String                                       `tfsdk:"networks" json:"networks,computed_optional"`
 	PopPools                  map[string]*[]types.String                            `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RegionPools               map[string]*[]types.String                            `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	AdaptiveRouting           *LoadBalancerAdaptiveRoutingDataSourceModel           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed_optional"`
