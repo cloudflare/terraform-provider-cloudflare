@@ -32,6 +32,26 @@ func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 	}
 }
 
+func resourceCloudflareWorkersCronTrigger() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareWorkerCronTriggerSchema(),
+		CreateContext: resourceCloudflareWorkerCronTriggerUpdate,
+		ReadContext:   resourceCloudflareWorkerCronTriggerRead,
+		UpdateContext: resourceCloudflareWorkerCronTriggerUpdate,
+		DeleteContext: resourceCloudflareWorkerCronTriggerDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareWorkerCronTriggerImport,
+		},
+		Description: heredoc.Doc(fmt.Sprintf(`
+			Worker Cron Triggers allow users to map a cron expression to a Worker script
+			using a %s listener that enables Workers to be executed on a
+			schedule. Worker Cron Triggers are ideal for running periodic jobs for
+			maintenance or calling third-party APIs to collect up-to-date data.
+		`, "`ScheduledEvent`")),
+		DeprecationMessage: "`cloudflare_worker_cron_trigger` is now deprecated and will be removed in the next major version. Use `cloudflare_workers_cron_trigger` instead.",
+	}
+}
+
 // resourceCloudflareWorkerCronTriggerUpdate is used for creation and updates of
 // Worker Cron Triggers as the remote API endpoint is shared uses HTTP PUT.
 func resourceCloudflareWorkerCronTriggerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

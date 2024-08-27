@@ -17,8 +17,8 @@ on:
     - '.changelog/**'
 
 jobs:
-  build:
-    name: Build
+  acceptance-tests:
+    name: Acceptance Tests
     runs-on: ubuntu-latest
 
     env:

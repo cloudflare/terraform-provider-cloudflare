@@ -30,6 +30,26 @@ func resourceCloudflareTunnelVirtualNetwork() *schema.Resource {
 			Tunnel IP Routes via Virtualized Networks to handle overlapping
 			private IPs in your origins.
 		`),
+		DeprecationMessage: "`cloudflare_tunnel_virtual_network` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_tunnel_virtual_network` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustTunnelVirtualNetwork() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTunnelVirtualNetworkSchema(),
+		CreateContext: resourceCloudflareTunnelVirtualNetworkCreate,
+		ReadContext:   resourceCloudflareTunnelVirtualNetworkRead,
+		UpdateContext: resourceCloudflareTunnelVirtualNetworkUpdate,
+		DeleteContext: resourceCloudflareTunnelVirtualNetworkDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTunnelVirtualNetworkImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a resource, that manages Cloudflare tunnel virtual networks
+			for Zero Trust. Tunnel virtual networks are used for segregation of
+			Tunnel IP Routes via Virtualized Networks to handle overlapping
+			private IPs in your origins.
+		`),
 	}
 }
 

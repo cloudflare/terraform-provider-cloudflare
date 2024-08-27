@@ -106,5 +106,12 @@ func resourceCloudflareDeviceSettingsPolicySchema() map[string]*schema.Schema {
 			Type:        schema.TypeBool,
 			Optional:    true,
 		},
+		"tunnel_protocol": {
+			Description:  fmt.Sprintf("Determines which tunnel protocol to use. %s", renderAvailableDocumentationValuesStringSlice([]string{"", "wireguard", "masque"})),
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"", "wireguard", "masque"}, false),
+			Default:      "wireguard",
+		},
 	}
 }

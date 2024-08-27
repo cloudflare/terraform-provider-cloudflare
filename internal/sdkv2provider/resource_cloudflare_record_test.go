@@ -79,7 +79,7 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					testAccCheckCloudflareRecordDates(resourceName, &record, testStartTime),
 					resource.TestCheckResourceAttr(resourceName, "name", "tf-acctest-basic"),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.10"),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("tf-acctest-basic.%s", zoneName)),
 					resource.TestMatchResourceAttr(resourceName, consts.ZoneIDSchemaKey, regexp.MustCompile("^[a-z0-9]{32}$")),
 					resource.TestCheckResourceAttr(resourceName, "ttl", "3600"),
@@ -89,6 +89,33 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.1", "tag2"),
 					resource.TestCheckResourceAttr(resourceName, "comment", "this is a comment"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCloudflareRecord_BasicValue(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigBasicUsingValue(zoneID, "tf-acctest-basic", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.8"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigBasicUsingValueUpdated(zoneID, "tf-acctest-basic", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.9"),
 				),
 			},
 		},
@@ -147,7 +174,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 					testAccCheckCloudflareRecordAttributes(&record),
 					resource.TestCheckResourceAttr(resourceName, "name", "@"),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.10"),
+					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
 				),
 			},
 		},
@@ -170,7 +197,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigLOC(zoneID, "tf-acctest-loc", rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
-					resource.TestCheckResourceAttr(resourceName, "value", "37 46 46.000 N 122 23 35.000 W 0.00 100.00 0.00 0.00"),
+					resource.TestCheckResourceAttr(resourceName, "content", "37 46 46.000 N 122 23 35.000 W 0.00 100.00 0.00 0.00"),
 					resource.TestCheckResourceAttr(resourceName, "proxiable", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.lat_degrees", "37"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.lat_degrees", "37"),
@@ -210,15 +237,12 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("_xmpp-client._tcp.%s", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("_xmpp-client._tcp.%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "value", "0 5222 talk.l.google.com"),
+					resource.TestCheckResourceAttr(resourceName, "content", "0 5222 talk.l.google.com"),
 					resource.TestCheckResourceAttr(resourceName, "proxiable", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.priority", "5"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.weight", "0"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.port", "5222"),
 					resource.TestCheckResourceAttr(resourceName, "data.0.target", "talk.l.google.com"),
-					resource.TestCheckResourceAttr(resourceName, "data.0.service", "_xmpp-client"),
-					resource.TestCheckResourceAttr(resourceName, "data.0.proto", "_tcp"),
-					resource.TestCheckResourceAttr(resourceName, "data.0.name", rnd+"."+domain),
 				),
 			},
 		},
@@ -280,7 +304,7 @@ func TestAccCloudflareRecord_Proxied(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "proxiable", "true"),
 					resource.TestCheckResourceAttr(resourceName, "proxied", "true"),
 					resource.TestCheckResourceAttr(resourceName, "type", "CNAME"),
-					resource.TestCheckResourceAttr(resourceName, "value", domain),
+					resource.TestCheckResourceAttr(resourceName, "content", domain),
 				),
 			},
 		},
@@ -483,7 +507,7 @@ func TestAccCloudflareRecord_MXWithPriorityZero(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, rnd, zoneName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
-					resource.TestCheckResourceAttr(resourceName, "value", "mail.terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(resourceName, "content", "mail.terraform.cfapi.net"),
 				),
 			},
 		},
@@ -578,7 +602,7 @@ func TestAccCloudflareRecord_MXNull(t *testing.T) {
 				Config: testAccCheckCloudflareRecordNullMX(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "value", "."),
+					resource.TestCheckResourceAttr(name, "content", "."),
 					resource.TestCheckResourceAttr(name, "priority", "0"),
 				),
 			},
@@ -787,7 +811,33 @@ func testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd string) string {
 resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "192.168.0.10"
+	content = "192.168.0.10"
+	type = "A"
+	ttl = 3600
+	tags = ["tag1", "tag2"]
+    comment = "this is a comment"
+}`, zoneID, name, rnd)
+}
+
+func testAccCheckCloudflareRecordConfigBasicUsingValue(zoneID, name, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	value = "192.168.0.8"
+	type = "A"
+	ttl = 3600
+	tags = ["tag1", "tag2"]
+    comment = "this is a comment"
+}`, zoneID, name, rnd)
+}
+
+func testAccCheckCloudflareRecordConfigBasicUsingValueUpdated(zoneID, name, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	value = "192.168.0.9"
 	type = "A"
 	ttl = 3600
 	tags = ["tag1", "tag2"]
@@ -800,7 +850,7 @@ func testAccCheckCloudflareRecordConfigApex(zoneID, rnd string) string {
 resource "cloudflare_record" "%[2]s" {
 	zone_id = "%[1]s"
 	name = "@"
-	value = "192.168.0.10"
+	content = "192.168.0.10"
 	type = "A"
 	ttl = 3600
 }`, zoneID, rnd)
@@ -840,9 +890,6 @@ resource "cloudflare_record" "%[2]s" {
     weight = 0
     port = 5222
     target = "talk.l.google.com"
-    service = "_xmpp-client"
-    proto = "_tcp"
-    name = "%[2]s.%[3]s"
   }
   type = "SRV"
   ttl = 3600
@@ -869,7 +916,7 @@ func testAccCheckCloudflareRecordConfigProxied(zoneID, domain, name, rnd string)
 resource "cloudflare_record" "%[4]s" {
 	zone_id = "%[1]s"
 	name = "%[3]s"
-	value = "%[2]s"
+	content = "%[2]s"
 	type = "CNAME"
 	proxied = true
 }`, zoneID, domain, name, rnd)
@@ -880,7 +927,7 @@ func testAccCheckCloudflareRecordConfigNewValue(zoneID, name, rnd string) string
 resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "192.168.0.11"
+	content = "192.168.0.11"
 	type = "A"
 	ttl = 3600
 	tags = ["updated_tag1", "updated_tag2"]
@@ -893,7 +940,7 @@ func testAccCheckCloudflareRecordConfigChangeType(zoneID, name, zoneName, rnd st
 resource "cloudflare_record" "%[4]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "%[3]s"
+	content = "%[3]s"
 	type = "CNAME"
 	ttl = 3600
 }`, zoneID, name, zoneName, rnd)
@@ -904,7 +951,7 @@ func testAccCheckCloudflareRecordConfigChangeHostname(zoneID, name, rnd string) 
 resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s-changed"
-	value = "192.168.0.10"
+	content = "192.168.0.10"
 	type = "A"
 	ttl = 3600
 }`, zoneID, name, rnd)
@@ -915,7 +962,7 @@ func testAccCheckCloudflareRecordConfigTtlValidation(zoneID, name, zoneName, rnd
 resource "cloudflare_record" "%[4]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "%[3]s"
+	content = "%[3]s"
 	type = "CNAME"
 	proxied = true
 	ttl = 3600
@@ -927,7 +974,7 @@ func testAccCheckCloudflareRecordConfigExplicitProxied(zoneID, name, zoneName, p
 resource "cloudflare_record" "%[2]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "%[3]s"
+	content = "%[3]s"
 	type = "CNAME"
 	proxied = %[4]s
 	ttl = %[5]s
@@ -939,7 +986,7 @@ func testAccCheckCloudflareRecordConfigMXWithPriorityZero(zoneID, name, zoneName
 resource "cloudflare_record" "%[2]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "mail.terraform.cfapi.net"
+	content = "mail.terraform.cfapi.net"
 	type = "MX"
 	priority = 0
 	proxied = false
@@ -983,7 +1030,7 @@ func testAccCheckCloudflareRecordNullMX(zoneID, rnd string) string {
 		zone_id  = "%[2]s"
 		type     = "MX"
 		name     = "%[1]s"
-		value    = "."
+		content    = "."
 		priority = 0
 	  }
 	`, rnd, zoneID)
@@ -994,7 +1041,7 @@ func testAccCheckCloudflareRecordConfigMultipleTags(zoneID, name, rnd string) st
 resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "192.168.0.10"
+	content = "192.168.0.10"
 	type = "A"
 	ttl = 3600
 	tags = ["tag1", "tag2"]
@@ -1007,7 +1054,7 @@ func testAccCheckCloudflareRecordConfigNoTags(zoneID, name, rnd string) string {
 resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
-	value = "192.168.0.10"
+	content = "192.168.0.10"
 	type = "A"
 	ttl = 3600
 }`, zoneID, name, rnd)

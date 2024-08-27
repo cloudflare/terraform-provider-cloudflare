@@ -25,7 +25,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 	}
 
 	rnd, defaultRnd := generateRandomResourceName(), generateRandomResourceName()
-	name, defaultName := fmt.Sprintf("cloudflare_device_settings_policy.%s", rnd), fmt.Sprintf("cloudflare_device_settings_policy.%s", defaultRnd)
+	name, defaultName := fmt.Sprintf("cloudflare_zero_trust_device_profiles.%s", rnd), fmt.Sprintf("cloudflare_zero_trust_device_profiles.%s", defaultRnd)
 	precedence := uint64(10)
 
 	resource.Test(t, resource.TestCase{
@@ -57,6 +57,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "switch_locked", "true"),
 					resource.TestCheckResourceAttr(name, "exclude_office_ips", "true"),
+					resource.TestCheckResourceAttr(name, "tunnel_protocol", "wireguard"),
 				),
 			},
 			{
@@ -79,6 +80,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(defaultName, "support_url", "https://cloudflare.com"),
 					resource.TestCheckResourceAttr(defaultName, "switch_locked", "true"),
 					resource.TestCheckResourceAttr(defaultName, "exclude_office_ips", "true"),
+					resource.TestCheckResourceAttr(defaultName, "tunnel_protocol", "wireguard"),
 				),
 			},
 			{
@@ -91,7 +93,7 @@ func TestAccCloudflareDeviceSettingsPolicy_Create(t *testing.T) {
 
 func testAccCloudflareDeviceSettingsPolicy(rnd, accountID string, precedence uint64) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_settings_policy" "%[1]s" {
+resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	account_id                = "%[2]s"
 	allow_mode_switch         = true
 	allow_updates             = true
@@ -107,13 +109,14 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips		  = true
+	tunnel_protocol           = "wireguard"
 }
 `, rnd, accountID, precedence, rnd)
 }
 
 func testAccCloudflareDefaultDeviceSettingsPolicy(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_settings_policy" "%[1]s" {
+resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	account_id                = "%[2]s"
 	default                   = true
 	name                      = "%[1]s"
@@ -128,6 +131,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	support_url               = "https://cloudflare.com"
 	switch_locked             = true
 	exclude_office_ips		  = true
+	tunnel_protocol           = "wireguard"
 }
 `, rnd, accountID, rnd)
 }
@@ -135,7 +139,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 // invalid configuration - not allowed to set match for default policies.
 func testAccCloudflareInvalidDefaultDeviceSettingsPolicy(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_settings_policy" "%[1]s" {
+resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	account_id                = "%[2]s"
 	default                   = true
 	name                      = "%[1]s"
@@ -150,6 +154,7 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	switch_locked             = true
 	match                     = "identity.email == \"foo@example.com\""
 	exclude_office_ips		  = true
+	tunnel_protocol           = "wireguard"
 }
 `, rnd, accountID, rnd)
 }
@@ -158,7 +163,7 @@ func testAccCheckCloudflareDeviceSettingsPolicyDestroy(s *terraform.State) error
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_device_settings_policy" {
+		if rs.Type != "cloudflare_zero_trust_device_profiles" {
 			continue
 		}
 

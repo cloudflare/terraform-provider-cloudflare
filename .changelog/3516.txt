@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/hyperdrive_config: Add support for creating Hyperdrive over Access configs
+```
+
+```release-note:enhancement
+resource/hyperdrive_config: Add support for max_age and stale_while_revalidate in Hyperdrive Config caching settings
+```

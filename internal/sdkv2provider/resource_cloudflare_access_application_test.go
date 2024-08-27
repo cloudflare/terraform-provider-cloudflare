@@ -17,8 +17,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_access_application", &resource.Sweeper{
-		Name: "cloudflare_access_application",
+	resource.AddTestSweepers("cloudflare_zero_trust_access_application", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_application",
 		F:    testSweepCloudflareAccessApplications,
 	})
 }
@@ -77,7 +77,7 @@ var (
 
 func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -107,7 +107,7 @@ func TestAccCloudflareAccessApplication_BasicZone(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -138,8 +138,8 @@ func TestAccCloudflareAccessApplication_BasicAccount(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -179,8 +179,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_UpdateSCIMConfig(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -274,8 +274,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasicMissingRequired(t
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -314,8 +314,8 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigOAuthBearerToken(t *testin
 
 func TestAccCloudflareAccessApplication_WithSCIMConfigOAuth2(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
-	idpName := fmt.Sprintf("cloudflare_access_identity_provider.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	idpName := fmt.Sprintf("cloudflare_zero_trust_access_identity_provider.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -395,7 +395,7 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigAuthenticationInvalid(t *t
 
 func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -425,7 +425,7 @@ func TestAccCloudflareAccessApplication_WithCORS(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSAMLSaas(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -472,7 +472,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
-	name := "cloudflare_access_application." + rnd
+	name := "cloudflare_zero_trust_access_application." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
 		resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
@@ -521,7 +521,7 @@ func TestAccCloudflareAccessApplication_WithSAMLSaas_Import(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
@@ -552,6 +552,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.0.scopes.3", "profile"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.app_launcher_url", "https://saas-app.example/sso/login"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.group_filter_regex", ".*"),
+					resource.TestCheckResourceAttr(name, "saas_app.0.access_token_lifetime", "5m"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.allow_pkce_without_client_secret", "false"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.refresh_token_options.0.lifetime", "1h"),
 					resource.TestCheckResourceAttr(name, "saas_app.0.custom_claim.#", "1"),
@@ -574,7 +575,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 	t.Parallel()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
-	name := "cloudflare_access_application." + rnd
+	name := "cloudflare_zero_trust_access_application." + rnd
 
 	checkFn := resource.ComposeTestCheckFunc(
 		resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
@@ -595,6 +596,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(name, "saas_app.0.scopes.3", "profile"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.app_launcher_url", "https://saas-app.example/sso/login"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.group_filter_regex", ".*"),
+		resource.TestCheckResourceAttr(name, "saas_app.0.access_token_lifetime", "5m"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.allow_pkce_without_client_secret", "false"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.refresh_token_options.#", "1"),
 		resource.TestCheckResourceAttr(name, "saas_app.0.refresh_token_options.0.lifetime", "1h"),
@@ -633,7 +635,7 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -660,7 +662,7 @@ func TestAccCloudflareAccessApplication_WithAutoRedirectToIdentity(t *testing.T)
 
 func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -686,7 +688,7 @@ func TestAccCloudflareAccessApplication_WithEnableBindingCookie(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -714,7 +716,7 @@ func TestAccCloudflareAccessApplication_WithCustomDenyFields(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithADefinedIdps(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -763,7 +765,7 @@ func TestAccCloudflareAccessApplication_WithMultipleIdpsReordered(t *testing.T) 
 
 func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -789,7 +791,7 @@ func TestAccCloudflareAccessApplication_WithHttpOnlyCookieAttribute(t *testing.T
 
 func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -815,7 +817,7 @@ func TestAccCloudflareAccessApplication_WithHTTPOnlyCookieAttributeSetToFalse(t 
 
 func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -841,7 +843,7 @@ func TestAccCloudflareAccessApplication_WithSameSiteCookieAttribute(t *testing.T
 
 func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -867,7 +869,7 @@ func TestAccCloudflareAccessApplication_WithLogoURL(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -893,7 +895,7 @@ func TestAccCloudflareAccessApplication_WithSkipInterstitial(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -919,7 +921,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -934,8 +936,25 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttrSet(name, "domain"),
 					resource.TestCheckResourceAttr(name, "self_hosted_domains.#", "2"),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.0", fmt.Sprintf("d1.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.1", fmt.Sprintf("d2.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
+					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
+					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
+					resource.TestCheckResourceAttr(name, "sass_app.#", "0"),
+					resource.TestCheckResourceAttr(name, "auto_redirect_to_identity", "false"),
+				),
+			},
+			{
+				Config: testAccCloudflareAccessApplicationWithSelfHostedDomains2(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.#", "2"),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.0", fmt.Sprintf("d3.%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "self_hosted_domains.1", fmt.Sprintf("d4.%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "type", "self_hosted"),
 					resource.TestCheckResourceAttr(name, "session_duration", "24h"),
 					resource.TestCheckResourceAttr(name, "cors_headers.#", "0"),
@@ -949,7 +968,7 @@ func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -976,7 +995,7 @@ func TestAccCloudflareAccessApplication_WithDefinedTags(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1001,7 +1020,7 @@ func TestAccCloudflareAccessApplication_WithReusablePolicies(t *testing.T) {
 
 func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1029,6 +1048,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 					resource.TestCheckResourceAttr(name, "footer_links.#", "1"),
 					resource.TestCheckResourceAttr(name, "footer_links.0.name", "footer link"),
 					resource.TestCheckResourceAttr(name, "footer_links.0.url", "https://www.cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "skip_app_launcher_login_page", "false"),
 				),
 			},
 		},
@@ -1037,7 +1057,7 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 
 func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_application.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -1065,7 +1085,7 @@ func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) 
 
 func testAccCloudflareAccessApplicationConfigBasic(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   %[3]s_id                  = "%[4]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[2]s"
@@ -1078,7 +1098,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithCORS(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id          = "%[2]s"
   name             = "%[1]s"
   domain           = "%[1]s.%[3]s"
@@ -1097,7 +1117,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "saas"
@@ -1133,7 +1153,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "saas"
@@ -1145,6 +1165,7 @@ resource "cloudflare_access_application" "%[1]s" {
 	scopes = ["openid", "email", "profile", "groups"]
 	app_launcher_url = "https://saas-app.example/sso/login"
 	group_filter_regex = ".*"
+	access_token_lifetime = "5m"
 	allow_pkce_without_client_secret = false
 	refresh_token_options {
 		lifetime = "1h"
@@ -1170,29 +1191,29 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithAutoRedirectToIdentity(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
   zone_id = "%[2]s"
   name    = "%[1]s"
   type    = "onetimepin"
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = true
-  allowed_idps              = [cloudflare_access_identity_provider.%[1]s.id]
+  allowed_idps              = [cloudflare_zero_trust_access_identity_provider.%[1]s.id]
 
-  depends_on = ["cloudflare_access_identity_provider.%[1]s"]
+  depends_on = ["cloudflare_zero_trust_access_identity_provider.%[1]s"]
 }
 `, rnd, zoneID, domain)
 }
 
 func testAccCloudflareAccessApplicationConfigWithEnableBindingCookie(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
@@ -1205,7 +1226,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithCustomDenyFields(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
@@ -1220,32 +1241,32 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithADefinedIdp(rnd, zoneID, domain string, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
   account_id = "%[4]s"
   name = "%[1]s"
   type = "onetimepin"
 }
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = true
-  allowed_idps              = [cloudflare_access_identity_provider.%[1]s.id]
+  allowed_idps              = [cloudflare_zero_trust_access_identity_provider.%[1]s.id]
 }
 `, rnd, zoneID, domain, accountID)
 }
 
 func testAccCloudflareAccessApplicationConfigWithMultipleIdps(rnd, zoneID, domain, accountID, idp1, idp2 string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[5]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[5]s" {
   account_id = "%[4]s"
   name = "%[5]s"
   type = "onetimepin"
 }
 
-resource "cloudflare_access_identity_provider" "%[6]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[6]s" {
   account_id = "%[4]s"
   name = "%[6]s"
   type = "github"
@@ -1255,15 +1276,15 @@ resource "cloudflare_access_identity_provider" "%[6]s" {
   }
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
   type                      = "self_hosted"
   session_duration          = "24h"
   allowed_idps              = [
-    cloudflare_access_identity_provider.%[5]s.id,
-    cloudflare_access_identity_provider.%[6]s.id,
+    cloudflare_zero_trust_access_identity_provider.%[5]s.id,
+    cloudflare_zero_trust_access_identity_provider.%[6]s.id,
   ]
 }
 `, rnd, zoneID, domain, accountID, idp1, idp2)
@@ -1271,7 +1292,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttribute(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                    = "%[2]s"
   name                       = "%[1]s"
   domain                     = "%[1]s.%[3]s"
@@ -1284,7 +1305,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithHTTPOnlyCookieAttributeSetToFalse(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                    = "%[2]s"
   name                       = "%[1]s"
   domain                     = "%[1]s.%[3]s"
@@ -1297,7 +1318,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigSameSiteCookieAttribute(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                    = "%[2]s"
   name                       = "%[1]s"
   domain                     = "%[1]s.%[3]s"
@@ -1310,7 +1331,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigSkipInterstitial(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                    = "%[2]s"
   name                       = "%[1]s"
   domain                     = "%[1]s.%[3]s"
@@ -1323,7 +1344,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigWithAppLauncherVisible(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
@@ -1336,7 +1357,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationConfigLogoURL(rnd, zoneID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                    = "%[2]s"
   name                       = "%[1]s"
   domain                     = "%[1]s.%[3]s"
@@ -1349,7 +1370,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID string) string {
 	return fmt.Sprintf(`
-		resource "cloudflare_access_application" "%[1]s" {
+		resource "cloudflare_zero_trust_access_application" "%[1]s" {
 			account_id       = "%[2]s"
 			type             = "app_launcher"
 			session_duration = "24h"
@@ -1377,7 +1398,7 @@ func testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID stri
 
 func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   %[3]s_id                  = "%[4]s"
   name                      = "%[1]s"
   type                      = "self_hosted"
@@ -1391,11 +1412,27 @@ resource "cloudflare_access_application" "%[1]s" {
 `, rnd, domain, identifier.Type, identifier.Identifier)
 }
 
+func testAccCloudflareAccessApplicationWithSelfHostedDomains2(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  %[3]s_id                  = "%[4]s"
+  name                      = "%[1]s"
+  type                      = "self_hosted"
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
+  self_hosted_domains       = [
+    "d3.%[1]s.%[2]s",
+    "d4.%[1]s.%[2]s"
+  ]
+}
+`, rnd, domain, identifier.Type, identifier.Identifier)
+}
+
 func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_application" {
+		if rs.Type != "cloudflare_zero_trust_access_application" {
 			continue
 		}
 
@@ -1421,7 +1458,7 @@ func testAccCheckCloudflareAccessApplicationDestroy(s *terraform.State) error {
 
 func TestAccCloudflareAccessApplicationWithZoneID(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "cloudflare_access_application." + rnd
+	name := "cloudflare_zero_trust_access_application." + rnd
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	updatedName := fmt.Sprintf("%s-updated", rnd)
@@ -1553,7 +1590,7 @@ func TestAccCloudflareAccessApplicationMisconfiguredCORSCredentialsAllowingWildc
 
 func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name    = "%[1]s"
       zone_id = "%[3]s"
       domain  = "%[1]s.%[2]s"
@@ -1564,7 +1601,7 @@ func testAccessApplicationWithZoneID(resourceID, zone, zoneID string) string {
 
 func testAccessApplicationWithZoneIDUpdated(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name    = "%[1]s-updated"
       zone_id = "%[3]s"
       domain  = "%[1]s.%[2]s"
@@ -1575,7 +1612,7 @@ func testAccessApplicationWithZoneIDUpdated(resourceID, zone, zoneID string) str
 
 func testAccessApplicationWithMissingCORSMethods(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name    = "%[1]s-updated"
       zone_id = "%[3]s"
       domain  = "%[1]s.%[2]s"
@@ -1590,7 +1627,7 @@ func testAccessApplicationWithMissingCORSMethods(resourceID, zone, zoneID string
 
 func testAccessApplicationWithMissingCORSOrigins(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name    = "%[1]s-updated"
       zone_id = "%[3]s"
       domain  = "%[1]s.%[2]s"
@@ -1605,7 +1642,7 @@ func testAccessApplicationWithMissingCORSOrigins(resourceID, zone, zoneID string
 
 func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name             = "%[1]s-updated"
       zone_id          = "%[3]s"
       domain           = "%[1]s.%[2]s"
@@ -1617,7 +1654,7 @@ func testAccessApplicationWithInvalidSessionDuration(resourceID, zone, zoneID st
 
 func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name             = "%[1]s-updated"
       zone_id          = "%[3]s"
       domain           = "%[1]s.%[2]s"
@@ -1634,7 +1671,7 @@ func testAccessApplicationMisconfiguredCORSAllowAllOriginsWithCredentials(resour
 
 func testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(resourceID, zone, zoneID string) string {
 	return fmt.Sprintf(`
-    resource "cloudflare_access_application" "%[1]s" {
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
       name             = "%[1]s-updated"
       zone_id          = "%[3]s"
       domain           = "%[1]s.%[2]s"
@@ -1651,24 +1688,24 @@ func testAccessApplicationMisconfiguredCORSAllowWildcardOriginWithCredentials(re
 
 func testAccCloudflareAccessApplicationConfigWithADefinedTag(rnd, zoneID, domain string, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_tag" "%[1]s" {
+resource "cloudflare_zero_trust_access_tag" "%[1]s" {
   account_id = "%[4]s"
   name = "%[1]s"
 }
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   zone_id                   = "%[2]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[3]s"
   type                      = "self_hosted"
   session_duration          = "24h"
-  tags                      = [cloudflare_access_tag.%[1]s.id]
+  tags                      = [cloudflare_zero_trust_access_tag.%[1]s.id]
 }
 `, rnd, zoneID, domain, accountID)
 }
 
 func testAccCloudflareAccessApplicationSCIMConfigValidHttpBasic(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -1686,7 +1723,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -1695,7 +1732,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication {
 		scheme =  "httpbasic"
@@ -1720,7 +1757,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerTokenNoMappings(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -1738,7 +1775,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -1747,7 +1784,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = false
 	remote_uri = "scim2.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = false
 	authentication {
 		scheme =  "oauthbearertoken"
@@ -1760,7 +1797,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationSCIMConfigValidOAuthBearerToken(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -1778,7 +1815,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -1787,7 +1824,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication {
 		scheme =  "oauthbearertoken"
@@ -1811,7 +1848,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationSCIMConfigValidOAuth2(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -1829,7 +1866,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -1838,7 +1875,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication {
 		scheme =  "oauth2"
@@ -1866,7 +1903,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationSCIMConfigOAuth2MissingRequired(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -1884,7 +1921,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -1893,7 +1930,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication {
 		scheme =  "oauth2"
@@ -1920,7 +1957,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationSCIMConfigAuthenticationInvalid(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -1938,7 +1975,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -1947,7 +1984,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication {
 		scheme =  "oauth2"
@@ -1978,7 +2015,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationSCIMConfigHttpBasicMissingRequired(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -1996,7 +2033,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -2005,7 +2042,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication {
 		scheme =  "httpbasic"
@@ -2028,7 +2065,7 @@ resource "cloudflare_access_application" "%[1]s" {
 
 func testAccCloudflareAccessApplicationSCIMConfigInvalidMappingSchema(rnd, accountID, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name       = "%[1]s"
 	type       = "azureAD"
@@ -2046,7 +2083,7 @@ resource "cloudflare_access_identity_provider" "%[1]s" {
 	}
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id       = "%[2]s"
   name             = "%[1]s"
   type             = "self_hosted"
@@ -2055,7 +2092,7 @@ resource "cloudflare_access_application" "%[1]s" {
   scim_config {
 	enabled = true
 	remote_uri = "scim.com"
-	idp_uid = cloudflare_access_identity_provider.%[1]s.id
+	idp_uid = cloudflare_zero_trust_access_identity_provider.%[1]s.id
 	deactivate_on_delete = true
 	authentication {
 		scheme =  "httpbasic"
@@ -2098,7 +2135,7 @@ resource "cloudflare_access_policy" "%[1]s_p2" {
   }
 }
 
-resource "cloudflare_access_application" "%[1]s" {
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
   account_id     			= "%[3]s"
   name                      = "%[1]s"
   domain                    = "%[1]s.%[2]s"

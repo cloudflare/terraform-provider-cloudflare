@@ -39,6 +39,25 @@ func resourceCloudflareDevicePostureIntegration() *schema.Resource {
 			posture integrations configure third-party data providers for device
 			posture rules.
 		`),
+		DeprecationMessage: "`cloudflare_device_posture_integration` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_device_posture_integration` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDevicePostureIntegration() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDevicePostureIntegrationSchema(),
+		CreateContext: resourceCloudflareDevicePostureIntegrationCreate,
+		ReadContext:   resourceCloudflareDevicePostureIntegrationRead,
+		UpdateContext: resourceCloudflareDevicePostureIntegrationUpdate,
+		DeleteContext: resourceCloudflareDevicePostureIntegrationDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDevicePostureIntegrationImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Device Posture Integration resource. Device
+			posture integrations configure third-party data providers for device
+			posture rules.
+		`),
 	}
 }
 

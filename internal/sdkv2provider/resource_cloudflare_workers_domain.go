@@ -26,6 +26,23 @@ func resourceCloudflareWorkerDomain() *schema.Resource {
 		Description: heredoc.Doc(
 			"Creates a Worker Custom Domain.",
 		),
+		DeprecationMessage: "`cloudflare_worker_domain` is now deprecated and will be removed in the next major version. Use `cloudflare_workers_domain` instead.",
+	}
+}
+
+func resourceCloudflareWorkersDomain() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareWorkerDomainSchema(),
+		CreateContext: resourceCloudflareWorkerDomainCreate,
+		ReadContext:   resourceCloudflareWorkerDomainRead,
+		UpdateContext: resourceCloudflareWorkerDomainUpdate,
+		DeleteContext: resourceCloudflareWorkerDomainDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareWorkerDomainImport,
+		},
+		Description: heredoc.Doc(
+			"Creates a Worker Custom Domain.",
+		),
 	}
 }
 

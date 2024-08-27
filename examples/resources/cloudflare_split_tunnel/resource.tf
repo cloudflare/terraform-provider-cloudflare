@@ -22,6 +22,7 @@ resource "cloudflare_split_tunnel" "example_split_tunnel_include" {
 resource "cloudflare_device_settings_policy" "developer_warp_policy" {
   account_id    = "f037e56e89293a057740de681ac9abbe"
   name          = "Developers"
+  description   = "Developers WARP settings policy description"
   precedence    = 10
   match         = "any(identity.groups.name[*] in {\"Developers\"})"
   switch_locked = true
@@ -41,7 +42,7 @@ resource "cloudflare_split_tunnel" "example_device_settings_policy_split_tunnel_
 # Including *.example.com in WARP routes for a particular device policy
 resource "cloudflare_split_tunnel" "example_split_tunnel_include" {
   account_id = "f037e56e89293a057740de681ac9abbe"
-  policy_id  = cloudflare_device_policy.developer_warp_policy.id
+  policy_id  = cloudflare_device_settings_policy.developer_warp_policy.id
   mode       = "include"
   tunnels {
     host        = "*.example.com"

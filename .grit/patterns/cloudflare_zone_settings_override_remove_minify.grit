@@ -1,0 +1,8 @@
+engine marzano(0.1)
+language hcl
+
+pattern cloudflare_zone_settings_override_deprecate_minify() {
+  `minify { $_ }` as $minify => . where {
+    $minify <: within `resource "cloudflare_zone_settings_override" $_ { $_ }`
+  }
+}

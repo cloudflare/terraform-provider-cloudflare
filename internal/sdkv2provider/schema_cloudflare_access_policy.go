@@ -16,10 +16,7 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Optional:     true,
 			ForceNew:     true,
 			RequiredWith: []string{"precedence"},
-			Deprecated: "This field is deprecated. Policies can now be standalone and reusable by multiple applications." +
-				"Please use `cloudflare_access_application.policies` to associate reusable access policies with access" +
-				" applications.",
-			Description: "The ID of the application the policy is associated with.",
+			Description:  "The ID of the application the policy is associated with.",
 		},
 		consts.AccountIDSchemaKey: {
 			Description:   consts.AccountIDSchemaDescription,
@@ -42,10 +39,7 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Type:         schema.TypeInt,
 			Optional:     true,
 			RequiredWith: []string{"application_id"},
-			Deprecated: "This field is deprecated. Access policies can now be reusable by multiple applications." +
-				" Please use `cloudflare_access_application.policies` to link policies to an application with" +
-				" ascending order of precedence.",
-			Description: "The unique precedence for policies on a single application.",
+			Description:  "The unique precedence for policies on a single application.",
 		},
 		"decision": {
 			Type:         schema.TypeString,

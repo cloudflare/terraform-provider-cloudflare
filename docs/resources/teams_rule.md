@@ -66,6 +66,7 @@ Optional:
 - `check_session` (Block List, Max: 1) Configure how session check behaves. (see [below for nested schema](#nestedblock--rule_settings--check_session))
 - `dns_resolvers` (Block List, Max: 1) Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers))
 - `egress` (Block List, Max: 1) Configure how Proxy traffic egresses. Can be set for rules with Egress action and Egress filter. Can be omitted to indicate local egress via Warp IPs. (see [below for nested schema](#nestedblock--rule_settings--egress))
+- `ignore_cname_category_matches` (Boolean) Set to true, to ignore the category matches at CNAME domains in a response.
 - `insecure_disable_dnssec_validation` (Boolean) Disable DNSSEC validation (must be Allow rule).
 - `ip_categories` (Boolean) Turns on IP category based filter on dns if the rule contains dns category checks.
 - `l4override` (Block List, Max: 1) Settings to forward layer 4 traffic. (see [below for nested schema](#nestedblock--rule_settings--l4override))
@@ -89,6 +90,7 @@ Required:
 
 Optional:
 
+- `disable_clipboard_redirection` (Boolean) Disable clipboard redirection.
 - `disable_copy_paste` (Boolean) Disable copy-paste.
 - `disable_download` (Boolean) Disable download.
 - `disable_keyboard` (Boolean) Disable keyboard usage.
@@ -110,8 +112,8 @@ Required:
 
 Optional:
 
-- `ipv4` (Block List) IPv4 resolvers. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers--ipv4))
-- `ipv6` (Block List) IPv6 resolvers. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers--ipv6))
+- `ipv4` (Block List, Max: 10) IPv4 resolvers. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers--ipv4))
+- `ipv6` (Block List, Max: 10) IPv6 resolvers. (see [below for nested schema](#nestedblock--rule_settings--dns_resolvers--ipv6))
 
 <a id="nestedblock--rule_settings--dns_resolvers--ipv4"></a>
 ### Nested Schema for `rule_settings.dns_resolvers.ipv4`

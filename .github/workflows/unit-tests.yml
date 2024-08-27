@@ -4,6 +4,14 @@ on: [pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: f037e56e89293a057740de681ac9abbe
+      CLOUDFLARE_ALT_DOMAIN: terraform2.cfapi.net
+      CLOUDFLARE_ALT_ZONE_ID: b72110c08e3382597095c29ba7e661ea
+      CLOUDFLARE_DOMAIN: terraform.cfapi.net
+      CLOUDFLARE_ZONE_ID: 0da42c8d2132a9ddaf714f9e7c920711
+      CLOUDFLARE_EMAIL: terraform-acceptance-test@cfapi.net
+      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
     steps:
       - name: Check out code repository source code
         uses: actions/checkout@v4

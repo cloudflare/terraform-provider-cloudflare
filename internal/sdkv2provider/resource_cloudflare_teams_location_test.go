@@ -21,7 +21,7 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_location.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_dns_location.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -45,7 +45,7 @@ func TestAccCloudflareTeamsLocationBasic(t *testing.T) {
 
 func testAccCloudflareTeamsLocationConfigBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_location" "%[1]s" {
+resource "cloudflare_zero_trust_dns_location" "%[1]s" {
   name        = "%[1]s"
   account_id  = "%[2]s"
 }
@@ -56,7 +56,7 @@ func testAccCheckCloudflareTeamsLocationDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_teams_location" {
+		if rs.Type != "cloudflare_zero_trust_dns_location" {
 			continue
 		}
 

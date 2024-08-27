@@ -28,7 +28,6 @@ a particular resource.
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   include {
@@ -45,7 +44,6 @@ resource "cloudflare_access_policy" "test_policy" {
 resource "cloudflare_access_policy" "test_policy" {
   account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "staging policy"
-  precedence     = "1"
   decision       = "allow"
 
   include {
@@ -69,12 +67,12 @@ resource "cloudflare_access_policy" "test_policy" {
 ### Optional
 
 - `account_id` (String) The account identifier to target for the resource. Conflicts with `zone_id`. **Modifying this attribute will force creation of a new resource.**
-- `application_id` (String, Deprecated) The ID of the application the policy is associated with. Required when using `precedence`. **Modifying this attribute will force creation of a new resource.**
+- `application_id` (String) The ID of the application the policy is associated with. Required when using `precedence`. **Modifying this attribute will force creation of a new resource.**
 - `approval_group` (Block List) (see [below for nested schema](#nestedblock--approval_group))
 - `approval_required` (Boolean)
 - `exclude` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--exclude))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy.
-- `precedence` (Number, Deprecated) The unique precedence for policies on a single application. Required when using `application_id`.
+- `precedence` (Number) The unique precedence for policies on a single application. Required when using `application_id`.
 - `purpose_justification_prompt` (String) The prompt to display to the user for a justification for accessing the resource. Required when using `purpose_justification_required`.
 - `purpose_justification_required` (Boolean) Whether to prompt the user for a justification for accessing the resource.
 - `require` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--require))

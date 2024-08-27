@@ -426,7 +426,7 @@ func testAccCheckCloudflareSpectrumApplicationConfigOriginDNS(zoneID, zoneName, 
 resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name    = "%[3]s.origin"
-	value   = "example.com"
+	content = "example.com"
 	type    = "CNAME"
 	ttl     = 3600
 }
@@ -458,7 +458,7 @@ func testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, zone
 resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name    = "%[3]s.origin"
-	value   = "example.com"
+	content = "example.com"
 	type    = "CNAME"
 	ttl     = 3600
 }

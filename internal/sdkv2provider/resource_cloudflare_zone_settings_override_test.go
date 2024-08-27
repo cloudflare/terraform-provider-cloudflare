@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"reflect"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
@@ -206,11 +208,6 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		fonts = "on"
 		origin_max_http_version = "2"
 		universal_ssl = "off"
-		minify {
-			css = "on"
-			js = "off"
-			html = "off"
-		}
 		security_header {
 			enabled = true
 		}
@@ -249,4 +246,74 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 	}
   }
 }`, rnd, zoneID)
+}
+
+func TestCloudflareZoneSettingsOverrideStateUpgradeV0(t *testing.T) {
+	v0 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"mobile_redirect": map[string]interface{}{
+				"mobile_subdomain": "",
+				"status":           "",
+				"strip_uri":        true,
+			},
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"mobile_redirect": map[string]interface{}{
+				"mobile_subdomain": "",
+				"status":           "",
+				"strip_uri":        true,
+			},
+			"other_thing": "foo",
+		}},
+	}
+
+	expectedV1 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+	}
+
+	actualV1, err := resourceCloudflareZoneSettingsOverrideStateUpgradeV1(context.Background(), v0, nil)
+	require.NoError(t, err)
+
+	require.Equal(t, expectedV1, actualV1)
+}
+
+func TestCloudflareZoneSettingsOverrideStateUpgradeV1(t *testing.T) {
+	v1 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"minify": map[string]interface{}{
+				"css":  "on",
+				"js":   "on",
+				"html": "off",
+			},
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"minify": map[string]interface{}{
+				"css":  "on",
+				"js":   "on",
+				"html": "off",
+			},
+			"other_thing": "foo",
+		}},
+	}
+
+	expectedV2 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+	}
+
+	actualV2, err := resourceCloudflareZoneSettingsOverrideStateUpgradeV2(context.Background(), v1, nil)
+	require.NoError(t, err)
+
+	require.Equal(t, expectedV2, actualV2)
 }

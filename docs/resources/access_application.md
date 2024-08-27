@@ -80,13 +80,14 @@ resource "cloudflare_access_application" "staging_app" {
 - `logo_url` (String) Image URL for the logo shown in the app launcher dashboard.
 - `name` (String) Friendly name of the Access Application.
 - `options_preflight_bypass` (Boolean) Allows options preflight requests to bypass Access authentication and go directly to the origin. Cannot turn on if cors_headers is set. Defaults to `false`.
-- `policies` (List of String) The policies associated with the application, in ascending order of precedence. When omitted, the application policies are not be updated. Warning: Do not use this field while you still have this application ID referenced as `application_id` in any `cloudflare_access_policy` resource, as it can result in an inconsistent state.
+- `policies` (List of String) The policies associated with the application, in ascending order of precedence. Warning: Do not use this field while you still have this application ID referenced as `application_id` in any `cloudflare_access_policy` resource, as it can result in an inconsistent state.
 - `saas_app` (Block List, Max: 1) SaaS configuration for the Access Application. (see [below for nested schema](#nestedblock--saas_app))
 - `same_site_cookie_attribute` (String) Defines the same-site cookie setting for access tokens. Available values: `none`, `lax`, `strict`.
 - `scim_config` (Block List, Max: 1) Configuration for provisioning to this application via SCIM. This is currently in closed beta. (see [below for nested schema](#nestedblock--scim_config))
 - `self_hosted_domains` (Set of String) List of domains that access will secure. Only present for self_hosted, vnc, and ssh applications. Always includes the value set as `domain`.
 - `service_auth_401_redirect` (Boolean) Option to return a 401 status code in service authentication rules on failed requests. Defaults to `false`.
 - `session_duration` (String) How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`. Defaults to `24h`.
+- `skip_app_launcher_login_page` (Boolean) Option to skip the App Launcher landing page. Defaults to `false`.
 - `skip_interstitial` (Boolean) Option to skip the authorization interstitial when using the CLI. Defaults to `false`.
 - `tags` (Set of String) The itags associated with the application.
 - `type` (String) The application type. Available values: `app_launcher`, `bookmark`, `biso`, `dash_sso`, `saas`, `self_hosted`, `ssh`, `vnc`, `warp`. Defaults to `self_hosted`.
@@ -138,6 +139,7 @@ Optional:
 
 Optional:
 
+- `access_token_lifetime` (String) The lifetime of the Access Token after creation. Valid units are `m` and `h`. Must be greater than or equal to 1m and less than or equal to 24h.
 - `allow_pkce_without_client_secret` (Boolean) Allow PKCE flow without a client secret.
 - `app_launcher_url` (String) The URL where this applications tile redirects users.
 - `auth_type` (String) **Modifying this attribute will force creation of a new resource.**
@@ -231,7 +233,7 @@ Optional:
 
 Optional:
 
-- `lifetime` (String) How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.
+- `lifetime` (String) How long a refresh token will be valid for after creation. Valid units are `m`, `h` and `d`. Must be longer than 1m.
 
 
 

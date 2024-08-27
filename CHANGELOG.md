@@ -1,4 +1,244 @@
-## 4.36.0 (Unreleased)
+## 4.41.0 (Unreleased)
+
+## 4.40.0 (August 21st, 2024)
+
+NOTES:
+
+* resource/cloudflare_access_application: deprecated in favour of `cloudflare_zero_trust_access_application` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_ca_certificate: deprecated in favour of `cloudflare_zero_trust_access_short_lived_certificate` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_custom_page: deprecated in favour of `cloudflare_zero_trust_access_custom_page` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_group: deprecated in favour of `cloudflare_zero_trust_access_group` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_identity_provider: deprecated in favour of `cloudflare_zero_trust_access_identity_provider` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_keys_configuration: deprecated in favour of `cloudflare_zero_trust_access_key_configuration` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_mutual_tls_certificate: deprecated in favour of `cloudflare_zero_trust_access_mtls_certificate` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_mutual_tls_hostname_settings: deprecated in favour of `cloudflare_zero_trust_access_mtls_hostname_settings` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_organization: deprecated in favour of `cloudflare_zero_trust_organization` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_policy: deprecated in favour of `cloudflare_zero_trust_access_policy` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_service_token: deprecated in favour of `cloudflare_zero_trust_access_service_token` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_access_tag: deprecated in favour of `cloudflare_zero_trust_access_tag` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_dex_test: deprecated in favour of `cloudflare_zero_trust_dex_test` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_managed_networks: deprecated in favour of `cloudflare_zero_trust_device_managed_networks` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_policy_certificates: deprecated in favour of `cloudflare_zero_trust_device_certificates` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_posture_integration: deprecated in favour of `cloudflare_zero_trust_device_posture_integration` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_posture_rule: deprecated in favour of `cloudflare_zero_trust_device_posture_rule` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_device_settings_policy: deprecated in favour of `cloudflare_zero_trust_device_profiles` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_dlp_custom_profile: deprecated in favour of `cloudflare_zero_trust_dlp_custom_profile` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_dlp_predefined_profile: deprecated in favour of `cloudflare_zero_trust_dlp_predefined_profile` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_dlp_profile: deprecated in favour of `cloudflare_zero_trust_dlp_profile` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_fallback_domain: deprecated in favour of `cloudflare_zero_trust_local_domain_fallback` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_gre_tunnel: deprecated in favour of `cloudflare_magic_wan_gre_tunnel` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_ipsec_tunnel: deprecated in favour of `cloudflare_magic_wan_ipsec_tunnel` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_record: fix a bug that prematurely removed the ability to set the deprecated `value` field. ([#3674](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3674))
+* resource/cloudflare_risk_behavior: deprecated in favour of `cloudflare_zero_trust_risk_behavior` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_split_tunnel: deprecated in favour of `cloudflare_zero_trust_split_tunnels` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_static_route: deprecated in favour of `cloudflare_magic_wan_static_route` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_account: deprecated in favour of `cloudflare_zero_trust_gateway_settings` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_list: deprecated in favour of `cloudflare_zero_trust_list` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_location: deprecated in favour of `cloudflare_zero_trust_dns_location` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_proxy_endpoint: deprecated in favour of `cloudflare_zero_trust_gateway_proxy_endpoint` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_teams_rule: deprecated in favour of `cloudflare_zero_trust_gateway_policy` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel: deprecated in favour of `cloudflare_zero_trust_tunnel_cloudflared` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel_config: deprecated in favour of `cloudflare_zero_trust_tunnel_cloudflared_config` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel_route: deprecated in favour of `cloudflare_zero_trust_tunnel_route` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_tunnel_virtual_network: deprecated in favour of `cloudflare_zero_trust_tunnel_virtual_network` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_cron_trigger: deprecated in favour of `cloudflare_workers_cron_trigger` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_domain: deprecated in favour of `cloudflare_workers_custom_domain` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_script: deprecated in favour of `cloudflare_workers_script` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_worker_secret: deprecated in favour of `cloudflare_workers_secret` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* resource/cloudflare_workers_for_platforms_namespace: deprecated in favour of `cloudflare_workers_for_platforms_dispatch_namespace` and will be removed in the next major version. ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_magic_wan_gre_tunnel` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_magic_wan_ipsec_tunnel` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_magic_wan_static_route` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_cron_trigger` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_custom_domain` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_for_platforms_dispatch_namespace` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_script` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_workers_secret` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_application` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_custom_page` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_group` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_identity_provider` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_key_configuration` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_mtls_certificate` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_mtls_hostname_settings` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_policy` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_service_token` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_short_lived_certificate` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_access_tag` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_certificates` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_managed_networks` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_posture_integration` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_posture_rule` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_device_profiles` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dex_test` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dlp_custom_profile` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dlp_predefined_profile` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dlp_profile` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_dns_location` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_gateway_policy` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_gateway_proxy_endpoint` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_gateway_settings` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_list` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_local_domain_fallback` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_organization` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_risk_behavior` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_risk_score_integration` ([#3563](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3563))
+* **New Resource:** `cloudflare_zero_trust_split_tunnels` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_cloudflared` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_cloudflared_config` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_route` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+* **New Resource:** `cloudflare_zero_trust_tunnel_virtual_network` ([#3584](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3584))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: add ability to create client_certificate_v2 posture rule ([#3512](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3512))
+* resource/cloudflare_device_settings_policy: Add tunnel_protocol field for device policies ([#3513](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3513))
+
+BUG FIXES:
+
+* resource/cloudflare_access_policy: handle multiple okta idps in access policies ([#3579](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3579))
+* resource/cloudflare_record: refactor validation to use `ExactlyOneOf` instead of custom logic ([#3699](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3699))
+
+DEPENDENCIES:
+
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.10.0 to 1.11.0 ([#3575](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3575))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.9.0 to 1.10.0 ([#3583](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3583))
+* provider: bump golang.org/x/net from 0.27.0 to 0.28.0 ([#3576](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3576))
+
+## 4.39.0 (August 7th, 2024)
+
+NOTES:
+
+* resource/cloudflare_access_policy: remove deprecation notice related to precedence ([#3556](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3556))
+* resource/cloudflare_record: `value` is now deprecated in favour of `content` ([#3509](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3509))
+* resource/cloudflare_worker_cron_trigger: deprecated in favour of `cloudflare_workers_cron_trigger` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_domain: deprecated in favour of `cloudflare_workers_domain` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_route: deprecated in favour of `cloudflare_workers_route` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_script: deprecated in favour of `cloudflare_workers_script` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_worker_secret: deprecated in favour of `cloudflare_workers_secret` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/cloudflare_workers_for_platforms_namespace: deprecated in favour of `cloudflare_workers_for_platforms_dispatch_namespace` and will be removed in the next major version. ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* resource/zone_settings_override: deprecate `minify` setting and include state migration to remove from local state. You should immediately remove the configuration from the resource to prevent permadiffs. Automatic migration of user configuration can be handled with [Grit](https://docs.grit.io/cli/quickstart) by running `grit apply github.com/cloudflare/terraform-provider-cloudflare#cloudflare_zone_settings_override_remove_minify` ([#3521](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3521))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_gateway_app_types` ([#3470](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3470))
+* **New Resource:** `cloudflare_workers_cron_trigger` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_domain` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_for_platforms_dispatch_namespace` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_route` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_script` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+* **New Resource:** `cloudflare_workers_secret` ([#3500](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3500))
+
+ENHANCEMENTS:
+
+* resource/access_application: add `skip_app_launcher_login_page` flag to skip the App Launcher landing page ([#3519](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3519))
+* resource/cloudflare_device_posture_rules: added support for intune compliance_status values ([#3492](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3492))
+* resource/cloudflare_teams_rule: Add `disable_clipboard_redirection` attribute to `BISOAdminControls` ([#3511](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3511))
+* resource/hyperdrive_config: Add support for creating Hyperdrive over Access configs ([#3516](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3516))
+* resource/hyperdrive_config: Add support for max_age and stale_while_revalidate in Hyperdrive Config caching settings ([#3516](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3516))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: handle overlapping hostname `url_hostname` ([#3515](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3515))
+* resource/cloudflare_risk_behavior: fix bug where partial definition of risk behaviors resulted in a provider error ([#3463](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3463))
+
+DEPENDENCIES:
+
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.58.2 to 1.58.3 in the aws group ([#3557](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3557))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.100.0 to 0.101.0 ([#3540](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3540))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.99.0 to 0.100.0 ([#3499](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3499))
+
+## 4.38.0 (July 24th, 2024)
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_gateway_categories` ([#3443](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3443))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_teams_list: add support for descriptions on list items ([#3488](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3488))
+* resource/cloudflare_teams_rules: add support for `ignore_cname_category_matches` ([#3473](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3473))
+
+BUG FIXES:
+
+* resource/cloudflare-access-application: fixes bug when updating self_hosted_domains ([#3468](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3468))
+* resource/cloudflare_access_application: Fix bug that was not cleaning the API when removing all ids from the 'policies' list ([#3469](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3469))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.24 to 1.27.25 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.25 to 1.27.27 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.24 to 1.17.25 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.25 to 1.17.27 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.58.0 to 1.58.1 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.58.1 to 1.58.2 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.1 to 1.30.2 ([#3449](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3449))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.2 to 1.30.3 ([#3483](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3483))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.3.0 to 2.4.0 ([#3480](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3480))
+
+## 4.37.0 (July 11th, 2024)
+
+ENHANCEMENTS:
+
+* resource/cloudflare_notification_policy: Add tunnel_name filter for Magic Health Checks ([#3417](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3417))
+
+BUG FIXES:
+
+* resource/cloudflare_r2_bucket: add validation to location hint to prevent invalid values from drifting ([#3441](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3441))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.21 to 1.27.22 ([#3404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3404))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.22 to 1.27.23 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.23 to 1.27.24 ([#3437](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3437))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.21 to 1.17.22 ([#3404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3404))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.22 to 1.17.23 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.23 to 1.17.24 ([#3437](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3437))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.56.1 to 1.57.0 ([#3404](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3404))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.57.0 to 1.57.1 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.0 to 1.30.1 ([#3412](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3412))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.57.1 to 1.58.0 in the aws group ([#3429](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3429))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.98.0 to 0.99.0 ([#3438](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3438))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.9.0 to 1.10.0 ([#3445](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3445))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.12.0 to 0.13.0 ([#3447](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3447))
+* provider: bump github.com/hashicorp/terraform-plugin-testing from 1.8.0 to 1.9.0 ([#3446](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3446))
+* provider: bump golang.org/x/net from 0.26.0 to 0.27.0 ([#3442](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3442))
+
+## 4.36.0 (June 26th, 2024)
+
+NOTES:
+
+* resource/zone_settings_override: deprecate `mobile_redirect` setting and include state migration to remove from local state. You should immediately remove the configuration from the resource to prevent permadiffs. ([#3337](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3337))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: Support configuring OIDC SaaS access token lifetime ([#3353](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3353))
+
+BUG FIXES:
+
+* resource/cloudflare_list_item: fix crash when not using `type = "redirect"` due to attempting to compare `nil` ([#3368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3368))
+* resource/cloudflare_list_item: implement exact match for IP values to prevent overlapping IP prefixes from not being found ([#3368](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3368))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.18 to 1.27.19 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.19 to 1.27.20 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.20 to 1.27.21 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.18 to 1.17.19 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.19 to 1.17.20 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.20 to 1.17.21 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.1 to 1.55.2 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.55.2 to 1.56.0 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.56.0 to 1.56.1 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.27.2 to 1.28.0 ([#3360](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3360))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.28.0 to 1.29.0 ([#3362](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3362))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.29.0 to 1.30.0 ([#3364](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3364))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.97.0 to 0.98.0 ([#3365](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3365))
+* provider: bump github.com/cloudflare/cloudflare-go/v2 from 2.2.0 to 2.3.0 ([#3363](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3363))
+* provider: bump github.com/hashicorp/go-retryablehttp from 0.7.4 to 0.7.7 in /tools ([#3395](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3395))
 
 ## 4.35.0 (June 12th, 2024)
 

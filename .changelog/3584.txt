@@ -1,0 +1,327 @@
+```release-note:note
+resource/cloudflare_access_application: deprecated in favour of `cloudflare_zero_trust_access_application` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_ca_certificate: deprecated in favour of `cloudflare_zero_trust_access_short_lived_certificate` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_custom_page: deprecated in favour of `cloudflare_zero_trust_access_custom_page` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_group: deprecated in favour of `cloudflare_zero_trust_access_group` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_identity_provider: deprecated in favour of `cloudflare_zero_trust_access_identity_provider` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_keys_configuration: deprecated in favour of `cloudflare_zero_trust_access_key_configuration` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_mutual_tls_certificate: deprecated in favour of `cloudflare_zero_trust_access_mtls_certificate` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_mutual_tls_hostname_settings: deprecated in favour of `cloudflare_zero_trust_access_mtls_hostname_settings` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_organization: deprecated in favour of `cloudflare_zero_trust_organization` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_policy: deprecated in favour of `cloudflare_zero_trust_access_policy` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_service_token: deprecated in favour of `cloudflare_zero_trust_access_service_token` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_access_tag: deprecated in favour of `cloudflare_zero_trust_access_tag` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_device_dex_test: deprecated in favour of `cloudflare_zero_trust_dex_test` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_device_managed_networks: deprecated in favour of `cloudflare_zero_trust_device_managed_networks` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_device_policy_certificates: deprecated in favour of `cloudflare_zero_trust_device_certificates` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_device_posture_integration: deprecated in favour of `cloudflare_zero_trust_device_posture_integration` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_device_posture_rule: deprecated in favour of `cloudflare_zero_trust_device_posture_rule` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_device_settings_policy: deprecated in favour of `cloudflare_zero_trust_device_profiles` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_dlp_profile: deprecated in favour of `cloudflare_zero_trust_dlp_profile` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_dlp_custom_profile: deprecated in favour of `cloudflare_zero_trust_dlp_custom_profile` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_dlp_predefined_profile: deprecated in favour of `cloudflare_zero_trust_dlp_predefined_profile` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_fallback_domain: deprecated in favour of `cloudflare_zero_trust_local_domain_fallback` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_gre_tunnel: deprecated in favour of `cloudflare_magic_wan_gre_tunnel` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_ipsec_tunnel: deprecated in favour of `cloudflare_magic_wan_ipsec_tunnel` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_risk_behavior: deprecated in favour of `cloudflare_zero_trust_risk_behavior` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_split_tunnel: deprecated in favour of `cloudflare_zero_trust_split_tunnels` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_static_route: deprecated in favour of `cloudflare_magic_wan_static_route` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_teams_account: deprecated in favour of `cloudflare_zero_trust_gateway_settings` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_teams_list: deprecated in favour of `cloudflare_zero_trust_list` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_teams_location: deprecated in favour of `cloudflare_zero_trust_dns_location` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_teams_proxy_endpoint: deprecated in favour of `cloudflare_zero_trust_gateway_proxy_endpoint` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_teams_rule: deprecated in favour of `cloudflare_zero_trust_gateway_policy` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_tunnel: deprecated in favour of `cloudflare_zero_trust_tunnel_cloudflared` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_tunnel_config: deprecated in favour of `cloudflare_zero_trust_tunnel_cloudflared_config` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_tunnel_route: deprecated in favour of `cloudflare_zero_trust_tunnel_route` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_tunnel_virtual_network: deprecated in favour of `cloudflare_zero_trust_tunnel_virtual_network` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_cron_trigger: deprecated in favour of `cloudflare_workers_cron_trigger` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_domain: deprecated in favour of `cloudflare_workers_custom_domain` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_script: deprecated in favour of `cloudflare_workers_script` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_secret: deprecated in favour of `cloudflare_workers_secret` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_workers_for_platforms_namespace: deprecated in favour of `cloudflare_workers_for_platforms_dispatch_namespace` and will be removed in the next major version.
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_application
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_short_lived_certificate
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_custom_page
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_group
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_identity_provider
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_key_configuration
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_mtls_certificate
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_mtls_hostname_settings
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_organization
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_policy
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_service_token
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_access_tag
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_dex_test
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_device_managed_networks
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_device_certificates
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_device_posture_integration
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_device_posture_rule
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_device_profiles
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_dlp_profile
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_dlp_custom_profile
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_dlp_predefined_profile
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_local_domain_fallback
+```
+
+```release-note:new-resource
+cloudflare_magic_wan_gre_tunnel
+```
+
+```release-note:new-resource
+cloudflare_magic_wan_ipsec_tunnel
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_risk_behavior
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_split_tunnels
+```
+
+```release-note:new-resource
+cloudflare_magic_wan_static_route
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_gateway_settings
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_list
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_dns_location
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_gateway_proxy_endpoint
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_gateway_policy
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_tunnel_cloudflared
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_tunnel_cloudflared_config
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_tunnel_route
+```
+
+```release-note:new-resource
+cloudflare_zero_trust_tunnel_virtual_network
+```
+
+```release-note:new-resource
+cloudflare_workers_cron_trigger
+```
+
+```release-note:new-resource
+cloudflare_workers_custom_domain
+```
+
+```release-note:new-resource
+cloudflare_workers_script
+```
+
+```release-note:new-resource
+cloudflare_workers_secret
+```
+
+```release-note:new-resource
+cloudflare_workers_for_platforms_dispatch_namespace
+```
