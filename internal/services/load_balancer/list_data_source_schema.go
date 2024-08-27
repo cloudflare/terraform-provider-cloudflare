@@ -116,6 +116,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Optional:    true,
 						},
+						"networks": schema.ListAttribute{
+							Description: "List of networks where Load Balancer or Pool is enabled.",
+							Computed:    true,
+							Optional:    true,
+							ElementType: types.StringType,
+						},
 						"pop_pools": schema.MapAttribute{
 							Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 							Computed:    true,

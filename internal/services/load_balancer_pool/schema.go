@@ -260,6 +260,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"networks": schema.ListAttribute{
+				Description: "List of networks where Load Balancer or Pool is enabled.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
 		},
 	}
 }

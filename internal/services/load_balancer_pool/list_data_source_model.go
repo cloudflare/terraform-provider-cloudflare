@@ -48,6 +48,7 @@ type LoadBalancerPoolsResultDataSourceModel struct {
 	ModifiedOn         timetypes.RFC3339                                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Monitor            types.String                                        `tfsdk:"monitor" json:"monitor,computed_optional"`
 	Name               types.String                                        `tfsdk:"name" json:"name,computed_optional"`
+	Networks           *[]types.String                                     `tfsdk:"networks" json:"networks,computed_optional"`
 	NotificationEmail  types.String                                        `tfsdk:"notification_email" json:"notification_email,computed_optional"`
 	NotificationFilter *LoadBalancerPoolsNotificationFilterDataSourceModel `tfsdk:"notification_filter" json:"notification_filter,computed_optional"`
 	OriginSteering     *LoadBalancerPoolsOriginSteeringDataSourceModel     `tfsdk:"origin_steering" json:"origin_steering,computed_optional"`

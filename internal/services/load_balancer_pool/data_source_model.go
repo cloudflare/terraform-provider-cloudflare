@@ -35,6 +35,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	Name               types.String                                       `tfsdk:"name" json:"name,computed_optional"`
 	NotificationEmail  types.String                                       `tfsdk:"notification_email" json:"notification_email,computed_optional"`
 	CheckRegions       *[]types.String                                    `tfsdk:"check_regions" json:"check_regions,computed_optional"`
+	Networks           *[]types.String                                    `tfsdk:"networks" json:"networks,computed_optional"`
 	LoadShedding       *LoadBalancerPoolLoadSheddingDataSourceModel       `tfsdk:"load_shedding" json:"load_shedding,computed_optional"`
 	NotificationFilter *LoadBalancerPoolNotificationFilterDataSourceModel `tfsdk:"notification_filter" json:"notification_filter,computed_optional"`
 	OriginSteering     *LoadBalancerPoolOriginSteeringDataSourceModel     `tfsdk:"origin_steering" json:"origin_steering,computed_optional"`

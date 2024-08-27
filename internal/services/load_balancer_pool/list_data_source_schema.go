@@ -150,6 +150,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Optional:    true,
 						},
+						"networks": schema.ListAttribute{
+							Description: "List of networks where Load Balancer or Pool is enabled.",
+							Computed:    true,
+							Optional:    true,
+							ElementType: types.StringType,
+						},
 						"notification_email": schema.StringAttribute{
 							Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
 							Computed:    true,
