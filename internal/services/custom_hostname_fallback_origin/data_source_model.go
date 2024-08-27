@@ -16,10 +16,10 @@ type CustomHostnameFallbackOriginResultDataSourceEnvelope struct {
 
 type CustomHostnameFallbackOriginDataSourceModel struct {
 	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id"`
-	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at"`
+	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at" format:"date-time"`
 	Origin    types.String      `tfsdk:"origin" json:"origin"`
 	Status    types.String      `tfsdk:"status" json:"status"`
-	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at"`
+	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at" format:"date-time"`
 	Errors    *[]types.String   `tfsdk:"errors" json:"errors"`
 }
 

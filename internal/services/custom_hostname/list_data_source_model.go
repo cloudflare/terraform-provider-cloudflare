@@ -54,7 +54,7 @@ type CustomHostnamesResultDataSourceModel struct {
 	ID                        types.String                                                `tfsdk:"id" json:"id,computed"`
 	Hostname                  types.String                                                `tfsdk:"hostname" json:"hostname,computed"`
 	SSL                       customfield.NestedObject[CustomHostnamesSSLDataSourceModel] `tfsdk:"ssl" json:"ssl,computed"`
-	CreatedAt                 timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt                 timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomMetadata            *CustomHostnamesCustomMetadataDataSourceModel               `tfsdk:"custom_metadata" json:"custom_metadata,computed_optional"`
 	CustomOriginServer        types.String                                                `tfsdk:"custom_origin_server" json:"custom_origin_server,computed_optional"`
 	CustomOriginSNI           types.String                                                `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed_optional"`
@@ -71,7 +71,7 @@ type CustomHostnamesSSLDataSourceModel struct {
 	CustomCertificate    types.String                                           `tfsdk:"custom_certificate" json:"custom_certificate,computed_optional"`
 	CustomCsrID          types.String                                           `tfsdk:"custom_csr_id" json:"custom_csr_id,computed_optional"`
 	CustomKey            types.String                                           `tfsdk:"custom_key" json:"custom_key,computed_optional"`
-	ExpiresOn            timetypes.RFC3339                                      `tfsdk:"expires_on" json:"expires_on,computed_optional"`
+	ExpiresOn            timetypes.RFC3339                                      `tfsdk:"expires_on" json:"expires_on,computed_optional" format:"date-time"`
 	Hosts                *[]types.String                                        `tfsdk:"hosts" json:"hosts,computed_optional"`
 	Issuer               types.String                                           `tfsdk:"issuer" json:"issuer,computed_optional"`
 	Method               types.String                                           `tfsdk:"method" json:"method,computed_optional"`
@@ -80,7 +80,7 @@ type CustomHostnamesSSLDataSourceModel struct {
 	Signature            types.String                                           `tfsdk:"signature" json:"signature,computed_optional"`
 	Status               types.String                                           `tfsdk:"status" json:"status,computed"`
 	Type                 types.String                                           `tfsdk:"type" json:"type,computed_optional"`
-	UploadedOn           timetypes.RFC3339                                      `tfsdk:"uploaded_on" json:"uploaded_on,computed_optional"`
+	UploadedOn           timetypes.RFC3339                                      `tfsdk:"uploaded_on" json:"uploaded_on,computed_optional" format:"date-time"`
 	ValidationErrors     *[]*CustomHostnamesSSLValidationErrorsDataSourceModel  `tfsdk:"validation_errors" json:"validation_errors,computed_optional"`
 	ValidationRecords    *[]*CustomHostnamesSSLValidationRecordsDataSourceModel `tfsdk:"validation_records" json:"validation_records,computed_optional"`
 	Wildcard             types.Bool                                             `tfsdk:"wildcard" json:"wildcard,computed_optional"`

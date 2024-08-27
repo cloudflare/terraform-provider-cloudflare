@@ -15,13 +15,13 @@ type APITokenModel struct {
 	ID         types.String              `tfsdk:"id" json:"id,computed"`
 	Name       types.String              `tfsdk:"name" json:"name"`
 	Policies   *[]*APITokenPoliciesModel `tfsdk:"policies" json:"policies"`
-	ExpiresOn  timetypes.RFC3339         `tfsdk:"expires_on" json:"expires_on"`
-	NotBefore  timetypes.RFC3339         `tfsdk:"not_before" json:"not_before"`
+	ExpiresOn  timetypes.RFC3339         `tfsdk:"expires_on" json:"expires_on" format:"date-time"`
+	NotBefore  timetypes.RFC3339         `tfsdk:"not_before" json:"not_before" format:"date-time"`
 	Status     types.String              `tfsdk:"status" json:"status"`
 	Condition  *APITokenConditionModel   `tfsdk:"condition" json:"condition"`
-	IssuedOn   timetypes.RFC3339         `tfsdk:"issued_on" json:"issued_on,computed"`
-	LastUsedOn timetypes.RFC3339         `tfsdk:"last_used_on" json:"last_used_on,computed"`
-	ModifiedOn timetypes.RFC3339         `tfsdk:"modified_on" json:"modified_on,computed"`
+	IssuedOn   timetypes.RFC3339         `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
+	LastUsedOn timetypes.RFC3339         `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
+	ModifiedOn timetypes.RFC3339         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      types.String              `tfsdk:"value" json:"value,computed"`
 }
 

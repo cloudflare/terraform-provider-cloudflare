@@ -18,13 +18,13 @@ type ZeroTrustListModel struct {
 	Items       *[]*ZeroTrustListItemsModel `tfsdk:"items" json:"items"`
 	Name        types.String                `tfsdk:"name" json:"name"`
 	Description types.String                `tfsdk:"description" json:"description"`
-	CreatedAt   timetypes.RFC3339           `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt   timetypes.RFC3339           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ListCount   types.Float64               `tfsdk:"list_count" json:"count,computed"`
-	UpdatedAt   timetypes.RFC3339           `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt   timetypes.RFC3339           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustListItemsModel struct {
-	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description types.String      `tfsdk:"description" json:"description"`
 	Value       types.String      `tfsdk:"value" json:"value"`
 }

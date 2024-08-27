@@ -39,7 +39,7 @@ func (m *APIShieldSchemasDataSourceModel) toListParams() (params api_gateway.Use
 }
 
 type APIShieldSchemasResultDataSourceModel struct {
-	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
 	Name              types.String      `tfsdk:"name" json:"name,computed"`
 	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id,computed"`

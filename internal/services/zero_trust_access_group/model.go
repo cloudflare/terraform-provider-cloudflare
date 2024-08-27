@@ -21,8 +21,8 @@ type ZeroTrustAccessGroupModel struct {
 	IsDefault types.Bool                           `tfsdk:"is_default" json:"is_default"`
 	Exclude   *[]*ZeroTrustAccessGroupExcludeModel `tfsdk:"exclude" json:"exclude"`
 	Require   *[]*ZeroTrustAccessGroupRequireModel `tfsdk:"require" json:"require"`
-	CreatedAt timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed"`
-	UpdatedAt timetypes.RFC3339                    `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt timetypes.RFC3339                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UpdatedAt timetypes.RFC3339                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustAccessGroupIncludeModel struct {

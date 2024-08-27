@@ -30,6 +30,6 @@ type LoadBalancerMonitorModel struct {
 	Retries         types.Int64                `tfsdk:"retries" json:"retries,computed_optional"`
 	Timeout         types.Int64                `tfsdk:"timeout" json:"timeout,computed_optional"`
 	Type            types.String               `tfsdk:"type" json:"type,computed_optional"`
-	CreatedOn       timetypes.RFC3339          `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn      timetypes.RFC3339          `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn       timetypes.RFC3339          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn      timetypes.RFC3339          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }

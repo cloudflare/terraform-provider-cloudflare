@@ -26,7 +26,7 @@ type DNSZoneDNSSECDataSourceModel struct {
 	Flags             types.Float64     `tfsdk:"flags" json:"flags"`
 	KeyTag            types.Float64     `tfsdk:"key_tag" json:"key_tag"`
 	KeyType           types.String      `tfsdk:"key_type" json:"key_type"`
-	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on"`
+	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
 	PublicKey         types.String      `tfsdk:"public_key" json:"public_key"`
 	Status            types.String      `tfsdk:"status" json:"status"`
 }

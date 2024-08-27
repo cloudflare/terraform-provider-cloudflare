@@ -19,7 +19,7 @@ type APIShieldOperationDataSourceModel struct {
 	Endpoint    types.String                                `tfsdk:"endpoint" json:"endpoint"`
 	Host        types.String                                `tfsdk:"host" json:"host"`
 	ID          types.String                                `tfsdk:"id" json:"id"`
-	LastUpdated timetypes.RFC3339                           `tfsdk:"last_updated" json:"last_updated"`
+	LastUpdated timetypes.RFC3339                           `tfsdk:"last_updated" json:"last_updated" format:"date-time"`
 	Method      types.String                                `tfsdk:"method" json:"method"`
 	State       types.String                                `tfsdk:"state" json:"state"`
 	Origin      *[]types.String                             `tfsdk:"origin" json:"origin"`
@@ -70,7 +70,7 @@ type APIShieldOperationFeaturesDataSourceModel struct {
 }
 
 type APIShieldOperationFeaturesTrafficStatsDataSourceModel struct {
-	LastUpdated   timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed"`
+	LastUpdated   timetypes.RFC3339 `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	PeriodSeconds types.Int64       `tfsdk:"period_seconds" json:"period_seconds,computed"`
 	Requests      types.Float64     `tfsdk:"requests" json:"requests,computed"`
 }

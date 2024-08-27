@@ -17,9 +17,9 @@ type WorkersForPlatformsDispatchNamespaceModel struct {
 	AccountID     types.String      `tfsdk:"account_id" path:"account_id"`
 	Name          types.String      `tfsdk:"name" json:"name"`
 	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by,computed"`
-	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedBy    types.String      `tfsdk:"modified_by" json:"modified_by,computed"`
-	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	NamespaceName types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
 	ScriptCount   types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
 }

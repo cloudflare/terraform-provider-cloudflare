@@ -18,7 +18,7 @@ type ArgoTieredCachingDataSourceModel struct {
 	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id"`
 	Editable   types.Bool        `tfsdk:"editable" json:"editable"`
 	ID         types.String      `tfsdk:"id" json:"id"`
-	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on"`
+	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
 	Value      types.String      `tfsdk:"value" json:"value"`
 }
 

@@ -32,8 +32,8 @@ func (m *ZeroTrustGatewayPoliciesDataSourceModel) toListParams() (params zero_tr
 type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	ID            types.String                                         `tfsdk:"id" json:"id,computed_optional"`
 	Action        types.String                                         `tfsdk:"action" json:"action,computed_optional"`
-	CreatedAt     timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt     timetypes.RFC3339                                    `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	CreatedAt     timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DeletedAt     timetypes.RFC3339                                    `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	Description   types.String                                         `tfsdk:"description" json:"description,computed_optional"`
 	DevicePosture types.String                                         `tfsdk:"device_posture" json:"device_posture,computed_optional"`
 	Enabled       types.Bool                                           `tfsdk:"enabled" json:"enabled,computed_optional"`
@@ -44,7 +44,7 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	RuleSettings  *ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel `tfsdk:"rule_settings" json:"rule_settings,computed_optional"`
 	Schedule      *ZeroTrustGatewayPoliciesScheduleDataSourceModel     `tfsdk:"schedule" json:"schedule,computed_optional"`
 	Traffic       types.String                                         `tfsdk:"traffic" json:"traffic,computed_optional"`
-	UpdatedAt     timetypes.RFC3339                                    `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt     timetypes.RFC3339                                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {

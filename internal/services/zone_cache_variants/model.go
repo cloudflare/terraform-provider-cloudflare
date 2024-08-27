@@ -15,7 +15,7 @@ type ZoneCacheVariantsModel struct {
 	ID         types.String                 `tfsdk:"id" json:"-,computed"`
 	ZoneID     types.String                 `tfsdk:"zone_id" path:"zone_id"`
 	Value      *ZoneCacheVariantsValueModel `tfsdk:"value" json:"value"`
-	ModifiedOn timetypes.RFC3339            `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn timetypes.RFC3339            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }
 
 type ZoneCacheVariantsValueModel struct {

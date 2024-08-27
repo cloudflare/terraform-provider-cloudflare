@@ -37,13 +37,13 @@ func (m *ZeroTrustAccessGroupsDataSourceModel) toListParams() (params zero_trust
 
 type ZeroTrustAccessGroupsResultDataSourceModel struct {
 	ID        types.String                                      `tfsdk:"id" json:"id,computed_optional"`
-	CreatedAt timetypes.RFC3339                                 `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt timetypes.RFC3339                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Exclude   *[]*ZeroTrustAccessGroupsExcludeDataSourceModel   `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include   *[]*ZeroTrustAccessGroupsIncludeDataSourceModel   `tfsdk:"include" json:"include,computed_optional"`
 	IsDefault *[]*ZeroTrustAccessGroupsIsDefaultDataSourceModel `tfsdk:"is_default" json:"is_default,computed_optional"`
 	Name      types.String                                      `tfsdk:"name" json:"name,computed_optional"`
 	Require   *[]*ZeroTrustAccessGroupsRequireDataSourceModel   `tfsdk:"require" json:"require,computed_optional"`
-	UpdatedAt timetypes.RFC3339                                 `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt timetypes.RFC3339                                 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustAccessGroupsExcludeDataSourceModel struct {

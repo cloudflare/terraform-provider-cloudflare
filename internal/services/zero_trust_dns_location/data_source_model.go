@@ -22,8 +22,8 @@ type ZeroTrustDNSLocationResultListDataSourceEnvelope struct {
 type ZeroTrustDNSLocationDataSourceModel struct {
 	AccountID             types.String                                    `tfsdk:"account_id" path:"account_id"`
 	LocationID            types.String                                    `tfsdk:"location_id" path:"location_id"`
-	CreatedAt             timetypes.RFC3339                               `tfsdk:"created_at" json:"created_at,computed"`
-	UpdatedAt             timetypes.RFC3339                               `tfsdk:"updated_at" json:"updated_at,computed"`
+	CreatedAt             timetypes.RFC3339                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UpdatedAt             timetypes.RFC3339                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	ClientDefault         types.Bool                                      `tfsdk:"client_default" json:"client_default,computed_optional"`
 	DNSDestinationIPsID   types.String                                    `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed_optional"`
 	DOHSubdomain          types.String                                    `tfsdk:"doh_subdomain" json:"doh_subdomain,computed_optional"`

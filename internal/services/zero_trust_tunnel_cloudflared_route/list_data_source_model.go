@@ -18,7 +18,7 @@ type ZeroTrustTunnelCloudflaredRoutesResultListDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
 	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id"`
 	Comment          types.String                                                                        `tfsdk:"comment" query:"comment"`
-	ExistedAt        timetypes.RFC3339                                                                   `tfsdk:"existed_at" query:"existed_at"`
+	ExistedAt        timetypes.RFC3339                                                                   `tfsdk:"existed_at" query:"existed_at" format:"date-time"`
 	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted"`
 	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset"`
 	NetworkSuperset  types.String                                                                        `tfsdk:"network_superset" query:"network_superset"`
@@ -72,8 +72,8 @@ func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams() (params
 type ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel struct {
 	ID                 types.String      `tfsdk:"id" json:"id,computed_optional"`
 	Comment            types.String      `tfsdk:"comment" json:"comment,computed_optional"`
-	CreatedAt          timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed"`
-	DeletedAt          timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed"`
+	CreatedAt          timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DeletedAt          timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	Network            types.String      `tfsdk:"network" json:"network,computed_optional"`
 	TunType            types.String      `tfsdk:"tun_type" json:"tun_type,computed_optional"`
 	TunnelID           types.String      `tfsdk:"tunnel_id" json:"tunnel_id,computed_optional"`

@@ -20,12 +20,12 @@ type ZeroTrustDNSLocationModel struct {
 	ECSSupport            types.Bool                            `tfsdk:"ecs_support" json:"ecs_support"`
 	Endpoints             *ZeroTrustDNSLocationEndpointsModel   `tfsdk:"endpoints" json:"endpoints"`
 	Networks              *[]*ZeroTrustDNSLocationNetworksModel `tfsdk:"networks" json:"networks"`
-	CreatedAt             timetypes.RFC3339                     `tfsdk:"created_at" json:"created_at,computed"`
+	CreatedAt             timetypes.RFC3339                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DOHSubdomain          types.String                          `tfsdk:"doh_subdomain" json:"doh_subdomain,computed"`
 	IP                    types.String                          `tfsdk:"ip" json:"ip,computed"`
 	IPV4Destination       types.String                          `tfsdk:"ipv4_destination" json:"ipv4_destination,computed"`
 	IPV4DestinationBackup types.String                          `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed"`
-	UpdatedAt             timetypes.RFC3339                     `tfsdk:"updated_at" json:"updated_at,computed"`
+	UpdatedAt             timetypes.RFC3339                     `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustDNSLocationEndpointsModel struct {

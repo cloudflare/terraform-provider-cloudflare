@@ -22,9 +22,9 @@ type LoadBalancerResultListDataSourceEnvelope struct {
 type LoadBalancerDataSourceModel struct {
 	LoadBalancerID            types.String                                          `tfsdk:"load_balancer_id" path:"load_balancer_id"`
 	ZoneID                    types.String                                          `tfsdk:"zone_id" path:"zone_id"`
-	CreatedOn                 timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn                 timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Enabled                   types.Bool                                            `tfsdk:"enabled" json:"enabled,computed"`
-	ModifiedOn                timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn                timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Proxied                   types.Bool                                            `tfsdk:"proxied" json:"proxied,computed"`
 	SessionAffinity           types.String                                          `tfsdk:"session_affinity" json:"session_affinity,computed"`
 	SteeringPolicy            types.String                                          `tfsdk:"steering_policy" json:"steering_policy,computed"`

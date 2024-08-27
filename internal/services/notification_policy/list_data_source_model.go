@@ -34,12 +34,12 @@ type NotificationPoliciesResultDataSourceModel struct {
 	ID            types.String                                `tfsdk:"id" json:"id,computed"`
 	AlertInterval types.String                                `tfsdk:"alert_interval" json:"alert_interval,computed_optional"`
 	AlertType     types.String                                `tfsdk:"alert_type" json:"alert_type,computed_optional"`
-	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed"`
+	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Description   types.String                                `tfsdk:"description" json:"description,computed_optional"`
 	Enabled       types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
 	Filters       *NotificationPoliciesFiltersDataSourceModel `tfsdk:"filters" json:"filters,computed_optional"`
 	Mechanisms    map[string]*[]jsontypes.Normalized          `tfsdk:"mechanisms" json:"mechanisms,computed_optional"`
-	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed"`
+	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Name          types.String                                `tfsdk:"name" json:"name,computed_optional"`
 }
 

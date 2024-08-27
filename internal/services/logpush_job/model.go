@@ -27,9 +27,9 @@ type LogpushJobModel struct {
 	Frequency                types.String                  `tfsdk:"frequency" json:"frequency,computed_optional"`
 	MaxUploadIntervalSeconds types.Int64                   `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed_optional"`
 	MaxUploadRecords         types.Int64                   `tfsdk:"max_upload_records" json:"max_upload_records,computed_optional"`
-	ErrorMessage             timetypes.RFC3339             `tfsdk:"error_message" json:"error_message,computed"`
-	LastComplete             timetypes.RFC3339             `tfsdk:"last_complete" json:"last_complete,computed"`
-	LastError                timetypes.RFC3339             `tfsdk:"last_error" json:"last_error,computed"`
+	ErrorMessage             timetypes.RFC3339             `tfsdk:"error_message" json:"error_message,computed" format:"date-time"`
+	LastComplete             timetypes.RFC3339             `tfsdk:"last_complete" json:"last_complete,computed" format:"date-time"`
+	LastError                timetypes.RFC3339             `tfsdk:"last_error" json:"last_error,computed" format:"date-time"`
 }
 
 type LogpushJobOutputOptionsModel struct {

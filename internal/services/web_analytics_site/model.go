@@ -19,7 +19,7 @@ type WebAnalyticsSiteModel struct {
 	AutoInstall types.Bool                                               `tfsdk:"auto_install" json:"auto_install"`
 	Host        types.String                                             `tfsdk:"host" json:"host"`
 	ZoneTag     types.String                                             `tfsdk:"zone_tag" json:"zone_tag"`
-	Created     timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed"`
+	Created     timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed" format:"date-time"`
 	SiteToken   types.String                                             `tfsdk:"site_token" json:"site_token,computed"`
 	Snippet     types.String                                             `tfsdk:"snippet" json:"snippet,computed"`
 	Rules       customfield.NestedObjectList[WebAnalyticsSiteRulesModel] `tfsdk:"rules" json:"rules,computed"`
@@ -28,7 +28,7 @@ type WebAnalyticsSiteModel struct {
 
 type WebAnalyticsSiteRulesModel struct {
 	ID        types.String      `tfsdk:"id" json:"id"`
-	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed"`
+	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Host      types.String      `tfsdk:"host" json:"host"`
 	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive"`
 	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused"`

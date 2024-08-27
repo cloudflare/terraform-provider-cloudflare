@@ -66,11 +66,11 @@ type ZonesAccountDataSourceModel struct {
 type ZonesResultDataSourceModel struct {
 	ID                  types.String                                          `tfsdk:"id" json:"id,computed"`
 	Account             customfield.NestedObject[ZonesAccountDataSourceModel] `tfsdk:"account" json:"account,computed"`
-	ActivatedOn         timetypes.RFC3339                                     `tfsdk:"activated_on" json:"activated_on,computed"`
-	CreatedOn           timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed"`
+	ActivatedOn         timetypes.RFC3339                                     `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
+	CreatedOn           timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DevelopmentMode     types.Float64                                         `tfsdk:"development_mode" json:"development_mode,computed"`
 	Meta                customfield.NestedObject[ZonesMetaDataSourceModel]    `tfsdk:"meta" json:"meta,computed"`
-	ModifiedOn          timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn          timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                types.String                                          `tfsdk:"name" json:"name,computed"`
 	NameServers         types.List                                            `tfsdk:"name_servers" json:"name_servers,computed"`
 	OriginalDnshost     types.String                                          `tfsdk:"original_dnshost" json:"original_dnshost,computed"`

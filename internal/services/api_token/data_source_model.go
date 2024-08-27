@@ -22,12 +22,12 @@ type APITokenResultListDataSourceEnvelope struct {
 type APITokenDataSourceModel struct {
 	TokenID    types.String                        `tfsdk:"token_id" path:"token_id"`
 	ID         types.String                        `tfsdk:"id" json:"id,computed"`
-	IssuedOn   timetypes.RFC3339                   `tfsdk:"issued_on" json:"issued_on,computed"`
-	LastUsedOn timetypes.RFC3339                   `tfsdk:"last_used_on" json:"last_used_on,computed"`
-	ModifiedOn timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on,computed"`
-	ExpiresOn  timetypes.RFC3339                   `tfsdk:"expires_on" json:"expires_on,computed_optional"`
+	IssuedOn   timetypes.RFC3339                   `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
+	LastUsedOn timetypes.RFC3339                   `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
+	ModifiedOn timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ExpiresOn  timetypes.RFC3339                   `tfsdk:"expires_on" json:"expires_on,computed_optional" format:"date-time"`
 	Name       types.String                        `tfsdk:"name" json:"name,computed_optional"`
-	NotBefore  timetypes.RFC3339                   `tfsdk:"not_before" json:"not_before,computed_optional"`
+	NotBefore  timetypes.RFC3339                   `tfsdk:"not_before" json:"not_before,computed_optional" format:"date-time"`
 	Status     types.String                        `tfsdk:"status" json:"status,computed_optional"`
 	Condition  *APITokenConditionDataSourceModel   `tfsdk:"condition" json:"condition,computed_optional"`
 	Policies   *[]*APITokenPoliciesDataSourceModel `tfsdk:"policies" json:"policies,computed_optional"`

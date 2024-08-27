@@ -22,7 +22,7 @@ type TurnstileWidgetModel struct {
 	BotFightMode   types.Bool        `tfsdk:"bot_fight_mode" json:"bot_fight_mode"`
 	ClearanceLevel types.String      `tfsdk:"clearance_level" json:"clearance_level"`
 	Offlabel       types.Bool        `tfsdk:"offlabel" json:"offlabel"`
-	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Secret         types.String      `tfsdk:"secret" json:"secret,computed"`
 }

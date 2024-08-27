@@ -33,13 +33,13 @@ type LoadBalancersResultDataSourceModel struct {
 	ID                        types.String                                           `tfsdk:"id" json:"id,computed_optional"`
 	AdaptiveRouting           *LoadBalancersAdaptiveRoutingDataSourceModel           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed_optional"`
 	CountryPools              map[string]*[]types.String                             `tfsdk:"country_pools" json:"country_pools,computed_optional"`
-	CreatedOn                 timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn                 timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DefaultPools              *[]types.String                                        `tfsdk:"default_pools" json:"default_pools,computed_optional"`
 	Description               types.String                                           `tfsdk:"description" json:"description,computed_optional"`
 	Enabled                   types.Bool                                             `tfsdk:"enabled" json:"enabled,computed"`
 	FallbackPool              types.String                                           `tfsdk:"fallback_pool" json:"fallback_pool,computed_optional"`
 	LocationStrategy          *LoadBalancersLocationStrategyDataSourceModel          `tfsdk:"location_strategy" json:"location_strategy,computed_optional"`
-	ModifiedOn                timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn                timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                      types.String                                           `tfsdk:"name" json:"name,computed_optional"`
 	PopPools                  map[string]*[]types.String                             `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	Proxied                   types.Bool                                             `tfsdk:"proxied" json:"proxied,computed"`

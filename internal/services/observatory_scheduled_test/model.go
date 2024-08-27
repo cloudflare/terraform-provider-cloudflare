@@ -31,7 +31,7 @@ type ObservatoryScheduledTestScheduleModel struct {
 
 type ObservatoryScheduledTestTestModel struct {
 	ID                types.String                                    `tfsdk:"id" json:"id"`
-	Date              timetypes.RFC3339                               `tfsdk:"date" json:"date"`
+	Date              timetypes.RFC3339                               `tfsdk:"date" json:"date" format:"date-time"`
 	DesktopReport     *ObservatoryScheduledTestTestDesktopReportModel `tfsdk:"desktop_report" json:"desktopReport"`
 	MobileReport      *ObservatoryScheduledTestTestMobileReportModel  `tfsdk:"mobile_report" json:"mobileReport"`
 	Region            *ObservatoryScheduledTestTestRegionModel        `tfsdk:"region" json:"region"`
