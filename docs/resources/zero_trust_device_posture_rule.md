@@ -78,7 +78,7 @@ Optional:
 - `is_active` (Boolean) True if SentinelOne device is active.
 - `issue_count` (String) The number of issues for kolide.
 - `last_seen` (String) The duration of time that the host was last seen from Crowdstrike. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`.
-- `locations` (Block List) List of locations to check for client certificate. (see [below for nested schema](#nestedblock--input--locations))
+- `locations` (Block List) List of operating system locations to check for a client certificate.. (see [below for nested schema](#nestedblock--input--locations))
 - `network_status` (String) The network status from SentinelOne. Available values: `connected`, `disconnected`, `disconnecting`, `connecting`.
 - `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
@@ -96,7 +96,7 @@ Optional:
 - `thumbprint` (String) The thumbprint of the file certificate.
 - `total_score` (Number) The total score from Tanium.
 - `version` (String) The operating system semantic version.
-- `version_operator` (String) The version comparison operator for crowdstrike. Available values: `>`, `>=`, `<`, `<=`, `==`.
+- `version_operator` (String) The version comparison operator for Crowdstrike. Available values: `>`, `>=`, `<`, `<=`, `==`.
 
 <a id="nestedblock--input--locations"></a>
 ### Nested Schema for `input.locations`

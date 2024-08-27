@@ -88,7 +88,7 @@ resource "cloudflare_access_policy" "test_policy" {
 
 Optional:
 
-- `any_valid_service_token` (Boolean) Matches any valid Access Service Token.
+- `any_valid_service_token` (Boolean) Matches any valid Access service token.
 - `auth_context` (Block List) (see [below for nested schema](#nestedblock--include--auth_context))
 - `auth_method` (String) The type of authentication method. Refer to https://datatracker.ietf.org/doc/html/rfc8176#section-2 for possible types.
 - `azure` (Block List) Matches an Azure group. Requires an Azure identity provider. (see [below for nested schema](#nestedblock--include--azure))
@@ -100,17 +100,17 @@ Optional:
 - `email_domain` (List of String) The email domain to match.
 - `email_list` (List of String) The ID of a previously created email list.
 - `everyone` (Boolean) Matches everyone.
-- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/learning-paths/zero-trust-web-access/advanced-workflows/external-evaluation. (see [below for nested schema](#nestedblock--include--external_evaluation))
+- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/cloudflare-one/policies/access/external-evaluation/. (see [below for nested schema](#nestedblock--include--external_evaluation))
 - `geo` (List of String) Matches a specific country.
 - `github` (Block List) Matches a Github organization. Requires a Github identity provider. (see [below for nested schema](#nestedblock--include--github))
 - `group` (List of String) The ID of a previously created Access group.
 - `gsuite` (Block List) Matches a group in Google Workspace. Requires a Google Workspace identity provider. (see [below for nested schema](#nestedblock--include--gsuite))
 - `ip` (List of String) An IPv4 or IPv6 CIDR block.
 - `ip_list` (List of String) The ID of a previously created IP list.
-- `login_method` (List of String) The ID of a configured Identity Provider.
+- `login_method` (List of String) The ID of a configured identity provider.
 - `okta` (Block List) Matches an Okta group. Requires an Okta identity provider. (see [below for nested schema](#nestedblock--include--okta))
 - `saml` (Block List) Matches a SAML group. Requires a SAML identity provider. (see [below for nested schema](#nestedblock--include--saml))
-- `service_token` (List of String) The ID of a Service Token.
+- `service_token` (List of String) The ID of an Access service token.
 
 <a id="nestedblock--include--auth_context"></a>
 ### Nested Schema for `include.auth_context`
@@ -119,7 +119,7 @@ Required:
 
 - `ac_id` (String) The ACID of the Authentication Context.
 - `id` (String) The ID of the Authentication Context.
-- `identity_provider_id` (String) The ID of the Azure Identity provider.
+- `identity_provider_id` (String) The ID of the Azure identity provider.
 
 
 <a id="nestedblock--include--azure"></a>
@@ -128,7 +128,7 @@ Required:
 Optional:
 
 - `id` (List of String) The ID of the Azure group or user.
-- `identity_provider_id` (String) The ID of the Azure Identity provider.
+- `identity_provider_id` (String) The ID of the Azure identity provider.
 
 
 <a id="nestedblock--include--external_evaluation"></a>
@@ -197,7 +197,7 @@ Optional:
 
 Optional:
 
-- `any_valid_service_token` (Boolean) Matches any valid Access Service Token.
+- `any_valid_service_token` (Boolean) Matches any valid Access service token.
 - `auth_context` (Block List) (see [below for nested schema](#nestedblock--exclude--auth_context))
 - `auth_method` (String) The type of authentication method. Refer to https://datatracker.ietf.org/doc/html/rfc8176#section-2 for possible types.
 - `azure` (Block List) Matches an Azure group. Requires an Azure identity provider. (see [below for nested schema](#nestedblock--exclude--azure))
@@ -209,17 +209,17 @@ Optional:
 - `email_domain` (List of String) The email domain to match.
 - `email_list` (List of String) The ID of a previously created email list.
 - `everyone` (Boolean) Matches everyone.
-- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/learning-paths/zero-trust-web-access/advanced-workflows/external-evaluation. (see [below for nested schema](#nestedblock--exclude--external_evaluation))
+- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/cloudflare-one/policies/access/external-evaluation/. (see [below for nested schema](#nestedblock--exclude--external_evaluation))
 - `geo` (List of String) Matches a specific country.
 - `github` (Block List) Matches a Github organization. Requires a Github identity provider. (see [below for nested schema](#nestedblock--exclude--github))
 - `group` (List of String) The ID of a previously created Access group.
 - `gsuite` (Block List) Matches a group in Google Workspace. Requires a Google Workspace identity provider. (see [below for nested schema](#nestedblock--exclude--gsuite))
 - `ip` (List of String) An IPv4 or IPv6 CIDR block.
 - `ip_list` (List of String) The ID of a previously created IP list.
-- `login_method` (List of String) The ID of a configured Identity Provider.
+- `login_method` (List of String) The ID of a configured identity provider.
 - `okta` (Block List) Matches an Okta group. Requires an Okta identity provider. (see [below for nested schema](#nestedblock--exclude--okta))
 - `saml` (Block List) Matches a SAML group. Requires a SAML identity provider. (see [below for nested schema](#nestedblock--exclude--saml))
-- `service_token` (List of String) The ID of a Service Token.
+- `service_token` (List of String) The ID of an Access service token.
 
 <a id="nestedblock--exclude--auth_context"></a>
 ### Nested Schema for `exclude.auth_context`
@@ -228,7 +228,7 @@ Required:
 
 - `ac_id` (String) The ACID of the Authentication Context.
 - `id` (String) The ID of the Authentication Context.
-- `identity_provider_id` (String) The ID of the Azure Identity provider.
+- `identity_provider_id` (String) The ID of the Azure identity provider.
 
 
 <a id="nestedblock--exclude--azure"></a>
@@ -237,7 +237,7 @@ Required:
 Optional:
 
 - `id` (List of String) The ID of the Azure group or user.
-- `identity_provider_id` (String) The ID of the Azure Identity provider.
+- `identity_provider_id` (String) The ID of the Azure identity provider.
 
 
 <a id="nestedblock--exclude--external_evaluation"></a>
@@ -293,7 +293,7 @@ Optional:
 
 Optional:
 
-- `any_valid_service_token` (Boolean) Matches any valid Access Service Token.
+- `any_valid_service_token` (Boolean) Matches any valid Access service token.
 - `auth_context` (Block List) (see [below for nested schema](#nestedblock--require--auth_context))
 - `auth_method` (String) The type of authentication method. Refer to https://datatracker.ietf.org/doc/html/rfc8176#section-2 for possible types.
 - `azure` (Block List) Matches an Azure group. Requires an Azure identity provider. (see [below for nested schema](#nestedblock--require--azure))
@@ -305,17 +305,17 @@ Optional:
 - `email_domain` (List of String) The email domain to match.
 - `email_list` (List of String) The ID of a previously created email list.
 - `everyone` (Boolean) Matches everyone.
-- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/learning-paths/zero-trust-web-access/advanced-workflows/external-evaluation. (see [below for nested schema](#nestedblock--require--external_evaluation))
+- `external_evaluation` (Block List) Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/cloudflare-one/policies/access/external-evaluation/. (see [below for nested schema](#nestedblock--require--external_evaluation))
 - `geo` (List of String) Matches a specific country.
 - `github` (Block List) Matches a Github organization. Requires a Github identity provider. (see [below for nested schema](#nestedblock--require--github))
 - `group` (List of String) The ID of a previously created Access group.
 - `gsuite` (Block List) Matches a group in Google Workspace. Requires a Google Workspace identity provider. (see [below for nested schema](#nestedblock--require--gsuite))
 - `ip` (List of String) An IPv4 or IPv6 CIDR block.
 - `ip_list` (List of String) The ID of a previously created IP list.
-- `login_method` (List of String) The ID of a configured Identity Provider.
+- `login_method` (List of String) The ID of a configured identity provider.
 - `okta` (Block List) Matches an Okta group. Requires an Okta identity provider. (see [below for nested schema](#nestedblock--require--okta))
 - `saml` (Block List) Matches a SAML group. Requires a SAML identity provider. (see [below for nested schema](#nestedblock--require--saml))
-- `service_token` (List of String) The ID of a Service Token.
+- `service_token` (List of String) The ID of an Access service token.
 
 <a id="nestedblock--require--auth_context"></a>
 ### Nested Schema for `require.auth_context`
@@ -324,7 +324,7 @@ Required:
 
 - `ac_id` (String) The ACID of the Authentication Context.
 - `id` (String) The ID of the Authentication Context.
-- `identity_provider_id` (String) The ID of the Azure Identity provider.
+- `identity_provider_id` (String) The ID of the Azure identity provider.
 
 
 <a id="nestedblock--require--azure"></a>
@@ -333,7 +333,7 @@ Required:
 Optional:
 
 - `id` (List of String) The ID of the Azure group or user.
-- `identity_provider_id` (String) The ID of the Azure Identity provider.
+- `identity_provider_id` (String) The ID of the Azure identity provider.
 
 
 <a id="nestedblock--require--external_evaluation"></a>

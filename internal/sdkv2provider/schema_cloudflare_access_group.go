@@ -89,7 +89,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 		},
 		"service_token": {
 			Type:        schema.TypeList,
-			Description: "The ID of a Service Token.",
+			Description: "The ID of an Access service token.",
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
@@ -97,7 +97,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 		},
 		"any_valid_service_token": {
 			Type:        schema.TypeBool,
-			Description: "Matches any valid Access Service Token.",
+			Description: "Matches any valid Access service token.",
 			Optional:    true,
 		},
 		"group": {
@@ -138,7 +138,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 		},
 		"login_method": {
 			Type:        schema.TypeList,
-			Description: "The ID of a configured Identity Provider.",
+			Description: "The ID of a configured identity provider.",
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
@@ -217,7 +217,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					},
 					"identity_provider_id": {
 						Type:        schema.TypeString,
-						Description: "The ID of the Azure Identity provider",
+						Description: "The ID of the Azure identity provider",
 						Optional:    true,
 					},
 				},
@@ -271,7 +271,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 		},
 		"external_evaluation": {
 			Type:        schema.TypeList,
-			Description: "Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/learning-paths/zero-trust-web-access/advanced-workflows/external-evaluation",
+			Description: "Create Allow or Block policies which evaluate the user based on custom criteria. https://developers.cloudflare.com/cloudflare-one/policies/access/external-evaluation/",
 			Optional:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -303,7 +303,7 @@ var AccessGroupOptionSchemaElement = &schema.Resource{
 					},
 					"identity_provider_id": {
 						Type:        schema.TypeString,
-						Description: "The ID of the Azure Identity provider",
+						Description: "The ID of the Azure identity provider",
 						Required:    true,
 					},
 					"ac_id": {
