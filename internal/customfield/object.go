@@ -249,39 +249,76 @@ func structFromAttributesInner(ctx context.Context, val reflect.Value) (map[stri
 		if ok {
 			attributeTypes[tag] = attr.Type(ctx)
 		} else {
-			t := v.Type()
-			if t.Kind() == reflect.Ptr {
-				t = t.Elem()
-			}
-			if t.Kind() == reflect.Struct {
-				m, d := structFromAttributesInner(ctx, v)
-				diags.Append(d...)
-				if diags.HasError() {
-					return nil, diags
-				}
-				attributeTypes[tag] = basetypes.ObjectType{AttrTypes: m}
-			} else if t.Kind() == reflect.Slice {
-				sliceType := t.Elem()
-				if sliceType.Kind() == reflect.Ptr {
-					sliceType = sliceType.Elem()
-				}
-				if sliceType.Kind() == reflect.Struct {
-					structVal := reflect.New(sliceType).Elem()
-					m, d := structFromAttributesInner(ctx, structVal)
-					diags.Append(d...)
-					if diags.HasError() {
-						return nil, diags
-					}
-					attributeTypes[tag] = basetypes.ListType{ElemType: basetypes.ObjectType{AttrTypes: m}}
-				} else {
-					diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T has unsupported type: %s`, t, t.Kind())))
-					return nil, diags
-				}
-			} else {
-				diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T has unsupported type: %s`, t, t.Kind())))
+			ty, diags := structFromValue(ctx, v)
+			diags.Append(diags...)
+			if diags.HasError() {
 				return nil, diags
 			}
+			attributeTypes[tag] = ty
 		}
 	}
 	return attributeTypes, nil
+}
+
+func structFromValue(ctx context.Context, v reflect.Value) (attr.Type, diag.Diagnostics) {
+	var elemType attr.Type
+	var diags diag.Diagnostics
+	attr, ok := v.Interface().(attr.Value)
+	if ok {
+		return attr.Type(ctx), nil
+	}
+
+	t := v.Type()
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	if t.Kind() == reflect.Struct {
+		m, d := structFromAttributesInner(ctx, v)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		return basetypes.ObjectType{AttrTypes: m}, nil
+	} else if t.Kind() == reflect.Slice {
+		sliceType := t.Elem()
+		if sliceType.Kind() == reflect.Ptr {
+			sliceType = sliceType.Elem()
+		}
+		elemType, diags = structFromValue(ctx, reflect.New(sliceType).Elem())
+		if diags.HasError() {
+			return nil, diags
+		}
+		return basetypes.ListType{ElemType: elemType}, nil
+	} else if t.Kind() == reflect.Map {
+		keyType := t.Key()
+		if keyType.Kind() != reflect.String {
+			diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T has unsupported key type: %s`, t, keyType.Kind())))
+			return nil, diags
+		}
+		valueType := t.Elem()
+		if valueType.Kind() == reflect.Ptr {
+			valueType = valueType.Elem()
+		}
+		elemType, diags = structFromValue(ctx, reflect.New(valueType).Elem())
+		if diags.HasError() {
+			return nil, diags
+		}
+		return basetypes.MapType{ElemType: elemType}, nil
+	} else {
+		switch t.Kind() {
+		case reflect.String:
+			return basetypes.StringType{}, nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			fallthrough
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			return basetypes.Int64Type{}, nil
+		case reflect.Float32, reflect.Float64:
+			return basetypes.Float64Type{}, nil
+		case reflect.Bool:
+			return basetypes.BoolType{}, nil
+		default:
+			diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T has unsupported type: %s`, t, t.Kind())))
+			return nil, diags
+		}
+	}
 }
