@@ -37,7 +37,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 						"created_on": schema.StringAttribute{
 							Computed:   true,
@@ -46,7 +45,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"custom_page_html": schema.StringAttribute{
 							Description: "If set, the event will override the waiting room's `custom_page_html` property while it is active. If null, the event will inherit it.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A note that you can use to add more details about the event.",
@@ -55,17 +53,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"disable_session_renewal": schema.BoolAttribute{
 							Description: "If set, the event will override the waiting room's `disable_session_renewal` property while it is active. If null, the event will inherit it.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"event_end_time": schema.StringAttribute{
 							Description: "An ISO 8601 timestamp that marks the end of the event.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"event_start_time": schema.StringAttribute{
 							Description: "An ISO 8601 timestamp that marks the start of the event. At this time, queued users will be processed with the event's configuration. The start time must be at least one minute before `event_end_time`.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"modified_on": schema.StringAttribute{
 							Computed:   true,
@@ -74,12 +69,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"new_users_per_minute": schema.Int64Attribute{
 							Description: "If set, the event will override the waiting room's `new_users_per_minute` property while it is active. If null, the event will inherit it. This can only be set if the event's `total_active_users` property is also set.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.Int64{
 								int64validator.Between(200, 2147483647),
 							},
@@ -87,17 +80,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"prequeue_start_time": schema.StringAttribute{
 							Description: "An ISO 8601 timestamp that marks when to begin queueing all users before the event starts. The prequeue must start at least five minutes before `event_start_time`.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"queueing_method": schema.StringAttribute{
 							Description: "If set, the event will override the waiting room's `queueing_method` property while it is active. If null, the event will inherit it.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"session_duration": schema.Int64Attribute{
 							Description: "If set, the event will override the waiting room's `session_duration` property while it is active. If null, the event will inherit it.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 30),
 							},
@@ -113,7 +103,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"total_active_users": schema.Int64Attribute{
 							Description: "If set, the event will override the waiting room's `total_active_users` property while it is active. If null, the event will inherit it. This can only be set if the event's `new_users_per_minute` property is also set.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.Int64{
 								int64validator.Between(200, 2147483647),
 							},

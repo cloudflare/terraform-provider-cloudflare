@@ -39,39 +39,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("accepted", "pending"),
 				},
 			},
-			"user": schema.SingleNestedAttribute{
-				Description: "Details of the user associated to the membership.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[AccountMemberUserDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"email": schema.StringAttribute{
-						Description: "The contact email address of the user.",
-						Computed:    true,
-					},
-					"id": schema.StringAttribute{
-						Description: "Identifier",
-						Computed:    true,
-					},
-					"first_name": schema.StringAttribute{
-						Description: "User's first name",
-						Computed:    true,
-						Optional:    true,
-					},
-					"last_name": schema.StringAttribute{
-						Description: "User's last name",
-						Computed:    true,
-						Optional:    true,
-					},
-					"two_factor_authentication_enabled": schema.BoolAttribute{
-						Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
-						Computed:    true,
-					},
-				},
-			},
 			"policies": schema.ListNestedAttribute{
 				Description: "Access policy for the membership",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[AccountMemberPoliciesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -81,7 +52,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"access": schema.StringAttribute{
 							Description: "Allow or deny operations against the resources.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
 							},
@@ -89,7 +59,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"permission_groups": schema.ListNestedAttribute{
 							Description: "A set of permission groups that are specified to the policy.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[AccountMemberPoliciesPermissionGroupsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -99,15 +69,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
 										Computed:    true,
-										Optional:    true,
+										CustomType:  customfield.NewNestedObjectType[AccountMemberPoliciesPermissionGroupsMetaDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
 												Computed: true,
-												Optional: true,
 											},
 											"value": schema.StringAttribute{
 												Computed: true,
-												Optional: true,
 											},
 										},
 									},
@@ -121,7 +89,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"resource_groups": schema.ListNestedAttribute{
 							Description: "A list of resource groups that the policy applies to.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[AccountMemberPoliciesResourceGroupsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -157,15 +125,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the resource group.",
 										Computed:    true,
-										Optional:    true,
+										CustomType:  customfield.NewNestedObjectType[AccountMemberPoliciesResourceGroupsMetaDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
 												Computed: true,
-												Optional: true,
 											},
 											"value": schema.StringAttribute{
 												Computed: true,
-												Optional: true,
 											},
 										},
 									},
@@ -182,7 +148,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"roles": schema.ListNestedAttribute{
 				Description: "Roles assigned to this Member.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[AccountMemberRolesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -202,6 +168,33 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							ElementType: types.StringType,
 						},
+					},
+				},
+			},
+			"user": schema.SingleNestedAttribute{
+				Description: "Details of the user associated to the membership.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountMemberUserDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"email": schema.StringAttribute{
+						Description: "The contact email address of the user.",
+						Computed:    true,
+					},
+					"id": schema.StringAttribute{
+						Description: "Identifier",
+						Computed:    true,
+					},
+					"first_name": schema.StringAttribute{
+						Description: "User's first name",
+						Computed:    true,
+					},
+					"last_name": schema.StringAttribute{
+						Description: "User's last name",
+						Computed:    true,
+					},
+					"two_factor_authentication_enabled": schema.BoolAttribute{
+						Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",
+						Computed:    true,
 					},
 				},
 			},

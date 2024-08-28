@@ -30,16 +30,16 @@ func (m *KeylessCertificatesDataSourceModel) toListParams() (params keyless_cert
 }
 
 type KeylessCertificatesResultDataSourceModel struct {
-	ID          types.String                              `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Enabled     types.Bool                                `tfsdk:"enabled" json:"enabled,computed"`
-	Host        types.String                              `tfsdk:"host" json:"host,computed"`
-	ModifiedOn  timetypes.RFC3339                         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name        types.String                              `tfsdk:"name" json:"name,computed"`
-	Permissions types.List                                `tfsdk:"permissions" json:"permissions,computed"`
-	Port        types.Float64                             `tfsdk:"port" json:"port,computed"`
-	Status      types.String                              `tfsdk:"status" json:"status,computed"`
-	Tunnel      *KeylessCertificatesTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel,computed_optional"`
+	ID          types.String                                                       `tfsdk:"id" json:"id,computed"`
+	CreatedOn   timetypes.RFC3339                                                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Enabled     types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
+	Host        types.String                                                       `tfsdk:"host" json:"host,computed"`
+	ModifiedOn  timetypes.RFC3339                                                  `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name        types.String                                                       `tfsdk:"name" json:"name,computed"`
+	Permissions types.List                                                         `tfsdk:"permissions" json:"permissions,computed"`
+	Port        types.Float64                                                      `tfsdk:"port" json:"port,computed"`
+	Status      types.String                                                       `tfsdk:"status" json:"status,computed"`
+	Tunnel      customfield.NestedObject[KeylessCertificatesTunnelDataSourceModel] `tfsdk:"tunnel" json:"tunnel,computed"`
 }
 
 type KeylessCertificatesTunnelDataSourceModel struct {

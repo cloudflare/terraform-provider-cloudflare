@@ -35,34 +35,34 @@ func (m *LogpushJobsDataSourceModel) toListParams() (params logpush.JobListParam
 }
 
 type LogpushJobsResultDataSourceModel struct {
-	ID                       types.Int64                              `tfsdk:"id" json:"id,computed_optional"`
-	Dataset                  types.String                             `tfsdk:"dataset" json:"dataset,computed_optional"`
-	DestinationConf          types.String                             `tfsdk:"destination_conf" json:"destination_conf,computed_optional"`
-	Enabled                  types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
-	ErrorMessage             timetypes.RFC3339                        `tfsdk:"error_message" json:"error_message,computed_optional" format:"date-time"`
-	Frequency                types.String                             `tfsdk:"frequency" json:"frequency,computed"`
-	Kind                     types.String                             `tfsdk:"kind" json:"kind,computed_optional"`
-	LastComplete             timetypes.RFC3339                        `tfsdk:"last_complete" json:"last_complete,computed_optional" format:"date-time"`
-	LastError                timetypes.RFC3339                        `tfsdk:"last_error" json:"last_error,computed_optional" format:"date-time"`
-	LogpullOptions           types.String                             `tfsdk:"logpull_options" json:"logpull_options,computed_optional"`
-	MaxUploadBytes           types.Int64                              `tfsdk:"max_upload_bytes" json:"max_upload_bytes,computed_optional"`
-	MaxUploadIntervalSeconds types.Int64                              `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`
-	MaxUploadRecords         types.Int64                              `tfsdk:"max_upload_records" json:"max_upload_records,computed"`
-	Name                     types.String                             `tfsdk:"name" json:"name,computed_optional"`
-	OutputOptions            *LogpushJobsOutputOptionsDataSourceModel `tfsdk:"output_options" json:"output_options,computed_optional"`
+	ID                       types.Int64                                                       `tfsdk:"id" json:"id,computed"`
+	Dataset                  types.String                                                      `tfsdk:"dataset" json:"dataset,computed"`
+	DestinationConf          types.String                                                      `tfsdk:"destination_conf" json:"destination_conf,computed"`
+	Enabled                  types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed"`
+	ErrorMessage             timetypes.RFC3339                                                 `tfsdk:"error_message" json:"error_message,computed" format:"date-time"`
+	Frequency                types.String                                                      `tfsdk:"frequency" json:"frequency,computed"`
+	Kind                     types.String                                                      `tfsdk:"kind" json:"kind,computed"`
+	LastComplete             timetypes.RFC3339                                                 `tfsdk:"last_complete" json:"last_complete,computed" format:"date-time"`
+	LastError                timetypes.RFC3339                                                 `tfsdk:"last_error" json:"last_error,computed" format:"date-time"`
+	LogpullOptions           types.String                                                      `tfsdk:"logpull_options" json:"logpull_options,computed"`
+	MaxUploadBytes           types.Int64                                                       `tfsdk:"max_upload_bytes" json:"max_upload_bytes,computed"`
+	MaxUploadIntervalSeconds types.Int64                                                       `tfsdk:"max_upload_interval_seconds" json:"max_upload_interval_seconds,computed"`
+	MaxUploadRecords         types.Int64                                                       `tfsdk:"max_upload_records" json:"max_upload_records,computed"`
+	Name                     types.String                                                      `tfsdk:"name" json:"name,computed"`
+	OutputOptions            customfield.NestedObject[LogpushJobsOutputOptionsDataSourceModel] `tfsdk:"output_options" json:"output_options,computed"`
 }
 
 type LogpushJobsOutputOptionsDataSourceModel struct {
-	BatchPrefix     types.String    `tfsdk:"batch_prefix" json:"batch_prefix,computed"`
-	BatchSuffix     types.String    `tfsdk:"batch_suffix" json:"batch_suffix,computed"`
-	Cve2021_4428    types.Bool      `tfsdk:"cve_2021_4428" json:"CVE-2021-4428,computed"`
-	FieldDelimiter  types.String    `tfsdk:"field_delimiter" json:"field_delimiter,computed"`
-	FieldNames      *[]types.String `tfsdk:"field_names" json:"field_names,computed_optional"`
-	OutputType      types.String    `tfsdk:"output_type" json:"output_type,computed"`
-	RecordDelimiter types.String    `tfsdk:"record_delimiter" json:"record_delimiter,computed"`
-	RecordPrefix    types.String    `tfsdk:"record_prefix" json:"record_prefix,computed"`
-	RecordSuffix    types.String    `tfsdk:"record_suffix" json:"record_suffix,computed"`
-	RecordTemplate  types.String    `tfsdk:"record_template" json:"record_template,computed"`
-	SampleRate      types.Float64   `tfsdk:"sample_rate" json:"sample_rate,computed"`
-	TimestampFormat types.String    `tfsdk:"timestamp_format" json:"timestamp_format,computed"`
+	BatchPrefix     types.String  `tfsdk:"batch_prefix" json:"batch_prefix,computed"`
+	BatchSuffix     types.String  `tfsdk:"batch_suffix" json:"batch_suffix,computed"`
+	Cve2021_4428    types.Bool    `tfsdk:"cve_2021_4428" json:"CVE-2021-4428,computed"`
+	FieldDelimiter  types.String  `tfsdk:"field_delimiter" json:"field_delimiter,computed"`
+	FieldNames      types.List    `tfsdk:"field_names" json:"field_names,computed"`
+	OutputType      types.String  `tfsdk:"output_type" json:"output_type,computed"`
+	RecordDelimiter types.String  `tfsdk:"record_delimiter" json:"record_delimiter,computed"`
+	RecordPrefix    types.String  `tfsdk:"record_prefix" json:"record_prefix,computed"`
+	RecordSuffix    types.String  `tfsdk:"record_suffix" json:"record_suffix,computed"`
+	RecordTemplate  types.String  `tfsdk:"record_template" json:"record_template,computed"`
+	SampleRate      types.Float64 `tfsdk:"sample_rate" json:"sample_rate,computed"`
+	TimestampFormat types.String  `tfsdk:"timestamp_format" json:"timestamp_format,computed"`
 }

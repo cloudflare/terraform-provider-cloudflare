@@ -25,12 +25,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Human-readable identifier of the Managed Transform.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "When true, the Managed Transform is enabled.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},
@@ -42,12 +40,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Human-readable identifier of the Managed Transform.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "When true, the Managed Transform is enabled.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

@@ -72,12 +72,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "UUID of the route.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"comment": schema.StringAttribute{
 							Description: "Optional remark describing the route.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Description: "Timestamp of when the resource was created.",
@@ -92,12 +90,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"network": schema.StringAttribute{
 							Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"tun_type": schema.StringAttribute{
 							Description: "The type of tunnel.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"cfd_tunnel",
@@ -111,22 +107,18 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"tunnel_id": schema.StringAttribute{
 							Description: "UUID of the tunnel.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"tunnel_name": schema.StringAttribute{
 							Description: "A user-friendly name for a tunnel.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"virtual_network_id": schema.StringAttribute{
 							Description: "UUID of the virtual network.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"virtual_network_name": schema.StringAttribute{
 							Description: "A user-friendly name for the virtual network.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

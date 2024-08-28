@@ -5,6 +5,7 @@ package email_routing_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -36,6 +37,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Routing rule identifier.",
 				Computed:    true,
 			},
+			"name": schema.StringAttribute{
+				Description: "Routing rule name.",
+				Computed:    true,
+			},
 			"priority": schema.Float64Attribute{
 				Description: "Priority of the routing rule.",
 				Computed:    true,
@@ -47,15 +52,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",
 				Computed:    true,
 			},
-			"name": schema.StringAttribute{
-				Description: "Routing rule name.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"actions": schema.ListNestedAttribute{
 				Description: "List actions patterns.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[EmailRoutingRuleActionsDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
@@ -79,7 +79,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"matchers": schema.ListNestedAttribute{
 				Description: "Matching patterns to forward to your actions.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[EmailRoutingRuleMatchersDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"field": schema.StringAttribute{

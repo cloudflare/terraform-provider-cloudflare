@@ -48,6 +48,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "A user-friendly name for the virtual network.",
 				Optional:    true,
 			},
+			"comment": schema.StringAttribute{
+				Description: "Optional remark describing the route.",
+				Computed:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Description: "Timestamp of when the resource was created.",
 				Computed:    true,
@@ -58,30 +62,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"comment": schema.StringAttribute{
-				Description: "Optional remark describing the route.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"id": schema.StringAttribute{
 				Description: "UUID of the route.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"network": schema.StringAttribute{
 				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

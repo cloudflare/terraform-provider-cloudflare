@@ -42,12 +42,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of this secret, this is what will be used to access it inside the Worker.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"type": schema.StringAttribute{
 							Description: "The type of secret.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("secret_text"),
 							},

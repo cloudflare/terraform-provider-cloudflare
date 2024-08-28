@@ -41,14 +41,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"name": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 						"uuid": schema.StringAttribute{
 							Computed: true,
 						},
 						"version": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 					},
 				},

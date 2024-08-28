@@ -66,12 +66,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "An informative summary of the list.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"num_referencing_filters": schema.Float64Attribute{
 							Description: "The number of [filters](/operations/filters-list-filters) referencing the list.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

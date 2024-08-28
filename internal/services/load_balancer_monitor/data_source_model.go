@@ -26,21 +26,21 @@ type LoadBalancerMonitorDataSourceModel struct {
 	ConsecutiveDown types.Int64                                  `tfsdk:"consecutive_down" json:"consecutive_down,computed"`
 	ConsecutiveUp   types.Int64                                  `tfsdk:"consecutive_up" json:"consecutive_up,computed"`
 	CreatedOn       timetypes.RFC3339                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description     types.String                                 `tfsdk:"description" json:"description,computed"`
+	ExpectedBody    types.String                                 `tfsdk:"expected_body" json:"expected_body,computed"`
 	ExpectedCodes   types.String                                 `tfsdk:"expected_codes" json:"expected_codes,computed"`
 	FollowRedirects types.Bool                                   `tfsdk:"follow_redirects" json:"follow_redirects,computed"`
+	ID              types.String                                 `tfsdk:"id" json:"id,computed"`
 	Interval        types.Int64                                  `tfsdk:"interval" json:"interval,computed"`
 	Method          types.String                                 `tfsdk:"method" json:"method,computed"`
 	ModifiedOn      timetypes.RFC3339                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Path            types.String                                 `tfsdk:"path" json:"path,computed"`
 	Port            types.Int64                                  `tfsdk:"port" json:"port,computed"`
+	ProbeZone       types.String                                 `tfsdk:"probe_zone" json:"probe_zone,computed"`
 	Retries         types.Int64                                  `tfsdk:"retries" json:"retries,computed"`
 	Timeout         types.Int64                                  `tfsdk:"timeout" json:"timeout,computed"`
 	Type            types.String                                 `tfsdk:"type" json:"type,computed"`
-	Description     types.String                                 `tfsdk:"description" json:"description,computed_optional"`
-	ExpectedBody    types.String                                 `tfsdk:"expected_body" json:"expected_body,computed_optional"`
-	ID              types.String                                 `tfsdk:"id" json:"id,computed_optional"`
-	ProbeZone       types.String                                 `tfsdk:"probe_zone" json:"probe_zone,computed_optional"`
-	Header          map[string]*[]types.String                   `tfsdk:"header" json:"header,computed_optional"`
+	Header          map[string]types.List                        `tfsdk:"header" json:"header,computed"`
 	Filter          *LoadBalancerMonitorFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

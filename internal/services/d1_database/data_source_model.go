@@ -25,9 +25,9 @@ type D1DatabaseDataSourceModel struct {
 	FileSize   types.Float64                       `tfsdk:"file_size" json:"file_size"`
 	NumTables  types.Float64                       `tfsdk:"num_tables" json:"num_tables"`
 	CreatedAt  timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	Name       types.String                        `tfsdk:"name" json:"name,computed"`
 	UUID       types.String                        `tfsdk:"uuid" json:"uuid,computed"`
-	Name       types.String                        `tfsdk:"name" json:"name,computed_optional"`
-	Version    types.String                        `tfsdk:"version" json:"version,computed_optional"`
+	Version    types.String                        `tfsdk:"version" json:"version,computed"`
 	Filter     *D1DatabaseFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

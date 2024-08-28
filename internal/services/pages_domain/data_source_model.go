@@ -26,11 +26,11 @@ type PagesDomainDataSourceModel struct {
 	CreatedOn            types.String                                                         `tfsdk:"created_on" json:"created_on,computed"`
 	DomainID             types.String                                                         `tfsdk:"domain_id" json:"domain_id,computed"`
 	ID                   types.String                                                         `tfsdk:"id" json:"id,computed"`
+	Name                 types.String                                                         `tfsdk:"name" json:"name,computed"`
 	Status               types.String                                                         `tfsdk:"status" json:"status,computed"`
 	ZoneTag              types.String                                                         `tfsdk:"zone_tag" json:"zone_tag,computed"`
 	ValidationData       customfield.NestedObject[PagesDomainValidationDataDataSourceModel]   `tfsdk:"validation_data" json:"validation_data,computed"`
 	VerificationData     customfield.NestedObject[PagesDomainVerificationDataDataSourceModel] `tfsdk:"verification_data" json:"verification_data,computed"`
-	Name                 types.String                                                         `tfsdk:"name" json:"name,computed_optional"`
 	Filter               *PagesDomainFindOneByDataSourceModel                                 `tfsdk:"filter"`
 }
 
@@ -51,16 +51,16 @@ func (m *PagesDomainDataSourceModel) toListParams() (params pages.ProjectDomainL
 }
 
 type PagesDomainValidationDataDataSourceModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed_optional"`
-	Method       types.String `tfsdk:"method" json:"method,computed_optional"`
-	Status       types.String `tfsdk:"status" json:"status,computed_optional"`
-	TXTName      types.String `tfsdk:"txt_name" json:"txt_name,computed_optional"`
-	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value,computed_optional"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
+	Method       types.String `tfsdk:"method" json:"method,computed"`
+	Status       types.String `tfsdk:"status" json:"status,computed"`
+	TXTName      types.String `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type PagesDomainVerificationDataDataSourceModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed_optional"`
-	Status       types.String `tfsdk:"status" json:"status,computed_optional"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
+	Status       types.String `tfsdk:"status" json:"status,computed"`
 }
 
 type PagesDomainFindOneByDataSourceModel struct {

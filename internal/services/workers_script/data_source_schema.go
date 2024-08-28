@@ -67,12 +67,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"environment": schema.StringAttribute{
 							Description: "Optional environment if the Worker utilizes one.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"namespace": schema.StringAttribute{
 							Description: "Optional dispatch namespace the script belongs to.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

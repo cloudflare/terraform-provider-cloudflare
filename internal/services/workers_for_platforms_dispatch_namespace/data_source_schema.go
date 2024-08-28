@@ -25,40 +25,35 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Name of the Workers for Platforms dispatch namespace.",
 				Optional:    true,
 			},
+			"created_by": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"created_on": schema.StringAttribute{
 				Description: "When the script was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
+			},
+			"modified_by": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the script was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"created_by": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
-			"modified_by": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
 			"namespace_id": schema.StringAttribute{
 				Description: "API Resource UUID tag.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"namespace_name": schema.StringAttribute{
 				Description: "Name of the Workers for Platforms dispatch namespace.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"script_count": schema.Int64Attribute{
 				Description: "The current number of scripts in this Dispatch Namespace",
 				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

@@ -33,17 +33,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Identifier",
 							Computed:    true,
-							Optional:    true,
 						},
 						"ca": schema.BoolAttribute{
 							Description: "Indicates whether the certificate is a CA or leaf certificate.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"certificates": schema.StringAttribute{
 							Description: "The uploaded root CA certificate.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate expires.",
@@ -57,7 +54,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "Optional unique name for the certificate. Only used for human readability.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"serial_number": schema.StringAttribute{
 							Description: "The certificate serial number.",
@@ -70,7 +66,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"uploaded_on": schema.StringAttribute{
 							Description: "This is the time the certificate was uploaded.",
 							Computed:    true,
-							Optional:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
 					},

@@ -54,12 +54,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"target": schema.StringAttribute{
 						Description: "The configuration target for this rule. You must set the target to `ua` for User Agent Blocking rules.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"value": schema.StringAttribute{
 						Description: "The exact user agent string to match. This value will be compared to the received `User-Agent` HTTP header value.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

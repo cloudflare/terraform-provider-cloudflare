@@ -29,6 +29,6 @@ func (m *WorkersCronTriggerDataSourceModel) toReadParams() (params workers.Scrip
 
 type WorkersCronTriggerSchedulesDataSourceModel struct {
 	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
-	Cron       types.String `tfsdk:"cron" json:"cron,computed_optional"`
+	Cron       types.String `tfsdk:"cron" json:"cron,computed"`
 	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

@@ -37,41 +37,41 @@ func (m *RateLimitDataSourceModel) toListParams() (params rate_limits.RateLimitL
 }
 
 type RateLimitActionDataSourceModel struct {
-	Mode     types.String                            `tfsdk:"mode" json:"mode,computed_optional"`
-	Response *RateLimitActionResponseDataSourceModel `tfsdk:"response" json:"response,computed_optional"`
-	Timeout  types.Float64                           `tfsdk:"timeout" json:"timeout,computed_optional"`
+	Mode     types.String                                                     `tfsdk:"mode" json:"mode,computed"`
+	Response customfield.NestedObject[RateLimitActionResponseDataSourceModel] `tfsdk:"response" json:"response,computed"`
+	Timeout  types.Float64                                                    `tfsdk:"timeout" json:"timeout,computed"`
 }
 
 type RateLimitActionResponseDataSourceModel struct {
-	Body        types.String `tfsdk:"body" json:"body,computed_optional"`
-	ContentType types.String `tfsdk:"content_type" json:"content_type,computed_optional"`
+	Body        types.String `tfsdk:"body" json:"body,computed"`
+	ContentType types.String `tfsdk:"content_type" json:"content_type,computed"`
 }
 
 type RateLimitBypassDataSourceModel struct {
-	Name  types.String `tfsdk:"name" json:"name,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Name  types.String `tfsdk:"name" json:"name,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type RateLimitMatchDataSourceModel struct {
-	Headers  *[]*RateLimitMatchHeadersDataSourceModel `tfsdk:"headers" json:"headers,computed_optional"`
-	Request  *RateLimitMatchRequestDataSourceModel    `tfsdk:"request" json:"request,computed_optional"`
-	Response *RateLimitMatchResponseDataSourceModel   `tfsdk:"response" json:"response,computed_optional"`
+	Headers  customfield.NestedObjectList[RateLimitMatchHeadersDataSourceModel] `tfsdk:"headers" json:"headers,computed"`
+	Request  customfield.NestedObject[RateLimitMatchRequestDataSourceModel]     `tfsdk:"request" json:"request,computed"`
+	Response customfield.NestedObject[RateLimitMatchResponseDataSourceModel]    `tfsdk:"response" json:"response,computed"`
 }
 
 type RateLimitMatchHeadersDataSourceModel struct {
-	Name  types.String `tfsdk:"name" json:"name,computed_optional"`
-	Op    types.String `tfsdk:"op" json:"op,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Name  types.String `tfsdk:"name" json:"name,computed"`
+	Op    types.String `tfsdk:"op" json:"op,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type RateLimitMatchRequestDataSourceModel struct {
-	Methods *[]types.String `tfsdk:"methods" json:"methods,computed_optional"`
-	Schemes *[]types.String `tfsdk:"schemes" json:"schemes,computed_optional"`
-	URL     types.String    `tfsdk:"url" json:"url,computed_optional"`
+	Methods types.List   `tfsdk:"methods" json:"methods,computed"`
+	Schemes types.List   `tfsdk:"schemes" json:"schemes,computed"`
+	URL     types.String `tfsdk:"url" json:"url,computed"`
 }
 
 type RateLimitMatchResponseDataSourceModel struct {
-	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic,computed_optional"`
+	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic,computed"`
 }
 
 type RateLimitFindOneByDataSourceModel struct {

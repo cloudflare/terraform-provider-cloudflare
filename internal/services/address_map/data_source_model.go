@@ -27,11 +27,11 @@ type AddressMapDataSourceModel struct {
 	CanDelete    types.Bool                               `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                               `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
 	CreatedAt    timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DefaultSNI   types.String                             `tfsdk:"default_sni" json:"default_sni,computed"`
+	Description  types.String                             `tfsdk:"description" json:"description,computed"`
 	Enabled      types.Bool                               `tfsdk:"enabled" json:"enabled,computed"`
+	ID           types.String                             `tfsdk:"id" json:"id,computed"`
 	ModifiedAt   timetypes.RFC3339                        `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	DefaultSNI   types.String                             `tfsdk:"default_sni" json:"default_sni,computed_optional"`
-	Description  types.String                             `tfsdk:"description" json:"description,computed_optional"`
-	ID           types.String                             `tfsdk:"id" json:"id,computed_optional"`
 	Filter       *AddressMapFindOneByDataSourceModel      `tfsdk:"filter"`
 }
 
@@ -53,14 +53,14 @@ func (m *AddressMapDataSourceModel) toListParams() (params addressing.AddressMap
 
 type AddressMapIPsDataSourceModel struct {
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	IP        types.String      `tfsdk:"ip" json:"ip,computed_optional"`
+	IP        types.String      `tfsdk:"ip" json:"ip,computed"`
 }
 
 type AddressMapMembershipsDataSourceModel struct {
 	CanDelete  types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Identifier types.String      `tfsdk:"identifier" json:"identifier,computed_optional"`
-	Kind       types.String      `tfsdk:"kind" json:"kind,computed_optional"`
+	Identifier types.String      `tfsdk:"identifier" json:"identifier,computed"`
+	Kind       types.String      `tfsdk:"kind" json:"kind,computed"`
 }
 
 type AddressMapFindOneByDataSourceModel struct {

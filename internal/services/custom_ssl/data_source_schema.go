@@ -5,6 +5,7 @@ package custom_ssl
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -58,6 +59,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"policy": schema.StringAttribute{
+				Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.",
+				Computed:    true,
+			},
 			"priority": schema.Float64Attribute{
 				Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
 				Computed:    true,
@@ -88,19 +93,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				ElementType: types.StringType,
 			},
-			"policy": schema.StringAttribute{
-				Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"geo_restrictions": schema.SingleNestedAttribute{
 				Description: "Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomSSLGeoRestrictionsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"label": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"us",
@@ -112,8 +111,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"keyless_server": schema.SingleNestedAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[CustomSSLKeylessServerDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Keyless certificate identifier tag.",
@@ -160,7 +159,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"tunnel": schema.SingleNestedAttribute{
 						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[CustomSSLKeylessServerTunnelDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"private_ip": schema.StringAttribute{
 								Description: "Private IP of the Key Server Host",

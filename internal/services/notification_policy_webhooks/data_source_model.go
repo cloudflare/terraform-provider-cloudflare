@@ -26,10 +26,10 @@ type NotificationPolicyWebhooksDataSourceModel struct {
 	ID          types.String                                        `tfsdk:"id" json:"id,computed"`
 	LastFailure timetypes.RFC3339                                   `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`
 	LastSuccess timetypes.RFC3339                                   `tfsdk:"last_success" json:"last_success,computed" format:"date-time"`
-	Name        types.String                                        `tfsdk:"name" json:"name,computed_optional"`
-	Secret      types.String                                        `tfsdk:"secret" json:"secret,computed_optional"`
-	Type        types.String                                        `tfsdk:"type" json:"type,computed_optional"`
-	URL         types.String                                        `tfsdk:"url" json:"url,computed_optional"`
+	Name        types.String                                        `tfsdk:"name" json:"name,computed"`
+	Secret      types.String                                        `tfsdk:"secret" json:"secret,computed"`
+	Type        types.String                                        `tfsdk:"type" json:"type,computed"`
+	URL         types.String                                        `tfsdk:"url" json:"url,computed"`
 	Filter      *NotificationPolicyWebhooksFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

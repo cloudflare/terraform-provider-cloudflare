@@ -80,27 +80,22 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"description": schema.StringAttribute{
 									Description: "An informative summary of the filter.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"expression": schema.StringAttribute{
 									Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
 									Computed:    true,
-									Optional:    true,
 								},
 								"paused": schema.BoolAttribute{
 									Description: "When true, indicates that the filter is currently paused.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"ref": schema.StringAttribute{
 									Description: "A short reference tag. Allows you to select related filters.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"deleted": schema.BoolAttribute{
 									Description: "When true, indicates that the firewall rule was deleted.",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},
@@ -111,19 +106,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "An informative summary of the firewall rule.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"priority": schema.Float64Attribute{
 							Description: "The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.Float64{
 								float64validator.Between(0, 2147483647),
 							},
 						},
 						"products": schema.ListAttribute{
 							Computed: true,
-							Optional: true,
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
 									stringvalidator.OneOfCaseInsensitive(
@@ -142,7 +134,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"ref": schema.StringAttribute{
 							Description: "A short reference tag. Allows you to select related firewall rules.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

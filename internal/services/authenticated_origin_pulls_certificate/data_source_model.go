@@ -22,13 +22,13 @@ type AuthenticatedOriginPullsCertificateResultListDataSourceEnvelope struct {
 type AuthenticatedOriginPullsCertificateDataSourceModel struct {
 	CertificateID types.String                                                 `tfsdk:"certificate_id" path:"certificate_id"`
 	ZoneID        types.String                                                 `tfsdk:"zone_id" path:"zone_id"`
+	Certificate   types.String                                                 `tfsdk:"certificate" json:"certificate,computed"`
 	ExpiresOn     timetypes.RFC3339                                            `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	ID            types.String                                                 `tfsdk:"id" json:"id,computed"`
 	Issuer        types.String                                                 `tfsdk:"issuer" json:"issuer,computed"`
 	Signature     types.String                                                 `tfsdk:"signature" json:"signature,computed"`
-	Certificate   types.String                                                 `tfsdk:"certificate" json:"certificate,computed_optional"`
-	ID            types.String                                                 `tfsdk:"id" json:"id,computed_optional"`
-	Status        types.String                                                 `tfsdk:"status" json:"status,computed_optional"`
-	UploadedOn    timetypes.RFC3339                                            `tfsdk:"uploaded_on" json:"uploaded_on,computed_optional" format:"date-time"`
+	Status        types.String                                                 `tfsdk:"status" json:"status,computed"`
+	UploadedOn    timetypes.RFC3339                                            `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 	Filter        *AuthenticatedOriginPullsCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

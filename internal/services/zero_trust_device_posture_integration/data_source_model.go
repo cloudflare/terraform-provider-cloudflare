@@ -19,14 +19,14 @@ type ZeroTrustDevicePostureIntegrationResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
-	AccountID     types.String                                               `tfsdk:"account_id" path:"account_id"`
-	IntegrationID types.String                                               `tfsdk:"integration_id" path:"integration_id"`
-	ID            types.String                                               `tfsdk:"id" json:"id,computed_optional"`
-	Interval      types.String                                               `tfsdk:"interval" json:"interval,computed_optional"`
-	Name          types.String                                               `tfsdk:"name" json:"name,computed_optional"`
-	Type          types.String                                               `tfsdk:"type" json:"type,computed_optional"`
-	Config        *ZeroTrustDevicePostureIntegrationConfigDataSourceModel    `tfsdk:"config" json:"config,computed_optional"`
-	Filter        *ZeroTrustDevicePostureIntegrationFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id"`
+	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id"`
+	ID            types.String                                                                     `tfsdk:"id" json:"id,computed"`
+	Interval      types.String                                                                     `tfsdk:"interval" json:"interval,computed"`
+	Name          types.String                                                                     `tfsdk:"name" json:"name,computed"`
+	Type          types.String                                                                     `tfsdk:"type" json:"type,computed"`
+	Config        customfield.NestedObject[ZeroTrustDevicePostureIntegrationConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
+	Filter        *ZeroTrustDevicePostureIntegrationFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDevicePostureIntegrationDataSourceModel) toReadParams() (params zero_trust.DevicePostureIntegrationGetParams, diags diag.Diagnostics) {

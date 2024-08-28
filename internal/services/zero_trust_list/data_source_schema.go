@@ -30,33 +30,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
-			"list_count": schema.Float64Attribute{
-				Description: "The number of items in the list.",
-				Computed:    true,
-			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
 			"description": schema.StringAttribute{
 				Description: "The description of the list.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "API Resource UUID tag.",
 				Computed:    true,
-				Optional:    true,
+			},
+			"list_count": schema.Float64Attribute{
+				Description: "The number of items in the list.",
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the list.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of list.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"SERIAL",
@@ -66,6 +58,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"IP",
 					),
 				},
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

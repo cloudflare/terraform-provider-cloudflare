@@ -19,12 +19,12 @@ type ZeroTrustDeviceManagedNetworksResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceManagedNetworksDataSourceModel struct {
-	AccountID types.String                                            `tfsdk:"account_id" path:"account_id"`
-	NetworkID types.String                                            `tfsdk:"network_id" path:"network_id,computed_optional"`
-	Name      types.String                                            `tfsdk:"name" json:"name,computed_optional"`
-	Type      types.String                                            `tfsdk:"type" json:"type,computed_optional"`
-	Config    *ZeroTrustDeviceManagedNetworksConfigDataSourceModel    `tfsdk:"config" json:"config,computed_optional"`
-	Filter    *ZeroTrustDeviceManagedNetworksFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID types.String                                                                  `tfsdk:"account_id" path:"account_id"`
+	NetworkID types.String                                                                  `tfsdk:"network_id" path:"network_id,computed_optional"`
+	Name      types.String                                                                  `tfsdk:"name" json:"name,computed"`
+	Type      types.String                                                                  `tfsdk:"type" json:"type,computed"`
+	Config    customfield.NestedObject[ZeroTrustDeviceManagedNetworksConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
+	Filter    *ZeroTrustDeviceManagedNetworksFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
 func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toReadParams() (params zero_trust.DeviceNetworkGetParams, diags diag.Diagnostics) {
@@ -45,7 +45,7 @@ func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toListParams() (params z
 
 type ZeroTrustDeviceManagedNetworksConfigDataSourceModel struct {
 	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr,computed"`
-	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed_optional"`
+	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed"`
 }
 
 type ZeroTrustDeviceManagedNetworksFindOneByDataSourceModel struct {
