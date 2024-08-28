@@ -17,6 +17,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/cloud_connector_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
@@ -363,6 +364,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		cloud_connector_rules.NewResource,
 		d1.NewResource,
 		email_routing_address.NewResource,
 		email_routing_rule.NewResource,

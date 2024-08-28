@@ -95,6 +95,33 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_BasicValue(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	resourceName := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigBasicUsingValue(zoneID, "tf-acctest-basic", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.8"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigBasicUsingValueUpdated(zoneID, "tf-acctest-basic", rnd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "value", "192.168.0.9"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRecord_CaseInsensitive(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord
@@ -785,6 +812,32 @@ resource "cloudflare_record" "%[3]s" {
 	zone_id = "%[1]s"
 	name = "%[2]s"
 	content = "192.168.0.10"
+	type = "A"
+	ttl = 3600
+	tags = ["tag1", "tag2"]
+    comment = "this is a comment"
+}`, zoneID, name, rnd)
+}
+
+func testAccCheckCloudflareRecordConfigBasicUsingValue(zoneID, name, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	value = "192.168.0.8"
+	type = "A"
+	ttl = 3600
+	tags = ["tag1", "tag2"]
+    comment = "this is a comment"
+}`, zoneID, name, rnd)
+}
+
+func testAccCheckCloudflareRecordConfigBasicUsingValueUpdated(zoneID, name, rnd string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	value = "192.168.0.9"
 	type = "A"
 	ttl = 3600
 	tags = ["tag1", "tag2"]

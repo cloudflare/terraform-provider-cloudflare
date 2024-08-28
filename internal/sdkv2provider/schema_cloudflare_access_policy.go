@@ -22,14 +22,12 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Description:   consts.AccountIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
-			ForceNew:      true,
 			ConflictsWith: []string{consts.ZoneIDSchemaKey},
 		},
 		consts.ZoneIDSchemaKey: {
 			Description:   consts.ZoneIDSchemaDescription,
 			Type:          schema.TypeString,
 			Optional:      true,
-			ForceNew:      true,
 			ConflictsWith: []string{consts.AccountIDSchemaKey},
 		},
 		"name": {

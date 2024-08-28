@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_device_posture_rule: Modify Tanium's eid_last_seen field to be relative instead of a timestamp value
+```
