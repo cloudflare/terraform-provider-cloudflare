@@ -463,8 +463,11 @@ type ListWithNestedObj struct {
 }
 
 type Embedded2 struct {
-	B types.String `tfsdk:"tfsdk_b" json:"b"`
-	C *Inner       `tfsdk:"tfsdk_c" json:"c"`
+	B types.String      `tfsdk:"tfsdk_b" json:"b"`
+	C *Inner            `tfsdk:"tfsdk_c" json:"c"`
+	D *[]*Inner         `tfsdk:"tfsdk_d" json:"d"`
+	E []string          `tfsdk:"tfsdk_e" json:"e"`
+	F *map[string]Inner `tfsdk:"tfsdk_f" json:"f"`
 }
 
 type Inner struct {
@@ -523,6 +526,9 @@ var decode_only_tests = map[string]struct {
 				{
 					B: types.StringValue("foo"),
 					C: nil,
+					D: nil,
+					E: nil,
+					F: nil,
 				},
 			}),
 		},
