@@ -18,11 +18,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Optional:    true,
 			},
 			"queue_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "Identifier.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -100,7 +100,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"account_id": schema.StringAttribute{
-						Description: "Identifier",
+						Description: "Identifier.",
 						Required:    true,
 					},
 				},
