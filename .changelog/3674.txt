@@ -1,0 +1,3 @@
+```release-note:note
+resource/cloudflare_record: fix a bug that prematurely removed the ability to set the deprecated `value` field.
+```

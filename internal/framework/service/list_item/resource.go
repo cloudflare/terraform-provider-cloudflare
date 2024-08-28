@@ -308,6 +308,11 @@ func createListItem(ctx context.Context, client *muxclient.Client, data *ListIte
 		}
 
 		for _, item := range items {
+			if item.Hostname != nil && item.Hostname.UrlHostname == searchTerm {
+				items = []cfv1.ListItem{item}
+				break
+			}
+
 			if item.Redirect != nil && item.Redirect.SourceUrl == searchTerm {
 				items = []cfv1.ListItem{item}
 				break

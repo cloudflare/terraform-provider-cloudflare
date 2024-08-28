@@ -27,6 +27,23 @@ func resourceCloudflareIPsecTunnel() *schema.Resource {
 		Description: heredoc.Doc(`
 			Provides a resource, that manages IPsec tunnels for Magic Transit.
 		`),
+		DeprecationMessage: "`cloudflare_ipsec_tunnel` is now deprecated and will be removed in the next major version. Use `cloudflare_magic_wan_ipsec_tunnel` instead.",
+	}
+}
+
+func resourceCloudflareMagicWANIPsecTunnel() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareIPsecTunnelSchema(),
+		CreateContext: resourceCloudflareIPsecTunnelCreate,
+		ReadContext:   resourceCloudflareIPsecTunnelRead,
+		UpdateContext: resourceCloudflareIPsecTunnelUpdate,
+		DeleteContext: resourceCloudflareIPsecTunnelDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareIPsecTunnelImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a resource, that manages IPsec tunnels for Magic Transit.
+		`),
 	}
 }
 

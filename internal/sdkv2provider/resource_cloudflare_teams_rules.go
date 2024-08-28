@@ -24,6 +24,21 @@ func resourceCloudflareTeamsRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareTeamsRuleImport,
 		},
+		Description:        "Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gateway policies.",
+		DeprecationMessage: "`cloudflare_teams_rule` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_gateway_policy` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustGatewayPolicy() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareTeamsRuleSchema(),
+		ReadContext:   resourceCloudflareTeamsRuleRead,
+		UpdateContext: resourceCloudflareTeamsRuleUpdate,
+		CreateContext: resourceCloudflareTeamsRuleCreate,
+		DeleteContext: resourceCloudflareTeamsRuleDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareTeamsRuleImport,
+		},
 		Description: "Provides a Cloudflare Teams rule resource. Teams rules comprise secure web gateway policies.",
 	}
 }
@@ -340,11 +355,12 @@ func flattenTeamsRuleBisoAdminControls(settings *cloudflare.TeamsBISOAdminContro
 		return nil
 	}
 	return []interface{}{map[string]interface{}{
-		"disable_printing":   settings.DisablePrinting,
-		"disable_copy_paste": settings.DisableCopyPaste,
-		"disable_download":   settings.DisableDownload,
-		"disable_upload":     settings.DisableUpload,
-		"disable_keyboard":   settings.DisableKeyboard,
+		"disable_printing":              settings.DisablePrinting,
+		"disable_copy_paste":            settings.DisableCopyPaste,
+		"disable_download":              settings.DisableDownload,
+		"disable_upload":                settings.DisableUpload,
+		"disable_keyboard":              settings.DisableKeyboard,
+		"disable_clipboard_redirection": settings.DisableClipboardRedirection,
 	}}
 }
 
@@ -370,12 +386,14 @@ func inflateTeamsRuleBisoAdminControls(settings interface{}) *cloudflare.TeamsBI
 	disableDownload := settingsMap["disable_download"].(bool)
 	disableUpload := settingsMap["disable_upload"].(bool)
 	disableKeyboard := settingsMap["disable_keyboard"].(bool)
+	disableClipboardRedirection := settingsMap["disable_clipboard_redirection"].(bool)
 	return &cloudflare.TeamsBISOAdminControlSettings{
-		DisablePrinting:  disablePrinting,
-		DisableCopyPaste: disableCopyPaste,
-		DisableDownload:  disableDownload,
-		DisableUpload:    disableUpload,
-		DisableKeyboard:  disableKeyboard,
+		DisablePrinting:             disablePrinting,
+		DisableCopyPaste:            disableCopyPaste,
+		DisableDownload:             disableDownload,
+		DisableUpload:               disableUpload,
+		DisableKeyboard:             disableKeyboard,
+		DisableClipboardRedirection: disableClipboardRedirection,
 	}
 }
 

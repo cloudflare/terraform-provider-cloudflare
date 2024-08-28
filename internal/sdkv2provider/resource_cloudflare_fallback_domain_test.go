@@ -22,7 +22,7 @@ func TestAccCloudflareFallbackDomain_Basic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_local_domain_fallback.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
@@ -55,7 +55,7 @@ func TestAccCloudflareFallbackDomain_DefaultPolicy(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_local_domain_fallback.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
@@ -99,7 +99,7 @@ func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_fallback_domain.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_local_domain_fallback.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		CheckDestroy: testAccCheckCloudflareFallbackDomainDestroy,
@@ -125,7 +125,7 @@ func TestAccCloudflareFallbackDomain_WithAttachedPolicy(t *testing.T) {
 
 func testAccCloudflareDefaultFallbackDomain(rnd, accountID string, description string, suffix string, dns_server string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_fallback_domain" "%[1]s" {
+resource "cloudflare_zero_trust_local_domain_fallback" "%[1]s" {
   account_id = "%[2]s"
   domains {
     description = "%[3]s"
@@ -138,7 +138,7 @@ resource "cloudflare_fallback_domain" "%[1]s" {
 
 func testAccCloudflareFallbackDomain(rnd, accountID, description string, suffix string, dns_server string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_device_settings_policy" "%[1]s" {
+resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 	account_id                = "%[2]s"
 	allow_mode_switch         = true
 	allow_updates             = true
@@ -154,16 +154,17 @@ resource "cloudflare_device_settings_policy" "%[1]s" {
 	switch_locked             = true
 	exclude_office_ips		  = false
 	description               = "%[1]s"
+	tunnel_protocol           = "wireguard"
 }
 
-resource "cloudflare_fallback_domain" "%[1]s" {
+resource "cloudflare_zero_trust_local_domain_fallback" "%[1]s" {
   account_id = "%[2]s"
   domains {
     description = "%[3]s"
     suffix      = "%[4]s"
     dns_server  = ["%[5]s"]
   }
-	policy_id = "${cloudflare_device_settings_policy.%[1]s.id}"
+	policy_id = "${cloudflare_zero_trust_device_profiles.%[1]s.id}"
 }
 `, rnd, accountID, description, suffix, dns_server)
 }
@@ -172,7 +173,7 @@ func testAccCheckCloudflareFallbackDomainDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_fallback_domain" {
+		if rs.Type != "cloudflare_zero_trust_local_domain_fallback" {
 			continue
 		}
 

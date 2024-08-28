@@ -1,3 +1,4 @@
+version: 2
 builds:
   - env:
       # goreleaser does not work with CGO, it could also complicate
@@ -49,7 +50,7 @@ release:
 changelog:
   disable: true
 snapshot:
-  name_template: "{{.ShortCommit}}-dev"
+  version_template: "{{.ShortCommit}}-dev"
 
 announce:
   discord:

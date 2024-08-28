@@ -47,17 +47,27 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Type:             schema.TypeString,
 			Optional:         true,
 			Computed:         true,
-			ConflictsWith:    []string{"data"},
+			ExactlyOneOf:     []string{"data", "content", "value"},
 			DiffSuppressFunc: suppressTrailingDots,
 			Description:      "The value of the record.",
+			Deprecated:       "`value` is deprecated in favour of `content` and will be removed in the next major release.",
+		},
+
+		"content": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Computed:         true,
+			ExactlyOneOf:     []string{"data", "content", "value"},
+			DiffSuppressFunc: suppressTrailingDots,
+			Description:      "The content of the record.",
 		},
 
 		"data": {
-			Type:          schema.TypeList,
-			MaxItems:      1,
-			Optional:      true,
-			ConflictsWith: []string{"value"},
-			Description:   "Map of attributes that constitute the record value.",
+			Type:         schema.TypeList,
+			MaxItems:     1,
+			Optional:     true,
+			ExactlyOneOf: []string{"data", "content", "value"},
+			Description:  "Map of attributes that constitute the record value.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					// Properties present in several record types

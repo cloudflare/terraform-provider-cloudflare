@@ -14,8 +14,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("cloudflare_access_mutual_tls_certificate", &resource.Sweeper{
-		Name: "cloudflare_access_mutual_tls_certificate",
+	resource.AddTestSweepers("cloudflare_zero_trust_access_mtls_certificate", &resource.Sweeper{
+		Name: "cloudflare_zero_trust_access_mtls_certificate",
 		F:    testSweepCloudflareAccessMutualTLSCertificate,
 	})
 }
@@ -68,7 +68,7 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
@@ -115,7 +115,7 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_access_mutual_tls_certificate.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
@@ -156,7 +156,7 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_access_mutual_tls_certificate" {
+		if rs.Type != "cloudflare_zero_trust_access_mtls_certificate" {
 			continue
 		}
 
@@ -180,7 +180,7 @@ func testAccCheckCloudflareAccessMutualTLSCertificateDestroy(s *terraform.State)
 
 func testAccessMutualTLSCertificateConfigBasic(rnd string, identifier *cloudflare.ResourceContainer, cert, domain string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
+resource "cloudflare_zero_trust_access_mtls_certificate" "%[1]s" {
 	name                 = "%[1]s"
 	%[2]s_id             = "%[3]s"
 	associated_hostnames = ["%[5]s"]
@@ -191,7 +191,7 @@ resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
 
 func testAccessMutualTLSCertificateUpdated(rnd string, identifier *cloudflare.ResourceContainer, cert string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_access_mutual_tls_certificate" "%[1]s" {
+resource "cloudflare_zero_trust_access_mtls_certificate" "%[1]s" {
 	name                 = "%[1]s"
 	%[2]s_id             = "%[3]s"
 	associated_hostnames = []

@@ -19,7 +19,7 @@ import (
 
 func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 	return &schema.Resource{
-		SchemaVersion: 1,
+		SchemaVersion: 2,
 		Schema:        resourceCloudflareZoneSettingsOverrideSchema(),
 		CreateContext: resourceCloudflareZoneSettingsOverrideCreate,
 		ReadContext:   resourceCloudflareZoneSettingsOverrideRead,
@@ -31,6 +31,11 @@ func resourceCloudflareZoneSettingsOverride() *schema.Resource {
 				Version: 0,
 				Type:    resourceCloudflareZoneSettingsOverrideV0().CoreConfigSchema().ImpliedType(),
 				Upgrade: resourceCloudflareZoneSettingsOverrideStateUpgradeV1,
+			},
+			{
+				Version: 1,
+				Type:    resourceCloudflareZoneSettingsOverrideV1().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceCloudflareZoneSettingsOverrideStateUpgradeV2,
 			},
 		},
 	}
@@ -195,7 +200,7 @@ func flattenZoneSettings(ctx context.Context, d *schema.ResourceData, settings [
 			continue
 		}
 
-		if s.ID == "minify" || s.ID == "nel" {
+		if s.ID == "nel" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})}
 		} else if s.ID == "security_header" {
 			cfg[s.ID] = []interface{}{s.Value.(map[string]interface{})["strict_transport_security"]}
@@ -363,7 +368,7 @@ func expandZoneSetting(d *schema.ResourceData, keyFormatString, k string, settin
 				zoneSettingValue = settingValue
 			}
 		}
-	case "minify", "nel":
+	case "nel":
 		{
 			listValue := settingValue.([]interface{})
 			if len(listValue) > 0 && listValue != nil {

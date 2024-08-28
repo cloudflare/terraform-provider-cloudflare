@@ -23,7 +23,7 @@ func TestAccCloudflareTeamsList_Basic(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_list.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_list.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -56,7 +56,7 @@ func TestAccCloudflareTeamsList_BasicWithDescription(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_list.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_list.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -93,7 +93,7 @@ func TestAccCloudflareTeamsList_LottaListItems(t *testing.T) {
 	}
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_teams_list.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_list.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -145,7 +145,7 @@ func TestAccCloudflareTeamsList_Reordered(t *testing.T) {
 
 func testAccCloudflareTeamsListConfigBasic(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[1]s" {
+resource "cloudflare_zero_trust_list" "%[1]s" {
 	account_id  = "%[2]s"
 	name        = "%[1]s"
 	description = "My description"
@@ -157,7 +157,7 @@ resource "cloudflare_teams_list" "%[1]s" {
 
 func testAccCloudflareTeamsListConfigBasicWithDescription(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[1]s" {
+resource "cloudflare_zero_trust_list" "%[1]s" {
 	account_id             = "%[2]s"
 	name                   = "%[1]s"
 	description            = "My description"
@@ -175,7 +175,7 @@ func testAccCloudflareTeamsListConfigBigItemCount(rnd, accountID string) string 
 	}
 
 	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[1]s" {
+resource "cloudflare_zero_trust_list" "%[1]s" {
 	account_id  = "%[2]s"
 	name        = "%[1]s"
 	description = "My description"
@@ -187,7 +187,7 @@ resource "cloudflare_teams_list" "%[1]s" {
 
 func testAccCloudflareTeamsListConfigReorderedItems(rnd, accountID string) string {
 	return fmt.Sprintf(`
-resource "cloudflare_teams_list" "%[1]s" {
+resource "cloudflare_zero_trust_list" "%[1]s" {
 	account_id  = "%[2]s"
 	name        = "%[1]s"
 	description = "My description"
@@ -201,7 +201,7 @@ func testAccCheckCloudflareTeamsListDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_teams_list" {
+		if rs.Type != "cloudflare_zero_trust_list" {
 			continue
 		}
 

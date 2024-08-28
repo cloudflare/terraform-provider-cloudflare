@@ -36,7 +36,7 @@ resource "cloudflare_notification_policy_webhooks" "example" {
 
 - `created_at` (String) Timestamp of when the notification webhook was created.
 - `id` (String) The ID of this resource.
-- `last_failure` (String) Timestamp of when the notification webhook last faiuled.
+- `last_failure` (String) Timestamp of when the notification webhook last failed.
 - `last_success` (String) Timestamp of when the notification webhook was last successful.
 - `type` (String)
 

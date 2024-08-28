@@ -28,6 +28,26 @@ func resourceCloudflareFallbackDomain() *schema.Resource {
 			requests will be passed back to other DNS servers configured on
 			existing network interfaces on the device.
 		`),
+		DeprecationMessage: "`cloudflare_fallback_domain` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_local_fallback_domain` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustLocalFallbackDomain() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareFallbackDomainSchema(),
+		ReadContext:   resourceCloudflareFallbackDomainRead,
+		CreateContext: resourceCloudflareFallbackDomainUpdate, // Intentionally identical to Update as the resource is always present
+		UpdateContext: resourceCloudflareFallbackDomainUpdate,
+		DeleteContext: resourceCloudflareFallbackDomainDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareFallbackDomainImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Fallback Domain resource. Fallback domains are
+			used to ignore DNS requests to a given list of domains. These DNS
+			requests will be passed back to other DNS servers configured on
+			existing network interfaces on the device.
+		`),
 	}
 }
 

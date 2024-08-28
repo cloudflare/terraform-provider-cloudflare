@@ -31,6 +31,27 @@ func resourceCloudflareAccessMutualTLSCertificate() *schema.Resource {
 			 used with Access to only allows requests from devices with a
 			 corresponding client certificate.
 		`),
+		DeprecationMessage: "`cloudflare_access_mutual_tls_certificate` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_mtls_certificate` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessMutualTLSCertificate() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessMutualTLSCertificateSchema(),
+		CreateContext: resourceCloudflareAccessMutualTLSCertificateCreate,
+		ReadContext:   resourceCloudflareAccessMutualTLSCertificateRead,
+		UpdateContext: resourceCloudflareAccessMutualTLSCertificateUpdate,
+		DeleteContext: resourceCloudflareAccessMutualTLSCertificateDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessMutualTLSCertificateImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Mutual TLS Certificate resource.
+			Mutual TLS authentication ensures that the traffic is secure and
+			trusted in both directions between a client and server and can be
+			 used with Access to only allows requests from devices with a
+			 corresponding client certificate.
+		`),
 	}
 }
 

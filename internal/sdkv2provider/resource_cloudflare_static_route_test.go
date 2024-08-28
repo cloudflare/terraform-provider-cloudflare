@@ -16,7 +16,7 @@ func TestAccCloudflareStaticRoute_Exists(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_static_route.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
@@ -70,7 +70,7 @@ func TestAccCloudflareStaticRoute_UpdateDescription(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_static_route.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
@@ -101,7 +101,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_static_route.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_static_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var StaticRoute cloudflare.MagicTransitStaticRoute
@@ -141,7 +141,7 @@ func TestAccCloudflareStaticRoute_UpdateWeight(t *testing.T) {
 
 func testAccCheckCloudflareStaticRouteSimple(ID, description, accountID string, weight int) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_static_route" "%[1]s" {
+  resource "cloudflare_magic_wan_static_route" "%[1]s" {
 	account_id = "%[3]s"
 	prefix = "10.100.0.0/24"
 	nexthop = "10.0.0.0"
