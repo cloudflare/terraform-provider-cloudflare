@@ -458,6 +458,19 @@ var tests = map[string]struct {
 	"json_struct_nil2": {`{}`, JsonModel{}},
 }
 
+type ListWithNestedObj struct {
+	A customfield.NestedObjectList[Embedded2] `tfsdk:"tfsdk_a" json:"a"`
+}
+
+type Embedded2 struct {
+	B types.String `tfsdk:"tfsdk_b" json:"b"`
+	C *Inner       `tfsdk:"tfsdk_c" json:"c"`
+}
+
+type Inner struct {
+	D types.String `tfsdk:"tfsdk_d" json:"d"`
+}
+
 var decode_only_tests = map[string]struct {
 	buf string
 	val interface{}
@@ -502,6 +515,18 @@ var decode_only_tests = map[string]struct {
 	},
 
 	"json_struct_nil3": {`{"nil":null}`, JsonModel{}},
+
+	"nested_object_list_missing_nested_field": {
+		`{"a":[{"b":"foo"}}]}`,
+		ListWithNestedObj{
+			A: customfield.NewObjectListMust(context.TODO(), []Embedded2{
+				{
+					B: types.StringValue("foo"),
+					C: nil,
+				},
+			}),
+		},
+	},
 }
 
 var encode_only_tests = map[string]struct {
