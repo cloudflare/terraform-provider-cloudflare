@@ -47,7 +47,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "API Resource UUID tag.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"list_count": schema.Float64Attribute{
 							Description: "The number of items in the list.",
@@ -60,17 +59,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "The description of the list.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the list.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"type": schema.StringAttribute{
 							Description: "The type of list.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"SERIAL",

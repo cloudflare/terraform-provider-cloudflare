@@ -71,8 +71,8 @@ func (m *ZoneLockdownDataSourceModel) toListParams() (params firewall.LockdownLi
 }
 
 type ZoneLockdownConfigurationsDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target,computed_optional"`
-	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
+	Target types.String `tfsdk:"target" json:"target,computed"`
+	Value  types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type ZoneLockdownFindOneByDataSourceModel struct {

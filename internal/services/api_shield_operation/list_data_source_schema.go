@@ -149,8 +149,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[APIShieldOperationsFeaturesDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"traffic_stats": schema.SingleNestedAttribute{
-									Computed: true,
-									Optional: true,
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[APIShieldOperationsFeaturesTrafficStatsDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"last_updated": schema.StringAttribute{
 											Computed:   true,

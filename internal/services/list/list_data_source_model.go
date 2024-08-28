@@ -35,6 +35,6 @@ type ListsResultDataSourceModel struct {
 	ModifiedOn            types.String  `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                  types.String  `tfsdk:"name" json:"name,computed"`
 	NumItems              types.Float64 `tfsdk:"num_items" json:"num_items,computed"`
-	Description           types.String  `tfsdk:"description" json:"description,computed_optional"`
-	NumReferencingFilters types.Float64 `tfsdk:"num_referencing_filters" json:"num_referencing_filters,computed_optional"`
+	Description           types.String  `tfsdk:"description" json:"description,computed"`
+	NumReferencingFilters types.Float64 `tfsdk:"num_referencing_filters" json:"num_referencing_filters,computed"`
 }

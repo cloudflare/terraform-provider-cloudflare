@@ -36,17 +36,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"host": schema.StringAttribute{
 									Description: "The desired endpoint to test.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"kind": schema.StringAttribute{
 									Description: "The type of test.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"method": schema.StringAttribute{
 									Description: "The HTTP request method type.",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},
@@ -65,35 +62,30 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "Additional details about the test.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"target_policies": schema.ListNestedAttribute{
 							Description: "Device settings profiles targeted by this test",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestsTargetPoliciesDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
 										Description: "The id of the device settings profile",
 										Computed:    true,
-										Optional:    true,
 									},
 									"default": schema.BoolAttribute{
 										Description: "Whether the profile is the account default",
 										Computed:    true,
-										Optional:    true,
 									},
 									"name": schema.StringAttribute{
 										Description: "The name of the device settings profile",
 										Computed:    true,
-										Optional:    true,
 									},
 								},
 							},
 						},
 						"targeted": schema.BoolAttribute{
 							Computed: true,
-							Optional: true,
 						},
 					},
 				},

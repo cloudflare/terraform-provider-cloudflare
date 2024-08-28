@@ -45,14 +45,14 @@ func (m *ZeroTrustOrganizationDataSourceModel) toReadParams() (params zero_trust
 }
 
 type ZeroTrustOrganizationCustomPagesDataSourceModel struct {
-	Forbidden      types.String `tfsdk:"forbidden" json:"forbidden,computed_optional"`
-	IdentityDenied types.String `tfsdk:"identity_denied" json:"identity_denied,computed_optional"`
+	Forbidden      types.String `tfsdk:"forbidden" json:"forbidden,computed"`
+	IdentityDenied types.String `tfsdk:"identity_denied" json:"identity_denied,computed"`
 }
 
 type ZeroTrustOrganizationLoginDesignDataSourceModel struct {
-	BackgroundColor types.String `tfsdk:"background_color" json:"background_color,computed_optional"`
-	FooterText      types.String `tfsdk:"footer_text" json:"footer_text,computed_optional"`
-	HeaderText      types.String `tfsdk:"header_text" json:"header_text,computed_optional"`
-	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,computed_optional"`
-	TextColor       types.String `tfsdk:"text_color" json:"text_color,computed_optional"`
+	BackgroundColor types.String `tfsdk:"background_color" json:"background_color,computed"`
+	FooterText      types.String `tfsdk:"footer_text" json:"footer_text,computed"`
+	HeaderText      types.String `tfsdk:"header_text" json:"header_text,computed"`
+	LogoPath        types.String `tfsdk:"logo_path" json:"logo_path,computed"`
+	TextColor       types.String `tfsdk:"text_color" json:"text_color,computed"`
 }

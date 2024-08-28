@@ -37,7 +37,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"app_count": schema.Int64Attribute{
 							Description: "The number of applications that have this tag",
 							Computed:    true,
-							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,

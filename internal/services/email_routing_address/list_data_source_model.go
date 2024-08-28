@@ -39,7 +39,7 @@ func (m *EmailRoutingAddressesDataSourceModel) toListParams() (params email_rout
 type EmailRoutingAddressesResultDataSourceModel struct {
 	ID       types.String      `tfsdk:"id" json:"id,computed"`
 	Created  timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Email    types.String      `tfsdk:"email" json:"email,computed_optional"`
+	Email    types.String      `tfsdk:"email" json:"email,computed"`
 	Modified timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Tag      types.String      `tfsdk:"tag" json:"tag,computed"`
 	Verified timetypes.RFC3339 `tfsdk:"verified" json:"verified,computed" format:"date-time"`

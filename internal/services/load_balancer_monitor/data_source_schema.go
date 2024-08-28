@@ -43,6 +43,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"description": schema.StringAttribute{
+				Description: "Object description.",
+				Computed:    true,
+			},
+			"expected_body": schema.StringAttribute{
+				Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.",
+				Computed:    true,
+			},
 			"expected_codes": schema.StringAttribute{
 				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
@@ -50,6 +58,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"follow_redirects": schema.BoolAttribute{
 				Description: "Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Computed: true,
 			},
 			"interval": schema.Int64Attribute{
 				Description: "The interval between each health check. Shorter intervals may improve failover time, but will increase load on the origins as we check from multiple locations.",
@@ -69,6 +80,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"port": schema.Int64Attribute{
 				Description: "The port number to connect to for the health check. Required for TCP, UDP, and SMTP checks. HTTP and HTTPS checks should only define the port when using a non-standard port (HTTP: default 80, HTTPS: default 443).",
+				Computed:    true,
+			},
+			"probe_zone": schema.StringAttribute{
+				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
 			},
 			"retries": schema.Int64Attribute{
@@ -93,29 +108,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"description": schema.StringAttribute{
-				Description: "Object description.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"expected_body": schema.StringAttribute{
-				Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"id": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-			},
-			"probe_zone": schema.StringAttribute{
-				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"header": schema.MapAttribute{
 				Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
-				Optional:    true,
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},

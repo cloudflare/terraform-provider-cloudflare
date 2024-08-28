@@ -5,6 +5,7 @@ package account
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -39,12 +40,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountSettingsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"abuse_contact_email": schema.StringAttribute{
 						Description: "Sets an abuse contact email to notify for abuse reports.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"default_nameservers": schema.StringAttribute{
 						Description: "Specifies the default nameservers to be used for new zones added to this account.\n\n- `cloudflare.standard` for Cloudflare-branded nameservers\n- `custom.account` for account custom nameservers\n- `custom.tenant` for tenant custom nameservers\n\nSee [Custom Nameservers](https://developers.cloudflare.com/dns/additional-options/custom-nameservers/)\nfor more information.",

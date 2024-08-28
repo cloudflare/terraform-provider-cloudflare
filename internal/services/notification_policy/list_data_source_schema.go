@@ -42,12 +42,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"alert_interval": schema.StringAttribute{
 							Description: "Optional specification of how often to re-alert from the same incident, not support on all alert types.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"alert_type": schema.StringAttribute{
 							Description: "Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"access_custom_certificate_expiration_type",
@@ -122,7 +120,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "Optional description for the Notification policy.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Whether or not the Notification policy is enabled.",
@@ -131,96 +128,81 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"filters": schema.SingleNestedAttribute{
 							Description: "Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[NotificationPoliciesFiltersDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"actions": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"affected_asns": schema.ListAttribute{
 									Description: "Used for configuring radar_notification",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"affected_components": schema.ListAttribute{
 									Description: "Used for configuring incident_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"affected_locations": schema.ListAttribute{
 									Description: "Used for configuring radar_notification",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"airport_code": schema.ListAttribute{
 									Description: "Used for configuring maintenance_event_notification",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"alert_trigger_preferences": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"alert_trigger_preferences_value": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"enabled": schema.ListAttribute{
 									Description: "Used for configuring load_balancing_pool_enablement_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"environment": schema.ListAttribute{
 									Description: "Used for configuring pages_event_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"event": schema.ListAttribute{
 									Description: "Used for configuring pages_event_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"event_source": schema.ListAttribute{
 									Description: "Used for configuring load_balancing_health_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"event_type": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"group_by": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"health_check_id": schema.ListAttribute{
 									Description: "Used for configuring health_check_status_notification",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"incident_impact": schema.ListAttribute{
 									Description: "Used for configuring incident_alert",
 									Computed:    true,
-									Optional:    true,
 									Validators: []validator.List{
 										listvalidator.ValueStringsAre(
 											stringvalidator.OneOfCaseInsensitive(
@@ -236,127 +218,106 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"input_id": schema.ListAttribute{
 									Description: "Used for configuring stream_live_notifications",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"limit": schema.ListAttribute{
 									Description: "Used for configuring billing_usage_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"logo_tag": schema.ListAttribute{
 									Description: "Used for configuring logo_match_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"megabits_per_second": schema.ListAttribute{
 									Description: "Used for configuring advanced_ddos_attack_l4_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"new_health": schema.ListAttribute{
 									Description: "Used for configuring load_balancing_health_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"new_status": schema.ListAttribute{
 									Description: "Used for configuring tunnel_health_event",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"packets_per_second": schema.ListAttribute{
 									Description: "Used for configuring advanced_ddos_attack_l4_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"pool_id": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"product": schema.ListAttribute{
 									Description: "Used for configuring billing_usage_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"project_id": schema.ListAttribute{
 									Description: "Used for configuring pages_event_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"protocol": schema.ListAttribute{
 									Description: "Used for configuring advanced_ddos_attack_l4_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"query_tag": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"requests_per_second": schema.ListAttribute{
 									Description: "Used for configuring advanced_ddos_attack_l7_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"selectors": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"services": schema.ListAttribute{
 									Description: "Used for configuring clickhouse_alert_fw_ent_anomaly",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"slo": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"status": schema.ListAttribute{
 									Description: "Used for configuring health_check_status_notification",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"target_hostname": schema.ListAttribute{
 									Description: "Used for configuring advanced_ddos_attack_l7_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"target_ip": schema.ListAttribute{
 									Description: "Used for configuring advanced_ddos_attack_l4_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"target_zone_name": schema.ListAttribute{
 									Description: "Used for configuring advanced_ddos_attack_l7_alert",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"traffic_exclusions": schema.ListAttribute{
 									Description: "Used for configuring traffic_anomalies_alert",
 									Computed:    true,
-									Optional:    true,
 									Validators: []validator.List{
 										listvalidator.ValueStringsAre(
 											stringvalidator.OneOfCaseInsensitive("security_events"),
@@ -367,25 +328,21 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"tunnel_id": schema.ListAttribute{
 									Description: "Used for configuring tunnel_health_event",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"tunnel_name": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"where": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"zones": schema.ListAttribute{
 									Description: "Usage depends on specific alert type",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 							},
@@ -393,7 +350,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"mechanisms": schema.MapAttribute{
 							Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 							Computed:    true,
-							Optional:    true,
 							ElementType: types.ListType{
 								ElemType: jsontypes.NormalizedType{},
 							},
@@ -405,7 +361,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "Name of the policy.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

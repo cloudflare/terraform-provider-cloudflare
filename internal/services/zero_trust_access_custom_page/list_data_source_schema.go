@@ -46,7 +46,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"app_count": schema.Int64Attribute{
 							Description: "Number of apps the custom page is assigned to.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
@@ -55,7 +54,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"uid": schema.StringAttribute{
 							Description: "UUID",
 							Computed:    true,
-							Optional:    true,
 						},
 						"updated_at": schema.StringAttribute{
 							Computed:   true,

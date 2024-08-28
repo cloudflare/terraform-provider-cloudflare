@@ -5,6 +5,7 @@ package logpush_job
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -38,11 +39,63 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
+			"dataset": schema.StringAttribute{
+				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).",
+				Computed:    true,
+			},
+			"destination_conf": schema.StringAttribute{
+				Description: "Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included.",
+				Computed:    true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Flag that indicates if the job is enabled.",
+				Computed:    true,
+			},
+			"error_message": schema.StringAttribute{
+				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"frequency": schema.StringAttribute{
 				Description: "This field is deprecated. Please use `max_upload_*` parameters instead. The frequency at which Cloudflare sends batches of logs to your destination. Setting frequency to high sends your logs in larger quantities of smaller files. Setting frequency to low sends logs in smaller quantities of larger files.",
 				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("high", "low"),
+				},
+			},
+			"id": schema.Int64Attribute{
+				Description: "Unique id of the job.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(1),
+				},
+			},
+			"kind": schema.StringAttribute{
+				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("edge"),
+				},
+			},
+			"last_complete": schema.StringAttribute{
+				Description: "Records the last time for which logs have been successfully pushed. If the last successful push was for logs range 2018-07-23T10:00:00Z to 2018-07-23T10:01:00Z then the value of this field will be 2018-07-23T10:01:00Z. If the job has never run or has just been enabled and hasn't run yet then the field will be empty.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"last_error": schema.StringAttribute{
+				Description: "Records the last time the job failed. If not null, the job is currently failing. If null, the job has either never failed or has run successfully at least once since last failure. See also the error_message field.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"logpull_options": schema.StringAttribute{
+				Description: "This field is deprecated. Use `output_options` instead. Configuration string. It specifies things like requested fields and timestamp formats. If migrating from the logpull api, copy the url (full url or just the query string) of your call here, and logpush will keep on making this call for you, setting start and end times appropriately.",
+				Computed:    true,
+			},
+			"max_upload_bytes": schema.Int64Attribute{
+				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size. This parameter is not available for jobs with `edge` as its kind.",
+				Computed:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(5000000, 1000000000),
 				},
 			},
 			"max_upload_interval_seconds": schema.Int64Attribute{
@@ -59,77 +112,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					int64validator.Between(1000, 1000000),
 				},
 			},
-			"dataset": schema.StringAttribute{
-				Description: "Name of the dataset. A list of supported datasets can be found on the [Developer Docs](https://developers.cloudflare.com/logs/reference/log-fields/).",
-				Computed:    true,
-				Optional:    true,
-			},
-			"destination_conf": schema.StringAttribute{
-				Description: "Uniquely identifies a resource (such as an s3 bucket) where data will be pushed. Additional configuration parameters supported by the destination may be included.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "Flag that indicates if the job is enabled.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"error_message": schema.StringAttribute{
-				Description: "If not null, the job is currently failing. Failures are usually repetitive (example: no permissions to write to destination bucket). Only the last failure is recorded. On successful execution of a job the error_message and last_error are set to null.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"id": schema.Int64Attribute{
-				Description: "Unique id of the job.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.AtLeast(1),
-				},
-			},
-			"kind": schema.StringAttribute{
-				Description: "The kind parameter (optional) is used to differentiate between Logpush and Edge Log Delivery jobs. Currently, Edge Log Delivery is only supported for the `http_requests` dataset.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("edge"),
-				},
-			},
-			"last_complete": schema.StringAttribute{
-				Description: "Records the last time for which logs have been successfully pushed. If the last successful push was for logs range 2018-07-23T10:00:00Z to 2018-07-23T10:01:00Z then the value of this field will be 2018-07-23T10:01:00Z. If the job has never run or has just been enabled and hasn't run yet then the field will be empty.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"last_error": schema.StringAttribute{
-				Description: "Records the last time the job failed. If not null, the job is currently failing. If null, the job has either never failed or has run successfully at least once since last failure. See also the error_message field.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"logpull_options": schema.StringAttribute{
-				Description: "This field is deprecated. Use `output_options` instead. Configuration string. It specifies things like requested fields and timestamp formats. If migrating from the logpull api, copy the url (full url or just the query string) of your call here, and logpush will keep on making this call for you, setting start and end times appropriately.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"max_upload_bytes": schema.Int64Attribute{
-				Description: "The maximum uncompressed file size of a batch of logs. This setting value must be between `5 MB` and `1 GB`, or `0` to disable it. Note that you cannot set a minimum file size; this means that log files may be much smaller than this batch size. This parameter is not available for jobs with `edge` as its kind.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(5000000, 1000000000),
-				},
-			},
 			"name": schema.StringAttribute{
 				Description: "Optional human readable job name. Not unique. Cloudflare suggests that you set this to a meaningful string, like the domain name, to make it easier to identify your job.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"output_options": schema.SingleNestedAttribute{
 				Description: "The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[LogpushJobOutputOptionsDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"batch_prefix": schema.StringAttribute{
 						Description: "String to be prepended before each batch.",
@@ -150,7 +140,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"field_names": schema.ListAttribute{
 						Description: "List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.",
 						Computed:    true,
-						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"output_type": schema.StringAttribute{

@@ -25,9 +25,9 @@ type QueueDataSourceModel struct {
 	CreatedOn           types.String                                                `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn          types.String                                                `tfsdk:"modified_on" json:"modified_on,computed"`
 	ProducersTotalCount types.Float64                                               `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
+	QueueName           types.String                                                `tfsdk:"queue_name" json:"queue_name,computed"`
 	Consumers           customfield.NestedObjectList[QueueConsumersDataSourceModel] `tfsdk:"consumers" json:"consumers,computed"`
 	Producers           customfield.NestedObjectList[QueueProducersDataSourceModel] `tfsdk:"producers" json:"producers,computed"`
-	QueueName           types.String                                                `tfsdk:"queue_name" json:"queue_name,computed_optional"`
 	Filter              *QueueFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
 
@@ -48,17 +48,17 @@ func (m *QueueDataSourceModel) toListParams() (params queues.QueueListParams, di
 }
 
 type QueueConsumersDataSourceModel struct {
-	CreatedOn   types.String                           `tfsdk:"created_on" json:"created_on,computed"`
-	Environment types.String                           `tfsdk:"environment" json:"environment,computed"`
-	QueueName   types.String                           `tfsdk:"queue_name" json:"queue_name,computed"`
-	Service     types.String                           `tfsdk:"service" json:"service,computed"`
-	Settings    *QueueConsumersSettingsDataSourceModel `tfsdk:"settings" json:"settings,computed_optional"`
+	CreatedOn   types.String                                                    `tfsdk:"created_on" json:"created_on,computed"`
+	Environment types.String                                                    `tfsdk:"environment" json:"environment,computed"`
+	QueueName   types.String                                                    `tfsdk:"queue_name" json:"queue_name,computed"`
+	Service     types.String                                                    `tfsdk:"service" json:"service,computed"`
+	Settings    customfield.NestedObject[QueueConsumersSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
 }
 
 type QueueConsumersSettingsDataSourceModel struct {
-	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size,computed_optional"`
-	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries,computed_optional"`
-	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed_optional"`
+	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size,computed"`
+	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries,computed"`
+	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed"`
 }
 
 type QueueProducersDataSourceModel struct {

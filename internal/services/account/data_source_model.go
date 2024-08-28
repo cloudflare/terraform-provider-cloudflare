@@ -20,12 +20,12 @@ type AccountResultListDataSourceEnvelope struct {
 }
 
 type AccountDataSourceModel struct {
-	AccountID types.String                     `tfsdk:"account_id" path:"account_id"`
-	CreatedOn timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ID        types.String                     `tfsdk:"id" json:"id,computed"`
-	Name      types.String                     `tfsdk:"name" json:"name,computed"`
-	Settings  *AccountSettingsDataSourceModel  `tfsdk:"settings" json:"settings,computed_optional"`
-	Filter    *AccountFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID types.String                                             `tfsdk:"account_id" path:"account_id"`
+	CreatedOn timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ID        types.String                                             `tfsdk:"id" json:"id,computed"`
+	Name      types.String                                             `tfsdk:"name" json:"name,computed"`
+	Settings  customfield.NestedObject[AccountSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
+	Filter    *AccountFindOneByDataSourceModel                         `tfsdk:"filter"`
 }
 
 func (m *AccountDataSourceModel) toReadParams() (params accounts.AccountGetParams, diags diag.Diagnostics) {
@@ -50,7 +50,7 @@ func (m *AccountDataSourceModel) toListParams() (params accounts.AccountListPara
 }
 
 type AccountSettingsDataSourceModel struct {
-	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email,computed_optional"`
+	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email,computed"`
 	DefaultNameservers          types.String `tfsdk:"default_nameservers" json:"default_nameservers,computed"`
 	EnforceTwofactor            types.Bool   `tfsdk:"enforce_twofactor" json:"enforce_twofactor,computed"`
 	UseAccountCustomNSByDefault types.Bool   `tfsdk:"use_account_custom_ns_by_default" json:"use_account_custom_ns_by_default,computed"`

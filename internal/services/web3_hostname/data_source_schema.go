@@ -31,6 +31,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"description": schema.StringAttribute{
+				Description: "An optional description of the hostname.",
+				Computed:    true,
+			},
+			"dnslink": schema.StringAttribute{
+				Description: "DNSLink value used if the target is ipfs.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "Identifier",
 				Computed:    true,
@@ -55,20 +63,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"description": schema.StringAttribute{
-				Description: "An optional description of the hostname.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"dnslink": schema.StringAttribute{
-				Description: "DNSLink value used if the target is ipfs.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"target": schema.StringAttribute{
 				Description: "Target gateway of the hostname.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"ethereum",

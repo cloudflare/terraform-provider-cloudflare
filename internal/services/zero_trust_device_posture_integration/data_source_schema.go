@@ -5,6 +5,7 @@ package zero_trust_device_posture_integration
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -28,22 +29,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description: "API UUID.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"interval": schema.StringAttribute{
 				Description: "The interval between each posture check with the third-party API. Use `m` for minutes (e.g. `5m`) and `h` for hours (e.g. `12h`).",
 				Computed:    true,
-				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the device posture integration.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of device posture integration.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"workspace_one",
@@ -59,7 +56,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"config": schema.SingleNestedAttribute{
 				Description: "The configuration object containing third-party integration information.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureIntegrationConfigDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"api_url": schema.StringAttribute{
 						Description: "The Workspace One API URL provided in the Workspace One Admin Dashboard.",

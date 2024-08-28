@@ -57,7 +57,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"email": schema.StringAttribute{
 							Description: "The contact email address of the user.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"modified": schema.StringAttribute{
 							Description: "The date and time the destination address was last modified.",

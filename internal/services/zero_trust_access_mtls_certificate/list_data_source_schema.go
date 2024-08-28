@@ -40,12 +40,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "The ID of the application that will use this certificate.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"associated_hostnames": schema.ListAttribute{
 							Description: "The hostnames of the applications that will use this certificate.",
 							Computed:    true,
-							Optional:    true,
 							ElementType: types.StringType,
 						},
 						"created_at": schema.StringAttribute{
@@ -54,18 +52,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"expires_on": schema.StringAttribute{
 							Computed:   true,
-							Optional:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"fingerprint": schema.StringAttribute{
 							Description: "The MD5 fingerprint of the certificate.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the certificate.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"updated_at": schema.StringAttribute{
 							Computed:   true,

@@ -21,10 +21,10 @@ type FilterResultListDataSourceEnvelope struct {
 type FilterDataSourceModel struct {
 	ZoneIdentifier types.String                    `tfsdk:"zone_identifier" path:"zone_identifier"`
 	ID             types.String                    `tfsdk:"id" path:"id,computed_optional"`
-	Expression     types.String                    `tfsdk:"expression" json:"expression"`
-	Paused         types.Bool                      `tfsdk:"paused" json:"paused"`
-	Description    types.String                    `tfsdk:"description" json:"description,computed_optional"`
-	Ref            types.String                    `tfsdk:"ref" json:"ref,computed_optional"`
+	Description    types.String                    `tfsdk:"description" json:"description,computed"`
+	Expression     types.String                    `tfsdk:"expression" json:"expression,computed"`
+	Paused         types.Bool                      `tfsdk:"paused" json:"paused,computed"`
+	Ref            types.String                    `tfsdk:"ref" json:"ref,computed"`
 	Filter         *FilterFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

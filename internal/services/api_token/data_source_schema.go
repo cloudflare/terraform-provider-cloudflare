@@ -25,6 +25,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Token identifier tag.",
 				Optional:    true,
 			},
+			"expires_on": schema.StringAttribute{
+				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
 			"id": schema.StringAttribute{
 				Description: "Token identifier tag.",
 				Computed:    true,
@@ -44,27 +49,18 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"expires_on": schema.StringAttribute{
-				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
 			"name": schema.StringAttribute{
 				Description: "Token name.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"not_before": schema.StringAttribute{
 				Description: "The time before which the token MUST NOT be accepted for processing.",
 				Computed:    true,
-				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the token.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"active",
@@ -74,24 +70,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"condition": schema.SingleNestedAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[APITokenConditionDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"request_ip": schema.SingleNestedAttribute{
 						Description: "Client IP restrictions.",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[APITokenConditionRequestIPDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
 								Computed:    true,
-								Optional:    true,
 								ElementType: types.StringType,
 							},
 							"not_in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
 								Computed:    true,
-								Optional:    true,
 								ElementType: types.StringType,
 							},
 						},
@@ -101,7 +95,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"policies": schema.ListNestedAttribute{
 				Description: "List of access policies assigned to the token.",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[APITokenPoliciesDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -128,15 +122,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
 										Computed:    true,
-										Optional:    true,
+										CustomType:  customfield.NewNestedObjectType[APITokenPoliciesPermissionGroupsMetaDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
 												Computed: true,
-												Optional: true,
 											},
 											"value": schema.StringAttribute{
 												Computed: true,
-												Optional: true,
 											},
 										},
 									},
@@ -154,11 +146,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"resource": schema.StringAttribute{
 									Computed: true,
-									Optional: true,
 								},
 								"scope": schema.StringAttribute{
 									Computed: true,
-									Optional: true,
 								},
 							},
 						},

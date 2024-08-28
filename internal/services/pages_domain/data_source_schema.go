@@ -46,6 +46,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Computed: true,
 			},
+			"name": schema.StringAttribute{
+				Computed: true,
+			},
 			"status": schema.StringAttribute{
 				Computed: true,
 				Validators: []validator.String{
@@ -68,18 +71,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"error_message": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 					"method": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("http", "txt"),
 						},
 					},
 					"status": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"initializing",
@@ -92,11 +92,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"txt_name": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 					"txt_value": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 				},
 			},
@@ -106,11 +104,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"error_message": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 					"status": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"pending",
@@ -122,10 +118,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"name": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

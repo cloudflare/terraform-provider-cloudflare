@@ -120,11 +120,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"geo_restrictions": schema.SingleNestedAttribute{
 							Description: "Specify the region where your private key can be held locally for optimal TLS performance. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Options allow distribution to only to U.S. data centers, only to E.U. data centers, or only to highest security data centers. Default distribution is to all Cloudflare datacenters, for optimal performance.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[CustomSSLsGeoRestrictionsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"label": schema.StringAttribute{
 									Computed: true,
-									Optional: true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive(
 											"us",
@@ -136,8 +135,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"keyless_server": schema.SingleNestedAttribute{
-							Computed: true,
-							Optional: true,
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[CustomSSLsKeylessServerDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
 									Description: "Keyless certificate identifier tag.",
@@ -184,7 +183,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"tunnel": schema.SingleNestedAttribute{
 									Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
 									Computed:    true,
-									Optional:    true,
+									CustomType:  customfield.NewNestedObjectType[CustomSSLsKeylessServerTunnelDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"private_ip": schema.StringAttribute{
 											Description: "Private IP of the Key Server Host",
@@ -201,7 +200,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"policy": schema.StringAttribute{
 							Description: "Specify the policy that determines the region where your private key will be held locally. HTTPS connections to any excluded data center will still be fully encrypted, but will incur some latency while Keyless SSL is used to complete the handshake with the nearest allowed data center. Any combination of countries, specified by their two letter country code (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) can be chosen, such as 'country: IN', as well as 'region: EU' which refers to the EU region. If there are too few data centers satisfying the policy, it will be rejected.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

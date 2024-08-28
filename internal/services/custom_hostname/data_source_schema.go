@@ -35,6 +35,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"custom_origin_server": schema.StringAttribute{
+				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
+				Computed:    true,
+			},
+			"custom_origin_sni": schema.StringAttribute{
+				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
+				Computed:    true,
+			},
 			"hostname": schema.StringAttribute{
 				Description: "The custom hostname that will point to your hostname via CNAME.",
 				Computed:    true,
@@ -42,6 +50,83 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description: "Identifier",
 				Computed:    true,
+			},
+			"status": schema.StringAttribute{
+				Description: "Status of the hostname's activation.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"active",
+						"pending",
+						"active_redeploying",
+						"moved",
+						"pending_deletion",
+						"deleted",
+						"pending_blocked",
+						"pending_migration",
+						"pending_provisioned",
+						"test_pending",
+						"test_active",
+						"test_active_apex",
+						"test_blocked",
+						"test_failed",
+						"provisioned",
+						"blocked",
+					),
+				},
+			},
+			"verification_errors": schema.ListAttribute{
+				Description: "These are errors that were encountered while trying to activate a hostname.",
+				Computed:    true,
+				ElementType: types.StringType,
+			},
+			"custom_metadata": schema.SingleNestedAttribute{
+				Description: "These are per-hostname (customer) settings.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameCustomMetadataDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"key": schema.StringAttribute{
+						Description: "Unique metadata for this hostname.",
+						Computed:    true,
+					},
+				},
+			},
+			"ownership_verification": schema.SingleNestedAttribute{
+				Description: "This is a record which can be placed to activate a hostname.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameOwnershipVerificationDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"name": schema.StringAttribute{
+						Description: "DNS Name for record.",
+						Computed:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "DNS Record type.",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("txt"),
+						},
+					},
+					"value": schema.StringAttribute{
+						Description: "Content for the record.",
+						Computed:    true,
+					},
+				},
+			},
+			"ownership_verification_http": schema.SingleNestedAttribute{
+				Description: "This presents the token to be served by the given http url to activate a hostname.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameOwnershipVerificationHTTPDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"http_body": schema.StringAttribute{
+						Description: "Token to be served.",
+						Computed:    true,
+					},
+					"http_url": schema.StringAttribute{
+						Description: "The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.",
+						Computed:    true,
+					},
+				},
 			},
 			"ssl": schema.SingleNestedAttribute{
 				Description: "SSL properties for the custom hostname.",
@@ -51,7 +136,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"id": schema.StringAttribute{
 						Description: "Custom hostname SSL identifier tag.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"bundle_method": schema.StringAttribute{
 						Description: "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
@@ -67,7 +151,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"certificate_authority": schema.StringAttribute{
 						Description: "The Certificate Authority that will issue the certificate",
 						Computed:    true,
-						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"digicert",
@@ -80,39 +163,32 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"custom_certificate": schema.StringAttribute{
 						Description: "If a custom uploaded certificate is used.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"custom_csr_id": schema.StringAttribute{
 						Description: "The identifier for the Custom CSR that was used.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"custom_key": schema.StringAttribute{
 						Description: "The key for a custom uploaded certificate.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"expires_on": schema.StringAttribute{
 						Description: "The time the custom certificate expires on.",
 						Computed:    true,
-						Optional:    true,
 						CustomType:  timetypes.RFC3339Type{},
 					},
 					"hosts": schema.ListAttribute{
 						Description: "A list of Hostnames on a custom uploaded certificate.",
 						Computed:    true,
-						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"issuer": schema.StringAttribute{
 						Description: "The issuer on a custom uploaded certificate.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"method": schema.StringAttribute{
 						Description: "Domain control validation (DCV) method used for this hostname.",
 						Computed:    true,
-						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"http",
@@ -124,23 +200,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"serial_number": schema.StringAttribute{
 						Description: "The serial number on a custom uploaded certificate.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"settings": schema.SingleNestedAttribute{
 						Description: "SSL specific settings.",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[CustomHostnameSSLSettingsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ciphers": schema.ListAttribute{
 								Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
 								Computed:    true,
-								Optional:    true,
 								ElementType: types.StringType,
 							},
 							"early_hints": schema.StringAttribute{
 								Description: "Whether or not Early Hints is enabled.",
 								Computed:    true,
-								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
 								},
@@ -148,7 +221,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"http2": schema.StringAttribute{
 								Description: "Whether or not HTTP2 is enabled.",
 								Computed:    true,
-								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
 								},
@@ -156,7 +228,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"min_tls_version": schema.StringAttribute{
 								Description: "The minimum TLS version supported.",
 								Computed:    true,
-								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
 										"1.0",
@@ -169,7 +240,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"tls_1_3": schema.StringAttribute{
 								Description: "Whether or not TLS 1.3 is enabled.",
 								Computed:    true,
-								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
 								},
@@ -179,7 +249,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"signature": schema.StringAttribute{
 						Description: "The signature on a custom uploaded certificate.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"status": schema.StringAttribute{
 						Description: "Status of the hostname's SSL certificates.",
@@ -213,7 +282,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"type": schema.StringAttribute{
 						Description: "Level of validation to be used for this hostname. Domain validation (dv) must be used.",
 						Computed:    true,
-						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dv"),
 						},
@@ -221,53 +289,46 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"uploaded_on": schema.StringAttribute{
 						Description: "The time the custom certificate was uploaded.",
 						Computed:    true,
-						Optional:    true,
 						CustomType:  timetypes.RFC3339Type{},
 					},
 					"validation_errors": schema.ListNestedAttribute{
 						Description: "Domain validation errors that have been received by the certificate authority (CA).",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectListType[CustomHostnameSSLValidationErrorsDataSourceModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"message": schema.StringAttribute{
 									Description: "A domain validation error.",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},
 					},
 					"validation_records": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectListType[CustomHostnameSSLValidationRecordsDataSourceModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"emails": schema.ListAttribute{
 									Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"http_body": schema.StringAttribute{
 									Description: "The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"http_url": schema.StringAttribute{
 									Description: "The url that will be checked during domain validation.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"txt_name": schema.StringAttribute{
 									Description: "The hostname that the certificate authority (CA) will check for a TXT record during domain validation .",
 									Computed:    true,
-									Optional:    true,
 								},
 								"txt_value": schema.StringAttribute{
 									Description: "The TXT record that the certificate authority (CA) will check during domain validation.",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},
@@ -275,102 +336,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"wildcard": schema.BoolAttribute{
 						Description: "Indicates whether the certificate covers a wildcard.",
 						Computed:    true,
-						Optional:    true,
-					},
-				},
-			},
-			"custom_origin_server": schema.StringAttribute{
-				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"custom_origin_sni": schema.StringAttribute{
-				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"status": schema.StringAttribute{
-				Description: "Status of the hostname's activation.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"active",
-						"pending",
-						"active_redeploying",
-						"moved",
-						"pending_deletion",
-						"deleted",
-						"pending_blocked",
-						"pending_migration",
-						"pending_provisioned",
-						"test_pending",
-						"test_active",
-						"test_active_apex",
-						"test_blocked",
-						"test_failed",
-						"provisioned",
-						"blocked",
-					),
-				},
-			},
-			"verification_errors": schema.ListAttribute{
-				Description: "These are errors that were encountered while trying to activate a hostname.",
-				Computed:    true,
-				Optional:    true,
-				ElementType: types.StringType,
-			},
-			"custom_metadata": schema.SingleNestedAttribute{
-				Description: "These are per-hostname (customer) settings.",
-				Computed:    true,
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"key": schema.StringAttribute{
-						Description: "Unique metadata for this hostname.",
-						Computed:    true,
-						Optional:    true,
-					},
-				},
-			},
-			"ownership_verification": schema.SingleNestedAttribute{
-				Description: "This is a record which can be placed to activate a hostname.",
-				Computed:    true,
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"name": schema.StringAttribute{
-						Description: "DNS Name for record.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"type": schema.StringAttribute{
-						Description: "DNS Record type.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("txt"),
-						},
-					},
-					"value": schema.StringAttribute{
-						Description: "Content for the record.",
-						Computed:    true,
-						Optional:    true,
-					},
-				},
-			},
-			"ownership_verification_http": schema.SingleNestedAttribute{
-				Description: "This presents the token to be served by the given http url to activate a hostname.",
-				Computed:    true,
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"http_body": schema.StringAttribute{
-						Description: "Token to be served.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"http_url": schema.StringAttribute{
-						Description: "The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.",
-						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

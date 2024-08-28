@@ -19,12 +19,12 @@ type HyperdriveConfigResultListDataSourceEnvelope struct {
 }
 
 type HyperdriveConfigDataSourceModel struct {
-	AccountID    types.String                              `tfsdk:"account_id" path:"account_id"`
-	HyperdriveID types.String                              `tfsdk:"hyperdrive_id" path:"hyperdrive_id"`
-	Name         types.String                              `tfsdk:"name" json:"name,computed_optional"`
-	Caching      *HyperdriveConfigCachingDataSourceModel   `tfsdk:"caching" json:"caching,computed_optional"`
-	Origin       *HyperdriveConfigOriginDataSourceModel    `tfsdk:"origin" json:"origin,computed_optional"`
-	Filter       *HyperdriveConfigFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id"`
+	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id"`
+	Name         types.String                                                     `tfsdk:"name" json:"name,computed"`
+	Caching      customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
+	Origin       customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
+	Filter       *HyperdriveConfigFindOneByDataSourceModel                        `tfsdk:"filter"`
 }
 
 func (m *HyperdriveConfigDataSourceModel) toReadParams() (params hyperdrive.ConfigGetParams, diags diag.Diagnostics) {
@@ -44,9 +44,9 @@ func (m *HyperdriveConfigDataSourceModel) toListParams() (params hyperdrive.Conf
 }
 
 type HyperdriveConfigCachingDataSourceModel struct {
-	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed_optional"`
-	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,computed_optional"`
-	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,computed_optional"`
+	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed"`
+	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,computed"`
+	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,computed"`
 }
 
 type HyperdriveConfigOriginDataSourceModel struct {
@@ -54,8 +54,8 @@ type HyperdriveConfigOriginDataSourceModel struct {
 	Host           types.String `tfsdk:"host" json:"host,computed"`
 	Scheme         types.String `tfsdk:"scheme" json:"scheme,computed"`
 	User           types.String `tfsdk:"user" json:"user,computed"`
-	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,computed_optional"`
-	Port           types.Int64  `tfsdk:"port" json:"port,computed_optional"`
+	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,computed"`
+	Port           types.Int64  `tfsdk:"port" json:"port,computed"`
 }
 
 type HyperdriveConfigFindOneByDataSourceModel struct {

@@ -5,6 +5,7 @@ package hyperdrive_config
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -28,32 +29,28 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"caching": schema.SingleNestedAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[HyperdriveConfigCachingDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"disabled": schema.BoolAttribute{
 						Description: "When set to true, disables the caching of SQL responses. (Default: false)",
 						Computed:    true,
-						Optional:    true,
 					},
 					"max_age": schema.Int64Attribute{
 						Description: "When present, specifies max duration for which items should persist in the cache. (Default: 60)",
 						Computed:    true,
-						Optional:    true,
 					},
 					"stale_while_revalidate": schema.Int64Attribute{
 						Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. (Default: 15)",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},
 			"origin": schema.SingleNestedAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:   true,
+				CustomType: customfield.NewNestedObjectType[HyperdriveConfigOriginDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"database": schema.StringAttribute{
 						Description: "The name of your origin database.",
@@ -81,12 +78,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"access_client_id": schema.StringAttribute{
 						Description: "The Client ID of the Access token to use when connecting to the origin database",
 						Computed:    true,
-						Optional:    true,
 					},
 					"port": schema.Int64Attribute{
 						Description: "The port (default: 5432 for Postgres) of your origin database.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

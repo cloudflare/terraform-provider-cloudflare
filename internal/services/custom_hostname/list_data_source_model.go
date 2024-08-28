@@ -51,72 +51,72 @@ func (m *CustomHostnamesDataSourceModel) toListParams() (params custom_hostnames
 }
 
 type CustomHostnamesResultDataSourceModel struct {
-	ID                        types.String                                                `tfsdk:"id" json:"id,computed"`
-	Hostname                  types.String                                                `tfsdk:"hostname" json:"hostname,computed"`
-	SSL                       customfield.NestedObject[CustomHostnamesSSLDataSourceModel] `tfsdk:"ssl" json:"ssl,computed"`
-	CreatedAt                 timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	CustomMetadata            *CustomHostnamesCustomMetadataDataSourceModel               `tfsdk:"custom_metadata" json:"custom_metadata,computed_optional"`
-	CustomOriginServer        types.String                                                `tfsdk:"custom_origin_server" json:"custom_origin_server,computed_optional"`
-	CustomOriginSNI           types.String                                                `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed_optional"`
-	OwnershipVerification     *CustomHostnamesOwnershipVerificationDataSourceModel        `tfsdk:"ownership_verification" json:"ownership_verification,computed_optional"`
-	OwnershipVerificationHTTP *CustomHostnamesOwnershipVerificationHTTPDataSourceModel    `tfsdk:"ownership_verification_http" json:"ownership_verification_http,computed_optional"`
-	Status                    types.String                                                `tfsdk:"status" json:"status,computed_optional"`
-	VerificationErrors        *[]types.String                                             `tfsdk:"verification_errors" json:"verification_errors,computed_optional"`
+	ID                        types.String                                                                      `tfsdk:"id" json:"id,computed"`
+	Hostname                  types.String                                                                      `tfsdk:"hostname" json:"hostname,computed"`
+	SSL                       customfield.NestedObject[CustomHostnamesSSLDataSourceModel]                       `tfsdk:"ssl" json:"ssl,computed"`
+	CreatedAt                 timetypes.RFC3339                                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	CustomMetadata            customfield.NestedObject[CustomHostnamesCustomMetadataDataSourceModel]            `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
+	CustomOriginServer        types.String                                                                      `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
+	CustomOriginSNI           types.String                                                                      `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`
+	OwnershipVerification     customfield.NestedObject[CustomHostnamesOwnershipVerificationDataSourceModel]     `tfsdk:"ownership_verification" json:"ownership_verification,computed"`
+	OwnershipVerificationHTTP customfield.NestedObject[CustomHostnamesOwnershipVerificationHTTPDataSourceModel] `tfsdk:"ownership_verification_http" json:"ownership_verification_http,computed"`
+	Status                    types.String                                                                      `tfsdk:"status" json:"status,computed"`
+	VerificationErrors        types.List                                                                        `tfsdk:"verification_errors" json:"verification_errors,computed"`
 }
 
 type CustomHostnamesSSLDataSourceModel struct {
-	ID                   types.String                                           `tfsdk:"id" json:"id,computed_optional"`
-	BundleMethod         types.String                                           `tfsdk:"bundle_method" json:"bundle_method,computed"`
-	CertificateAuthority types.String                                           `tfsdk:"certificate_authority" json:"certificate_authority,computed_optional"`
-	CustomCertificate    types.String                                           `tfsdk:"custom_certificate" json:"custom_certificate,computed_optional"`
-	CustomCsrID          types.String                                           `tfsdk:"custom_csr_id" json:"custom_csr_id,computed_optional"`
-	CustomKey            types.String                                           `tfsdk:"custom_key" json:"custom_key,computed_optional"`
-	ExpiresOn            timetypes.RFC3339                                      `tfsdk:"expires_on" json:"expires_on,computed_optional" format:"date-time"`
-	Hosts                *[]types.String                                        `tfsdk:"hosts" json:"hosts,computed_optional"`
-	Issuer               types.String                                           `tfsdk:"issuer" json:"issuer,computed_optional"`
-	Method               types.String                                           `tfsdk:"method" json:"method,computed_optional"`
-	SerialNumber         types.String                                           `tfsdk:"serial_number" json:"serial_number,computed_optional"`
-	Settings             *CustomHostnamesSSLSettingsDataSourceModel             `tfsdk:"settings" json:"settings,computed_optional"`
-	Signature            types.String                                           `tfsdk:"signature" json:"signature,computed_optional"`
-	Status               types.String                                           `tfsdk:"status" json:"status,computed"`
-	Type                 types.String                                           `tfsdk:"type" json:"type,computed_optional"`
-	UploadedOn           timetypes.RFC3339                                      `tfsdk:"uploaded_on" json:"uploaded_on,computed_optional" format:"date-time"`
-	ValidationErrors     *[]*CustomHostnamesSSLValidationErrorsDataSourceModel  `tfsdk:"validation_errors" json:"validation_errors,computed_optional"`
-	ValidationRecords    *[]*CustomHostnamesSSLValidationRecordsDataSourceModel `tfsdk:"validation_records" json:"validation_records,computed_optional"`
-	Wildcard             types.Bool                                             `tfsdk:"wildcard" json:"wildcard,computed_optional"`
+	ID                   types.String                                                                     `tfsdk:"id" json:"id,computed"`
+	BundleMethod         types.String                                                                     `tfsdk:"bundle_method" json:"bundle_method,computed"`
+	CertificateAuthority types.String                                                                     `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
+	CustomCertificate    types.String                                                                     `tfsdk:"custom_certificate" json:"custom_certificate,computed"`
+	CustomCsrID          types.String                                                                     `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
+	CustomKey            types.String                                                                     `tfsdk:"custom_key" json:"custom_key,computed"`
+	ExpiresOn            timetypes.RFC3339                                                                `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	Hosts                types.List                                                                       `tfsdk:"hosts" json:"hosts,computed"`
+	Issuer               types.String                                                                     `tfsdk:"issuer" json:"issuer,computed"`
+	Method               types.String                                                                     `tfsdk:"method" json:"method,computed"`
+	SerialNumber         types.String                                                                     `tfsdk:"serial_number" json:"serial_number,computed"`
+	Settings             customfield.NestedObject[CustomHostnamesSSLSettingsDataSourceModel]              `tfsdk:"settings" json:"settings,computed"`
+	Signature            types.String                                                                     `tfsdk:"signature" json:"signature,computed"`
+	Status               types.String                                                                     `tfsdk:"status" json:"status,computed"`
+	Type                 types.String                                                                     `tfsdk:"type" json:"type,computed"`
+	UploadedOn           timetypes.RFC3339                                                                `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+	ValidationErrors     customfield.NestedObjectList[CustomHostnamesSSLValidationErrorsDataSourceModel]  `tfsdk:"validation_errors" json:"validation_errors,computed"`
+	ValidationRecords    customfield.NestedObjectList[CustomHostnamesSSLValidationRecordsDataSourceModel] `tfsdk:"validation_records" json:"validation_records,computed"`
+	Wildcard             types.Bool                                                                       `tfsdk:"wildcard" json:"wildcard,computed"`
 }
 
 type CustomHostnamesSSLSettingsDataSourceModel struct {
-	Ciphers       *[]types.String `tfsdk:"ciphers" json:"ciphers,computed_optional"`
-	EarlyHints    types.String    `tfsdk:"early_hints" json:"early_hints,computed_optional"`
-	HTTP2         types.String    `tfsdk:"http2" json:"http2,computed_optional"`
-	MinTLSVersion types.String    `tfsdk:"min_tls_version" json:"min_tls_version,computed_optional"`
-	TLS1_3        types.String    `tfsdk:"tls_1_3" json:"tls_1_3,computed_optional"`
+	Ciphers       types.List   `tfsdk:"ciphers" json:"ciphers,computed"`
+	EarlyHints    types.String `tfsdk:"early_hints" json:"early_hints,computed"`
+	HTTP2         types.String `tfsdk:"http2" json:"http2,computed"`
+	MinTLSVersion types.String `tfsdk:"min_tls_version" json:"min_tls_version,computed"`
+	TLS1_3        types.String `tfsdk:"tls_1_3" json:"tls_1_3,computed"`
 }
 
 type CustomHostnamesSSLValidationErrorsDataSourceModel struct {
-	Message types.String `tfsdk:"message" json:"message,computed_optional"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type CustomHostnamesSSLValidationRecordsDataSourceModel struct {
-	Emails   *[]types.String `tfsdk:"emails" json:"emails,computed_optional"`
-	HTTPBody types.String    `tfsdk:"http_body" json:"http_body,computed_optional"`
-	HTTPURL  types.String    `tfsdk:"http_url" json:"http_url,computed_optional"`
-	TXTName  types.String    `tfsdk:"txt_name" json:"txt_name,computed_optional"`
-	TXTValue types.String    `tfsdk:"txt_value" json:"txt_value,computed_optional"`
+	Emails   types.List   `tfsdk:"emails" json:"emails,computed"`
+	HTTPBody types.String `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL  types.String `tfsdk:"http_url" json:"http_url,computed"`
+	TXTName  types.String `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue types.String `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type CustomHostnamesCustomMetadataDataSourceModel struct {
-	Key types.String `tfsdk:"key" json:"key,computed_optional"`
+	Key types.String `tfsdk:"key" json:"key,computed"`
 }
 
 type CustomHostnamesOwnershipVerificationDataSourceModel struct {
-	Name  types.String `tfsdk:"name" json:"name,computed_optional"`
-	Type  types.String `tfsdk:"type" json:"type,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Name  types.String `tfsdk:"name" json:"name,computed"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type CustomHostnamesOwnershipVerificationHTTPDataSourceModel struct {
-	HTTPBody types.String `tfsdk:"http_body" json:"http_body,computed_optional"`
-	HTTPURL  types.String `tfsdk:"http_url" json:"http_url,computed_optional"`
+	HTTPBody types.String `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL  types.String `tfsdk:"http_url" json:"http_url,computed"`
 }

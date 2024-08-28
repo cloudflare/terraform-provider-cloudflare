@@ -38,6 +38,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"producers_total_count": schema.Float64Attribute{
 				Computed: true,
 			},
+			"queue_name": schema.StringAttribute{
+				Computed: true,
+			},
 			"consumers": schema.ListNestedAttribute{
 				Computed:   true,
 				CustomType: customfield.NewNestedObjectListType[QueueConsumersDataSourceModel](ctx),
@@ -56,22 +59,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed: true,
 						},
 						"settings": schema.SingleNestedAttribute{
-							Computed: true,
-							Optional: true,
+							Computed:   true,
+							CustomType: customfield.NewNestedObjectType[QueueConsumersSettingsDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"batch_size": schema.Float64Attribute{
 									Description: "The maximum number of messages to include in a batch.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"max_retries": schema.Float64Attribute{
 									Description: "The maximum number of retries",
 									Computed:    true,
-									Optional:    true,
 								},
 								"max_wait_time_ms": schema.Float64Attribute{
 									Computed: true,
-									Optional: true,
 								},
 							},
 						},
@@ -91,10 +91,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"queue_name": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

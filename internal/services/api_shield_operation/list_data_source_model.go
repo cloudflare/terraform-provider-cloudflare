@@ -79,7 +79,7 @@ type APIShieldOperationsResultDataSourceModel struct {
 }
 
 type APIShieldOperationsFeaturesDataSourceModel struct {
-	TrafficStats *APIShieldOperationsFeaturesTrafficStatsDataSourceModel `tfsdk:"traffic_stats" json:"traffic_stats,computed_optional"`
+	TrafficStats customfield.NestedObject[APIShieldOperationsFeaturesTrafficStatsDataSourceModel] `tfsdk:"traffic_stats" json:"traffic_stats,computed"`
 }
 
 type APIShieldOperationsFeaturesTrafficStatsDataSourceModel struct {

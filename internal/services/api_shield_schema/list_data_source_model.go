@@ -43,6 +43,6 @@ type APIShieldSchemasResultDataSourceModel struct {
 	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
 	Name              types.String      `tfsdk:"name" json:"name,computed"`
 	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id,computed"`
-	Source            types.String      `tfsdk:"source" json:"source,computed_optional"`
-	ValidationEnabled types.Bool        `tfsdk:"validation_enabled" json:"validation_enabled,computed_optional"`
+	Source            types.String      `tfsdk:"source" json:"source,computed"`
+	ValidationEnabled types.Bool        `tfsdk:"validation_enabled" json:"validation_enabled,computed"`
 }

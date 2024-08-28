@@ -24,10 +24,10 @@ type OriginCACertificateDataSourceModel struct {
 	Certificate       types.String                                 `tfsdk:"certificate" json:"certificate,computed"`
 	Csr               types.String                                 `tfsdk:"csr" json:"csr,computed"`
 	ExpiresOn         timetypes.RFC3339                            `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	ID                types.String                                 `tfsdk:"id" json:"id,computed"`
 	RequestType       types.String                                 `tfsdk:"request_type" json:"request_type,computed"`
 	RequestedValidity types.Float64                                `tfsdk:"requested_validity" json:"requested_validity,computed"`
 	Hostnames         types.List                                   `tfsdk:"hostnames" json:"hostnames,computed"`
-	ID                types.String                                 `tfsdk:"id" json:"id,computed_optional"`
 	Filter            *OriginCACertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

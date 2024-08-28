@@ -66,7 +66,7 @@ func (m *APIShieldOperationDataSourceModel) toListParams() (params api_gateway.D
 }
 
 type APIShieldOperationFeaturesDataSourceModel struct {
-	TrafficStats *APIShieldOperationFeaturesTrafficStatsDataSourceModel `tfsdk:"traffic_stats" json:"traffic_stats,computed_optional"`
+	TrafficStats customfield.NestedObject[APIShieldOperationFeaturesTrafficStatsDataSourceModel] `tfsdk:"traffic_stats" json:"traffic_stats,computed"`
 }
 
 type APIShieldOperationFeaturesTrafficStatsDataSourceModel struct {

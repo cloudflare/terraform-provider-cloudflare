@@ -39,37 +39,37 @@ func (m *CustomSSLsDataSourceModel) toListParams() (params custom_certificates.C
 }
 
 type CustomSSLsResultDataSourceModel struct {
-	ID              types.String                              `tfsdk:"id" json:"id,computed"`
-	BundleMethod    types.String                              `tfsdk:"bundle_method" json:"bundle_method,computed"`
-	ExpiresOn       timetypes.RFC3339                         `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	Hosts           types.List                                `tfsdk:"hosts" json:"hosts,computed"`
-	Issuer          types.String                              `tfsdk:"issuer" json:"issuer,computed"`
-	ModifiedOn      timetypes.RFC3339                         `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Priority        types.Float64                             `tfsdk:"priority" json:"priority,computed"`
-	Signature       types.String                              `tfsdk:"signature" json:"signature,computed"`
-	Status          types.String                              `tfsdk:"status" json:"status,computed"`
-	UploadedOn      timetypes.RFC3339                         `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
-	ZoneID          types.String                              `tfsdk:"zone_id" json:"zone_id,computed"`
-	GeoRestrictions *CustomSSLsGeoRestrictionsDataSourceModel `tfsdk:"geo_restrictions" json:"geo_restrictions,computed_optional"`
-	KeylessServer   *CustomSSLsKeylessServerDataSourceModel   `tfsdk:"keyless_server" json:"keyless_server,computed_optional"`
-	Policy          types.String                              `tfsdk:"policy" json:"policy,computed_optional"`
+	ID              types.String                                                       `tfsdk:"id" json:"id,computed"`
+	BundleMethod    types.String                                                       `tfsdk:"bundle_method" json:"bundle_method,computed"`
+	ExpiresOn       timetypes.RFC3339                                                  `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	Hosts           types.List                                                         `tfsdk:"hosts" json:"hosts,computed"`
+	Issuer          types.String                                                       `tfsdk:"issuer" json:"issuer,computed"`
+	ModifiedOn      timetypes.RFC3339                                                  `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Priority        types.Float64                                                      `tfsdk:"priority" json:"priority,computed"`
+	Signature       types.String                                                       `tfsdk:"signature" json:"signature,computed"`
+	Status          types.String                                                       `tfsdk:"status" json:"status,computed"`
+	UploadedOn      timetypes.RFC3339                                                  `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+	ZoneID          types.String                                                       `tfsdk:"zone_id" json:"zone_id,computed"`
+	GeoRestrictions customfield.NestedObject[CustomSSLsGeoRestrictionsDataSourceModel] `tfsdk:"geo_restrictions" json:"geo_restrictions,computed"`
+	KeylessServer   customfield.NestedObject[CustomSSLsKeylessServerDataSourceModel]   `tfsdk:"keyless_server" json:"keyless_server,computed"`
+	Policy          types.String                                                       `tfsdk:"policy" json:"policy,computed"`
 }
 
 type CustomSSLsGeoRestrictionsDataSourceModel struct {
-	Label types.String `tfsdk:"label" json:"label,computed_optional"`
+	Label types.String `tfsdk:"label" json:"label,computed"`
 }
 
 type CustomSSLsKeylessServerDataSourceModel struct {
-	ID          types.String                                  `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Enabled     types.Bool                                    `tfsdk:"enabled" json:"enabled,computed"`
-	Host        types.String                                  `tfsdk:"host" json:"host,computed"`
-	ModifiedOn  timetypes.RFC3339                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name        types.String                                  `tfsdk:"name" json:"name,computed"`
-	Permissions types.List                                    `tfsdk:"permissions" json:"permissions,computed"`
-	Port        types.Float64                                 `tfsdk:"port" json:"port,computed"`
-	Status      types.String                                  `tfsdk:"status" json:"status,computed"`
-	Tunnel      *CustomSSLsKeylessServerTunnelDataSourceModel `tfsdk:"tunnel" json:"tunnel,computed_optional"`
+	ID          types.String                                                           `tfsdk:"id" json:"id,computed"`
+	CreatedOn   timetypes.RFC3339                                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Enabled     types.Bool                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	Host        types.String                                                           `tfsdk:"host" json:"host,computed"`
+	ModifiedOn  timetypes.RFC3339                                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name        types.String                                                           `tfsdk:"name" json:"name,computed"`
+	Permissions types.List                                                             `tfsdk:"permissions" json:"permissions,computed"`
+	Port        types.Float64                                                          `tfsdk:"port" json:"port,computed"`
+	Status      types.String                                                           `tfsdk:"status" json:"status,computed"`
+	Tunnel      customfield.NestedObject[CustomSSLsKeylessServerTunnelDataSourceModel] `tfsdk:"tunnel" json:"tunnel,computed"`
 }
 
 type CustomSSLsKeylessServerTunnelDataSourceModel struct {

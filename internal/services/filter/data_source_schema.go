@@ -25,23 +25,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 			},
-			"expression": schema.StringAttribute{
-				Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
-				Optional:    true,
-			},
-			"paused": schema.BoolAttribute{
-				Description: "When true, indicates that the filter is currently paused.",
-				Optional:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the filter.",
 				Computed:    true,
-				Optional:    true,
+			},
+			"expression": schema.StringAttribute{
+				Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
+				Computed:    true,
+			},
+			"paused": schema.BoolAttribute{
+				Description: "When true, indicates that the filter is currently paused.",
+				Computed:    true,
 			},
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related filters.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

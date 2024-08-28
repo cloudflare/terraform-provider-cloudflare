@@ -29,23 +29,23 @@ func (m *ZeroTrustDEXTestsDataSourceModel) toListParams() (params zero_trust.Dev
 }
 
 type ZeroTrustDEXTestsResultDataSourceModel struct {
-	Data           customfield.NestedObject[ZeroTrustDEXTestsDataDataSourceModel] `tfsdk:"data" json:"data,computed"`
-	Enabled        types.Bool                                                     `tfsdk:"enabled" json:"enabled,computed"`
-	Interval       types.String                                                   `tfsdk:"interval" json:"interval,computed"`
-	Name           types.String                                                   `tfsdk:"name" json:"name,computed"`
-	Description    types.String                                                   `tfsdk:"description" json:"description,computed_optional"`
-	TargetPolicies *[]*ZeroTrustDEXTestsTargetPoliciesDataSourceModel             `tfsdk:"target_policies" json:"target_policies,computed_optional"`
-	Targeted       types.Bool                                                     `tfsdk:"targeted" json:"targeted,computed_optional"`
+	Data           customfield.NestedObject[ZeroTrustDEXTestsDataDataSourceModel]               `tfsdk:"data" json:"data,computed"`
+	Enabled        types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed"`
+	Interval       types.String                                                                 `tfsdk:"interval" json:"interval,computed"`
+	Name           types.String                                                                 `tfsdk:"name" json:"name,computed"`
+	Description    types.String                                                                 `tfsdk:"description" json:"description,computed"`
+	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestsTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed"`
+	Targeted       types.Bool                                                                   `tfsdk:"targeted" json:"targeted,computed"`
 }
 
 type ZeroTrustDEXTestsDataDataSourceModel struct {
-	Host   types.String `tfsdk:"host" json:"host,computed_optional"`
-	Kind   types.String `tfsdk:"kind" json:"kind,computed_optional"`
-	Method types.String `tfsdk:"method" json:"method,computed_optional"`
+	Host   types.String `tfsdk:"host" json:"host,computed"`
+	Kind   types.String `tfsdk:"kind" json:"kind,computed"`
+	Method types.String `tfsdk:"method" json:"method,computed"`
 }
 
 type ZeroTrustDEXTestsTargetPoliciesDataSourceModel struct {
-	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
-	Default types.Bool   `tfsdk:"default" json:"default,computed_optional"`
-	Name    types.String `tfsdk:"name" json:"name,computed_optional"`
+	ID      types.String `tfsdk:"id" json:"id,computed"`
+	Default types.Bool   `tfsdk:"default" json:"default,computed"`
+	Name    types.String `tfsdk:"name" json:"name,computed"`
 }

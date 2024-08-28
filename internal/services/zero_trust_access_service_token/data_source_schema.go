@@ -31,6 +31,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
 				Optional:    true,
 			},
+			"client_id": schema.StringAttribute{
+				Description: "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
+				Computed:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -39,29 +43,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The duration for how long the service token will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h. The default is 1 year in hours (8760h).",
 				Computed:    true,
 			},
-			"updated_at": schema.StringAttribute{
-				Computed:   true,
-				CustomType: timetypes.RFC3339Type{},
-			},
-			"client_id": schema.StringAttribute{
-				Description: "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"expires_at": schema.StringAttribute{
 				Computed:   true,
-				Optional:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
 			"id": schema.StringAttribute{
 				Description: "The ID of the service token.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the service token.",
 				Computed:    true,
-				Optional:    true,
+			},
+			"updated_at": schema.StringAttribute{
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

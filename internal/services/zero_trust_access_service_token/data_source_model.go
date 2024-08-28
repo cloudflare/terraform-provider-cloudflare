@@ -23,13 +23,13 @@ type ZeroTrustAccessServiceTokenDataSourceModel struct {
 	AccountID      types.String                                         `tfsdk:"account_id" path:"account_id"`
 	ServiceTokenID types.String                                         `tfsdk:"service_token_id" path:"service_token_id"`
 	ZoneID         types.String                                         `tfsdk:"zone_id" path:"zone_id"`
+	ClientID       types.String                                         `tfsdk:"client_id" json:"client_id,computed"`
 	CreatedAt      timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Duration       types.String                                         `tfsdk:"duration" json:"duration,computed"`
+	ExpiresAt      timetypes.RFC3339                                    `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	ID             types.String                                         `tfsdk:"id" json:"id,computed"`
+	Name           types.String                                         `tfsdk:"name" json:"name,computed"`
 	UpdatedAt      timetypes.RFC3339                                    `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	ClientID       types.String                                         `tfsdk:"client_id" json:"client_id,computed_optional"`
-	ExpiresAt      timetypes.RFC3339                                    `tfsdk:"expires_at" json:"expires_at,computed_optional" format:"date-time"`
-	ID             types.String                                         `tfsdk:"id" json:"id,computed_optional"`
-	Name           types.String                                         `tfsdk:"name" json:"name,computed_optional"`
 	Filter         *ZeroTrustAccessServiceTokenFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

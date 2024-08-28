@@ -97,12 +97,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"id": schema.StringAttribute{
 									Description: "Identifier",
 									Computed:    true,
-									Optional:    true,
 								},
 								"name": schema.StringAttribute{
 									Description: "The name of the account",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},
@@ -128,36 +126,29 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"cdn_only": schema.BoolAttribute{
 									Description: "The zone is only configured for CDN",
 									Computed:    true,
-									Optional:    true,
 								},
 								"custom_certificate_quota": schema.Int64Attribute{
 									Description: "Number of Custom Certificates the zone can have",
 									Computed:    true,
-									Optional:    true,
 								},
 								"dns_only": schema.BoolAttribute{
 									Description: "The zone is only configured for DNS",
 									Computed:    true,
-									Optional:    true,
 								},
 								"foundation_dns": schema.BoolAttribute{
 									Description: "The zone is setup with Foundation DNS",
 									Computed:    true,
-									Optional:    true,
 								},
 								"page_rule_quota": schema.Int64Attribute{
 									Description: "Number of Page Rules a zone can have",
 									Computed:    true,
-									Optional:    true,
 								},
 								"phishing_detected": schema.BoolAttribute{
 									Description: "The zone has been flagged for phishing",
 									Computed:    true,
-									Optional:    true,
 								},
 								"step": schema.Int64Attribute{
 									Computed: true,
-									Optional: true,
 								},
 							},
 						},
@@ -196,24 +187,20 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"id": schema.StringAttribute{
 									Description: "Identifier",
 									Computed:    true,
-									Optional:    true,
 								},
 								"name": schema.StringAttribute{
 									Description: "Name of the owner",
 									Computed:    true,
-									Optional:    true,
 								},
 								"type": schema.StringAttribute{
 									Description: "The type of owner",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},
 						"vanity_name_servers": schema.ListAttribute{
 							Description: "An array of domains used for custom name servers. This is only available for Business and Enterprise plans.",
 							Computed:    true,
-							Optional:    true,
 							ElementType: types.StringType,
 						},
 					},

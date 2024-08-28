@@ -49,12 +49,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"source": schema.StringAttribute{
 				Description: "Source of the schema",
 				Computed:    true,
-				Optional:    true,
 			},
 			"validation_enabled": schema.BoolAttribute{
 				Description: "Flag whether schema is enabled for validation.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
