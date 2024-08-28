@@ -209,9 +209,13 @@ func NewObjectMust[T any](ctx context.Context, t *T) NestedObject[T] {
 }
 
 func StructToAttributes[T any](ctx context.Context) (map[string]attr.Type, diag.Diagnostics) {
-	var diags diag.Diagnostics
 	var t T
 	val := reflect.ValueOf(t)
+	return structFromAttributesInner(ctx, val)
+}
+
+func structFromAttributesInner(ctx context.Context, val reflect.Value) (map[string]attr.Type, diag.Diagnostics) {
+	var diags diag.Diagnostics
 	typ := val.Type()
 
 	if typ.Kind() == reflect.Ptr && typ.Elem().Kind() == reflect.Struct {
@@ -220,7 +224,7 @@ func StructToAttributes[T any](ctx context.Context) (map[string]attr.Type, diag.
 	}
 
 	if typ.Kind() != reflect.Struct {
-		diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf("%T has unsupported type: %s", t, typ)))
+		diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf("%T has unsupported type: %s", val.Interface(), typ)))
 		return nil, diags
 	}
 
@@ -235,14 +239,49 @@ func StructToAttributes[T any](ctx context.Context) (map[string]attr.Type, diag.
 			continue
 		}
 		if tag == "" {
-			diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T is missing a "tfsdk" struct tag on %s`, t, field.Name)))
+			diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T is missing a "tfsdk" struct tag on %s`, val.Interface(), field.Name)))
 			return nil, diags
 		}
 
-		if v, ok := val.Field(i).Interface().(attr.Value); ok {
-			attributeTypes[tag] = v.Type(ctx)
+		v := val.Field(i)
+
+		attr, ok := v.Interface().(attr.Value)
+		if ok {
+			attributeTypes[tag] = attr.Type(ctx)
+		} else {
+			t := v.Type()
+			if t.Kind() == reflect.Ptr {
+				t = t.Elem()
+			}
+			if t.Kind() == reflect.Struct {
+				m, d := structFromAttributesInner(ctx, v)
+				diags.Append(d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				attributeTypes[tag] = basetypes.ObjectType{AttrTypes: m}
+			} else if t.Kind() == reflect.Slice {
+				sliceType := t.Elem()
+				if sliceType.Kind() == reflect.Ptr {
+					sliceType = sliceType.Elem()
+				}
+				if sliceType.Kind() == reflect.Struct {
+					structVal := reflect.New(sliceType).Elem()
+					m, d := structFromAttributesInner(ctx, structVal)
+					diags.Append(d...)
+					if diags.HasError() {
+						return nil, diags
+					}
+					attributeTypes[tag] = basetypes.ListType{ElemType: basetypes.ObjectType{AttrTypes: m}}
+				} else {
+					diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T has unsupported type: %s`, t, t.Kind())))
+					return nil, diags
+				}
+			} else {
+				diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T has unsupported type: %s`, t, t.Kind())))
+				return nil, diags
+			}
 		}
 	}
-
 	return attributeTypes, nil
 }

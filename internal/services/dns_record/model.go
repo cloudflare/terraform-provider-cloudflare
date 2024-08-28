@@ -21,7 +21,7 @@ type DNSRecordModel struct {
 	Data     *DNSRecordDataModel `tfsdk:"data" json:"data"`
 	Proxied  types.Bool          `tfsdk:"proxied" json:"proxied,computed_optional"`
 	TTL      types.Float64       `tfsdk:"ttl" json:"ttl,computed_optional"`
-	Tags     *[]types.String     `tfsdk:"tags" json:"tags,computed_optional"`
+	Tags     types.List          `tfsdk:"tags" json:"tags,computed_optional"`
 }
 
 type DNSRecordDataModel struct {
