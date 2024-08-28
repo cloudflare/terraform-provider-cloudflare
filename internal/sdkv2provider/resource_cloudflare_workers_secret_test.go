@@ -39,7 +39,7 @@ func TestAccCloudflareWorkerSecret_Basic(t *testing.T) {
 			},
 			{
 				Config:                  testAccCheckCloudflareWorkerSecretWithWorkerScript(workerSecretTestScriptName, name, secretText, accountId),
-				ResourceName:            "cloudflare_worker_secret." + name,
+				ResourceName:            "cloudflare_workers_secret." + name,
 				ImportStateId:           fmt.Sprintf("%s/%s/%s", accountID, workerSecretTestScriptName, name),
 				ImportState:             true,
 				ImportStateVerify:       true,
@@ -56,7 +56,7 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 	accountId := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_worker_secret" {
+		if rs.Type != "cloudflare_workers_secret" {
 			continue
 		}
 
@@ -77,15 +77,15 @@ func testAccCheckCloudflareWorkerSecretDestroy(s *terraform.State) error {
 
 func testAccCheckCloudflareWorkerSecretWithWorkerScript(scriptName string, name string, secretText string, accountId string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_worker_script" "%[2]s" {
+	resource "cloudflare_workers_script" "%[2]s" {
 		account_id = "%[4]s"
 		name       = "%[1]s"
 		content    = "%[5]s"
 	}
 
-	resource "cloudflare_worker_secret" "%[2]s" {
+	resource "cloudflare_workers_secret" "%[2]s" {
 		account_id  = "%[4]s"
-		script_name = cloudflare_worker_script.%[2]s.name
+		script_name = cloudflare_workers_script.%[2]s.name
 		name 		= "%[2]s"
 		secret_text	= "%[3]s"
 	}`, scriptName, name, secretText, accountId, scriptContentForSecret)

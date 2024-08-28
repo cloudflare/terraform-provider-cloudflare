@@ -1,0 +1,48 @@
+```release-note:note
+resource/cloudflare_worker_cron_trigger: deprecated in favour of `cloudflare_workers_cron_trigger` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_domain: deprecated in favour of `cloudflare_workers_domain` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_route: deprecated in favour of `cloudflare_workers_route` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_script: deprecated in favour of `cloudflare_workers_script` and will be removed in the next major version.
+```
+
+```release-note:note
+resource/cloudflare_worker_secret: deprecated in favour of `cloudflare_workers_secret` and will be removed in the next major version.
+```
+
+
+```release-note:note
+resource/cloudflare_workers_for_platforms_namespace: deprecated in favour of `cloudflare_workers_for_platforms_dispatch_namespace` and will be removed in the next major version.
+```
+
+```release-note:new-resource
+cloudflare_workers_secret
+```
+
+```release-note:new-resource
+cloudflare_workers_script
+```
+
+```release-note:new-resource
+cloudflare_workers_route
+```
+
+```release-note:new-resource
+cloudflare_workers_domain
+```
+
+```release-note:new-resource
+cloudflare_workers_cron_trigger
+```
+
+```release-note:new-resource
+cloudflare_workers_for_platforms_dispatch_namespace
+```

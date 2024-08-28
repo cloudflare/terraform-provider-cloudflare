@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_teams_rule: Add `disable_clipboard_redirection` attribute to `BISOAdminControls`
+```

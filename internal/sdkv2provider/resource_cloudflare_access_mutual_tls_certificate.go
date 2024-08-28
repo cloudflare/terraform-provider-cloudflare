@@ -31,6 +31,27 @@ func resourceCloudflareAccessMutualTLSCertificate() *schema.Resource {
 			 used with Access to only allows requests from devices with a
 			 corresponding client certificate.
 		`),
+		DeprecationMessage: "`cloudflare_access_mutual_tls_certificate` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_mtls_certificate` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessMutualTLSCertificate() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessMutualTLSCertificateSchema(),
+		CreateContext: resourceCloudflareAccessMutualTLSCertificateCreate,
+		ReadContext:   resourceCloudflareAccessMutualTLSCertificateRead,
+		UpdateContext: resourceCloudflareAccessMutualTLSCertificateUpdate,
+		DeleteContext: resourceCloudflareAccessMutualTLSCertificateDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessMutualTLSCertificateImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Mutual TLS Certificate resource.
+			Mutual TLS authentication ensures that the traffic is secure and
+			trusted in both directions between a client and server and can be
+			 used with Access to only allows requests from devices with a
+			 corresponding client certificate.
+		`),
 	}
 }
 
@@ -41,7 +62,7 @@ func resourceCloudflareAccessMutualTLSCertificateCreate(ctx context.Context, d *
 		Name:        d.Get("name").(string),
 		Certificate: d.Get("certificate").(string),
 	}
-	newAccessMutualTLSCertificate.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames"))
+	newAccessMutualTLSCertificate.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames").(*schema.Set).List())
 
 	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Access Mutual TLS certificate from struct: %+v", newAccessMutualTLSCertificate))
 
@@ -94,7 +115,7 @@ func resourceCloudflareAccessMutualTLSCertificateUpdate(ctx context.Context, d *
 		ID:   d.Id(),
 		Name: d.Get("name").(string),
 	}
-	updatedAccessMutualTLSCert.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames"))
+	updatedAccessMutualTLSCert.AssociatedHostnames = expandInterfaceToStringList(d.Get("associated_hostnames").(*schema.Set).List())
 
 	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Access Mutal TLS Certificate from struct: %+v", updatedAccessMutualTLSCert))
 

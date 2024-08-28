@@ -208,11 +208,6 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 		fonts = "on"
 		origin_max_http_version = "2"
 		universal_ssl = "off"
-		minify {
-			css = "on"
-			js = "off"
-			html = "off"
-		}
 		security_header {
 			enabled = true
 		}
@@ -286,4 +281,39 @@ func TestCloudflareZoneSettingsOverrideStateUpgradeV0(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, expectedV1, actualV1)
+}
+
+func TestCloudflareZoneSettingsOverrideStateUpgradeV1(t *testing.T) {
+	v1 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"minify": map[string]interface{}{
+				"css":  "on",
+				"js":   "on",
+				"html": "off",
+			},
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"minify": map[string]interface{}{
+				"css":  "on",
+				"js":   "on",
+				"html": "off",
+			},
+			"other_thing": "foo",
+		}},
+	}
+
+	expectedV2 := map[string]interface{}{
+		"settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+		"initial_settings": []interface{}{map[string]interface{}{
+			"other_thing": "foo",
+		}},
+	}
+
+	actualV2, err := resourceCloudflareZoneSettingsOverrideStateUpgradeV2(context.Background(), v1, nil)
+	require.NoError(t, err)
+
+	require.Equal(t, expectedV2, actualV2)
 }

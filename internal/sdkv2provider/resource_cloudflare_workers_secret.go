@@ -24,6 +24,21 @@ func resourceCloudflareWorkerSecret() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareWorkerSecretImport,
 		},
+		Description:        heredoc.Doc("Provides a Cloudflare Worker secret resource."),
+		DeprecationMessage: "`cloudflare_worker_secret` is now deprecated and will be removed in the next major version. Use `cloudflare_workers_secret` instead.",
+	}
+}
+
+func resourceCloudflareWorkersSecret() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareWorkerSecretSchema(),
+		CreateContext: resourceCloudflareWorkerSecretCreate,
+		ReadContext:   resourceCloudflareWorkerSecretRead,
+		UpdateContext: resourceCloudflareWorkerSecretCreate,
+		DeleteContext: resourceCloudflareWorkerSecretDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareWorkerSecretImport,
+		},
 		Description: heredoc.Doc("Provides a Cloudflare Worker secret resource."),
 	}
 }

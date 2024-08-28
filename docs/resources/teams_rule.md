@@ -90,6 +90,7 @@ Required:
 
 Optional:
 
+- `disable_clipboard_redirection` (Boolean) Disable clipboard redirection.
 - `disable_copy_paste` (Boolean) Disable copy-paste.
 - `disable_download` (Boolean) Disable download.
 - `disable_keyboard` (Boolean) Disable keyboard usage.

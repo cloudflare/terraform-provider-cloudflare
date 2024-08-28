@@ -30,6 +30,25 @@ func resourceCloudflareDLPProfile() *schema.Resource {
 			are a set of entries that can be matched in HTTP bodies or files.
 			They are referenced in Zero Trust Gateway rules.
 		`),
+		DeprecationMessage: "`cloudflare_dlp_profile` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_dlp_profile` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDLPProfile() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDLPProfileSchema(),
+		CreateContext: resourceCloudflareDLPProfileCreate,
+		ReadContext:   resourceCloudflareDLPProfileRead,
+		UpdateContext: resourceCloudflareDLPProfileUpdate,
+		DeleteContext: resourceCloudflareDLPProfileDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDLPProfileImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare DLP Profile resource. Data Loss Prevention profiles
+			are a set of entries that can be matched in HTTP bodies or files.
+			They are referenced in Zero Trust Gateway rules.
+		`),
 	}
 }
 

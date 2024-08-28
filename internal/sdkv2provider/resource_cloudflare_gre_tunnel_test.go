@@ -17,7 +17,7 @@ func TestAccCloudflareGRETunnelExists(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_gre_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
@@ -73,7 +73,7 @@ func TestAccCloudflareGRETunnelUpdateDescription(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_gre_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
@@ -104,7 +104,7 @@ func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
 	skipMagicTransitTestForNonConfiguredDefaultZone(t)
 
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_gre_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_magic_wan_gre_tunnel.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	var Tunnel cloudflare.MagicTransitGRETunnel
@@ -151,7 +151,7 @@ func TestAccCloudflareGRETunnelUpdateMulti(t *testing.T) {
 
 func testAccCheckCloudflareGRETunnelSimple(ID, name, description, accountID string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_gre_tunnel" "%[1]s" {
+  resource "cloudflare_magic_wan_gre_tunnel" "%[1]s" {
 	account_id = "%[4]s"
 	name = "%[2]s"
 	customer_gre_endpoint = "203.0.113.1"
@@ -168,7 +168,7 @@ func testAccCheckCloudflareGRETunnelSimple(ID, name, description, accountID stri
 
 func testAccCheckCloudflareGRETunnelMultiUpdate(ID, name, description, accountID string) string {
 	return fmt.Sprintf(`
-  resource "cloudflare_gre_tunnel" "%[1]s" {
+  resource "cloudflare_magic_wan_gre_tunnel" "%[1]s" {
 	account_id = "%[4]s"
 	name = "%[2]s"
 	customer_gre_endpoint = "203.0.113.2"

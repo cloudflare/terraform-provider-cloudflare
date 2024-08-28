@@ -23,6 +23,21 @@ func resourceCloudflareGRETunnel() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareGRETunnelImport,
 		},
+		Description:        "Provides a resource, that manages GRE tunnels for Magic Transit.",
+		DeprecationMessage: "`cloudflare_gre_tunnel` is now deprecated and will be removed in the next major version. Use `cloudflare_magic_wan_gre_tunnel` instead.",
+	}
+}
+
+func resourceCloudflareMagicWANGRETunnel() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareGRETunnelSchema(),
+		CreateContext: resourceCloudflareGRETunnelCreate,
+		ReadContext:   resourceCloudflareGRETunnelRead,
+		UpdateContext: resourceCloudflareGRETunnelUpdate,
+		DeleteContext: resourceCloudflareGRETunnelDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareGRETunnelImport,
+		},
 		Description: "Provides a resource, that manages GRE tunnels for Magic Transit.",
 	}
 }

@@ -17,10 +17,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/muxclient"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/access_mutual_tls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/cloud_connector_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_app_types"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_categories"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
@@ -30,7 +32,11 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace_deprecated"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_access_mtls_hostname_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_behavior"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_score_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -358,6 +364,7 @@ func (p *CloudflareProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		cloud_connector_rules.NewResource,
 		d1.NewResource,
 		email_routing_address.NewResource,
 		email_routing_rule.NewResource,
@@ -365,10 +372,14 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		list_item.NewResource,
 		r2_bucket.NewResource,
 		risk_behavior.NewResource,
+		zero_trust_risk_behavior.NewResource,
 		rulesets.NewResource,
 		turnstile.NewResource,
 		access_mutual_tls_hostname_settings.NewResource,
-		workers_for_platforms.NewResource,
+		zero_trust_access_mtls_hostname_settings.NewResource,
+		workers_for_platforms_dispatch_namespace_deprecated.NewResource,
+		workers_for_platforms_dispatch_namespace.NewResource,
+		zero_trust_risk_score_integration.NewResource,
 	}
 }
 
@@ -379,6 +390,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		user.NewDataSource,
 		dlp_datasets.NewDataSource,
 		gateway_categories.NewDataSource,
+		gateway_app_types.NewDataSource,
 	}
 }
 

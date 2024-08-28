@@ -30,6 +30,23 @@ func resourceCloudflareAccessOrganization() *schema.Resource {
 		Description: heredoc.Doc(`
 			A Zero Trust organization defines the user login experience.
 		`),
+		DeprecationMessage: "`cloudflare_access_organization` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_organization` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessOrganization() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessOrganizationSchema(),
+		CreateContext: resourceCloudflareAccessOrganizationCreate,
+		ReadContext:   resourceCloudflareAccessOrganizationRead,
+		UpdateContext: resourceCloudflareAccessOrganizationUpdate,
+		DeleteContext: resourceCloudflareAccessOrganizationNoop,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessOrganizationImport,
+		},
+		Description: heredoc.Doc(`
+			A Zero Trust organization defines the user login experience.
+		`),
 	}
 }
 

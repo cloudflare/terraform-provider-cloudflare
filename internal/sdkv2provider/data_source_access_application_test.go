@@ -11,7 +11,7 @@ import (
 
 func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -32,23 +32,23 @@ func TestAccCloudflareAccessApplicationDataSource_AccountName(t *testing.T) {
 
 func testAccCheckCloudflareAccessApplicationAccountName(accountID, name, domain string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
+	resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		domain = "%[1]s.%[3]s"
 	}
 
-	data "cloudflare_access_application" "%[1]s" {
+	data "cloudflare_zero_trust_access_application" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
-		depends_on = [cloudflare_access_application.%[1]s]
+		depends_on = [cloudflare_zero_trust_access_application.%[1]s]
 	}
 	`, name, accountID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -69,23 +69,23 @@ func TestAccCloudflareAccessApplicationDataSource_AccountDomain(t *testing.T) {
 
 func testAccCheckCloudflareAccessApplicationAccountDomain(accountID, name, domain string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
+	resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		domain = "%[1]s.%[3]s"
 	}
 
-	data "cloudflare_access_application" "%[1]s" {
+	data "cloudflare_zero_trust_access_application" "%[1]s" {
 		account_id = "%[2]s"
 		domain = "%[1]s.%[3]s"
-		depends_on = [cloudflare_access_application.%[1]s]
+		depends_on = [cloudflare_zero_trust_access_application.%[1]s]
 	}
 	`, name, accountID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -106,23 +106,23 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneName(t *testing.T) {
 
 func testAccCheckCloudflareAccessApplicationZoneName(zoneID, name, domain string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
+	resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		zone_id = "%[2]s"
 		name = "%[1]s"
 		domain = "%[1]s.%[3]s"
 	}
 
-	data "cloudflare_access_application" "%[1]s" {
+	data "cloudflare_zero_trust_access_application" "%[1]s" {
 		zone_id = "%[2]s"
 		name = "%[1]s"
-		depends_on = [cloudflare_access_application.%[1]s]
+		depends_on = [cloudflare_zero_trust_access_application.%[1]s]
 	}
 	`, name, zoneID, domain)
 }
 
 func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 	rnd := generateRandomResourceName()
-	name := "data.cloudflare_access_application." + rnd
+	name := "data.cloudflare_zero_trust_access_application." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -143,16 +143,16 @@ func TestAccCloudflareAccessApplicationDataSource_ZoneDomain(t *testing.T) {
 
 func testAccCheckCloudflareAccessApplicationZoneDomain(zoneID, name, domain string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_access_application" "%[1]s" {
+	resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		zone_id = "%[2]s"
 		name = "%[1]s"
 		domain = "%[1]s.%[3]s"
 	}
 
-	data "cloudflare_access_application" "%[1]s" {
+	data "cloudflare_zero_trust_access_application" "%[1]s" {
 		zone_id = "%[2]s"
 		domain = "%[1]s.%[3]s"
-		depends_on = [cloudflare_access_application.%[1]s]
+		depends_on = [cloudflare_zero_trust_access_application.%[1]s]
 	}
 	`, name, zoneID, domain)
 }

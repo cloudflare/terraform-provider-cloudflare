@@ -26,7 +26,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventZoneIdAndAccountId
 
 func testCloudflareAccessIdentityProviderDataSourceConfigConflictingFields(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {
+data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
   account_id = "123abc"
   zone_id    = "abc123"
   name       = "foo"
@@ -50,7 +50,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventNoInputSpecify(t *
 
 func testCloudflareAccessIdentityProviderDataSourceNoInput(rnd string) string {
 	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {
+data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	name = "foo"
 }
 `, rnd)
@@ -77,12 +77,12 @@ func TestAccCloudflareAccessIdentityProviderDataSourceNotFound(t *testing.T) {
 
 func testAccCheckCloudflareAccessIdentityProviderDataSource_NotFound(accountID, name string) string {
 	return fmt.Sprintf(`
-data "cloudflare_access_identity_provider" "%[1]s" {
+data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
 	name = "%[1]s-abc123"
 }
 
-resource "cloudflare_access_identity_provider" "%[1]s" {
+resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 	account_id = "%[2]s"
   name = "%[1]s"
   type = "github"
@@ -98,7 +98,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 
-	name := "data.cloudflare_access_identity_provider." + rnd
+	name := "data.cloudflare_zero_trust_access_identity_provider." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -120,7 +120,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 
 func testAccCheckCloudflareAccessIdentityProviderDataSourceGitHub(accountID, name string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_access_identity_provider" "%[1]s" {
+	resource "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 		account_id = "%[2]s"
 	  name = "%[1]s"
 	  type = "github"
@@ -130,10 +130,10 @@ func testAccCheckCloudflareAccessIdentityProviderDataSourceGitHub(accountID, nam
 		}
 	}
 
-	data "cloudflare_access_identity_provider" "%[1]s" {
+	data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
-		depends_on = [cloudflare_access_identity_provider.%[1]s]
+		depends_on = [cloudflare_zero_trust_access_identity_provider.%[1]s]
 	}
 	`, name, accountID)
 }

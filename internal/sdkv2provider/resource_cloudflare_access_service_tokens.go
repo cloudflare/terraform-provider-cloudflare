@@ -27,6 +27,24 @@ func resourceCloudflareAccessServiceToken() *schema.Resource {
 			Access Service Tokens are used for service-to-service communication
 			when an application is behind Cloudflare Access.
 		`),
+		DeprecationMessage: "`cloudflare_access_service_token` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_service_token` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessServiceToken() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessServiceTokenSchema(),
+		CreateContext: resourceCloudflareAccessServiceTokenCreate,
+		ReadContext:   resourceCloudflareAccessServiceTokenRead,
+		UpdateContext: resourceCloudflareAccessServiceTokenUpdate,
+		DeleteContext: resourceCloudflareAccessServiceTokenDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessServiceTokenImport,
+		},
+		Description: heredoc.Doc(`
+			Access Service Tokens are used for service-to-service communication
+			when an application is behind Cloudflare Access.
+		`),
 	}
 }
 

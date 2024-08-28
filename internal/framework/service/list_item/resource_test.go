@@ -434,6 +434,61 @@ func testAccCheckCloudflareHostnameRedirectWithOverlappingSourceURL(ID, name, co
   `, ID, name, comment, accountID)
 }
 
+func TestAccCloudflareListItem_WithOverlappingHostname(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)
+	secondResource := fmt.Sprintf("cloudflare_list_item.%s_2", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck_Account(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareHostnameWithOverlappingHostname(rnd, rnd, rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstResource, "hostname.#", "1"),
+					resource.TestCheckResourceAttr(firstResource, "hostname.0.url_hostname", "site1.com"),
+
+					resource.TestCheckResourceAttr(secondResource, "hostname.#", "1"),
+					resource.TestCheckResourceAttr(secondResource, "hostname.0.url_hostname", "test.site1.com"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareHostnameWithOverlappingHostname(ID, name, comment, accountID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_list" "%[2]s" {
+    account_id          = "%[4]s"
+    name                = "%[2]s"
+    description         = "list named %[2]s"
+    kind                = "hostname"
+  }
+
+  resource "cloudflare_list_item" "%[1]s_1" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	hostname {
+		url_hostname = "site1.com"
+	}
+  }
+
+  resource "cloudflare_list_item" "%[1]s_2" {
+    account_id = "%[4]s"
+	list_id    = cloudflare_list.%[2]s.id
+	comment    = "%[3]s"
+	hostname {
+		url_hostname = "test.site1.com"
+	}
+  }
+  `, ID, name, comment, accountID)
+}
+
 func TestAccCloudflareListItem_IPWithOverlappingPrefix(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	firstResource := fmt.Sprintf("cloudflare_list_item.%s_1", rnd)

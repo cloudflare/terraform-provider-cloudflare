@@ -22,6 +22,21 @@ func resourceCloudflareDeviceSettingsPolicy() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceCloudflareDeviceSettingsPolicyImport,
 		},
+		Description:        "Provides a Cloudflare Device Settings Policy resource. Device policies configure settings applied to WARP devices.",
+		DeprecationMessage: "`cloudflare_device_settings_policy` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_device_profiles` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustDeviceProfiles() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareDeviceSettingsPolicySchema(),
+		CreateContext: resourceCloudflareDeviceSettingsPolicyCreate,
+		ReadContext:   resourceCloudflareDeviceSettingsPolicyRead,
+		UpdateContext: resourceCloudflareDeviceSettingsPolicyUpdate,
+		DeleteContext: resourceCloudflareDeviceSettingsPolicyDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareDeviceSettingsPolicyImport,
+		},
 		Description: "Provides a Cloudflare Device Settings Policy resource. Device policies configure settings applied to WARP devices.",
 	}
 }
@@ -59,6 +74,7 @@ func resourceCloudflareDeviceSettingsPolicyCreate(ctx context.Context, d *schema
 		Enabled:             req.Enabled,
 		ExcludeOfficeIps:    req.ExcludeOfficeIps,
 		Description:         req.Description,
+		TunnelProtocol:      req.TunnelProtocol,
 	})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("error creating Cloudflare device settings policy %q: %w", accountID, err))
@@ -100,6 +116,7 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 			Enabled:             req.Enabled,
 			ExcludeOfficeIps:    req.ExcludeOfficeIps,
 			Description:         req.Description,
+			TunnelProtocol:      req.TunnelProtocol,
 		})
 	} else {
 		_, err = client.UpdateDeviceSettingsPolicy(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.UpdateDeviceSettingsPolicyParams{
@@ -119,6 +136,7 @@ func resourceCloudflareDeviceSettingsPolicyUpdate(ctx context.Context, d *schema
 			Enabled:             req.Enabled,
 			ExcludeOfficeIps:    req.ExcludeOfficeIps,
 			Description:         req.Description,
+			TunnelProtocol:      req.TunnelProtocol,
 		})
 	}
 	if err != nil {
@@ -180,6 +198,9 @@ func resourceCloudflareDeviceSettingsPolicyRead(ctx context.Context, d *schema.R
 	}
 	if err := d.Set("exclude_office_ips", policy.ExcludeOfficeIps); err != nil {
 		return diag.FromErr(fmt.Errorf("error parsing exclude_office_ips"))
+	}
+	if err := d.Set("tunnel_protocol", policy.TunnelProtocol); err != nil {
+		return diag.FromErr(fmt.Errorf("error parsing tunnel_protocol"))
 	}
 	// ignore setting forbidden fields for default policies
 	if policy.Name != nil {
@@ -270,6 +291,7 @@ func buildDeviceSettingsPolicyRequest(d *schema.ResourceData) (cloudflare.Device
 			Port: d.Get("service_mode_v2_port").(int),
 		},
 		ExcludeOfficeIps: cloudflare.BoolPtr(d.Get("exclude_office_ips").(bool)),
+		TunnelProtocol:   cloudflare.StringPtr(d.Get("tunnel_protocol").(string)),
 	}
 
 	name := d.Get("name").(string)

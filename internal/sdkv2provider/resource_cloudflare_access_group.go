@@ -29,6 +29,25 @@ func resourceCloudflareAccessGroup() *schema.Resource {
 			in conjunction with Access Policies to restrict access to a
 			particular resource based on group membership.
 		`),
+		DeprecationMessage: "`cloudflare_access_group` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_group` instead.",
+	}
+}
+
+func resourceCloudflareZeroTrustAccessGroup() *schema.Resource {
+	return &schema.Resource{
+		Schema:        resourceCloudflareAccessGroupSchema(),
+		CreateContext: resourceCloudflareAccessGroupCreate,
+		ReadContext:   resourceCloudflareAccessGroupRead,
+		UpdateContext: resourceCloudflareAccessGroupUpdate,
+		DeleteContext: resourceCloudflareAccessGroupDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareAccessGroupImport,
+		},
+		Description: heredoc.Doc(`
+			Provides a Cloudflare Access Group resource. Access Groups are used
+			in conjunction with Access Policies to restrict access to a
+			particular resource based on group membership.
+		`),
 	}
 }
 
@@ -411,8 +430,7 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 	authMethod := ""
 	geos := []string{}
 	loginMethod := []string{}
-	oktaID := ""
-	oktaGroups := []string{}
+	oktaGroups := []map[string]interface{}{}
 	gsuiteID := ""
 	gsuiteEmails := []string{}
 	githubName := ""
@@ -488,8 +506,22 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 				}
 			case "okta":
 				oktaCfg := groupValue.(map[string]interface{})
-				oktaID = oktaCfg["identity_provider_id"].(string)
-				oktaGroups = append(oktaGroups, oktaCfg["name"].(string))
+				oktaIdPID := oktaCfg["identity_provider_id"].(string)
+				oktaGroupName := oktaCfg["name"].(string)
+
+				var oktaGroup map[string]interface{}
+				for _, og := range oktaGroups {
+					if og["identity_provider_id"] == oktaIdPID {
+						oktaGroup = og
+						break
+					}
+				}
+
+				if len(oktaGroup) == 0 {
+					oktaGroups = append(oktaGroups, map[string]interface{}{"identity_provider_id": oktaIdPID, "name": []string{oktaGroupName}})
+				} else {
+					oktaGroup["name"] = append(oktaGroup["name"].([]string), oktaGroupName)
+				}
 			case "gsuite":
 				gsuiteCfg := groupValue.(map[string]interface{})
 				gsuiteID = gsuiteCfg["identity_provider_id"].(string)
@@ -605,13 +637,8 @@ func TransformAccessGroupForSchema(ctx context.Context, accessGroup []interface{
 		groupMap["login_method"] = loginMethod
 	}
 
-	if len(oktaGroups) > 0 && oktaID != "" {
-		groupMap["okta"] = []interface{}{
-			map[string]interface{}{
-				"identity_provider_id": oktaID,
-				"name":                 oktaGroups,
-			},
-		}
+	if len(oktaGroups) > 0 {
+		groupMap["okta"] = oktaGroups
 	}
 
 	if len(gsuiteEmails) > 0 && gsuiteID != "" {

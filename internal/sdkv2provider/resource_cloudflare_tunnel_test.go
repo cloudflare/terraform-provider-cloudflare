@@ -22,7 +22,7 @@ func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -45,7 +45,7 @@ func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 
 func testAccCheckCloudflareTunnelBasic(accID, name string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_tunnel" "%[2]s" {
+	resource "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
 		account_id = "%[1]s"
 		name       = "%[2]s"
 		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
@@ -61,7 +61,7 @@ func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -85,7 +85,7 @@ func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
 
 func testAccCheckCloudflareTunnelManaged(accID, name string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_tunnel" "%[2]s" {
+	resource "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
 		account_id = "%[1]s"
 		name       = "%[2]s"
 		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
@@ -102,7 +102,7 @@ func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
 
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_tunnel.%s", rnd)
+	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared.%s", rnd)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -126,7 +126,7 @@ func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
 
 func testAccCheckCloudflareTunnelUnmanaged(accID, name string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_tunnel" "%[2]s" {
+	resource "cloudflare_zero_trust_tunnel_cloudflared" "%[2]s" {
 		account_id = "%[1]s"
 		name       = "%[2]s"
 		secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
@@ -136,7 +136,7 @@ func testAccCheckCloudflareTunnelUnmanaged(accID, name string) string {
 
 func testAccCheckCloudflareTunnelDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "cloudflare_tunnel" {
+		if rs.Type != "cloudflare_zero_trust_tunnel_cloudflared" {
 			continue
 		}
 
