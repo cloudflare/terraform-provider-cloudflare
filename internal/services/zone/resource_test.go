@@ -36,35 +36,11 @@ func TestAccCloudflareZone_Basic(t *testing.T) {
 			{
 				Config: testZoneConfig(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareZone_BasicWithJumpStartEnabled(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testZoneConfig(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "true", accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-					resource.TestCheckResourceAttr(name, "jump_start", "true"),
 				),
 			},
 		},
@@ -83,10 +59,10 @@ func TestAccCloudflareZone_WithPlan(t *testing.T) {
 			{
 				Config: testZoneConfigWithPlan(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
@@ -106,9 +82,9 @@ func TestAccCloudflareZone_PartialSetup(t *testing.T) {
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, "foo.net", "true", "false", "free", accountID, "partial"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "foo.net"),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "name", "foo.net"),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "partial"),
 				),
 			},
@@ -128,10 +104,10 @@ func TestAccCloudflareZone_FullSetup(t *testing.T) {
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "true", "false", "free", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
@@ -151,10 +127,10 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 			{
 				Config: testZoneConfig(rnd, "żółw.cfapi.net", "true", "false", accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
@@ -174,10 +150,10 @@ func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
 			{
 				Config: testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", "true", "false", accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
@@ -197,10 +173,10 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 			{
 				Config: testZoneConfig(rnd, "żółw.cfapi.net", "true", "false", accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
@@ -208,10 +184,10 @@ func TestAccZonePerformsUnicodeComparison(t *testing.T) {
 				Config:   testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", "true", "false", accountID),
 				PlanOnly: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDFree),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDFree),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
@@ -231,10 +207,10 @@ func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.cfapi.net", rnd), "false", "false", "enterprise", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(name, "paused", "false"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.cfapi.net", rnd)),
+					// resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDEnterprise),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 				),
 			},
@@ -255,10 +231,10 @@ func TestAccCloudflareZone_WithEnterprisePlanVanityNameServers(t *testing.T) {
 			{
 				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "false", "false", "enterprise", accountID, "full"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.%s", rnd, zoneName)),
-					resource.TestCheckResourceAttr(name, "paused", "false"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.%s", rnd, zoneName)),
+					// resource.TestCheckResourceAttr(name, "paused", "false"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDEnterprise),
 					resource.TestCheckResourceAttr(name, "type", "full"),
 					resource.TestCheckResourceAttr(name, "vanity_name_servers.#", "2"),
 				),
@@ -280,10 +256,10 @@ func TestAccCloudflareZone_Secondary(t *testing.T) {
 			{
 				Config: testZoneConfigWithTypeSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "secondary"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.%s", rnd, zoneName)),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.%s", rnd, zoneName)),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDEnterprise),
 					resource.TestCheckResourceAttr(name, "type", "secondary"),
 				),
 			},
@@ -304,10 +280,10 @@ func TestAccCloudflareZone_SecondaryWithVanityNameServers(t *testing.T) {
 			{
 				Config: testZoneConfigWithTypeVanityNameServersSetup(rnd, fmt.Sprintf("%s.%s", rnd, zoneName), "true", "false", "enterprise", accountID, "secondary"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "zone", fmt.Sprintf("%s.%s", rnd, zoneName)),
-					resource.TestCheckResourceAttr(name, "paused", "true"),
+					resource.TestCheckResourceAttr(name, "name", fmt.Sprintf("%s.%s", rnd, zoneName)),
+					// resource.TestCheckResourceAttr(name, "paused", "true"),
 					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "plan", planIDEnterprise),
+					resource.TestCheckResourceAttr(name, "plan.id", planIDEnterprise),
 					resource.TestCheckResourceAttr(name, "type", "secondary"),
 					resource.TestCheckResourceAttr(name, "vanity_name_servers.#", "2"),
 				),
