@@ -5,6 +5,7 @@ package magic_wan_ipsec_tunnel
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -47,7 +48,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"allow_null_cipher": schema.BoolAttribute{
 						Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
 						Computed:    true,
-						Optional:    true,
 					},
 					"created_on": schema.StringAttribute{
 						Description: "The date and time the tunnel was created.",
@@ -57,12 +57,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"customer_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional description forthe IPsec tunnel.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "The date and time the tunnel was last modified.",
@@ -72,7 +70,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"psk_metadata": schema.SingleNestedAttribute{
 						Description: "The PSK metadata that includes when the PSK was generated.",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelPSKMetadataDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"last_generated_on": schema.StringAttribute{
 								Description: "The date and time the tunnel was last modified.",
@@ -86,8 +84,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 					"tunnel_health_check": schema.SingleNestedAttribute{
-						Computed: true,
-						Optional: true,
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Determines whether to run healthchecks for a tunnel.",
@@ -107,7 +105,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"target": schema.StringAttribute{
 								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
 								Computed:    true,
-								Optional:    true,
 							},
 							"type": schema.StringAttribute{
 								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.",

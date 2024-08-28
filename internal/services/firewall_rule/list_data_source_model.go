@@ -48,17 +48,17 @@ type FirewallRulesResultDataSourceModel struct {
 	Action      types.String                                                 `tfsdk:"action" json:"action,computed"`
 	Filter      customfield.NestedObject[FirewallRulesFilterDataSourceModel] `tfsdk:"filter" json:"filter,computed"`
 	Paused      types.Bool                                                   `tfsdk:"paused" json:"paused,computed"`
-	Description types.String                                                 `tfsdk:"description" json:"description,computed_optional"`
-	Priority    types.Float64                                                `tfsdk:"priority" json:"priority,computed_optional"`
-	Products    *[]types.String                                              `tfsdk:"products" json:"products,computed_optional"`
-	Ref         types.String                                                 `tfsdk:"ref" json:"ref,computed_optional"`
+	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
+	Priority    types.Float64                                                `tfsdk:"priority" json:"priority,computed"`
+	Products    types.List                                                   `tfsdk:"products" json:"products,computed"`
+	Ref         types.String                                                 `tfsdk:"ref" json:"ref,computed"`
 }
 
 type FirewallRulesFilterDataSourceModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	Expression  types.String `tfsdk:"expression" json:"expression,computed_optional"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed_optional"`
-	Ref         types.String `tfsdk:"ref" json:"ref,computed_optional"`
-	Deleted     types.Bool   `tfsdk:"deleted" json:"deleted,computed_optional"`
+	Description types.String `tfsdk:"description" json:"description,computed"`
+	Expression  types.String `tfsdk:"expression" json:"expression,computed"`
+	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed"`
+	Ref         types.String `tfsdk:"ref" json:"ref,computed"`
+	Deleted     types.Bool   `tfsdk:"deleted" json:"deleted,computed"`
 }

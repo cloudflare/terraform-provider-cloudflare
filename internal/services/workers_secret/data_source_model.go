@@ -23,8 +23,8 @@ type WorkersSecretDataSourceModel struct {
 	DispatchNamespace types.String                           `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
 	ScriptName        types.String                           `tfsdk:"script_name" path:"script_name"`
 	SecretName        types.String                           `tfsdk:"secret_name" path:"secret_name"`
-	Name              types.String                           `tfsdk:"name" json:"name,computed_optional"`
-	Type              types.String                           `tfsdk:"type" json:"type,computed_optional"`
+	Name              types.String                           `tfsdk:"name" json:"name,computed"`
+	Type              types.String                           `tfsdk:"type" json:"type,computed"`
 	Filter            *WorkersSecretFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

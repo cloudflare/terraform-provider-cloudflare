@@ -32,6 +32,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"email": schema.StringAttribute{
+				Description: "The contact email address of the user.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "Destination address identifier.",
 				Computed:    true,
@@ -49,11 +53,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The date and time the destination address has been verified. Null means not verified yet.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"email": schema.StringAttribute{
-				Description: "The contact email address of the user.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

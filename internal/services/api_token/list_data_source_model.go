@@ -32,25 +32,25 @@ func (m *APITokensDataSourceModel) toListParams() (params user.TokenListParams, 
 }
 
 type APITokensResultDataSourceModel struct {
-	ID         types.String                         `tfsdk:"id" json:"id,computed"`
-	Condition  *APITokensConditionDataSourceModel   `tfsdk:"condition" json:"condition,computed_optional"`
-	ExpiresOn  timetypes.RFC3339                    `tfsdk:"expires_on" json:"expires_on,computed_optional" format:"date-time"`
-	IssuedOn   timetypes.RFC3339                    `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
-	LastUsedOn timetypes.RFC3339                    `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
-	ModifiedOn timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name       types.String                         `tfsdk:"name" json:"name,computed_optional"`
-	NotBefore  timetypes.RFC3339                    `tfsdk:"not_before" json:"not_before,computed_optional" format:"date-time"`
-	Policies   *[]*APITokensPoliciesDataSourceModel `tfsdk:"policies" json:"policies,computed_optional"`
-	Status     types.String                         `tfsdk:"status" json:"status,computed_optional"`
+	ID         types.String                                                   `tfsdk:"id" json:"id,computed"`
+	Condition  customfield.NestedObject[APITokensConditionDataSourceModel]    `tfsdk:"condition" json:"condition,computed"`
+	ExpiresOn  timetypes.RFC3339                                              `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	IssuedOn   timetypes.RFC3339                                              `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
+	LastUsedOn timetypes.RFC3339                                              `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
+	ModifiedOn timetypes.RFC3339                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name       types.String                                                   `tfsdk:"name" json:"name,computed"`
+	NotBefore  timetypes.RFC3339                                              `tfsdk:"not_before" json:"not_before,computed" format:"date-time"`
+	Policies   customfield.NestedObjectList[APITokensPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
+	Status     types.String                                                   `tfsdk:"status" json:"status,computed"`
 }
 
 type APITokensConditionDataSourceModel struct {
-	RequestIP *APITokensConditionRequestIPDataSourceModel `tfsdk:"request_ip" json:"request.ip,computed_optional"`
+	RequestIP customfield.NestedObject[APITokensConditionRequestIPDataSourceModel] `tfsdk:"request_ip" json:"request.ip,computed"`
 }
 
 type APITokensConditionRequestIPDataSourceModel struct {
-	In    *[]types.String `tfsdk:"in" json:"in,computed_optional"`
-	NotIn *[]types.String `tfsdk:"not_in" json:"not_in,computed_optional"`
+	In    types.List `tfsdk:"in" json:"in,computed"`
+	NotIn types.List `tfsdk:"not_in" json:"not_in,computed"`
 }
 
 type APITokensPoliciesDataSourceModel struct {
@@ -61,17 +61,17 @@ type APITokensPoliciesDataSourceModel struct {
 }
 
 type APITokensPoliciesPermissionGroupsDataSourceModel struct {
-	ID   types.String                                          `tfsdk:"id" json:"id,computed"`
-	Meta *APITokensPoliciesPermissionGroupsMetaDataSourceModel `tfsdk:"meta" json:"meta,computed_optional"`
-	Name types.String                                          `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                                                   `tfsdk:"id" json:"id,computed"`
+	Meta customfield.NestedObject[APITokensPoliciesPermissionGroupsMetaDataSourceModel] `tfsdk:"meta" json:"meta,computed"`
+	Name types.String                                                                   `tfsdk:"name" json:"name,computed"`
 }
 
 type APITokensPoliciesPermissionGroupsMetaDataSourceModel struct {
-	Key   types.String `tfsdk:"key" json:"key,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Key   types.String `tfsdk:"key" json:"key,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type APITokensPoliciesResourcesDataSourceModel struct {
-	Resource types.String `tfsdk:"resource" json:"resource,computed_optional"`
-	Scope    types.String `tfsdk:"scope" json:"scope,computed_optional"`
+	Resource types.String `tfsdk:"resource" json:"resource,computed"`
+	Scope    types.String `tfsdk:"scope" json:"scope,computed"`
 }

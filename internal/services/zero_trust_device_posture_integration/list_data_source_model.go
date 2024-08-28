@@ -29,11 +29,11 @@ func (m *ZeroTrustDevicePostureIntegrationsDataSourceModel) toListParams() (para
 }
 
 type ZeroTrustDevicePostureIntegrationsResultDataSourceModel struct {
-	ID       types.String                                             `tfsdk:"id" json:"id,computed_optional"`
-	Config   *ZeroTrustDevicePostureIntegrationsConfigDataSourceModel `tfsdk:"config" json:"config,computed_optional"`
-	Interval types.String                                             `tfsdk:"interval" json:"interval,computed_optional"`
-	Name     types.String                                             `tfsdk:"name" json:"name,computed_optional"`
-	Type     types.String                                             `tfsdk:"type" json:"type,computed_optional"`
+	ID       types.String                                                                      `tfsdk:"id" json:"id,computed"`
+	Config   customfield.NestedObject[ZeroTrustDevicePostureIntegrationsConfigDataSourceModel] `tfsdk:"config" json:"config,computed"`
+	Interval types.String                                                                      `tfsdk:"interval" json:"interval,computed"`
+	Name     types.String                                                                      `tfsdk:"name" json:"name,computed"`
+	Type     types.String                                                                      `tfsdk:"type" json:"type,computed"`
 }
 
 type ZeroTrustDevicePostureIntegrationsConfigDataSourceModel struct {

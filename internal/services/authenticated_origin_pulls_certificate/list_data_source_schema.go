@@ -35,12 +35,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Identifier",
 							Computed:    true,
-							Optional:    true,
 						},
 						"certificate": schema.StringAttribute{
 							Description: "The zone's leaf certificate.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate from the authority expires.",
@@ -58,7 +56,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"status": schema.StringAttribute{
 							Description: "Status of the certificate activation.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"initializing",
@@ -74,7 +71,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"uploaded_on": schema.StringAttribute{
 							Description: "This is the time the certificate was uploaded.",
 							Computed:    true,
-							Optional:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
 					},

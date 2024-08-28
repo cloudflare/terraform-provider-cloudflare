@@ -36,16 +36,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"name": schema.StringAttribute{
+				Computed: true,
+			},
 			"uuid": schema.StringAttribute{
 				Computed: true,
 			},
-			"name": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-			},
 			"version": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

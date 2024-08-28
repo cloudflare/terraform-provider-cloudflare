@@ -42,35 +42,35 @@ func (m *AccountMembersDataSourceModel) toListParams() (params accounts.MemberLi
 }
 
 type AccountMembersResultDataSourceModel struct {
-	ID       types.String                                                `tfsdk:"id" json:"id,computed"`
-	Policies *[]*AccountMembersPoliciesDataSourceModel                   `tfsdk:"policies" json:"policies,computed_optional"`
-	Roles    *[]*AccountMembersRolesDataSourceModel                      `tfsdk:"roles" json:"roles,computed_optional"`
-	Status   types.String                                                `tfsdk:"status" json:"status,computed"`
-	User     customfield.NestedObject[AccountMembersUserDataSourceModel] `tfsdk:"user" json:"user,computed"`
+	ID       types.String                                                        `tfsdk:"id" json:"id,computed"`
+	Policies customfield.NestedObjectList[AccountMembersPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
+	Roles    customfield.NestedObjectList[AccountMembersRolesDataSourceModel]    `tfsdk:"roles" json:"roles,computed"`
+	Status   types.String                                                        `tfsdk:"status" json:"status,computed"`
+	User     customfield.NestedObject[AccountMembersUserDataSourceModel]         `tfsdk:"user" json:"user,computed"`
 }
 
 type AccountMembersPoliciesDataSourceModel struct {
-	ID               types.String                                              `tfsdk:"id" json:"id,computed"`
-	Access           types.String                                              `tfsdk:"access" json:"access,computed_optional"`
-	PermissionGroups *[]*AccountMembersPoliciesPermissionGroupsDataSourceModel `tfsdk:"permission_groups" json:"permission_groups,computed_optional"`
-	ResourceGroups   *[]*AccountMembersPoliciesResourceGroupsDataSourceModel   `tfsdk:"resource_groups" json:"resource_groups,computed_optional"`
+	ID               types.String                                                                        `tfsdk:"id" json:"id,computed"`
+	Access           types.String                                                                        `tfsdk:"access" json:"access,computed"`
+	PermissionGroups customfield.NestedObjectList[AccountMembersPoliciesPermissionGroupsDataSourceModel] `tfsdk:"permission_groups" json:"permission_groups,computed"`
+	ResourceGroups   customfield.NestedObjectList[AccountMembersPoliciesResourceGroupsDataSourceModel]   `tfsdk:"resource_groups" json:"resource_groups,computed"`
 }
 
 type AccountMembersPoliciesPermissionGroupsDataSourceModel struct {
-	ID   types.String                                               `tfsdk:"id" json:"id,computed"`
-	Meta *AccountMembersPoliciesPermissionGroupsMetaDataSourceModel `tfsdk:"meta" json:"meta,computed_optional"`
-	Name types.String                                               `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                                                        `tfsdk:"id" json:"id,computed"`
+	Meta customfield.NestedObject[AccountMembersPoliciesPermissionGroupsMetaDataSourceModel] `tfsdk:"meta" json:"meta,computed"`
+	Name types.String                                                                        `tfsdk:"name" json:"name,computed"`
 }
 
 type AccountMembersPoliciesPermissionGroupsMetaDataSourceModel struct {
-	Key   types.String `tfsdk:"key" json:"key,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Key   types.String `tfsdk:"key" json:"key,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type AccountMembersPoliciesResourceGroupsDataSourceModel struct {
 	ID    types.String                                                                           `tfsdk:"id" json:"id,computed"`
 	Scope customfield.NestedObjectList[AccountMembersPoliciesResourceGroupsScopeDataSourceModel] `tfsdk:"scope" json:"scope,computed"`
-	Meta  *AccountMembersPoliciesResourceGroupsMetaDataSourceModel                               `tfsdk:"meta" json:"meta,computed_optional"`
+	Meta  customfield.NestedObject[AccountMembersPoliciesResourceGroupsMetaDataSourceModel]      `tfsdk:"meta" json:"meta,computed"`
 	Name  types.String                                                                           `tfsdk:"name" json:"name,computed"`
 }
 
@@ -84,8 +84,8 @@ type AccountMembersPoliciesResourceGroupsScopeObjectsDataSourceModel struct {
 }
 
 type AccountMembersPoliciesResourceGroupsMetaDataSourceModel struct {
-	Key   types.String `tfsdk:"key" json:"key,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Key   types.String `tfsdk:"key" json:"key,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type AccountMembersRolesDataSourceModel struct {
@@ -98,7 +98,7 @@ type AccountMembersRolesDataSourceModel struct {
 type AccountMembersUserDataSourceModel struct {
 	Email                          types.String `tfsdk:"email" json:"email,computed"`
 	ID                             types.String `tfsdk:"id" json:"id,computed"`
-	FirstName                      types.String `tfsdk:"first_name" json:"first_name,computed_optional"`
-	LastName                       types.String `tfsdk:"last_name" json:"last_name,computed_optional"`
+	FirstName                      types.String `tfsdk:"first_name" json:"first_name,computed"`
+	LastName                       types.String `tfsdk:"last_name" json:"last_name,computed"`
 	TwoFactorAuthenticationEnabled types.Bool   `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
 }

@@ -19,16 +19,16 @@ type EmailRoutingRuleResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingRuleDataSourceModel struct {
-	RuleIdentifier types.String                                `tfsdk:"rule_identifier" path:"rule_identifier"`
-	ZoneIdentifier types.String                                `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Enabled        types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
-	ID             types.String                                `tfsdk:"id" json:"id,computed"`
-	Priority       types.Float64                               `tfsdk:"priority" json:"priority,computed"`
-	Tag            types.String                                `tfsdk:"tag" json:"tag,computed"`
-	Name           types.String                                `tfsdk:"name" json:"name,computed_optional"`
-	Actions        *[]*EmailRoutingRuleActionsDataSourceModel  `tfsdk:"actions" json:"actions,computed_optional"`
-	Matchers       *[]*EmailRoutingRuleMatchersDataSourceModel `tfsdk:"matchers" json:"matchers,computed_optional"`
-	Filter         *EmailRoutingRuleFindOneByDataSourceModel   `tfsdk:"filter"`
+	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier"`
+	ZoneIdentifier types.String                                                          `tfsdk:"zone_identifier" path:"zone_identifier"`
+	Enabled        types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
+	ID             types.String                                                          `tfsdk:"id" json:"id,computed"`
+	Name           types.String                                                          `tfsdk:"name" json:"name,computed"`
+	Priority       types.Float64                                                         `tfsdk:"priority" json:"priority,computed"`
+	Tag            types.String                                                          `tfsdk:"tag" json:"tag,computed"`
+	Actions        customfield.NestedObjectList[EmailRoutingRuleActionsDataSourceModel]  `tfsdk:"actions" json:"actions,computed"`
+	Matchers       customfield.NestedObjectList[EmailRoutingRuleMatchersDataSourceModel] `tfsdk:"matchers" json:"matchers,computed"`
+	Filter         *EmailRoutingRuleFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
 func (m *EmailRoutingRuleDataSourceModel) toListParams() (params email_routing.RuleListParams, diags diag.Diagnostics) {

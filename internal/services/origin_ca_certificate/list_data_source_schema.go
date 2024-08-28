@@ -72,7 +72,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "Identifier",
 							Computed:    true,
-							Optional:    true,
 						},
 						"certificate": schema.StringAttribute{
 							Description: "The Origin CA certificate. Will be newline-encoded.",

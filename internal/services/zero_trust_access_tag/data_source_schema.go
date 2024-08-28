@@ -25,6 +25,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the tag",
 				Optional:    true,
 			},
+			"app_count": schema.Int64Attribute{
+				Description: "The number of applications that have this tag",
+				Computed:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -36,11 +40,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"updated_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"app_count": schema.Int64Attribute{
-				Description: "The number of applications that have this tag",
-				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

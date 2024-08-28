@@ -31,7 +31,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"cron": schema.StringAttribute{
 							Computed: true,
-							Optional: true,
 						},
 						"modified_on": schema.StringAttribute{
 							Computed: true,

@@ -30,32 +30,32 @@ func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams() (params zero_trust
 }
 
 type ZeroTrustDNSLocationsResultDataSourceModel struct {
-	ID                    types.String                                     `tfsdk:"id" json:"id,computed_optional"`
-	ClientDefault         types.Bool                                       `tfsdk:"client_default" json:"client_default,computed_optional"`
-	CreatedAt             timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	DNSDestinationIPsID   types.String                                     `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed_optional"`
-	DOHSubdomain          types.String                                     `tfsdk:"doh_subdomain" json:"doh_subdomain,computed_optional"`
-	ECSSupport            types.Bool                                       `tfsdk:"ecs_support" json:"ecs_support,computed_optional"`
-	Endpoints             *ZeroTrustDNSLocationsEndpointsDataSourceModel   `tfsdk:"endpoints" json:"endpoints,computed_optional"`
-	IP                    types.String                                     `tfsdk:"ip" json:"ip,computed_optional"`
-	IPV4Destination       types.String                                     `tfsdk:"ipv4_destination" json:"ipv4_destination,computed_optional"`
-	IPV4DestinationBackup types.String                                     `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed_optional"`
-	Name                  types.String                                     `tfsdk:"name" json:"name,computed_optional"`
-	Networks              *[]*ZeroTrustDNSLocationsNetworksDataSourceModel `tfsdk:"networks" json:"networks,computed_optional"`
-	UpdatedAt             timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ID                    types.String                                                               `tfsdk:"id" json:"id,computed"`
+	ClientDefault         types.Bool                                                                 `tfsdk:"client_default" json:"client_default,computed"`
+	CreatedAt             timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DNSDestinationIPsID   types.String                                                               `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed"`
+	DOHSubdomain          types.String                                                               `tfsdk:"doh_subdomain" json:"doh_subdomain,computed"`
+	ECSSupport            types.Bool                                                                 `tfsdk:"ecs_support" json:"ecs_support,computed"`
+	Endpoints             customfield.NestedObject[ZeroTrustDNSLocationsEndpointsDataSourceModel]    `tfsdk:"endpoints" json:"endpoints,computed"`
+	IP                    types.String                                                               `tfsdk:"ip" json:"ip,computed"`
+	IPV4Destination       types.String                                                               `tfsdk:"ipv4_destination" json:"ipv4_destination,computed"`
+	IPV4DestinationBackup types.String                                                               `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed"`
+	Name                  types.String                                                               `tfsdk:"name" json:"name,computed"`
+	Networks              customfield.NestedObjectList[ZeroTrustDNSLocationsNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
+	UpdatedAt             timetypes.RFC3339                                                          `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustDNSLocationsEndpointsDataSourceModel struct {
-	DOH  *ZeroTrustDNSLocationsEndpointsDOHDataSourceModel  `tfsdk:"doh" json:"doh,computed_optional"`
-	DOT  *ZeroTrustDNSLocationsEndpointsDOTDataSourceModel  `tfsdk:"dot" json:"dot,computed_optional"`
-	IPV4 *ZeroTrustDNSLocationsEndpointsIPV4DataSourceModel `tfsdk:"ipv4" json:"ipv4,computed_optional"`
-	IPV6 *ZeroTrustDNSLocationsEndpointsIPV6DataSourceModel `tfsdk:"ipv6" json:"ipv6,computed_optional"`
+	DOH  customfield.NestedObject[ZeroTrustDNSLocationsEndpointsDOHDataSourceModel]  `tfsdk:"doh" json:"doh,computed"`
+	DOT  customfield.NestedObject[ZeroTrustDNSLocationsEndpointsDOTDataSourceModel]  `tfsdk:"dot" json:"dot,computed"`
+	IPV4 customfield.NestedObject[ZeroTrustDNSLocationsEndpointsIPV4DataSourceModel] `tfsdk:"ipv4" json:"ipv4,computed"`
+	IPV6 customfield.NestedObject[ZeroTrustDNSLocationsEndpointsIPV6DataSourceModel] `tfsdk:"ipv6" json:"ipv6,computed"`
 }
 
 type ZeroTrustDNSLocationsEndpointsDOHDataSourceModel struct {
-	Enabled      types.Bool                                                   `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Networks     *[]*ZeroTrustDNSLocationsEndpointsDOHNetworksDataSourceModel `tfsdk:"networks" json:"networks,computed_optional"`
-	RequireToken types.Bool                                                   `tfsdk:"require_token" json:"require_token,computed_optional"`
+	Enabled      types.Bool                                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	Networks     customfield.NestedObjectList[ZeroTrustDNSLocationsEndpointsDOHNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
+	RequireToken types.Bool                                                                             `tfsdk:"require_token" json:"require_token,computed"`
 }
 
 type ZeroTrustDNSLocationsEndpointsDOHNetworksDataSourceModel struct {
@@ -63,8 +63,8 @@ type ZeroTrustDNSLocationsEndpointsDOHNetworksDataSourceModel struct {
 }
 
 type ZeroTrustDNSLocationsEndpointsDOTDataSourceModel struct {
-	Enabled  types.Bool                                                   `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Networks *[]*ZeroTrustDNSLocationsEndpointsDOTNetworksDataSourceModel `tfsdk:"networks" json:"networks,computed_optional"`
+	Enabled  types.Bool                                                                             `tfsdk:"enabled" json:"enabled,computed"`
+	Networks customfield.NestedObjectList[ZeroTrustDNSLocationsEndpointsDOTNetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
 }
 
 type ZeroTrustDNSLocationsEndpointsDOTNetworksDataSourceModel struct {
@@ -72,12 +72,12 @@ type ZeroTrustDNSLocationsEndpointsDOTNetworksDataSourceModel struct {
 }
 
 type ZeroTrustDNSLocationsEndpointsIPV4DataSourceModel struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
 }
 
 type ZeroTrustDNSLocationsEndpointsIPV6DataSourceModel struct {
-	Enabled  types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Networks *[]*ZeroTrustDNSLocationsEndpointsIPV6NetworksDataSourceModel `tfsdk:"networks" json:"networks,computed_optional"`
+	Enabled  types.Bool                                                                              `tfsdk:"enabled" json:"enabled,computed"`
+	Networks customfield.NestedObjectList[ZeroTrustDNSLocationsEndpointsIPV6NetworksDataSourceModel] `tfsdk:"networks" json:"networks,computed"`
 }
 
 type ZeroTrustDNSLocationsEndpointsIPV6NetworksDataSourceModel struct {

@@ -6,7 +6,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,19 +20,19 @@ type NotificationPolicyResultListDataSourceEnvelope struct {
 }
 
 type NotificationPolicyDataSourceModel struct {
-	AccountID     types.String                                `tfsdk:"account_id" path:"account_id"`
-	PolicyID      types.String                                `tfsdk:"policy_id" path:"policy_id"`
-	Created       timetypes.RFC3339                           `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Enabled       types.Bool                                  `tfsdk:"enabled" json:"enabled,computed"`
-	ID            types.String                                `tfsdk:"id" json:"id,computed"`
-	Modified      timetypes.RFC3339                           `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	AlertInterval types.String                                `tfsdk:"alert_interval" json:"alert_interval,computed_optional"`
-	AlertType     types.String                                `tfsdk:"alert_type" json:"alert_type,computed_optional"`
-	Description   types.String                                `tfsdk:"description" json:"description,computed_optional"`
-	Name          types.String                                `tfsdk:"name" json:"name,computed_optional"`
-	Mechanisms    map[string]*[]jsontypes.Normalized          `tfsdk:"mechanisms" json:"mechanisms,computed_optional"`
-	Filters       *NotificationPolicyFiltersDataSourceModel   `tfsdk:"filters" json:"filters,computed_optional"`
-	Filter        *NotificationPolicyFindOneByDataSourceModel `tfsdk:"filter"`
+	AccountID     types.String                                                       `tfsdk:"account_id" path:"account_id"`
+	PolicyID      types.String                                                       `tfsdk:"policy_id" path:"policy_id"`
+	AlertInterval types.String                                                       `tfsdk:"alert_interval" json:"alert_interval,computed"`
+	AlertType     types.String                                                       `tfsdk:"alert_type" json:"alert_type,computed"`
+	Created       timetypes.RFC3339                                                  `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Description   types.String                                                       `tfsdk:"description" json:"description,computed"`
+	Enabled       types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
+	ID            types.String                                                       `tfsdk:"id" json:"id,computed"`
+	Modified      timetypes.RFC3339                                                  `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Name          types.String                                                       `tfsdk:"name" json:"name,computed"`
+	Mechanisms    map[string]types.List                                              `tfsdk:"mechanisms" json:"mechanisms,computed"`
+	Filters       customfield.NestedObject[NotificationPolicyFiltersDataSourceModel] `tfsdk:"filters" json:"filters,computed"`
+	Filter        *NotificationPolicyFindOneByDataSourceModel                        `tfsdk:"filter"`
 }
 
 func (m *NotificationPolicyDataSourceModel) toReadParams() (params alerting.PolicyGetParams, diags diag.Diagnostics) {
@@ -53,46 +52,46 @@ func (m *NotificationPolicyDataSourceModel) toListParams() (params alerting.Poli
 }
 
 type NotificationPolicyFiltersDataSourceModel struct {
-	Actions                      *[]types.String `tfsdk:"actions" json:"actions,computed_optional"`
-	AffectedASNs                 *[]types.String `tfsdk:"affected_asns" json:"affected_asns,computed_optional"`
-	AffectedComponents           *[]types.String `tfsdk:"affected_components" json:"affected_components,computed_optional"`
-	AffectedLocations            *[]types.String `tfsdk:"affected_locations" json:"affected_locations,computed_optional"`
-	AirportCode                  *[]types.String `tfsdk:"airport_code" json:"airport_code,computed_optional"`
-	AlertTriggerPreferences      *[]types.String `tfsdk:"alert_trigger_preferences" json:"alert_trigger_preferences,computed_optional"`
-	AlertTriggerPreferencesValue *[]types.String `tfsdk:"alert_trigger_preferences_value" json:"alert_trigger_preferences_value,computed_optional"`
-	Enabled                      *[]types.String `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Environment                  *[]types.String `tfsdk:"environment" json:"environment,computed_optional"`
-	Event                        *[]types.String `tfsdk:"event" json:"event,computed_optional"`
-	EventSource                  *[]types.String `tfsdk:"event_source" json:"event_source,computed_optional"`
-	EventType                    *[]types.String `tfsdk:"event_type" json:"event_type,computed_optional"`
-	GroupBy                      *[]types.String `tfsdk:"group_by" json:"group_by,computed_optional"`
-	HealthCheckID                *[]types.String `tfsdk:"health_check_id" json:"health_check_id,computed_optional"`
-	IncidentImpact               *[]types.String `tfsdk:"incident_impact" json:"incident_impact,computed_optional"`
-	InputID                      *[]types.String `tfsdk:"input_id" json:"input_id,computed_optional"`
-	Limit                        *[]types.String `tfsdk:"limit" json:"limit,computed_optional"`
-	LogoTag                      *[]types.String `tfsdk:"logo_tag" json:"logo_tag,computed_optional"`
-	MegabitsPerSecond            *[]types.String `tfsdk:"megabits_per_second" json:"megabits_per_second,computed_optional"`
-	NewHealth                    *[]types.String `tfsdk:"new_health" json:"new_health,computed_optional"`
-	NewStatus                    *[]types.String `tfsdk:"new_status" json:"new_status,computed_optional"`
-	PacketsPerSecond             *[]types.String `tfsdk:"packets_per_second" json:"packets_per_second,computed_optional"`
-	PoolID                       *[]types.String `tfsdk:"pool_id" json:"pool_id,computed_optional"`
-	Product                      *[]types.String `tfsdk:"product" json:"product,computed_optional"`
-	ProjectID                    *[]types.String `tfsdk:"project_id" json:"project_id,computed_optional"`
-	Protocol                     *[]types.String `tfsdk:"protocol" json:"protocol,computed_optional"`
-	QueryTag                     *[]types.String `tfsdk:"query_tag" json:"query_tag,computed_optional"`
-	RequestsPerSecond            *[]types.String `tfsdk:"requests_per_second" json:"requests_per_second,computed_optional"`
-	Selectors                    *[]types.String `tfsdk:"selectors" json:"selectors,computed_optional"`
-	Services                     *[]types.String `tfsdk:"services" json:"services,computed_optional"`
-	Slo                          *[]types.String `tfsdk:"slo" json:"slo,computed_optional"`
-	Status                       *[]types.String `tfsdk:"status" json:"status,computed_optional"`
-	TargetHostname               *[]types.String `tfsdk:"target_hostname" json:"target_hostname,computed_optional"`
-	TargetIP                     *[]types.String `tfsdk:"target_ip" json:"target_ip,computed_optional"`
-	TargetZoneName               *[]types.String `tfsdk:"target_zone_name" json:"target_zone_name,computed_optional"`
-	TrafficExclusions            *[]types.String `tfsdk:"traffic_exclusions" json:"traffic_exclusions,computed_optional"`
-	TunnelID                     *[]types.String `tfsdk:"tunnel_id" json:"tunnel_id,computed_optional"`
-	TunnelName                   *[]types.String `tfsdk:"tunnel_name" json:"tunnel_name,computed_optional"`
-	Where                        *[]types.String `tfsdk:"where" json:"where,computed_optional"`
-	Zones                        *[]types.String `tfsdk:"zones" json:"zones,computed_optional"`
+	Actions                      types.List `tfsdk:"actions" json:"actions,computed"`
+	AffectedASNs                 types.List `tfsdk:"affected_asns" json:"affected_asns,computed"`
+	AffectedComponents           types.List `tfsdk:"affected_components" json:"affected_components,computed"`
+	AffectedLocations            types.List `tfsdk:"affected_locations" json:"affected_locations,computed"`
+	AirportCode                  types.List `tfsdk:"airport_code" json:"airport_code,computed"`
+	AlertTriggerPreferences      types.List `tfsdk:"alert_trigger_preferences" json:"alert_trigger_preferences,computed"`
+	AlertTriggerPreferencesValue types.List `tfsdk:"alert_trigger_preferences_value" json:"alert_trigger_preferences_value,computed"`
+	Enabled                      types.List `tfsdk:"enabled" json:"enabled,computed"`
+	Environment                  types.List `tfsdk:"environment" json:"environment,computed"`
+	Event                        types.List `tfsdk:"event" json:"event,computed"`
+	EventSource                  types.List `tfsdk:"event_source" json:"event_source,computed"`
+	EventType                    types.List `tfsdk:"event_type" json:"event_type,computed"`
+	GroupBy                      types.List `tfsdk:"group_by" json:"group_by,computed"`
+	HealthCheckID                types.List `tfsdk:"health_check_id" json:"health_check_id,computed"`
+	IncidentImpact               types.List `tfsdk:"incident_impact" json:"incident_impact,computed"`
+	InputID                      types.List `tfsdk:"input_id" json:"input_id,computed"`
+	Limit                        types.List `tfsdk:"limit" json:"limit,computed"`
+	LogoTag                      types.List `tfsdk:"logo_tag" json:"logo_tag,computed"`
+	MegabitsPerSecond            types.List `tfsdk:"megabits_per_second" json:"megabits_per_second,computed"`
+	NewHealth                    types.List `tfsdk:"new_health" json:"new_health,computed"`
+	NewStatus                    types.List `tfsdk:"new_status" json:"new_status,computed"`
+	PacketsPerSecond             types.List `tfsdk:"packets_per_second" json:"packets_per_second,computed"`
+	PoolID                       types.List `tfsdk:"pool_id" json:"pool_id,computed"`
+	Product                      types.List `tfsdk:"product" json:"product,computed"`
+	ProjectID                    types.List `tfsdk:"project_id" json:"project_id,computed"`
+	Protocol                     types.List `tfsdk:"protocol" json:"protocol,computed"`
+	QueryTag                     types.List `tfsdk:"query_tag" json:"query_tag,computed"`
+	RequestsPerSecond            types.List `tfsdk:"requests_per_second" json:"requests_per_second,computed"`
+	Selectors                    types.List `tfsdk:"selectors" json:"selectors,computed"`
+	Services                     types.List `tfsdk:"services" json:"services,computed"`
+	Slo                          types.List `tfsdk:"slo" json:"slo,computed"`
+	Status                       types.List `tfsdk:"status" json:"status,computed"`
+	TargetHostname               types.List `tfsdk:"target_hostname" json:"target_hostname,computed"`
+	TargetIP                     types.List `tfsdk:"target_ip" json:"target_ip,computed"`
+	TargetZoneName               types.List `tfsdk:"target_zone_name" json:"target_zone_name,computed"`
+	TrafficExclusions            types.List `tfsdk:"traffic_exclusions" json:"traffic_exclusions,computed"`
+	TunnelID                     types.List `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
+	TunnelName                   types.List `tfsdk:"tunnel_name" json:"tunnel_name,computed"`
+	Where                        types.List `tfsdk:"where" json:"where,computed"`
+	Zones                        types.List `tfsdk:"zones" json:"zones,computed"`
 }
 
 type NotificationPolicyFindOneByDataSourceModel struct {

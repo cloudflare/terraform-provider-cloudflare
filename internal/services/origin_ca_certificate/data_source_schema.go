@@ -38,6 +38,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"request_type": schema.StringAttribute{
 				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",
 				Computed:    true,
@@ -68,11 +72,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
 				Computed:    true,
 				ElementType: types.StringType,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

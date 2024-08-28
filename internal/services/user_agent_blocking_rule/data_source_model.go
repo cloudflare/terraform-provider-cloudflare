@@ -45,8 +45,8 @@ func (m *UserAgentBlockingRuleDataSourceModel) toListParams() (params firewall.U
 }
 
 type UserAgentBlockingRuleConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target,computed_optional"`
-	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
+	Target types.String `tfsdk:"target" json:"target,computed"`
+	Value  types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type UserAgentBlockingRuleFindOneByDataSourceModel struct {

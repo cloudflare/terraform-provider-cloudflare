@@ -46,37 +46,31 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"build_config": schema.SingleNestedAttribute{
 							Description: "Configs for the project build process.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[PagesProjectsBuildConfigDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"build_caching": schema.BoolAttribute{
 									Description: "Enable build caching for the project.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"build_command": schema.StringAttribute{
 									Description: "Command used to build project.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"destination_dir": schema.StringAttribute{
 									Description: "Output directory of the build.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"root_dir": schema.StringAttribute{
 									Description: "Directory to run the command.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"web_analytics_tag": schema.StringAttribute{
 									Description: "The classifying tag for analytics.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"web_analytics_token": schema.StringAttribute{
 									Description: "The auth token for analytics.",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},
@@ -93,7 +87,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"metadata": schema.SingleNestedAttribute{
 									Description: "Additional info about the trigger.",
 									Computed:    true,
-									Optional:    true,
+									CustomType:  customfield.NewNestedObjectType[PagesProjectsDeploymentTriggerMetadataDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"branch": schema.StringAttribute{
 											Description: "Where the trigger happened.",
@@ -141,7 +135,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"name": schema.StringAttribute{
 									Description: "The current build stage.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"started_on": schema.StringAttribute{
 									Description: "When the stage started.",
@@ -176,44 +169,36 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[PagesProjectsSourceDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"config": schema.SingleNestedAttribute{
-									Computed: true,
-									Optional: true,
+									Computed:   true,
+									CustomType: customfield.NewNestedObjectType[PagesProjectsSourceConfigDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"deployments_enabled": schema.BoolAttribute{
 											Computed: true,
-											Optional: true,
 										},
 										"owner": schema.StringAttribute{
 											Computed: true,
-											Optional: true,
 										},
 										"path_excludes": schema.ListAttribute{
 											Computed:    true,
-											Optional:    true,
 											ElementType: types.StringType,
 										},
 										"path_includes": schema.ListAttribute{
 											Computed:    true,
-											Optional:    true,
 											ElementType: types.StringType,
 										},
 										"pr_comments_enabled": schema.BoolAttribute{
 											Computed: true,
-											Optional: true,
 										},
 										"preview_branch_excludes": schema.ListAttribute{
 											Computed:    true,
-											Optional:    true,
 											ElementType: types.StringType,
 										},
 										"preview_branch_includes": schema.ListAttribute{
 											Computed:    true,
-											Optional:    true,
 											ElementType: types.StringType,
 										},
 										"preview_deployment_setting": schema.StringAttribute{
 											Computed: true,
-											Optional: true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive(
 													"all",
@@ -224,21 +209,17 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 										"production_branch": schema.StringAttribute{
 											Computed: true,
-											Optional: true,
 										},
 										"production_deployments_enabled": schema.BoolAttribute{
 											Computed: true,
-											Optional: true,
 										},
 										"repo_name": schema.StringAttribute{
 											Computed: true,
-											Optional: true,
 										},
 									},
 								},
 								"type": schema.StringAttribute{
 									Computed: true,
-									Optional: true,
 								},
 							},
 						},
@@ -256,7 +237,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"name": schema.StringAttribute{
 										Description: "The current build stage.",
 										Computed:    true,
-										Optional:    true,
 									},
 									"started_on": schema.StringAttribute{
 										Description: "When the stage started.",

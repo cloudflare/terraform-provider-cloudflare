@@ -25,13 +25,13 @@ type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
 	TunType            types.String                                             `tfsdk:"tun_type" json:"tun_type"`
 	TunnelName         types.String                                             `tfsdk:"tunnel_name" json:"tunnel_name"`
 	VirtualNetworkName types.String                                             `tfsdk:"virtual_network_name" json:"virtual_network_name"`
+	Comment            types.String                                             `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt          timetypes.RFC3339                                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt          timetypes.RFC3339                                        `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
-	Comment            types.String                                             `tfsdk:"comment" json:"comment,computed_optional"`
-	ID                 types.String                                             `tfsdk:"id" json:"id,computed_optional"`
-	Network            types.String                                             `tfsdk:"network" json:"network,computed_optional"`
-	TunnelID           types.String                                             `tfsdk:"tunnel_id" json:"tunnel_id,computed_optional"`
-	VirtualNetworkID   types.String                                             `tfsdk:"virtual_network_id" json:"virtual_network_id,computed_optional"`
+	ID                 types.String                                             `tfsdk:"id" json:"id,computed"`
+	Network            types.String                                             `tfsdk:"network" json:"network,computed"`
+	TunnelID           types.String                                             `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
+	VirtualNetworkID   types.String                                             `tfsdk:"virtual_network_id" json:"virtual_network_id,computed"`
 	Filter             *ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

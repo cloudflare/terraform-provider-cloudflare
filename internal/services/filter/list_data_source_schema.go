@@ -64,12 +64,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "An informative summary of the filter.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"ref": schema.StringAttribute{
 							Description: "A short reference tag. Allows you to select related filters.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

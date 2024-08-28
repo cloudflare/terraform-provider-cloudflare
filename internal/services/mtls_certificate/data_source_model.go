@@ -22,15 +22,15 @@ type MTLSCertificateResultListDataSourceEnvelope struct {
 type MTLSCertificateDataSourceModel struct {
 	AccountID         types.String                             `tfsdk:"account_id" path:"account_id"`
 	MTLSCertificateID types.String                             `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id"`
+	CA                types.Bool                               `tfsdk:"ca" json:"ca,computed"`
+	Certificates      types.String                             `tfsdk:"certificates" json:"certificates,computed"`
 	ExpiresOn         timetypes.RFC3339                        `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
+	ID                types.String                             `tfsdk:"id" json:"id,computed"`
 	Issuer            types.String                             `tfsdk:"issuer" json:"issuer,computed"`
+	Name              types.String                             `tfsdk:"name" json:"name,computed"`
 	SerialNumber      types.String                             `tfsdk:"serial_number" json:"serial_number,computed"`
 	Signature         types.String                             `tfsdk:"signature" json:"signature,computed"`
-	CA                types.Bool                               `tfsdk:"ca" json:"ca,computed_optional"`
-	Certificates      types.String                             `tfsdk:"certificates" json:"certificates,computed_optional"`
-	ID                types.String                             `tfsdk:"id" json:"id,computed_optional"`
-	Name              types.String                             `tfsdk:"name" json:"name,computed_optional"`
-	UploadedOn        timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on,computed_optional" format:"date-time"`
+	UploadedOn        timetypes.RFC3339                        `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
 	Filter            *MTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

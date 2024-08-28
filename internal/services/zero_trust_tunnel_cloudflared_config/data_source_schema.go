@@ -42,7 +42,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"ingress": schema.ListNestedAttribute{
 						Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectListType[ZeroTrustTunnelCloudflaredConfigConfigIngressDataSourceModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"hostname": schema.StringAttribute{
@@ -56,12 +56,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"origin_request": schema.SingleNestedAttribute{
 									Description: "Configuration parameters for the public hostname specific connection settings between cloudflared and origin server.",
 									Computed:    true,
-									Optional:    true,
+									CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestDataSourceModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"access": schema.SingleNestedAttribute{
 											Description: "For all L7 requests to this hostname, cloudflared will validate each request's Cf-Access-Jwt-Assertion request header.",
 											Computed:    true,
-											Optional:    true,
+											CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessDataSourceModel](ctx),
 											Attributes: map[string]schema.Attribute{
 												"aud_tag": schema.ListAttribute{
 													Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
@@ -88,17 +88,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										"disable_chunked_encoding": schema.BoolAttribute{
 											Description: "Disables chunked transfer encoding. Useful if you are running a WSGI server.",
 											Computed:    true,
-											Optional:    true,
 										},
 										"http2_origin": schema.BoolAttribute{
 											Description: "Attempt to connect to origin using HTTP2. Origin must be configured as https.",
 											Computed:    true,
-											Optional:    true,
 										},
 										"http_host_header": schema.StringAttribute{
 											Description: "Sets the HTTP Host header on requests sent to the local service.",
 											Computed:    true,
-											Optional:    true,
 										},
 										"keep_alive_connections": schema.Int64Attribute{
 											Description: "Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections.",
@@ -144,12 +141,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"origin_request": schema.SingleNestedAttribute{
 						Description: "Configuration parameters for the public hostname specific connection settings between cloudflared and origin server.",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"access": schema.SingleNestedAttribute{
 								Description: "For all L7 requests to this hostname, cloudflared will validate each request's Cf-Access-Jwt-Assertion request header.",
 								Computed:    true,
-								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessDataSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"aud_tag": schema.ListAttribute{
 										Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
@@ -176,17 +173,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"disable_chunked_encoding": schema.BoolAttribute{
 								Description: "Disables chunked transfer encoding. Useful if you are running a WSGI server.",
 								Computed:    true,
-								Optional:    true,
 							},
 							"http2_origin": schema.BoolAttribute{
 								Description: "Attempt to connect to origin using HTTP2. Origin must be configured as https.",
 								Computed:    true,
-								Optional:    true,
 							},
 							"http_host_header": schema.StringAttribute{
 								Description: "Sets the HTTP Host header on requests sent to the local service.",
 								Computed:    true,
-								Optional:    true,
 							},
 							"keep_alive_connections": schema.Int64Attribute{
 								Description: "Maximum number of idle keepalive connections between Tunnel and your origin. This does not restrict the total number of concurrent connections.",

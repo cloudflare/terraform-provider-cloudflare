@@ -44,7 +44,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"actions": schema.ListNestedAttribute{
 							Description: "List actions patterns.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[EmailRoutingRulesActionsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"type": schema.StringAttribute{
@@ -72,7 +72,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"matchers": schema.ListNestedAttribute{
 							Description: "Matching patterns to forward to your actions.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[EmailRoutingRulesMatchersDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"field": schema.StringAttribute{
@@ -99,7 +99,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "Routing rule name.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"priority": schema.Float64Attribute{
 							Description: "Priority of the routing rule.",

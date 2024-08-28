@@ -5,6 +5,7 @@ package api_shield_operation
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -77,8 +78,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"traffic_stats": schema.SingleNestedAttribute{
-						Computed: true,
-						Optional: true,
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[APIShieldOperationFeaturesTrafficStatsDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"last_updated": schema.StringAttribute{
 								Computed:   true,

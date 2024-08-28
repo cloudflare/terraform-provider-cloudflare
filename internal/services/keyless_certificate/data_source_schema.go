@@ -5,6 +5,7 @@ package keyless_certificate
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -73,7 +74,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"tunnel": schema.SingleNestedAttribute{
 				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
 				Computed:    true,
-				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[KeylessCertificateTunnelDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"private_ip": schema.StringAttribute{
 						Description: "Private IP of the Key Server Host",

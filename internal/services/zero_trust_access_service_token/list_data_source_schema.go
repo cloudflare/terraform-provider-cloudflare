@@ -39,12 +39,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "The ID of the service token.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"client_id": schema.StringAttribute{
 							Description: "The Client ID for the service token. Access will check for this value in the `CF-Access-Client-ID` request header.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
@@ -56,13 +54,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"expires_at": schema.StringAttribute{
 							Computed:   true,
-							Optional:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the service token.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"updated_at": schema.StringAttribute{
 							Computed:   true,

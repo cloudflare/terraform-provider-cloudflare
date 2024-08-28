@@ -25,13 +25,29 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Optional:    true,
 			},
+			"ca": schema.BoolAttribute{
+				Description: "Indicates whether the certificate is a CA or leaf certificate.",
+				Computed:    true,
+			},
+			"certificates": schema.StringAttribute{
+				Description: "The uploaded root CA certificate.",
+				Computed:    true,
+			},
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate expires.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
+				Computed:    true,
+			},
 			"issuer": schema.StringAttribute{
 				Description: "The certificate authority that issued the certificate.",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "Optional unique name for the certificate. Only used for human readability.",
 				Computed:    true,
 			},
 			"serial_number": schema.StringAttribute{
@@ -42,30 +58,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "The type of hash used for the certificate.",
 				Computed:    true,
 			},
-			"ca": schema.BoolAttribute{
-				Description: "Indicates whether the certificate is a CA or leaf certificate.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"certificates": schema.StringAttribute{
-				Description: "The uploaded root CA certificate.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "Optional unique name for the certificate. Only used for human readability.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"uploaded_on": schema.StringAttribute{
 				Description: "This is the time the certificate was uploaded.",
 				Computed:    true,
-				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"filter": schema.SingleNestedAttribute{

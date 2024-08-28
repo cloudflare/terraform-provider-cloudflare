@@ -70,14 +70,14 @@ func (m *ZeroTrustTunnelCloudflaredRoutesDataSourceModel) toListParams() (params
 }
 
 type ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel struct {
-	ID                 types.String      `tfsdk:"id" json:"id,computed_optional"`
-	Comment            types.String      `tfsdk:"comment" json:"comment,computed_optional"`
+	ID                 types.String      `tfsdk:"id" json:"id,computed"`
+	Comment            types.String      `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt          timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt          timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
-	Network            types.String      `tfsdk:"network" json:"network,computed_optional"`
-	TunType            types.String      `tfsdk:"tun_type" json:"tun_type,computed_optional"`
-	TunnelID           types.String      `tfsdk:"tunnel_id" json:"tunnel_id,computed_optional"`
-	TunnelName         types.String      `tfsdk:"tunnel_name" json:"tunnel_name,computed_optional"`
-	VirtualNetworkID   types.String      `tfsdk:"virtual_network_id" json:"virtual_network_id,computed_optional"`
-	VirtualNetworkName types.String      `tfsdk:"virtual_network_name" json:"virtual_network_name,computed_optional"`
+	Network            types.String      `tfsdk:"network" json:"network,computed"`
+	TunType            types.String      `tfsdk:"tun_type" json:"tun_type,computed"`
+	TunnelID           types.String      `tfsdk:"tunnel_id" json:"tunnel_id,computed"`
+	TunnelName         types.String      `tfsdk:"tunnel_name" json:"tunnel_name,computed"`
+	VirtualNetworkID   types.String      `tfsdk:"virtual_network_id" json:"virtual_network_id,computed"`
+	VirtualNetworkName types.String      `tfsdk:"virtual_network_name" json:"virtual_network_name,computed"`
 }

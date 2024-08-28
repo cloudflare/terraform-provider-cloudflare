@@ -5,6 +5,7 @@ package magic_wan_static_route
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -42,7 +43,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"id": schema.StringAttribute{
 						Description: "Identifier",
 						Computed:    true,
-						Optional:    true,
 					},
 					"created_on": schema.StringAttribute{
 						Description: "When the route was created.",
@@ -52,7 +52,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"description": schema.StringAttribute{
 						Description: "An optional human provided description of the static route.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"modified_on": schema.StringAttribute{
 						Description: "When the route was last modified.",
@@ -62,18 +61,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"scope": schema.SingleNestedAttribute{
 						Description: "Used only for ECMP routes.",
 						Computed:    true,
-						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[MagicWANStaticRouteRouteScopeDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"colo_names": schema.ListAttribute{
 								Description: "List of colo names for the ECMP scope.",
 								Computed:    true,
-								Optional:    true,
 								ElementType: types.StringType,
 							},
 							"colo_regions": schema.ListAttribute{
 								Description: "List of colo regions for the ECMP scope.",
 								Computed:    true,
-								Optional:    true,
 								ElementType: types.StringType,
 							},
 						},
@@ -81,7 +78,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"weight": schema.Int64Attribute{
 						Description: "Optional weight of the ECMP scope - if provided.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

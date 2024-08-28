@@ -41,12 +41,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"address": schema.StringAttribute{
 							Description: "The hostname or IP address of the origin server to run health checks on.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"check_regions": schema.ListAttribute{
 							Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.List{
 								listvalidator.ValueStringsAre(
 									stringvalidator.OneOfCaseInsensitive(
@@ -84,7 +82,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"description": schema.StringAttribute{
 							Description: "A human-readable description of the health check.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"failure_reason": schema.StringAttribute{
 							Description: "The current failure reason if status is unhealthy.",
@@ -93,7 +90,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"http_config": schema.SingleNestedAttribute{
 							Description: "Parameters specific to an HTTP or HTTPS health check.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[HealthchecksHTTPConfigDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"allow_insecure": schema.BoolAttribute{
 									Description: "Do not validate the certificate when the health check uses HTTPS.",
@@ -102,12 +99,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"expected_body": schema.StringAttribute{
 									Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"expected_codes": schema.ListAttribute{
 									Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"follow_redirects": schema.BoolAttribute{
@@ -117,7 +112,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"header": schema.MapAttribute{
 									Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
 									Computed:    true,
-									Optional:    true,
 									ElementType: types.ListType{
 										ElemType: types.StringType,
 									},
@@ -150,7 +144,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"retries": schema.Int64Attribute{
 							Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
@@ -175,7 +168,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"tcp_config": schema.SingleNestedAttribute{
 							Description: "Parameters specific to TCP health check.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[HealthchecksTCPConfigDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"method": schema.StringAttribute{
 									Description: "The TCP connection method to use for the health check.",

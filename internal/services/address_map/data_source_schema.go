@@ -39,7 +39,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"ip": schema.StringAttribute{
 							Description: "An IPv4 or IPv6 address.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},
@@ -60,12 +59,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"identifier": schema.StringAttribute{
 							Description: "The identifier for the membership (eg. a zone or account tag).",
 							Computed:    true,
-							Optional:    true,
 						},
 						"kind": schema.StringAttribute{
 							Description: "The type of the membership.",
 							Computed:    true,
-							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("zone", "account"),
 							},
@@ -85,28 +82,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
 			},
+			"default_sni": schema.StringAttribute{
+				Description: "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
+				Computed:    true,
+			},
+			"description": schema.StringAttribute{
+				Description: "An optional description field which may be used to describe the types of IPs or zones on the map.",
+				Computed:    true,
+			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "Identifier",
 				Computed:    true,
 			},
 			"modified_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"default_sni": schema.StringAttribute{
-				Description: "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"description": schema.StringAttribute{
-				Description: "An optional description field which may be used to describe the types of IPs or zones on the map.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-				Optional:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

@@ -40,7 +40,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "UUID",
 							Computed:    true,
-							Optional:    true,
 						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
@@ -49,12 +48,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"exclude": schema.ListNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match a policy, a user cannot meet any of the Exclude rules.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessGroupsExcludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"email": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeEmailDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"email": schema.StringAttribute{
 												Description: "The email of the user.",
@@ -63,8 +62,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeEmailListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created email list.",
@@ -73,8 +72,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_domain": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeEmailDomainDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"domain": schema.StringAttribute{
 												Description: "The email domain to match.",
@@ -85,12 +84,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeIPDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"ip": schema.StringAttribute{
 												Description: "An IPv4 or IPv6 CIDR block.",
@@ -99,8 +97,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"ip_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeIPListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created IP list.",
@@ -110,12 +108,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"certificate": schema.StringAttribute{
 										Computed:   true,
-										Optional:   true,
 										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeGroupDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created Access group.",
@@ -124,8 +121,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"azure_ad": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeAzureADDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of an Azure group.",
@@ -138,8 +135,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"github_organization": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeGitHubOrganizationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Github identity provider.",
@@ -152,8 +149,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"gsuite": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeGSuiteDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
@@ -166,8 +163,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"okta": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeOktaDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Okta identity provider.",
@@ -180,8 +177,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"saml": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeSAMLDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"attribute_name": schema.StringAttribute{
 												Description: "The name of the SAML attribute.",
@@ -194,8 +191,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"service_token": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeServiceTokenDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
@@ -206,12 +203,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeExternalEvaluationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"evaluate_url": schema.StringAttribute{
 												Description: "The API endpoint containing your business logic.",
@@ -224,8 +220,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"geo": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeGeoDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"country_code": schema.StringAttribute{
 												Description: "The country code that should be matched.",
@@ -234,8 +230,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"auth_method": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeAuthMethodDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"auth_method": schema.StringAttribute{
 												Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
@@ -244,8 +240,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"device_posture": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeDevicePostureDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
@@ -259,12 +255,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"include": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessGroupsIncludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"email": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeEmailDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"email": schema.StringAttribute{
 												Description: "The email of the user.",
@@ -273,8 +269,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeEmailListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created email list.",
@@ -283,8 +279,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_domain": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeEmailDomainDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"domain": schema.StringAttribute{
 												Description: "The email domain to match.",
@@ -295,12 +291,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeIPDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"ip": schema.StringAttribute{
 												Description: "An IPv4 or IPv6 CIDR block.",
@@ -309,8 +304,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"ip_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeIPListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created IP list.",
@@ -320,12 +315,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"certificate": schema.StringAttribute{
 										Computed:   true,
-										Optional:   true,
 										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeGroupDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created Access group.",
@@ -334,8 +328,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"azure_ad": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeAzureADDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of an Azure group.",
@@ -348,8 +342,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"github_organization": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeGitHubOrganizationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Github identity provider.",
@@ -362,8 +356,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"gsuite": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeGSuiteDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
@@ -376,8 +370,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"okta": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeOktaDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Okta identity provider.",
@@ -390,8 +384,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"saml": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeSAMLDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"attribute_name": schema.StringAttribute{
 												Description: "The name of the SAML attribute.",
@@ -404,8 +398,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"service_token": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeServiceTokenDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
@@ -416,12 +410,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeExternalEvaluationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"evaluate_url": schema.StringAttribute{
 												Description: "The API endpoint containing your business logic.",
@@ -434,8 +427,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"geo": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeGeoDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"country_code": schema.StringAttribute{
 												Description: "The country code that should be matched.",
@@ -444,8 +437,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"auth_method": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeAuthMethodDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"auth_method": schema.StringAttribute{
 												Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
@@ -454,8 +447,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"device_posture": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeDevicePostureDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
@@ -469,12 +462,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"is_default": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessGroupsIsDefaultDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"email": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultEmailDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"email": schema.StringAttribute{
 												Description: "The email of the user.",
@@ -483,8 +476,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultEmailListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created email list.",
@@ -493,8 +486,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_domain": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultEmailDomainDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"domain": schema.StringAttribute{
 												Description: "The email domain to match.",
@@ -505,12 +498,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultIPDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"ip": schema.StringAttribute{
 												Description: "An IPv4 or IPv6 CIDR block.",
@@ -519,8 +511,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"ip_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultIPListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created IP list.",
@@ -530,12 +522,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"certificate": schema.StringAttribute{
 										Computed:   true,
-										Optional:   true,
 										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultGroupDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created Access group.",
@@ -544,8 +535,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"azure_ad": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultAzureADDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of an Azure group.",
@@ -558,8 +549,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"github_organization": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultGitHubOrganizationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Github identity provider.",
@@ -572,8 +563,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"gsuite": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultGSuiteDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
@@ -586,8 +577,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"okta": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultOktaDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Okta identity provider.",
@@ -600,8 +591,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"saml": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultSAMLDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"attribute_name": schema.StringAttribute{
 												Description: "The name of the SAML attribute.",
@@ -614,8 +605,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"service_token": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultServiceTokenDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
@@ -626,12 +617,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultExternalEvaluationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"evaluate_url": schema.StringAttribute{
 												Description: "The API endpoint containing your business logic.",
@@ -644,8 +634,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"geo": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultGeoDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"country_code": schema.StringAttribute{
 												Description: "The country code that should be matched.",
@@ -654,8 +644,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"auth_method": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultAuthMethodDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"auth_method": schema.StringAttribute{
 												Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
@@ -664,8 +654,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"device_posture": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultDevicePostureDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",
@@ -679,17 +669,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name": schema.StringAttribute{
 							Description: "The name of the Access group.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"require": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match a policy, a user must meet all of the Require rules.",
 							Computed:    true,
-							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessGroupsRequireDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"email": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireEmailDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"email": schema.StringAttribute{
 												Description: "The email of the user.",
@@ -698,8 +687,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireEmailListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created email list.",
@@ -708,8 +697,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"email_domain": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireEmailDomainDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"domain": schema.StringAttribute{
 												Description: "The email domain to match.",
@@ -720,12 +709,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"everyone": schema.StringAttribute{
 										Description: "An empty object which matches on all users.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"ip": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireIPDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"ip": schema.StringAttribute{
 												Description: "An IPv4 or IPv6 CIDR block.",
@@ -734,8 +722,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"ip_list": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireIPListDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created IP list.",
@@ -745,12 +733,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"certificate": schema.StringAttribute{
 										Computed:   true,
-										Optional:   true,
 										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireGroupDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of a previously created Access group.",
@@ -759,8 +746,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"azure_ad": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireAzureADDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
 												Description: "The ID of an Azure group.",
@@ -773,8 +760,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"github_organization": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireGitHubOrganizationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Github identity provider.",
@@ -787,8 +774,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"gsuite": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireGSuiteDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Google Workspace identity provider.",
@@ -801,8 +788,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"okta": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireOktaDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"connection_id": schema.StringAttribute{
 												Description: "The ID of your Okta identity provider.",
@@ -815,8 +802,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"saml": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireSAMLDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"attribute_name": schema.StringAttribute{
 												Description: "The name of the SAML attribute.",
@@ -829,8 +816,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"service_token": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireServiceTokenDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"token_id": schema.StringAttribute{
 												Description: "The ID of a Service Token.",
@@ -841,12 +828,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"any_valid_service_token": schema.StringAttribute{
 										Description: "An empty object which matches on all service tokens.",
 										Computed:    true,
-										Optional:    true,
 										CustomType:  jsontypes.NormalizedType{},
 									},
 									"external_evaluation": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireExternalEvaluationDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"evaluate_url": schema.StringAttribute{
 												Description: "The API endpoint containing your business logic.",
@@ -859,8 +845,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"geo": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireGeoDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"country_code": schema.StringAttribute{
 												Description: "The country code that should be matched.",
@@ -869,8 +855,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"auth_method": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireAuthMethodDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"auth_method": schema.StringAttribute{
 												Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
@@ -879,8 +865,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									"device_posture": schema.SingleNestedAttribute{
-										Computed: true,
-										Optional: true,
+										Computed:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireDevicePostureDataSourceModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"integration_uid": schema.StringAttribute{
 												Description: "The ID of a device posture integration.",

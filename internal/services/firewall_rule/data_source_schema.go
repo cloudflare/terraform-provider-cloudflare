@@ -46,6 +46,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"description": schema.StringAttribute{
+				Description: "An informative summary of the firewall rule.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of the firewall rule.",
 				Computed:    true,
@@ -54,15 +58,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "When true, indicates that the firewall rule is currently paused.",
 				Computed:    true,
 			},
-			"description": schema.StringAttribute{
-				Description: "An informative summary of the firewall rule.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"priority": schema.Float64Attribute{
 				Description: "The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(0, 2147483647),
 				},
@@ -70,11 +68,9 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"ref": schema.StringAttribute{
 				Description: "A short reference tag. Allows you to select related firewall rules.",
 				Computed:    true,
-				Optional:    true,
 			},
 			"products": schema.ListAttribute{
 				Computed: true,
-				Optional: true,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
 						stringvalidator.OneOfCaseInsensitive(
