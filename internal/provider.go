@@ -33,10 +33,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_dnssec"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_catch_all"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_rule"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
@@ -305,10 +301,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		custom_hostname_fallback_origin.NewResource,
 		dns_record.NewResource,
 		dns_zone_dnssec.NewResource,
-		email_routing_settings.NewResource,
-		email_routing_rule.NewResource,
-		email_routing_catch_all.NewResource,
-		email_routing_address.NewResource,
 		filter.NewResource,
 		zone_lockdown.NewResource,
 		firewall_rule.NewResource,
@@ -439,12 +431,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dns_record.NewDNSRecordDataSource,
 		dns_record.NewDNSRecordsDataSource,
 		dns_zone_dnssec.NewDNSZoneDNSSECDataSource,
-		email_routing_settings.NewEmailRoutingSettingsDataSource,
-		email_routing_rule.NewEmailRoutingRuleDataSource,
-		email_routing_rule.NewEmailRoutingRulesDataSource,
-		email_routing_catch_all.NewEmailRoutingCatchAllDataSource,
-		email_routing_address.NewEmailRoutingAddressDataSource,
-		email_routing_address.NewEmailRoutingAddressesDataSource,
 		filter.NewFilterDataSource,
 		filter.NewFiltersDataSource,
 		zone_lockdown.NewZoneLockdownDataSource,
