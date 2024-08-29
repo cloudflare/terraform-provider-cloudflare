@@ -35,3 +35,5 @@ dist/*
 .envrc
 .flox/
 .vscode/private.env
+
+setvars.sh
