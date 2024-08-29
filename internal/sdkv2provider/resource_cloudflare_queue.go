@@ -31,7 +31,7 @@ func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, 
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	queueName := d.Get("name").(string)
-
+	
 	req := cloudflare.CreateQueueParams{
 		Name: queueName,
 	}
@@ -44,6 +44,35 @@ func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, 
 
 	if r.ID == "" {
 		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
+	}
+
+	if d.Get("consumer") != nil {
+		consumers := d.Get("consumer").([]interface{})
+		for _, consumer := range consumers {
+			consumerMap := consumer.(map[string]interface{})
+			settings := consumerMap["settings"].([]interface{})[0].(map[string]interface{})
+			req := cloudflare.CreateQueueConsumerParams{
+				QueueName: queueName,
+				Consumer: cloudflare.QueueConsumer{
+					Service: "workers",
+					Name: consumerMap["script_name"].(string),
+					QueueName: queueName,
+					Environment: consumerMap["environment"].(string),
+					ScriptName: consumerMap["script_name"].(string),
+					Settings: cloudflare.QueueConsumerSettings{
+						BatchSize: settings["batch_size"].(int),
+						MaxRetires: settings["max_retries"].(int),
+						MaxWaitTime: settings["max_wait_time_ms"].(int),
+					},
+				},
+			}
+			
+			_, err := client.CreateQueueConsumer(ctx, cloudflare.AccountIdentifier(accountID), req)
+			// println(fmt.Sprintf("result: %+v", result))
+			if err != nil {
+				return diag.FromErr(errors.Wrap(err, "error creating workers queue consumer"))
+			}
+		}
 	}
 
 	d.SetId(r.ID)
@@ -62,13 +91,32 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error reading queues"))
 	}
-
+	
 	var queue cloudflare.Queue
 	for _, r := range resp {
 		if r.ID == queueID {
 			queue = r
 			d.Set("name", r.Name)
-			break
+			consumers := make([]map[string]interface{}, 0)
+			if len(r.Consumers) > 0 {
+				for _, consumer := range r.Consumers {
+					consumerMap := map[string]interface{}{
+						"created_on": consumer.CreatedOn,
+						"environment": consumer.Environment,
+						"queue_name": consumer.QueueName,
+						"script_name": consumer.ScriptName,
+						"settings": []map[string]interface{}{
+							{
+								"batch_size": consumer.Settings.BatchSize,
+								"max_retries": consumer.Settings.MaxRetires,
+								"max_wait_time_ms": consumer.Settings.MaxWaitTime,
+							},
+						},
+					}
+					consumers = append(consumers, consumerMap)
+				}
+				d.Set("consumer", consumers)
+			}
 		}
 	}
 
