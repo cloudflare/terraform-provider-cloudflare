@@ -28,6 +28,45 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"entries": schema.ListNestedAttribute{
+				Required: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Required: true,
+						},
+						"enabled": schema.BoolAttribute{
+							Required: true,
+						},
+					},
+				},
+			},
+			"allowed_match_count": schema.Int64Attribute{
+				Optional: true,
+			},
+			"ocr_enabled": schema.BoolAttribute{
+				Optional: true,
+			},
+			"context_awareness": schema.SingleNestedAttribute{
+				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
+						Required:    true,
+					},
+					"skip": schema.SingleNestedAttribute{
+						Description: "Content types to exclude from context analysis and return all matches.",
+						Required:    true,
+						Attributes: map[string]schema.Attribute{
+							"files": schema.BoolAttribute{
+								Description: "If the content type is a file, skip context analysis and return all matches.",
+								Required:    true,
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
