@@ -21,6 +21,7 @@ type LoadBalancerModel struct {
 	SessionAffinityTTL        types.Float64                               `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl"`
 	TTL                       types.Float64                               `tfsdk:"ttl" json:"ttl"`
 	CountryPools              map[string]*[]types.String                  `tfsdk:"country_pools" json:"country_pools"`
+	Networks                  *[]types.String                             `tfsdk:"networks" json:"networks"`
 	PopPools                  map[string]*[]types.String                  `tfsdk:"pop_pools" json:"pop_pools"`
 	RegionPools               map[string]*[]types.String                  `tfsdk:"region_pools" json:"region_pools"`
 	AdaptiveRouting           *LoadBalancerAdaptiveRoutingModel           `tfsdk:"adaptive_routing" json:"adaptive_routing"`
@@ -34,7 +35,6 @@ type LoadBalancerModel struct {
 	SteeringPolicy            types.String                                `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
 	CreatedOn                 timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn                timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Networks                  types.List                                  `tfsdk:"networks" json:"networks,computed"`
 }
 
 type LoadBalancerAdaptiveRoutingModel struct {
