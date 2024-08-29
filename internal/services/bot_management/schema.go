@@ -29,6 +29,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
+			"ai_bots_protection": schema.StringAttribute{
+				Description: "Enable rule to block AI Scrapers and Crawlers.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("block", "disabled"),
+				},
+			},
 			"auto_update_model": schema.BoolAttribute{
 				Description: "Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes)",
 				Optional:    true,
