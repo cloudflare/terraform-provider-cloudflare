@@ -66,6 +66,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					ElemType: types.StringType,
 				},
 			},
+			"networks": schema.ListAttribute{
+				Description: "List of networks where Load Balancer or Pool is enabled.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 			"pop_pools": schema.MapAttribute{
 				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 				Optional:    true,
@@ -305,10 +310,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"cookie",
 											"ip_cookie",
 											"header",
-											"\"\"",
+											"",
 										),
 									},
-									Default: stringdefault.StaticString("\"\""),
+									Default: stringdefault.StaticString(""),
 								},
 								"session_affinity_attributes": schema.SingleNestedAttribute{
 									Description: "Configures attributes for session affinity.",
@@ -388,10 +393,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"proximity",
 											"least_outstanding_requests",
 											"least_connections",
-											"\"\"",
+											"",
 										),
 									},
-									Default: stringdefault.StaticString("\"\""),
+									Default: stringdefault.StaticString(""),
 								},
 								"ttl": schema.Float64Attribute{
 									Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
@@ -500,10 +505,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"cookie",
 						"ip_cookie",
 						"header",
-						"\"\"",
+						"",
 					),
 				},
-				Default: stringdefault.StaticString("\"\""),
+				Default: stringdefault.StaticString(""),
 			},
 			"steering_policy": schema.StringAttribute{
 				Description: "Steering Policy for this load balancer.\n- `\"off\"`: Use `default_pools`.\n- `\"geo\"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied requests, the country for `country_pools` is determined by `location_strategy`.\n- `\"random\"`: Select a pool randomly.\n- `\"dynamic_latency\"`: Use round trip time to select the closest pool in default_pools (requires pool health checks).\n- `\"proximity\"`: Use the pools' latitude and longitude to select the closest pool using the Cloudflare PoP location for proxied requests or the location determined by `location_strategy` for non-proxied requests.\n- `\"least_outstanding_requests\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of outstanding requests. Pools with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select a pool by taking into consideration `random_steering` weights, as well as each pool's number of open connections. Pools with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.\n- `\"\"`: Will map to `\"geo\"` if you use `region_pools`/`country_pools`/`pop_pools` otherwise `\"off\"`.",
@@ -518,10 +523,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"proximity",
 						"least_outstanding_requests",
 						"least_connections",
-						"\"\"",
+						"",
 					),
 				},
-				Default: stringdefault.StaticString("\"\""),
+				Default: stringdefault.StaticString(""),
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,
@@ -530,11 +535,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"modified_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"networks": schema.ListAttribute{
-				Description: "List of networks where Load Balancer or Pool is enabled.",
-				Computed:    true,
-				ElementType: types.StringType,
 			},
 		},
 	}
