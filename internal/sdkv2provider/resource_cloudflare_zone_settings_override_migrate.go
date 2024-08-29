@@ -43,7 +43,9 @@ func resourceCloudflareZoneSettingsOverrideStateUpgradeV1(
 	}
 
 	upgrade := func(state map[string]interface{}, name string) map[string]interface{} {
-		delete(state[name].([]interface{})[0].(map[string]interface{}), "mobile_redirect")
+		if val, ok := state[name]; ok && val != nil {
+			delete(state[name].([]interface{})[0].(map[string]interface{}), "mobile_redirect")
+		}
 		return state
 	}
 
@@ -89,7 +91,9 @@ func resourceCloudflareZoneSettingsOverrideStateUpgradeV2(
 	}
 
 	upgrade := func(state map[string]interface{}, name string) map[string]interface{} {
-		delete(state[name].([]interface{})[0].(map[string]interface{}), "minify")
+		if val, ok := state[name]; ok && val != nil {
+			delete(state[name].([]interface{})[0].(map[string]interface{}), "minify")
+		}
 		return state
 	}
 
