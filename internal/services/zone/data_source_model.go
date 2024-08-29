@@ -29,6 +29,9 @@ type ZoneDataSourceModel struct {
 	Name                types.String                                         `tfsdk:"name" json:"name,computed"`
 	OriginalDnshost     types.String                                         `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
 	OriginalRegistrar   types.String                                         `tfsdk:"original_registrar" json:"original_registrar,computed"`
+	Paused              types.Bool                                           `tfsdk:"paused" json:"paused,computed"`
+	Status              types.String                                         `tfsdk:"status" json:"status,computed"`
+	Type                types.String                                         `tfsdk:"type" json:"type,computed"`
 	NameServers         types.List                                           `tfsdk:"name_servers" json:"name_servers,computed"`
 	OriginalNameServers types.List                                           `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	VanityNameServers   types.List                                           `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
