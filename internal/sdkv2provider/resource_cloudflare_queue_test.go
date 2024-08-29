@@ -5,14 +5,12 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	"encoding/json"
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 )
 
 func init() {
@@ -82,22 +80,6 @@ func TestAccCloudflareQueue_Basic(t *testing.T) {
 	})
 }
 
-var _ plancheck.PlanCheck = debugPlan{}
-
-type debugPlan struct{}
-
-func (e debugPlan) CheckPlan(ctx context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
-	rd, err := json.Marshal(req.Plan)
-	if err != nil {
-		fmt.Println("error marshalling machine-readable plan output:", err)
-	}
-	fmt.Printf("req.Plan - %s\n", string(rd))
-}
-
-func DebugPlan() plancheck.PlanCheck {
-	return debugPlan{}
-}
-
 func TestAccCloudflareQueue_Consumer(t *testing.T) {
 	t.Parallel()
 	var queue cloudflare.Queue
@@ -110,14 +92,6 @@ func TestAccCloudflareQueue_Consumer(t *testing.T) {
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCloudflareQueueDestroy,
 		Steps: []resource.TestStep{
-			// {
-			// 	Config: testAccCheckCloudflareQueueWConsumer(rnd, accountID, rnd),
-			// 	ConfigPlanChecks: resource.ConfigPlanChecks{
-			// 		PostApplyPreRefresh: []plancheck.PlanCheck{
-			// 			DebugPlan(),
-			// 		},
-			// 	},
-			// },
 			{
 				Config: testAccCheckCloudflareQueueWConsumer(rnd, accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
