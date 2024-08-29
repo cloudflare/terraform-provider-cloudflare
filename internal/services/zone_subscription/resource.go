@@ -115,10 +115,10 @@ func (r *ZoneSubscriptionResource) Update(ctx context.Context, req resource.Upda
 	}
 	res := new(http.Response)
 	env := ZoneSubscriptionResultEnvelope{*data}
-	_, err = r.client.Zones.Subscriptions.New(
+	_, err = r.client.Zones.Subscriptions.Edit(
 		ctx,
 		data.Identifier.ValueString(),
-		zones.SubscriptionNewParams{},
+		zones.SubscriptionEditParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
