@@ -77,6 +77,9 @@ type ZonesResultDataSourceModel struct {
 	OriginalNameServers types.List                                            `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	OriginalRegistrar   types.String                                          `tfsdk:"original_registrar" json:"original_registrar,computed"`
 	Owner               customfield.NestedObject[ZonesOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`
+	Paused              types.Bool                                            `tfsdk:"paused" json:"paused,computed"`
+	Status              types.String                                          `tfsdk:"status" json:"status,computed"`
+	Type                types.String                                          `tfsdk:"type" json:"type,computed"`
 	VanityNameServers   types.List                                            `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
 }
 

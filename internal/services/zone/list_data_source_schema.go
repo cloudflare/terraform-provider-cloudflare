@@ -198,6 +198,33 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"paused": schema.BoolAttribute{
+							Description: "Indicates whether the zone is only using Cloudflare DNS services. A\ntrue value means the zone will not receive security or performance\nbenefits.\n",
+							Computed:    true,
+						},
+						"status": schema.StringAttribute{
+							Description: "The zone status on Cloudflare.",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"initializing",
+									"pending",
+									"active",
+									"moved",
+								),
+							},
+						},
+						"type": schema.StringAttribute{
+							Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"full",
+									"partial",
+									"secondary",
+								),
+							},
+						},
 						"vanity_name_servers": schema.ListAttribute{
 							Description: "An array of domains used for custom name servers. This is only available for Business and Enterprise plans.",
 							Computed:    true,

@@ -10,8 +10,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -42,17 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
 			},
-			"type": schema.StringAttribute{
-				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"full",
-						"partial",
-						"secondary",
-					),
-				},
-			},
 			"vanity_name_servers": schema.ListAttribute{
 				Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
 				Optional:    true,
@@ -67,6 +58,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+			},
+			"type": schema.StringAttribute{
+				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"full",
+						"partial",
+						"secondary",
+					),
+				},
+				Default: stringdefault.StaticString("full"),
 			},
 			"activated_on": schema.StringAttribute{
 				Description: "The last time proof of ownership was detected and the zone was made\nactive",
@@ -94,6 +98,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"original_registrar": schema.StringAttribute{
 				Description: "Registrar for the domain at the time of switching to Cloudflare",
 				Computed:    true,
+			},
+			"paused": schema.BoolAttribute{
+				Description: "Indicates whether the zone is only using Cloudflare DNS services. A\ntrue value means the zone will not receive security or performance\nbenefits.\n",
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"status": schema.StringAttribute{
+				Description: "The zone status on Cloudflare.",
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"initializing",
+						"pending",
+						"active",
+						"moved",
+					),
+				},
 			},
 			"name_servers": schema.ListAttribute{
 				Description: "The name servers Cloudflare assigns to a zone",
