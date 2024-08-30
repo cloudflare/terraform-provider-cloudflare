@@ -36,7 +36,7 @@ func resourceCloudflareQueueSchema() map[string]*schema.Schema {
 						"script_name": {
 							Description: "script_name",
 							Type:        schema.TypeString,
-							ForceNew:    true,
+							Required:   true,
 						},
 						"settings": {
 							Description: "Settings",

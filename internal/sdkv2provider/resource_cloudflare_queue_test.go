@@ -158,13 +158,14 @@ func testAccCheckCloudflareQueueWConsumer(rnd, accountID, name string) string {
 	resource "cloudflare_queue" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[3]s"
-		consumers = {
+		consumers = [
 			{
-				queue_name = "%[3]s"
 				script_name = "%[1]s"
+				settings {
+					batch_size = 1
+				}
 			}
-		}
-		depends_on = [cloudflare_workers_script.%[1]s]
+		]
 	}`, rnd, accountID, name, queueModuleContent)
 	return tf_content
 }
