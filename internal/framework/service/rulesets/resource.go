@@ -542,11 +542,20 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 						} else {
 							excludeOrigin = types.BoolNull()
 						}
-						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 || excludeOrigin.ValueBool() {
+						contains := map[string]types.Set{}
+						for k, v := range ruleResponse.ActionParameters.CacheKey.CustomKey.Header.Contains {
+							set, _ := basetypes.NewSetValueFrom(ctx, types.StringType, v)
+							contains[k] = set
+						}
+						if len(include.Elements()) > 0 || len(checkPresence.Elements()) > 0 || excludeOrigin.ValueBool() || len(contains) > 0 {
+							if len(contains) == 0 {
+								contains = nil
+							}
 							key.Header = []*ActionParameterCacheKeyCustomKeyHeaderModel{{
 								Include:       include,
 								CheckPresence: checkPresence,
 								ExcludeOrigin: excludeOrigin,
+								Contains:      contains,
 							}}
 						}
 					}
@@ -1174,6 +1183,10 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 				if len(ap.CacheKey[0].CustomKey[0].Header) > 0 {
 					includeQueryList := expanders.StringSet(ctx, ap.CacheKey[0].CustomKey[0].Header[0].Include)
 					checkPresenceList := expanders.StringSet(ctx, basetypes.SetValue(ap.CacheKey[0].CustomKey[0].Header[0].CheckPresence))
+					containsMap := map[string][]string{}
+					for k, v := range ap.CacheKey[0].CustomKey[0].Header[0].Contains {
+						containsMap[k] = expanders.StringSet(ctx, v)
+					}
 
 					customKey.Header = &cfv1.RulesetRuleActionParametersCustomKeyHeader{
 						RulesetRuleActionParametersCustomKeyFields: cfv1.RulesetRuleActionParametersCustomKeyFields{
@@ -1181,6 +1194,7 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 							CheckPresence: checkPresenceList,
 						},
 						ExcludeOrigin: cfv1.BoolPtr(ap.CacheKey[0].CustomKey[0].Header[0].ExcludeOrigin.ValueBool()),
+						Contains:      containsMap,
 					}
 				}
 

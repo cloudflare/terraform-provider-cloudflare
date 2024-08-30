@@ -196,9 +196,10 @@ type ActionParameterCacheKeyCustomKeyQueryStringModel struct {
 }
 
 type ActionParameterCacheKeyCustomKeyHeaderModel struct {
-	Include       types.Set  `tfsdk:"include"`
-	CheckPresence types.Set  `tfsdk:"check_presence"`
-	ExcludeOrigin types.Bool `tfsdk:"exclude_origin"`
+	Include       types.Set            `tfsdk:"include"`
+	CheckPresence types.Set            `tfsdk:"check_presence"`
+	ExcludeOrigin types.Bool           `tfsdk:"exclude_origin"`
+	Contains      map[string]types.Set `tfsdk:"contains"`
 }
 
 type ActionParameterCacheKeyCustomKeyCookieModel struct {
