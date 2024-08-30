@@ -1,0 +1,10 @@
+language hcl
+
+pattern terraform_cloudflare_v5_resource_renames() {
+  any {
+    `"cloudflare_r2_bucket"` => `"foo"`,
+    `"cloudflare_fake"` => `"foo"`
+  } as $old_name where {
+    $old_name <: within `resource $_ { $_ }`
+  }
+}
