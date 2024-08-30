@@ -3,6 +3,8 @@
 package dns_record
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/shared"
@@ -25,7 +27,7 @@ type DNSRecordDataSourceModel struct {
 	Filter      *DNSRecordFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *DNSRecordDataSourceModel) toReadParams() (params dns.RecordGetParams, diags diag.Diagnostics) {
+func (m *DNSRecordDataSourceModel) toReadParams(_ context.Context) (params dns.RecordGetParams, diags diag.Diagnostics) {
 	params = dns.RecordGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -33,7 +35,7 @@ func (m *DNSRecordDataSourceModel) toReadParams() (params dns.RecordGetParams, d
 	return
 }
 
-func (m *DNSRecordDataSourceModel) toListParams() (params dns.RecordListParams, diags diag.Diagnostics) {
+func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.RecordListParams, diags diag.Diagnostics) {
 	params = dns.RecordListParams{
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}
@@ -129,19 +131,19 @@ type DNSRecordFindOneByDataSourceModel struct {
 }
 
 type DNSRecordCommentDataSourceModel struct {
-	Absent     types.String `tfsdk:"absent" json:"absent"`
-	Contains   types.String `tfsdk:"contains" json:"contains"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith"`
-	Exact      types.String `tfsdk:"exact" json:"exact"`
-	Present    types.String `tfsdk:"present" json:"present"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith"`
+	Absent     types.String `tfsdk:"absent" json:"absent,computed_optional"`
+	Contains   types.String `tfsdk:"contains" json:"contains,computed_optional"`
+	Endswith   types.String `tfsdk:"endswith" json:"endswith,computed_optional"`
+	Exact      types.String `tfsdk:"exact" json:"exact,computed_optional"`
+	Present    types.String `tfsdk:"present" json:"present,computed_optional"`
+	Startswith types.String `tfsdk:"startswith" json:"startswith,computed_optional"`
 }
 
 type DNSRecordTagDataSourceModel struct {
-	Absent     types.String `tfsdk:"absent" json:"absent"`
-	Contains   types.String `tfsdk:"contains" json:"contains"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith"`
-	Exact      types.String `tfsdk:"exact" json:"exact"`
-	Present    types.String `tfsdk:"present" json:"present"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith"`
+	Absent     types.String `tfsdk:"absent" json:"absent,computed_optional"`
+	Contains   types.String `tfsdk:"contains" json:"contains,computed_optional"`
+	Endswith   types.String `tfsdk:"endswith" json:"endswith,computed_optional"`
+	Exact      types.String `tfsdk:"exact" json:"exact,computed_optional"`
+	Present    types.String `tfsdk:"present" json:"present,computed_optional"`
+	Startswith types.String `tfsdk:"startswith" json:"startswith,computed_optional"`
 }

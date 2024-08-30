@@ -3,6 +3,8 @@
 package byo_ip_prefix
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -37,7 +39,7 @@ type ByoIPPrefixDataSourceModel struct {
 	Filter               *ByoIPPrefixFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ByoIPPrefixDataSourceModel) toReadParams() (params addressing.PrefixGetParams, diags diag.Diagnostics) {
+func (m *ByoIPPrefixDataSourceModel) toReadParams(_ context.Context) (params addressing.PrefixGetParams, diags diag.Diagnostics) {
 	params = addressing.PrefixGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -45,7 +47,7 @@ func (m *ByoIPPrefixDataSourceModel) toReadParams() (params addressing.PrefixGet
 	return
 }
 
-func (m *ByoIPPrefixDataSourceModel) toListParams() (params addressing.PrefixListParams, diags diag.Diagnostics) {
+func (m *ByoIPPrefixDataSourceModel) toListParams(_ context.Context) (params addressing.PrefixListParams, diags diag.Diagnostics) {
 	params = addressing.PrefixListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

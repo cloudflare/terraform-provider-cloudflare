@@ -3,6 +3,8 @@
 package zero_trust_tunnel_cloudflared
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -30,7 +32,7 @@ type ZeroTrustTunnelCloudflaredsDataSourceModel struct {
 	Result        customfield.NestedObjectList[ZeroTrustTunnelCloudflaredsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams() (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredsDataSourceModel) toListParams(_ context.Context) (params zero_trust.TunnelListParams, diags diag.Diagnostics) {
 	mExistedAt, errs := m.ExistedAt.ValueRFC3339Time()
 	diags.Append(errs...)
 	mWasActiveAt, errs := m.WasActiveAt.ValueRFC3339Time()

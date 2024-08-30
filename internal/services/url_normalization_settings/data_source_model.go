@@ -3,6 +3,8 @@
 package url_normalization_settings
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/url_normalization"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -15,7 +17,7 @@ type URLNormalizationSettingsDataSourceModel struct {
 	Type   types.String `tfsdk:"type" json:"type"`
 }
 
-func (m *URLNormalizationSettingsDataSourceModel) toReadParams() (params url_normalization.URLNormalizationGetParams, diags diag.Diagnostics) {
+func (m *URLNormalizationSettingsDataSourceModel) toReadParams(_ context.Context) (params url_normalization.URLNormalizationGetParams, diags diag.Diagnostics) {
 	params = url_normalization.URLNormalizationGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

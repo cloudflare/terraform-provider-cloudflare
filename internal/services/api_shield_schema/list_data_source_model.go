@@ -3,6 +3,8 @@
 package api_shield_schema
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -23,7 +25,7 @@ type APIShieldSchemasDataSourceModel struct {
 	Result            customfield.NestedObjectList[APIShieldSchemasResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *APIShieldSchemasDataSourceModel) toListParams() (params api_gateway.UserSchemaListParams, diags diag.Diagnostics) {
+func (m *APIShieldSchemasDataSourceModel) toListParams(_ context.Context) (params api_gateway.UserSchemaListParams, diags diag.Diagnostics) {
 	params = api_gateway.UserSchemaListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

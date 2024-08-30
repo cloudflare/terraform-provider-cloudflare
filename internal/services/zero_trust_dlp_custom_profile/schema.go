@@ -5,6 +5,7 @@ package zero_trust_dlp_custom_profile
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -51,6 +52,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												Required: true,
 											},
 											"validation": schema.StringAttribute{
+												Computed: true,
 												Optional: true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("luhn"),
@@ -79,7 +81,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"context_awareness": schema.SingleNestedAttribute{
 							Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileProfilesContextAwarenessModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -99,14 +103,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"description": schema.StringAttribute{
 							Description: "The description of the profile",
+							Computed:    true,
 							Optional:    true,
 						},
 						"ocr_enabled": schema.BoolAttribute{
+							Computed: true,
 							Optional: true,
 						},
 						"shared_entries": schema.ListNestedAttribute{
 							Description: "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileProfilesSharedEntriesModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
@@ -187,6 +195,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Required: true,
 								},
 								"validation": schema.StringAttribute{
+									Computed: true,
 									Optional: true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("luhn"),

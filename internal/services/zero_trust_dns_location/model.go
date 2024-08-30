@@ -3,6 +3,7 @@
 package zero_trust_dns_location
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -29,16 +30,16 @@ type ZeroTrustDNSLocationModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsModel struct {
-	DOH  *ZeroTrustDNSLocationEndpointsDOHModel  `tfsdk:"doh" json:"doh"`
-	DOT  *ZeroTrustDNSLocationEndpointsDOTModel  `tfsdk:"dot" json:"dot"`
-	IPV4 *ZeroTrustDNSLocationEndpointsIPV4Model `tfsdk:"ipv4" json:"ipv4"`
-	IPV6 *ZeroTrustDNSLocationEndpointsIPV6Model `tfsdk:"ipv6" json:"ipv6"`
+	DOH  customfield.NestedObject[ZeroTrustDNSLocationEndpointsDOHModel]  `tfsdk:"doh" json:"doh,computed_optional"`
+	DOT  customfield.NestedObject[ZeroTrustDNSLocationEndpointsDOTModel]  `tfsdk:"dot" json:"dot,computed_optional"`
+	IPV4 customfield.NestedObject[ZeroTrustDNSLocationEndpointsIPV4Model] `tfsdk:"ipv4" json:"ipv4,computed_optional"`
+	IPV6 customfield.NestedObject[ZeroTrustDNSLocationEndpointsIPV6Model] `tfsdk:"ipv6" json:"ipv6,computed_optional"`
 }
 
 type ZeroTrustDNSLocationEndpointsDOHModel struct {
-	Enabled      types.Bool                                        `tfsdk:"enabled" json:"enabled"`
-	Networks     *[]*ZeroTrustDNSLocationEndpointsDOHNetworksModel `tfsdk:"networks" json:"networks"`
-	RequireToken types.Bool                                        `tfsdk:"require_token" json:"require_token"`
+	Enabled      types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Networks     customfield.NestedObjectList[ZeroTrustDNSLocationEndpointsDOHNetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
+	RequireToken types.Bool                                                                  `tfsdk:"require_token" json:"require_token,computed_optional"`
 }
 
 type ZeroTrustDNSLocationEndpointsDOHNetworksModel struct {
@@ -46,8 +47,8 @@ type ZeroTrustDNSLocationEndpointsDOHNetworksModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsDOTModel struct {
-	Enabled  types.Bool                                        `tfsdk:"enabled" json:"enabled"`
-	Networks *[]*ZeroTrustDNSLocationEndpointsDOTNetworksModel `tfsdk:"networks" json:"networks"`
+	Enabled  types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Networks customfield.NestedObjectList[ZeroTrustDNSLocationEndpointsDOTNetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
 }
 
 type ZeroTrustDNSLocationEndpointsDOTNetworksModel struct {
@@ -55,12 +56,12 @@ type ZeroTrustDNSLocationEndpointsDOTNetworksModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsIPV4Model struct {
-	Enabled types.Bool `tfsdk:"enabled" json:"enabled"`
+	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
 type ZeroTrustDNSLocationEndpointsIPV6Model struct {
-	Enabled  types.Bool                                         `tfsdk:"enabled" json:"enabled"`
-	Networks *[]*ZeroTrustDNSLocationEndpointsIPV6NetworksModel `tfsdk:"networks" json:"networks"`
+	Enabled  types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Networks customfield.NestedObjectList[ZeroTrustDNSLocationEndpointsIPV6NetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
 }
 
 type ZeroTrustDNSLocationEndpointsIPV6NetworksModel struct {

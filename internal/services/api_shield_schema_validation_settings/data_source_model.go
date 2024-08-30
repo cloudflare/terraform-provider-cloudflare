@@ -3,6 +3,8 @@
 package api_shield_schema_validation_settings
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -15,7 +17,7 @@ type APIShieldSchemaValidationSettingsDataSourceModel struct {
 	ValidationOverrideMitigationAction types.String `tfsdk:"validation_override_mitigation_action" json:"validation_override_mitigation_action"`
 }
 
-func (m *APIShieldSchemaValidationSettingsDataSourceModel) toReadParams() (params api_gateway.SettingSchemaValidationGetParams, diags diag.Diagnostics) {
+func (m *APIShieldSchemaValidationSettingsDataSourceModel) toReadParams(_ context.Context) (params api_gateway.SettingSchemaValidationGetParams, diags diag.Diagnostics) {
 	params = api_gateway.SettingSchemaValidationGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

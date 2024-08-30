@@ -3,6 +3,7 @@
 package api_token
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -33,26 +34,26 @@ type APITokenPoliciesModel struct {
 }
 
 type APITokenPoliciesPermissionGroupsModel struct {
-	ID   types.String                               `tfsdk:"id" json:"id,computed"`
-	Meta *APITokenPoliciesPermissionGroupsMetaModel `tfsdk:"meta" json:"meta"`
-	Name types.String                               `tfsdk:"name" json:"name,computed"`
+	ID   types.String                                                        `tfsdk:"id" json:"id,computed"`
+	Meta customfield.NestedObject[APITokenPoliciesPermissionGroupsMetaModel] `tfsdk:"meta" json:"meta,computed_optional"`
+	Name types.String                                                        `tfsdk:"name" json:"name,computed"`
 }
 
 type APITokenPoliciesPermissionGroupsMetaModel struct {
-	Key   types.String `tfsdk:"key" json:"key"`
-	Value types.String `tfsdk:"value" json:"value"`
+	Key   types.String `tfsdk:"key" json:"key,computed_optional"`
+	Value types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type APITokenPoliciesResourcesModel struct {
-	Resource types.String `tfsdk:"resource" json:"resource"`
-	Scope    types.String `tfsdk:"scope" json:"scope"`
+	Resource types.String `tfsdk:"resource" json:"resource,computed_optional"`
+	Scope    types.String `tfsdk:"scope" json:"scope,computed_optional"`
 }
 
 type APITokenConditionModel struct {
-	RequestIP *APITokenConditionRequestIPModel `tfsdk:"request_ip" json:"request.ip"`
+	RequestIP customfield.NestedObject[APITokenConditionRequestIPModel] `tfsdk:"request_ip" json:"request.ip,computed_optional"`
 }
 
 type APITokenConditionRequestIPModel struct {
-	In    *[]types.String `tfsdk:"in" json:"in"`
-	NotIn *[]types.String `tfsdk:"not_in" json:"not_in"`
+	In    types.List `tfsdk:"in" json:"in,computed_optional"`
+	NotIn types.List `tfsdk:"not_in" json:"not_in,computed_optional"`
 }

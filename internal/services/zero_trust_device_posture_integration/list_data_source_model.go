@@ -3,6 +3,8 @@
 package zero_trust_device_posture_integration
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -20,7 +22,7 @@ type ZeroTrustDevicePostureIntegrationsDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustDevicePostureIntegrationsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustDevicePostureIntegrationsDataSourceModel) toListParams() (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDevicePostureIntegrationsDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureIntegrationListParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePostureIntegrationListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

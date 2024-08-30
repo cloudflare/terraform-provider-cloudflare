@@ -3,6 +3,8 @@
 package keyless_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/keyless_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type KeylessCertificatesDataSourceModel struct {
 	Result   customfield.NestedObjectList[KeylessCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *KeylessCertificatesDataSourceModel) toListParams() (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
+func (m *KeylessCertificatesDataSourceModel) toListParams(_ context.Context) (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
 	params = keyless_certificates.KeylessCertificateListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

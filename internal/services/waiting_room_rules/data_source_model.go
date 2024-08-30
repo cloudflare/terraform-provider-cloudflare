@@ -3,6 +3,8 @@
 package waiting_room_rules
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type WaitingRoomRulesDataSourceModel struct {
 	ZoneID        types.String `tfsdk:"zone_id" path:"zone_id"`
 }
 
-func (m *WaitingRoomRulesDataSourceModel) toReadParams() (params waiting_rooms.RuleGetParams, diags diag.Diagnostics) {
+func (m *WaitingRoomRulesDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.RuleGetParams, diags diag.Diagnostics) {
 	params = waiting_rooms.RuleGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

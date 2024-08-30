@@ -3,6 +3,8 @@
 package pages_domain
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -34,7 +36,7 @@ type PagesDomainDataSourceModel struct {
 	Filter               *PagesDomainFindOneByDataSourceModel                                 `tfsdk:"filter"`
 }
 
-func (m *PagesDomainDataSourceModel) toReadParams() (params pages.ProjectDomainGetParams, diags diag.Diagnostics) {
+func (m *PagesDomainDataSourceModel) toReadParams(_ context.Context) (params pages.ProjectDomainGetParams, diags diag.Diagnostics) {
 	params = pages.ProjectDomainGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -42,7 +44,7 @@ func (m *PagesDomainDataSourceModel) toReadParams() (params pages.ProjectDomainG
 	return
 }
 
-func (m *PagesDomainDataSourceModel) toListParams() (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
+func (m *PagesDomainDataSourceModel) toListParams(_ context.Context) (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
 	params = pages.ProjectDomainListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

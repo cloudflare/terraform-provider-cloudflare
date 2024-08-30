@@ -3,6 +3,7 @@
 package load_balancer_pool
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -34,17 +35,17 @@ type LoadBalancerPoolModel struct {
 }
 
 type LoadBalancerPoolOriginsModel struct {
-	Address          types.String                        `tfsdk:"address" json:"address"`
-	DisabledAt       timetypes.RFC3339                   `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
-	Enabled          types.Bool                          `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Header           *LoadBalancerPoolOriginsHeaderModel `tfsdk:"header" json:"header"`
-	Name             types.String                        `tfsdk:"name" json:"name"`
-	VirtualNetworkID types.String                        `tfsdk:"virtual_network_id" json:"virtual_network_id"`
-	Weight           types.Float64                       `tfsdk:"weight" json:"weight,computed_optional"`
+	Address          types.String                                                 `tfsdk:"address" json:"address,computed_optional"`
+	DisabledAt       timetypes.RFC3339                                            `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
+	Enabled          types.Bool                                                   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Header           customfield.NestedObject[LoadBalancerPoolOriginsHeaderModel] `tfsdk:"header" json:"header,computed_optional"`
+	Name             types.String                                                 `tfsdk:"name" json:"name,computed_optional"`
+	VirtualNetworkID types.String                                                 `tfsdk:"virtual_network_id" json:"virtual_network_id,computed_optional"`
+	Weight           types.Float64                                                `tfsdk:"weight" json:"weight,computed_optional"`
 }
 
 type LoadBalancerPoolOriginsHeaderModel struct {
-	Host *[]types.String `tfsdk:"host" json:"Host"`
+	Host types.List `tfsdk:"host" json:"Host,computed_optional"`
 }
 
 type LoadBalancerPoolLoadSheddingModel struct {
@@ -55,18 +56,18 @@ type LoadBalancerPoolLoadSheddingModel struct {
 }
 
 type LoadBalancerPoolNotificationFilterModel struct {
-	Origin *LoadBalancerPoolNotificationFilterOriginModel `tfsdk:"origin" json:"origin"`
-	Pool   *LoadBalancerPoolNotificationFilterPoolModel   `tfsdk:"pool" json:"pool"`
+	Origin customfield.NestedObject[LoadBalancerPoolNotificationFilterOriginModel] `tfsdk:"origin" json:"origin,computed_optional"`
+	Pool   customfield.NestedObject[LoadBalancerPoolNotificationFilterPoolModel]   `tfsdk:"pool" json:"pool,computed_optional"`
 }
 
 type LoadBalancerPoolNotificationFilterOriginModel struct {
 	Disable types.Bool `tfsdk:"disable" json:"disable,computed_optional"`
-	Healthy types.Bool `tfsdk:"healthy" json:"healthy"`
+	Healthy types.Bool `tfsdk:"healthy" json:"healthy,computed_optional"`
 }
 
 type LoadBalancerPoolNotificationFilterPoolModel struct {
 	Disable types.Bool `tfsdk:"disable" json:"disable,computed_optional"`
-	Healthy types.Bool `tfsdk:"healthy" json:"healthy"`
+	Healthy types.Bool `tfsdk:"healthy" json:"healthy,computed_optional"`
 }
 
 type LoadBalancerPoolOriginSteeringModel struct {

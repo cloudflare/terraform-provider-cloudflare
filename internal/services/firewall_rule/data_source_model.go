@@ -3,6 +3,8 @@
 package firewall_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -31,7 +33,7 @@ type FirewallRuleDataSourceModel struct {
 	Products       types.List    `tfsdk:"products" json:"products,computed"`
 }
 
-func (m *FirewallRuleDataSourceModel) toReadParams() (params firewall.RuleGetParams, diags diag.Diagnostics) {
+func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.RuleGetParams, diags diag.Diagnostics) {
 	params = firewall.RuleGetParams{
 		PathID: cloudflare.F(m.PathID.ValueString()),
 	}
@@ -39,7 +41,7 @@ func (m *FirewallRuleDataSourceModel) toReadParams() (params firewall.RuleGetPar
 	return
 }
 
-func (m *FirewallRuleDataSourceModel) toListParams() (params firewall.RuleListParams, diags diag.Diagnostics) {
+func (m *FirewallRuleDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
 	params = firewall.RuleListParams{}
 
 	return

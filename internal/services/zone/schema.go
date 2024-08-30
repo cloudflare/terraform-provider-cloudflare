@@ -39,6 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Identifier",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -123,29 +124,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"cdn_only": schema.BoolAttribute{
 						Description: "The zone is only configured for CDN",
+						Computed:    true,
 						Optional:    true,
 					},
 					"custom_certificate_quota": schema.Int64Attribute{
 						Description: "Number of Custom Certificates the zone can have",
+						Computed:    true,
 						Optional:    true,
 					},
 					"dns_only": schema.BoolAttribute{
 						Description: "The zone is only configured for DNS",
+						Computed:    true,
 						Optional:    true,
 					},
 					"foundation_dns": schema.BoolAttribute{
 						Description: "The zone is setup with Foundation DNS",
+						Computed:    true,
 						Optional:    true,
 					},
 					"page_rule_quota": schema.Int64Attribute{
 						Description: "Number of Page Rules a zone can have",
+						Computed:    true,
 						Optional:    true,
 					},
 					"phishing_detected": schema.BoolAttribute{
 						Description: "The zone has been flagged for phishing",
+						Computed:    true,
 						Optional:    true,
 					},
 					"step": schema.Int64Attribute{
+						Computed: true,
 						Optional: true,
 					},
 				},
@@ -157,14 +165,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Identifier",
+						Computed:    true,
 						Optional:    true,
 					},
 					"name": schema.StringAttribute{
 						Description: "Name of the owner",
+						Computed:    true,
 						Optional:    true,
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of owner",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

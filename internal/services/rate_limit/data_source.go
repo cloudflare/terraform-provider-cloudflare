@@ -80,7 +80,7 @@ func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 		}
 		data = &env.Result
 	} else {
-		params, diags := data.toListParams()
+		params, diags := data.toListParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return

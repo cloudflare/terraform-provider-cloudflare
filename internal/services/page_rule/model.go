@@ -3,6 +3,7 @@
 package page_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,14 +23,14 @@ type PageRuleModel struct {
 }
 
 type PageRuleActionsModel struct {
-	ModifiedOn timetypes.RFC3339          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name       types.String               `tfsdk:"name" json:"name"`
-	Value      *PageRuleActionsValueModel `tfsdk:"value" json:"value"`
+	ModifiedOn timetypes.RFC3339                                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name       types.String                                        `tfsdk:"name" json:"name,computed_optional"`
+	Value      customfield.NestedObject[PageRuleActionsValueModel] `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type PageRuleActionsValueModel struct {
-	Type types.String `tfsdk:"type" json:"type"`
-	URL  types.String `tfsdk:"url" json:"url"`
+	Type types.String `tfsdk:"type" json:"type,computed_optional"`
+	URL  types.String `tfsdk:"url" json:"url,computed_optional"`
 }
 
 type PageRuleTargetsModel struct {

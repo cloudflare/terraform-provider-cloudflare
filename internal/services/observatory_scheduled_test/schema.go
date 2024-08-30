@@ -82,6 +82,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"frequency": schema.StringAttribute{
 						Description: "The frequency of the test.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),
@@ -89,6 +90,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"region": schema.StringAttribute{
 						Description: "A test region.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -118,6 +120,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"url": schema.StringAttribute{
 						Description: "A URL.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -128,32 +131,41 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "UUID",
+						Computed:    true,
 						Optional:    true,
 					},
 					"date": schema.StringAttribute{
+						Computed:   true,
 						Optional:   true,
 						CustomType: timetypes.RFC3339Type{},
 					},
 					"desktop_report": schema.SingleNestedAttribute{
 						Description: "The Lighthouse report.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ObservatoryScheduledTestTestDesktopReportModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"cls": schema.Float64Attribute{
 								Description: "Cumulative Layout Shift.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"device_type": schema.StringAttribute{
 								Description: "The type of device.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("DESKTOP", "MOBILE"),
 								},
 							},
 							"error": schema.SingleNestedAttribute{
-								Optional: true,
+								Computed:   true,
+								Optional:   true,
+								CustomType: customfield.NewNestedObjectType[ObservatoryScheduledTestTestDesktopReportErrorModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"code": schema.StringAttribute{
 										Description: "The error code of the Lighthouse result.",
+										Computed:    true,
 										Optional:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -167,36 +179,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 									"detail": schema.StringAttribute{
 										Description: "Detailed error message.",
+										Computed:    true,
 										Optional:    true,
 									},
 									"final_displayed_url": schema.StringAttribute{
 										Description: "The final URL displayed to the user.",
+										Computed:    true,
 										Optional:    true,
 									},
 								},
 							},
 							"fcp": schema.Float64Attribute{
 								Description: "First Contentful Paint.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"json_report_url": schema.StringAttribute{
 								Description: "The URL to the full Lighthouse JSON report.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"lcp": schema.Float64Attribute{
 								Description: "Largest Contentful Paint.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"performance_score": schema.Float64Attribute{
 								Description: "The Lighthouse performance score.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"si": schema.Float64Attribute{
 								Description: "Speed Index.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"state": schema.StringAttribute{
 								Description: "The state of the Lighthouse report.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -208,38 +228,48 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"tbt": schema.Float64Attribute{
 								Description: "Total Blocking Time.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"ttfb": schema.Float64Attribute{
 								Description: "Time To First Byte.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"tti": schema.Float64Attribute{
 								Description: "Time To Interactive.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"mobile_report": schema.SingleNestedAttribute{
 						Description: "The Lighthouse report.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ObservatoryScheduledTestTestMobileReportModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"cls": schema.Float64Attribute{
 								Description: "Cumulative Layout Shift.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"device_type": schema.StringAttribute{
 								Description: "The type of device.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("DESKTOP", "MOBILE"),
 								},
 							},
 							"error": schema.SingleNestedAttribute{
-								Optional: true,
+								Computed:   true,
+								Optional:   true,
+								CustomType: customfield.NewNestedObjectType[ObservatoryScheduledTestTestMobileReportErrorModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"code": schema.StringAttribute{
 										Description: "The error code of the Lighthouse result.",
+										Computed:    true,
 										Optional:    true,
 										Validators: []validator.String{
 											stringvalidator.OneOfCaseInsensitive(
@@ -253,36 +283,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 									"detail": schema.StringAttribute{
 										Description: "Detailed error message.",
+										Computed:    true,
 										Optional:    true,
 									},
 									"final_displayed_url": schema.StringAttribute{
 										Description: "The final URL displayed to the user.",
+										Computed:    true,
 										Optional:    true,
 									},
 								},
 							},
 							"fcp": schema.Float64Attribute{
 								Description: "First Contentful Paint.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"json_report_url": schema.StringAttribute{
 								Description: "The URL to the full Lighthouse JSON report.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"lcp": schema.Float64Attribute{
 								Description: "Largest Contentful Paint.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"performance_score": schema.Float64Attribute{
 								Description: "The Lighthouse performance score.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"si": schema.Float64Attribute{
 								Description: "Speed Index.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"state": schema.StringAttribute{
 								Description: "The state of the Lighthouse report.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -294,27 +332,34 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"tbt": schema.Float64Attribute{
 								Description: "Total Blocking Time.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"ttfb": schema.Float64Attribute{
 								Description: "Time To First Byte.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"tti": schema.Float64Attribute{
 								Description: "Time To Interactive.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"region": schema.SingleNestedAttribute{
 						Description: "A test region with a label.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ObservatoryScheduledTestTestRegionModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"label": schema.StringAttribute{
+								Computed: true,
 								Optional: true,
 							},
 							"value": schema.StringAttribute{
 								Description: "A test region.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -346,6 +391,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"schedule_frequency": schema.StringAttribute{
 						Description: "The frequency of the test.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),
@@ -353,6 +399,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"url": schema.StringAttribute{
 						Description: "A URL.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

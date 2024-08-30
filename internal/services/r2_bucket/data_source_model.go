@@ -3,6 +3,8 @@
 package r2_bucket
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/r2"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -22,7 +24,7 @@ type R2BucketDataSourceModel struct {
 	StorageClass types.String `tfsdk:"storage_class" json:"storage_class,computed_optional"`
 }
 
-func (m *R2BucketDataSourceModel) toReadParams() (params r2.BucketGetParams, diags diag.Diagnostics) {
+func (m *R2BucketDataSourceModel) toReadParams(_ context.Context) (params r2.BucketGetParams, diags diag.Diagnostics) {
 	params = r2.BucketGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

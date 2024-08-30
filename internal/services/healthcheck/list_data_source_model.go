@@ -3,6 +3,8 @@
 package healthcheck
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/healthchecks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type HealthchecksDataSourceModel struct {
 	Result   customfield.NestedObjectList[HealthchecksResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *HealthchecksDataSourceModel) toListParams() (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
+func (m *HealthchecksDataSourceModel) toListParams(_ context.Context) (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
 	params = healthchecks.HealthcheckListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

@@ -3,6 +3,7 @@
 package zero_trust_access_application
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -50,14 +51,14 @@ type ZeroTrustAccessApplicationModel struct {
 }
 
 type ZeroTrustAccessApplicationCORSHeadersModel struct {
-	AllowAllHeaders  types.Bool      `tfsdk:"allow_all_headers" json:"allow_all_headers"`
-	AllowAllMethods  types.Bool      `tfsdk:"allow_all_methods" json:"allow_all_methods"`
-	AllowAllOrigins  types.Bool      `tfsdk:"allow_all_origins" json:"allow_all_origins"`
-	AllowCredentials types.Bool      `tfsdk:"allow_credentials" json:"allow_credentials"`
-	AllowedHeaders   *[]types.String `tfsdk:"allowed_headers" json:"allowed_headers"`
-	AllowedMethods   *[]types.String `tfsdk:"allowed_methods" json:"allowed_methods"`
-	AllowedOrigins   *[]types.String `tfsdk:"allowed_origins" json:"allowed_origins"`
-	MaxAge           types.Float64   `tfsdk:"max_age" json:"max_age"`
+	AllowAllHeaders  types.Bool    `tfsdk:"allow_all_headers" json:"allow_all_headers,computed_optional"`
+	AllowAllMethods  types.Bool    `tfsdk:"allow_all_methods" json:"allow_all_methods,computed_optional"`
+	AllowAllOrigins  types.Bool    `tfsdk:"allow_all_origins" json:"allow_all_origins,computed_optional"`
+	AllowCredentials types.Bool    `tfsdk:"allow_credentials" json:"allow_credentials,computed_optional"`
+	AllowedHeaders   types.List    `tfsdk:"allowed_headers" json:"allowed_headers,computed_optional"`
+	AllowedMethods   types.List    `tfsdk:"allowed_methods" json:"allowed_methods,computed_optional"`
+	AllowedOrigins   types.List    `tfsdk:"allowed_origins" json:"allowed_origins,computed_optional"`
+	MaxAge           types.Float64 `tfsdk:"max_age" json:"max_age,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationFooterLinksModel struct {
@@ -66,20 +67,20 @@ type ZeroTrustAccessApplicationFooterLinksModel struct {
 }
 
 type ZeroTrustAccessApplicationLandingPageDesignModel struct {
-	ButtonColor     types.String `tfsdk:"button_color" json:"button_color"`
-	ButtonTextColor types.String `tfsdk:"button_text_color" json:"button_text_color"`
-	ImageURL        types.String `tfsdk:"image_url" json:"image_url"`
-	Message         types.String `tfsdk:"message" json:"message"`
+	ButtonColor     types.String `tfsdk:"button_color" json:"button_color,computed_optional"`
+	ButtonTextColor types.String `tfsdk:"button_text_color" json:"button_text_color,computed_optional"`
+	ImageURL        types.String `tfsdk:"image_url" json:"image_url,computed_optional"`
+	Message         types.String `tfsdk:"message" json:"message,computed_optional"`
 	Title           types.String `tfsdk:"title" json:"title,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationPoliciesModel struct {
-	ID         types.String `tfsdk:"id" json:"id"`
-	Precedence types.Int64  `tfsdk:"precedence" json:"precedence"`
+	ID         types.String `tfsdk:"id" json:"id,computed_optional"`
+	Precedence types.Int64  `tfsdk:"precedence" json:"precedence,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppModel struct {
-	AuthType                      types.String                                                    `tfsdk:"auth_type" json:"auth_type"`
+	AuthType                      types.String                                                    `tfsdk:"auth_type" json:"auth_type,computed_optional"`
 	ConsumerServiceURL            types.String                                                    `tfsdk:"consumer_service_url" json:"consumer_service_url"`
 	CreatedAt                     timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomAttributes              *ZeroTrustAccessApplicationSaaSAppCustomAttributesModel         `tfsdk:"custom_attributes" json:"custom_attributes"`
@@ -87,7 +88,7 @@ type ZeroTrustAccessApplicationSaaSAppModel struct {
 	IdPEntityID                   types.String                                                    `tfsdk:"idp_entity_id" json:"idp_entity_id"`
 	NameIDFormat                  types.String                                                    `tfsdk:"name_id_format" json:"name_id_format"`
 	NameIDTransformJsonata        types.String                                                    `tfsdk:"name_id_transform_jsonata" json:"name_id_transform_jsonata"`
-	PublicKey                     types.String                                                    `tfsdk:"public_key" json:"public_key"`
+	PublicKey                     types.String                                                    `tfsdk:"public_key" json:"public_key,computed_optional"`
 	SAMLAttributeTransformJsonata types.String                                                    `tfsdk:"saml_attribute_transform_jsonata" json:"saml_attribute_transform_jsonata"`
 	SPEntityID                    types.String                                                    `tfsdk:"sp_entity_id" json:"sp_entity_id"`
 	SSOEndpoint                   types.String                                                    `tfsdk:"sso_endpoint" json:"sso_endpoint"`
@@ -107,46 +108,46 @@ type ZeroTrustAccessApplicationSaaSAppModel struct {
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomAttributesModel struct {
-	FriendlyName types.String                                                  `tfsdk:"friendly_name" json:"friendly_name"`
-	Name         types.String                                                  `tfsdk:"name" json:"name"`
-	NameFormat   types.String                                                  `tfsdk:"name_format" json:"name_format"`
-	Required     types.Bool                                                    `tfsdk:"required" json:"required"`
-	Source       *ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceModel `tfsdk:"source" json:"source"`
+	FriendlyName types.String                                                                           `tfsdk:"friendly_name" json:"friendly_name,computed_optional"`
+	Name         types.String                                                                           `tfsdk:"name" json:"name,computed_optional"`
+	NameFormat   types.String                                                                           `tfsdk:"name_format" json:"name_format,computed_optional"`
+	Required     types.Bool                                                                             `tfsdk:"required" json:"required,computed_optional"`
+	Source       customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceModel] `tfsdk:"source" json:"source,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceModel struct {
-	Name      types.String            `tfsdk:"name" json:"name"`
-	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp"`
+	Name      types.String            `tfsdk:"name" json:"name,computed_optional"`
+	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomClaimsModel struct {
-	Name     types.String                                              `tfsdk:"name" json:"name"`
-	Required types.Bool                                                `tfsdk:"required" json:"required"`
-	Scope    types.String                                              `tfsdk:"scope" json:"scope"`
-	Source   *ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel `tfsdk:"source" json:"source"`
+	Name     types.String                                                                       `tfsdk:"name" json:"name,computed_optional"`
+	Required types.Bool                                                                         `tfsdk:"required" json:"required,computed_optional"`
+	Scope    types.String                                                                       `tfsdk:"scope" json:"scope,computed_optional"`
+	Source   customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel] `tfsdk:"source" json:"source,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel struct {
-	Name      types.String            `tfsdk:"name" json:"name"`
-	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp"`
+	Name      types.String            `tfsdk:"name" json:"name,computed_optional"`
+	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppHybridAndImplicitOptionsModel struct {
-	ReturnAccessTokenFromAuthorizationEndpoint types.Bool `tfsdk:"return_access_token_from_authorization_endpoint" json:"return_access_token_from_authorization_endpoint"`
-	ReturnIDTokenFromAuthorizationEndpoint     types.Bool `tfsdk:"return_id_token_from_authorization_endpoint" json:"return_id_token_from_authorization_endpoint"`
+	ReturnAccessTokenFromAuthorizationEndpoint types.Bool `tfsdk:"return_access_token_from_authorization_endpoint" json:"return_access_token_from_authorization_endpoint,computed_optional"`
+	ReturnIDTokenFromAuthorizationEndpoint     types.Bool `tfsdk:"return_id_token_from_authorization_endpoint" json:"return_id_token_from_authorization_endpoint,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppRefreshTokenOptionsModel struct {
-	Lifetime types.String `tfsdk:"lifetime" json:"lifetime"`
+	Lifetime types.String `tfsdk:"lifetime" json:"lifetime,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSCIMConfigModel struct {
-	IdPUID             types.String                                             `tfsdk:"idp_uid" json:"idp_uid"`
-	RemoteURI          types.String                                             `tfsdk:"remote_uri" json:"remote_uri"`
-	Authentication     *ZeroTrustAccessApplicationSCIMConfigAuthenticationModel `tfsdk:"authentication" json:"authentication"`
-	DeactivateOnDelete types.Bool                                               `tfsdk:"deactivate_on_delete" json:"deactivate_on_delete"`
-	Enabled            types.Bool                                               `tfsdk:"enabled" json:"enabled"`
-	Mappings           *[]*ZeroTrustAccessApplicationSCIMConfigMappingsModel    `tfsdk:"mappings" json:"mappings"`
+	IdPUID             types.String                                                                      `tfsdk:"idp_uid" json:"idp_uid"`
+	RemoteURI          types.String                                                                      `tfsdk:"remote_uri" json:"remote_uri"`
+	Authentication     customfield.NestedObject[ZeroTrustAccessApplicationSCIMConfigAuthenticationModel] `tfsdk:"authentication" json:"authentication,computed_optional"`
+	DeactivateOnDelete types.Bool                                                                        `tfsdk:"deactivate_on_delete" json:"deactivate_on_delete,computed_optional"`
+	Enabled            types.Bool                                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Mappings           customfield.NestedObjectList[ZeroTrustAccessApplicationSCIMConfigMappingsModel]   `tfsdk:"mappings" json:"mappings,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSCIMConfigAuthenticationModel struct {
@@ -162,15 +163,15 @@ type ZeroTrustAccessApplicationSCIMConfigAuthenticationModel struct {
 }
 
 type ZeroTrustAccessApplicationSCIMConfigMappingsModel struct {
-	Schema           types.String                                                 `tfsdk:"schema" json:"schema"`
-	Enabled          types.Bool                                                   `tfsdk:"enabled" json:"enabled"`
-	Filter           types.String                                                 `tfsdk:"filter" json:"filter"`
-	Operations       *ZeroTrustAccessApplicationSCIMConfigMappingsOperationsModel `tfsdk:"operations" json:"operations"`
-	TransformJsonata types.String                                                 `tfsdk:"transform_jsonata" json:"transform_jsonata"`
+	Schema           types.String                                                                          `tfsdk:"schema" json:"schema"`
+	Enabled          types.Bool                                                                            `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Filter           types.String                                                                          `tfsdk:"filter" json:"filter,computed_optional"`
+	Operations       customfield.NestedObject[ZeroTrustAccessApplicationSCIMConfigMappingsOperationsModel] `tfsdk:"operations" json:"operations,computed_optional"`
+	TransformJsonata types.String                                                                          `tfsdk:"transform_jsonata" json:"transform_jsonata,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSCIMConfigMappingsOperationsModel struct {
-	Create types.Bool `tfsdk:"create" json:"create"`
-	Delete types.Bool `tfsdk:"delete" json:"delete"`
-	Update types.Bool `tfsdk:"update" json:"update"`
+	Create types.Bool `tfsdk:"create" json:"create,computed_optional"`
+	Delete types.Bool `tfsdk:"delete" json:"delete,computed_optional"`
+	Update types.Bool `tfsdk:"update" json:"update,computed_optional"`
 }

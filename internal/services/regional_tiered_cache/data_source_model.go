@@ -3,6 +3,8 @@
 package regional_tiered_cache
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/cache"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -21,7 +23,7 @@ type RegionalTieredCacheDataSourceModel struct {
 	Value      *RegionalTieredCacheValueDataSourceModel `tfsdk:"value" json:"value"`
 }
 
-func (m *RegionalTieredCacheDataSourceModel) toReadParams() (params cache.RegionalTieredCacheGetParams, diags diag.Diagnostics) {
+func (m *RegionalTieredCacheDataSourceModel) toReadParams(_ context.Context) (params cache.RegionalTieredCacheGetParams, diags diag.Diagnostics) {
 	params = cache.RegionalTieredCacheGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

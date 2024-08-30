@@ -3,6 +3,8 @@
 package user_agent_blocking_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -28,7 +30,7 @@ type UserAgentBlockingRuleDataSourceModel struct {
 	Filter         *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
 }
 
-func (m *UserAgentBlockingRuleDataSourceModel) toListParams() (params firewall.UARuleListParams, diags diag.Diagnostics) {
+func (m *UserAgentBlockingRuleDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
 	params = firewall.UARuleListParams{}
 
 	if !m.Filter.Description.IsNull() {

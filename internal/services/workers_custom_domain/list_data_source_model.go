@@ -3,6 +3,8 @@
 package workers_custom_domain
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -25,7 +27,7 @@ type WorkersCustomDomainsDataSourceModel struct {
 	Result      customfield.NestedObjectList[WorkersCustomDomainsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *WorkersCustomDomainsDataSourceModel) toListParams() (params workers.DomainListParams, diags diag.Diagnostics) {
+func (m *WorkersCustomDomainsDataSourceModel) toListParams(_ context.Context) (params workers.DomainListParams, diags diag.Diagnostics) {
 	params = workers.DomainListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

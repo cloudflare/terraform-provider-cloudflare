@@ -39,7 +39,7 @@ type AccountMemberPoliciesResourceGroupsModel struct {
 type AccountMemberUserModel struct {
 	Email                          types.String `tfsdk:"email" json:"email"`
 	ID                             types.String `tfsdk:"id" json:"id,computed"`
-	FirstName                      types.String `tfsdk:"first_name" json:"first_name"`
-	LastName                       types.String `tfsdk:"last_name" json:"last_name"`
+	FirstName                      types.String `tfsdk:"first_name" json:"first_name,computed_optional"`
+	LastName                       types.String `tfsdk:"last_name" json:"last_name,computed_optional"`
 	TwoFactorAuthenticationEnabled types.Bool   `tfsdk:"two_factor_authentication_enabled" json:"two_factor_authentication_enabled,computed"`
 }

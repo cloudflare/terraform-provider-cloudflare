@@ -3,6 +3,8 @@
 package d1_database
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -31,7 +33,7 @@ type D1DatabaseDataSourceModel struct {
 	Filter     *D1DatabaseFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *D1DatabaseDataSourceModel) toReadParams() (params d1.DatabaseGetParams, diags diag.Diagnostics) {
+func (m *D1DatabaseDataSourceModel) toReadParams(_ context.Context) (params d1.DatabaseGetParams, diags diag.Diagnostics) {
 	params = d1.DatabaseGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -39,7 +41,7 @@ func (m *D1DatabaseDataSourceModel) toReadParams() (params d1.DatabaseGetParams,
 	return
 }
 
-func (m *D1DatabaseDataSourceModel) toListParams() (params d1.DatabaseListParams, diags diag.Diagnostics) {
+func (m *D1DatabaseDataSourceModel) toListParams(_ context.Context) (params d1.DatabaseListParams, diags diag.Diagnostics) {
 	params = d1.DatabaseListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

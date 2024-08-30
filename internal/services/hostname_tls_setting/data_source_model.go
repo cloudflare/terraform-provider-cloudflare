@@ -3,6 +3,8 @@
 package hostname_tls_setting
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/hostnames"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type HostnameTLSSettingDataSourceModel struct {
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 }
 
-func (m *HostnameTLSSettingDataSourceModel) toReadParams() (params hostnames.SettingTLSGetParams, diags diag.Diagnostics) {
+func (m *HostnameTLSSettingDataSourceModel) toReadParams(_ context.Context) (params hostnames.SettingTLSGetParams, diags diag.Diagnostics) {
 	params = hostnames.SettingTLSGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

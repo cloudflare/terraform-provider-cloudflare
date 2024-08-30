@@ -23,13 +23,13 @@ type ZeroTrustDEXTestModel struct {
 }
 
 type ZeroTrustDEXTestDataModel struct {
-	Host   types.String `tfsdk:"host" json:"host"`
-	Kind   types.String `tfsdk:"kind" json:"kind"`
-	Method types.String `tfsdk:"method" json:"method"`
+	Host   types.String `tfsdk:"host" json:"host,computed_optional"`
+	Kind   types.String `tfsdk:"kind" json:"kind,computed_optional"`
+	Method types.String `tfsdk:"method" json:"method,computed_optional"`
 }
 
 type ZeroTrustDEXTestTargetPoliciesModel struct {
-	ID      types.String `tfsdk:"id" json:"id"`
-	Default types.Bool   `tfsdk:"default" json:"default"`
-	Name    types.String `tfsdk:"name" json:"name"`
+	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
+	Default types.Bool   `tfsdk:"default" json:"default,computed_optional"`
+	Name    types.String `tfsdk:"name" json:"name,computed_optional"`
 }

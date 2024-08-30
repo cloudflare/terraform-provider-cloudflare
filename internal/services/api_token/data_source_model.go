@@ -3,6 +3,8 @@
 package api_token
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -34,7 +36,7 @@ type APITokenDataSourceModel struct {
 	Filter     *APITokenFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
-func (m *APITokenDataSourceModel) toListParams() (params user.TokenListParams, diags diag.Diagnostics) {
+func (m *APITokenDataSourceModel) toListParams(_ context.Context) (params user.TokenListParams, diags diag.Diagnostics) {
 	params = user.TokenListParams{}
 
 	if !m.Filter.Direction.IsNull() {

@@ -3,6 +3,8 @@
 package mtls_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/mtls_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type MTLSCertificatesDataSourceModel struct {
 	Result    customfield.NestedObjectList[MTLSCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *MTLSCertificatesDataSourceModel) toListParams() (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
+func (m *MTLSCertificatesDataSourceModel) toListParams(_ context.Context) (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
 	params = mtls_certificates.MTLSCertificateListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

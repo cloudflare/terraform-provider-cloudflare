@@ -26,14 +26,14 @@ type PagesDomainModel struct {
 }
 
 type PagesDomainValidationDataModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message"`
-	Method       types.String `tfsdk:"method" json:"method"`
-	Status       types.String `tfsdk:"status" json:"status"`
-	TXTName      types.String `tfsdk:"txt_name" json:"txt_name"`
-	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed_optional"`
+	Method       types.String `tfsdk:"method" json:"method,computed_optional"`
+	Status       types.String `tfsdk:"status" json:"status,computed_optional"`
+	TXTName      types.String `tfsdk:"txt_name" json:"txt_name,computed_optional"`
+	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value,computed_optional"`
 }
 
 type PagesDomainVerificationDataModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message"`
-	Status       types.String `tfsdk:"status" json:"status"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed_optional"`
+	Status       types.String `tfsdk:"status" json:"status,computed_optional"`
 }

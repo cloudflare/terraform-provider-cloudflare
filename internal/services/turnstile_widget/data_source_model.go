@@ -3,6 +3,8 @@
 package turnstile_widget
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/challenges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -35,7 +37,7 @@ type TurnstileWidgetDataSourceModel struct {
 	Filter         *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *TurnstileWidgetDataSourceModel) toReadParams() (params challenges.WidgetGetParams, diags diag.Diagnostics) {
+func (m *TurnstileWidgetDataSourceModel) toReadParams(_ context.Context) (params challenges.WidgetGetParams, diags diag.Diagnostics) {
 	params = challenges.WidgetGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -43,7 +45,7 @@ func (m *TurnstileWidgetDataSourceModel) toReadParams() (params challenges.Widge
 	return
 }
 
-func (m *TurnstileWidgetDataSourceModel) toListParams() (params challenges.WidgetListParams, diags diag.Diagnostics) {
+func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params challenges.WidgetListParams, diags diag.Diagnostics) {
 	params = challenges.WidgetListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

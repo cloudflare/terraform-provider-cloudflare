@@ -3,6 +3,8 @@
 package page_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/pagerules"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type PageRuleDataSourceModel struct {
 	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id"`
 }
 
-func (m *PageRuleDataSourceModel) toReadParams() (params pagerules.PageruleGetParams, diags diag.Diagnostics) {
+func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params pagerules.PageruleGetParams, diags diag.Diagnostics) {
 	params = pagerules.PageruleGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

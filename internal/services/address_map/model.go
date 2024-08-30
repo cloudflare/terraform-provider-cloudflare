@@ -33,8 +33,8 @@ type AddressMapModel struct {
 type AddressMapMembershipsModel struct {
 	CanDelete  types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Identifier types.String      `tfsdk:"identifier" json:"identifier"`
-	Kind       types.String      `tfsdk:"kind" json:"kind"`
+	Identifier types.String      `tfsdk:"identifier" json:"identifier,computed_optional"`
+	Kind       types.String      `tfsdk:"kind" json:"kind,computed_optional"`
 }
 
 type AddressMapErrorsModel struct {
@@ -48,8 +48,8 @@ type AddressMapMessagesModel struct {
 }
 
 type AddressMapResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count"`
-	Page       types.Float64 `tfsdk:"page" json:"page"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
+	Count      types.Float64 `tfsdk:"count" json:"count,computed_optional"`
+	Page       types.Float64 `tfsdk:"page" json:"page,computed_optional"`
+	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed_optional"`
+	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed_optional"`
 }

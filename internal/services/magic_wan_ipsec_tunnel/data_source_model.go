@@ -3,6 +3,8 @@
 package magic_wan_ipsec_tunnel
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type MagicWANIPSECTunnelDataSourceModel struct {
 	IPSECTunnel   *MagicWANIPSECTunnelIPSECTunnelDataSourceModel `tfsdk:"ipsec_tunnel" json:"ipsec_tunnel"`
 }
 
-func (m *MagicWANIPSECTunnelDataSourceModel) toReadParams() (params magic_transit.IPSECTunnelGetParams, diags diag.Diagnostics) {
+func (m *MagicWANIPSECTunnelDataSourceModel) toReadParams(_ context.Context) (params magic_transit.IPSECTunnelGetParams, diags diag.Diagnostics) {
 	params = magic_transit.IPSECTunnelGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

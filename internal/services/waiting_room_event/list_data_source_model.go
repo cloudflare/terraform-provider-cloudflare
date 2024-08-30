@@ -3,6 +3,8 @@
 package waiting_room_event
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type WaitingRoomEventsDataSourceModel struct {
 	Result        customfield.NestedObjectList[WaitingRoomEventsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *WaitingRoomEventsDataSourceModel) toListParams() (params waiting_rooms.EventListParams, diags diag.Diagnostics) {
+func (m *WaitingRoomEventsDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.EventListParams, diags diag.Diagnostics) {
 	params = waiting_rooms.EventListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

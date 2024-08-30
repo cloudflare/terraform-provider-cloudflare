@@ -55,7 +55,7 @@ func (d *OriginCACertificatesDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	params, diags := data.toListParams()
+	params, diags := data.toListParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

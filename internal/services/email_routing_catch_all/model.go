@@ -21,8 +21,8 @@ type EmailRoutingCatchAllModel struct {
 }
 
 type EmailRoutingCatchAllActionsModel struct {
-	Type  types.String    `tfsdk:"type" json:"type"`
-	Value *[]types.String `tfsdk:"value" json:"value"`
+	Type  types.String `tfsdk:"type" json:"type"`
+	Value types.List   `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type EmailRoutingCatchAllMatchersModel struct {

@@ -3,6 +3,8 @@
 package web_analytics_site
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rum"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type WebAnalyticsSitesDataSourceModel struct {
 	Result    customfield.NestedObjectList[WebAnalyticsSitesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *WebAnalyticsSitesDataSourceModel) toListParams() (params rum.SiteInfoListParams, diags diag.Diagnostics) {
+func (m *WebAnalyticsSitesDataSourceModel) toListParams(_ context.Context) (params rum.SiteInfoListParams, diags diag.Diagnostics) {
 	params = rum.SiteInfoListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

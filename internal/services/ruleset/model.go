@@ -3,6 +3,7 @@
 package ruleset
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -25,21 +26,21 @@ type RulesetModel struct {
 }
 
 type RulesetRulesModel struct {
-	LastUpdated      timetypes.RFC3339                  `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Version          types.String                       `tfsdk:"version" json:"version,computed"`
-	ID               types.String                       `tfsdk:"id" json:"id"`
-	Action           types.String                       `tfsdk:"action" json:"action"`
-	ActionParameters *RulesetRulesActionParametersModel `tfsdk:"action_parameters" json:"action_parameters"`
-	Categories       types.List                         `tfsdk:"categories" json:"categories,computed"`
-	Description      types.String                       `tfsdk:"description" json:"description,computed_optional"`
-	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Expression       types.String                       `tfsdk:"expression" json:"expression"`
-	Logging          *RulesetRulesLoggingModel          `tfsdk:"logging" json:"logging"`
-	Ref              types.String                       `tfsdk:"ref" json:"ref"`
+	LastUpdated      timetypes.RFC3339                                           `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version          types.String                                                `tfsdk:"version" json:"version,computed"`
+	ID               types.String                                                `tfsdk:"id" json:"id,computed_optional"`
+	Action           types.String                                                `tfsdk:"action" json:"action,computed_optional"`
+	ActionParameters customfield.NestedObject[RulesetRulesActionParametersModel] `tfsdk:"action_parameters" json:"action_parameters,computed_optional"`
+	Categories       types.List                                                  `tfsdk:"categories" json:"categories,computed"`
+	Description      types.String                                                `tfsdk:"description" json:"description,computed_optional"`
+	Enabled          types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Expression       types.String                                                `tfsdk:"expression" json:"expression,computed_optional"`
+	Logging          customfield.NestedObject[RulesetRulesLoggingModel]          `tfsdk:"logging" json:"logging,computed_optional"`
+	Ref              types.String                                                `tfsdk:"ref" json:"ref,computed_optional"`
 }
 
 type RulesetRulesActionParametersModel struct {
-	Response *RulesetRulesActionParametersResponseModel `tfsdk:"response" json:"response"`
+	Response customfield.NestedObject[RulesetRulesActionParametersResponseModel] `tfsdk:"response" json:"response,computed_optional"`
 }
 
 type RulesetRulesActionParametersResponseModel struct {

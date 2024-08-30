@@ -3,6 +3,8 @@
 package workers_script
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type WorkersScriptsDataSourceModel struct {
 	Result    customfield.NestedObjectList[WorkersScriptsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *WorkersScriptsDataSourceModel) toListParams() (params workers.ScriptListParams, diags diag.Diagnostics) {
+func (m *WorkersScriptsDataSourceModel) toListParams(_ context.Context) (params workers.ScriptListParams, diags diag.Diagnostics) {
 	params = workers.ScriptListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

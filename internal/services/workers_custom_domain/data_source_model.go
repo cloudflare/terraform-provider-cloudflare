@@ -3,6 +3,8 @@
 package workers_custom_domain
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -30,7 +32,7 @@ type WorkersCustomDomainDataSourceModel struct {
 	Filter      *WorkersCustomDomainFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *WorkersCustomDomainDataSourceModel) toReadParams() (params workers.DomainGetParams, diags diag.Diagnostics) {
+func (m *WorkersCustomDomainDataSourceModel) toReadParams(_ context.Context) (params workers.DomainGetParams, diags diag.Diagnostics) {
 	params = workers.DomainGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -38,7 +40,7 @@ func (m *WorkersCustomDomainDataSourceModel) toReadParams() (params workers.Doma
 	return
 }
 
-func (m *WorkersCustomDomainDataSourceModel) toListParams() (params workers.DomainListParams, diags diag.Diagnostics) {
+func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (params workers.DomainListParams, diags diag.Diagnostics) {
 	params = workers.DomainListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

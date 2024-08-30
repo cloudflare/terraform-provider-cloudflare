@@ -3,6 +3,8 @@
 package zero_trust_tunnel_cloudflared_virtual_network
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -31,7 +33,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel struct {
 	Filter           *ZeroTrustTunnelCloudflaredVirtualNetworkFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toReadParams() (params zero_trust.NetworkVirtualNetworkGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toReadParams(_ context.Context) (params zero_trust.NetworkVirtualNetworkGetParams, diags diag.Diagnostics) {
 	params = zero_trust.NetworkVirtualNetworkGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -39,7 +41,7 @@ func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toReadParams()
 	return
 }
 
-func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toListParams() (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredVirtualNetworkDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
 	params = zero_trust.NetworkVirtualNetworkListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

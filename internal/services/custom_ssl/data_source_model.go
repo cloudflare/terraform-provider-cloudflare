@@ -3,6 +3,8 @@
 package custom_ssl
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/custom_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -38,7 +40,7 @@ type CustomSSLDataSourceModel struct {
 	Filter              *CustomSSLFindOneByDataSourceModel                                `tfsdk:"filter"`
 }
 
-func (m *CustomSSLDataSourceModel) toReadParams() (params custom_certificates.CustomCertificateGetParams, diags diag.Diagnostics) {
+func (m *CustomSSLDataSourceModel) toReadParams(_ context.Context) (params custom_certificates.CustomCertificateGetParams, diags diag.Diagnostics) {
 	params = custom_certificates.CustomCertificateGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -46,7 +48,7 @@ func (m *CustomSSLDataSourceModel) toReadParams() (params custom_certificates.Cu
 	return
 }
 
-func (m *CustomSSLDataSourceModel) toListParams() (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
+func (m *CustomSSLDataSourceModel) toListParams(_ context.Context) (params custom_certificates.CustomCertificateListParams, diags diag.Diagnostics) {
 	params = custom_certificates.CustomCertificateListParams{
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}

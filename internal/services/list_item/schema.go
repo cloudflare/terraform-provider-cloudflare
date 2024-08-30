@@ -5,6 +5,7 @@ package list_item
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -40,21 +41,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"operation_id": schema.StringAttribute{
+				Description: "The unique operation ID of the asynchronous action.",
+				Computed:    true,
+			},
 			"asn": schema.Int64Attribute{
 				Description: "A non-negative 32 bit integer",
+				Computed:    true,
 				Optional:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "An informative summary of the list item.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"ip": schema.StringAttribute{
 				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"hostname": schema.SingleNestedAttribute{
 				Description: "Valid characters for hostnames are ASCII(7) letters from a to z, the digits from 0 to 9, wildcards (*), and the hyphen (-).",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ListItemHostnameModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"url_hostname": schema.StringAttribute{
 						Required: true,
@@ -63,7 +73,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"redirect": schema.SingleNestedAttribute{
 				Description: "The definition of the redirect.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ListItemRedirectModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"source_url": schema.StringAttribute{
 						Required: true,
@@ -105,10 +117,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:  booldefault.StaticBool(false),
 					},
 				},
-			},
-			"operation_id": schema.StringAttribute{
-				Description: "The unique operation ID of the asynchronous action.",
-				Computed:    true,
 			},
 		},
 	}

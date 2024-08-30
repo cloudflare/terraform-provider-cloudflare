@@ -3,6 +3,8 @@
 package zero_trust_dns_location
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type ZeroTrustDNSLocationsDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustDNSLocationsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams() (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDNSLocationsDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayLocationListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

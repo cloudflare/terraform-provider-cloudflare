@@ -60,6 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"label": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -179,7 +180,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"tunnel": schema.SingleNestedAttribute{
 						Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[CustomSSLKeylessServerTunnelModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"private_ip": schema.StringAttribute{
 								Description: "Private IP of the Key Server Host",

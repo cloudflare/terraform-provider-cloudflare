@@ -3,6 +3,8 @@
 package origin_ca_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/origin_ca_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -31,7 +33,7 @@ type OriginCACertificateDataSourceModel struct {
 	Filter            *OriginCACertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *OriginCACertificateDataSourceModel) toListParams() (params origin_ca_certificates.OriginCACertificateListParams, diags diag.Diagnostics) {
+func (m *OriginCACertificateDataSourceModel) toListParams(_ context.Context) (params origin_ca_certificates.OriginCACertificateListParams, diags diag.Diagnostics) {
 	params = origin_ca_certificates.OriginCACertificateListParams{}
 
 	if !m.Filter.ZoneID.IsNull() {

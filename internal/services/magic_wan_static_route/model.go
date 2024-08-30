@@ -30,74 +30,74 @@ type MagicWANStaticRouteModel struct {
 }
 
 type MagicWANStaticRouteScopeModel struct {
-	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names"`
-	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions"`
+	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteDeletedRouteModel struct {
-	Nexthop     types.String                               `tfsdk:"nexthop" json:"nexthop"`
-	Prefix      types.String                               `tfsdk:"prefix" json:"prefix"`
-	Priority    types.Int64                                `tfsdk:"priority" json:"priority"`
-	ID          types.String                               `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                          `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description types.String                               `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Scope       *MagicWANStaticRouteDeletedRouteScopeModel `tfsdk:"scope" json:"scope"`
-	Weight      types.Int64                                `tfsdk:"weight" json:"weight"`
+	Nexthop     types.String                                                        `tfsdk:"nexthop" json:"nexthop"`
+	Prefix      types.String                                                        `tfsdk:"prefix" json:"prefix"`
+	Priority    types.Int64                                                         `tfsdk:"priority" json:"priority"`
+	ID          types.String                                                        `tfsdk:"id" json:"id,computed_optional"`
+	CreatedOn   timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description types.String                                                        `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn  timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Scope       customfield.NestedObject[MagicWANStaticRouteDeletedRouteScopeModel] `tfsdk:"scope" json:"scope,computed_optional"`
+	Weight      types.Int64                                                         `tfsdk:"weight" json:"weight,computed_optional"`
 }
 
 type MagicWANStaticRouteDeletedRouteScopeModel struct {
-	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names"`
-	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions"`
+	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteModifiedRouteModel struct {
-	Nexthop     types.String                                `tfsdk:"nexthop" json:"nexthop"`
-	Prefix      types.String                                `tfsdk:"prefix" json:"prefix"`
-	Priority    types.Int64                                 `tfsdk:"priority" json:"priority"`
-	ID          types.String                                `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description types.String                                `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Scope       *MagicWANStaticRouteModifiedRouteScopeModel `tfsdk:"scope" json:"scope"`
-	Weight      types.Int64                                 `tfsdk:"weight" json:"weight"`
+	Nexthop     types.String                                                         `tfsdk:"nexthop" json:"nexthop"`
+	Prefix      types.String                                                         `tfsdk:"prefix" json:"prefix"`
+	Priority    types.Int64                                                          `tfsdk:"priority" json:"priority"`
+	ID          types.String                                                         `tfsdk:"id" json:"id,computed_optional"`
+	CreatedOn   timetypes.RFC3339                                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description types.String                                                         `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn  timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Scope       customfield.NestedObject[MagicWANStaticRouteModifiedRouteScopeModel] `tfsdk:"scope" json:"scope,computed_optional"`
+	Weight      types.Int64                                                          `tfsdk:"weight" json:"weight,computed_optional"`
 }
 
 type MagicWANStaticRouteModifiedRouteScopeModel struct {
-	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names"`
-	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions"`
+	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteRouteModel struct {
-	Nexthop     types.String                        `tfsdk:"nexthop" json:"nexthop"`
-	Prefix      types.String                        `tfsdk:"prefix" json:"prefix"`
-	Priority    types.Int64                         `tfsdk:"priority" json:"priority"`
-	ID          types.String                        `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description types.String                        `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Scope       *MagicWANStaticRouteRouteScopeModel `tfsdk:"scope" json:"scope"`
-	Weight      types.Int64                         `tfsdk:"weight" json:"weight"`
+	Nexthop     types.String                                                 `tfsdk:"nexthop" json:"nexthop"`
+	Prefix      types.String                                                 `tfsdk:"prefix" json:"prefix"`
+	Priority    types.Int64                                                  `tfsdk:"priority" json:"priority"`
+	ID          types.String                                                 `tfsdk:"id" json:"id,computed_optional"`
+	CreatedOn   timetypes.RFC3339                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description types.String                                                 `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn  timetypes.RFC3339                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Scope       customfield.NestedObject[MagicWANStaticRouteRouteScopeModel] `tfsdk:"scope" json:"scope,computed_optional"`
+	Weight      types.Int64                                                  `tfsdk:"weight" json:"weight,computed_optional"`
 }
 
 type MagicWANStaticRouteRouteScopeModel struct {
-	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names"`
-	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions"`
+	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteRoutesModel struct {
-	Nexthop     types.String                         `tfsdk:"nexthop" json:"nexthop"`
-	Prefix      types.String                         `tfsdk:"prefix" json:"prefix"`
-	Priority    types.Int64                          `tfsdk:"priority" json:"priority"`
-	ID          types.String                         `tfsdk:"id" json:"id"`
-	CreatedOn   timetypes.RFC3339                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description types.String                         `tfsdk:"description" json:"description"`
-	ModifiedOn  timetypes.RFC3339                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Scope       *MagicWANStaticRouteRoutesScopeModel `tfsdk:"scope" json:"scope"`
-	Weight      types.Int64                          `tfsdk:"weight" json:"weight"`
+	Nexthop     types.String                                                  `tfsdk:"nexthop" json:"nexthop"`
+	Prefix      types.String                                                  `tfsdk:"prefix" json:"prefix"`
+	Priority    types.Int64                                                   `tfsdk:"priority" json:"priority"`
+	ID          types.String                                                  `tfsdk:"id" json:"id,computed_optional"`
+	CreatedOn   timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description types.String                                                  `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn  timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Scope       customfield.NestedObject[MagicWANStaticRouteRoutesScopeModel] `tfsdk:"scope" json:"scope,computed_optional"`
+	Weight      types.Int64                                                   `tfsdk:"weight" json:"weight,computed_optional"`
 }
 
 type MagicWANStaticRouteRoutesScopeModel struct {
-	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names"`
-	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions"`
+	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }

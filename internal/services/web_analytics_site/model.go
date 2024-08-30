@@ -27,18 +27,18 @@ type WebAnalyticsSiteModel struct {
 }
 
 type WebAnalyticsSiteRulesModel struct {
-	ID        types.String      `tfsdk:"id" json:"id"`
+	ID        types.String      `tfsdk:"id" json:"id,computed_optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Host      types.String      `tfsdk:"host" json:"host"`
-	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive"`
-	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused"`
-	Paths     *[]types.String   `tfsdk:"paths" json:"paths"`
-	Priority  types.Float64     `tfsdk:"priority" json:"priority"`
+	Host      types.String      `tfsdk:"host" json:"host,computed_optional"`
+	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive,computed_optional"`
+	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused,computed_optional"`
+	Paths     types.List        `tfsdk:"paths" json:"paths,computed_optional"`
+	Priority  types.Float64     `tfsdk:"priority" json:"priority,computed_optional"`
 }
 
 type WebAnalyticsSiteRulesetModel struct {
-	ID       types.String `tfsdk:"id" json:"id"`
-	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled"`
-	ZoneName types.String `tfsdk:"zone_name" json:"zone_name"`
-	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag"`
+	ID       types.String `tfsdk:"id" json:"id,computed_optional"`
+	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,computed_optional"`
+	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag,computed_optional"`
 }

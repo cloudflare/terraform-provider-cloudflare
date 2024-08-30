@@ -3,6 +3,8 @@
 package list_item
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type ListItemsDataSourceModel struct {
 	Result    customfield.NestedObjectList[ListItemsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ListItemsDataSourceModel) toListParams() (params rules.ListItemListParams, diags diag.Diagnostics) {
+func (m *ListItemsDataSourceModel) toListParams(_ context.Context) (params rules.ListItemListParams, diags diag.Diagnostics) {
 	params = rules.ListItemListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

@@ -3,6 +3,8 @@
 package account
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -28,7 +30,7 @@ type AccountDataSourceModel struct {
 	Filter    *AccountFindOneByDataSourceModel                         `tfsdk:"filter"`
 }
 
-func (m *AccountDataSourceModel) toReadParams() (params accounts.AccountGetParams, diags diag.Diagnostics) {
+func (m *AccountDataSourceModel) toReadParams(_ context.Context) (params accounts.AccountGetParams, diags diag.Diagnostics) {
 	params = accounts.AccountGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -36,7 +38,7 @@ func (m *AccountDataSourceModel) toReadParams() (params accounts.AccountGetParam
 	return
 }
 
-func (m *AccountDataSourceModel) toListParams() (params accounts.AccountListParams, diags diag.Diagnostics) {
+func (m *AccountDataSourceModel) toListParams(_ context.Context) (params accounts.AccountListParams, diags diag.Diagnostics) {
 	params = accounts.AccountListParams{}
 
 	if !m.Filter.Direction.IsNull() {

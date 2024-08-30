@@ -3,6 +3,8 @@
 package access_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -25,7 +27,7 @@ type AccessRuleDataSourceModel struct {
 	Filter     *AccessRuleFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *AccessRuleDataSourceModel) toReadParams() (params firewall.AccessRuleGetParams, diags diag.Diagnostics) {
+func (m *AccessRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.AccessRuleGetParams, diags diag.Diagnostics) {
 	params = firewall.AccessRuleGetParams{}
 
 	if !m.Filter.AccountID.IsNull() {
@@ -37,7 +39,7 @@ func (m *AccessRuleDataSourceModel) toReadParams() (params firewall.AccessRuleGe
 	return
 }
 
-func (m *AccessRuleDataSourceModel) toListParams() (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
+func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
 	params = firewall.AccessRuleListParams{}
 
 	if m.Filter.Configuration != nil {
@@ -87,6 +89,6 @@ type AccessRuleFindOneByDataSourceModel struct {
 }
 
 type AccessRuleConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	Target types.String `tfsdk:"target" json:"target,computed_optional"`
+	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
 }

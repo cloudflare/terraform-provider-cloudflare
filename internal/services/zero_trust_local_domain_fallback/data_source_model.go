@@ -3,6 +3,8 @@
 package zero_trust_local_domain_fallback
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -27,7 +29,7 @@ type ZeroTrustLocalDomainFallbackDataSourceModel struct {
 	Filter      *ZeroTrustLocalDomainFallbackFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toReadParams() (params zero_trust.DevicePolicyFallbackDomainGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyFallbackDomainGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePolicyFallbackDomainGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -35,7 +37,7 @@ func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toReadParams() (params zer
 	return
 }
 
-func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toListParams() (params zero_trust.DevicePolicyFallbackDomainListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePolicyFallbackDomainListParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePolicyFallbackDomainListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

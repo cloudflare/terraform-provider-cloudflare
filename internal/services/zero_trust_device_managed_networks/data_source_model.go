@@ -3,6 +3,8 @@
 package zero_trust_device_managed_networks
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -27,7 +29,7 @@ type ZeroTrustDeviceManagedNetworksDataSourceModel struct {
 	Filter    *ZeroTrustDeviceManagedNetworksFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toReadParams() (params zero_trust.DeviceNetworkGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DeviceNetworkGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceNetworkGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -35,7 +37,7 @@ func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toReadParams() (params z
 	return
 }
 
-func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toListParams() (params zero_trust.DeviceNetworkListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDeviceManagedNetworksDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceNetworkListParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceNetworkListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

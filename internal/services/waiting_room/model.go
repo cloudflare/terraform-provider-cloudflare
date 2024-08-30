@@ -40,7 +40,7 @@ type WaitingRoomModel struct {
 }
 
 type WaitingRoomAdditionalRoutesModel struct {
-	Host types.String `tfsdk:"host" json:"host"`
+	Host types.String `tfsdk:"host" json:"host,computed_optional"`
 	Path types.String `tfsdk:"path" json:"path,computed_optional"`
 }
 

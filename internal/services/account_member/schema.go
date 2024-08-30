@@ -109,10 +109,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"first_name": schema.StringAttribute{
 						Description: "User's first name",
+						Computed:    true,
 						Optional:    true,
 					},
 					"last_name": schema.StringAttribute{
 						Description: "User's last name",
+						Computed:    true,
 						Optional:    true,
 					},
 					"two_factor_authentication_enabled": schema.BoolAttribute{

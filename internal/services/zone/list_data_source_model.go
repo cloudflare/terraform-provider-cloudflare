@@ -3,6 +3,8 @@
 package zone
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -26,7 +28,7 @@ type ZonesDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZonesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZonesDataSourceModel) toListParams() (params zones.ZoneListParams, diags diag.Diagnostics) {
+func (m *ZonesDataSourceModel) toListParams(_ context.Context) (params zones.ZoneListParams, diags diag.Diagnostics) {
 	params = zones.ZoneListParams{}
 
 	if m.Account != nil {

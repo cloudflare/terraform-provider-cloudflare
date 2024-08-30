@@ -55,7 +55,7 @@ func (d *APITokensDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	params, diags := data.toListParams()
+	params, diags := data.toListParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

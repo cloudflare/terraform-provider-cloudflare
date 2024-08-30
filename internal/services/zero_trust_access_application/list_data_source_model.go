@@ -3,6 +3,8 @@
 package zero_trust_access_application
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type ZeroTrustAccessApplicationsDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustAccessApplicationsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustAccessApplicationsDataSourceModel) toListParams() (params zero_trust.AccessApplicationListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessApplicationsDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessApplicationListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessApplicationListParams{}
 
 	if !m.AccountID.IsNull() {

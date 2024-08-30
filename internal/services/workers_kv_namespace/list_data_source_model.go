@@ -3,6 +3,8 @@
 package workers_kv_namespace
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type WorkersKVNamespacesDataSourceModel struct {
 	Result    customfield.NestedObjectList[WorkersKVNamespacesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *WorkersKVNamespacesDataSourceModel) toListParams() (params kv.NamespaceListParams, diags diag.Diagnostics) {
+func (m *WorkersKVNamespacesDataSourceModel) toListParams(_ context.Context) (params kv.NamespaceListParams, diags diag.Diagnostics) {
 	params = kv.NamespaceListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

@@ -272,11 +272,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"email_addresses": schema.ListAttribute{
 							Description: "A list of emails that can approve the access request.",
+							Computed:    true,
 							Optional:    true,
 							ElementType: types.StringType,
 						},
 						"email_list_uuid": schema.StringAttribute{
 							Description: "The UUID of an re-usable email list.",
+							Computed:    true,
 							Optional:    true,
 						},
 					},

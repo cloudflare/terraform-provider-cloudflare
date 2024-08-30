@@ -3,6 +3,8 @@
 package zero_trust_access_short_lived_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type ZeroTrustAccessShortLivedCertificatesDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustAccessShortLivedCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustAccessShortLivedCertificatesDataSourceModel) toListParams() (params zero_trust.AccessApplicationCAListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessShortLivedCertificatesDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessApplicationCAListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessApplicationCAListParams{}
 
 	if !m.AccountID.IsNull() {

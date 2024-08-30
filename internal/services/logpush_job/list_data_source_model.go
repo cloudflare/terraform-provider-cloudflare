@@ -3,6 +3,8 @@
 package logpush_job
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/logpush"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type LogpushJobsDataSourceModel struct {
 	Result    customfield.NestedObjectList[LogpushJobsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *LogpushJobsDataSourceModel) toListParams() (params logpush.JobListParams, diags diag.Diagnostics) {
+func (m *LogpushJobsDataSourceModel) toListParams(_ context.Context) (params logpush.JobListParams, diags diag.Diagnostics) {
 	params = logpush.JobListParams{}
 
 	if !m.AccountID.IsNull() {

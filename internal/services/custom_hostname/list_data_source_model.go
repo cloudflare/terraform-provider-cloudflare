@@ -3,6 +3,8 @@
 package custom_hostname
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/custom_hostnames"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -26,7 +28,7 @@ type CustomHostnamesDataSourceModel struct {
 	Result    customfield.NestedObjectList[CustomHostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *CustomHostnamesDataSourceModel) toListParams() (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
+func (m *CustomHostnamesDataSourceModel) toListParams(_ context.Context) (params custom_hostnames.CustomHostnameListParams, diags diag.Diagnostics) {
 	params = custom_hostnames.CustomHostnameListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

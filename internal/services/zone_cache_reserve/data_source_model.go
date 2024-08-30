@@ -3,6 +3,8 @@
 package zone_cache_reserve
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/cache"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -21,7 +23,7 @@ type ZoneCacheReserveDataSourceModel struct {
 	Value         types.String      `tfsdk:"value" json:"value,computed_optional"`
 }
 
-func (m *ZoneCacheReserveDataSourceModel) toReadParams() (params cache.CacheReserveGetParams, diags diag.Diagnostics) {
+func (m *ZoneCacheReserveDataSourceModel) toReadParams(_ context.Context) (params cache.CacheReserveGetParams, diags diag.Diagnostics) {
 	params = cache.CacheReserveGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
