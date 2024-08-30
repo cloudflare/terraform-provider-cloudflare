@@ -4,9 +4,6 @@ resource "cloudflare_zone" "%[1]s" {
     id = "%[6]s"
   }
 	name = "%[2]s"
-	plan = {
-	  id = "%[5]s"
-	}
 	type = "%[7]s"
 	vanity_name_servers = ["ns1.%[2]s", "ns2.%[2]s"]
 }
