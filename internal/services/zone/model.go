@@ -17,7 +17,6 @@ type ZoneModel struct {
 	Name                types.String                             `tfsdk:"name" json:"name"`
 	Account             *ZoneAccountModel                        `tfsdk:"account" json:"account"`
 	VanityNameServers   *[]types.String                          `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
-	Plan                *ZonePlanModel                           `tfsdk:"plan" json:"plan"`
 	Type                types.String                             `tfsdk:"type" json:"type,computed_optional"`
 	ActivatedOn         timetypes.RFC3339                        `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
 	CreatedOn           timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -34,10 +33,6 @@ type ZoneModel struct {
 }
 
 type ZoneAccountModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type ZonePlanModel struct {
 	ID types.String `tfsdk:"id" json:"id"`
 }
 

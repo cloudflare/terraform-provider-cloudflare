@@ -49,16 +49,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"plan": schema.SingleNestedAttribute{
-				Description: "(Deprecated) Please use the `/zones/{zone_id}/subscription` API\nto update a zone's plan. Changing this value will create/cancel\nassociated subscriptions. To view available plans for this zone,\nsee Zone Plans.\n",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Description: "Identifier",
-						Optional:    true,
-					},
-				},
-			},
 			"type": schema.StringAttribute{
 				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
 				Computed:    true,
