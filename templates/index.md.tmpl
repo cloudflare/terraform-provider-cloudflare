@@ -1,0 +1,25 @@
+---
+layout: ""
+page_title: "Provider: Cloudflare"
+description: |-
+  The Cloudflare provider provides resources to interact with the Cloudflare API.
+---
+
+# Cloudflare Provider
+
+The Cloudflare provider is used to interact with resources supported by
+Cloudflare. The provider needs to be configured with the proper credentials
+before it can be used.
+
+## Getting Started
+
+Try the [getting started tutorial](https://developers.cloudflare.com/terraform/tutorial/)
+on [developers.cloudflare.com](https://developers.cloudflare.com). In the walk
+through, you will setup Terraform and learn to manage Cloudflare resources such
+as DNS records, zone settings, load balancers and much more!
+
+## Example Usage
+
+{{ tffile "examples/provider/provider.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
