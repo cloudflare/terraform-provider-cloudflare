@@ -3,6 +3,8 @@
 package api_shield_operation
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -29,7 +31,7 @@ type APIShieldOperationsDataSourceModel struct {
 	Result    customfield.NestedObjectList[APIShieldOperationsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *APIShieldOperationsDataSourceModel) toListParams() (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
+func (m *APIShieldOperationsDataSourceModel) toListParams(_ context.Context) (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
 	mHost := []string{}
 	for _, item := range *m.Host {
 		mHost = append(mHost, item.ValueString())

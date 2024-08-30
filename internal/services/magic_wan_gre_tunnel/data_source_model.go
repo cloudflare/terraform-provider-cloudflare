@@ -3,6 +3,8 @@
 package magic_wan_gre_tunnel
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type MagicWANGRETunnelDataSourceModel struct {
 	GRETunnel   *MagicWANGRETunnelGRETunnelDataSourceModel `tfsdk:"gre_tunnel" json:"gre_tunnel"`
 }
 
-func (m *MagicWANGRETunnelDataSourceModel) toReadParams() (params magic_transit.GRETunnelGetParams, diags diag.Diagnostics) {
+func (m *MagicWANGRETunnelDataSourceModel) toReadParams(_ context.Context) (params magic_transit.GRETunnelGetParams, diags diag.Diagnostics) {
 	params = magic_transit.GRETunnelGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

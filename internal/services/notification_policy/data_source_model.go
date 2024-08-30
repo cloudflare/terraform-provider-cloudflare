@@ -3,6 +3,8 @@
 package notification_policy
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -35,7 +37,7 @@ type NotificationPolicyDataSourceModel struct {
 	Filter        *NotificationPolicyFindOneByDataSourceModel                        `tfsdk:"filter"`
 }
 
-func (m *NotificationPolicyDataSourceModel) toReadParams() (params alerting.PolicyGetParams, diags diag.Diagnostics) {
+func (m *NotificationPolicyDataSourceModel) toReadParams(_ context.Context) (params alerting.PolicyGetParams, diags diag.Diagnostics) {
 	params = alerting.PolicyGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -43,7 +45,7 @@ func (m *NotificationPolicyDataSourceModel) toReadParams() (params alerting.Poli
 	return
 }
 
-func (m *NotificationPolicyDataSourceModel) toListParams() (params alerting.PolicyListParams, diags diag.Diagnostics) {
+func (m *NotificationPolicyDataSourceModel) toListParams(_ context.Context) (params alerting.PolicyListParams, diags diag.Diagnostics) {
 	params = alerting.PolicyListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

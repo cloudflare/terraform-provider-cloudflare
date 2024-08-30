@@ -14,11 +14,11 @@ type ManagedHeadersModel struct {
 }
 
 type ManagedHeadersManagedRequestHeadersModel struct {
-	ID      types.String `tfsdk:"id" json:"id"`
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
+	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
 type ManagedHeadersManagedResponseHeadersModel struct {
-	ID      types.String `tfsdk:"id" json:"id"`
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
+	ID      types.String `tfsdk:"id" json:"id,computed_optional"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 }

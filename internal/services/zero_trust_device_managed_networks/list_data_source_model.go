@@ -3,6 +3,8 @@
 package zero_trust_device_managed_networks
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -20,7 +22,7 @@ type ZeroTrustDeviceManagedNetworksListDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustDeviceManagedNetworksListResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustDeviceManagedNetworksListDataSourceModel) toListParams() (params zero_trust.DeviceNetworkListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDeviceManagedNetworksListDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceNetworkListParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceNetworkListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

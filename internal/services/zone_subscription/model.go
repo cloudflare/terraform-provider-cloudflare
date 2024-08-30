@@ -17,11 +17,11 @@ type ZoneSubscriptionModel struct {
 }
 
 type ZoneSubscriptionRatePlanModel struct {
-	ID                types.String    `tfsdk:"id" json:"id"`
-	Currency          types.String    `tfsdk:"currency" json:"currency"`
-	ExternallyManaged types.Bool      `tfsdk:"externally_managed" json:"externally_managed"`
-	IsContract        types.Bool      `tfsdk:"is_contract" json:"is_contract"`
-	PublicName        types.String    `tfsdk:"public_name" json:"public_name"`
-	Scope             types.String    `tfsdk:"scope" json:"scope"`
-	Sets              *[]types.String `tfsdk:"sets" json:"sets"`
+	ID                types.String `tfsdk:"id" json:"id,computed_optional"`
+	Currency          types.String `tfsdk:"currency" json:"currency,computed_optional"`
+	ExternallyManaged types.Bool   `tfsdk:"externally_managed" json:"externally_managed,computed_optional"`
+	IsContract        types.Bool   `tfsdk:"is_contract" json:"is_contract,computed_optional"`
+	PublicName        types.String `tfsdk:"public_name" json:"public_name,computed_optional"`
+	Scope             types.String `tfsdk:"scope" json:"scope,computed_optional"`
+	Sets              types.List   `tfsdk:"sets" json:"sets,computed_optional"`
 }

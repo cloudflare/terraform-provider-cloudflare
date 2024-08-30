@@ -3,6 +3,7 @@
 package firewall_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,20 +25,20 @@ type FirewallRuleModel struct {
 }
 
 type FirewallRuleActionModel struct {
-	Mode     types.String                     `tfsdk:"mode" json:"mode"`
-	Response *FirewallRuleActionResponseModel `tfsdk:"response" json:"response"`
-	Timeout  types.Float64                    `tfsdk:"timeout" json:"timeout"`
+	Mode     types.String                                              `tfsdk:"mode" json:"mode,computed_optional"`
+	Response customfield.NestedObject[FirewallRuleActionResponseModel] `tfsdk:"response" json:"response,computed_optional"`
+	Timeout  types.Float64                                             `tfsdk:"timeout" json:"timeout,computed_optional"`
 }
 
 type FirewallRuleActionResponseModel struct {
-	Body        types.String `tfsdk:"body" json:"body"`
-	ContentType types.String `tfsdk:"content_type" json:"content_type"`
+	Body        types.String `tfsdk:"body" json:"body,computed_optional"`
+	ContentType types.String `tfsdk:"content_type" json:"content_type,computed_optional"`
 }
 
 type FirewallRuleFilterModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description"`
-	Expression  types.String `tfsdk:"expression" json:"expression"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused"`
-	Ref         types.String `tfsdk:"ref" json:"ref"`
+	Description types.String `tfsdk:"description" json:"description,computed_optional"`
+	Expression  types.String `tfsdk:"expression" json:"expression,computed_optional"`
+	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed_optional"`
+	Ref         types.String `tfsdk:"ref" json:"ref,computed_optional"`
 }

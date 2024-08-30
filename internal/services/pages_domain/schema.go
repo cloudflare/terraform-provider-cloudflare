@@ -70,15 +70,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[PagesDomainValidationDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"error_message": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 					"method": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("http", "txt"),
 						},
 					},
 					"status": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -91,9 +94,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"txt_name": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 					"txt_value": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 				},
@@ -103,9 +108,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType: customfield.NewNestedObjectType[PagesDomainVerificationDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"error_message": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 					"status": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

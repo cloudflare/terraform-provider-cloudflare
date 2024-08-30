@@ -3,6 +3,8 @@
 package healthcheck
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/healthchecks"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -43,7 +45,7 @@ type HealthcheckDataSourceModel struct {
 	Filter               *HealthcheckFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
-func (m *HealthcheckDataSourceModel) toReadParams() (params healthchecks.HealthcheckGetParams, diags diag.Diagnostics) {
+func (m *HealthcheckDataSourceModel) toReadParams(_ context.Context) (params healthchecks.HealthcheckGetParams, diags diag.Diagnostics) {
 	params = healthchecks.HealthcheckGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -51,7 +53,7 @@ func (m *HealthcheckDataSourceModel) toReadParams() (params healthchecks.Healthc
 	return
 }
 
-func (m *HealthcheckDataSourceModel) toListParams() (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
+func (m *HealthcheckDataSourceModel) toListParams(_ context.Context) (params healthchecks.HealthcheckListParams, diags diag.Diagnostics) {
 	params = healthchecks.HealthcheckListParams{
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}

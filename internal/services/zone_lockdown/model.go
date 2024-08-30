@@ -23,6 +23,6 @@ type ZoneLockdownModel struct {
 }
 
 type ZoneLockdownConfigurationsModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	Target types.String `tfsdk:"target" json:"target,computed_optional"`
+	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
 }

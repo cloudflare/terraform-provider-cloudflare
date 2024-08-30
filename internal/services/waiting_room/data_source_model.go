@@ -3,6 +3,8 @@
 package waiting_room
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -49,7 +51,7 @@ type WaitingRoomDataSourceModel struct {
 	Filter                     *WaitingRoomFindOneByDataSourceModel                                     `tfsdk:"filter"`
 }
 
-func (m *WaitingRoomDataSourceModel) toReadParams() (params waiting_rooms.WaitingRoomGetParams, diags diag.Diagnostics) {
+func (m *WaitingRoomDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.WaitingRoomGetParams, diags diag.Diagnostics) {
 	params = waiting_rooms.WaitingRoomGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -57,7 +59,7 @@ func (m *WaitingRoomDataSourceModel) toReadParams() (params waiting_rooms.Waitin
 	return
 }
 
-func (m *WaitingRoomDataSourceModel) toListParams() (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
+func (m *WaitingRoomDataSourceModel) toListParams(_ context.Context) (params waiting_rooms.WaitingRoomListParams, diags diag.Diagnostics) {
 	params = waiting_rooms.WaitingRoomListParams{
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}

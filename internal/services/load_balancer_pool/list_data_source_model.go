@@ -3,6 +3,8 @@
 package load_balancer_pool
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type LoadBalancerPoolsDataSourceModel struct {
 	Result    customfield.NestedObjectList[LoadBalancerPoolsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *LoadBalancerPoolsDataSourceModel) toListParams() (params load_balancers.PoolListParams, diags diag.Diagnostics) {
+func (m *LoadBalancerPoolsDataSourceModel) toListParams(_ context.Context) (params load_balancers.PoolListParams, diags diag.Diagnostics) {
 	params = load_balancers.PoolListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

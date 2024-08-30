@@ -5,6 +5,7 @@ package ruleset
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -101,10 +102,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"action": schema.StringAttribute{
 							Description: "The action to perform when the rule matches.",
+							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -131,11 +134,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"action_parameters": schema.SingleNestedAttribute{
 							Description: "The parameters configuring the rule's action.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"response": schema.SingleNestedAttribute{
 									Description: "The response to show when the block is applied.",
+									Computed:    true,
 									Optional:    true,
+									CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersResponseModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"content": schema.StringAttribute{
 											Description: "The content to return.",
@@ -175,11 +182,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"expression": schema.StringAttribute{
 							Description: "The expression defining which traffic will match the rule.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"logging": schema.SingleNestedAttribute{
 							Description: "An object configuring the rule's logging behavior.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[RulesetRulesLoggingModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to generate a log when the rule matches.",
@@ -189,6 +199,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"ref": schema.StringAttribute{
 							Description: "The reference of the rule (the rule ID by default).",
+							Computed:    true,
 							Optional:    true,
 						},
 					},

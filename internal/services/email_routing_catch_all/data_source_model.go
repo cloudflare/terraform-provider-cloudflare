@@ -3,6 +3,8 @@
 package email_routing_catch_all
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -23,7 +25,7 @@ type EmailRoutingCatchAllDataSourceModel struct {
 	Enabled  types.Bool                                      `tfsdk:"enabled" json:"enabled,computed_optional"`
 }
 
-func (m *EmailRoutingCatchAllDataSourceModel) toReadParams() (params email_routing.RuleCatchAllGetParams, diags diag.Diagnostics) {
+func (m *EmailRoutingCatchAllDataSourceModel) toReadParams(_ context.Context) (params email_routing.RuleCatchAllGetParams, diags diag.Diagnostics) {
 	params = email_routing.RuleCatchAllGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

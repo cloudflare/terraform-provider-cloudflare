@@ -3,6 +3,8 @@
 package workers_script
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -29,7 +31,7 @@ type WorkersScriptDataSourceModel struct {
 	Filter        *WorkersScriptFindOneByDataSourceModel        `tfsdk:"filter"`
 }
 
-func (m *WorkersScriptDataSourceModel) toReadParams() (params workers.ScriptGetParams, diags diag.Diagnostics) {
+func (m *WorkersScriptDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptGetParams, diags diag.Diagnostics) {
 	params = workers.ScriptGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -37,7 +39,7 @@ func (m *WorkersScriptDataSourceModel) toReadParams() (params workers.ScriptGetP
 	return
 }
 
-func (m *WorkersScriptDataSourceModel) toListParams() (params workers.ScriptListParams, diags diag.Diagnostics) {
+func (m *WorkersScriptDataSourceModel) toListParams(_ context.Context) (params workers.ScriptListParams, diags diag.Diagnostics) {
 	params = workers.ScriptListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

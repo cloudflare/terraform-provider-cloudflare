@@ -21,20 +21,20 @@ type ZeroTrustAccessIdentityProviderModel struct {
 }
 
 type ZeroTrustAccessIdentityProviderConfigModel struct {
-	Claims                   *[]types.String `tfsdk:"claims" json:"claims"`
-	ClientID                 types.String    `tfsdk:"client_id" json:"client_id"`
-	ClientSecret             types.String    `tfsdk:"client_secret" json:"client_secret"`
-	ConditionalAccessEnabled types.Bool      `tfsdk:"conditional_access_enabled" json:"conditional_access_enabled"`
-	DirectoryID              types.String    `tfsdk:"directory_id" json:"directory_id"`
-	EmailClaimName           types.String    `tfsdk:"email_claim_name" json:"email_claim_name"`
-	Prompt                   types.String    `tfsdk:"prompt" json:"prompt"`
-	SupportGroups            types.Bool      `tfsdk:"support_groups" json:"support_groups"`
+	Claims                   types.List   `tfsdk:"claims" json:"claims,computed_optional"`
+	ClientID                 types.String `tfsdk:"client_id" json:"client_id,computed_optional"`
+	ClientSecret             types.String `tfsdk:"client_secret" json:"client_secret,computed_optional"`
+	ConditionalAccessEnabled types.Bool   `tfsdk:"conditional_access_enabled" json:"conditional_access_enabled,computed_optional"`
+	DirectoryID              types.String `tfsdk:"directory_id" json:"directory_id,computed_optional"`
+	EmailClaimName           types.String `tfsdk:"email_claim_name" json:"email_claim_name,computed_optional"`
+	Prompt                   types.String `tfsdk:"prompt" json:"prompt,computed_optional"`
+	SupportGroups            types.Bool   `tfsdk:"support_groups" json:"support_groups,computed_optional"`
 }
 
 type ZeroTrustAccessIdentityProviderSCIMConfigModel struct {
-	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled"`
-	GroupMemberDeprovision types.Bool   `tfsdk:"group_member_deprovision" json:"group_member_deprovision"`
-	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision"`
-	Secret                 types.String `tfsdk:"secret" json:"secret"`
-	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision"`
+	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	GroupMemberDeprovision types.Bool   `tfsdk:"group_member_deprovision" json:"group_member_deprovision,computed_optional"`
+	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,computed_optional"`
+	Secret                 types.String `tfsdk:"secret" json:"secret,computed_optional"`
+	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,computed_optional"`
 }

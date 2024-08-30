@@ -3,6 +3,7 @@
 package rate_limit
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,34 +21,34 @@ type RateLimitModel struct {
 }
 
 type RateLimitActionModel struct {
-	Mode     types.String                  `tfsdk:"mode" json:"mode"`
-	Response *RateLimitActionResponseModel `tfsdk:"response" json:"response"`
-	Timeout  types.Float64                 `tfsdk:"timeout" json:"timeout"`
+	Mode     types.String                                           `tfsdk:"mode" json:"mode,computed_optional"`
+	Response customfield.NestedObject[RateLimitActionResponseModel] `tfsdk:"response" json:"response,computed_optional"`
+	Timeout  types.Float64                                          `tfsdk:"timeout" json:"timeout,computed_optional"`
 }
 
 type RateLimitActionResponseModel struct {
-	Body        types.String `tfsdk:"body" json:"body"`
-	ContentType types.String `tfsdk:"content_type" json:"content_type"`
+	Body        types.String `tfsdk:"body" json:"body,computed_optional"`
+	ContentType types.String `tfsdk:"content_type" json:"content_type,computed_optional"`
 }
 
 type RateLimitMatchModel struct {
-	Headers  *[]*RateLimitMatchHeadersModel `tfsdk:"headers" json:"headers"`
-	Request  *RateLimitMatchRequestModel    `tfsdk:"request" json:"request"`
-	Response *RateLimitMatchResponseModel   `tfsdk:"response" json:"response"`
+	Headers  customfield.NestedObjectList[RateLimitMatchHeadersModel] `tfsdk:"headers" json:"headers,computed_optional"`
+	Request  customfield.NestedObject[RateLimitMatchRequestModel]     `tfsdk:"request" json:"request,computed_optional"`
+	Response customfield.NestedObject[RateLimitMatchResponseModel]    `tfsdk:"response" json:"response,computed_optional"`
 }
 
 type RateLimitMatchHeadersModel struct {
-	Name  types.String `tfsdk:"name" json:"name"`
-	Op    types.String `tfsdk:"op" json:"op"`
-	Value types.String `tfsdk:"value" json:"value"`
+	Name  types.String `tfsdk:"name" json:"name,computed_optional"`
+	Op    types.String `tfsdk:"op" json:"op,computed_optional"`
+	Value types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type RateLimitMatchRequestModel struct {
-	Methods *[]types.String `tfsdk:"methods" json:"methods"`
-	Schemes *[]types.String `tfsdk:"schemes" json:"schemes"`
-	URL     types.String    `tfsdk:"url" json:"url"`
+	Methods types.List   `tfsdk:"methods" json:"methods,computed_optional"`
+	Schemes types.List   `tfsdk:"schemes" json:"schemes,computed_optional"`
+	URL     types.String `tfsdk:"url" json:"url,computed_optional"`
 }
 
 type RateLimitMatchResponseModel struct {
-	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic"`
+	OriginTraffic types.Bool `tfsdk:"origin_traffic" json:"origin_traffic,computed_optional"`
 }

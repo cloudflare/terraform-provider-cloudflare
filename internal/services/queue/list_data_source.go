@@ -55,7 +55,7 @@ func (d *QueuesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	params, diags := data.toListParams()
+	params, diags := data.toListParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

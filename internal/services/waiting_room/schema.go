@@ -67,6 +67,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"host": schema.StringAttribute{
 							Description: "The hostname to which this waiting room will be applied (no wildcards). The hostname must be the primary domain, subdomain, or custom hostname (if using SSL for SaaS) of this zone. Please do not include the scheme (http:// or https://).",
+							Computed:    true,
 							Optional:    true,
 						},
 						"path": schema.StringAttribute{

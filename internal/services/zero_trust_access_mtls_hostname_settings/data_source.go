@@ -57,7 +57,7 @@ func (d *ZeroTrustAccessMTLSHostnameSettingsDataSource) Read(ctx context.Context
 		return
 	}
 
-	params, diags := data.toReadParams()
+	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

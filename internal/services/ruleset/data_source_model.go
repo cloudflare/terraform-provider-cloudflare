@@ -3,6 +3,8 @@
 package ruleset
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -34,7 +36,7 @@ type RulesetDataSourceModel struct {
 	Filter      *RulesetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *RulesetDataSourceModel) toReadParams() (params rulesets.RulesetGetParams, diags diag.Diagnostics) {
+func (m *RulesetDataSourceModel) toReadParams(_ context.Context) (params rulesets.RulesetGetParams, diags diag.Diagnostics) {
 	params = rulesets.RulesetGetParams{}
 
 	if !m.Filter.AccountID.IsNull() {
@@ -46,7 +48,7 @@ func (m *RulesetDataSourceModel) toReadParams() (params rulesets.RulesetGetParam
 	return
 }
 
-func (m *RulesetDataSourceModel) toListParams() (params rulesets.RulesetListParams, diags diag.Diagnostics) {
+func (m *RulesetDataSourceModel) toListParams(_ context.Context) (params rulesets.RulesetListParams, diags diag.Diagnostics) {
 	params = rulesets.RulesetListParams{}
 
 	if !m.Filter.AccountID.IsNull() {

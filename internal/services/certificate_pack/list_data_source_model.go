@@ -3,6 +3,8 @@
 package certificate_pack
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type CertificatePacksDataSourceModel struct {
 	Result   customfield.NestedObjectList[CertificatePacksResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *CertificatePacksDataSourceModel) toListParams() (params ssl.CertificatePackListParams, diags diag.Diagnostics) {
+func (m *CertificatePacksDataSourceModel) toListParams(_ context.Context) (params ssl.CertificatePackListParams, diags diag.Diagnostics) {
 	params = ssl.CertificatePackListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

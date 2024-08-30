@@ -56,6 +56,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"certificate_authority": schema.StringAttribute{
 						Description: "The Certificate Authority that will issue the certificate",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -68,14 +69,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"custom_certificate": schema.StringAttribute{
 						Description: "If a custom uploaded certificate is used.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"custom_key": schema.StringAttribute{
 						Description: "The key for a custom uploaded certificate.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"method": schema.StringAttribute{
 						Description: "Domain control validation (DCV) method used for this hostname.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -87,15 +91,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"settings": schema.SingleNestedAttribute{
 						Description: "SSL specific settings.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[CustomHostnameSSLSettingsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ciphers": schema.ListAttribute{
 								Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
+								Computed:    true,
 								Optional:    true,
 								ElementType: types.StringType,
 							},
 							"early_hints": schema.StringAttribute{
 								Description: "Whether or not Early Hints is enabled.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
@@ -103,6 +111,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"http2": schema.StringAttribute{
 								Description: "Whether or not HTTP2 is enabled.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
@@ -110,6 +119,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"min_tls_version": schema.StringAttribute{
 								Description: "The minimum TLS version supported.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -122,6 +132,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"tls_1_3": schema.StringAttribute{
 								Description: "Whether or not TLS 1.3 is enabled.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
@@ -131,6 +142,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"type": schema.StringAttribute{
 						Description: "Level of validation to be used for this hostname. Domain validation (dv) must be used.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dv"),
@@ -138,6 +150,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"wildcard": schema.BoolAttribute{
 						Description: "Indicates whether the certificate covers a wildcard.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -156,6 +169,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"key": schema.StringAttribute{
 						Description: "Unique metadata for this hostname.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -201,10 +215,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"name": schema.StringAttribute{
 						Description: "DNS Name for record.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"type": schema.StringAttribute{
 						Description: "DNS Record type.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("txt"),
@@ -212,6 +228,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"value": schema.StringAttribute{
 						Description: "Content for the record.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -223,10 +240,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"http_body": schema.StringAttribute{
 						Description: "Token to be served.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"http_url": schema.StringAttribute{
 						Description: "The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

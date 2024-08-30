@@ -3,6 +3,8 @@
 package zero_trust_tunnel_cloudflared_virtual_network
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -25,7 +27,7 @@ type ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel) toListParams() (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkVirtualNetworkListParams, diags diag.Diagnostics) {
 	params = zero_trust.NetworkVirtualNetworkListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

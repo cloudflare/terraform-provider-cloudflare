@@ -3,6 +3,8 @@
 package zero_trust_access_tag
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -29,7 +31,7 @@ type ZeroTrustAccessTagDataSourceModel struct {
 	Filter    *ZeroTrustAccessTagFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustAccessTagDataSourceModel) toReadParams() (params zero_trust.AccessTagGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessTagDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessTagGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessTagGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -37,7 +39,7 @@ func (m *ZeroTrustAccessTagDataSourceModel) toReadParams() (params zero_trust.Ac
 	return
 }
 
-func (m *ZeroTrustAccessTagDataSourceModel) toListParams() (params zero_trust.AccessTagListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessTagDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessTagListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessTagListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

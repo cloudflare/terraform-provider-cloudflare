@@ -3,6 +3,8 @@
 package list
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -32,7 +34,7 @@ type ListDataSourceModel struct {
 	Filter                *ListFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ListDataSourceModel) toReadParams() (params rules.ListGetParams, diags diag.Diagnostics) {
+func (m *ListDataSourceModel) toReadParams(_ context.Context) (params rules.ListGetParams, diags diag.Diagnostics) {
 	params = rules.ListGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -40,7 +42,7 @@ func (m *ListDataSourceModel) toReadParams() (params rules.ListGetParams, diags 
 	return
 }
 
-func (m *ListDataSourceModel) toListParams() (params rules.ListListParams, diags diag.Diagnostics) {
+func (m *ListDataSourceModel) toListParams(_ context.Context) (params rules.ListListParams, diags diag.Diagnostics) {
 	params = rules.ListListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

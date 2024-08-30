@@ -3,6 +3,8 @@
 package zero_trust_access_service_token
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type ZeroTrustAccessServiceTokensDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustAccessServiceTokensResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustAccessServiceTokensDataSourceModel) toListParams() (params zero_trust.AccessServiceTokenListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessServiceTokensDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessServiceTokenListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessServiceTokenListParams{}
 
 	if !m.AccountID.IsNull() {

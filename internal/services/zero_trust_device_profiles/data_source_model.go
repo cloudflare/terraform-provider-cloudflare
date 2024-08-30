@@ -3,6 +3,8 @@
 package zero_trust_device_profiles
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -48,7 +50,7 @@ type ZeroTrustDeviceProfilesDataSourceModel struct {
 	Filter              *ZeroTrustDeviceProfilesFindOneByDataSourceModel                                    `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustDeviceProfilesDataSourceModel) toReadParams() (params zero_trust.DevicePolicyGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDeviceProfilesDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePolicyGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePolicyGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -56,7 +58,7 @@ func (m *ZeroTrustDeviceProfilesDataSourceModel) toReadParams() (params zero_tru
 	return
 }
 
-func (m *ZeroTrustDeviceProfilesDataSourceModel) toListParams() (params zero_trust.DevicePolicyListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDeviceProfilesDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePolicyListParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePolicyListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

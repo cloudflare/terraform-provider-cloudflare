@@ -3,6 +3,8 @@
 package zero_trust_access_short_lived_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -28,7 +30,7 @@ type ZeroTrustAccessShortLivedCertificateDataSourceModel struct {
 	Filter    *ZeroTrustAccessShortLivedCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toReadParams() (params zero_trust.AccessApplicationCAGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessApplicationCAGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessApplicationCAGetParams{}
 
 	if !m.Filter.AccountID.IsNull() {
@@ -40,7 +42,7 @@ func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toReadParams() (pa
 	return
 }
 
-func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toListParams() (params zero_trust.AccessApplicationCAListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessApplicationCAListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessApplicationCAListParams{}
 
 	if !m.Filter.AccountID.IsNull() {

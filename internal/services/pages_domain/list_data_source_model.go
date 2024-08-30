@@ -3,6 +3,8 @@
 package pages_domain
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type PagesDomainsDataSourceModel struct {
 	Result      customfield.NestedObjectList[PagesDomainsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *PagesDomainsDataSourceModel) toListParams() (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
+func (m *PagesDomainsDataSourceModel) toListParams(_ context.Context) (params pages.ProjectDomainListParams, diags diag.Diagnostics) {
 	params = pages.ProjectDomainListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

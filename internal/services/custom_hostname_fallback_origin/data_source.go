@@ -57,7 +57,7 @@ func (d *CustomHostnameFallbackOriginDataSource) Read(ctx context.Context, req d
 		return
 	}
 
-	params, diags := data.toReadParams()
+	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -3,6 +3,8 @@
 package zero_trust_dex_test
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -20,7 +22,7 @@ type ZeroTrustDEXTestsDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustDEXTestsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustDEXTestsDataSourceModel) toListParams() (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDEXTestsDataSourceModel) toListParams(_ context.Context) (params zero_trust.DeviceDEXTestListParams, diags diag.Diagnostics) {
 	params = zero_trust.DeviceDEXTestListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

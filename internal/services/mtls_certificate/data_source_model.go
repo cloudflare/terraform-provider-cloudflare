@@ -3,6 +3,8 @@
 package mtls_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/mtls_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -34,7 +36,7 @@ type MTLSCertificateDataSourceModel struct {
 	Filter            *MTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *MTLSCertificateDataSourceModel) toReadParams() (params mtls_certificates.MTLSCertificateGetParams, diags diag.Diagnostics) {
+func (m *MTLSCertificateDataSourceModel) toReadParams(_ context.Context) (params mtls_certificates.MTLSCertificateGetParams, diags diag.Diagnostics) {
 	params = mtls_certificates.MTLSCertificateGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -42,7 +44,7 @@ func (m *MTLSCertificateDataSourceModel) toReadParams() (params mtls_certificate
 	return
 }
 
-func (m *MTLSCertificateDataSourceModel) toListParams() (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
+func (m *MTLSCertificateDataSourceModel) toListParams(_ context.Context) (params mtls_certificates.MTLSCertificateListParams, diags diag.Diagnostics) {
 	params = mtls_certificates.MTLSCertificateListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

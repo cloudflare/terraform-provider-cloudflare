@@ -126,9 +126,9 @@ type ZeroTrustAccessPolicyIncludeDevicePostureModel struct {
 }
 
 type ZeroTrustAccessPolicyApprovalGroupsModel struct {
-	ApprovalsNeeded types.Float64   `tfsdk:"approvals_needed" json:"approvals_needed"`
-	EmailAddresses  *[]types.String `tfsdk:"email_addresses" json:"email_addresses"`
-	EmailListUUID   types.String    `tfsdk:"email_list_uuid" json:"email_list_uuid"`
+	ApprovalsNeeded types.Float64 `tfsdk:"approvals_needed" json:"approvals_needed"`
+	EmailAddresses  types.List    `tfsdk:"email_addresses" json:"email_addresses,computed_optional"`
+	EmailListUUID   types.String  `tfsdk:"email_list_uuid" json:"email_list_uuid,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeModel struct {

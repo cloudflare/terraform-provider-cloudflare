@@ -65,6 +65,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The Web Analytics rule identifier.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"created": schema.StringAttribute{
@@ -73,22 +74,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"host": schema.StringAttribute{
 							Description: "The hostname the rule will be applied to.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"inclusive": schema.BoolAttribute{
 							Description: "Whether the rule includes or excludes traffic from being measured.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"is_paused": schema.BoolAttribute{
 							Description: "Whether the rule is paused or not.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"paths": schema.ListAttribute{
 							Description: "The paths the rule will be applied to.",
+							Computed:    true,
 							Optional:    true,
 							ElementType: types.StringType,
 						},
 						"priority": schema.Float64Attribute{
+							Computed: true,
 							Optional: true,
 						},
 					},
@@ -100,17 +106,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "The Web Analytics ruleset identifier.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether the ruleset is enabled.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"zone_name": schema.StringAttribute{
+						Computed: true,
 						Optional: true,
 					},
 					"zone_tag": schema.StringAttribute{
 						Description: "The zone identifier.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

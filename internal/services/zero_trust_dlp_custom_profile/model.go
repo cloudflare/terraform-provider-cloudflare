@@ -3,6 +3,7 @@
 package zero_trust_dlp_custom_profile
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,13 +25,13 @@ type ZeroTrustDLPCustomProfileModel struct {
 }
 
 type ZeroTrustDLPCustomProfileProfilesModel struct {
-	Entries           *[]*ZeroTrustDLPCustomProfileProfilesEntriesModel       `tfsdk:"entries" json:"entries"`
-	Name              types.String                                            `tfsdk:"name" json:"name"`
-	AllowedMatchCount types.Int64                                             `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`
-	ContextAwareness  *ZeroTrustDLPCustomProfileProfilesContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness"`
-	Description       types.String                                            `tfsdk:"description" json:"description"`
-	OCREnabled        types.Bool                                              `tfsdk:"ocr_enabled" json:"ocr_enabled"`
-	SharedEntries     *[]*ZeroTrustDLPCustomProfileProfilesSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries"`
+	Entries           *[]*ZeroTrustDLPCustomProfileProfilesEntriesModel                                 `tfsdk:"entries" json:"entries"`
+	Name              types.String                                                                      `tfsdk:"name" json:"name"`
+	AllowedMatchCount types.Int64                                                                       `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`
+	ContextAwareness  customfield.NestedObject[ZeroTrustDLPCustomProfileProfilesContextAwarenessModel]  `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
+	Description       types.String                                                                      `tfsdk:"description" json:"description,computed_optional"`
+	OCREnabled        types.Bool                                                                        `tfsdk:"ocr_enabled" json:"ocr_enabled,computed_optional"`
+	SharedEntries     customfield.NestedObjectList[ZeroTrustDLPCustomProfileProfilesSharedEntriesModel] `tfsdk:"shared_entries" json:"shared_entries,computed_optional"`
 }
 
 type ZeroTrustDLPCustomProfileProfilesEntriesModel struct {
@@ -42,7 +43,7 @@ type ZeroTrustDLPCustomProfileProfilesEntriesModel struct {
 
 type ZeroTrustDLPCustomProfileProfilesEntriesPatternModel struct {
 	Regex      types.String `tfsdk:"regex" json:"regex"`
-	Validation types.String `tfsdk:"validation" json:"validation"`
+	Validation types.String `tfsdk:"validation" json:"validation,computed_optional"`
 }
 
 type ZeroTrustDLPCustomProfileProfilesContextAwarenessModel struct {
@@ -78,7 +79,7 @@ type ZeroTrustDLPCustomProfileEntriesModel struct {
 
 type ZeroTrustDLPCustomProfileEntriesPatternModel struct {
 	Regex      types.String `tfsdk:"regex" json:"regex"`
-	Validation types.String `tfsdk:"validation" json:"validation"`
+	Validation types.String `tfsdk:"validation" json:"validation,computed_optional"`
 }
 
 type ZeroTrustDLPCustomProfileSharedEntriesModel struct {

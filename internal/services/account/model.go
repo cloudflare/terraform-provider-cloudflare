@@ -21,11 +21,11 @@ type AccountModel struct {
 }
 
 type AccountUnitModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type AccountSettingsModel struct {
-	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email"`
+	AbuseContactEmail           types.String `tfsdk:"abuse_contact_email" json:"abuse_contact_email,computed_optional"`
 	DefaultNameservers          types.String `tfsdk:"default_nameservers" json:"default_nameservers,computed_optional"`
 	EnforceTwofactor            types.Bool   `tfsdk:"enforce_twofactor" json:"enforce_twofactor,computed_optional"`
 	UseAccountCustomNSByDefault types.Bool   `tfsdk:"use_account_custom_ns_by_default" json:"use_account_custom_ns_by_default,computed_optional"`

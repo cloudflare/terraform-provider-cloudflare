@@ -3,6 +3,8 @@
 package zero_trust_gateway_settings
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type ZeroTrustGatewaySettingsDataSourceModel struct {
 	Settings  *ZeroTrustGatewaySettingsSettingsDataSourceModel `tfsdk:"settings" json:"settings"`
 }
 
-func (m *ZeroTrustGatewaySettingsDataSourceModel) toReadParams() (params zero_trust.GatewayConfigurationGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustGatewaySettingsDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayConfigurationGetParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayConfigurationGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

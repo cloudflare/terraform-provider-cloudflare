@@ -5,6 +5,7 @@ package api_token
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -56,12 +57,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
+										Computed:    true,
 										Optional:    true,
+										CustomType:  customfield.NewNestedObjectType[APITokenPoliciesPermissionGroupsMetaModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
+												Computed: true,
 												Optional: true,
 											},
 											"value": schema.StringAttribute{
+												Computed: true,
 												Optional: true,
 											},
 										},
@@ -78,9 +83,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 							Attributes: map[string]schema.Attribute{
 								"resource": schema.StringAttribute{
+									Computed: true,
 									Optional: true,
 								},
 								"scope": schema.StringAttribute{
+									Computed: true,
 									Optional: true,
 								},
 							},
@@ -114,15 +121,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"request_ip": schema.SingleNestedAttribute{
 						Description: "Client IP restrictions.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[APITokenConditionRequestIPModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
+								Computed:    true,
 								Optional:    true,
 								ElementType: types.StringType,
 							},
 							"not_in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
+								Computed:    true,
 								Optional:    true,
 								ElementType: types.StringType,
 							},

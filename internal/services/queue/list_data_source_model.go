@@ -3,6 +3,8 @@
 package queue
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/queues"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -20,7 +22,7 @@ type QueuesDataSourceModel struct {
 	Result    customfield.NestedObjectList[QueuesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *QueuesDataSourceModel) toListParams() (params queues.QueueListParams, diags diag.Diagnostics) {
+func (m *QueuesDataSourceModel) toListParams(_ context.Context) (params queues.QueueListParams, diags diag.Diagnostics) {
 	params = queues.QueueListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

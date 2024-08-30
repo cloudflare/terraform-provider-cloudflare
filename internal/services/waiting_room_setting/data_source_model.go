@@ -3,6 +3,8 @@
 package waiting_room_setting
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/waiting_rooms"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type WaitingRoomSettingDataSourceModel struct {
 	SearchEngineCrawlerBypass types.Bool   `tfsdk:"search_engine_crawler_bypass" json:"search_engine_crawler_bypass,computed_optional"`
 }
 
-func (m *WaitingRoomSettingDataSourceModel) toReadParams() (params waiting_rooms.SettingGetParams, diags diag.Diagnostics) {
+func (m *WaitingRoomSettingDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.SettingGetParams, diags diag.Diagnostics) {
 	params = waiting_rooms.SettingGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

@@ -5,6 +5,7 @@ package page_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -43,16 +44,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"name": schema.StringAttribute{
 							Description: "The type of route.",
+							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("forward_url"),
 							},
 						},
 						"value": schema.SingleNestedAttribute{
-							Optional: true,
+							Computed:   true,
+							Optional:   true,
+							CustomType: customfield.NewNestedObjectType[PageRuleActionsValueModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
 									Description: "The response type for the URL redirect.",
+									Computed:    true,
 									Optional:    true,
 									Validators: []validator.String{
 										stringvalidator.OneOfCaseInsensitive("temporary", "permanent"),
@@ -60,6 +65,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"url": schema.StringAttribute{
 									Description: "The URL to redirect the request to.\nNotes: ${num} refers to the position of '*' in the constraint value.",
+									Computed:    true,
 									Optional:    true,
 								},
 							},

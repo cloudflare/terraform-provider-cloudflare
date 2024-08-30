@@ -15,12 +15,12 @@ type WorkersCronTriggerModel struct {
 	ID         types.String                                                   `tfsdk:"id" json:"-,computed"`
 	ScriptName types.String                                                   `tfsdk:"script_name" path:"script_name"`
 	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id"`
-	Cron       types.String                                                   `tfsdk:"cron" json:"cron"`
 	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesModel] `tfsdk:"schedules" json:"schedules,computed"`
+	Cron       types.String                                                   `tfsdk:"cron" json:"cron,computed_optional"`
 }
 
 type WorkersCronTriggerSchedulesModel struct {
 	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
-	Cron       types.String `tfsdk:"cron" json:"cron"`
+	Cron       types.String `tfsdk:"cron" json:"cron,computed_optional"`
 	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }

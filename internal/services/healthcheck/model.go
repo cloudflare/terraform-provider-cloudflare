@@ -34,14 +34,14 @@ type HealthcheckModel struct {
 }
 
 type HealthcheckHTTPConfigModel struct {
-	AllowInsecure   types.Bool                 `tfsdk:"allow_insecure" json:"allow_insecure,computed_optional"`
-	ExpectedBody    types.String               `tfsdk:"expected_body" json:"expected_body"`
-	ExpectedCodes   *[]types.String            `tfsdk:"expected_codes" json:"expected_codes"`
-	FollowRedirects types.Bool                 `tfsdk:"follow_redirects" json:"follow_redirects,computed_optional"`
-	Header          map[string]*[]types.String `tfsdk:"header" json:"header"`
-	Method          types.String               `tfsdk:"method" json:"method,computed_optional"`
-	Path            types.String               `tfsdk:"path" json:"path,computed_optional"`
-	Port            types.Int64                `tfsdk:"port" json:"port,computed_optional"`
+	AllowInsecure   types.Bool            `tfsdk:"allow_insecure" json:"allow_insecure,computed_optional"`
+	ExpectedBody    types.String          `tfsdk:"expected_body" json:"expected_body,computed_optional"`
+	ExpectedCodes   types.List            `tfsdk:"expected_codes" json:"expected_codes,computed_optional"`
+	FollowRedirects types.Bool            `tfsdk:"follow_redirects" json:"follow_redirects,computed_optional"`
+	Header          map[string]types.List `tfsdk:"header" json:"header,computed_optional"`
+	Method          types.String          `tfsdk:"method" json:"method,computed_optional"`
+	Path            types.String          `tfsdk:"path" json:"path,computed_optional"`
+	Port            types.Int64           `tfsdk:"port" json:"port,computed_optional"`
 }
 
 type HealthcheckTCPConfigModel struct {

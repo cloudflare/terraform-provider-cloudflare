@@ -5,6 +5,7 @@ package load_balancer_pool
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -46,6 +47,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"disabled_at": schema.StringAttribute{
@@ -61,10 +63,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"header": schema.SingleNestedAttribute{
 							Description: "The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolOriginsHeaderModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"host": schema.ListAttribute{
 									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
+									Computed:    true,
 									Optional:    true,
 									ElementType: types.StringType,
 								},
@@ -72,10 +77,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"name": schema.StringAttribute{
 							Description: "A human-identifiable name for the origin.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"virtual_network_id": schema.StringAttribute{
 							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"weight": schema.Float64Attribute{
@@ -183,7 +190,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"origin": schema.SingleNestedAttribute{
 						Description: "Filter options for a particular resource type (pool or origin). Use null to reset.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolNotificationFilterOriginModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disable": schema.BoolAttribute{
 								Description: "If set true, disable notifications for this type of resource (pool or origin).",
@@ -193,13 +202,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"pool": schema.SingleNestedAttribute{
 						Description: "Filter options for a particular resource type (pool or origin). Use null to reset.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolNotificationFilterPoolModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"disable": schema.BoolAttribute{
 								Description: "If set true, disable notifications for this type of resource (pool or origin).",
@@ -209,6 +221,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
+								Computed:    true,
 								Optional:    true,
 							},
 						},

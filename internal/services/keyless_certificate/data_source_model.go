@@ -3,6 +3,8 @@
 package keyless_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/keyless_certificates"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -35,7 +37,7 @@ type KeylessCertificateDataSourceModel struct {
 	Filter               *KeylessCertificateFindOneByDataSourceModel                       `tfsdk:"filter"`
 }
 
-func (m *KeylessCertificateDataSourceModel) toReadParams() (params keyless_certificates.KeylessCertificateGetParams, diags diag.Diagnostics) {
+func (m *KeylessCertificateDataSourceModel) toReadParams(_ context.Context) (params keyless_certificates.KeylessCertificateGetParams, diags diag.Diagnostics) {
 	params = keyless_certificates.KeylessCertificateGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -43,7 +45,7 @@ func (m *KeylessCertificateDataSourceModel) toReadParams() (params keyless_certi
 	return
 }
 
-func (m *KeylessCertificateDataSourceModel) toListParams() (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
+func (m *KeylessCertificateDataSourceModel) toListParams(_ context.Context) (params keyless_certificates.KeylessCertificateListParams, diags diag.Diagnostics) {
 	params = keyless_certificates.KeylessCertificateListParams{
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}

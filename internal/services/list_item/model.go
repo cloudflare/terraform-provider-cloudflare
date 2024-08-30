@@ -3,6 +3,7 @@
 package list_item
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,16 +12,16 @@ type ListItemResultEnvelope struct {
 }
 
 type ListItemModel struct {
-	ListID            types.String           `tfsdk:"list_id" path:"list_id"`
-	AccountID         types.String           `tfsdk:"account_id" path:"account_id"`
-	AccountIdentifier types.String           `tfsdk:"account_identifier" path:"account_identifier"`
-	ItemID            types.String           `tfsdk:"item_id" path:"item_id"`
-	ASN               types.Int64            `tfsdk:"asn" json:"asn"`
-	Comment           types.String           `tfsdk:"comment" json:"comment"`
-	IP                types.String           `tfsdk:"ip" json:"ip"`
-	Hostname          *ListItemHostnameModel `tfsdk:"hostname" json:"hostname"`
-	Redirect          *ListItemRedirectModel `tfsdk:"redirect" json:"redirect"`
-	OperationID       types.String           `tfsdk:"operation_id" json:"operation_id,computed"`
+	ListID            types.String                                    `tfsdk:"list_id" path:"list_id"`
+	AccountID         types.String                                    `tfsdk:"account_id" path:"account_id"`
+	AccountIdentifier types.String                                    `tfsdk:"account_identifier" path:"account_identifier"`
+	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id"`
+	OperationID       types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
+	ASN               types.Int64                                     `tfsdk:"asn" json:"asn,computed_optional"`
+	Comment           types.String                                    `tfsdk:"comment" json:"comment,computed_optional"`
+	IP                types.String                                    `tfsdk:"ip" json:"ip,computed_optional"`
+	Hostname          customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed_optional"`
+	Redirect          customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed_optional"`
 }
 
 type ListItemHostnameModel struct {

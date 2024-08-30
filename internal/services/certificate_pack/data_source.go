@@ -59,7 +59,7 @@ func (d *CertificatePackDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	if data.Filter == nil {
-		params, diags := data.toReadParams()
+		params, diags := data.toReadParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -86,7 +86,7 @@ func (d *CertificatePackDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 		data = &env.Result
 	} else {
-		params, diags := data.toListParams()
+		params, diags := data.toListParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return

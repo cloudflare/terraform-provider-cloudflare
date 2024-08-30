@@ -3,6 +3,8 @@
 package ruleset
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type RulesetsDataSourceModel struct {
 	Result    customfield.NestedObjectList[RulesetsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *RulesetsDataSourceModel) toListParams() (params rulesets.RulesetListParams, diags diag.Diagnostics) {
+func (m *RulesetsDataSourceModel) toListParams(_ context.Context) (params rulesets.RulesetListParams, diags diag.Diagnostics) {
 	params = rulesets.RulesetListParams{}
 
 	if !m.AccountID.IsNull() {

@@ -3,6 +3,8 @@
 package workers_for_platforms_dispatch_namespace
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -32,7 +34,7 @@ type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
 	Filter            *WorkersForPlatformsDispatchNamespaceFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams() (params workers_for_platforms.DispatchNamespaceGetParams, diags diag.Diagnostics) {
+func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceGetParams, diags diag.Diagnostics) {
 	params = workers_for_platforms.DispatchNamespaceGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -40,7 +42,7 @@ func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toReadParams() (pa
 	return
 }
 
-func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
+func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
 	params = workers_for_platforms.DispatchNamespaceListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

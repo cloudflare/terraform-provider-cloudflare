@@ -3,6 +3,8 @@
 package address_map
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type AddressMapsDataSourceModel struct {
 	Result    customfield.NestedObjectList[AddressMapsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *AddressMapsDataSourceModel) toListParams() (params addressing.AddressMapListParams, diags diag.Diagnostics) {
+func (m *AddressMapsDataSourceModel) toListParams(_ context.Context) (params addressing.AddressMapListParams, diags diag.Diagnostics) {
 	params = addressing.AddressMapListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

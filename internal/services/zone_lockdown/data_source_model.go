@@ -3,6 +3,8 @@
 package zone_lockdown
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -31,7 +33,7 @@ type ZoneLockdownDataSourceModel struct {
 	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
 }
 
-func (m *ZoneLockdownDataSourceModel) toListParams() (params firewall.LockdownListParams, diags diag.Diagnostics) {
+func (m *ZoneLockdownDataSourceModel) toListParams(_ context.Context) (params firewall.LockdownListParams, diags diag.Diagnostics) {
 	mFilterCreatedOn, errs := m.Filter.CreatedOn.ValueRFC3339Time()
 	diags.Append(errs...)
 	mFilterModifiedOn, errs := m.Filter.ModifiedOn.ValueRFC3339Time()

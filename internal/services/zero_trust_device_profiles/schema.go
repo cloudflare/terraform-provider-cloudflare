@@ -103,10 +103,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
 						Description: "The mode to run the WARP client under.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"port": schema.Float64Attribute{
 						Description: "The port number when used with proxy mode.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -133,6 +135,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to exclude from the tunnel. If `host` is present, `address` must not be present.",
+							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -149,10 +152,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"description": schema.StringAttribute{
 							Description: "A description of the fallback domain, displayed in the client UI.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"dns_server": schema.ListAttribute{
 							Description: "A list of IP addresses to handle domain resolution.",
+							Computed:    true,
 							Optional:    true,
 							ElementType: types.StringType,
 						},
@@ -174,6 +179,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"host": schema.StringAttribute{
 							Description: "The domain name to include in the tunnel. If host is present, address must not be present.",
+							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -186,10 +192,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The id of the DEX test targeting this policy",
+							Computed:    true,
 							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the DEX test targeting this policy",
+							Computed:    true,
 							Optional:    true,
 						},
 					},

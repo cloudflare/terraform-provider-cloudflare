@@ -3,6 +3,8 @@
 package zero_trust_dns_location
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -38,7 +40,7 @@ type ZeroTrustDNSLocationDataSourceModel struct {
 	Filter                *ZeroTrustDNSLocationFindOneByDataSourceModel                             `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams() (params zero_trust.GatewayLocationGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayLocationGetParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayLocationGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -46,7 +48,7 @@ func (m *ZeroTrustDNSLocationDataSourceModel) toReadParams() (params zero_trust.
 	return
 }
 
-func (m *ZeroTrustDNSLocationDataSourceModel) toListParams() (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDNSLocationDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayLocationListParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayLocationListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

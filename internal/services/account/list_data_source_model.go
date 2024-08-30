@@ -3,6 +3,8 @@
 package account
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/accounts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type AccountsDataSourceModel struct {
 	Result    customfield.NestedObjectList[AccountsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *AccountsDataSourceModel) toListParams() (params accounts.AccountListParams, diags diag.Diagnostics) {
+func (m *AccountsDataSourceModel) toListParams(_ context.Context) (params accounts.AccountListParams, diags diag.Diagnostics) {
 	params = accounts.AccountListParams{}
 
 	if !m.Direction.IsNull() {

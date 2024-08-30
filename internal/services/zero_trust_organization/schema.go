@@ -71,10 +71,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"forbidden": schema.StringAttribute{
 						Description: "The uid of the custom page to use when a user is denied access after failing a non-identity rule.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"identity_denied": schema.StringAttribute{
 						Description: "The uid of the custom page to use when a user is denied access.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -84,22 +86,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"background_color": schema.StringAttribute{
 						Description: "The background color on your login page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"footer_text": schema.StringAttribute{
 						Description: "The text at the bottom of your login page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"header_text": schema.StringAttribute{
 						Description: "The text at the top of your login page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"logo_path": schema.StringAttribute{
 						Description: "The URL of the logo on your login page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"text_color": schema.StringAttribute{
 						Description: "The text color on your login page.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

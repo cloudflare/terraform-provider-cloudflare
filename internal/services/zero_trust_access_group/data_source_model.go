@@ -3,6 +3,8 @@
 package zero_trust_access_group
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -35,7 +37,7 @@ type ZeroTrustAccessGroupDataSourceModel struct {
 	Filter    *ZeroTrustAccessGroupFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams() (params zero_trust.AccessGroupGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessGroupGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessGroupGetParams{}
 
 	if !m.Filter.AccountID.IsNull() {
@@ -47,7 +49,7 @@ func (m *ZeroTrustAccessGroupDataSourceModel) toReadParams() (params zero_trust.
 	return
 }
 
-func (m *ZeroTrustAccessGroupDataSourceModel) toListParams() (params zero_trust.AccessGroupListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessGroupDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessGroupListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessGroupListParams{}
 
 	if !m.Filter.AccountID.IsNull() {

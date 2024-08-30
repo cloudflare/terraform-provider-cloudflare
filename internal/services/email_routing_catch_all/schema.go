@@ -49,6 +49,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"value": schema.ListAttribute{
+							Computed:    true,
 							Optional:    true,
 							ElementType: types.StringType,
 						},

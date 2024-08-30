@@ -3,6 +3,8 @@
 package email_routing_settings
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -26,7 +28,7 @@ type EmailRoutingSettingsDataSourceModel struct {
 	SkipWizard types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard,computed_optional"`
 }
 
-func (m *EmailRoutingSettingsDataSourceModel) toReadParams() (params email_routing.EmailRoutingGetParams, diags diag.Diagnostics) {
+func (m *EmailRoutingSettingsDataSourceModel) toReadParams(_ context.Context) (params email_routing.EmailRoutingGetParams, diags diag.Diagnostics) {
 	params = email_routing.EmailRoutingGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

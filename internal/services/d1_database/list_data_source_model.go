@@ -3,6 +3,8 @@
 package d1_database
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/d1"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type D1DatabasesDataSourceModel struct {
 	Result    customfield.NestedObjectList[D1DatabasesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *D1DatabasesDataSourceModel) toListParams() (params d1.DatabaseListParams, diags diag.Diagnostics) {
+func (m *D1DatabasesDataSourceModel) toListParams(_ context.Context) (params d1.DatabaseListParams, diags diag.Diagnostics) {
 	params = d1.DatabaseListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

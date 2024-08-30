@@ -3,6 +3,8 @@
 package zero_trust_device_posture_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -32,7 +34,7 @@ type ZeroTrustDevicePostureRuleDataSourceModel struct {
 	Filter      *ZeroTrustDevicePostureRuleFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams() (params zero_trust.DevicePostureGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DevicePostureGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePostureGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -40,7 +42,7 @@ func (m *ZeroTrustDevicePostureRuleDataSourceModel) toReadParams() (params zero_
 	return
 }
 
-func (m *ZeroTrustDevicePostureRuleDataSourceModel) toListParams() (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDevicePostureRuleDataSourceModel) toListParams(_ context.Context) (params zero_trust.DevicePostureListParams, diags diag.Diagnostics) {
 	params = zero_trust.DevicePostureListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
