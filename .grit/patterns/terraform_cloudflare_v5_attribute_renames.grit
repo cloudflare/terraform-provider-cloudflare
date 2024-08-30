@@ -46,6 +46,8 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     `account_id = $id` => `account = {
       id = $id
     }` where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
-    `jump_start = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }` }
+    `plan = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }`},
+    `jump_start = $id` => . where { $id <: within `resource "cloudflare_zone" $_ { $_ }` },
+    `zone = $zone` => `name = $zone` where { $zone <: within `resource "cloudflare_zone" $_ { $_ }` }
   }
 }
