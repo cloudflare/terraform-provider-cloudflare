@@ -36,39 +36,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"app": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"install_id": schema.StringAttribute{
-						Description: "app install id.",
-						Optional:    true,
-					},
-				},
-			},
-			"component_values": schema.ListNestedAttribute{
-				Description: "The list of add-ons subscribed to.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"default": schema.Float64Attribute{
-							Description: "The default amount assigned.",
-							Optional:    true,
-						},
-						"name": schema.StringAttribute{
-							Description: "The name of the component value.",
-							Optional:    true,
-						},
-						"price": schema.Float64Attribute{
-							Description: "The unit price for the component value.",
-							Optional:    true,
-						},
-						"value": schema.Float64Attribute{
-							Description: "The amount of the component value assigned.",
-							Optional:    true,
-						},
-					},
-				},
-			},
 			"rate_plan": schema.SingleNestedAttribute{
 				Description: "The rate plan applied to the subscription.",
 				Optional:    true,
@@ -101,20 +68,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The list of sets this rate plan applies to.",
 						Optional:    true,
 						ElementType: types.StringType,
-					},
-				},
-			},
-			"zone": schema.SingleNestedAttribute{
-				Description: "A simple zone object. May have null properties if not a zone subscription.",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"id": schema.StringAttribute{
-						Description: "Identifier",
-						Computed:    true,
-					},
-					"name": schema.StringAttribute{
-						Description: "The domain name",
-						Computed:    true,
 					},
 				},
 			},
