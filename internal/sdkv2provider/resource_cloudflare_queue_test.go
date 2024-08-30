@@ -158,18 +158,25 @@ func testAccCheckCloudflareQueueWConsumer(rnd, accountID, name string) string {
 	resource "cloudflare_queue" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[3]s"
-		consumer {
-			script_name = "%[1]s"
-			settings {
-				batch_size = 1
-				max_retries = 1
-				max_wait_time_ms = 1000
+		consumers = {
+			{
+				queue_name = "%[3]s"
+				script_name = "%[1]s"
 			}
 		}
 		depends_on = [cloudflare_workers_script.%[1]s]
 	}`, rnd, accountID, name, queueModuleContent)
 	return tf_content
 }
+
+// {
+// 	script_name = "%[1]s"
+// 	settings = {
+// 		batch_size = 1
+// 		max_retries = 1
+// 		max_wait_time_ms = 1000
+// 	}
+// }
 
 func testAccCheckCloudflareQueueExists(name string, queue *cloudflare.Queue) resource.TestCheckFunc {
 	return func(s *terraform.State) error {

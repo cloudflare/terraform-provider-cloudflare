@@ -766,6 +766,17 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 																		Optional:    true,
 																		Description: "Exclude the origin header from the custom key.",
 																	},
+																	"contains": {
+																		Type:        schema.TypeMap,
+																		Optional:    true,
+																		Description: "Dictionary of headers mapping to lists of values to check for presence in the custom key.",
+																		Elem: &schema.Schema{
+																			Type: schema.TypeSet,
+																			Elem: &schema.Schema{
+																				Type: schema.TypeString,
+																			},
+																		},
+																	},
 																},
 															},
 														},

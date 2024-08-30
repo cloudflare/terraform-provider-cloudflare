@@ -46,8 +46,8 @@ func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(fmt.Errorf("failed to find id in Create response; resource was empty"))
 	}
 
-	if d.Get("consumer") != nil {
-		consumers := d.Get("consumer").([]interface{})
+	if d.Get("consumers") != nil {
+		consumers := d.Get("consumers").([]interface{})
 		for _, consumer := range consumers {
 			consumerMap := consumer.(map[string]interface{})
 			settings := consumerMap["settings"].([]interface{})[0].(map[string]interface{})
@@ -115,7 +115,7 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 					}
 					consumers = append(consumers, consumerMap)
 				}
-				d.Set("consumer", consumers)
+				d.Set("consumers", consumers)
 			}
 		}
 	}

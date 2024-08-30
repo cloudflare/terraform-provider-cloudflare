@@ -643,6 +643,13 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 																				defaults.DefaultBool(false),
 																			},
 																		},
+																		"contains": schema.MapAttribute{
+																			ElementType: types.SetType{
+																				ElemType: types.StringType,
+																			},
+																			Optional:            true,
+																			MarkdownDescription: "Dictionary of headers mapping to lists of values to check for presence in the custom key.",
+																		},
 																	},
 																},
 																Validators: []validator.List{
