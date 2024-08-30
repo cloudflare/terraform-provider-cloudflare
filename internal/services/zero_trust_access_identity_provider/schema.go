@@ -66,31 +66,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"claims": schema.ListAttribute{
 						Description: "Custom claims",
+						Computed:    true,
 						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"client_id": schema.StringAttribute{
 						Description: "Your OAuth Client ID",
+						Computed:    true,
 						Optional:    true,
 					},
 					"client_secret": schema.StringAttribute{
 						Description: "Your OAuth Client Secret",
+						Computed:    true,
 						Optional:    true,
 					},
 					"conditional_access_enabled": schema.BoolAttribute{
 						Description: "Should Cloudflare try to load authentication contexts from your account",
+						Computed:    true,
 						Optional:    true,
 					},
 					"directory_id": schema.StringAttribute{
 						Description: "Your Azure directory uuid",
+						Computed:    true,
 						Optional:    true,
 					},
 					"email_claim_name": schema.StringAttribute{
 						Description: "The claim name for email in the id_token response.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"prompt": schema.StringAttribute{
 						Description: "Indicates the type of user interaction that is required. prompt=login forces the user to enter their credentials on that request, negating single-sign on. prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error. prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in session or any remembered account or an option to choose to use a different account altogether.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -102,6 +109,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"support_groups": schema.BoolAttribute{
 						Description: "Should Cloudflare try to load groups from your account",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -112,22 +120,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "A flag to enable or disable SCIM for the identity provider.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"group_member_deprovision": schema.BoolAttribute{
 						Description: "A flag to revoke a user's session in Access and force a reauthentication on the user's Gateway session when they have been added or removed from a group in the Identity Provider.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"seat_deprovision": schema.BoolAttribute{
 						Description: "A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"secret": schema.StringAttribute{
 						Description: "A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it token at /access/identity_providers/:idpID/refresh_scim_secret.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"user_deprovision": schema.BoolAttribute{
 						Description: "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

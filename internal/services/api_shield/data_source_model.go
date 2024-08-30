@@ -3,6 +3,8 @@
 package api_shield
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,7 +21,7 @@ type APIShieldDataSourceModel struct {
 	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsDataSourceModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics"`
 }
 
-func (m *APIShieldDataSourceModel) toReadParams() (params api_gateway.ConfigurationGetParams, diags diag.Diagnostics) {
+func (m *APIShieldDataSourceModel) toReadParams(_ context.Context) (params api_gateway.ConfigurationGetParams, diags diag.Diagnostics) {
 	params = api_gateway.ConfigurationGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

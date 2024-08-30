@@ -3,6 +3,8 @@
 package tiered_cache
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/cache"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -22,7 +24,7 @@ type TieredCacheDataSourceModel struct {
 	Value      types.String      `tfsdk:"value" json:"value"`
 }
 
-func (m *TieredCacheDataSourceModel) toReadParams() (params cache.SmartTieredCacheGetParams, diags diag.Diagnostics) {
+func (m *TieredCacheDataSourceModel) toReadParams(_ context.Context) (params cache.SmartTieredCacheGetParams, diags diag.Diagnostics) {
 	params = cache.SmartTieredCacheGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

@@ -184,11 +184,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"paths": schema.ListAttribute{
 								Description: "List of paths to check for client certificate on linux.",
+								Computed:    true,
 								Optional:    true,
 								ElementType: types.StringType,
 							},
 							"trust_stores": schema.ListAttribute{
 								Description: "List of trust stores to check for client certificate.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.List{
 									listvalidator.ValueStringsAre(
@@ -339,6 +341,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"platform": schema.StringAttribute{
+							Computed: true,
 							Optional: true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(

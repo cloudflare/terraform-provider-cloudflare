@@ -3,6 +3,8 @@
 package zero_trust_organization
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -32,7 +34,7 @@ type ZeroTrustOrganizationDataSourceModel struct {
 	AutoRedirectToIdentity         types.Bool                                       `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 }
 
-func (m *ZeroTrustOrganizationDataSourceModel) toReadParams() (params zero_trust.OrganizationListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustOrganizationDataSourceModel) toReadParams(_ context.Context) (params zero_trust.OrganizationListParams, diags diag.Diagnostics) {
 	params = zero_trust.OrganizationListParams{}
 
 	if !m.AccountID.IsNull() {

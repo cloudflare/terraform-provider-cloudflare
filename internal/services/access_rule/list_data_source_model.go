@@ -3,6 +3,8 @@
 package access_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -27,7 +29,7 @@ type AccessRulesDataSourceModel struct {
 	Result        customfield.NestedObjectList[AccessRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *AccessRulesDataSourceModel) toListParams() (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
+func (m *AccessRulesDataSourceModel) toListParams(_ context.Context) (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
 	params = firewall.AccessRuleListParams{}
 
 	if m.Configuration != nil {
@@ -66,8 +68,8 @@ func (m *AccessRulesDataSourceModel) toListParams() (params firewall.AccessRuleL
 }
 
 type AccessRulesConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	Target types.String `tfsdk:"target" json:"target,computed_optional"`
+	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type AccessRulesResultDataSourceModel struct {

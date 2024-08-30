@@ -3,6 +3,8 @@
 package authenticated_origin_pulls_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type AuthenticatedOriginPullsCertificatesDataSourceModel struct {
 	Result   customfield.NestedObjectList[AuthenticatedOriginPullsCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *AuthenticatedOriginPullsCertificatesDataSourceModel) toListParams() (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {
+func (m *AuthenticatedOriginPullsCertificatesDataSourceModel) toListParams(_ context.Context) (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {
 	params = origin_tls_client_auth.OriginTLSClientAuthListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

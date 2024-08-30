@@ -3,6 +3,8 @@
 package zero_trust_access_custom_page
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type ZeroTrustAccessCustomPagesDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustAccessCustomPagesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustAccessCustomPagesDataSourceModel) toListParams() (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessCustomPagesDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessCustomPageListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

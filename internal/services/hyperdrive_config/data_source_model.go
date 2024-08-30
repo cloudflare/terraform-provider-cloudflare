@@ -3,6 +3,8 @@
 package hyperdrive_config
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/hyperdrive"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -27,7 +29,7 @@ type HyperdriveConfigDataSourceModel struct {
 	Filter       *HyperdriveConfigFindOneByDataSourceModel                        `tfsdk:"filter"`
 }
 
-func (m *HyperdriveConfigDataSourceModel) toReadParams() (params hyperdrive.ConfigGetParams, diags diag.Diagnostics) {
+func (m *HyperdriveConfigDataSourceModel) toReadParams(_ context.Context) (params hyperdrive.ConfigGetParams, diags diag.Diagnostics) {
 	params = hyperdrive.ConfigGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -35,7 +37,7 @@ func (m *HyperdriveConfigDataSourceModel) toReadParams() (params hyperdrive.Conf
 	return
 }
 
-func (m *HyperdriveConfigDataSourceModel) toListParams() (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
+func (m *HyperdriveConfigDataSourceModel) toListParams(_ context.Context) (params hyperdrive.ConfigListParams, diags diag.Diagnostics) {
 	params = hyperdrive.ConfigListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

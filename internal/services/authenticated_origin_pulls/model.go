@@ -31,7 +31,7 @@ type AuthenticatedOriginPullsModel struct {
 }
 
 type AuthenticatedOriginPullsConfigModel struct {
-	CERTID   types.String `tfsdk:"cert_id" json:"cert_id"`
-	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled"`
-	Hostname types.String `tfsdk:"hostname" json:"hostname"`
+	CERTID   types.String `tfsdk:"cert_id" json:"cert_id,computed_optional"`
+	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Hostname types.String `tfsdk:"hostname" json:"hostname,computed_optional"`
 }

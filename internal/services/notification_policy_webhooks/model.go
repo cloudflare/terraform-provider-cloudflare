@@ -39,8 +39,8 @@ type NotificationPolicyWebhooksMessagesModel struct {
 }
 
 type NotificationPolicyWebhooksResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count"`
-	Page       types.Float64 `tfsdk:"page" json:"page"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count"`
+	Count      types.Float64 `tfsdk:"count" json:"count,computed_optional"`
+	Page       types.Float64 `tfsdk:"page" json:"page,computed_optional"`
+	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed_optional"`
+	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed_optional"`
 }

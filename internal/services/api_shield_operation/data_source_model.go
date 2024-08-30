@@ -3,6 +3,8 @@
 package api_shield_operation
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/api_gateway"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -27,7 +29,7 @@ type APIShieldOperationDataSourceModel struct {
 	Filter      *APIShieldOperationFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *APIShieldOperationDataSourceModel) toListParams() (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
+func (m *APIShieldOperationDataSourceModel) toListParams(_ context.Context) (params api_gateway.DiscoveryOperationListParams, diags diag.Diagnostics) {
 	mFilterHost := []string{}
 	for _, item := range *m.Filter.Host {
 		mFilterHost = append(mFilterHost, item.ValueString())

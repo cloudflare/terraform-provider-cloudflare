@@ -23,33 +23,33 @@ type ZeroTrustTunnelCloudflaredConfigModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigModel struct {
-	Ingress       *[]*ZeroTrustTunnelCloudflaredConfigConfigIngressModel                           `tfsdk:"ingress" json:"ingress"`
-	OriginRequest *ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel                        `tfsdk:"origin_request" json:"originRequest"`
-	WARPRouting   customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel] `tfsdk:"warp_routing" json:"warp-routing,computed"`
+	Ingress       customfield.NestedObjectList[ZeroTrustTunnelCloudflaredConfigConfigIngressModel]   `tfsdk:"ingress" json:"ingress,computed_optional"`
+	OriginRequest customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel] `tfsdk:"origin_request" json:"originRequest,computed_optional"`
+	WARPRouting   customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel]   `tfsdk:"warp_routing" json:"warp-routing,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressModel struct {
-	Hostname      types.String                                                     `tfsdk:"hostname" json:"hostname"`
-	Service       types.String                                                     `tfsdk:"service" json:"service"`
-	OriginRequest *ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel `tfsdk:"origin_request" json:"originRequest"`
-	Path          types.String                                                     `tfsdk:"path" json:"path,computed_optional"`
+	Hostname      types.String                                                                              `tfsdk:"hostname" json:"hostname"`
+	Service       types.String                                                                              `tfsdk:"service" json:"service"`
+	OriginRequest customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel] `tfsdk:"origin_request" json:"originRequest,computed_optional"`
+	Path          types.String                                                                              `tfsdk:"path" json:"path,computed_optional"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel struct {
-	Access                 *ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessModel `tfsdk:"access" json:"access"`
-	CAPool                 types.String                                                           `tfsdk:"ca_pool" json:"caPool,computed_optional"`
-	ConnectTimeout         types.Int64                                                            `tfsdk:"connect_timeout" json:"connectTimeout,computed_optional"`
-	DisableChunkedEncoding types.Bool                                                             `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding"`
-	HTTP2Origin            types.Bool                                                             `tfsdk:"http2_origin" json:"http2Origin"`
-	HTTPHostHeader         types.String                                                           `tfsdk:"http_host_header" json:"httpHostHeader"`
-	KeepAliveConnections   types.Int64                                                            `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed_optional"`
-	KeepAliveTimeout       types.Int64                                                            `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed_optional"`
-	NoHappyEyeballs        types.Bool                                                             `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed_optional"`
-	NoTLSVerify            types.Bool                                                             `tfsdk:"no_tls_verify" json:"noTLSVerify,computed_optional"`
-	OriginServerName       types.String                                                           `tfsdk:"origin_server_name" json:"originServerName,computed_optional"`
-	ProxyType              types.String                                                           `tfsdk:"proxy_type" json:"proxyType,computed_optional"`
-	TCPKeepAlive           types.Int64                                                            `tfsdk:"tcp_keep_alive" json:"tcpKeepAlive,computed_optional"`
-	TLSTimeout             types.Int64                                                            `tfsdk:"tls_timeout" json:"tlsTimeout,computed_optional"`
+	Access                 customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessModel] `tfsdk:"access" json:"access,computed_optional"`
+	CAPool                 types.String                                                                                    `tfsdk:"ca_pool" json:"caPool,computed_optional"`
+	ConnectTimeout         types.Int64                                                                                     `tfsdk:"connect_timeout" json:"connectTimeout,computed_optional"`
+	DisableChunkedEncoding types.Bool                                                                                      `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding,computed_optional"`
+	HTTP2Origin            types.Bool                                                                                      `tfsdk:"http2_origin" json:"http2Origin,computed_optional"`
+	HTTPHostHeader         types.String                                                                                    `tfsdk:"http_host_header" json:"httpHostHeader,computed_optional"`
+	KeepAliveConnections   types.Int64                                                                                     `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed_optional"`
+	KeepAliveTimeout       types.Int64                                                                                     `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed_optional"`
+	NoHappyEyeballs        types.Bool                                                                                      `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed_optional"`
+	NoTLSVerify            types.Bool                                                                                      `tfsdk:"no_tls_verify" json:"noTLSVerify,computed_optional"`
+	OriginServerName       types.String                                                                                    `tfsdk:"origin_server_name" json:"originServerName,computed_optional"`
+	ProxyType              types.String                                                                                    `tfsdk:"proxy_type" json:"proxyType,computed_optional"`
+	TCPKeepAlive           types.Int64                                                                                     `tfsdk:"tcp_keep_alive" json:"tcpKeepAlive,computed_optional"`
+	TLSTimeout             types.Int64                                                                                     `tfsdk:"tls_timeout" json:"tlsTimeout,computed_optional"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessModel struct {
@@ -59,20 +59,20 @@ type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessModel struc
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel struct {
-	Access                 *ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel `tfsdk:"access" json:"access"`
-	CAPool                 types.String                                                    `tfsdk:"ca_pool" json:"caPool,computed_optional"`
-	ConnectTimeout         types.Int64                                                     `tfsdk:"connect_timeout" json:"connectTimeout,computed_optional"`
-	DisableChunkedEncoding types.Bool                                                      `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding"`
-	HTTP2Origin            types.Bool                                                      `tfsdk:"http2_origin" json:"http2Origin"`
-	HTTPHostHeader         types.String                                                    `tfsdk:"http_host_header" json:"httpHostHeader"`
-	KeepAliveConnections   types.Int64                                                     `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed_optional"`
-	KeepAliveTimeout       types.Int64                                                     `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed_optional"`
-	NoHappyEyeballs        types.Bool                                                      `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed_optional"`
-	NoTLSVerify            types.Bool                                                      `tfsdk:"no_tls_verify" json:"noTLSVerify,computed_optional"`
-	OriginServerName       types.String                                                    `tfsdk:"origin_server_name" json:"originServerName,computed_optional"`
-	ProxyType              types.String                                                    `tfsdk:"proxy_type" json:"proxyType,computed_optional"`
-	TCPKeepAlive           types.Int64                                                     `tfsdk:"tcp_keep_alive" json:"tcpKeepAlive,computed_optional"`
-	TLSTimeout             types.Int64                                                     `tfsdk:"tls_timeout" json:"tlsTimeout,computed_optional"`
+	Access                 customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel] `tfsdk:"access" json:"access,computed_optional"`
+	CAPool                 types.String                                                                             `tfsdk:"ca_pool" json:"caPool,computed_optional"`
+	ConnectTimeout         types.Int64                                                                              `tfsdk:"connect_timeout" json:"connectTimeout,computed_optional"`
+	DisableChunkedEncoding types.Bool                                                                               `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding,computed_optional"`
+	HTTP2Origin            types.Bool                                                                               `tfsdk:"http2_origin" json:"http2Origin,computed_optional"`
+	HTTPHostHeader         types.String                                                                             `tfsdk:"http_host_header" json:"httpHostHeader,computed_optional"`
+	KeepAliveConnections   types.Int64                                                                              `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed_optional"`
+	KeepAliveTimeout       types.Int64                                                                              `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed_optional"`
+	NoHappyEyeballs        types.Bool                                                                               `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed_optional"`
+	NoTLSVerify            types.Bool                                                                               `tfsdk:"no_tls_verify" json:"noTLSVerify,computed_optional"`
+	OriginServerName       types.String                                                                             `tfsdk:"origin_server_name" json:"originServerName,computed_optional"`
+	ProxyType              types.String                                                                             `tfsdk:"proxy_type" json:"proxyType,computed_optional"`
+	TCPKeepAlive           types.Int64                                                                              `tfsdk:"tcp_keep_alive" json:"tcpKeepAlive,computed_optional"`
+	TLSTimeout             types.Int64                                                                              `tfsdk:"tls_timeout" json:"tlsTimeout,computed_optional"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel struct {

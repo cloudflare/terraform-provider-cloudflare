@@ -3,6 +3,8 @@
 package workers_secret
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type WorkersSecretsDataSourceModel struct {
 	Result            customfield.NestedObjectList[WorkersSecretsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *WorkersSecretsDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {
+func (m *WorkersSecretsDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceScriptSecretListParams, diags diag.Diagnostics) {
 	params = workers_for_platforms.DispatchNamespaceScriptSecretListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

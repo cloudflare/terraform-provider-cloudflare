@@ -57,7 +57,7 @@ func (d *ZeroTrustAccessKeyConfigurationDataSource) Read(ctx context.Context, re
 		return
 	}
 
-	params, diags := data.toReadParams()
+	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

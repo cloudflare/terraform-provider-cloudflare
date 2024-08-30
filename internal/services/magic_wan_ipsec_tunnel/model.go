@@ -35,23 +35,23 @@ type MagicWANIPSECTunnelHealthCheckModel struct {
 	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
 	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
-	Target    types.String `tfsdk:"target" json:"target"`
+	Target    types.String `tfsdk:"target" json:"target,computed_optional"`
 	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelDeletedIPSECTunnelModel struct {
-	CloudflareEndpoint types.String                                                 `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
-	InterfaceAddress   types.String                                                 `tfsdk:"interface_address" json:"interface_address"`
-	Name               types.String                                                 `tfsdk:"name" json:"name"`
-	ID                 types.String                                                 `tfsdk:"id" json:"id,computed"`
-	AllowNullCipher    types.Bool                                                   `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	CustomerEndpoint   types.String                                                 `tfsdk:"customer_endpoint" json:"customer_endpoint"`
-	Description        types.String                                                 `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PSKMetadata        *MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                                   `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
-	TunnelHealthCheck  *MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
+	CloudflareEndpoint types.String                                                                          `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
+	InterfaceAddress   types.String                                                                          `tfsdk:"interface_address" json:"interface_address"`
+	Name               types.String                                                                          `tfsdk:"name" json:"name"`
+	ID                 types.String                                                                          `tfsdk:"id" json:"id,computed"`
+	AllowNullCipher    types.Bool                                                                            `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed_optional"`
+	CreatedOn          timetypes.RFC3339                                                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CustomerEndpoint   types.String                                                                          `tfsdk:"customer_endpoint" json:"customer_endpoint,computed_optional"`
+	Description        types.String                                                                          `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn         timetypes.RFC3339                                                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel]       `tfsdk:"psk_metadata" json:"psk_metadata,computed_optional"`
+	ReplayProtection   types.Bool                                                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
+	TunnelHealthCheck  customfield.NestedObject[MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel] `tfsdk:"tunnel_health_check" json:"tunnel_health_check,computed_optional"`
 }
 
 type MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel struct {
@@ -61,23 +61,23 @@ type MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel struct {
 type MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel struct {
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
-	Target  types.String `tfsdk:"target" json:"target"`
+	Target  types.String `tfsdk:"target" json:"target,computed_optional"`
 	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelModel struct {
-	CloudflareEndpoint types.String                                          `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
-	InterfaceAddress   types.String                                          `tfsdk:"interface_address" json:"interface_address"`
-	Name               types.String                                          `tfsdk:"name" json:"name"`
-	ID                 types.String                                          `tfsdk:"id" json:"id,computed"`
-	AllowNullCipher    types.Bool                                            `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	CustomerEndpoint   types.String                                          `tfsdk:"customer_endpoint" json:"customer_endpoint"`
-	Description        types.String                                          `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PSKMetadata        *MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
-	TunnelHealthCheck  *MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
+	CloudflareEndpoint types.String                                                                   `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
+	InterfaceAddress   types.String                                                                   `tfsdk:"interface_address" json:"interface_address"`
+	Name               types.String                                                                   `tfsdk:"name" json:"name"`
+	ID                 types.String                                                                   `tfsdk:"id" json:"id,computed"`
+	AllowNullCipher    types.Bool                                                                     `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed_optional"`
+	CreatedOn          timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CustomerEndpoint   types.String                                                                   `tfsdk:"customer_endpoint" json:"customer_endpoint,computed_optional"`
+	Description        types.String                                                                   `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn         timetypes.RFC3339                                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel]       `tfsdk:"psk_metadata" json:"psk_metadata,computed_optional"`
+	ReplayProtection   types.Bool                                                                     `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
+	TunnelHealthCheck  customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel] `tfsdk:"tunnel_health_check" json:"tunnel_health_check,computed_optional"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel struct {
@@ -87,23 +87,23 @@ type MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel struct {
 type MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel struct {
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
-	Target  types.String `tfsdk:"target" json:"target"`
+	Target  types.String `tfsdk:"target" json:"target,computed_optional"`
 	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelsModel struct {
-	CloudflareEndpoint types.String                                           `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
-	InterfaceAddress   types.String                                           `tfsdk:"interface_address" json:"interface_address"`
-	Name               types.String                                           `tfsdk:"name" json:"name"`
-	ID                 types.String                                           `tfsdk:"id" json:"id,computed"`
-	AllowNullCipher    types.Bool                                             `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	CustomerEndpoint   types.String                                           `tfsdk:"customer_endpoint" json:"customer_endpoint"`
-	Description        types.String                                           `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PSKMetadata        *MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                             `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
-	TunnelHealthCheck  *MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
+	CloudflareEndpoint types.String                                                                    `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
+	InterfaceAddress   types.String                                                                    `tfsdk:"interface_address" json:"interface_address"`
+	Name               types.String                                                                    `tfsdk:"name" json:"name"`
+	ID                 types.String                                                                    `tfsdk:"id" json:"id,computed"`
+	AllowNullCipher    types.Bool                                                                      `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed_optional"`
+	CreatedOn          timetypes.RFC3339                                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CustomerEndpoint   types.String                                                                    `tfsdk:"customer_endpoint" json:"customer_endpoint,computed_optional"`
+	Description        types.String                                                                    `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn         timetypes.RFC3339                                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel]       `tfsdk:"psk_metadata" json:"psk_metadata,computed_optional"`
+	ReplayProtection   types.Bool                                                                      `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
+	TunnelHealthCheck  customfield.NestedObject[MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel] `tfsdk:"tunnel_health_check" json:"tunnel_health_check,computed_optional"`
 }
 
 type MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel struct {
@@ -113,23 +113,23 @@ type MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel struct {
 type MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel struct {
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
-	Target  types.String `tfsdk:"target" json:"target"`
+	Target  types.String `tfsdk:"target" json:"target,computed_optional"`
 	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelModel struct {
-	CloudflareEndpoint types.String                                                  `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
-	InterfaceAddress   types.String                                                  `tfsdk:"interface_address" json:"interface_address"`
-	Name               types.String                                                  `tfsdk:"name" json:"name"`
-	ID                 types.String                                                  `tfsdk:"id" json:"id,computed"`
-	AllowNullCipher    types.Bool                                                    `tfsdk:"allow_null_cipher" json:"allow_null_cipher"`
-	CreatedOn          timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	CustomerEndpoint   types.String                                                  `tfsdk:"customer_endpoint" json:"customer_endpoint"`
-	Description        types.String                                                  `tfsdk:"description" json:"description"`
-	ModifiedOn         timetypes.RFC3339                                             `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	PSKMetadata        *MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel       `tfsdk:"psk_metadata" json:"psk_metadata"`
-	ReplayProtection   types.Bool                                                    `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
-	TunnelHealthCheck  *MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel `tfsdk:"tunnel_health_check" json:"tunnel_health_check"`
+	CloudflareEndpoint types.String                                                                           `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
+	InterfaceAddress   types.String                                                                           `tfsdk:"interface_address" json:"interface_address"`
+	Name               types.String                                                                           `tfsdk:"name" json:"name"`
+	ID                 types.String                                                                           `tfsdk:"id" json:"id,computed"`
+	AllowNullCipher    types.Bool                                                                             `tfsdk:"allow_null_cipher" json:"allow_null_cipher,computed_optional"`
+	CreatedOn          timetypes.RFC3339                                                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CustomerEndpoint   types.String                                                                           `tfsdk:"customer_endpoint" json:"customer_endpoint,computed_optional"`
+	Description        types.String                                                                           `tfsdk:"description" json:"description,computed_optional"`
+	ModifiedOn         timetypes.RFC3339                                                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	PSKMetadata        customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel]       `tfsdk:"psk_metadata" json:"psk_metadata,computed_optional"`
+	ReplayProtection   types.Bool                                                                             `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
+	TunnelHealthCheck  customfield.NestedObject[MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel] `tfsdk:"tunnel_health_check" json:"tunnel_health_check,computed_optional"`
 }
 
 type MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel struct {
@@ -139,6 +139,6 @@ type MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel struct {
 type MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel struct {
 	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Rate    types.String `tfsdk:"rate" json:"rate,computed_optional"`
-	Target  types.String `tfsdk:"target" json:"target"`
+	Target  types.String `tfsdk:"target" json:"target,computed_optional"`
 	Type    types.String `tfsdk:"type" json:"type,computed_optional"`
 }

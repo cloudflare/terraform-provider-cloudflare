@@ -3,6 +3,8 @@
 package logpull_retention
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/logs"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type LogpullRetentionDataSourceModel struct {
 	Flag   types.Bool   `tfsdk:"flag" json:"flag"`
 }
 
-func (m *LogpullRetentionDataSourceModel) toReadParams() (params logs.ControlRetentionGetParams, diags diag.Diagnostics) {
+func (m *LogpullRetentionDataSourceModel) toReadParams(_ context.Context) (params logs.ControlRetentionGetParams, diags diag.Diagnostics) {
 	params = logs.ControlRetentionGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

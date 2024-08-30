@@ -3,6 +3,8 @@
 package notification_policy_webhooks
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -33,7 +35,7 @@ type NotificationPolicyWebhooksDataSourceModel struct {
 	Filter      *NotificationPolicyWebhooksFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *NotificationPolicyWebhooksDataSourceModel) toReadParams() (params alerting.DestinationWebhookGetParams, diags diag.Diagnostics) {
+func (m *NotificationPolicyWebhooksDataSourceModel) toReadParams(_ context.Context) (params alerting.DestinationWebhookGetParams, diags diag.Diagnostics) {
 	params = alerting.DestinationWebhookGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -41,7 +43,7 @@ func (m *NotificationPolicyWebhooksDataSourceModel) toReadParams() (params alert
 	return
 }
 
-func (m *NotificationPolicyWebhooksDataSourceModel) toListParams() (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {
+func (m *NotificationPolicyWebhooksDataSourceModel) toListParams(_ context.Context) (params alerting.DestinationWebhookListParams, diags diag.Diagnostics) {
 	params = alerting.DestinationWebhookListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

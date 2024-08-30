@@ -3,6 +3,8 @@
 package zero_trust_access_mtls_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type ZeroTrustAccessMTLSCertificatesDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustAccessMTLSCertificatesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustAccessMTLSCertificatesDataSourceModel) toListParams() (params zero_trust.AccessCertificateListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessMTLSCertificatesDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessCertificateListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessCertificateListParams{}
 
 	if !m.AccountID.IsNull() {

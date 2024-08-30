@@ -33,20 +33,20 @@ type CustomSSLModel struct {
 }
 
 type CustomSSLGeoRestrictionsModel struct {
-	Label types.String `tfsdk:"label" json:"label"`
+	Label types.String `tfsdk:"label" json:"label,computed_optional"`
 }
 
 type CustomSSLKeylessServerModel struct {
-	ID          types.String                       `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                  `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Enabled     types.Bool                         `tfsdk:"enabled" json:"enabled,computed"`
-	Host        types.String                       `tfsdk:"host" json:"host"`
-	ModifiedOn  timetypes.RFC3339                  `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name        types.String                       `tfsdk:"name" json:"name,computed"`
-	Permissions types.List                         `tfsdk:"permissions" json:"permissions,computed"`
-	Port        types.Float64                      `tfsdk:"port" json:"port,computed_optional"`
-	Status      types.String                       `tfsdk:"status" json:"status,computed"`
-	Tunnel      *CustomSSLKeylessServerTunnelModel `tfsdk:"tunnel" json:"tunnel"`
+	ID          types.String                                                `tfsdk:"id" json:"id,computed"`
+	CreatedOn   timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Enabled     types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed"`
+	Host        types.String                                                `tfsdk:"host" json:"host"`
+	ModifiedOn  timetypes.RFC3339                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name        types.String                                                `tfsdk:"name" json:"name,computed"`
+	Permissions types.List                                                  `tfsdk:"permissions" json:"permissions,computed"`
+	Port        types.Float64                                               `tfsdk:"port" json:"port,computed_optional"`
+	Status      types.String                                                `tfsdk:"status" json:"status,computed"`
+	Tunnel      customfield.NestedObject[CustomSSLKeylessServerTunnelModel] `tfsdk:"tunnel" json:"tunnel,computed_optional"`
 }
 
 type CustomSSLKeylessServerTunnelModel struct {

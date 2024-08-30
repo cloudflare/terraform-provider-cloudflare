@@ -3,6 +3,8 @@
 package custom_hostname_fallback_origin
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/custom_hostnames"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -23,7 +25,7 @@ type CustomHostnameFallbackOriginDataSourceModel struct {
 	Errors    *[]types.String   `tfsdk:"errors" json:"errors"`
 }
 
-func (m *CustomHostnameFallbackOriginDataSourceModel) toReadParams() (params custom_hostnames.FallbackOriginGetParams, diags diag.Diagnostics) {
+func (m *CustomHostnameFallbackOriginDataSourceModel) toReadParams(_ context.Context) (params custom_hostnames.FallbackOriginGetParams, diags diag.Diagnostics) {
 	params = custom_hostnames.FallbackOriginGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

@@ -3,6 +3,8 @@
 package rate_limit
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,7 +21,7 @@ type RateLimitsDataSourceModel struct {
 	Result         customfield.NestedObjectList[RateLimitsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *RateLimitsDataSourceModel) toListParams() (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
+func (m *RateLimitsDataSourceModel) toListParams(_ context.Context) (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
 	params = rate_limits.RateLimitListParams{}
 
 	return

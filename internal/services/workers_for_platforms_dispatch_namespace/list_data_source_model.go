@@ -3,6 +3,8 @@
 package workers_for_platforms_dispatch_namespace
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type WorkersForPlatformsDispatchNamespacesDataSourceModel struct {
 	Result    customfield.NestedObjectList[WorkersForPlatformsDispatchNamespacesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams() (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
+func (m *WorkersForPlatformsDispatchNamespacesDataSourceModel) toListParams(_ context.Context) (params workers_for_platforms.DispatchNamespaceListParams, diags diag.Diagnostics) {
 	params = workers_for_platforms.DispatchNamespaceListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

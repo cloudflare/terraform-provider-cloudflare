@@ -5,6 +5,7 @@ package zero_trust_dns_location
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -46,15 +47,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"doh": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsDOHModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsDOHNetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
@@ -66,20 +72,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"require_token": schema.BoolAttribute{
 								Description: "True if the endpoint requires [user identity](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/agentless/dns/dns-over-https/#filter-doh-requests-by-user) authentication.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"dot": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsDOTModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "A list of allowed source IP network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsDOTNetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
@@ -92,24 +104,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"ipv4": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsIPV4Model](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"ipv6": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsIPV6Model](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
 								Description: "A list of allowed source IPv6 network ranges for this endpoint. When empty, all source IPs are allowed. A non-empty list is only effective if the endpoint is enabled for this location.",
+								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationEndpointsIPV6NetworksModel](ctx),
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{

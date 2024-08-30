@@ -3,6 +3,8 @@
 package zero_trust_tunnel_cloudflared_route
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -35,7 +37,7 @@ type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
 	Filter             *ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams() (params zero_trust.NetworkRouteGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams(_ context.Context) (params zero_trust.NetworkRouteGetParams, diags diag.Diagnostics) {
 	params = zero_trust.NetworkRouteGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -43,7 +45,7 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toReadParams() (params 
 	return
 }
 
-func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams() (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.Context) (params zero_trust.NetworkRouteListParams, diags diag.Diagnostics) {
 	mFilterExistedAt, errs := m.Filter.ExistedAt.ValueRFC3339Time()
 	diags.Append(errs...)
 

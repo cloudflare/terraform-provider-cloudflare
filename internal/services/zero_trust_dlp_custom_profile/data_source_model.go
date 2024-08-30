@@ -3,6 +3,8 @@
 package zero_trust_dlp_custom_profile
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type ZeroTrustDLPCustomProfileDataSourceModel struct {
 	ProfileID types.String `tfsdk:"profile_id" path:"profile_id"`
 }
 
-func (m *ZeroTrustDLPCustomProfileDataSourceModel) toReadParams() (params zero_trust.DLPProfileCustomGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustDLPCustomProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPProfileCustomGetParams, diags diag.Diagnostics) {
 	params = zero_trust.DLPProfileCustomGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

@@ -54,10 +54,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"identifier": schema.StringAttribute{
 							Description: "The identifier for the membership (eg. a zone or account tag).",
+							Computed:    true,
 							Optional:    true,
 						},
 						"kind": schema.StringAttribute{
 							Description: "The type of the membership.",
+							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("zone", "account"),
@@ -141,18 +143,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"count": schema.Float64Attribute{
 						Description: "Total number of results for the requested service",
+						Computed:    true,
 						Optional:    true,
 					},
 					"page": schema.Float64Attribute{
 						Description: "Current page within paginated list of results",
+						Computed:    true,
 						Optional:    true,
 					},
 					"per_page": schema.Float64Attribute{
 						Description: "Number of results per page of results",
+						Computed:    true,
 						Optional:    true,
 					},
 					"total_count": schema.Float64Attribute{
 						Description: "Total results available without any search parameters",
+						Computed:    true,
 						Optional:    true,
 					},
 				},

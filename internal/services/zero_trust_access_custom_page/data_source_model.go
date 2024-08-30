@@ -3,6 +3,8 @@
 package zero_trust_access_custom_page
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -32,7 +34,7 @@ type ZeroTrustAccessCustomPageDataSourceModel struct {
 	Filter       *ZeroTrustAccessCustomPageFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustAccessCustomPageDataSourceModel) toReadParams() (params zero_trust.AccessCustomPageGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessCustomPageDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessCustomPageGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessCustomPageGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -40,7 +42,7 @@ func (m *ZeroTrustAccessCustomPageDataSourceModel) toReadParams() (params zero_t
 	return
 }
 
-func (m *ZeroTrustAccessCustomPageDataSourceModel) toListParams() (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessCustomPageDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessCustomPageListParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessCustomPageListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

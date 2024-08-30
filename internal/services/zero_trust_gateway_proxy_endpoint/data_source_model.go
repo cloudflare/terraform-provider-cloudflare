@@ -3,6 +3,8 @@
 package zero_trust_gateway_proxy_endpoint
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type ZeroTrustGatewayProxyEndpointDataSourceModel struct {
 	ProxyEndpointID types.String `tfsdk:"proxy_endpoint_id" path:"proxy_endpoint_id"`
 }
 
-func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toReadParams() (params zero_trust.GatewayProxyEndpointGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayProxyEndpointGetParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayProxyEndpointGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

@@ -3,6 +3,8 @@
 package filter
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/filters"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -25,7 +27,7 @@ type FiltersDataSourceModel struct {
 	Result         customfield.NestedObjectList[FiltersResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *FiltersDataSourceModel) toListParams() (params filters.FilterListParams, diags diag.Diagnostics) {
+func (m *FiltersDataSourceModel) toListParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
 	params = filters.FilterListParams{}
 
 	if !m.ID.IsNull() {

@@ -25,6 +25,6 @@ type ZeroTrustListModel struct {
 
 type ZeroTrustListItemsModel struct {
 	CreatedAt   timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Description types.String      `tfsdk:"description" json:"description"`
-	Value       types.String      `tfsdk:"value" json:"value"`
+	Description types.String      `tfsdk:"description" json:"description,computed_optional"`
+	Value       types.String      `tfsdk:"value" json:"value,computed_optional"`
 }

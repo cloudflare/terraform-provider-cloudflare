@@ -37,10 +37,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "A description of the fallback domain, displayed in the client UI.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"dns_server": schema.ListAttribute{
 				Description: "A list of IP addresses to handle domain resolution.",
+				Computed:    true,
 				Optional:    true,
 				ElementType: types.StringType,
 			},

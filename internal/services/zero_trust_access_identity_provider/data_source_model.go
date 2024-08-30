@@ -3,6 +3,8 @@
 package zero_trust_access_identity_provider
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -25,7 +27,7 @@ type ZeroTrustAccessIdentityProviderDataSourceModel struct {
 	Filter             *ZeroTrustAccessIdentityProviderFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toReadParams() (params zero_trust.IdentityProviderGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toReadParams(_ context.Context) (params zero_trust.IdentityProviderGetParams, diags diag.Diagnostics) {
 	params = zero_trust.IdentityProviderGetParams{}
 
 	if !m.Filter.AccountID.IsNull() {
@@ -37,7 +39,7 @@ func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toReadParams() (params 
 	return
 }
 
-func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toListParams() (params zero_trust.IdentityProviderListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toListParams(_ context.Context) (params zero_trust.IdentityProviderListParams, diags diag.Diagnostics) {
 	params = zero_trust.IdentityProviderListParams{}
 
 	if !m.Filter.AccountID.IsNull() {

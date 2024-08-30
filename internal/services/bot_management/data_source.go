@@ -57,7 +57,7 @@ func (d *BotManagementDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	params, diags := data.toReadParams()
+	params, diags := data.toReadParams(ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

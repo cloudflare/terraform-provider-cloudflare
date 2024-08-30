@@ -3,6 +3,8 @@
 package zero_trust_access_mtls_hostname_settings
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,7 @@ type ZeroTrustAccessMTLSHostnameSettingsDataSourceModel struct {
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
 }
 
-func (m *ZeroTrustAccessMTLSHostnameSettingsDataSourceModel) toReadParams() (params zero_trust.AccessCertificateSettingGetParams, diags diag.Diagnostics) {
+func (m *ZeroTrustAccessMTLSHostnameSettingsDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessCertificateSettingGetParams, diags diag.Diagnostics) {
 	params = zero_trust.AccessCertificateSettingGetParams{}
 
 	if !m.AccountID.IsNull() {

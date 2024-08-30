@@ -3,6 +3,8 @@
 package regional_hostname
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/addressing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type RegionalHostnamesDataSourceModel struct {
 	Result   customfield.NestedObjectList[RegionalHostnamesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *RegionalHostnamesDataSourceModel) toListParams() (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {
+func (m *RegionalHostnamesDataSourceModel) toListParams(_ context.Context) (params addressing.RegionalHostnameListParams, diags diag.Diagnostics) {
 	params = addressing.RegionalHostnameListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

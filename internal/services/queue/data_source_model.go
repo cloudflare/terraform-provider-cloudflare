@@ -3,6 +3,8 @@
 package queue
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/queues"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -31,7 +33,7 @@ type QueueDataSourceModel struct {
 	Filter              *QueueFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
 
-func (m *QueueDataSourceModel) toReadParams() (params queues.QueueGetParams, diags diag.Diagnostics) {
+func (m *QueueDataSourceModel) toReadParams(_ context.Context) (params queues.QueueGetParams, diags diag.Diagnostics) {
 	params = queues.QueueGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -39,7 +41,7 @@ func (m *QueueDataSourceModel) toReadParams() (params queues.QueueGetParams, dia
 	return
 }
 
-func (m *QueueDataSourceModel) toListParams() (params queues.QueueListParams, diags diag.Diagnostics) {
+func (m *QueueDataSourceModel) toListParams(_ context.Context) (params queues.QueueListParams, diags diag.Diagnostics) {
 	params = queues.QueueListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

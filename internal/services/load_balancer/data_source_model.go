@@ -3,6 +3,8 @@
 package load_balancer
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -47,7 +49,7 @@ type LoadBalancerDataSourceModel struct {
 	Filter                    *LoadBalancerFindOneByDataSourceModel                                          `tfsdk:"filter"`
 }
 
-func (m *LoadBalancerDataSourceModel) toReadParams() (params load_balancers.LoadBalancerGetParams, diags diag.Diagnostics) {
+func (m *LoadBalancerDataSourceModel) toReadParams(_ context.Context) (params load_balancers.LoadBalancerGetParams, diags diag.Diagnostics) {
 	params = load_balancers.LoadBalancerGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -55,7 +57,7 @@ func (m *LoadBalancerDataSourceModel) toReadParams() (params load_balancers.Load
 	return
 }
 
-func (m *LoadBalancerDataSourceModel) toListParams() (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
+func (m *LoadBalancerDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
 	params = load_balancers.LoadBalancerListParams{
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}

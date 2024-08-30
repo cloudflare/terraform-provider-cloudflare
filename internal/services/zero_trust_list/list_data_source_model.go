@@ -3,6 +3,8 @@
 package zero_trust_list
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -22,7 +24,7 @@ type ZeroTrustListsDataSourceModel struct {
 	Result    customfield.NestedObjectList[ZeroTrustListsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustListsDataSourceModel) toListParams() (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
+func (m *ZeroTrustListsDataSourceModel) toListParams(_ context.Context) (params zero_trust.GatewayListListParams, diags diag.Diagnostics) {
 	params = zero_trust.GatewayListListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

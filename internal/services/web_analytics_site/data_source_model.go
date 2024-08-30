@@ -3,6 +3,8 @@
 package web_analytics_site
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rum"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -32,7 +34,7 @@ type WebAnalyticsSiteDataSourceModel struct {
 	Filter      *WebAnalyticsSiteFindOneByDataSourceModel                          `tfsdk:"filter"`
 }
 
-func (m *WebAnalyticsSiteDataSourceModel) toReadParams() (params rum.SiteInfoGetParams, diags diag.Diagnostics) {
+func (m *WebAnalyticsSiteDataSourceModel) toReadParams(_ context.Context) (params rum.SiteInfoGetParams, diags diag.Diagnostics) {
 	params = rum.SiteInfoGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -40,7 +42,7 @@ func (m *WebAnalyticsSiteDataSourceModel) toReadParams() (params rum.SiteInfoGet
 	return
 }
 
-func (m *WebAnalyticsSiteDataSourceModel) toListParams() (params rum.SiteInfoListParams, diags diag.Diagnostics) {
+func (m *WebAnalyticsSiteDataSourceModel) toListParams(_ context.Context) (params rum.SiteInfoListParams, diags diag.Diagnostics) {
 	params = rum.SiteInfoListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

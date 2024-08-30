@@ -3,6 +3,8 @@
 package magic_wan_static_route
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/magic_transit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type MagicWANStaticRouteDataSourceModel struct {
 	Route     *MagicWANStaticRouteRouteDataSourceModel `tfsdk:"route" json:"route"`
 }
 
-func (m *MagicWANStaticRouteDataSourceModel) toReadParams() (params magic_transit.RouteGetParams, diags diag.Diagnostics) {
+func (m *MagicWANStaticRouteDataSourceModel) toReadParams(_ context.Context) (params magic_transit.RouteGetParams, diags diag.Diagnostics) {
 	params = magic_transit.RouteGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}

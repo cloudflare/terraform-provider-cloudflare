@@ -27,18 +27,18 @@ type SpectrumApplicationModel struct {
 }
 
 type SpectrumApplicationDNSModel struct {
-	Name types.String `tfsdk:"name" json:"name"`
-	Type types.String `tfsdk:"type" json:"type"`
+	Name types.String `tfsdk:"name" json:"name,computed_optional"`
+	Type types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type SpectrumApplicationEdgeIPsModel struct {
 	Connectivity types.String    `tfsdk:"connectivity" json:"connectivity"`
-	Type         types.String    `tfsdk:"type" json:"type"`
+	Type         types.String    `tfsdk:"type" json:"type,computed_optional"`
 	IPs          *[]types.String `tfsdk:"ips" json:"ips"`
 }
 
 type SpectrumApplicationOriginDNSModel struct {
-	Name types.String `tfsdk:"name" json:"name"`
-	TTL  types.Int64  `tfsdk:"ttl" json:"ttl"`
-	Type types.String `tfsdk:"type" json:"type"`
+	Name types.String `tfsdk:"name" json:"name,computed_optional"`
+	TTL  types.Int64  `tfsdk:"ttl" json:"ttl,computed_optional"`
+	Type types.String `tfsdk:"type" json:"type,computed_optional"`
 }

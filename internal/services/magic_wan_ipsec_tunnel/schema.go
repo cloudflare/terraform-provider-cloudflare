@@ -89,6 +89,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"target": schema.StringAttribute{
 						Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"type": schema.StringAttribute{
@@ -136,6 +137,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"allow_null_cipher": schema.BoolAttribute{
 						Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
+						Computed:    true,
 						Optional:    true,
 					},
 					"created_on": schema.StringAttribute{
@@ -145,10 +147,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"customer_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional description forthe IPsec tunnel.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"modified_on": schema.StringAttribute{
@@ -158,7 +162,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"psk_metadata": schema.SingleNestedAttribute{
 						Description: "The PSK metadata that includes when the PSK was generated.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[MagicWANIPSECTunnelDeletedIPSECTunnelPSKMetadataModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"last_generated_on": schema.StringAttribute{
 								Description: "The date and time the tunnel was last modified.",
@@ -174,7 +180,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 					"tunnel_health_check": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelDeletedIPSECTunnelTunnelHealthCheckModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Determines whether to run healthchecks for a tunnel.",
@@ -197,6 +205,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"target": schema.StringAttribute{
 								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"type": schema.StringAttribute{
@@ -234,6 +243,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"allow_null_cipher": schema.BoolAttribute{
 						Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
+						Computed:    true,
 						Optional:    true,
 					},
 					"created_on": schema.StringAttribute{
@@ -243,10 +253,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"customer_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional description forthe IPsec tunnel.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"modified_on": schema.StringAttribute{
@@ -256,7 +268,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"psk_metadata": schema.SingleNestedAttribute{
 						Description: "The PSK metadata that includes when the PSK was generated.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelPSKMetadataModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"last_generated_on": schema.StringAttribute{
 								Description: "The date and time the tunnel was last modified.",
@@ -272,7 +286,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 					"tunnel_health_check": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Determines whether to run healthchecks for a tunnel.",
@@ -295,6 +311,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"target": schema.StringAttribute{
 								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"type": schema.StringAttribute{
@@ -333,6 +350,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"allow_null_cipher": schema.BoolAttribute{
 							Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
+							Computed:    true,
 							Optional:    true,
 						},
 						"created_on": schema.StringAttribute{
@@ -342,10 +360,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"customer_endpoint": schema.StringAttribute{
 							Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"description": schema.StringAttribute{
 							Description: "An optional description forthe IPsec tunnel.",
+							Computed:    true,
 							Optional:    true,
 						},
 						"modified_on": schema.StringAttribute{
@@ -355,7 +375,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"psk_metadata": schema.SingleNestedAttribute{
 							Description: "The PSK metadata that includes when the PSK was generated.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelsPSKMetadataModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"last_generated_on": schema.StringAttribute{
 									Description: "The date and time the tunnel was last modified.",
@@ -371,7 +393,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Default:     booldefault.StaticBool(false),
 						},
 						"tunnel_health_check": schema.SingleNestedAttribute{
-							Optional: true,
+							Computed:   true,
+							Optional:   true,
+							CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelsTunnelHealthCheckModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "Determines whether to run healthchecks for a tunnel.",
@@ -394,6 +418,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"target": schema.StringAttribute{
 									Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"type": schema.StringAttribute{
@@ -432,6 +457,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"allow_null_cipher": schema.BoolAttribute{
 						Description: "When `true`, the tunnel can use a null-cipher (`ENCR_NULL`) in the ESP tunnel (Phase 2).",
+						Computed:    true,
 						Optional:    true,
 					},
 					"created_on": schema.StringAttribute{
@@ -441,10 +467,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"customer_endpoint": schema.StringAttribute{
 						Description: "The IP address assigned to the customer side of the IPsec tunnel. Not required, but must be set for proactive traceroutes to work.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"description": schema.StringAttribute{
 						Description: "An optional description forthe IPsec tunnel.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"modified_on": schema.StringAttribute{
@@ -454,7 +482,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"psk_metadata": schema.SingleNestedAttribute{
 						Description: "The PSK metadata that includes when the PSK was generated.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[MagicWANIPSECTunnelModifiedIPSECTunnelPSKMetadataModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"last_generated_on": schema.StringAttribute{
 								Description: "The date and time the tunnel was last modified.",
@@ -470,7 +500,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 					"tunnel_health_check": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelModifiedIPSECTunnelTunnelHealthCheckModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Determines whether to run healthchecks for a tunnel.",
@@ -493,6 +525,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"target": schema.StringAttribute{
 								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"type": schema.StringAttribute{

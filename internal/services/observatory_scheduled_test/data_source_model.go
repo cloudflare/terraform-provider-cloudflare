@@ -3,6 +3,8 @@
 package observatory_scheduled_test
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/speed"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,7 +22,7 @@ type ObservatoryScheduledTestDataSourceModel struct {
 	Frequency types.String `tfsdk:"frequency" json:"frequency"`
 }
 
-func (m *ObservatoryScheduledTestDataSourceModel) toReadParams() (params speed.ScheduleGetParams, diags diag.Diagnostics) {
+func (m *ObservatoryScheduledTestDataSourceModel) toReadParams(_ context.Context) (params speed.ScheduleGetParams, diags diag.Diagnostics) {
 	params = speed.ScheduleGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

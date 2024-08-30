@@ -3,6 +3,8 @@
 package authenticated_origin_pulls_certificate
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -32,7 +34,7 @@ type AuthenticatedOriginPullsCertificateDataSourceModel struct {
 	Filter        *AuthenticatedOriginPullsCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toReadParams() (params origin_tls_client_auth.OriginTLSClientAuthGetParams, diags diag.Diagnostics) {
+func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toReadParams(_ context.Context) (params origin_tls_client_auth.OriginTLSClientAuthGetParams, diags diag.Diagnostics) {
 	params = origin_tls_client_auth.OriginTLSClientAuthGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -40,7 +42,7 @@ func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toReadParams() (par
 	return
 }
 
-func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toListParams() (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {
+func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toListParams(_ context.Context) (params origin_tls_client_auth.OriginTLSClientAuthListParams, diags diag.Diagnostics) {
 	params = origin_tls_client_auth.OriginTLSClientAuthListParams{
 		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}

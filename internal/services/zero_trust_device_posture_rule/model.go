@@ -64,10 +64,10 @@ type ZeroTrustDevicePostureRuleInputModel struct {
 }
 
 type ZeroTrustDevicePostureRuleInputLocationsModel struct {
-	Paths       *[]types.String `tfsdk:"paths" json:"paths"`
-	TrustStores *[]types.String `tfsdk:"trust_stores" json:"trust_stores"`
+	Paths       types.List `tfsdk:"paths" json:"paths,computed_optional"`
+	TrustStores types.List `tfsdk:"trust_stores" json:"trust_stores,computed_optional"`
 }
 
 type ZeroTrustDevicePostureRuleMatchModel struct {
-	Platform types.String `tfsdk:"platform" json:"platform"`
+	Platform types.String `tfsdk:"platform" json:"platform,computed_optional"`
 }

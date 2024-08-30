@@ -5,6 +5,7 @@ package zero_trust_access_application
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -124,27 +125,33 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"allow_all_headers": schema.BoolAttribute{
 						Description: "Allows all HTTP request headers.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"allow_all_methods": schema.BoolAttribute{
 						Description: "Allows all HTTP request methods.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"allow_all_origins": schema.BoolAttribute{
 						Description: "Allows all origins.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"allow_credentials": schema.BoolAttribute{
 						Description: "When set to `true`, includes credentials (cookies, authorization headers, or TLS client certificates) with requests.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"allowed_headers": schema.ListAttribute{
 						Description: "Allowed HTTP request headers.",
+						Computed:    true,
 						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"allowed_methods": schema.ListAttribute{
 						Description: "Allowed HTTP request methods.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(
@@ -165,11 +172,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"allowed_origins": schema.ListAttribute{
 						Description: "Allowed origins.",
+						Computed:    true,
 						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"max_age": schema.Float64Attribute{
 						Description: "The maximum number of seconds the results of a preflight request can be cached.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(-1, 86400),
@@ -199,18 +208,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"button_color": schema.StringAttribute{
 						Description: "The background color of the log in button on the landing page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"button_text_color": schema.StringAttribute{
 						Description: "The color of the text in the log in button on the landing page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"image_url": schema.StringAttribute{
 						Description: "The URL of the image shown on the landing page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"message": schema.StringAttribute{
 						Description: "The message shown on the landing page.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"title": schema.StringAttribute{
@@ -228,10 +241,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The UUID of the policy",
+							Computed:    true,
 							Optional:    true,
 						},
 						"precedence": schema.Int64Attribute{
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
+							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -242,6 +257,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"auth_type": schema.StringAttribute{
 						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("saml", "oidc"),
@@ -260,14 +276,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"friendly_name": schema.StringAttribute{
 								Description: "The SAML FriendlyName of the attribute.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"name": schema.StringAttribute{
 								Description: "The name of the attribute.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"name_format": schema.StringAttribute{
 								Description: "A globally unique name for an identity or service provider.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -279,17 +298,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"required": schema.BoolAttribute{
 								Description: "If the attribute is required when building a SAML assertion.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"source": schema.SingleNestedAttribute{
-								Optional: true,
+								Computed:   true,
+								Optional:   true,
+								CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
 										Description: "The name of the IdP attribute.",
+										Computed:    true,
 										Optional:    true,
 									},
 									"name_by_idp": schema.MapAttribute{
 										Description: "A mapping from IdP ID to attribute name.",
+										Computed:    true,
 										Optional:    true,
 										ElementType: types.StringType,
 									},
@@ -318,6 +342,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"public_key": schema.StringAttribute{
 						Description: "The Access public certificate that will be used to verify your identity.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"saml_attribute_transform_jsonata": schema.StringAttribute{
@@ -361,14 +386,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"name": schema.StringAttribute{
 								Description: "The name of the claim.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"required": schema.BoolAttribute{
 								Description: "If the claim is required when building an OIDC token.",
+								Computed:    true,
 								Optional:    true,
 							},
 							"scope": schema.StringAttribute{
 								Description: "The scope of the claim.",
+								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -380,14 +408,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"source": schema.SingleNestedAttribute{
-								Optional: true,
+								Computed:   true,
+								Optional:   true,
+								CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel](ctx),
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
 										Description: "The name of the IdP claim.",
+										Computed:    true,
 										Optional:    true,
 									},
 									"name_by_idp": schema.MapAttribute{
 										Description: "A mapping from IdP ID to claim name.",
+										Computed:    true,
 										Optional:    true,
 										ElementType: types.StringType,
 									},
@@ -420,10 +452,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"return_access_token_from_authorization_endpoint": schema.BoolAttribute{
 								Description: "If an Access Token should be returned from the OIDC Authorization endpoint",
+								Computed:    true,
 								Optional:    true,
 							},
 							"return_id_token_from_authorization_endpoint": schema.BoolAttribute{
 								Description: "If an ID Token should be returned from the OIDC Authorization endpoint",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -438,6 +472,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"lifetime": schema.StringAttribute{
 								Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
+								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -473,7 +508,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"authentication": schema.SingleNestedAttribute{
 						Description: "Attributes for configuring HTTP Basic authentication scheme for SCIM provisioning to an application.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationSCIMConfigAuthenticationModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"password": schema.StringAttribute{
 								Description: "Password used to authenticate with the remote SCIM service.",
@@ -523,15 +560,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"deactivate_on_delete": schema.BoolAttribute{
 						Description: "If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether SCIM provisioning is turned on for this application.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"mappings": schema.ListNestedAttribute{
 						Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationSCIMConfigMappingsModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"schema": schema.StringAttribute{
@@ -540,32 +581,40 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"enabled": schema.BoolAttribute{
 									Description: "Whether or not this mapping is enabled.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"filter": schema.StringAttribute{
 									Description: "A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"operations": schema.SingleNestedAttribute{
 									Description: "Whether or not this mapping applies to creates, updates, or deletes.",
+									Computed:    true,
 									Optional:    true,
+									CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationSCIMConfigMappingsOperationsModel](ctx),
 									Attributes: map[string]schema.Attribute{
 										"create": schema.BoolAttribute{
 											Description: "Whether or not this mapping applies to create (POST) operations.",
+											Computed:    true,
 											Optional:    true,
 										},
 										"delete": schema.BoolAttribute{
 											Description: "Whether or not this mapping applies to DELETE operations.",
+											Computed:    true,
 											Optional:    true,
 										},
 										"update": schema.BoolAttribute{
 											Description: "Whether or not this mapping applies to update (PATCH/PUT) operations.",
+											Computed:    true,
 											Optional:    true,
 										},
 									},
 								},
 								"transform_jsonata": schema.StringAttribute{
 									Description: "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
+									Computed:    true,
 									Optional:    true,
 								},
 							},

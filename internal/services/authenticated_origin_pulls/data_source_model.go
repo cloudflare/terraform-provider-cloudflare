@@ -3,6 +3,8 @@
 package authenticated_origin_pulls
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/origin_tls_client_auth"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -32,7 +34,7 @@ type AuthenticatedOriginPullsDataSourceModel struct {
 	UpdatedAt      timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at" format:"date-time"`
 }
 
-func (m *AuthenticatedOriginPullsDataSourceModel) toReadParams() (params origin_tls_client_auth.HostnameGetParams, diags diag.Diagnostics) {
+func (m *AuthenticatedOriginPullsDataSourceModel) toReadParams(_ context.Context) (params origin_tls_client_auth.HostnameGetParams, diags diag.Diagnostics) {
 	params = origin_tls_client_auth.HostnameGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

@@ -81,7 +81,7 @@ func (d *ListItemDataSource) Read(ctx context.Context, req datasource.ReadReques
 		}
 		data = &env.Result
 	} else {
-		params, diags := data.toListParams()
+		params, diags := data.toListParams(ctx)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return

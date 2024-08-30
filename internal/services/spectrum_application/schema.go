@@ -44,10 +44,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"name": schema.StringAttribute{
 						Description: "The name of the DNS record associated with the application.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of DNS record associated with the application.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("CNAME", "ADDRESS"),
@@ -93,6 +95,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of edge IP configuration specified. Dynamically allocated edge IPs use Spectrum anycast IPs in accordance with the connectivity you specify. Only valid with CNAME DNS names.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dynamic", "static"),
@@ -111,10 +114,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"name": schema.StringAttribute{
 						Description: "The name of the DNS record associated with the origin.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"ttl": schema.Int64Attribute{
 						Description: "The TTL of our resolution of your DNS record in seconds.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Int64{
 							int64validator.AtLeast(600),
@@ -122,6 +127,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of DNS record associated with the origin. \"\" is used to specify a combination of A/AAAA records.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(

@@ -3,6 +3,8 @@
 package email_routing_address
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -31,7 +33,7 @@ type EmailRoutingAddressDataSourceModel struct {
 	Filter                       *EmailRoutingAddressFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *EmailRoutingAddressDataSourceModel) toReadParams() (params email_routing.AddressGetParams, diags diag.Diagnostics) {
+func (m *EmailRoutingAddressDataSourceModel) toReadParams(_ context.Context) (params email_routing.AddressGetParams, diags diag.Diagnostics) {
 	params = email_routing.AddressGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
@@ -39,7 +41,7 @@ func (m *EmailRoutingAddressDataSourceModel) toReadParams() (params email_routin
 	return
 }
 
-func (m *EmailRoutingAddressDataSourceModel) toListParams() (params email_routing.AddressListParams, diags diag.Diagnostics) {
+func (m *EmailRoutingAddressDataSourceModel) toListParams(_ context.Context) (params email_routing.AddressListParams, diags diag.Diagnostics) {
 	params = email_routing.AddressListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}

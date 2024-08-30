@@ -41,29 +41,29 @@ type ZeroTrustDeviceProfilesModel struct {
 }
 
 type ZeroTrustDeviceProfilesServiceModeV2Model struct {
-	Mode types.String  `tfsdk:"mode" json:"mode"`
-	Port types.Float64 `tfsdk:"port" json:"port"`
+	Mode types.String  `tfsdk:"mode" json:"mode,computed_optional"`
+	Port types.Float64 `tfsdk:"port" json:"port,computed_optional"`
 }
 
 type ZeroTrustDeviceProfilesExcludeModel struct {
 	Address     types.String `tfsdk:"address" json:"address"`
 	Description types.String `tfsdk:"description" json:"description"`
-	Host        types.String `tfsdk:"host" json:"host"`
+	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
 }
 
 type ZeroTrustDeviceProfilesFallbackDomainsModel struct {
-	Suffix      types.String    `tfsdk:"suffix" json:"suffix"`
-	Description types.String    `tfsdk:"description" json:"description"`
-	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server"`
+	Suffix      types.String `tfsdk:"suffix" json:"suffix"`
+	Description types.String `tfsdk:"description" json:"description,computed_optional"`
+	DNSServer   types.List   `tfsdk:"dns_server" json:"dns_server,computed_optional"`
 }
 
 type ZeroTrustDeviceProfilesIncludeModel struct {
 	Address     types.String `tfsdk:"address" json:"address"`
 	Description types.String `tfsdk:"description" json:"description"`
-	Host        types.String `tfsdk:"host" json:"host"`
+	Host        types.String `tfsdk:"host" json:"host,computed_optional"`
 }
 
 type ZeroTrustDeviceProfilesTargetTestsModel struct {
-	ID   types.String `tfsdk:"id" json:"id"`
-	Name types.String `tfsdk:"name" json:"name"`
+	ID   types.String `tfsdk:"id" json:"id,computed_optional"`
+	Name types.String `tfsdk:"name" json:"name,computed_optional"`
 }

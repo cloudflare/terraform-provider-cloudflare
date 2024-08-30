@@ -3,6 +3,8 @@
 package firewall_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -24,7 +26,7 @@ type FirewallRulesDataSourceModel struct {
 	Result         customfield.NestedObjectList[FirewallRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *FirewallRulesDataSourceModel) toListParams() (params firewall.RuleListParams, diags diag.Diagnostics) {
+func (m *FirewallRulesDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
 	params = firewall.RuleListParams{}
 
 	if !m.ID.IsNull() {

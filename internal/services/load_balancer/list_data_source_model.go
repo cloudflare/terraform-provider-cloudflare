@@ -3,6 +3,8 @@
 package load_balancer
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type LoadBalancersDataSourceModel struct {
 	Result   customfield.NestedObjectList[LoadBalancersResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *LoadBalancersDataSourceModel) toListParams() (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
+func (m *LoadBalancersDataSourceModel) toListParams(_ context.Context) (params load_balancers.LoadBalancerListParams, diags diag.Diagnostics) {
 	params = load_balancers.LoadBalancerListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

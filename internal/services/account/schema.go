@@ -41,6 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Tenant unit ID",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -56,6 +57,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"abuse_contact_email": schema.StringAttribute{
 						Description: "Sets an abuse contact email to notify for abuse reports.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"default_nameservers": schema.StringAttribute{

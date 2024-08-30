@@ -3,6 +3,8 @@
 package email_routing_rule
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -21,7 +23,7 @@ type EmailRoutingRulesDataSourceModel struct {
 	Result   customfield.NestedObjectList[EmailRoutingRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *EmailRoutingRulesDataSourceModel) toListParams() (params email_routing.RuleListParams, diags diag.Diagnostics) {
+func (m *EmailRoutingRulesDataSourceModel) toListParams(_ context.Context) (params email_routing.RuleListParams, diags diag.Diagnostics) {
 	params = email_routing.RuleListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}

@@ -3,6 +3,8 @@
 package zone
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/zones"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -41,7 +43,7 @@ type ZoneDataSourceModel struct {
 	Filter              *ZoneFindOneByDataSourceModel                        `tfsdk:"filter"`
 }
 
-func (m *ZoneDataSourceModel) toReadParams() (params zones.ZoneGetParams, diags diag.Diagnostics) {
+func (m *ZoneDataSourceModel) toReadParams(_ context.Context) (params zones.ZoneGetParams, diags diag.Diagnostics) {
 	params = zones.ZoneGetParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
@@ -49,7 +51,7 @@ func (m *ZoneDataSourceModel) toReadParams() (params zones.ZoneGetParams, diags 
 	return
 }
 
-func (m *ZoneDataSourceModel) toListParams() (params zones.ZoneListParams, diags diag.Diagnostics) {
+func (m *ZoneDataSourceModel) toListParams(_ context.Context) (params zones.ZoneListParams, diags diag.Diagnostics) {
 	params = zones.ZoneListParams{}
 
 	if m.Filter.Account != nil {
@@ -82,8 +84,8 @@ func (m *ZoneDataSourceModel) toListParams() (params zones.ZoneListParams, diags
 }
 
 type ZoneAccountDataSourceModel struct {
-	ID   types.String `tfsdk:"id" json:"id"`
-	Name types.String `tfsdk:"name" json:"name"`
+	ID   types.String `tfsdk:"id" json:"id,computed_optional"`
+	Name types.String `tfsdk:"name" json:"name,computed_optional"`
 }
 
 type ZoneMetaDataSourceModel struct {

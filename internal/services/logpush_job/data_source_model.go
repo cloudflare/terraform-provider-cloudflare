@@ -3,6 +3,8 @@
 package logpush_job
 
 import (
+	"context"
+
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/logpush"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
@@ -41,7 +43,7 @@ type LogpushJobDataSourceModel struct {
 	Filter                   *LogpushJobFindOneByDataSourceModel                              `tfsdk:"filter"`
 }
 
-func (m *LogpushJobDataSourceModel) toReadParams() (params logpush.JobGetParams, diags diag.Diagnostics) {
+func (m *LogpushJobDataSourceModel) toReadParams(_ context.Context) (params logpush.JobGetParams, diags diag.Diagnostics) {
 	params = logpush.JobGetParams{}
 
 	if !m.Filter.AccountID.IsNull() {
@@ -53,7 +55,7 @@ func (m *LogpushJobDataSourceModel) toReadParams() (params logpush.JobGetParams,
 	return
 }
 
-func (m *LogpushJobDataSourceModel) toListParams() (params logpush.JobListParams, diags diag.Diagnostics) {
+func (m *LogpushJobDataSourceModel) toListParams(_ context.Context) (params logpush.JobListParams, diags diag.Diagnostics) {
 	params = logpush.JobListParams{}
 
 	if !m.Filter.AccountID.IsNull() {

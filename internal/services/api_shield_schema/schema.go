@@ -127,10 +127,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"source": schema.StringAttribute{
 						Description: "Source of the schema",
+						Computed:    true,
 						Optional:    true,
 					},
 					"validation_enabled": schema.BoolAttribute{
 						Description: "Flag whether schema is enabled for validation.",
+						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -141,7 +143,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"warnings": schema.ListNestedAttribute{
 						Description: "Diagnostic warning events that occurred during processing. These events are non-critical errors found within the schema.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewNestedObjectListType[APIShieldSchemaUploadDetailsWarningsModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"code": schema.Int64Attribute{
@@ -150,11 +154,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"locations": schema.ListAttribute{
 									Description: "JSONPath location(s) in the schema where these events were encountered.  See [https://goessner.net/articles/JsonPath/](https://goessner.net/articles/JsonPath/) for JSONPath specification.",
+									Computed:    true,
 									Optional:    true,
 									ElementType: types.StringType,
 								},
 								"message": schema.StringAttribute{
 									Description: "Diagnostic message that describes the event.",
+									Computed:    true,
 									Optional:    true,
 								},
 							},
