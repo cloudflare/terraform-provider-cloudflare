@@ -301,9 +301,9 @@ resource "cloudflare_ruleset" "cache_settings_example" {
             check_presence = ["habc_t", "hdef_t"]
             exclude_origin = true
             contains       = {
-              "accept"         = ["image/web", "image/png"]
-              "accept-encoding = ["br", "zstd"]
-              "some-header"    = ["some-value", "some-other-value"]
+              "accept"          = ["image/web", "image/png"]
+              "accept-encoding" = ["br", "zstd"]
+              "some-header"     = ["some-value", "some-other-value"]
             }
           }
           cookie {
@@ -607,6 +607,7 @@ Optional:
 Optional:
 
 - `check_presence` (Set of String) List of headers to check for presence in the custom key.
+- `contains` (Map of Set of String) Dictionary of headers mapping to lists of values to check for presence in the custom key.
 - `exclude_origin` (Boolean) Exclude the origin header from the custom key.
 - `include` (Set of String) List of headers to include in the custom key.
 

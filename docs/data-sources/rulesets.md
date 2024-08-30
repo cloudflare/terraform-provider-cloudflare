@@ -189,9 +189,9 @@ Read-Only:
 Read-Only:
 
 - `check_presence` (List of String)
+- `contains` (Map of Set of String)
 - `exclude_origin` (Boolean)
 - `include` (List of String)
-- `contains` (Map of String to List)
 
 
 <a id="nestedobjatt--rulesets--rules--action_parameters--version--custom_key--host"></a>
