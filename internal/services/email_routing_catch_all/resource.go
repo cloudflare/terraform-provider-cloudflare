@@ -90,7 +90,6 @@ func (r *EmailRoutingCatchAllResource) Create(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
-	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,7 +121,7 @@ func (r *EmailRoutingCatchAllResource) Update(ctx context.Context, req resource.
 	_, err = r.client.EmailRouting.Rules.CatchAlls.Update(
 		ctx,
 		email_routing.RuleCatchAllUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -139,7 +138,6 @@ func (r *EmailRoutingCatchAllResource) Update(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
-	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -158,7 +156,7 @@ func (r *EmailRoutingCatchAllResource) Read(ctx context.Context, req resource.Re
 	_, err := r.client.EmailRouting.Rules.CatchAlls.Get(
 		ctx,
 		email_routing.RuleCatchAllGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+			ZoneID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -174,7 +172,6 @@ func (r *EmailRoutingCatchAllResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 	data = &env.Result
-	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -218,7 +215,6 @@ func (r *EmailRoutingCatchAllResource) ImportState(ctx context.Context, req reso
 		return
 	}
 	data = &env.Result
-	data.ID = data.ZoneID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
