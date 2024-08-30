@@ -30,11 +30,11 @@ func TestAccCloudflareEmailRoutingCatchAll(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(name, "name", "terraform rule catch all"),
 
-					resource.TestCheckResourceAttr(name, "matcher.0.type", "all"),
+					resource.TestCheckResourceAttr(name, "matchers.0.type", "all"),
 
-					resource.TestCheckResourceAttr(name, "action.0.type", "forward"),
-					resource.TestCheckResourceAttr(name, "action.0.value.#", "1"),
-					resource.TestCheckResourceAttr(name, "action.0.value.0", "destinationaddress@example.net"),
+					resource.TestCheckResourceAttr(name, "actions.0.type", "forward"),
+					resource.TestCheckResourceAttr(name, "actions.0.value.#", "1"),
+					resource.TestCheckResourceAttr(name, "actions.0.value.0", "destinationaddress@example.net"),
 				),
 			},
 		},
