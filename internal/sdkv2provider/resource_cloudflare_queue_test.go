@@ -83,9 +83,11 @@ func TestAccCloudflareQueue_Basic(t *testing.T) {
 func TestAccCloudflareQueue_Consumer(t *testing.T) {
 	t.Parallel()
 	var queue cloudflare.Queue
+	var script cloudflare.WorkerScript
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := generateRandomResourceName()
 	resourceName := "cloudflare_queue." + rnd
+	workerScriptName := "cloudflare_workers_script." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -96,8 +98,10 @@ func TestAccCloudflareQueue_Consumer(t *testing.T) {
 				Config: testAccCheckCloudflareQueueWConsumer(rnd, accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareQueueExists(rnd, &queue),
+					testAccCheckCloudflareWorkerScriptExists(rnd, &script, nil),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(workerScriptName, "name", rnd),
 				),
 			},
 			
@@ -158,26 +162,17 @@ func testAccCheckCloudflareQueueWConsumer(rnd, accountID, name string) string {
 	resource "cloudflare_queue" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[3]s"
-		consumers = [
-			{
-				script_name = "%[1]s"
-				settings {
-					batch_size = 1
-				}
+		consumers {
+			script_name = "%[1]s"
+
+			settings {
+				batch_size = 5
 			}
-		]
+		}
+		depends_on = [cloudflare_workers_script.%[1]s]
 	}`, rnd, accountID, name, queueModuleContent)
 	return tf_content
 }
-
-// {
-// 	script_name = "%[1]s"
-// 	settings = {
-// 		batch_size = 1
-// 		max_retries = 1
-// 		max_wait_time_ms = 1000
-// 	}
-// }
 
 func testAccCheckCloudflareQueueExists(name string, queue *cloudflare.Queue) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -204,3 +199,4 @@ func testAccCheckCloudflareQueueExists(name string, queue *cloudflare.Queue) res
 		return fmt.Errorf("queue not found")
 	}
 }
+
