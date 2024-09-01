@@ -66,10 +66,7 @@ func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, 
 					},
 				},
 			}
-			println(fmt.Sprintf("req: %+v", req))
-			result, err := client.CreateQueueConsumer(ctx, cloudflare.AccountIdentifier(accountID), req)
-			println(fmt.Sprintf("result: %+v", result))
-			println(fmt.Sprintf("err: %+v", err))
+			_, err := client.CreateQueueConsumer(ctx, cloudflare.AccountIdentifier(accountID), req)
 			if err != nil {
 				return diag.FromErr(errors.Wrap(err, "error creating workers queue consumer"))
 			}

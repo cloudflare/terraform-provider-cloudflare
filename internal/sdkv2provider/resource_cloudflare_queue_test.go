@@ -95,7 +95,9 @@ func TestAccCloudflareQueue_Consumer(t *testing.T) {
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCloudflareQueueDestroy,
 		Steps: []resource.TestStep{
+			
 			{
+
 				Config: testAccCheckCloudflareQueueWConsumer(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareQueueExists(rnd, &queue),
@@ -149,29 +151,26 @@ resource "cloudflare_queue" "%[1]s" {
 
 func testAccCheckCloudflareQueueWConsumer(rnd, accountID string) string {
 	queueModuleContent := `export default { queue(batch, env) { return new Response('Hello world'); }, };`
-	tf_content := fmt.Sprintf(`
+	return fmt.Sprintf(`
 	resource "cloudflare_workers_script" "%[1]s" {
 		  account_id = "%[2]s"
 		  name = "%[1]s"
 		  content = "%[3]s"
 		  module = true
-		  compatibility_date = "2023-03-19"
-		  compatibility_flags = ["nodejs_compat", "web_socket_compression"]
 	}
-	
+
 	resource "cloudflare_queue" "%[1]s" {
 		account_id = "%[2]s"
 		name = "%[1]s"
 		consumers {
 			script_name = "%[1]s"
-			environment = "production"
 			settings {
 				batch_size = 5
 			}
 		}
 		depends_on = [cloudflare_workers_script.%[1]s]
 	}`, rnd, accountID, queueModuleContent)
-	return tf_content
+
 }
 
 
