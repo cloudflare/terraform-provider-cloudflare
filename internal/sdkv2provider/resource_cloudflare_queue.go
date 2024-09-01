@@ -31,7 +31,7 @@ func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, 
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 	queueName := d.Get("name").(string)
-	
+
 	req := cloudflare.CreateQueueParams{
 		Name: queueName,
 	}
@@ -91,7 +91,7 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "error reading queues"))
 	}
-	
+
 	var queue cloudflare.Queue
 	for _, r := range resp {
 		if r.ID == queueID {
@@ -101,7 +101,6 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 			if len(r.Consumers) > 0 {
 				for _, consumer := range r.Consumers {
 					consumerMap := map[string]interface{}{
-						"created_on": consumer.CreatedOn,
 						"environment": consumer.Environment,
 						"queue_name": consumer.QueueName,
 						"script_name": consumer.ScriptName,
@@ -117,6 +116,7 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 				}
 				d.Set("consumers", consumers)
 			}
+			break
 		}
 	}
 
