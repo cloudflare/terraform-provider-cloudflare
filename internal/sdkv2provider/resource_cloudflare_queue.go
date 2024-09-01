@@ -66,9 +66,10 @@ func resourceCloudflareQueueCreate(ctx context.Context, d *schema.ResourceData, 
 					},
 				},
 			}
-			
-			_, err := client.CreateQueueConsumer(ctx, cloudflare.AccountIdentifier(accountID), req)
-			// println(fmt.Sprintf("result: %+v", result))
+			println(fmt.Sprintf("req: %+v", req))
+			result, err := client.CreateQueueConsumer(ctx, cloudflare.AccountIdentifier(accountID), req)
+			println(fmt.Sprintf("result: %+v", result))
+			println(fmt.Sprintf("err: %+v", err))
 			if err != nil {
 				return diag.FromErr(errors.Wrap(err, "error creating workers queue consumer"))
 			}
@@ -114,6 +115,7 @@ func resourceCloudflareQueueRead(ctx context.Context, d *schema.ResourceData, me
 					}
 					consumers = append(consumers, consumerMap)
 				}
+				println(fmt.Sprintf("consumers: %+v", consumers))
 				d.Set("consumers", consumers)
 			}
 			break

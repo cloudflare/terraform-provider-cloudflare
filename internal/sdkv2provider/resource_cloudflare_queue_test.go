@@ -164,7 +164,7 @@ func testAccCheckCloudflareQueueWConsumer(rnd, accountID string) string {
 		name = "%[1]s"
 		consumers {
 			script_name = "%[1]s"
-
+			environment = "production"
 			settings {
 				batch_size = 5
 			}
