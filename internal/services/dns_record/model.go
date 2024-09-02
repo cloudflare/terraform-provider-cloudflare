@@ -3,6 +3,8 @@
 package dns_record
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,17 +13,23 @@ type DNSRecordResultEnvelope struct {
 }
 
 type DNSRecordModel struct {
-	ID       types.String        `tfsdk:"id" json:"id"`
-	ZoneID   types.String        `tfsdk:"zone_id" path:"zone_id"`
-	Name     types.String        `tfsdk:"name" json:"name"`
-	Type     types.String        `tfsdk:"type" json:"type"`
-	Comment  types.String        `tfsdk:"comment" json:"comment"`
-	Content  types.String        `tfsdk:"content" json:"content"`
-	Priority types.Float64       `tfsdk:"priority" json:"priority"`
-	Data     *DNSRecordDataModel `tfsdk:"data" json:"data"`
-	Proxied  types.Bool          `tfsdk:"proxied" json:"proxied,computed_optional"`
-	TTL      types.Float64       `tfsdk:"ttl" json:"ttl,computed_optional"`
-	Tags     types.List          `tfsdk:"tags" json:"tags,computed_optional"`
+	ID                types.String                                 `tfsdk:"id" json:"id,computed"`
+	ZoneID            types.String                                 `tfsdk:"zone_id" path:"zone_id"`
+	Content           types.String                                 `tfsdk:"content" json:"content"`
+	Priority          types.Float64                                `tfsdk:"priority" json:"priority"`
+	Type              types.String                                 `tfsdk:"type" json:"type"`
+	Data              *DNSRecordDataModel                          `tfsdk:"data" json:"data"`
+	Comment           types.String                                 `tfsdk:"comment" json:"comment,computed"`
+	CommentModifiedOn timetypes.RFC3339                            `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	CreatedOn         timetypes.RFC3339                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn        timetypes.RFC3339                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name              types.String                                 `tfsdk:"name" json:"name,computed"`
+	Proxiable         types.Bool                                   `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied           types.Bool                                   `tfsdk:"proxied" json:"proxied,computed"`
+	TagsModifiedOn    timetypes.RFC3339                            `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
+	TTL               types.Float64                                `tfsdk:"ttl" json:"ttl,computed"`
+	Tags              types.List                                   `tfsdk:"tags" json:"tags,computed"`
+	Meta              customfield.NestedObject[DNSRecordMetaModel] `tfsdk:"meta" json:"meta,computed"`
 }
 
 type DNSRecordDataModel struct {
@@ -58,9 +66,11 @@ type DNSRecordDataModel struct {
 	MatchingType  types.Float64 `tfsdk:"matching_type" json:"matching_type"`
 	Selector      types.Float64 `tfsdk:"selector" json:"selector"`
 	Usage         types.Float64 `tfsdk:"usage" json:"usage"`
-	Name          types.String  `tfsdk:"name" json:"name"`
 	Port          types.Float64 `tfsdk:"port" json:"port"`
-	Proto         types.String  `tfsdk:"proto" json:"proto"`
 	Weight        types.Float64 `tfsdk:"weight" json:"weight"`
 	Fingerprint   types.String  `tfsdk:"fingerprint" json:"fingerprint"`
+}
+
+type DNSRecordMetaModel struct {
+	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed_optional"`
 }

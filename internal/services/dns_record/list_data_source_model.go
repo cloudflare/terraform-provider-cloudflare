@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -133,4 +134,20 @@ type DNSRecordsTagDataSourceModel struct {
 }
 
 type DNSRecordsResultDataSourceModel struct {
+	ID                types.String                                            `tfsdk:"id" json:"id,computed"`
+	Comment           types.String                                            `tfsdk:"comment" json:"comment,computed"`
+	CommentModifiedOn timetypes.RFC3339                                       `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	CreatedOn         timetypes.RFC3339                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Meta              customfield.NestedObject[DNSRecordsMetaDataSourceModel] `tfsdk:"meta" json:"meta,computed"`
+	ModifiedOn        timetypes.RFC3339                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name              types.String                                            `tfsdk:"name" json:"name,computed"`
+	Proxiable         types.Bool                                              `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied           types.Bool                                              `tfsdk:"proxied" json:"proxied,computed"`
+	Tags              types.List                                              `tfsdk:"tags" json:"tags,computed"`
+	TagsModifiedOn    timetypes.RFC3339                                       `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
+	TTL               types.Float64                                           `tfsdk:"ttl" json:"ttl,computed"`
+}
+
+type DNSRecordsMetaDataSourceModel struct {
+	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed"`
 }
