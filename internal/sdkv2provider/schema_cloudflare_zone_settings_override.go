@@ -791,13 +791,6 @@ var resourceCloudflareZoneSettingsSchemaV0 = map[string]*schema.Schema{
 		Computed:     true,
 	},
 
-	"replace_insecure_js": {
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional:     true,
-		Computed:     true,
-	},
-
 	"response_buffering": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
@@ -1290,13 +1283,6 @@ var resourceCloudflareZoneSettingsSchemaV1 = map[string]*schema.Schema{
 	},
 
 	"privacy_pass": {
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
-		Optional:     true,
-		Computed:     true,
-	},
-
-	"replace_insecure_js": {
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
 		Optional:     true,
