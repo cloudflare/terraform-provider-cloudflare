@@ -9,6 +9,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/cloudflare-go/v2/shared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,9 +23,21 @@ type DNSRecordResultListDataSourceEnvelope struct {
 }
 
 type DNSRecordDataSourceModel struct {
-	DNSRecordID types.String                       `tfsdk:"dns_record_id" path:"dns_record_id"`
-	ZoneID      types.String                       `tfsdk:"zone_id" path:"zone_id"`
-	Filter      *DNSRecordFindOneByDataSourceModel `tfsdk:"filter"`
+	DNSRecordID       types.String                                           `tfsdk:"dns_record_id" path:"dns_record_id"`
+	ZoneID            types.String                                           `tfsdk:"zone_id" path:"zone_id"`
+	Comment           types.String                                           `tfsdk:"comment" json:"comment,computed"`
+	CommentModifiedOn timetypes.RFC3339                                      `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	CreatedOn         timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ID                types.String                                           `tfsdk:"id" json:"id,computed"`
+	ModifiedOn        timetypes.RFC3339                                      `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name              types.String                                           `tfsdk:"name" json:"name,computed"`
+	Proxiable         types.Bool                                             `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied           types.Bool                                             `tfsdk:"proxied" json:"proxied,computed"`
+	TagsModifiedOn    timetypes.RFC3339                                      `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
+	TTL               types.Float64                                          `tfsdk:"ttl" json:"ttl,computed"`
+	Tags              types.List                                             `tfsdk:"tags" json:"tags,computed"`
+	Meta              customfield.NestedObject[DNSRecordMetaDataSourceModel] `tfsdk:"meta" json:"meta,computed"`
+	Filter            *DNSRecordFindOneByDataSourceModel                     `tfsdk:"filter"`
 }
 
 func (m *DNSRecordDataSourceModel) toReadParams(_ context.Context) (params dns.RecordGetParams, diags diag.Diagnostics) {
@@ -113,6 +126,10 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 	}
 
 	return
+}
+
+type DNSRecordMetaDataSourceModel struct {
+	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed"`
 }
 
 type DNSRecordFindOneByDataSourceModel struct {
