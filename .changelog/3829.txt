@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zone_settings_override: fix migration process with nil initial_settings
+```

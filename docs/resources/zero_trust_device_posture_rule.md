@@ -68,7 +68,7 @@ Optional:
 - `connection_id` (String) The workspace one or intune connection id.
 - `count_operator` (String) The count comparison operator for kolide. Available values: `>`, `>=`, `<`, `<=`, `==`.
 - `domain` (String) The domain that the client must join.
-- `eid_last_seen` (String) The datetime a device last seen in RFC 3339 format from Tanium.
+- `eid_last_seen` (String) The time a device last seen in Tanium. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`
 - `enabled` (Boolean) True if the firewall must be enabled.
 - `exists` (Boolean) Checks if the file should exist.
 - `id` (String) The Teams List id. Required for `serial_number` and `unique_client_id` rule types.

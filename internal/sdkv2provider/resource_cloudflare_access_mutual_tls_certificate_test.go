@@ -72,6 +72,10 @@ func TestAccCloudflareAccessMutualTLSBasic(t *testing.T) {
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 
+	if v := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE"); v == "" {
+		t.Fatal("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE must be set for this acceptance test")
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
@@ -114,6 +118,10 @@ func TestAccCloudflareAccessMutualTLSBasicWithZoneID(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zero_trust_access_mtls_certificate.%s", rnd)
 	cert := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+
+	if v := os.Getenv("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE"); v == "" {
+		t.Fatal("CLOUDFLARE_MUTUAL_TLS_CERTIFICATE must be set for this acceptance test")
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
