@@ -97,6 +97,7 @@ func resourceCloudflareLogpushJobSchema() map[string]*schema.Schema {
 			Optional:     true,
 			Default:      "high",
 			ValidateFunc: validation.StringInSlice(frequencyAllowedValues, false),
+			Deprecated:   "`frequency` has been deprecated in favour of using `max_upload_interval_seconds` instead.",
 			Description:  fmt.Sprintf("A higher frequency will result in logs being pushed on faster with smaller files. `low` frequency will push logs less often with larger files. %s", renderAvailableDocumentationValuesStringSlice(frequencyAllowedValues)),
 		},
 		"max_upload_bytes": {
