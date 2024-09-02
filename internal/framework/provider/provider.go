@@ -19,6 +19,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/api_token_permissions_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/cloud_connector_rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/d1"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dcv_delegation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_address"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/email_routing_rule"
@@ -391,6 +392,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dlp_datasets.NewDataSource,
 		gateway_categories.NewDataSource,
 		gateway_app_types.NewDataSource,
+		dcv_delegation.NewDataSource,
 	}
 }
 
