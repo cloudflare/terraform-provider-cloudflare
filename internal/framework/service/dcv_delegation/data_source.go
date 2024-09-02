@@ -10,21 +10,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSource = &CloudflareDCVDelegationDataSource{}
+var _ datasource.DataSource = &DCVDelegationDataSource{}
 
 func NewDataSource() datasource.DataSource {
-	return &CloudflareDCVDelegationDataSource{}
+	return &DCVDelegationDataSource{}
 }
 
-type CloudflareDCVDelegationDataSource struct {
+type DCVDelegationDataSource struct {
 	client *muxclient.Client
 }
 
-func (r *CloudflareDCVDelegationDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (r *DCVDelegationDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_dcv_delegation"
 }
 
-func (r *CloudflareDCVDelegationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (r *DCVDelegationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -43,8 +43,8 @@ func (r *CloudflareDCVDelegationDataSource) Configure(ctx context.Context, req d
 	r.client = client
 }
 
-func (r *CloudflareDCVDelegationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data CloudflareDCVDelegationModel
+func (r *DCVDelegationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data DCVDelegationModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -56,7 +56,7 @@ func (r *CloudflareDCVDelegationDataSource) Read(ctx context.Context, req dataso
 		return
 	}
 
-	data = CloudflareDCVDelegationModel{
+	data = DCVDelegationModel{
 		ZoneID:   types.StringValue(data.ZoneID.ValueString()),
 		ID:       types.StringValue(dcv.UUID),
 		Hostname: types.StringValue(fmt.Sprintf("%s.dcv.cloudflare.com", dcv.UUID)),
