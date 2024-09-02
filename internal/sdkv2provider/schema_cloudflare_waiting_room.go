@@ -188,7 +188,7 @@ func resourceCloudflareWaitingRoomSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice(waitingRoomQueueingMethod, false),
+				ValidateFunc: validation.StringInSlice(waitingRoomOriginCommands, false),
 			},
 		},
 	}
