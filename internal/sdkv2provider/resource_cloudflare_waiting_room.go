@@ -64,7 +64,7 @@ func buildWaitingRoom(d *schema.ResourceData) cloudflare.WaitingRoom {
 		CookieSuffix:            d.Get("cookie_suffix").(string),
 		AdditionalRoutes:        additional_routes,
 		QueueingStatusCode:      d.Get("queueing_status_code").(int),
-		EnabledOriginCommands:   d.Get("enabled_origin_commands").([]string),
+		EnabledOriginCommands:   expandInterfaceToStringList(d.Get("enabled_origin_commands").([]interface{})),
 	}
 }
 
