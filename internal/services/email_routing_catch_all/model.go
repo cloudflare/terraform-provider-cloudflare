@@ -11,7 +11,7 @@ type EmailRoutingCatchAllResultEnvelope struct {
 }
 
 type EmailRoutingCatchAllModel struct {
-	ID       types.String                          `tfsdk:"id" json:"-,computed"`
+	ID       types.String                          `tfsdk:"id" json:"id,computed"`
 	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id"`
 	Actions  *[]*EmailRoutingCatchAllActionsModel  `tfsdk:"actions" json:"actions"`
 	Matchers *[]*EmailRoutingCatchAllMatchersModel `tfsdk:"matchers" json:"matchers"`
