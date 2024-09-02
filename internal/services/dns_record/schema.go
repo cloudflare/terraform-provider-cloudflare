@@ -5,7 +5,9 @@ package dns_record
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -26,21 +28,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Required:    true,
+			"content": schema.StringAttribute{
+				Description: "A valid IPv4 address.",
+				Optional:    true,
+			},
+			"priority": schema.Float64Attribute{
+				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 65535),
+				},
 			},
 			"type": schema.StringAttribute{
 				Description: "Record type.",
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"A",
@@ -65,21 +74,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"TXT",
 						"URI",
 					),
-				},
-			},
-			"comment": schema.StringAttribute{
-				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
-				Optional:    true,
-			},
-			"content": schema.StringAttribute{
-				Description: "A valid IPv4 address.",
-				Optional:    true,
-			},
-			"priority": schema.Float64Attribute{
-				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 65535),
 				},
 			},
 			"data": schema.SingleNestedAttribute{
@@ -304,20 +298,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							float64validator.Between(0, 255),
 						},
 					},
-					"name": schema.StringAttribute{
-						Description: "A valid hostname. Deprecated in favor of the regular 'name' outside the data map. This data map field represents the remainder of the full 'name' after the service and protocol.",
-						Optional:    true,
-					},
 					"port": schema.Float64Attribute{
 						Description: "The port of the service.",
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(0, 65535),
 						},
-					},
-					"proto": schema.StringAttribute{
-						Description: "A valid protocol, prefixed with an underscore. Deprecated in favor of the regular 'name' outside the data map. This data map field normally represents the second label of that 'name'.",
-						Optional:    true,
 					},
 					"weight": schema.Float64Attribute{
 						Description: "The record weight.",
@@ -332,16 +318,46 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"comment": schema.StringAttribute{
+				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
+				Computed:    true,
+			},
+			"comment_modified_on": schema.StringAttribute{
+				Description: "When the record comment was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"created_on": schema.StringAttribute{
+				Description: "When the record was created.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "When the record was last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"name": schema.StringAttribute{
+				Description: "DNS record name (or @ for the zone apex) in Punycode.",
+				Computed:    true,
+			},
+			"proxiable": schema.BoolAttribute{
+				Description: "Whether the record can be proxied by Cloudflare or not.",
+				Computed:    true,
+			},
 			"proxied": schema.BoolAttribute{
 				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
 				Computed:    true,
-				Optional:    true,
 				Default:     booldefault.StaticBool(false),
+			},
+			"tags_modified_on": schema.StringAttribute{
+				Description: "When the record tags were last modified.",
+				Computed:    true,
+				CustomType:  timetypes.RFC3339Type{},
 			},
 			"ttl": schema.Float64Attribute{
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
 				Computed:    true,
-				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(30, 86400),
 				},
@@ -349,8 +365,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"tags": schema.ListAttribute{
 				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 				Computed:    true,
-				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"meta": schema.SingleNestedAttribute{
+				Description: "Extra Cloudflare-specific information about the record.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[DNSRecordMetaModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"auto_added": schema.BoolAttribute{
+						Description: "Will exist if Cloudflare automatically added this DNS record during initial setup.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
 			},
 		},
 	}
