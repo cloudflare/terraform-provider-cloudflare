@@ -1,0 +1,3 @@
+```release-note:note
+resource/cloudflare_record: remove deprecated zone_name field
+```

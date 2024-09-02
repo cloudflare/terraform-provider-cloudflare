@@ -67,11 +67,6 @@ func dataSourceCloudflareRecord() *schema.Resource {
 				Computed:    true,
 				Description: "Proxiable status of the found DNS record.",
 			},
-			"zone_name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Zone name of the found DNS record.",
-			},
 		},
 	}
 }
@@ -120,7 +115,6 @@ func dataSourceCloudflareRecordRead(ctx context.Context, d *schema.ResourceData,
 	d.Set("proxied", record.Proxied)
 	d.Set("ttl", record.TTL)
 	d.Set("proxiable", record.Proxiable)
-	d.Set("zone_name", record.ZoneName)
 
 	if record.Priority != nil {
 		d.Set("priority", int(cloudflare.Uint16(record.Priority)))
