@@ -189,6 +189,7 @@ Read-Only:
 Read-Only:
 
 - `check_presence` (List of String)
+- `contains` (Map of Set of String)
 - `exclude_origin` (Boolean)
 - `include` (List of String)
 

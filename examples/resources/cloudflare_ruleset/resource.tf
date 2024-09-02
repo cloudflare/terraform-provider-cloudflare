@@ -275,6 +275,11 @@ resource "cloudflare_ruleset" "cache_settings_example" {
             include        = ["habc", "hdef"]
             check_presence = ["habc_t", "hdef_t"]
             exclude_origin = true
+            contains       = {
+              "accept"          = ["image/web", "image/png"]
+              "accept-encoding" = ["br", "zstd"]
+              "some-header"     = ["some-value", "some-other-value"]
+            }
           }
           cookie {
             include        = ["cabc", "cdef"]
