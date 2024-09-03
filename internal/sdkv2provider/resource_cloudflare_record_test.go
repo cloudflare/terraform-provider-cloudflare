@@ -689,7 +689,7 @@ func TestAccCloudflareRecord_CompareIPv6(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "AAAA"),
-					resource.TestCheckResourceAttr(name, "content", "2001:4860:4860:0:0:0:0:8888"),
+					resource.TestCheckResourceAttr(name, "content", "2001:4860:4860::8888"),
 				),
 			},
 			{
