@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_record: Suppress matching ipv6 dns record
+```

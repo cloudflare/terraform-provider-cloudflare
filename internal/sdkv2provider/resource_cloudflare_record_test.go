@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -672,6 +673,35 @@ func TestAccCloudflareRecord_ClearTags(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRecord_CompareIPv6(t *testing.T) {
+	t.Parallel()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_record.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareRecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareRecordConfigIPv6(zoneID, rnd, rnd, "2001:4860:4860:0:0:0:0:8888"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "AAAA"),
+					resource.TestCheckResourceAttr(name, "content", "2001:4860:4860::8888"),
+				),
+			},
+			{
+				Config: testAccCheckCloudflareRecordConfigIPv6(zoneID, rnd, rnd, "2001:4860:4860::8888"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+		},
+	})
+}
+
 func TestSuppressTrailingDots(t *testing.T) {
 	t.Parallel()
 
@@ -694,6 +724,28 @@ func TestSuppressTrailingDots(t *testing.T) {
 	for _, c := range cases {
 		got := suppressTrailingDots("", c.old, c.new, nil)
 		assert.Equal(t, c.expected, got)
+	}
+}
+
+func TestIPv6Comparison(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		old string
+		new string
+	}{
+		{"2001:db8:3333:4444:5555:6666:7777:8888", "2001:db8:3333:4444:5555:6666:7777:8888"},
+		{"1050:0000:0000:0000:0005:0600:300c:326b", "1050:0:0:0:5:0600:300c:326b"},
+		{"ff06:0:0:0:0:0:0:c3", "ff06::c3"},
+		{"0:0:0:0:0:0:0:0", "::"},
+		{"2001:db8::", "2001:db8:0:0:0:0:0:0"},
+		{"::1234:5678", "0:0:0:0:0:0:1234:5678"},
+		{"2001:db8:0:0:0:0:1234:5678", "2001:db8::1234:5678"},
+	}
+
+	for _, c := range cases {
+		got := suppressContent("", c.old, c.new, nil)
+		assert.Equal(t, true, got)
 	}
 }
 
@@ -1075,4 +1127,15 @@ func testAccCheckCloudflareRecordDNSKEY(zoneID, name string) string {
 	   }
 	 }
 `, zoneID, name)
+}
+
+func testAccCheckCloudflareRecordConfigIPv6(zoneID, name, rnd, content string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_record" "%[3]s" {
+	zone_id = "%[1]s"
+	name = "%[2]s"
+	content = "%[4]s"
+	type = "AAAA"
+	ttl = 3600
+}`, zoneID, name, rnd, content)
 }
