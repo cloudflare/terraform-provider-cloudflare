@@ -66,11 +66,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"colo_names": schema.ListAttribute{
 								Description: "List of colo names for the ECMP scope.",
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"colo_regions": schema.ListAttribute{
 								Description: "List of colo regions for the ECMP scope.",
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 						},

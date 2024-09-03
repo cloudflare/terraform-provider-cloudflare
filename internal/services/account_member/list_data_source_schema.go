@@ -193,6 +193,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"permissions": schema.ListAttribute{
 										Description: "Access permissions for this User.",
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 								},

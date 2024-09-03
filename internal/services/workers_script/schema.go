@@ -83,12 +83,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"keep_bindings": schema.ListAttribute{
 						Description: "List of binding types to keep from previous_upload.",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"logpush": schema.BoolAttribute{
@@ -172,12 +174,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "A list of classes to delete Durable Object namespaces from.",
 											Computed:    true,
 											Optional:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"new_classes": schema.ListAttribute{
 											Description: "A list of classes to create Durable Object namespaces from.",
 											Computed:    true,
 											Optional:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"renamed_classes": schema.ListNestedAttribute{
@@ -244,6 +248,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "List of strings to use as tags for this Worker",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"tail_consumers": schema.ListNestedAttribute{
@@ -282,6 +287,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Key-value pairs to use as tags for this version of this Worker",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewMapType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 				},

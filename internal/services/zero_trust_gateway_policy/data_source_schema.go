@@ -110,6 +110,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"rule_settings": schema.SingleNestedAttribute{
@@ -120,6 +121,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"add_headers": schema.MapAttribute{
 						Description: "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).",
 						Computed:    true,
+						CustomType:  customfield.NewMapType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"allow_child_bypass": schema.BoolAttribute{
@@ -322,6 +324,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"override_ips": schema.ListAttribute{
 						Description: "Override matching DNS queries with an IP or set of IPs.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"payload_log": schema.SingleNestedAttribute{

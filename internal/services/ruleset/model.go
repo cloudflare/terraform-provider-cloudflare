@@ -31,7 +31,7 @@ type RulesetRulesModel struct {
 	ID               types.String                                                `tfsdk:"id" json:"id,computed_optional"`
 	Action           types.String                                                `tfsdk:"action" json:"action,computed_optional"`
 	ActionParameters customfield.NestedObject[RulesetRulesActionParametersModel] `tfsdk:"action_parameters" json:"action_parameters,computed_optional"`
-	Categories       types.List                                                  `tfsdk:"categories" json:"categories,computed"`
+	Categories       customfield.List[types.String]                              `tfsdk:"categories" json:"categories,computed"`
 	Description      types.String                                                `tfsdk:"description" json:"description,computed_optional"`
 	Enabled          types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Expression       types.String                                                `tfsdk:"expression" json:"expression,computed_optional"`

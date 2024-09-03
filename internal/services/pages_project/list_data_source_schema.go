@@ -41,6 +41,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"aliases": schema.ListAttribute{
 							Description: "A list of alias URLs pointing to this deployment.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"build_config": schema.SingleNestedAttribute{
@@ -112,6 +113,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"env_vars": schema.MapAttribute{
 							Description: "A dict of env variables to build this deploy.",
 							Computed:    true,
+							CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 							ElementType: jsontypes.NormalizedType{},
 						},
 						"environment": schema.StringAttribute{
@@ -180,10 +182,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 										"path_excludes": schema.ListAttribute{
 											Computed:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"path_includes": schema.ListAttribute{
 											Computed:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"pr_comments_enabled": schema.BoolAttribute{
@@ -191,10 +195,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 										"preview_branch_excludes": schema.ListAttribute{
 											Computed:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"preview_branch_includes": schema.ListAttribute{
 											Computed:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"preview_deployment_setting": schema.StringAttribute{

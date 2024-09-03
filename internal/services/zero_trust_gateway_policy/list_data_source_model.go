@@ -39,7 +39,7 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	Description   types.String                                                                  `tfsdk:"description" json:"description,computed"`
 	DevicePosture types.String                                                                  `tfsdk:"device_posture" json:"device_posture,computed"`
 	Enabled       types.Bool                                                                    `tfsdk:"enabled" json:"enabled,computed"`
-	Filters       types.List                                                                    `tfsdk:"filters" json:"filters,computed"`
+	Filters       customfield.List[types.String]                                                `tfsdk:"filters" json:"filters,computed"`
 	Identity      types.String                                                                  `tfsdk:"identity" json:"identity,computed"`
 	Name          types.String                                                                  `tfsdk:"name" json:"name,computed"`
 	Precedence    types.Int64                                                                   `tfsdk:"precedence" json:"precedence,computed"`
@@ -50,7 +50,7 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
-	AddHeaders                      map[string]types.String                                                                           `tfsdk:"add_headers" json:"add_headers,computed"`
+	AddHeaders                      customfield.Map[types.String]                                                                     `tfsdk:"add_headers" json:"add_headers,computed"`
 	AllowChildBypass                types.Bool                                                                                        `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsAuditSSHDataSourceModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsBISOAdminControlsDataSourceModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed"`
@@ -67,7 +67,7 @@ type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
 	L4override                      customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsL4overrideDataSourceModel]           `tfsdk:"l4override" json:"l4override,computed"`
 	NotificationSettings            customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsNotificationSettingsDataSourceModel] `tfsdk:"notification_settings" json:"notification_settings,computed"`
 	OverrideHost                    types.String                                                                                      `tfsdk:"override_host" json:"override_host,computed"`
-	OverrideIPs                     types.List                                                                                        `tfsdk:"override_ips" json:"override_ips,computed"`
+	OverrideIPs                     customfield.List[types.String]                                                                    `tfsdk:"override_ips" json:"override_ips,computed"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsPayloadLogDataSourceModel]           `tfsdk:"payload_log" json:"payload_log,computed"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                                        `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPoliciesRuleSettingsUntrustedCERTDataSourceModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed"`

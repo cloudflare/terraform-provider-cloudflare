@@ -203,7 +203,7 @@ func (e *encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			return value.(basetypes.DynamicValue).UnderlyingValue()
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
-		structType := reflect.PtrTo(t.Field(0).Type)
+		structType := reflect.PointerTo(t.Field(0).Type)
 		return e.terraformUnwrappedEncoder(structType, func(value any) any {
 			converted := value.(customfield.NestedObjectLike)
 			structValue, _ := converted.ValueAny(context.TODO())

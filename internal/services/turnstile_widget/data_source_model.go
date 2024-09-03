@@ -33,7 +33,7 @@ type TurnstileWidgetDataSourceModel struct {
 	Name           types.String                             `tfsdk:"name" json:"name,computed"`
 	Offlabel       types.Bool                               `tfsdk:"offlabel" json:"offlabel,computed"`
 	Region         types.String                             `tfsdk:"region" json:"region,computed"`
-	Domains        types.List                               `tfsdk:"domains" json:"domains,computed"`
+	Domains        customfield.List[types.String]           `tfsdk:"domains" json:"domains,computed"`
 	Filter         *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

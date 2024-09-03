@@ -64,12 +64,12 @@ type ZeroTrustDevicePostureRuleInputDataSourceModel struct {
 	OSDistroRevision types.String                                                                      `tfsdk:"os_distro_revision" json:"os_distro_revision,computed"`
 	OSVersionExtra   types.String                                                                      `tfsdk:"os_version_extra" json:"os_version_extra,computed"`
 	Enabled          types.Bool                                                                        `tfsdk:"enabled" json:"enabled,computed"`
-	CheckDisks       types.List                                                                        `tfsdk:"check_disks" json:"checkDisks,computed"`
+	CheckDisks       customfield.List[types.String]                                                    `tfsdk:"check_disks" json:"checkDisks,computed"`
 	RequireAll       types.Bool                                                                        `tfsdk:"require_all" json:"requireAll,computed"`
 	CertificateID    types.String                                                                      `tfsdk:"certificate_id" json:"certificate_id,computed"`
 	Cn               types.String                                                                      `tfsdk:"cn" json:"cn,computed"`
 	CheckPrivateKey  types.Bool                                                                        `tfsdk:"check_private_key" json:"check_private_key,computed"`
-	ExtendedKeyUsage types.List                                                                        `tfsdk:"extended_key_usage" json:"extended_key_usage,computed"`
+	ExtendedKeyUsage customfield.List[types.String]                                                    `tfsdk:"extended_key_usage" json:"extended_key_usage,computed"`
 	Locations        customfield.NestedObject[ZeroTrustDevicePostureRuleInputLocationsDataSourceModel] `tfsdk:"locations" json:"locations,computed"`
 	ComplianceStatus types.String                                                                      `tfsdk:"compliance_status" json:"compliance_status,computed"`
 	ConnectionID     types.String                                                                      `tfsdk:"connection_id" json:"connection_id,computed"`
@@ -92,8 +92,8 @@ type ZeroTrustDevicePostureRuleInputDataSourceModel struct {
 }
 
 type ZeroTrustDevicePostureRuleInputLocationsDataSourceModel struct {
-	Paths       types.List `tfsdk:"paths" json:"paths,computed"`
-	TrustStores types.List `tfsdk:"trust_stores" json:"trust_stores,computed"`
+	Paths       customfield.List[types.String] `tfsdk:"paths" json:"paths,computed"`
+	TrustStores customfield.List[types.String] `tfsdk:"trust_stores" json:"trust_stores,computed"`
 }
 
 type ZeroTrustDevicePostureRuleMatchDataSourceModel struct {

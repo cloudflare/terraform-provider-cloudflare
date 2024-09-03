@@ -44,9 +44,9 @@ type RateLimitMatchHeadersModel struct {
 }
 
 type RateLimitMatchRequestModel struct {
-	Methods types.List   `tfsdk:"methods" json:"methods,computed_optional"`
-	Schemes types.List   `tfsdk:"schemes" json:"schemes,computed_optional"`
-	URL     types.String `tfsdk:"url" json:"url,computed_optional"`
+	Methods customfield.List[types.String] `tfsdk:"methods" json:"methods,computed_optional"`
+	Schemes customfield.List[types.String] `tfsdk:"schemes" json:"schemes,computed_optional"`
+	URL     types.String                   `tfsdk:"url" json:"url,computed_optional"`
 }
 
 type RateLimitMatchResponseModel struct {

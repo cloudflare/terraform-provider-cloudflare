@@ -77,6 +77,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"paths": schema.ListAttribute{
 										Description: "The paths the rule will be applied to.",
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"priority": schema.Float64Attribute{

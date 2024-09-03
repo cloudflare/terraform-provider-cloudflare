@@ -101,11 +101,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"networks": schema.ListAttribute{
 				Description: "List of networks where Load Balancer or Pool is enabled.",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"load_shedding": schema.SingleNestedAttribute{
@@ -226,6 +228,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"host": schema.ListAttribute{
 									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
 									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 							},

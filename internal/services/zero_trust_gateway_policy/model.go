@@ -32,7 +32,7 @@ type ZeroTrustGatewayPolicyModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {
-	AddHeaders                      map[string]types.String                                                               `tfsdk:"add_headers" json:"add_headers,computed_optional"`
+	AddHeaders                      customfield.Map[types.String]                                                         `tfsdk:"add_headers" json:"add_headers,computed_optional"`
 	AllowChildBypass                types.Bool                                                                            `tfsdk:"allow_child_bypass" json:"allow_child_bypass,computed_optional"`
 	AuditSSH                        customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsAuditSSHModel]             `tfsdk:"audit_ssh" json:"audit_ssh,computed_optional"`
 	BISOAdminControls               customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsBISOAdminControlsModel]    `tfsdk:"biso_admin_controls" json:"biso_admin_controls,computed_optional"`
@@ -49,7 +49,7 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	L4override                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsL4overrideModel]           `tfsdk:"l4override" json:"l4override,computed_optional"`
 	NotificationSettings            customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel] `tfsdk:"notification_settings" json:"notification_settings,computed_optional"`
 	OverrideHost                    types.String                                                                          `tfsdk:"override_host" json:"override_host,computed_optional"`
-	OverrideIPs                     types.List                                                                            `tfsdk:"override_ips" json:"override_ips,computed_optional"`
+	OverrideIPs                     customfield.List[types.String]                                                        `tfsdk:"override_ips" json:"override_ips,computed_optional"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel]           `tfsdk:"payload_log" json:"payload_log,computed_optional"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                            `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,computed_optional"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed_optional"`

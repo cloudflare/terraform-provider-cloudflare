@@ -63,7 +63,7 @@ type CustomHostnamesResultDataSourceModel struct {
 	OwnershipVerification     customfield.NestedObject[CustomHostnamesOwnershipVerificationDataSourceModel]     `tfsdk:"ownership_verification" json:"ownership_verification,computed"`
 	OwnershipVerificationHTTP customfield.NestedObject[CustomHostnamesOwnershipVerificationHTTPDataSourceModel] `tfsdk:"ownership_verification_http" json:"ownership_verification_http,computed"`
 	Status                    types.String                                                                      `tfsdk:"status" json:"status,computed"`
-	VerificationErrors        types.List                                                                        `tfsdk:"verification_errors" json:"verification_errors,computed"`
+	VerificationErrors        customfield.List[types.String]                                                    `tfsdk:"verification_errors" json:"verification_errors,computed"`
 }
 
 type CustomHostnamesSSLDataSourceModel struct {
@@ -74,7 +74,7 @@ type CustomHostnamesSSLDataSourceModel struct {
 	CustomCsrID          types.String                                                                     `tfsdk:"custom_csr_id" json:"custom_csr_id,computed"`
 	CustomKey            types.String                                                                     `tfsdk:"custom_key" json:"custom_key,computed"`
 	ExpiresOn            timetypes.RFC3339                                                                `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
-	Hosts                types.List                                                                       `tfsdk:"hosts" json:"hosts,computed"`
+	Hosts                customfield.List[types.String]                                                   `tfsdk:"hosts" json:"hosts,computed"`
 	Issuer               types.String                                                                     `tfsdk:"issuer" json:"issuer,computed"`
 	Method               types.String                                                                     `tfsdk:"method" json:"method,computed"`
 	SerialNumber         types.String                                                                     `tfsdk:"serial_number" json:"serial_number,computed"`
@@ -89,11 +89,11 @@ type CustomHostnamesSSLDataSourceModel struct {
 }
 
 type CustomHostnamesSSLSettingsDataSourceModel struct {
-	Ciphers       types.List   `tfsdk:"ciphers" json:"ciphers,computed"`
-	EarlyHints    types.String `tfsdk:"early_hints" json:"early_hints,computed"`
-	HTTP2         types.String `tfsdk:"http2" json:"http2,computed"`
-	MinTLSVersion types.String `tfsdk:"min_tls_version" json:"min_tls_version,computed"`
-	TLS1_3        types.String `tfsdk:"tls_1_3" json:"tls_1_3,computed"`
+	Ciphers       customfield.List[types.String] `tfsdk:"ciphers" json:"ciphers,computed"`
+	EarlyHints    types.String                   `tfsdk:"early_hints" json:"early_hints,computed"`
+	HTTP2         types.String                   `tfsdk:"http2" json:"http2,computed"`
+	MinTLSVersion types.String                   `tfsdk:"min_tls_version" json:"min_tls_version,computed"`
+	TLS1_3        types.String                   `tfsdk:"tls_1_3" json:"tls_1_3,computed"`
 }
 
 type CustomHostnamesSSLValidationErrorsDataSourceModel struct {
@@ -101,11 +101,11 @@ type CustomHostnamesSSLValidationErrorsDataSourceModel struct {
 }
 
 type CustomHostnamesSSLValidationRecordsDataSourceModel struct {
-	Emails   types.List   `tfsdk:"emails" json:"emails,computed"`
-	HTTPBody types.String `tfsdk:"http_body" json:"http_body,computed"`
-	HTTPURL  types.String `tfsdk:"http_url" json:"http_url,computed"`
-	TXTName  types.String `tfsdk:"txt_name" json:"txt_name,computed"`
-	TXTValue types.String `tfsdk:"txt_value" json:"txt_value,computed"`
+	Emails   customfield.List[types.String] `tfsdk:"emails" json:"emails,computed"`
+	HTTPBody types.String                   `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL  types.String                   `tfsdk:"http_url" json:"http_url,computed"`
+	TXTName  types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type CustomHostnamesCustomMetadataDataSourceModel struct {

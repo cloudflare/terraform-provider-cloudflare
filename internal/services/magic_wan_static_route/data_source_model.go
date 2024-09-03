@@ -44,6 +44,6 @@ type MagicWANStaticRouteRouteDataSourceModel struct {
 }
 
 type MagicWANStaticRouteRouteScopeDataSourceModel struct {
-	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed"`
-	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed"`
+	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed"`
+	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed"`
 }

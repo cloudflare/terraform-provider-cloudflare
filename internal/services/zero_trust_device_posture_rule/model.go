@@ -3,6 +3,7 @@
 package zero_trust_device_posture_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -64,8 +65,8 @@ type ZeroTrustDevicePostureRuleInputModel struct {
 }
 
 type ZeroTrustDevicePostureRuleInputLocationsModel struct {
-	Paths       types.List `tfsdk:"paths" json:"paths,computed_optional"`
-	TrustStores types.List `tfsdk:"trust_stores" json:"trust_stores,computed_optional"`
+	Paths       customfield.List[types.String] `tfsdk:"paths" json:"paths,computed_optional"`
+	TrustStores customfield.List[types.String] `tfsdk:"trust_stores" json:"trust_stores,computed_optional"`
 }
 
 type ZeroTrustDevicePostureRuleMatchModel struct {

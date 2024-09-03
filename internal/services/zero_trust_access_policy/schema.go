@@ -5,6 +5,7 @@ package zero_trust_access_policy
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -274,6 +275,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "A list of emails that can approve the access request.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"email_list_uuid": schema.StringAttribute{

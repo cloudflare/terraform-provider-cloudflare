@@ -156,6 +156,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "JSONPath location(s) in the schema where these events were encountered.  See [https://goessner.net/articles/JsonPath/](https://goessner.net/articles/JsonPath/) for JSONPath specification.",
 									Computed:    true,
 									Optional:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 								"message": schema.StringAttribute{

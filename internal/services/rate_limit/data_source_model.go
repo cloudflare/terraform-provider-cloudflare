@@ -67,9 +67,9 @@ type RateLimitMatchHeadersDataSourceModel struct {
 }
 
 type RateLimitMatchRequestDataSourceModel struct {
-	Methods types.List   `tfsdk:"methods" json:"methods,computed"`
-	Schemes types.List   `tfsdk:"schemes" json:"schemes,computed"`
-	URL     types.String `tfsdk:"url" json:"url,computed"`
+	Methods customfield.List[types.String] `tfsdk:"methods" json:"methods,computed"`
+	Schemes customfield.List[types.String] `tfsdk:"schemes" json:"schemes,computed"`
+	URL     types.String                   `tfsdk:"url" json:"url,computed"`
 }
 
 type RateLimitMatchResponseDataSourceModel struct {

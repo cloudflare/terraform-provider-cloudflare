@@ -3,6 +3,7 @@
 package email_routing_catch_all
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,8 +22,8 @@ type EmailRoutingCatchAllModel struct {
 }
 
 type EmailRoutingCatchAllActionsModel struct {
-	Type  types.String `tfsdk:"type" json:"type"`
-	Value types.List   `tfsdk:"value" json:"value,computed_optional"`
+	Type  types.String                   `tfsdk:"type" json:"type"`
+	Value customfield.List[types.String] `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type EmailRoutingCatchAllMatchersModel struct {

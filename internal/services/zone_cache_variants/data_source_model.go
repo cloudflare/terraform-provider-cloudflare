@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/cache"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -32,15 +33,15 @@ func (m *ZoneCacheVariantsDataSourceModel) toReadParams(_ context.Context) (para
 }
 
 type ZoneCacheVariantsValueDataSourceModel struct {
-	AVIF types.List `tfsdk:"avif" json:"avif,computed"`
-	BMP  types.List `tfsdk:"bmp" json:"bmp,computed"`
-	GIF  types.List `tfsdk:"gif" json:"gif,computed"`
-	JP2  types.List `tfsdk:"jp2" json:"jp2,computed"`
-	JPEG types.List `tfsdk:"jpeg" json:"jpeg,computed"`
-	JPG  types.List `tfsdk:"jpg" json:"jpg,computed"`
-	JPG2 types.List `tfsdk:"jpg2" json:"jpg2,computed"`
-	PNG  types.List `tfsdk:"png" json:"png,computed"`
-	TIF  types.List `tfsdk:"tif" json:"tif,computed"`
-	TIFF types.List `tfsdk:"tiff" json:"tiff,computed"`
-	WebP types.List `tfsdk:"webp" json:"webp,computed"`
+	AVIF customfield.List[types.String] `tfsdk:"avif" json:"avif,computed"`
+	BMP  customfield.List[types.String] `tfsdk:"bmp" json:"bmp,computed"`
+	GIF  customfield.List[types.String] `tfsdk:"gif" json:"gif,computed"`
+	JP2  customfield.List[types.String] `tfsdk:"jp2" json:"jp2,computed"`
+	JPEG customfield.List[types.String] `tfsdk:"jpeg" json:"jpeg,computed"`
+	JPG  customfield.List[types.String] `tfsdk:"jpg" json:"jpg,computed"`
+	JPG2 customfield.List[types.String] `tfsdk:"jpg2" json:"jpg2,computed"`
+	PNG  customfield.List[types.String] `tfsdk:"png" json:"png,computed"`
+	TIF  customfield.List[types.String] `tfsdk:"tif" json:"tif,computed"`
+	TIFF customfield.List[types.String] `tfsdk:"tiff" json:"tiff,computed"`
+	WebP customfield.List[types.String] `tfsdk:"webp" json:"webp,computed"`
 }

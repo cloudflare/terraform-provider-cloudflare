@@ -138,6 +138,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									stringvalidator.OneOfCaseInsensitive("revoke"),
 								),
 							},
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"host": schema.StringAttribute{

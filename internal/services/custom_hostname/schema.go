@@ -99,6 +99,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
 								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"early_hints": schema.StringAttribute{
@@ -206,6 +207,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"verification_errors": schema.ListAttribute{
 				Description: "These are errors that were encountered while trying to activate a hostname.",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"ownership_verification": schema.SingleNestedAttribute{

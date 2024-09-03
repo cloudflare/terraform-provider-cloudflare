@@ -5,6 +5,7 @@ package origin_ca_certificate
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
@@ -71,6 +72,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"hostnames": schema.ListAttribute{
 				Description: "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"filter": schema.SingleNestedAttribute{

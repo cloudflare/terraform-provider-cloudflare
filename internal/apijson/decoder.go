@@ -664,6 +664,56 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		}
 	}
 
+	if t.Implements(reflect.TypeOf((*customfield.NestedObjectMapLike)(nil)).Elem()) {
+		structType := t.Field(0).Type
+		structMapType := reflect.MapOf(reflect.TypeOf(""), structType)
+		dec := d.typeDecoder(structMapType)
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			existingObjectMapValue := value.Interface().(customfield.NestedObjectMapLike)
+			if node.Type == gjson.Null {
+				nullValue := existingObjectMapValue.NullValue(ctx)
+				value.Set(reflect.ValueOf(nullValue))
+				return nil
+			}
+
+			newObjectMapValue := reflect.New(structMapType).Elem()
+			existingAny, _ := existingObjectMapValue.AsStructMap(ctx)
+			newObjectMapValue.Set(reflect.ValueOf(existingAny))
+			err := dec(node, newObjectMapValue, state)
+			if err != nil {
+				return err
+			}
+			structInterface := newObjectMapValue.Interface()
+			updated := existingObjectMapValue.KnownValue(ctx, structInterface)
+			value.Set(reflect.ValueOf(updated))
+			return nil
+		}
+	}
+
+	if t.Implements(reflect.TypeOf((*customfield.MapLike)(nil)).Elem()) {
+		structType := t.Field(0).Type
+		mapOfStruct := reflect.MapOf(reflect.TypeOf(""), structType)
+		dec := d.typeDecoder(mapOfStruct)
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			objectMapValue := value.Interface().(customfield.MapLike)
+			if node.Type == gjson.Null {
+				nullValue := objectMapValue.NullValue(ctx)
+				value.Set(reflect.ValueOf(nullValue))
+				return nil
+			}
+			mv, _ := objectMapValue.ValueAttr(ctx)
+			val := reflect.New(mapOfStruct).Elem()
+			val.Set(reflect.ValueOf(mv))
+			err := dec(node, val, state)
+			if err != nil {
+				return err
+			}
+			newObjectMap := objectMapValue.KnownValue(ctx, val.Interface())
+			value.Set(reflect.ValueOf(newObjectMap))
+			return nil
+		}
+	}
+
 	if (t == reflect.TypeOf(basetypes.DynamicValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			dynamic := value.Interface().(basetypes.DynamicValue)

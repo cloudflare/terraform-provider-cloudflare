@@ -143,7 +143,7 @@ type DNSRecordsResultDataSourceModel struct {
 	Name              types.String                                            `tfsdk:"name" json:"name,computed"`
 	Proxiable         types.Bool                                              `tfsdk:"proxiable" json:"proxiable,computed"`
 	Proxied           types.Bool                                              `tfsdk:"proxied" json:"proxied,computed"`
-	Tags              types.List                                              `tfsdk:"tags" json:"tags,computed"`
+	Tags              customfield.List[types.String]                          `tfsdk:"tags" json:"tags,computed"`
 	TagsModifiedOn    timetypes.RFC3339                                       `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
 	TTL               types.Float64                                           `tfsdk:"ttl" json:"ttl,computed"`
 }

@@ -52,7 +52,7 @@ type FirewallRulesResultDataSourceModel struct {
 	Paused      types.Bool                                                   `tfsdk:"paused" json:"paused,computed"`
 	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
 	Priority    types.Float64                                                `tfsdk:"priority" json:"priority,computed"`
-	Products    types.List                                                   `tfsdk:"products" json:"products,computed"`
+	Products    customfield.List[types.String]                               `tfsdk:"products" json:"products,computed"`
 	Ref         types.String                                                 `tfsdk:"ref" json:"ref,computed"`
 }
 

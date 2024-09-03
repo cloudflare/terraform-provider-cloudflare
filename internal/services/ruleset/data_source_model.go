@@ -66,7 +66,7 @@ type RulesetRulesDataSourceModel struct {
 	ID               types.String                                                          `tfsdk:"id" json:"id,computed"`
 	Action           types.String                                                          `tfsdk:"action" json:"action,computed"`
 	ActionParameters customfield.NestedObject[RulesetRulesActionParametersDataSourceModel] `tfsdk:"action_parameters" json:"action_parameters,computed"`
-	Categories       types.List                                                            `tfsdk:"categories" json:"categories,computed"`
+	Categories       customfield.List[types.String]                                        `tfsdk:"categories" json:"categories,computed"`
 	Description      types.String                                                          `tfsdk:"description" json:"description,computed"`
 	Enabled          types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	Expression       types.String                                                          `tfsdk:"expression" json:"expression,computed"`

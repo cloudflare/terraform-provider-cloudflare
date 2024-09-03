@@ -54,6 +54,6 @@ type APITokenConditionModel struct {
 }
 
 type APITokenConditionRequestIPModel struct {
-	In    types.List `tfsdk:"in" json:"in,computed_optional"`
-	NotIn types.List `tfsdk:"not_in" json:"not_in,computed_optional"`
+	In    customfield.List[types.String] `tfsdk:"in" json:"in,computed_optional"`
+	NotIn customfield.List[types.String] `tfsdk:"not_in" json:"not_in,computed_optional"`
 }

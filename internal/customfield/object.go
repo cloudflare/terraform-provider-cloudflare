@@ -23,14 +23,14 @@ type NestedObjectType[T any] struct {
 
 func newNestedObjectType[T any](ctx context.Context) (NestedObjectType[T], diag.Diagnostics) {
 	var diags diag.Diagnostics
+	t := NestedObjectType[T]{}
 
 	m, d := StructToAttributes[T](ctx)
 	diags.Append(d...)
 	if diags.HasError() {
-		return NestedObjectType[T]{}, diags
+		return t, diags
 	}
 
-	t := NestedObjectType[T]{}
 	t.ObjectType = basetypes.ObjectType{AttrTypes: m}
 	return t, diags
 }
@@ -138,7 +138,7 @@ func (v NestedObject[T]) UnknownValue(ctx context.Context) NestedObjectLike {
 }
 
 func (v NestedObject[T]) KnownValue(ctx context.Context, t any) NestedObjectLike {
-	r, _ := NewObject[T](ctx, t.(*T))
+	r, _ := NewObject(ctx, t.(*T))
 	return r
 }
 

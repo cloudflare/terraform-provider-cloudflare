@@ -5,6 +5,7 @@ package email_routing_catch_all
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -51,6 +52,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"value": schema.ListAttribute{
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 					},

@@ -3,6 +3,7 @@
 package keyless_certificate
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -24,7 +25,7 @@ type KeylessCertificateModel struct {
 	CreatedOn    timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn   timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Status       types.String                   `tfsdk:"status" json:"status,computed"`
-	Permissions  types.List                     `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions  customfield.List[types.String] `tfsdk:"permissions" json:"permissions,computed"`
 }
 
 type KeylessCertificateTunnelModel struct {

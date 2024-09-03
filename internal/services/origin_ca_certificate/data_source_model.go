@@ -29,7 +29,7 @@ type OriginCACertificateDataSourceModel struct {
 	ID                types.String                                 `tfsdk:"id" json:"id,computed"`
 	RequestType       types.String                                 `tfsdk:"request_type" json:"request_type,computed"`
 	RequestedValidity types.Float64                                `tfsdk:"requested_validity" json:"requested_validity,computed"`
-	Hostnames         types.List                                   `tfsdk:"hostnames" json:"hostnames,computed"`
+	Hostnames         customfield.List[types.String]               `tfsdk:"hostnames" json:"hostnames,computed"`
 	Filter            *OriginCACertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

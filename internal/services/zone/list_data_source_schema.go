@@ -166,6 +166,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"name_servers": schema.ListAttribute{
 							Description: "The name servers Cloudflare assigns to a zone",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"original_dnshost": schema.StringAttribute{
@@ -175,6 +176,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"original_name_servers": schema.ListAttribute{
 							Description: "Original name servers before moving to Cloudflare",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"original_registrar": schema.StringAttribute{
@@ -230,6 +232,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"vanity_name_servers": schema.ListAttribute{
 							Description: "An array of domains used for custom name servers. This is only available for Business and Enterprise plans.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 					},

@@ -5,6 +5,7 @@ package healthcheck
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -90,6 +91,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"follow_redirects": schema.BoolAttribute{
@@ -102,6 +104,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 						ElementType: types.ListType{
 							ElemType: types.StringType,
 						},

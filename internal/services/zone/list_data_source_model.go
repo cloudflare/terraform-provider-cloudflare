@@ -74,15 +74,15 @@ type ZonesResultDataSourceModel struct {
 	Meta                customfield.NestedObject[ZonesMetaDataSourceModel]    `tfsdk:"meta" json:"meta,computed"`
 	ModifiedOn          timetypes.RFC3339                                     `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name                types.String                                          `tfsdk:"name" json:"name,computed"`
-	NameServers         types.List                                            `tfsdk:"name_servers" json:"name_servers,computed"`
+	NameServers         customfield.List[types.String]                        `tfsdk:"name_servers" json:"name_servers,computed"`
 	OriginalDnshost     types.String                                          `tfsdk:"original_dnshost" json:"original_dnshost,computed"`
-	OriginalNameServers types.List                                            `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	OriginalNameServers customfield.List[types.String]                        `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	OriginalRegistrar   types.String                                          `tfsdk:"original_registrar" json:"original_registrar,computed"`
 	Owner               customfield.NestedObject[ZonesOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`
 	Paused              types.Bool                                            `tfsdk:"paused" json:"paused,computed"`
 	Status              types.String                                          `tfsdk:"status" json:"status,computed"`
 	Type                types.String                                          `tfsdk:"type" json:"type,computed"`
-	VanityNameServers   types.List                                            `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
+	VanityNameServers   customfield.List[types.String]                        `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
 }
 
 type ZonesMetaDataSourceModel struct {

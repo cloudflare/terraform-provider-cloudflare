@@ -52,9 +52,9 @@ type ZeroTrustDeviceProfilesExcludeModel struct {
 }
 
 type ZeroTrustDeviceProfilesFallbackDomainsModel struct {
-	Suffix      types.String `tfsdk:"suffix" json:"suffix"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	DNSServer   types.List   `tfsdk:"dns_server" json:"dns_server,computed_optional"`
+	Suffix      types.String                   `tfsdk:"suffix" json:"suffix"`
+	Description types.String                   `tfsdk:"description" json:"description,computed_optional"`
+	DNSServer   customfield.List[types.String] `tfsdk:"dns_server" json:"dns_server,computed_optional"`
 }
 
 type ZeroTrustDeviceProfilesIncludeModel struct {
