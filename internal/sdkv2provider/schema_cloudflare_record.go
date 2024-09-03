@@ -58,7 +58,7 @@ func resourceCloudflareRecordSchema() map[string]*schema.Schema {
 			Optional:         true,
 			Computed:         true,
 			ExactlyOneOf:     []string{"data", "content", "value"},
-			DiffSuppressFunc: suppressTrailingDots,
+			DiffSuppressFunc: suppressContent,
 			Description:      "The content of the record.",
 		},
 

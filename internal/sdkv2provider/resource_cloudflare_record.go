@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"strings"
 	"time"
 
@@ -500,4 +501,23 @@ func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
 	}
 
 	return strings.TrimSuffix(old, ".") == newTrimmed
+}
+
+func suppressMatchingIpv6(_, old, new string, _ *schema.ResourceData) bool {
+	oldIpv6 := net.ParseIP(old)
+	if oldIpv6 == nil || oldIpv6.To16() == nil {
+		return false
+	}
+	newIpv6 := net.ParseIP(new)
+	if newIpv6 == nil || newIpv6.To16() == nil {
+		return false
+	}
+	return oldIpv6.Equal(newIpv6)
+}
+
+func suppressContent(k, old, new string, d *schema.ResourceData) bool {
+	if suppressMatchingIpv6(k, old, new, d) {
+		return true
+	}
+	return suppressTrailingDots(k, old, new, d)
 }
