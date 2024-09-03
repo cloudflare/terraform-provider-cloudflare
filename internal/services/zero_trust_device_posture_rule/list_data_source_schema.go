@@ -123,6 +123,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"check_disks": schema.ListAttribute{
 									Description: "List of volume names to be checked for encryption.",
 									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 								"require_all": schema.BoolAttribute{
@@ -149,6 +150,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											stringvalidator.OneOfCaseInsensitive("clientAuth", "emailProtection"),
 										),
 									},
+									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 								"locations": schema.SingleNestedAttribute{
@@ -158,6 +160,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										"paths": schema.ListAttribute{
 											Description: "List of paths to check for client certificate on linux.",
 											Computed:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"trust_stores": schema.ListAttribute{
@@ -168,6 +171,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													stringvalidator.OneOfCaseInsensitive("system", "user"),
 												),
 											},
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 									},

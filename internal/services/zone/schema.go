@@ -110,11 +110,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"name_servers": schema.ListAttribute{
 				Description: "The name servers Cloudflare assigns to a zone",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"original_name_servers": schema.ListAttribute{
 				Description: "Original name servers before moving to Cloudflare",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"meta": schema.SingleNestedAttribute{

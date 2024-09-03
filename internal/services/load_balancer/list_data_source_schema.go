@@ -51,6 +51,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"country_pools": schema.MapAttribute{
 							Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 							Computed:    true,
+							CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 							ElementType: types.ListType{
 								ElemType: types.StringType,
 							},
@@ -62,6 +63,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"default_pools": schema.ListAttribute{
 							Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"description": schema.StringAttribute{
@@ -113,11 +115,13 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"networks": schema.ListAttribute{
 							Description: "List of networks where Load Balancer or Pool is enabled.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"pop_pools": schema.MapAttribute{
 							Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 							Computed:    true,
+							CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 							ElementType: types.ListType{
 								ElemType: types.StringType,
 							},
@@ -158,6 +162,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"region_pools": schema.MapAttribute{
 							Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 							Computed:    true,
+							CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 							ElementType: types.ListType{
 								ElemType: types.StringType,
 							},
@@ -222,6 +227,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"country_pools": schema.MapAttribute{
 												Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 												Computed:    true,
+												CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 												ElementType: types.ListType{
 													ElemType: types.StringType,
 												},
@@ -229,6 +235,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"default_pools": schema.ListAttribute{
 												Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
 												Computed:    true,
+												CustomType:  customfield.NewListType[types.String](ctx),
 												ElementType: types.StringType,
 											},
 											"fallback_pool": schema.StringAttribute{
@@ -264,6 +271,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"pop_pools": schema.MapAttribute{
 												Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 												Computed:    true,
+												CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 												ElementType: types.ListType{
 													ElemType: types.StringType,
 												},
@@ -300,6 +308,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"region_pools": schema.MapAttribute{
 												Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 												Computed:    true,
+												CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 												ElementType: types.ListType{
 													ElemType: types.StringType,
 												},
@@ -329,6 +338,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 													"headers": schema.ListAttribute{
 														Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",
 														Computed:    true,
+														CustomType:  customfield.NewListType[types.String](ctx),
 														ElementType: types.StringType,
 													},
 													"require_all_headers": schema.BoolAttribute{
@@ -436,6 +446,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"headers": schema.ListAttribute{
 									Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",
 									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 								"require_all_headers": schema.BoolAttribute{

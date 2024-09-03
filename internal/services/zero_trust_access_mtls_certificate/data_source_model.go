@@ -31,7 +31,7 @@ type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
 	ID                  types.String                                            `tfsdk:"id" json:"id,computed"`
 	Name                types.String                                            `tfsdk:"name" json:"name,computed"`
 	UpdatedAt           timetypes.RFC3339                                       `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-	AssociatedHostnames types.List                                              `tfsdk:"associated_hostnames" json:"associated_hostnames,computed"`
+	AssociatedHostnames customfield.List[types.String]                          `tfsdk:"associated_hostnames" json:"associated_hostnames,computed"`
 	Filter              *ZeroTrustAccessMTLSCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

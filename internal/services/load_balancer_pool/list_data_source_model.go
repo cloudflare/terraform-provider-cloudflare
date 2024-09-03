@@ -38,7 +38,7 @@ func (m *LoadBalancerPoolsDataSourceModel) toListParams(_ context.Context) (para
 
 type LoadBalancerPoolsResultDataSourceModel struct {
 	ID                 types.String                                                                 `tfsdk:"id" json:"id,computed"`
-	CheckRegions       types.List                                                                   `tfsdk:"check_regions" json:"check_regions,computed"`
+	CheckRegions       customfield.List[types.String]                                               `tfsdk:"check_regions" json:"check_regions,computed"`
 	CreatedOn          timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description        types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                            `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
@@ -50,7 +50,7 @@ type LoadBalancerPoolsResultDataSourceModel struct {
 	ModifiedOn         timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Monitor            types.String                                                                 `tfsdk:"monitor" json:"monitor,computed"`
 	Name               types.String                                                                 `tfsdk:"name" json:"name,computed"`
-	Networks           types.List                                                                   `tfsdk:"networks" json:"networks,computed"`
+	Networks           customfield.List[types.String]                                               `tfsdk:"networks" json:"networks,computed"`
 	NotificationEmail  types.String                                                                 `tfsdk:"notification_email" json:"notification_email,computed"`
 	NotificationFilter customfield.NestedObject[LoadBalancerPoolsNotificationFilterDataSourceModel] `tfsdk:"notification_filter" json:"notification_filter,computed"`
 	OriginSteering     customfield.NestedObject[LoadBalancerPoolsOriginSteeringDataSourceModel]     `tfsdk:"origin_steering" json:"origin_steering,computed"`
@@ -94,5 +94,5 @@ type LoadBalancerPoolsOriginsDataSourceModel struct {
 }
 
 type LoadBalancerPoolsOriginsHeaderDataSourceModel struct {
-	Host types.List `tfsdk:"host" json:"Host,computed"`
+	Host customfield.List[types.String] `tfsdk:"host" json:"Host,computed"`
 }

@@ -34,9 +34,9 @@ type ZoneDataSourceModel struct {
 	Paused              types.Bool                                           `tfsdk:"paused" json:"paused,computed"`
 	Status              types.String                                         `tfsdk:"status" json:"status,computed"`
 	Type                types.String                                         `tfsdk:"type" json:"type,computed"`
-	NameServers         types.List                                           `tfsdk:"name_servers" json:"name_servers,computed"`
-	OriginalNameServers types.List                                           `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
-	VanityNameServers   types.List                                           `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
+	NameServers         customfield.List[types.String]                       `tfsdk:"name_servers" json:"name_servers,computed"`
+	OriginalNameServers customfield.List[types.String]                       `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
+	VanityNameServers   customfield.List[types.String]                       `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed"`
 	Account             customfield.NestedObject[ZoneAccountDataSourceModel] `tfsdk:"account" json:"account,computed"`
 	Meta                customfield.NestedObject[ZoneMetaDataSourceModel]    `tfsdk:"meta" json:"meta,computed"`
 	Owner               customfield.NestedObject[ZoneOwnerDataSourceModel]   `tfsdk:"owner" json:"owner,computed"`

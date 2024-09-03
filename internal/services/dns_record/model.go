@@ -28,7 +28,7 @@ type DNSRecordModel struct {
 	Proxied           types.Bool                                   `tfsdk:"proxied" json:"proxied,computed"`
 	TagsModifiedOn    timetypes.RFC3339                            `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
 	TTL               types.Float64                                `tfsdk:"ttl" json:"ttl,computed"`
-	Tags              types.List                                   `tfsdk:"tags" json:"tags,computed"`
+	Tags              customfield.List[types.String]               `tfsdk:"tags" json:"tags,computed"`
 	Meta              customfield.NestedObject[DNSRecordMetaModel] `tfsdk:"meta" json:"meta,computed"`
 }
 

@@ -69,6 +69,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"permissions": schema.ListAttribute{
 				Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"tunnel": schema.SingleNestedAttribute{

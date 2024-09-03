@@ -33,6 +33,8 @@ type TfsdkStructs struct {
 	NestedObjectList customfield.NestedObjectList[EmbeddedTfsdkStruct] `tfsdk:"tfsdk_nested_object_list" json:"nested_object_list"`
 	SetObject        customfield.Set[types.String]                     `tfsdk:"tfsdk_set_object" json:"set_object"`
 	NestedObjectSet  customfield.NestedObjectSet[EmbeddedTfsdkStruct]  `tfsdk:"tfsdk_nested_object_set" json:"nested_object_set"`
+	MapObject        customfield.Map[types.String]                     `tfsdk:"tfsdk_map_object" json:"map_object"`
+	NestedObjectMap  customfield.NestedObjectMap[EmbeddedTfsdkStruct]  `tfsdk:"tfsdk_nested_object_map" json:"nested_object_map"`
 	FloatValue       types.Float64                                     `tfsdk:"tfsdk_float_value" json:"float_value"`
 	OptionalArray    *[]types.String                                   `tfsdk:"tfsdk_optional_array" json:"optional_array"`
 }
@@ -412,7 +414,9 @@ var tests = map[string]struct {
 			`"data_object":{"data_object":{"nested_int":19},"embedded_int":18,"embedded_string":"embedded_data_string_value"},` +
 			`"float_value":3.14,` +
 			`"list_object":["hi_list","there_list"],` +
+			`"map_object":{"hi_map":"there_map"},` +
 			`"nested_object_list":[{"embedded_int":20,"embedded_string":"nested_object_string"}],` +
+			`"nested_object_map":{"nested_object_map_key":{"embedded_int":21,"embedded_string":"nested_object_string_in_map"}},` +
 			`"nested_object_set":[{"embedded_int":21,"embedded_string":"nested_object_string_in_set"}],` +
 			`"optional_array":["hi","there"],` +
 			`"set_object":["hi_set","there_set"],` +
@@ -441,6 +445,12 @@ var tests = map[string]struct {
 			SetObject: customfield.NewSetMust[basetypes.StringValue](context.TODO(), []attr.Value{types.StringValue("hi_set"), types.StringValue("there_set")}),
 			NestedObjectSet: customfield.NewObjectSetMust(context.TODO(), []EmbeddedTfsdkStruct{{
 				EmbeddedString: types.StringValue("nested_object_string_in_set"),
+				EmbeddedInt:    types.Int64Value(21),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+			}}),
+			MapObject: customfield.NewMapMust[basetypes.StringValue](context.TODO(), map[string]attr.Value{"hi_map": types.StringValue("there_map")}),
+			NestedObjectMap: customfield.NewObjectMapMust(context.TODO(), map[string]EmbeddedTfsdkStruct{"nested_object_map_key": {
+				EmbeddedString: types.StringValue("nested_object_string_in_map"),
 				EmbeddedInt:    types.Int64Value(21),
 				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
 			}}),
@@ -498,6 +508,8 @@ var decode_only_tests = map[string]struct {
 			NestedObjectList: customfield.NullObjectList[EmbeddedTfsdkStruct](context.TODO()),
 			SetObject:        customfield.NullSet[basetypes.StringValue](context.TODO()),
 			NestedObjectSet:  customfield.NullObjectSet[EmbeddedTfsdkStruct](context.TODO()),
+			MapObject:        customfield.NullMap[basetypes.StringValue](context.TODO()),
+			NestedObjectMap:  customfield.NullObjectMap[EmbeddedTfsdkStruct](context.TODO()),
 			FloatValue:       types.Float64Null(),
 			OptionalArray:    nil,
 		},

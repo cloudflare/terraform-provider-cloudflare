@@ -5,6 +5,7 @@ package turnstile_widget
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -87,6 +88,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"domains": schema.ListAttribute{
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"filter": schema.SingleNestedAttribute{

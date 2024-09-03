@@ -131,6 +131,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									stringvalidator.OneOfCaseInsensitive("ML", "SessionIdentifier"),
 								),
 							},
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"state": schema.StringAttribute{

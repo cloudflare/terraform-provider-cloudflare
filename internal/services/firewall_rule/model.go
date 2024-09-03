@@ -12,16 +12,16 @@ type FirewallRuleResultEnvelope struct {
 }
 
 type FirewallRuleModel struct {
-	ZoneIdentifier types.String             `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String             `tfsdk:"id" path:"id"`
-	PathID         types.String             `tfsdk:"path_id" path:"id"`
-	Action         *FirewallRuleActionModel `tfsdk:"action" json:"action"`
-	Filter         *FirewallRuleFilterModel `tfsdk:"filter" json:"filter"`
-	Description    types.String             `tfsdk:"description" json:"description,computed"`
-	Paused         types.Bool               `tfsdk:"paused" json:"paused,computed"`
-	Priority       types.Float64            `tfsdk:"priority" json:"priority,computed"`
-	Ref            types.String             `tfsdk:"ref" json:"ref,computed"`
-	Products       types.List               `tfsdk:"products" json:"products,computed"`
+	ZoneIdentifier types.String                   `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ID             types.String                   `tfsdk:"id" path:"id"`
+	PathID         types.String                   `tfsdk:"path_id" path:"id"`
+	Action         *FirewallRuleActionModel       `tfsdk:"action" json:"action"`
+	Filter         *FirewallRuleFilterModel       `tfsdk:"filter" json:"filter"`
+	Description    types.String                   `tfsdk:"description" json:"description,computed"`
+	Paused         types.Bool                     `tfsdk:"paused" json:"paused,computed"`
+	Priority       types.Float64                  `tfsdk:"priority" json:"priority,computed"`
+	Ref            types.String                   `tfsdk:"ref" json:"ref,computed"`
+	Products       customfield.List[types.String] `tfsdk:"products" json:"products,computed"`
 }
 
 type FirewallRuleActionModel struct {

@@ -91,6 +91,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hosts": schema.ListAttribute{
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"geo_restrictions": schema.SingleNestedAttribute{
@@ -143,6 +144,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"permissions": schema.ListAttribute{
 						Description: "Available permissions for the Keyless SSL for the current user requesting the item.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"port": schema.Float64Attribute{

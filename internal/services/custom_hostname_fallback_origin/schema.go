@@ -5,6 +5,7 @@ package custom_hostname_fallback_origin
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -61,6 +62,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"errors": schema.ListAttribute{
 				Description: "These are errors that were encountered while trying to activate a fallback origin.",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 		},

@@ -22,7 +22,7 @@ type CustomHostnameModel struct {
 	CustomMetadata            *CustomHostnameCustomMetadataModel                                     `tfsdk:"custom_metadata" json:"custom_metadata"`
 	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status                    types.String                                                           `tfsdk:"status" json:"status,computed"`
-	VerificationErrors        types.List                                                             `tfsdk:"verification_errors" json:"verification_errors,computed"`
+	VerificationErrors        customfield.List[types.String]                                         `tfsdk:"verification_errors" json:"verification_errors,computed"`
 	OwnershipVerification     customfield.NestedObject[CustomHostnameOwnershipVerificationModel]     `tfsdk:"ownership_verification" json:"ownership_verification,computed"`
 	OwnershipVerificationHTTP customfield.NestedObject[CustomHostnameOwnershipVerificationHTTPModel] `tfsdk:"ownership_verification_http" json:"ownership_verification_http,computed"`
 }
@@ -39,11 +39,11 @@ type CustomHostnameSSLModel struct {
 }
 
 type CustomHostnameSSLSettingsModel struct {
-	Ciphers       types.List   `tfsdk:"ciphers" json:"ciphers,computed_optional"`
-	EarlyHints    types.String `tfsdk:"early_hints" json:"early_hints,computed_optional"`
-	HTTP2         types.String `tfsdk:"http2" json:"http2,computed_optional"`
-	MinTLSVersion types.String `tfsdk:"min_tls_version" json:"min_tls_version,computed_optional"`
-	TLS1_3        types.String `tfsdk:"tls_1_3" json:"tls_1_3,computed_optional"`
+	Ciphers       customfield.List[types.String] `tfsdk:"ciphers" json:"ciphers,computed_optional"`
+	EarlyHints    types.String                   `tfsdk:"early_hints" json:"early_hints,computed_optional"`
+	HTTP2         types.String                   `tfsdk:"http2" json:"http2,computed_optional"`
+	MinTLSVersion types.String                   `tfsdk:"min_tls_version" json:"min_tls_version,computed_optional"`
+	TLS1_3        types.String                   `tfsdk:"tls_1_3" json:"tls_1_3,computed_optional"`
 }
 
 type CustomHostnameCustomMetadataModel struct {

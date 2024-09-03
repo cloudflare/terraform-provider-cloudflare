@@ -46,8 +46,8 @@ type EmailRoutingRulesResultDataSourceModel struct {
 }
 
 type EmailRoutingRulesActionsDataSourceModel struct {
-	Type  types.String `tfsdk:"type" json:"type,computed"`
-	Value types.List   `tfsdk:"value" json:"value,computed"`
+	Type  types.String                   `tfsdk:"type" json:"type,computed"`
+	Value customfield.List[types.String] `tfsdk:"value" json:"value,computed"`
 }
 
 type EmailRoutingRulesMatchersDataSourceModel struct {

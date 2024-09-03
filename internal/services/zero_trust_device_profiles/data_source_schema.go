@@ -137,6 +137,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"dns_server": schema.ListAttribute{
 							Description: "A list of IP addresses to handle domain resolution.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 					},

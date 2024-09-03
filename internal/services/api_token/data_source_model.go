@@ -51,8 +51,8 @@ type APITokenConditionDataSourceModel struct {
 }
 
 type APITokenConditionRequestIPDataSourceModel struct {
-	In    types.List `tfsdk:"in" json:"in,computed"`
-	NotIn types.List `tfsdk:"not_in" json:"not_in,computed"`
+	In    customfield.List[types.String] `tfsdk:"in" json:"in,computed"`
+	NotIn customfield.List[types.String] `tfsdk:"not_in" json:"not_in,computed"`
 }
 
 type APITokenPoliciesDataSourceModel struct {

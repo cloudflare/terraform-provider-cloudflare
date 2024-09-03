@@ -114,6 +114,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"urls": schema.ListAttribute{
 							Description: "The URLs to include in the rule definition. You can use wildcards. Each entered URL will be escaped before use, which means you can only use simple wildcard patterns.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 					},

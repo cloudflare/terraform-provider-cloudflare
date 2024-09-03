@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/email_routing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -34,8 +35,8 @@ func (m *EmailRoutingCatchAllDataSourceModel) toReadParams(_ context.Context) (p
 }
 
 type EmailRoutingCatchAllActionsDataSourceModel struct {
-	Type  types.String `tfsdk:"type" json:"type,computed"`
-	Value types.List   `tfsdk:"value" json:"value,computed"`
+	Type  types.String                   `tfsdk:"type" json:"type,computed"`
+	Value customfield.List[types.String] `tfsdk:"value" json:"value,computed"`
 }
 
 type EmailRoutingCatchAllMatchersDataSourceModel struct {

@@ -71,6 +71,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
 									Computed:    true,
 									Optional:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 							},
@@ -276,6 +277,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"networks": schema.ListAttribute{
 				Description: "List of networks where Load Balancer or Pool is enabled.",
 				Computed:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 		},

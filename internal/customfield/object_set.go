@@ -116,7 +116,7 @@ func (v NestedObjectSet[T]) UnknownValue(ctx context.Context) NestedObjectListLi
 }
 
 func (v NestedObjectSet[T]) KnownValue(ctx context.Context, anyValues any) NestedObjectListLike {
-	r, diags := NewObjectSet[T](ctx, anyValues.([]T))
+	r, diags := NewObjectSet(ctx, anyValues.([]T))
 	if diags.HasError() {
 		panic(fmt.Errorf("unexpected error creating NestedObjectSet: %v", diags))
 	}
@@ -213,7 +213,7 @@ func NewObjectSetFromAttributes[T any](ctx context.Context, values []attr.Value)
 }
 
 func NewObjectSetMust[T any](ctx context.Context, values []T) NestedObjectSet[T] {
-	o, diags := NewObjectSet[T](ctx, values)
+	o, diags := NewObjectSet(ctx, values)
 	if diags.HasError() {
 		panic(fmt.Errorf("unexpected error creating NestedObjectSet: %v", diags))
 	}

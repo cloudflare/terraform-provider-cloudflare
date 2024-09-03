@@ -54,8 +54,8 @@ func (m *EmailRoutingRuleDataSourceModel) toListParams(_ context.Context) (param
 }
 
 type EmailRoutingRuleActionsDataSourceModel struct {
-	Type  types.String `tfsdk:"type" json:"type,computed"`
-	Value types.List   `tfsdk:"value" json:"value,computed"`
+	Type  types.String                   `tfsdk:"type" json:"type,computed"`
+	Value customfield.List[types.String] `tfsdk:"value" json:"value,computed"`
 }
 
 type EmailRoutingRuleMatchersDataSourceModel struct {

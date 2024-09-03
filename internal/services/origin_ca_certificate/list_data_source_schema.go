@@ -41,6 +41,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"hostnames": schema.ListAttribute{
 							Description: "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"request_type": schema.StringAttribute{

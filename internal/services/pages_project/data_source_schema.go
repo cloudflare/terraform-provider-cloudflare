@@ -94,6 +94,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"build_config": schema.SingleNestedAttribute{
@@ -165,6 +166,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"env_vars": schema.MapAttribute{
 						Description: "A dict of env variables to build this deploy.",
 						Computed:    true,
+						CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 						ElementType: jsontypes.NormalizedType{},
 					},
 					"environment": schema.StringAttribute{
@@ -233,10 +235,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"path_excludes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"path_includes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"pr_comments_enabled": schema.BoolAttribute{
@@ -244,10 +248,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"preview_branch_excludes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_branch_includes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
@@ -321,16 +327,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"ai_bindings": schema.MapAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"analytics_engine_datasets": schema.MapAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"compatibility_date": schema.StringAttribute{
@@ -340,36 +349,43 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"d1_databases": schema.MapAttribute{
 								Description: "D1 databases used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"durable_object_namespaces": schema.MapAttribute{
 								Description: "Durabble Object namespaces used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"env_vars": schema.MapAttribute{
 								Description: "Environment variables for build configs.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"hyperdrive_bindings": schema.MapAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"kv_namespaces": schema.MapAttribute{
 								Description: "KV namespaces used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"mtls_certificates": schema.MapAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"placement": schema.SingleNestedAttribute{
@@ -386,21 +402,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"queue_producers": schema.MapAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"r2_buckets": schema.MapAttribute{
 								Description: "R2 buckets used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"services": schema.MapAttribute{
 								Description: "Services used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"vectorize_bindings": schema.MapAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 						},
@@ -413,16 +433,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"ai_bindings": schema.MapAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"analytics_engine_datasets": schema.MapAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"compatibility_date": schema.StringAttribute{
@@ -432,36 +455,43 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"d1_databases": schema.MapAttribute{
 								Description: "D1 databases used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"durable_object_namespaces": schema.MapAttribute{
 								Description: "Durabble Object namespaces used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"env_vars": schema.MapAttribute{
 								Description: "Environment variables for build configs.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"hyperdrive_bindings": schema.MapAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"kv_namespaces": schema.MapAttribute{
 								Description: "KV namespaces used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"mtls_certificates": schema.MapAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"placement": schema.SingleNestedAttribute{
@@ -478,21 +508,25 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"queue_producers": schema.MapAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"r2_buckets": schema.MapAttribute{
 								Description: "R2 buckets used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"services": schema.MapAttribute{
 								Description: "Services used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"vectorize_bindings": schema.MapAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Computed:    true,
+								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 						},
@@ -539,6 +573,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"aliases": schema.ListAttribute{
 						Description: "A list of alias URLs pointing to this deployment.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"build_config": schema.SingleNestedAttribute{
@@ -610,6 +645,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"env_vars": schema.MapAttribute{
 						Description: "A dict of env variables to build this deploy.",
 						Computed:    true,
+						CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 						ElementType: jsontypes.NormalizedType{},
 					},
 					"environment": schema.StringAttribute{
@@ -678,10 +714,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"path_excludes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"path_includes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"pr_comments_enabled": schema.BoolAttribute{
@@ -689,10 +727,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 									"preview_branch_excludes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_branch_includes": schema.ListAttribute{
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"preview_deployment_setting": schema.StringAttribute{
@@ -860,10 +900,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 							"path_excludes": schema.ListAttribute{
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"path_includes": schema.ListAttribute{
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"pr_comments_enabled": schema.BoolAttribute{
@@ -871,10 +913,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 							"preview_branch_excludes": schema.ListAttribute{
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"preview_branch_includes": schema.ListAttribute{
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"preview_deployment_setting": schema.StringAttribute{

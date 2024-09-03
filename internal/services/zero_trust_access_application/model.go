@@ -51,14 +51,14 @@ type ZeroTrustAccessApplicationModel struct {
 }
 
 type ZeroTrustAccessApplicationCORSHeadersModel struct {
-	AllowAllHeaders  types.Bool    `tfsdk:"allow_all_headers" json:"allow_all_headers,computed_optional"`
-	AllowAllMethods  types.Bool    `tfsdk:"allow_all_methods" json:"allow_all_methods,computed_optional"`
-	AllowAllOrigins  types.Bool    `tfsdk:"allow_all_origins" json:"allow_all_origins,computed_optional"`
-	AllowCredentials types.Bool    `tfsdk:"allow_credentials" json:"allow_credentials,computed_optional"`
-	AllowedHeaders   types.List    `tfsdk:"allowed_headers" json:"allowed_headers,computed_optional"`
-	AllowedMethods   types.List    `tfsdk:"allowed_methods" json:"allowed_methods,computed_optional"`
-	AllowedOrigins   types.List    `tfsdk:"allowed_origins" json:"allowed_origins,computed_optional"`
-	MaxAge           types.Float64 `tfsdk:"max_age" json:"max_age,computed_optional"`
+	AllowAllHeaders  types.Bool                     `tfsdk:"allow_all_headers" json:"allow_all_headers,computed_optional"`
+	AllowAllMethods  types.Bool                     `tfsdk:"allow_all_methods" json:"allow_all_methods,computed_optional"`
+	AllowAllOrigins  types.Bool                     `tfsdk:"allow_all_origins" json:"allow_all_origins,computed_optional"`
+	AllowCredentials types.Bool                     `tfsdk:"allow_credentials" json:"allow_credentials,computed_optional"`
+	AllowedHeaders   customfield.List[types.String] `tfsdk:"allowed_headers" json:"allowed_headers,computed_optional"`
+	AllowedMethods   customfield.List[types.String] `tfsdk:"allowed_methods" json:"allowed_methods,computed_optional"`
+	AllowedOrigins   customfield.List[types.String] `tfsdk:"allowed_origins" json:"allowed_origins,computed_optional"`
+	MaxAge           types.Float64                  `tfsdk:"max_age" json:"max_age,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationFooterLinksModel struct {
@@ -116,8 +116,8 @@ type ZeroTrustAccessApplicationSaaSAppCustomAttributesModel struct {
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceModel struct {
-	Name      types.String            `tfsdk:"name" json:"name,computed_optional"`
-	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,computed_optional"`
+	Name      types.String                  `tfsdk:"name" json:"name,computed_optional"`
+	NameByIdP customfield.Map[types.String] `tfsdk:"name_by_idp" json:"name_by_idp,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomClaimsModel struct {
@@ -128,8 +128,8 @@ type ZeroTrustAccessApplicationSaaSAppCustomClaimsModel struct {
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel struct {
-	Name      types.String            `tfsdk:"name" json:"name,computed_optional"`
-	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,computed_optional"`
+	Name      types.String                  `tfsdk:"name" json:"name,computed_optional"`
+	NameByIdP customfield.Map[types.String] `tfsdk:"name_by_idp" json:"name_by_idp,computed_optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppHybridAndImplicitOptionsModel struct {

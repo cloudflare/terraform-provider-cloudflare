@@ -3,6 +3,7 @@
 package zero_trust_access_identity_provider
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,14 +22,14 @@ type ZeroTrustAccessIdentityProviderModel struct {
 }
 
 type ZeroTrustAccessIdentityProviderConfigModel struct {
-	Claims                   types.List   `tfsdk:"claims" json:"claims,computed_optional"`
-	ClientID                 types.String `tfsdk:"client_id" json:"client_id,computed_optional"`
-	ClientSecret             types.String `tfsdk:"client_secret" json:"client_secret,computed_optional"`
-	ConditionalAccessEnabled types.Bool   `tfsdk:"conditional_access_enabled" json:"conditional_access_enabled,computed_optional"`
-	DirectoryID              types.String `tfsdk:"directory_id" json:"directory_id,computed_optional"`
-	EmailClaimName           types.String `tfsdk:"email_claim_name" json:"email_claim_name,computed_optional"`
-	Prompt                   types.String `tfsdk:"prompt" json:"prompt,computed_optional"`
-	SupportGroups            types.Bool   `tfsdk:"support_groups" json:"support_groups,computed_optional"`
+	Claims                   customfield.List[types.String] `tfsdk:"claims" json:"claims,computed_optional"`
+	ClientID                 types.String                   `tfsdk:"client_id" json:"client_id,computed_optional"`
+	ClientSecret             types.String                   `tfsdk:"client_secret" json:"client_secret,computed_optional"`
+	ConditionalAccessEnabled types.Bool                     `tfsdk:"conditional_access_enabled" json:"conditional_access_enabled,computed_optional"`
+	DirectoryID              types.String                   `tfsdk:"directory_id" json:"directory_id,computed_optional"`
+	EmailClaimName           types.String                   `tfsdk:"email_claim_name" json:"email_claim_name,computed_optional"`
+	Prompt                   types.String                   `tfsdk:"prompt" json:"prompt,computed_optional"`
+	SupportGroups            types.Bool                     `tfsdk:"support_groups" json:"support_groups,computed_optional"`
 }
 
 type ZeroTrustAccessIdentityProviderSCIMConfigModel struct {

@@ -121,6 +121,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"http_config": schema.SingleNestedAttribute{
@@ -139,6 +140,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"expected_codes": schema.ListAttribute{
 						Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"follow_redirects": schema.BoolAttribute{
@@ -148,6 +150,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"header": schema.MapAttribute{
 						Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
 						Computed:    true,
+						CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 						ElementType: types.ListType{
 							ElemType: types.StringType,
 						},

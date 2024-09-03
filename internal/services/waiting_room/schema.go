@@ -5,6 +5,7 @@ package waiting_room
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -226,6 +227,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						stringvalidator.OneOfCaseInsensitive("revoke"),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"created_on": schema.StringAttribute{
