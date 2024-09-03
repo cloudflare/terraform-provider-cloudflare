@@ -31,6 +31,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_hostname_fallback_origin"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
@@ -586,6 +587,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		web_analytics_site.NewWebAnalyticsSitesDataSource,
 		bot_management.NewBotManagementDataSource,
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
+		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
 	}
 }
