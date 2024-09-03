@@ -727,6 +727,28 @@ func TestSuppressTrailingDots(t *testing.T) {
 	}
 }
 
+func TestIPv6Comparison(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		old string
+		new string
+	}{
+		{"2001:db8:3333:4444:5555:6666:7777:8888", "2001:db8:3333:4444:5555:6666:7777:8888"},
+		{"1050:0000:0000:0000:0005:0600:300c:326b", "1050:0:0:0:5:0600:300c:326b"},
+		{"ff06:0:0:0:0:0:0:c3", "ff06::c3"},
+		{"0:0:0:0:0:0:0:0", "::"},
+		{"2001:db8::", "2001:db8:0:0:0:0:0:0"},
+		{"::1234:5678", "0:0:0:0:0:0:1234:5678"},
+		{"2001:db8:0:0:0:0:1234:5678", "2001:db8::1234:5678"},
+	}
+
+	for _, c := range cases {
+		got := suppressContent("", c.old, c.new, nil)
+		assert.Equal(t, true, got)
+	}
+}
+
 func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
