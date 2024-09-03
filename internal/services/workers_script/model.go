@@ -52,16 +52,16 @@ type WorkersScriptMetadataModel struct {
 	Bindings           customfield.NestedObjectList[WorkersScriptMetadataBindingsModel]      `tfsdk:"bindings" json:"bindings,computed_optional"`
 	BodyPart           types.String                                                          `tfsdk:"body_part" json:"body_part,computed_optional"`
 	CompatibilityDate  types.String                                                          `tfsdk:"compatibility_date" json:"compatibility_date,computed_optional"`
-	CompatibilityFlags types.List                                                            `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
-	KeepBindings       types.List                                                            `tfsdk:"keep_bindings" json:"keep_bindings,computed_optional"`
+	CompatibilityFlags customfield.List[types.String]                                        `tfsdk:"compatibility_flags" json:"compatibility_flags,computed_optional"`
+	KeepBindings       customfield.List[types.String]                                        `tfsdk:"keep_bindings" json:"keep_bindings,computed_optional"`
 	Logpush            types.Bool                                                            `tfsdk:"logpush" json:"logpush,computed_optional"`
 	MainModule         types.String                                                          `tfsdk:"main_module" json:"main_module,computed_optional"`
 	Migrations         customfield.NestedObject[WorkersScriptMetadataMigrationsModel]        `tfsdk:"migrations" json:"migrations,computed_optional"`
 	Placement          customfield.NestedObject[WorkersScriptMetadataPlacementModel]         `tfsdk:"placement" json:"placement,computed_optional"`
-	Tags               types.List                                                            `tfsdk:"tags" json:"tags,computed_optional"`
+	Tags               customfield.List[types.String]                                        `tfsdk:"tags" json:"tags,computed_optional"`
 	TailConsumers      customfield.NestedObjectList[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	UsageModel         types.String                                                          `tfsdk:"usage_model" json:"usage_model,computed_optional"`
-	VersionTags        map[string]types.String                                               `tfsdk:"version_tags" json:"version_tags,computed_optional"`
+	VersionTags        customfield.Map[types.String]                                         `tfsdk:"version_tags" json:"version_tags,computed_optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {
@@ -91,8 +91,8 @@ type WorkersScriptMetadataMigrationsTransferredClassesModel struct {
 }
 
 type WorkersScriptMetadataMigrationsStepsModel struct {
-	DeletedClasses     types.List                                                                                `tfsdk:"deleted_classes" json:"deleted_classes,computed_optional"`
-	NewClasses         types.List                                                                                `tfsdk:"new_classes" json:"new_classes,computed_optional"`
+	DeletedClasses     customfield.List[types.String]                                                            `tfsdk:"deleted_classes" json:"deleted_classes,computed_optional"`
+	NewClasses         customfield.List[types.String]                                                            `tfsdk:"new_classes" json:"new_classes,computed_optional"`
 	RenamedClasses     customfield.NestedObjectList[WorkersScriptMetadataMigrationsStepsRenamedClassesModel]     `tfsdk:"renamed_classes" json:"renamed_classes,computed_optional"`
 	TransferredClasses customfield.NestedObjectList[WorkersScriptMetadataMigrationsStepsTransferredClassesModel] `tfsdk:"transferred_classes" json:"transferred_classes,computed_optional"`
 }

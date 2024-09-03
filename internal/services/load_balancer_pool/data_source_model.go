@@ -36,8 +36,8 @@ type LoadBalancerPoolDataSourceModel struct {
 	Monitor            types.String                                                                `tfsdk:"monitor" json:"monitor,computed"`
 	Name               types.String                                                                `tfsdk:"name" json:"name,computed"`
 	NotificationEmail  types.String                                                                `tfsdk:"notification_email" json:"notification_email,computed"`
-	CheckRegions       types.List                                                                  `tfsdk:"check_regions" json:"check_regions,computed"`
-	Networks           types.List                                                                  `tfsdk:"networks" json:"networks,computed"`
+	CheckRegions       customfield.List[types.String]                                              `tfsdk:"check_regions" json:"check_regions,computed"`
+	Networks           customfield.List[types.String]                                              `tfsdk:"networks" json:"networks,computed"`
 	LoadShedding       customfield.NestedObject[LoadBalancerPoolLoadSheddingDataSourceModel]       `tfsdk:"load_shedding" json:"load_shedding,computed"`
 	NotificationFilter customfield.NestedObject[LoadBalancerPoolNotificationFilterDataSourceModel] `tfsdk:"notification_filter" json:"notification_filter,computed"`
 	OriginSteering     customfield.NestedObject[LoadBalancerPoolOriginSteeringDataSourceModel]     `tfsdk:"origin_steering" json:"origin_steering,computed"`
@@ -102,7 +102,7 @@ type LoadBalancerPoolOriginsDataSourceModel struct {
 }
 
 type LoadBalancerPoolOriginsHeaderDataSourceModel struct {
-	Host types.List `tfsdk:"host" json:"Host,computed"`
+	Host customfield.List[types.String] `tfsdk:"host" json:"Host,computed"`
 }
 
 type LoadBalancerPoolFindOneByDataSourceModel struct {

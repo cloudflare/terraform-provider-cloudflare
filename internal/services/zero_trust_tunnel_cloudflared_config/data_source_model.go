@@ -65,9 +65,9 @@ type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestDataSourceModel s
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessDataSourceModel struct {
-	AUDTag   types.List   `tfsdk:"aud_tag" json:"audTag,computed"`
-	TeamName types.String `tfsdk:"team_name" json:"teamName,computed"`
-	Required types.Bool   `tfsdk:"required" json:"required,computed"`
+	AUDTag   customfield.List[types.String] `tfsdk:"aud_tag" json:"audTag,computed"`
+	TeamName types.String                   `tfsdk:"team_name" json:"teamName,computed"`
+	Required types.Bool                     `tfsdk:"required" json:"required,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestDataSourceModel struct {
@@ -88,9 +88,9 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestDataSourceModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessDataSourceModel struct {
-	AUDTag   types.List   `tfsdk:"aud_tag" json:"audTag,computed"`
-	TeamName types.String `tfsdk:"team_name" json:"teamName,computed"`
-	Required types.Bool   `tfsdk:"required" json:"required,computed"`
+	AUDTag   customfield.List[types.String] `tfsdk:"aud_tag" json:"audTag,computed"`
+	TeamName types.String                   `tfsdk:"team_name" json:"teamName,computed"`
+	Required types.Bool                     `tfsdk:"required" json:"required,computed"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingDataSourceModel struct {

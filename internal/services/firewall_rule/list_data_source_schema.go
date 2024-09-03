@@ -129,6 +129,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									),
 								),
 							},
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"ref": schema.StringAttribute{

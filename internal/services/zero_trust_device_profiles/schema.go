@@ -159,6 +159,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "A list of IP addresses to handle domain resolution.",
 							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 					},

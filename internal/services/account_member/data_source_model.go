@@ -97,10 +97,10 @@ type AccountMemberPoliciesResourceGroupsMetaDataSourceModel struct {
 }
 
 type AccountMemberRolesDataSourceModel struct {
-	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed"`
-	Name        types.String `tfsdk:"name" json:"name,computed"`
-	Permissions types.List   `tfsdk:"permissions" json:"permissions,computed"`
+	ID          types.String                   `tfsdk:"id" json:"id,computed"`
+	Description types.String                   `tfsdk:"description" json:"description,computed"`
+	Name        types.String                   `tfsdk:"name" json:"name,computed"`
+	Permissions customfield.List[types.String] `tfsdk:"permissions" json:"permissions,computed"`
 }
 
 type AccountMemberUserDataSourceModel struct {

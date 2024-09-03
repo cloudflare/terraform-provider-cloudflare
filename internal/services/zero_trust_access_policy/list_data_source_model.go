@@ -56,9 +56,9 @@ type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 }
 
 type ZeroTrustAccessPoliciesApprovalGroupsDataSourceModel struct {
-	ApprovalsNeeded types.Float64 `tfsdk:"approvals_needed" json:"approvals_needed,computed"`
-	EmailAddresses  types.List    `tfsdk:"email_addresses" json:"email_addresses,computed"`
-	EmailListUUID   types.String  `tfsdk:"email_list_uuid" json:"email_list_uuid,computed"`
+	ApprovalsNeeded types.Float64                  `tfsdk:"approvals_needed" json:"approvals_needed,computed"`
+	EmailAddresses  customfield.List[types.String] `tfsdk:"email_addresses" json:"email_addresses,computed"`
+	EmailListUUID   types.String                   `tfsdk:"email_list_uuid" json:"email_list_uuid,computed"`
 }
 
 type ZeroTrustAccessPoliciesExcludeDataSourceModel struct {

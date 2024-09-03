@@ -66,6 +66,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 												"aud_tag": schema.ListAttribute{
 													Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
 													Computed:    true,
+													CustomType:  customfield.NewListType[types.String](ctx),
 													ElementType: types.StringType,
 												},
 												"team_name": schema.StringAttribute{
@@ -151,6 +152,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									"aud_tag": schema.ListAttribute{
 										Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
 										Computed:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"team_name": schema.StringAttribute{

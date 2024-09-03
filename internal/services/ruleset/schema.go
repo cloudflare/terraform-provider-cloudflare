@@ -167,6 +167,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"categories": schema.ListAttribute{
 							Description: "The categories of the rule.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"description": schema.StringAttribute{

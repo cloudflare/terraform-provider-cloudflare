@@ -76,6 +76,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"domains": schema.ListAttribute{
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"mode": schema.StringAttribute{

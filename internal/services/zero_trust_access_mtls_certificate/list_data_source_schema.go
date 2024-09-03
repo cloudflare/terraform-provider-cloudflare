@@ -44,6 +44,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"associated_hostnames": schema.ListAttribute{
 							Description: "The hostnames of the applications that will use this certificate.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"created_at": schema.StringAttribute{

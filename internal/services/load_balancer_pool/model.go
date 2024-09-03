@@ -31,7 +31,7 @@ type LoadBalancerPoolModel struct {
 	CreatedOn          timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DisabledAt         timetypes.RFC3339                        `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	ModifiedOn         timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Networks           types.List                               `tfsdk:"networks" json:"networks,computed"`
+	Networks           customfield.List[types.String]           `tfsdk:"networks" json:"networks,computed"`
 }
 
 type LoadBalancerPoolOriginsModel struct {
@@ -45,7 +45,7 @@ type LoadBalancerPoolOriginsModel struct {
 }
 
 type LoadBalancerPoolOriginsHeaderModel struct {
-	Host types.List `tfsdk:"host" json:"Host,computed_optional"`
+	Host customfield.List[types.String] `tfsdk:"host" json:"Host,computed_optional"`
 }
 
 type LoadBalancerPoolLoadSheddingModel struct {

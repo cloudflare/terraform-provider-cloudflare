@@ -81,11 +81,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"not_in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
 								Computed:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 						},

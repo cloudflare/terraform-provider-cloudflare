@@ -75,7 +75,7 @@ type APIShieldOperationsResultDataSourceModel struct {
 	Host        types.String                                                         `tfsdk:"host" json:"host,computed"`
 	LastUpdated timetypes.RFC3339                                                    `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Method      types.String                                                         `tfsdk:"method" json:"method,computed"`
-	Origin      types.List                                                           `tfsdk:"origin" json:"origin,computed"`
+	Origin      customfield.List[types.String]                                       `tfsdk:"origin" json:"origin,computed"`
 	State       types.String                                                         `tfsdk:"state" json:"state,computed"`
 	Features    customfield.NestedObject[APIShieldOperationsFeaturesDataSourceModel] `tfsdk:"features" json:"features,computed"`
 }

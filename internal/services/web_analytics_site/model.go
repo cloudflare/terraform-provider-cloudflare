@@ -27,13 +27,13 @@ type WebAnalyticsSiteModel struct {
 }
 
 type WebAnalyticsSiteRulesModel struct {
-	ID        types.String      `tfsdk:"id" json:"id,computed_optional"`
-	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Host      types.String      `tfsdk:"host" json:"host,computed_optional"`
-	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive,computed_optional"`
-	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused,computed_optional"`
-	Paths     types.List        `tfsdk:"paths" json:"paths,computed_optional"`
-	Priority  types.Float64     `tfsdk:"priority" json:"priority,computed_optional"`
+	ID        types.String                   `tfsdk:"id" json:"id,computed_optional"`
+	Created   timetypes.RFC3339              `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Host      types.String                   `tfsdk:"host" json:"host,computed_optional"`
+	Inclusive types.Bool                     `tfsdk:"inclusive" json:"inclusive,computed_optional"`
+	IsPaused  types.Bool                     `tfsdk:"is_paused" json:"is_paused,computed_optional"`
+	Paths     customfield.List[types.String] `tfsdk:"paths" json:"paths,computed_optional"`
+	Priority  types.Float64                  `tfsdk:"priority" json:"priority,computed_optional"`
 }
 
 type WebAnalyticsSiteRulesetModel struct {

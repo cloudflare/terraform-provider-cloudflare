@@ -3,6 +3,7 @@
 package zero_trust_access_policy
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -126,9 +127,9 @@ type ZeroTrustAccessPolicyIncludeDevicePostureModel struct {
 }
 
 type ZeroTrustAccessPolicyApprovalGroupsModel struct {
-	ApprovalsNeeded types.Float64 `tfsdk:"approvals_needed" json:"approvals_needed"`
-	EmailAddresses  types.List    `tfsdk:"email_addresses" json:"email_addresses,computed_optional"`
-	EmailListUUID   types.String  `tfsdk:"email_list_uuid" json:"email_list_uuid,computed_optional"`
+	ApprovalsNeeded types.Float64                  `tfsdk:"approvals_needed" json:"approvals_needed"`
+	EmailAddresses  customfield.List[types.String] `tfsdk:"email_addresses" json:"email_addresses,computed_optional"`
+	EmailListUUID   types.String                   `tfsdk:"email_list_uuid" json:"email_list_uuid,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeModel struct {

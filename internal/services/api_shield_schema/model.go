@@ -71,7 +71,7 @@ type APIShieldSchemaUploadDetailsModel struct {
 }
 
 type APIShieldSchemaUploadDetailsWarningsModel struct {
-	Code      types.Int64  `tfsdk:"code" json:"code"`
-	Locations types.List   `tfsdk:"locations" json:"locations,computed_optional"`
-	Message   types.String `tfsdk:"message" json:"message,computed_optional"`
+	Code      types.Int64                    `tfsdk:"code" json:"code"`
+	Locations customfield.List[types.String] `tfsdk:"locations" json:"locations,computed_optional"`
+	Message   types.String                   `tfsdk:"message" json:"message,computed_optional"`
 }

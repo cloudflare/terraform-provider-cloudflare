@@ -39,7 +39,7 @@ type HealthcheckDataSourceModel struct {
 	Suspended            types.Bool                                                     `tfsdk:"suspended" json:"suspended,computed"`
 	Timeout              types.Int64                                                    `tfsdk:"timeout" json:"timeout,computed"`
 	Type                 types.String                                                   `tfsdk:"type" json:"type,computed"`
-	CheckRegions         types.List                                                     `tfsdk:"check_regions" json:"check_regions,computed"`
+	CheckRegions         customfield.List[types.String]                                 `tfsdk:"check_regions" json:"check_regions,computed"`
 	HTTPConfig           customfield.NestedObject[HealthcheckHTTPConfigDataSourceModel] `tfsdk:"http_config" json:"http_config,computed"`
 	TCPConfig            customfield.NestedObject[HealthcheckTCPConfigDataSourceModel]  `tfsdk:"tcp_config" json:"tcp_config,computed"`
 	Filter               *HealthcheckFindOneByDataSourceModel                           `tfsdk:"filter"`
@@ -62,14 +62,14 @@ func (m *HealthcheckDataSourceModel) toListParams(_ context.Context) (params hea
 }
 
 type HealthcheckHTTPConfigDataSourceModel struct {
-	AllowInsecure   types.Bool            `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
-	ExpectedBody    types.String          `tfsdk:"expected_body" json:"expected_body,computed"`
-	ExpectedCodes   types.List            `tfsdk:"expected_codes" json:"expected_codes,computed"`
-	FollowRedirects types.Bool            `tfsdk:"follow_redirects" json:"follow_redirects,computed"`
-	Header          map[string]types.List `tfsdk:"header" json:"header,computed"`
-	Method          types.String          `tfsdk:"method" json:"method,computed"`
-	Path            types.String          `tfsdk:"path" json:"path,computed"`
-	Port            types.Int64           `tfsdk:"port" json:"port,computed"`
+	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
+	ExpectedBody    types.String                                    `tfsdk:"expected_body" json:"expected_body,computed"`
+	ExpectedCodes   customfield.List[types.String]                  `tfsdk:"expected_codes" json:"expected_codes,computed"`
+	FollowRedirects types.Bool                                      `tfsdk:"follow_redirects" json:"follow_redirects,computed"`
+	Header          customfield.Map[customfield.List[types.String]] `tfsdk:"header" json:"header,computed"`
+	Method          types.String                                    `tfsdk:"method" json:"method,computed"`
+	Path            types.String                                    `tfsdk:"path" json:"path,computed"`
+	Port            types.Int64                                     `tfsdk:"port" json:"port,computed"`
 }
 
 type HealthcheckTCPConfigDataSourceModel struct {

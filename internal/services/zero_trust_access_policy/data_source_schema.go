@@ -104,6 +104,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"email_addresses": schema.ListAttribute{
 							Description: "A list of emails that can approve the access request.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"email_list_uuid": schema.StringAttribute{

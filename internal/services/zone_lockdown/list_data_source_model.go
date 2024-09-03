@@ -78,7 +78,7 @@ type ZoneLockdownsResultDataSourceModel struct {
 	Description    types.String                                                         `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Paused         types.Bool                                                           `tfsdk:"paused" json:"paused,computed"`
-	URLs           types.List                                                           `tfsdk:"urls" json:"urls,computed"`
+	URLs           customfield.List[types.String]                                       `tfsdk:"urls" json:"urls,computed"`
 }
 
 type ZoneLockdownsConfigurationsDataSourceModel struct {

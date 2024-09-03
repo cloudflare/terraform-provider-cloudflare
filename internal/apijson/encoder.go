@@ -349,7 +349,7 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			}
 		}
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
-		structType := reflect.PtrTo(t.Field(0).Type)
+		structType := reflect.PointerTo(t.Field(0).Type)
 		return e.terraformUnwrappedEncoder(structType, func(value attr.Value) any {
 			converted := value.(customfield.NestedObjectLike)
 			structValue, _ := converted.ValueAny(context.TODO())
@@ -366,6 +366,18 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 			converted := value.(customfield.ListLike)
 			listValue, _ := converted.ValueAttr(context.TODO())
 			return listValue
+		})
+	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectMapLike)(nil)).Elem()) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.NestedObjectMapLike)
+			structMap, _ := converted.AsStructMap(context.TODO())
+			return structMap
+		})
+	} else if t.Implements(reflect.TypeOf((*customfield.MapLike)(nil)).Elem()) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.MapLike)
+			mapValue, _ := converted.ValueAttr(context.TODO())
+			return mapValue
 		})
 	} else if t == reflect.TypeOf(jsontypes.Normalized{}) {
 		return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {

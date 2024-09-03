@@ -145,12 +145,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										),
 									),
 								},
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"schemes": schema.ListAttribute{
 								Description: "The HTTP schemes to match. You can specify one scheme (`['HTTPS']`), both schemes (`['HTTP','HTTPS']`), or all schemes (`['_ALL_']`). This field is optional.",
 								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"url": schema.StringAttribute{

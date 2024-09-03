@@ -30,8 +30,8 @@ type MagicWANStaticRouteModel struct {
 }
 
 type MagicWANStaticRouteScopeModel struct {
-	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
-	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
+	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteDeletedRouteModel struct {
@@ -47,8 +47,8 @@ type MagicWANStaticRouteDeletedRouteModel struct {
 }
 
 type MagicWANStaticRouteDeletedRouteScopeModel struct {
-	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
-	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
+	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteModifiedRouteModel struct {
@@ -64,8 +64,8 @@ type MagicWANStaticRouteModifiedRouteModel struct {
 }
 
 type MagicWANStaticRouteModifiedRouteScopeModel struct {
-	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
-	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
+	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteRouteModel struct {
@@ -81,8 +81,8 @@ type MagicWANStaticRouteRouteModel struct {
 }
 
 type MagicWANStaticRouteRouteScopeModel struct {
-	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
-	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
+	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }
 
 type MagicWANStaticRouteRoutesModel struct {
@@ -98,6 +98,6 @@ type MagicWANStaticRouteRoutesModel struct {
 }
 
 type MagicWANStaticRouteRoutesScopeModel struct {
-	ColoNames   types.List `tfsdk:"colo_names" json:"colo_names,computed_optional"`
-	ColoRegions types.List `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
+	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed_optional"`
+	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
 }

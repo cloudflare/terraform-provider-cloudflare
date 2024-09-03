@@ -147,6 +147,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Allowed HTTP request headers.",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"allowed_methods": schema.ListAttribute{
@@ -168,12 +169,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							),
 						},
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"allowed_origins": schema.ListAttribute{
 						Description: "Allowed origins.",
 						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"max_age": schema.Float64Attribute{
@@ -315,6 +318,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description: "A mapping from IdP ID to attribute name.",
 										Computed:    true,
 										Optional:    true,
+										CustomType:  customfield.NewMapType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 								},
@@ -421,6 +425,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										Description: "A mapping from IdP ID to claim name.",
 										Computed:    true,
 										Optional:    true,
+										CustomType:  customfield.NewMapType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 								},

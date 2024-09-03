@@ -76,13 +76,13 @@ type LoadBalancerRulesFixedResponseModel struct {
 
 type LoadBalancerRulesOverridesModel struct {
 	AdaptiveRouting           customfield.NestedObject[LoadBalancerRulesOverridesAdaptiveRoutingModel]           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed_optional"`
-	CountryPools              map[string]types.List                                                              `tfsdk:"country_pools" json:"country_pools,computed_optional"`
-	DefaultPools              types.List                                                                         `tfsdk:"default_pools" json:"default_pools,computed_optional"`
+	CountryPools              customfield.Map[customfield.List[types.String]]                                    `tfsdk:"country_pools" json:"country_pools,computed_optional"`
+	DefaultPools              customfield.List[types.String]                                                     `tfsdk:"default_pools" json:"default_pools,computed_optional"`
 	FallbackPool              types.String                                                                       `tfsdk:"fallback_pool" json:"fallback_pool,computed_optional"`
 	LocationStrategy          customfield.NestedObject[LoadBalancerRulesOverridesLocationStrategyModel]          `tfsdk:"location_strategy" json:"location_strategy,computed_optional"`
-	PopPools                  map[string]types.List                                                              `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
+	PopPools                  customfield.Map[customfield.List[types.String]]                                    `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RandomSteering            customfield.NestedObject[LoadBalancerRulesOverridesRandomSteeringModel]            `tfsdk:"random_steering" json:"random_steering,computed_optional"`
-	RegionPools               map[string]types.List                                                              `tfsdk:"region_pools" json:"region_pools,computed_optional"`
+	RegionPools               customfield.Map[customfield.List[types.String]]                                    `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	SessionAffinity           types.String                                                                       `tfsdk:"session_affinity" json:"session_affinity,computed_optional"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerRulesOverridesSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
 	SessionAffinityTTL        types.Float64                                                                      `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed_optional"`
@@ -110,19 +110,19 @@ type LoadBalancerRulesOverridesRandomSteeringPoolWeightsModel struct {
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesModel struct {
-	DrainDuration        types.Float64 `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
-	Headers              types.List    `tfsdk:"headers" json:"headers,computed_optional"`
-	RequireAllHeaders    types.Bool    `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
-	Samesite             types.String  `tfsdk:"samesite" json:"samesite,computed_optional"`
-	Secure               types.String  `tfsdk:"secure" json:"secure,computed_optional"`
-	ZeroDowntimeFailover types.String  `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
+	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
+	Headers              customfield.List[types.String] `tfsdk:"headers" json:"headers,computed_optional"`
+	RequireAllHeaders    types.Bool                     `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
+	Samesite             types.String                   `tfsdk:"samesite" json:"samesite,computed_optional"`
+	Secure               types.String                   `tfsdk:"secure" json:"secure,computed_optional"`
+	ZeroDowntimeFailover types.String                   `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
 }
 
 type LoadBalancerSessionAffinityAttributesModel struct {
-	DrainDuration        types.Float64 `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
-	Headers              types.List    `tfsdk:"headers" json:"headers,computed_optional"`
-	RequireAllHeaders    types.Bool    `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
-	Samesite             types.String  `tfsdk:"samesite" json:"samesite,computed_optional"`
-	Secure               types.String  `tfsdk:"secure" json:"secure,computed_optional"`
-	ZeroDowntimeFailover types.String  `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
+	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
+	Headers              customfield.List[types.String] `tfsdk:"headers" json:"headers,computed_optional"`
+	RequireAllHeaders    types.Bool                     `tfsdk:"require_all_headers" json:"require_all_headers,computed_optional"`
+	Samesite             types.String                   `tfsdk:"samesite" json:"samesite,computed_optional"`
+	Secure               types.String                   `tfsdk:"secure" json:"secure,computed_optional"`
+	ZeroDowntimeFailover types.String                   `tfsdk:"zero_downtime_failover" json:"zero_downtime_failover,computed_optional"`
 }

@@ -124,6 +124,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								"hosts": schema.ListAttribute{
 									Description: "A list of Hostnames on a custom uploaded certificate.",
 									Computed:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 								"issuer": schema.StringAttribute{
@@ -153,6 +154,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										"ciphers": schema.ListAttribute{
 											Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
 											Computed:    true,
+											CustomType:  customfield.NewListType[types.String](ctx),
 											ElementType: types.StringType,
 										},
 										"early_hints": schema.StringAttribute{
@@ -256,6 +258,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"emails": schema.ListAttribute{
 												Description: "The set of email addresses that the certificate authority (CA) will use to complete domain validation.",
 												Computed:    true,
+												CustomType:  customfield.NewListType[types.String](ctx),
 												ElementType: types.StringType,
 											},
 											"http_body": schema.StringAttribute{
@@ -371,6 +374,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"verification_errors": schema.ListAttribute{
 							Description: "These are errors that were encountered while trying to activate a hostname.",
 							Computed:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 					},

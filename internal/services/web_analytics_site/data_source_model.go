@@ -55,13 +55,13 @@ func (m *WebAnalyticsSiteDataSourceModel) toListParams(_ context.Context) (param
 }
 
 type WebAnalyticsSiteRulesDataSourceModel struct {
-	ID        types.String      `tfsdk:"id" json:"id,computed"`
-	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Host      types.String      `tfsdk:"host" json:"host,computed"`
-	Inclusive types.Bool        `tfsdk:"inclusive" json:"inclusive,computed"`
-	IsPaused  types.Bool        `tfsdk:"is_paused" json:"is_paused,computed"`
-	Paths     types.List        `tfsdk:"paths" json:"paths,computed"`
-	Priority  types.Float64     `tfsdk:"priority" json:"priority,computed"`
+	ID        types.String                   `tfsdk:"id" json:"id,computed"`
+	Created   timetypes.RFC3339              `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Host      types.String                   `tfsdk:"host" json:"host,computed"`
+	Inclusive types.Bool                     `tfsdk:"inclusive" json:"inclusive,computed"`
+	IsPaused  types.Bool                     `tfsdk:"is_paused" json:"is_paused,computed"`
+	Paths     customfield.List[types.String] `tfsdk:"paths" json:"paths,computed"`
+	Priority  types.Float64                  `tfsdk:"priority" json:"priority,computed"`
 }
 
 type WebAnalyticsSiteRulesetDataSourceModel struct {

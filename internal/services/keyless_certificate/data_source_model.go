@@ -32,7 +32,7 @@ type KeylessCertificateDataSourceModel struct {
 	Name                 types.String                                                      `tfsdk:"name" json:"name,computed"`
 	Port                 types.Float64                                                     `tfsdk:"port" json:"port,computed"`
 	Status               types.String                                                      `tfsdk:"status" json:"status,computed"`
-	Permissions          types.List                                                        `tfsdk:"permissions" json:"permissions,computed"`
+	Permissions          customfield.List[types.String]                                    `tfsdk:"permissions" json:"permissions,computed"`
 	Tunnel               customfield.NestedObject[KeylessCertificateTunnelDataSourceModel] `tfsdk:"tunnel" json:"tunnel,computed"`
 	Filter               *KeylessCertificateFindOneByDataSourceModel                       `tfsdk:"filter"`
 }

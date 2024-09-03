@@ -5,6 +5,7 @@ package zone_cache_variants
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -41,56 +42,67 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"avif": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for avif.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"bmp": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for bmp.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"gif": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for gif.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"jp2": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for jp2.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"jpeg": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for jpeg.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"jpg": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for jpg.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"jpg2": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for jpg2.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"png": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for png.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"tif": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for tif.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"tiff": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for tiff.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"webp": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for webp.",
 						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 				},

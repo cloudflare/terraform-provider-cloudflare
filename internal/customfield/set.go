@@ -131,8 +131,7 @@ func (v Set[T]) Type(ctx context.Context) attr.Type {
 }
 
 func (v Set[T]) ValueAttr(ctx context.Context) (any, diag.Diagnostics) {
-	vs, _ := v.Value(ctx)
-	return vs, nil
+	return v.Value(ctx)
 }
 
 func (v Set[T]) Value(ctx context.Context) ([]T, diag.Diagnostics) {
@@ -158,7 +157,7 @@ func NewSet[T attr.Value](ctx context.Context, values any) (Set[T], diag.Diagnos
 	if !ok {
 		ts, ok := values.([]T)
 		if !ok {
-			diags.AddError("unexpected type of values", fmt.Sprintf("expected []%T or []attr.Value, got %T", []T{}, values))
+			diags.AddError("unexpected type of values", fmt.Sprintf("expected %T or []attr.Value, got %T", []T{}, values))
 			return UnknownSet[T](ctx), diags
 		}
 		attrs = make([]attr.Value, len(ts))

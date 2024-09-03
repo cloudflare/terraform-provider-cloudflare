@@ -45,7 +45,7 @@ type WaitingRoomDataSourceModel struct {
 	SessionDuration            types.Int64                                                              `tfsdk:"session_duration" json:"session_duration,computed"`
 	Suspended                  types.Bool                                                               `tfsdk:"suspended" json:"suspended,computed"`
 	TotalActiveUsers           types.Int64                                                              `tfsdk:"total_active_users" json:"total_active_users,computed"`
-	EnabledOriginCommands      types.List                                                               `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
+	EnabledOriginCommands      customfield.List[types.String]                                           `tfsdk:"enabled_origin_commands" json:"enabled_origin_commands,computed"`
 	AdditionalRoutes           customfield.NestedObjectList[WaitingRoomAdditionalRoutesDataSourceModel] `tfsdk:"additional_routes" json:"additional_routes,computed"`
 	CookieAttributes           customfield.NestedObject[WaitingRoomCookieAttributesDataSourceModel]     `tfsdk:"cookie_attributes" json:"cookie_attributes,computed"`
 	Filter                     *WaitingRoomFindOneByDataSourceModel                                     `tfsdk:"filter"`

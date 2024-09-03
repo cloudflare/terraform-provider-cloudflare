@@ -5,6 +5,7 @@ package zero_trust_device_posture_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -186,6 +187,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Description: "List of paths to check for client certificate on linux.",
 								Computed:    true,
 								Optional:    true,
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"trust_stores": schema.ListAttribute{
@@ -197,6 +199,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										stringvalidator.OneOfCaseInsensitive("system", "user"),
 									),
 								},
+								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 						},
