@@ -503,7 +503,7 @@ func suppressTrailingDots(k, old, new string, d *schema.ResourceData) bool {
 	return strings.TrimSuffix(old, ".") == newTrimmed
 }
 
-func suppressMatchingIpv6(_, old, new string, _ *schema.ResourceData) bool {
+func suppressMatchingIpv6(old, new string) bool {
 	oldIpv6 := net.ParseIP(old)
 	if oldIpv6 == nil || oldIpv6.To16() == nil {
 		return false
@@ -516,7 +516,7 @@ func suppressMatchingIpv6(_, old, new string, _ *schema.ResourceData) bool {
 }
 
 func suppressContent(k, old, new string, d *schema.ResourceData) bool {
-	if suppressMatchingIpv6(k, old, new, d) {
+	if suppressMatchingIpv6(old, new) {
 		return true
 	}
 	return suppressTrailingDots(k, old, new, d)
