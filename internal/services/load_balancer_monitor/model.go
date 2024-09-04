@@ -14,7 +14,7 @@ type LoadBalancerMonitorResultEnvelope struct {
 
 type LoadBalancerMonitorModel struct {
 	ID              types.String                                    `tfsdk:"id" json:"id,computed"`
-	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id"`
+	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id,required"`
 	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed_optional"`
 	ConsecutiveDown types.Int64                                     `tfsdk:"consecutive_down" json:"consecutive_down,computed_optional"`
 	ConsecutiveUp   types.Int64                                     `tfsdk:"consecutive_up" json:"consecutive_up,computed_optional"`

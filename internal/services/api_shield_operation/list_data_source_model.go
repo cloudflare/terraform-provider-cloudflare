@@ -18,15 +18,15 @@ type APIShieldOperationsResultListDataSourceEnvelope struct {
 }
 
 type APIShieldOperationsDataSourceModel struct {
-	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id"`
-	Diff      types.Bool                                                             `tfsdk:"diff" query:"diff"`
-	Direction types.String                                                           `tfsdk:"direction" query:"direction"`
-	Endpoint  types.String                                                           `tfsdk:"endpoint" query:"endpoint"`
-	Order     types.String                                                           `tfsdk:"order" query:"order"`
-	Origin    types.String                                                           `tfsdk:"origin" query:"origin"`
-	State     types.String                                                           `tfsdk:"state" query:"state"`
-	Host      *[]types.String                                                        `tfsdk:"host" query:"host"`
-	Method    *[]types.String                                                        `tfsdk:"method" query:"method"`
+	ZoneID    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
+	Diff      types.Bool                                                             `tfsdk:"diff" query:"diff,optional"`
+	Direction types.String                                                           `tfsdk:"direction" query:"direction,optional"`
+	Endpoint  types.String                                                           `tfsdk:"endpoint" query:"endpoint,optional"`
+	Order     types.String                                                           `tfsdk:"order" query:"order,optional"`
+	Origin    types.String                                                           `tfsdk:"origin" query:"origin,optional"`
+	State     types.String                                                           `tfsdk:"state" query:"state,optional"`
+	Host      *[]types.String                                                        `tfsdk:"host" query:"host,optional"`
+	Method    *[]types.String                                                        `tfsdk:"method" query:"method,optional"`
 	MaxItems  types.Int64                                                            `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[APIShieldOperationsResultDataSourceModel] `tfsdk:"result"`
 }

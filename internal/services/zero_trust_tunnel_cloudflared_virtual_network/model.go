@@ -13,8 +13,8 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkResultEnvelope struct {
 
 type ZeroTrustTunnelCloudflaredVirtualNetworkModel struct {
 	ID               types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID        types.String      `tfsdk:"account_id" path:"account_id"`
-	IsDefault        types.Bool        `tfsdk:"is_default" json:"is_default"`
+	AccountID        types.String      `tfsdk:"account_id" path:"account_id,required"`
+	IsDefault        types.Bool        `tfsdk:"is_default" json:"is_default,optional"`
 	Comment          types.String      `tfsdk:"comment" json:"comment,computed_optional"`
 	IsDefaultNetwork types.Bool        `tfsdk:"is_default_network" json:"is_default_network,computed_optional"`
 	Name             types.String      `tfsdk:"name" json:"name,computed_optional"`

@@ -21,8 +21,8 @@ type AccountMemberResultListDataSourceEnvelope struct {
 }
 
 type AccountMemberDataSourceModel struct {
-	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id"`
-	MemberID  types.String                                                       `tfsdk:"member_id" path:"member_id"`
+	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	MemberID  types.String                                                       `tfsdk:"member_id" path:"member_id,optional"`
 	ID        types.String                                                       `tfsdk:"id" json:"id,computed"`
 	Status    types.String                                                       `tfsdk:"status" json:"status,computed"`
 	Policies  customfield.NestedObjectList[AccountMemberPoliciesDataSourceModel] `tfsdk:"policies" json:"policies,computed"`
@@ -112,8 +112,8 @@ type AccountMemberUserDataSourceModel struct {
 }
 
 type AccountMemberFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	Direction types.String `tfsdk:"direction" query:"direction"`
-	Order     types.String `tfsdk:"order" query:"order"`
-	Status    types.String `tfsdk:"status" query:"status"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	Direction types.String `tfsdk:"direction" query:"direction,optional"`
+	Order     types.String `tfsdk:"order" query:"order,optional"`
+	Status    types.String `tfsdk:"status" query:"status,optional"`
 }

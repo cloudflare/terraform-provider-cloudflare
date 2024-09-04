@@ -22,10 +22,10 @@ type RulesetResultListDataSourceEnvelope struct {
 }
 
 type RulesetDataSourceModel struct {
-	AccountID   types.String                     `tfsdk:"account_id" path:"account_id"`
-	RulesetID   types.String                     `tfsdk:"ruleset_id" path:"ruleset_id"`
-	ZoneID      types.String                     `tfsdk:"zone_id" path:"zone_id"`
-	Rules       *[]*RulesetRulesDataSourceModel  `tfsdk:"rules" json:"rules"`
+	AccountID   types.String                     `tfsdk:"account_id" path:"account_id,optional"`
+	RulesetID   types.String                     `tfsdk:"ruleset_id" path:"ruleset_id,optional"`
+	ZoneID      types.String                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	Rules       *[]*RulesetRulesDataSourceModel  `tfsdk:"rules" json:"rules,optional"`
 	Description types.String                     `tfsdk:"description" json:"description,computed"`
 	ID          types.String                     `tfsdk:"id" json:"id,computed"`
 	Kind        types.String                     `tfsdk:"kind" json:"kind,computed"`
@@ -89,6 +89,6 @@ type RulesetRulesLoggingDataSourceModel struct {
 }
 
 type RulesetFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

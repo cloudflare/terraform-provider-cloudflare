@@ -21,8 +21,8 @@ type HyperdriveConfigResultListDataSourceEnvelope struct {
 }
 
 type HyperdriveConfigDataSourceModel struct {
-	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id"`
-	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id"`
+	AccountID    types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	HyperdriveID types.String                                                     `tfsdk:"hyperdrive_id" path:"hyperdrive_id,optional"`
 	Name         types.String                                                     `tfsdk:"name" json:"name,computed"`
 	Caching      customfield.NestedObject[HyperdriveConfigCachingDataSourceModel] `tfsdk:"caching" json:"caching,computed"`
 	Origin       customfield.NestedObject[HyperdriveConfigOriginDataSourceModel]  `tfsdk:"origin" json:"origin,computed"`
@@ -61,5 +61,5 @@ type HyperdriveConfigOriginDataSourceModel struct {
 }
 
 type HyperdriveConfigFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

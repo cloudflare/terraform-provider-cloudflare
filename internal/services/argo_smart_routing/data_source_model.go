@@ -16,7 +16,7 @@ type ArgoSmartRoutingResultDataSourceEnvelope struct {
 }
 
 type ArgoSmartRoutingDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *ArgoSmartRoutingDataSourceModel) toReadParams(_ context.Context) (params argo.SmartRoutingGetParams, diags diag.Diagnostics) {

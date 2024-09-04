@@ -22,8 +22,8 @@ type CustomHostnameResultListDataSourceEnvelope struct {
 }
 
 type CustomHostnameDataSourceModel struct {
-	CustomHostnameID          types.String                                                                     `tfsdk:"custom_hostname_id" path:"custom_hostname_id"`
-	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id"`
+	CustomHostnameID          types.String                                                                     `tfsdk:"custom_hostname_id" path:"custom_hostname_id,optional"`
+	ZoneID                    types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt                 timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	CustomOriginServer        types.String                                                                     `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
 	CustomOriginSNI           types.String                                                                     `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`
@@ -128,10 +128,10 @@ type CustomHostnameSSLValidationRecordsDataSourceModel struct {
 }
 
 type CustomHostnameFindOneByDataSourceModel struct {
-	ZoneID    types.String  `tfsdk:"zone_id" path:"zone_id"`
-	ID        types.String  `tfsdk:"id" query:"id"`
-	Direction types.String  `tfsdk:"direction" query:"direction"`
-	Hostname  types.String  `tfsdk:"hostname" query:"hostname"`
+	ZoneID    types.String  `tfsdk:"zone_id" path:"zone_id,required"`
+	ID        types.String  `tfsdk:"id" query:"id,optional"`
+	Direction types.String  `tfsdk:"direction" query:"direction,optional"`
+	Hostname  types.String  `tfsdk:"hostname" query:"hostname,optional"`
 	Order     types.String  `tfsdk:"order" query:"order,computed_optional"`
-	SSL       types.Float64 `tfsdk:"ssl" query:"ssl"`
+	SSL       types.Float64 `tfsdk:"ssl" query:"ssl,optional"`
 }

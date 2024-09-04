@@ -18,14 +18,14 @@ type APIShieldOperationResultListDataSourceEnvelope struct {
 }
 
 type APIShieldOperationDataSourceModel struct {
-	Endpoint    types.String                                `tfsdk:"endpoint" json:"endpoint"`
-	Host        types.String                                `tfsdk:"host" json:"host"`
-	ID          types.String                                `tfsdk:"id" json:"id"`
-	LastUpdated timetypes.RFC3339                           `tfsdk:"last_updated" json:"last_updated" format:"date-time"`
-	Method      types.String                                `tfsdk:"method" json:"method"`
-	State       types.String                                `tfsdk:"state" json:"state"`
-	Origin      *[]types.String                             `tfsdk:"origin" json:"origin"`
-	Features    *APIShieldOperationFeaturesDataSourceModel  `tfsdk:"features" json:"features"`
+	Endpoint    types.String                                `tfsdk:"endpoint" json:"endpoint,optional"`
+	Host        types.String                                `tfsdk:"host" json:"host,optional"`
+	ID          types.String                                `tfsdk:"id" json:"id,optional"`
+	LastUpdated timetypes.RFC3339                           `tfsdk:"last_updated" json:"last_updated,optional" format:"date-time"`
+	Method      types.String                                `tfsdk:"method" json:"method,optional"`
+	State       types.String                                `tfsdk:"state" json:"state,optional"`
+	Origin      *[]types.String                             `tfsdk:"origin" json:"origin,optional"`
+	Features    *APIShieldOperationFeaturesDataSourceModel  `tfsdk:"features" json:"features,optional"`
 	Filter      *APIShieldOperationFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -78,13 +78,13 @@ type APIShieldOperationFeaturesTrafficStatsDataSourceModel struct {
 }
 
 type APIShieldOperationFindOneByDataSourceModel struct {
-	ZoneID    types.String    `tfsdk:"zone_id" path:"zone_id"`
-	Diff      types.Bool      `tfsdk:"diff" query:"diff"`
-	Direction types.String    `tfsdk:"direction" query:"direction"`
-	Endpoint  types.String    `tfsdk:"endpoint" query:"endpoint"`
-	Host      *[]types.String `tfsdk:"host" query:"host"`
-	Method    *[]types.String `tfsdk:"method" query:"method"`
-	Order     types.String    `tfsdk:"order" query:"order"`
-	Origin    types.String    `tfsdk:"origin" query:"origin"`
-	State     types.String    `tfsdk:"state" query:"state"`
+	ZoneID    types.String    `tfsdk:"zone_id" path:"zone_id,required"`
+	Diff      types.Bool      `tfsdk:"diff" query:"diff,optional"`
+	Direction types.String    `tfsdk:"direction" query:"direction,optional"`
+	Endpoint  types.String    `tfsdk:"endpoint" query:"endpoint,optional"`
+	Host      *[]types.String `tfsdk:"host" query:"host,optional"`
+	Method    *[]types.String `tfsdk:"method" query:"method,optional"`
+	Order     types.String    `tfsdk:"order" query:"order,optional"`
+	Origin    types.String    `tfsdk:"origin" query:"origin,optional"`
+	State     types.String    `tfsdk:"state" query:"state,optional"`
 }

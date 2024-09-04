@@ -13,10 +13,10 @@ type PageRuleResultEnvelope struct {
 }
 
 type PageRuleModel struct {
-	ZoneID     types.String             `tfsdk:"zone_id" path:"zone_id"`
-	PageruleID types.String             `tfsdk:"pagerule_id" path:"pagerule_id"`
-	Actions    *[]*PageRuleActionsModel `tfsdk:"actions" json:"actions"`
-	Targets    *[]*PageRuleTargetsModel `tfsdk:"targets" json:"targets"`
+	ZoneID     types.String             `tfsdk:"zone_id" path:"zone_id,required"`
+	PageruleID types.String             `tfsdk:"pagerule_id" path:"pagerule_id,optional"`
+	Actions    *[]*PageRuleActionsModel `tfsdk:"actions" json:"actions,required"`
+	Targets    *[]*PageRuleTargetsModel `tfsdk:"targets" json:"targets,required"`
 	Priority   types.Int64              `tfsdk:"priority" json:"priority,computed_optional"`
 	Status     types.String             `tfsdk:"status" json:"status,computed_optional"`
 	ID         types.String             `tfsdk:"id" json:"id,computed"`
@@ -34,11 +34,11 @@ type PageRuleActionsValueModel struct {
 }
 
 type PageRuleTargetsModel struct {
-	Constraint *PageRuleTargetsConstraintModel `tfsdk:"constraint" json:"constraint"`
-	Target     types.String                    `tfsdk:"target" json:"target"`
+	Constraint *PageRuleTargetsConstraintModel `tfsdk:"constraint" json:"constraint,required"`
+	Target     types.String                    `tfsdk:"target" json:"target,required"`
 }
 
 type PageRuleTargetsConstraintModel struct {
 	Operator types.String `tfsdk:"operator" json:"operator,computed_optional"`
-	Value    types.String `tfsdk:"value" json:"value"`
+	Value    types.String `tfsdk:"value" json:"value,required"`
 }

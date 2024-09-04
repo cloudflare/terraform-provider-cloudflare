@@ -20,15 +20,15 @@ type RateLimitResultListDataSourceEnvelope struct {
 }
 
 type RateLimitDataSourceModel struct {
-	ZoneIdentifier types.String                       `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String                       `tfsdk:"zone_identifier" path:"zone_identifier,optional"`
 	ID             types.String                       `tfsdk:"id" path:"id,computed_optional"`
-	Description    types.String                       `tfsdk:"description" json:"description"`
-	Disabled       types.Bool                         `tfsdk:"disabled" json:"disabled"`
-	Period         types.Float64                      `tfsdk:"period" json:"period"`
-	Threshold      types.Float64                      `tfsdk:"threshold" json:"threshold"`
-	Action         *RateLimitActionDataSourceModel    `tfsdk:"action" json:"action"`
-	Bypass         *[]*RateLimitBypassDataSourceModel `tfsdk:"bypass" json:"bypass"`
-	Match          *RateLimitMatchDataSourceModel     `tfsdk:"match" json:"match"`
+	Description    types.String                       `tfsdk:"description" json:"description,optional"`
+	Disabled       types.Bool                         `tfsdk:"disabled" json:"disabled,optional"`
+	Period         types.Float64                      `tfsdk:"period" json:"period,optional"`
+	Threshold      types.Float64                      `tfsdk:"threshold" json:"threshold,optional"`
+	Action         *RateLimitActionDataSourceModel    `tfsdk:"action" json:"action,optional"`
+	Bypass         *[]*RateLimitBypassDataSourceModel `tfsdk:"bypass" json:"bypass,optional"`
+	Match          *RateLimitMatchDataSourceModel     `tfsdk:"match" json:"match,optional"`
 	Filter         *RateLimitFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -77,5 +77,5 @@ type RateLimitMatchResponseDataSourceModel struct {
 }
 
 type RateLimitFindOneByDataSourceModel struct {
-	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier,required"`
 }

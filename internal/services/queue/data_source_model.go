@@ -21,7 +21,7 @@ type QueueResultListDataSourceEnvelope struct {
 }
 
 type QueueDataSourceModel struct {
-	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id"`
+	AccountID           types.String                                                `tfsdk:"account_id" path:"account_id,optional"`
 	QueueID             types.String                                                `tfsdk:"queue_id" path:"queue_id,computed_optional"`
 	ConsumersTotalCount types.Float64                                               `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                                `tfsdk:"created_on" json:"created_on,computed"`
@@ -69,5 +69,5 @@ type QueueProducersDataSourceModel struct {
 }
 
 type QueueFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

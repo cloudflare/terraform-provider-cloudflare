@@ -22,7 +22,7 @@ type OriginCACertificateResultListDataSourceEnvelope struct {
 }
 
 type OriginCACertificateDataSourceModel struct {
-	CertificateID     types.String                                 `tfsdk:"certificate_id" path:"certificate_id"`
+	CertificateID     types.String                                 `tfsdk:"certificate_id" path:"certificate_id,optional"`
 	Certificate       types.String                                 `tfsdk:"certificate" json:"certificate,computed"`
 	Csr               types.String                                 `tfsdk:"csr" json:"csr,computed"`
 	ExpiresOn         timetypes.RFC3339                            `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
@@ -44,5 +44,5 @@ func (m *OriginCACertificateDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type OriginCACertificateFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" query:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" query:"zone_id,optional"`
 }

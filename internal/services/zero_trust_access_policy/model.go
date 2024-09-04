@@ -15,10 +15,10 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 
 type ZeroTrustAccessPolicyModel struct {
 	ID                           types.String                                                           `tfsdk:"id" json:"id,computed"`
-	AppID                        types.String                                                           `tfsdk:"app_id" path:"app_id"`
-	AccountID                    types.String                                                           `tfsdk:"account_id" path:"account_id"`
-	ZoneID                       types.String                                                           `tfsdk:"zone_id" path:"zone_id"`
-	Precedence                   types.Int64                                                            `tfsdk:"precedence" json:"precedence"`
+	AppID                        types.String                                                           `tfsdk:"app_id" path:"app_id,required"`
+	AccountID                    types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                       types.String                                                           `tfsdk:"zone_id" path:"zone_id,optional"`
+	Precedence                   types.Int64                                                            `tfsdk:"precedence" json:"precedence,optional"`
 	ApprovalRequired             types.Bool                                                             `tfsdk:"approval_required" json:"approval_required,computed_optional"`
 	Decision                     types.String                                                           `tfsdk:"decision" json:"decision,computed_optional"`
 	IsolationRequired            types.Bool                                                             `tfsdk:"isolation_required" json:"isolation_required,computed_optional"`

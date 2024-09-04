@@ -17,9 +17,9 @@ type WorkersSecretsResultListDataSourceEnvelope struct {
 }
 
 type WorkersSecretsDataSourceModel struct {
-	AccountID         types.String                                                      `tfsdk:"account_id" path:"account_id"`
-	DispatchNamespace types.String                                                      `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
-	ScriptName        types.String                                                      `tfsdk:"script_name" path:"script_name"`
+	AccountID         types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	DispatchNamespace types.String                                                      `tfsdk:"dispatch_namespace" path:"dispatch_namespace,required"`
+	ScriptName        types.String                                                      `tfsdk:"script_name" path:"script_name,required"`
 	MaxItems          types.Int64                                                       `tfsdk:"max_items"`
 	Result            customfield.NestedObjectList[WorkersSecretsResultDataSourceModel] `tfsdk:"result"`
 }

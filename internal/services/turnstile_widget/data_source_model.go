@@ -22,9 +22,9 @@ type TurnstileWidgetResultListDataSourceEnvelope struct {
 }
 
 type TurnstileWidgetDataSourceModel struct {
-	AccountID      types.String                             `tfsdk:"account_id" path:"account_id"`
+	AccountID      types.String                             `tfsdk:"account_id" path:"account_id,optional"`
 	Sitekey        types.String                             `tfsdk:"sitekey" path:"sitekey,computed_optional"`
-	Secret         types.String                             `tfsdk:"secret" json:"secret"`
+	Secret         types.String                             `tfsdk:"secret" json:"secret,optional"`
 	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -61,7 +61,7 @@ func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type TurnstileWidgetFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	Direction types.String `tfsdk:"direction" query:"direction"`
-	Order     types.String `tfsdk:"order" query:"order"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	Direction types.String `tfsdk:"direction" query:"direction,optional"`
+	Order     types.String `tfsdk:"order" query:"order,optional"`
 }

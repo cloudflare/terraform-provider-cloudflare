@@ -17,13 +17,13 @@ type AccessRulesResultListDataSourceEnvelope struct {
 }
 
 type AccessRulesDataSourceModel struct {
-	AccountID     types.String                                                   `tfsdk:"account_id" path:"account_id"`
-	ZoneID        types.String                                                   `tfsdk:"zone_id" path:"zone_id"`
-	Direction     types.String                                                   `tfsdk:"direction" query:"direction"`
-	Mode          types.String                                                   `tfsdk:"mode" query:"mode"`
-	Notes         types.String                                                   `tfsdk:"notes" query:"notes"`
-	Order         types.String                                                   `tfsdk:"order" query:"order"`
-	Configuration *AccessRulesConfigurationDataSourceModel                       `tfsdk:"configuration" query:"configuration"`
+	AccountID     types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID        types.String                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	Direction     types.String                                                   `tfsdk:"direction" query:"direction,optional"`
+	Mode          types.String                                                   `tfsdk:"mode" query:"mode,optional"`
+	Notes         types.String                                                   `tfsdk:"notes" query:"notes,optional"`
+	Order         types.String                                                   `tfsdk:"order" query:"order,optional"`
+	Configuration *AccessRulesConfigurationDataSourceModel                       `tfsdk:"configuration" query:"configuration,optional"`
 	Match         types.String                                                   `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems      types.Int64                                                    `tfsdk:"max_items"`
 	Result        customfield.NestedObjectList[AccessRulesResultDataSourceModel] `tfsdk:"result"`

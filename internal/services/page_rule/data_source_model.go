@@ -16,8 +16,8 @@ type PageRuleResultDataSourceEnvelope struct {
 }
 
 type PageRuleDataSourceModel struct {
-	PageruleID types.String `tfsdk:"pagerule_id" path:"pagerule_id"`
-	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id"`
+	PageruleID types.String `tfsdk:"pagerule_id" path:"pagerule_id,required"`
+	ZoneID     types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *PageRuleDataSourceModel) toReadParams(_ context.Context) (params pagerules.PageruleGetParams, diags diag.Diagnostics) {

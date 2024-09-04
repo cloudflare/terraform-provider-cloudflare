@@ -22,7 +22,7 @@ type RegionalHostnameResultListDataSourceEnvelope struct {
 }
 
 type RegionalHostnameDataSourceModel struct {
-	ZoneID    types.String                              `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID    types.String                              `tfsdk:"zone_id" path:"zone_id,optional"`
 	Hostname  types.String                              `tfsdk:"hostname" path:"hostname,computed_optional"`
 	CreatedOn timetypes.RFC3339                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	RegionKey types.String                              `tfsdk:"region_key" json:"region_key,computed"`
@@ -46,5 +46,5 @@ func (m *RegionalHostnameDataSourceModel) toListParams(_ context.Context) (param
 }
 
 type RegionalHostnameFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

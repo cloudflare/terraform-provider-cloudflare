@@ -17,11 +17,11 @@ type FirewallRulesResultListDataSourceEnvelope struct {
 }
 
 type FirewallRulesDataSourceModel struct {
-	ZoneIdentifier types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Action         types.String                                                     `tfsdk:"action" query:"action"`
-	Description    types.String                                                     `tfsdk:"description" query:"description"`
-	ID             types.String                                                     `tfsdk:"id" query:"id"`
-	Paused         types.Bool                                                       `tfsdk:"paused" query:"paused"`
+	ZoneIdentifier types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	Action         types.String                                                     `tfsdk:"action" query:"action,optional"`
+	Description    types.String                                                     `tfsdk:"description" query:"description,optional"`
+	ID             types.String                                                     `tfsdk:"id" query:"id,optional"`
+	Paused         types.Bool                                                       `tfsdk:"paused" query:"paused,optional"`
 	MaxItems       types.Int64                                                      `tfsdk:"max_items"`
 	Result         customfield.NestedObjectList[FirewallRulesResultDataSourceModel] `tfsdk:"result"`
 }

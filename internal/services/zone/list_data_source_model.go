@@ -18,11 +18,11 @@ type ZonesResultListDataSourceEnvelope struct {
 }
 
 type ZonesDataSourceModel struct {
-	Direction types.String                                             `tfsdk:"direction" query:"direction"`
-	Name      types.String                                             `tfsdk:"name" query:"name"`
-	Order     types.String                                             `tfsdk:"order" query:"order"`
-	Status    types.String                                             `tfsdk:"status" query:"status"`
-	Account   *ZonesAccountDataSourceModel                             `tfsdk:"account" query:"account"`
+	Direction types.String                                             `tfsdk:"direction" query:"direction,optional"`
+	Name      types.String                                             `tfsdk:"name" query:"name,optional"`
+	Order     types.String                                             `tfsdk:"order" query:"order,optional"`
+	Status    types.String                                             `tfsdk:"status" query:"status,optional"`
+	Account   *ZonesAccountDataSourceModel                             `tfsdk:"account" query:"account,optional"`
 	Match     types.String                                             `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems  types.Int64                                              `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZonesResultDataSourceModel] `tfsdk:"result"`

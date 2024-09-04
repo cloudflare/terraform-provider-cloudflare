@@ -14,7 +14,7 @@ type NotificationPolicyWebhooksResultEnvelope struct {
 
 type NotificationPolicyWebhooksModel struct {
 	ID          types.String                                                          `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                                                          `tfsdk:"account_id" path:"account_id"`
+	AccountID   types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
 	Name        types.String                                                          `tfsdk:"name" json:"name,computed_optional"`
 	Secret      types.String                                                          `tfsdk:"secret" json:"secret,computed_optional"`
 	URL         types.String                                                          `tfsdk:"url" json:"url,computed_optional"`

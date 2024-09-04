@@ -16,8 +16,8 @@ type ZoneSettingResultDataSourceEnvelope struct {
 }
 
 type ZoneSettingDataSourceModel struct {
-	SettingID types.String `tfsdk:"setting_id" path:"setting_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	SettingID types.String `tfsdk:"setting_id" path:"setting_id,required"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *ZoneSettingDataSourceModel) toReadParams(_ context.Context) (params zones.SettingGetParams, diags diag.Diagnostics) {

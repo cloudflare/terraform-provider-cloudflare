@@ -22,8 +22,8 @@ type LoadBalancerPoolResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerPoolDataSourceModel struct {
-	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id"`
-	PoolID             types.String                                                                `tfsdk:"pool_id" path:"pool_id"`
+	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
+	PoolID             types.String                                                                `tfsdk:"pool_id" path:"pool_id,optional"`
 	CreatedOn          timetypes.RFC3339                                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description        types.String                                                                `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                           `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
@@ -106,6 +106,6 @@ type LoadBalancerPoolOriginsHeaderDataSourceModel struct {
 }
 
 type LoadBalancerPoolFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	Monitor   types.String `tfsdk:"monitor" query:"monitor"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	Monitor   types.String `tfsdk:"monitor" query:"monitor,optional"`
 }

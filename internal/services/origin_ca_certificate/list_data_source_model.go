@@ -18,7 +18,7 @@ type OriginCACertificatesResultListDataSourceEnvelope struct {
 }
 
 type OriginCACertificatesDataSourceModel struct {
-	ZoneID   types.String                                                            `tfsdk:"zone_id" query:"zone_id"`
+	ZoneID   types.String                                                            `tfsdk:"zone_id" query:"zone_id,optional"`
 	MaxItems types.Int64                                                             `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[OriginCACertificatesResultDataSourceModel] `tfsdk:"result"`
 }

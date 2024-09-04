@@ -12,9 +12,9 @@ type AuthenticatedOriginPullsResultEnvelope struct {
 }
 
 type AuthenticatedOriginPullsModel struct {
-	ZoneID         types.String                            `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID         types.String                            `tfsdk:"zone_id" path:"zone_id,required"`
 	Hostname       types.String                            `tfsdk:"hostname" path:"hostname,computed_optional"`
-	Config         *[]*AuthenticatedOriginPullsConfigModel `tfsdk:"config" json:"config"`
+	Config         *[]*AuthenticatedOriginPullsConfigModel `tfsdk:"config" json:"config,required"`
 	CERTID         types.String                            `tfsdk:"cert_id" json:"cert_id,computed"`
 	CERTStatus     types.String                            `tfsdk:"cert_status" json:"cert_status,computed"`
 	CERTUpdatedAt  timetypes.RFC3339                       `tfsdk:"cert_updated_at" json:"cert_updated_at,computed" format:"date-time"`

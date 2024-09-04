@@ -18,8 +18,8 @@ type APIShieldSchemasResultListDataSourceEnvelope struct {
 }
 
 type APIShieldSchemasDataSourceModel struct {
-	ZoneID            types.String                                                        `tfsdk:"zone_id" path:"zone_id"`
-	ValidationEnabled types.Bool                                                          `tfsdk:"validation_enabled" query:"validation_enabled"`
+	ZoneID            types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	ValidationEnabled types.Bool                                                          `tfsdk:"validation_enabled" query:"validation_enabled,optional"`
 	OmitSource        types.Bool                                                          `tfsdk:"omit_source" query:"omit_source,computed_optional"`
 	MaxItems          types.Int64                                                         `tfsdk:"max_items"`
 	Result            customfield.NestedObjectList[APIShieldSchemasResultDataSourceModel] `tfsdk:"result"`

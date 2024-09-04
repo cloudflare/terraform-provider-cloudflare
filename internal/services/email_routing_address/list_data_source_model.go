@@ -18,7 +18,7 @@ type EmailRoutingAddressesResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingAddressesDataSourceModel struct {
-	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String                                                             `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String                                                             `tfsdk:"direction" query:"direction,computed_optional"`
 	Verified  types.Bool                                                               `tfsdk:"verified" query:"verified,computed_optional"`
 	MaxItems  types.Int64                                                              `tfsdk:"max_items"`

@@ -22,9 +22,9 @@ type ZeroTrustAccessMTLSCertificateResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessMTLSCertificateDataSourceModel struct {
-	AccountID           types.String                                            `tfsdk:"account_id" path:"account_id"`
-	CertificateID       types.String                                            `tfsdk:"certificate_id" path:"certificate_id"`
-	ZoneID              types.String                                            `tfsdk:"zone_id" path:"zone_id"`
+	AccountID           types.String                                            `tfsdk:"account_id" path:"account_id,optional"`
+	CertificateID       types.String                                            `tfsdk:"certificate_id" path:"certificate_id,optional"`
+	ZoneID              types.String                                            `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt           timetypes.RFC3339                                       `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ExpiresOn           timetypes.RFC3339                                       `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Fingerprint         types.String                                            `tfsdk:"fingerprint" json:"fingerprint,computed"`
@@ -60,6 +60,6 @@ func (m *ZeroTrustAccessMTLSCertificateDataSourceModel) toListParams(_ context.C
 }
 
 type ZeroTrustAccessMTLSCertificateFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

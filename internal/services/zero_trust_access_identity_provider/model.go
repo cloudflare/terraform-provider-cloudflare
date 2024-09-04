@@ -13,12 +13,12 @@ type ZeroTrustAccessIdentityProviderResultEnvelope struct {
 
 type ZeroTrustAccessIdentityProviderModel struct {
 	ID         types.String                                    `tfsdk:"id" json:"id,computed_optional"`
-	AccountID  types.String                                    `tfsdk:"account_id" path:"account_id"`
-	ZoneID     types.String                                    `tfsdk:"zone_id" path:"zone_id"`
-	Name       types.String                                    `tfsdk:"name" json:"name"`
-	Type       types.String                                    `tfsdk:"type" json:"type"`
-	Config     *ZeroTrustAccessIdentityProviderConfigModel     `tfsdk:"config" json:"config"`
-	SCIMConfig *ZeroTrustAccessIdentityProviderSCIMConfigModel `tfsdk:"scim_config" json:"scim_config"`
+	AccountID  types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID     types.String                                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name       types.String                                    `tfsdk:"name" json:"name,required"`
+	Type       types.String                                    `tfsdk:"type" json:"type,required"`
+	Config     *ZeroTrustAccessIdentityProviderConfigModel     `tfsdk:"config" json:"config,required"`
+	SCIMConfig *ZeroTrustAccessIdentityProviderSCIMConfigModel `tfsdk:"scim_config" json:"scim_config,optional"`
 }
 
 type ZeroTrustAccessIdentityProviderConfigModel struct {

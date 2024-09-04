@@ -22,8 +22,8 @@ type ZeroTrustTunnelCloudflaredResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredDataSourceModel struct {
-	AccountID types.String                                        `tfsdk:"account_id" path:"account_id"`
-	TunnelID  types.String                                        `tfsdk:"tunnel_id" path:"tunnel_id"`
+	AccountID types.String                                        `tfsdk:"account_id" path:"account_id,optional"`
+	TunnelID  types.String                                        `tfsdk:"tunnel_id" path:"tunnel_id,optional"`
 	Filter    *ZeroTrustTunnelCloudflaredFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -79,14 +79,14 @@ func (m *ZeroTrustTunnelCloudflaredDataSourceModel) toListParams(_ context.Conte
 }
 
 type ZeroTrustTunnelCloudflaredFindOneByDataSourceModel struct {
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id"`
-	ExcludePrefix types.String      `tfsdk:"exclude_prefix" query:"exclude_prefix"`
-	ExistedAt     timetypes.RFC3339 `tfsdk:"existed_at" query:"existed_at" format:"date-time"`
-	IncludePrefix types.String      `tfsdk:"include_prefix" query:"include_prefix"`
-	IsDeleted     types.Bool        `tfsdk:"is_deleted" query:"is_deleted"`
-	Name          types.String      `tfsdk:"name" query:"name"`
-	Status        types.String      `tfsdk:"status" query:"status"`
-	UUID          types.String      `tfsdk:"uuid" query:"uuid"`
-	WasActiveAt   timetypes.RFC3339 `tfsdk:"was_active_at" query:"was_active_at" format:"date-time"`
-	WasInactiveAt timetypes.RFC3339 `tfsdk:"was_inactive_at" query:"was_inactive_at" format:"date-time"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
+	ExcludePrefix types.String      `tfsdk:"exclude_prefix" query:"exclude_prefix,optional"`
+	ExistedAt     timetypes.RFC3339 `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
+	IncludePrefix types.String      `tfsdk:"include_prefix" query:"include_prefix,optional"`
+	IsDeleted     types.Bool        `tfsdk:"is_deleted" query:"is_deleted,optional"`
+	Name          types.String      `tfsdk:"name" query:"name,optional"`
+	Status        types.String      `tfsdk:"status" query:"status,optional"`
+	UUID          types.String      `tfsdk:"uuid" query:"uuid,optional"`
+	WasActiveAt   timetypes.RFC3339 `tfsdk:"was_active_at" query:"was_active_at,optional" format:"date-time"`
+	WasInactiveAt timetypes.RFC3339 `tfsdk:"was_inactive_at" query:"was_inactive_at,optional" format:"date-time"`
 }

@@ -18,8 +18,8 @@ type LoadBalancerPoolsResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerPoolsDataSourceModel struct {
-	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id"`
-	Monitor   types.String                                                         `tfsdk:"monitor" query:"monitor"`
+	AccountID types.String                                                         `tfsdk:"account_id" path:"account_id,required"`
+	Monitor   types.String                                                         `tfsdk:"monitor" query:"monitor,optional"`
 	MaxItems  types.Int64                                                          `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[LoadBalancerPoolsResultDataSourceModel] `tfsdk:"result"`
 }

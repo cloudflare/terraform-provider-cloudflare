@@ -22,8 +22,8 @@ type EmailRoutingAddressResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingAddressDataSourceModel struct {
-	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id"`
-	DestinationAddressIdentifier types.String                                 `tfsdk:"destination_address_identifier" path:"destination_address_identifier"`
+	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
+	DestinationAddressIdentifier types.String                                 `tfsdk:"destination_address_identifier" path:"destination_address_identifier,optional"`
 	Created                      timetypes.RFC3339                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Email                        types.String                                 `tfsdk:"email" json:"email,computed"`
 	ID                           types.String                                 `tfsdk:"id" json:"id,computed"`
@@ -57,7 +57,7 @@ func (m *EmailRoutingAddressDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type EmailRoutingAddressFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 	Direction types.String `tfsdk:"direction" query:"direction,computed_optional"`
 	Verified  types.Bool   `tfsdk:"verified" query:"verified,computed_optional"`
 }

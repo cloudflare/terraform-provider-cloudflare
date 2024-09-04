@@ -14,7 +14,7 @@ type LoadBalancerResultEnvelope struct {
 
 type LoadBalancerModel struct {
 	ID                        types.String                                                         `tfsdk:"id" json:"id,computed"`
-	ZoneID                    types.String                                                         `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID                    types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
 	Description               types.String                                                         `tfsdk:"description" json:"description,computed_optional"`
 	Enabled                   types.Bool                                                           `tfsdk:"enabled" json:"enabled,computed_optional"`
 	FallbackPool              types.String                                                         `tfsdk:"fallback_pool" json:"fallback_pool,computed_optional"`

@@ -23,9 +23,9 @@ type ZeroTrustAccessGroupResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessGroupDataSourceModel struct {
-	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id"`
-	GroupID   types.String                                                               `tfsdk:"group_id" path:"group_id"`
-	ZoneID    types.String                                                               `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
+	GroupID   types.String                                                               `tfsdk:"group_id" path:"group_id,optional"`
+	ZoneID    types.String                                                               `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedAt timetypes.RFC3339                                                          `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ID        types.String                                                               `tfsdk:"id" json:"id,computed"`
 	Name      types.String                                                               `tfsdk:"name" json:"name,computed"`
@@ -430,6 +430,6 @@ type ZeroTrustAccessGroupRequireDevicePostureDataSourceModel struct {
 }
 
 type ZeroTrustAccessGroupFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

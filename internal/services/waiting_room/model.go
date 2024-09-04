@@ -14,7 +14,7 @@ type WaitingRoomResultEnvelope struct {
 
 type WaitingRoomModel struct {
 	ID                         types.String                                                   `tfsdk:"id" json:"id,computed"`
-	ZoneID                     types.String                                                   `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID                     types.String                                                   `tfsdk:"zone_id" path:"zone_id,required"`
 	CookieSuffix               types.String                                                   `tfsdk:"cookie_suffix" json:"cookie_suffix,computed_optional"`
 	CustomPageHTML             types.String                                                   `tfsdk:"custom_page_html" json:"custom_page_html,computed_optional"`
 	DefaultTemplateLanguage    types.String                                                   `tfsdk:"default_template_language" json:"default_template_language,computed_optional"`

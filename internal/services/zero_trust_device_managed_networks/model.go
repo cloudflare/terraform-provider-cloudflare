@@ -14,7 +14,7 @@ type ZeroTrustDeviceManagedNetworksResultEnvelope struct {
 type ZeroTrustDeviceManagedNetworksModel struct {
 	ID        types.String                                                        `tfsdk:"id" json:"-,computed"`
 	NetworkID types.String                                                        `tfsdk:"network_id" json:"network_id,computed"`
-	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	Name      types.String                                                        `tfsdk:"name" json:"name,computed_optional"`
 	Type      types.String                                                        `tfsdk:"type" json:"type,computed_optional"`
 	Config    customfield.NestedObject[ZeroTrustDeviceManagedNetworksConfigModel] `tfsdk:"config" json:"config,computed_optional"`

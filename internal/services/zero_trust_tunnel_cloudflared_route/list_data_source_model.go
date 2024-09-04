@@ -18,16 +18,16 @@ type ZeroTrustTunnelCloudflaredRoutesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredRoutesDataSourceModel struct {
-	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id"`
-	Comment          types.String                                                                        `tfsdk:"comment" query:"comment"`
-	ExistedAt        timetypes.RFC3339                                                                   `tfsdk:"existed_at" query:"existed_at" format:"date-time"`
-	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted"`
-	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset"`
-	NetworkSuperset  types.String                                                                        `tfsdk:"network_superset" query:"network_superset"`
-	RouteID          types.String                                                                        `tfsdk:"route_id" query:"route_id"`
-	TunTypes         types.String                                                                        `tfsdk:"tun_types" query:"tun_types"`
-	TunnelID         types.String                                                                        `tfsdk:"tunnel_id" query:"tunnel_id"`
-	VirtualNetworkID types.String                                                                        `tfsdk:"virtual_network_id" query:"virtual_network_id"`
+	AccountID        types.String                                                                        `tfsdk:"account_id" path:"account_id,required"`
+	Comment          types.String                                                                        `tfsdk:"comment" query:"comment,optional"`
+	ExistedAt        timetypes.RFC3339                                                                   `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
+	IsDeleted        types.Bool                                                                          `tfsdk:"is_deleted" query:"is_deleted,optional"`
+	NetworkSubset    types.String                                                                        `tfsdk:"network_subset" query:"network_subset,optional"`
+	NetworkSuperset  types.String                                                                        `tfsdk:"network_superset" query:"network_superset,optional"`
+	RouteID          types.String                                                                        `tfsdk:"route_id" query:"route_id,optional"`
+	TunTypes         types.String                                                                        `tfsdk:"tun_types" query:"tun_types,optional"`
+	TunnelID         types.String                                                                        `tfsdk:"tunnel_id" query:"tunnel_id,optional"`
+	VirtualNetworkID types.String                                                                        `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 	MaxItems         types.Int64                                                                         `tfsdk:"max_items"`
 	Result           customfield.NestedObjectList[ZeroTrustTunnelCloudflaredRoutesResultDataSourceModel] `tfsdk:"result"`
 }

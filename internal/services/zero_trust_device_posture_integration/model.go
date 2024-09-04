@@ -12,20 +12,20 @@ type ZeroTrustDevicePostureIntegrationResultEnvelope struct {
 
 type ZeroTrustDevicePostureIntegrationModel struct {
 	ID        types.String                                  `tfsdk:"id" json:"id,computed"`
-	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
-	Config    *ZeroTrustDevicePostureIntegrationConfigModel `tfsdk:"config" json:"config"`
+	AccountID types.String                                  `tfsdk:"account_id" path:"account_id,required"`
+	Config    *ZeroTrustDevicePostureIntegrationConfigModel `tfsdk:"config" json:"config,required"`
 	Interval  types.String                                  `tfsdk:"interval" json:"interval,computed_optional"`
 	Name      types.String                                  `tfsdk:"name" json:"name,computed_optional"`
 	Type      types.String                                  `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type ZeroTrustDevicePostureIntegrationConfigModel struct {
-	APIURL             types.String `tfsdk:"api_url" json:"api_url"`
-	AuthURL            types.String `tfsdk:"auth_url" json:"auth_url"`
-	ClientID           types.String `tfsdk:"client_id" json:"client_id"`
-	ClientSecret       types.String `tfsdk:"client_secret" json:"client_secret"`
-	CustomerID         types.String `tfsdk:"customer_id" json:"customer_id"`
-	ClientKey          types.String `tfsdk:"client_key" json:"client_key"`
-	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id"`
-	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret"`
+	APIURL             types.String `tfsdk:"api_url" json:"api_url,optional"`
+	AuthURL            types.String `tfsdk:"auth_url" json:"auth_url,optional"`
+	ClientID           types.String `tfsdk:"client_id" json:"client_id,optional"`
+	ClientSecret       types.String `tfsdk:"client_secret" json:"client_secret,required"`
+	CustomerID         types.String `tfsdk:"customer_id" json:"customer_id,optional"`
+	ClientKey          types.String `tfsdk:"client_key" json:"client_key,optional"`
+	AccessClientID     types.String `tfsdk:"access_client_id" json:"access_client_id,optional"`
+	AccessClientSecret types.String `tfsdk:"access_client_secret" json:"access_client_secret,optional"`
 }

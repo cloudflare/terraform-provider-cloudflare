@@ -16,7 +16,7 @@ type RateLimitsResultListDataSourceEnvelope struct {
 }
 
 type RateLimitsDataSourceModel struct {
-	ZoneIdentifier types.String                                                  `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String                                                  `tfsdk:"zone_identifier" path:"zone_identifier,required"`
 	MaxItems       types.Int64                                                   `tfsdk:"max_items"`
 	Result         customfield.NestedObjectList[RateLimitsResultDataSourceModel] `tfsdk:"result"`
 }

@@ -17,20 +17,20 @@ type ZeroTrustOrganizationResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustOrganizationDataSourceModel struct {
-	AccountID                      types.String                                     `tfsdk:"account_id" path:"account_id"`
-	ZoneID                         types.String                                     `tfsdk:"zone_id" path:"zone_id"`
-	AllowAuthenticateViaWARP       types.Bool                                       `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp"`
-	AuthDomain                     types.String                                     `tfsdk:"auth_domain" json:"auth_domain"`
-	CreatedAt                      timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at" format:"date-time"`
-	IsUIReadOnly                   types.Bool                                       `tfsdk:"is_ui_read_only" json:"is_ui_read_only"`
-	Name                           types.String                                     `tfsdk:"name" json:"name"`
-	SessionDuration                types.String                                     `tfsdk:"session_duration" json:"session_duration"`
-	UIReadOnlyToggleReason         types.String                                     `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason"`
-	UpdatedAt                      timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at" format:"date-time"`
-	UserSeatExpirationInactiveTime types.String                                     `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time"`
-	WARPAuthSessionDuration        types.String                                     `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration"`
-	CustomPages                    *ZeroTrustOrganizationCustomPagesDataSourceModel `tfsdk:"custom_pages" json:"custom_pages"`
-	LoginDesign                    *ZeroTrustOrganizationLoginDesignDataSourceModel `tfsdk:"login_design" json:"login_design"`
+	AccountID                      types.String                                     `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                         types.String                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	AllowAuthenticateViaWARP       types.Bool                                       `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,optional"`
+	AuthDomain                     types.String                                     `tfsdk:"auth_domain" json:"auth_domain,optional"`
+	CreatedAt                      timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,optional" format:"date-time"`
+	IsUIReadOnly                   types.Bool                                       `tfsdk:"is_ui_read_only" json:"is_ui_read_only,optional"`
+	Name                           types.String                                     `tfsdk:"name" json:"name,optional"`
+	SessionDuration                types.String                                     `tfsdk:"session_duration" json:"session_duration,optional"`
+	UIReadOnlyToggleReason         types.String                                     `tfsdk:"ui_read_only_toggle_reason" json:"ui_read_only_toggle_reason,optional"`
+	UpdatedAt                      timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,optional" format:"date-time"`
+	UserSeatExpirationInactiveTime types.String                                     `tfsdk:"user_seat_expiration_inactive_time" json:"user_seat_expiration_inactive_time,optional"`
+	WARPAuthSessionDuration        types.String                                     `tfsdk:"warp_auth_session_duration" json:"warp_auth_session_duration,optional"`
+	CustomPages                    *ZeroTrustOrganizationCustomPagesDataSourceModel `tfsdk:"custom_pages" json:"custom_pages,optional"`
+	LoginDesign                    *ZeroTrustOrganizationLoginDesignDataSourceModel `tfsdk:"login_design" json:"login_design,optional"`
 	AutoRedirectToIdentity         types.Bool                                       `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 }
 

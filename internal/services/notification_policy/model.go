@@ -15,7 +15,7 @@ type NotificationPolicyResultEnvelope struct {
 
 type NotificationPolicyModel struct {
 	ID            types.String                                                  `tfsdk:"id" json:"id,computed"`
-	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id"`
+	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	AlertInterval types.String                                                  `tfsdk:"alert_interval" json:"alert_interval,computed_optional"`
 	AlertType     types.String                                                  `tfsdk:"alert_type" json:"alert_type,computed_optional"`
 	Description   types.String                                                  `tfsdk:"description" json:"description,computed_optional"`

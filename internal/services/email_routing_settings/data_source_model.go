@@ -17,13 +17,13 @@ type EmailRoutingSettingsResultDataSourceEnvelope struct {
 }
 
 type EmailRoutingSettingsDataSourceModel struct {
-	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id"`
-	Created    timetypes.RFC3339 `tfsdk:"created" json:"created" format:"date-time"`
-	ID         types.String      `tfsdk:"id" json:"id"`
-	Modified   timetypes.RFC3339 `tfsdk:"modified" json:"modified" format:"date-time"`
-	Name       types.String      `tfsdk:"name" json:"name"`
-	Status     types.String      `tfsdk:"status" json:"status"`
-	Tag        types.String      `tfsdk:"tag" json:"tag"`
+	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	Created    timetypes.RFC3339 `tfsdk:"created" json:"created,optional" format:"date-time"`
+	ID         types.String      `tfsdk:"id" json:"id,optional"`
+	Modified   timetypes.RFC3339 `tfsdk:"modified" json:"modified,optional" format:"date-time"`
+	Name       types.String      `tfsdk:"name" json:"name,optional"`
+	Status     types.String      `tfsdk:"status" json:"status,optional"`
+	Tag        types.String      `tfsdk:"tag" json:"tag,optional"`
 	Enabled    types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	SkipWizard types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard,computed_optional"`
 }

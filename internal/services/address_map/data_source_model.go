@@ -22,10 +22,10 @@ type AddressMapResultListDataSourceEnvelope struct {
 }
 
 type AddressMapDataSourceModel struct {
-	AccountID    types.String                             `tfsdk:"account_id" path:"account_id"`
-	AddressMapID types.String                             `tfsdk:"address_map_id" path:"address_map_id"`
-	IPs          *[]*AddressMapIPsDataSourceModel         `tfsdk:"ips" json:"ips"`
-	Memberships  *[]*AddressMapMembershipsDataSourceModel `tfsdk:"memberships" json:"memberships"`
+	AccountID    types.String                             `tfsdk:"account_id" path:"account_id,optional"`
+	AddressMapID types.String                             `tfsdk:"address_map_id" path:"address_map_id,optional"`
+	IPs          *[]*AddressMapIPsDataSourceModel         `tfsdk:"ips" json:"ips,optional"`
+	Memberships  *[]*AddressMapMembershipsDataSourceModel `tfsdk:"memberships" json:"memberships,optional"`
 	CanDelete    types.Bool                               `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                               `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
 	CreatedAt    timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -66,5 +66,5 @@ type AddressMapMembershipsDataSourceModel struct {
 }
 
 type AddressMapFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

@@ -17,8 +17,8 @@ type EmailRoutingRulesResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingRulesDataSourceModel struct {
-	ZoneID   types.String                                                         `tfsdk:"zone_id" path:"zone_id"`
-	Enabled  types.Bool                                                           `tfsdk:"enabled" query:"enabled"`
+	ZoneID   types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
+	Enabled  types.Bool                                                           `tfsdk:"enabled" query:"enabled,optional"`
 	MaxItems types.Int64                                                          `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[EmailRoutingRulesResultDataSourceModel] `tfsdk:"result"`
 }

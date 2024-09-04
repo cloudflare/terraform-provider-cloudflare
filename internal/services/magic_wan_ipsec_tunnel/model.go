@@ -13,15 +13,15 @@ type MagicWANIPSECTunnelResultEnvelope struct {
 }
 
 type MagicWANIPSECTunnelModel struct {
-	AccountID           types.String                                                          `tfsdk:"account_id" path:"account_id"`
-	IPSECTunnelID       types.String                                                          `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id"`
-	CloudflareEndpoint  types.String                                                          `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint"`
-	InterfaceAddress    types.String                                                          `tfsdk:"interface_address" json:"interface_address"`
-	Name                types.String                                                          `tfsdk:"name" json:"name"`
-	CustomerEndpoint    types.String                                                          `tfsdk:"customer_endpoint" json:"customer_endpoint"`
-	Description         types.String                                                          `tfsdk:"description" json:"description"`
-	PSK                 types.String                                                          `tfsdk:"psk" json:"psk"`
-	HealthCheck         *MagicWANIPSECTunnelHealthCheckModel                                  `tfsdk:"health_check" json:"health_check"`
+	AccountID           types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
+	IPSECTunnelID       types.String                                                          `tfsdk:"ipsec_tunnel_id" path:"ipsec_tunnel_id,optional"`
+	CloudflareEndpoint  types.String                                                          `tfsdk:"cloudflare_endpoint" json:"cloudflare_endpoint,required"`
+	InterfaceAddress    types.String                                                          `tfsdk:"interface_address" json:"interface_address,required"`
+	Name                types.String                                                          `tfsdk:"name" json:"name,required"`
+	CustomerEndpoint    types.String                                                          `tfsdk:"customer_endpoint" json:"customer_endpoint,optional"`
+	Description         types.String                                                          `tfsdk:"description" json:"description,optional"`
+	PSK                 types.String                                                          `tfsdk:"psk" json:"psk,optional"`
+	HealthCheck         *MagicWANIPSECTunnelHealthCheckModel                                  `tfsdk:"health_check" json:"health_check,optional"`
 	ReplayProtection    types.Bool                                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
 	Deleted             types.Bool                                                            `tfsdk:"deleted" json:"deleted,computed"`
 	Modified            types.Bool                                                            `tfsdk:"modified" json:"modified,computed"`

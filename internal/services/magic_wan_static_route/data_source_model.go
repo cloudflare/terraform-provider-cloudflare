@@ -18,9 +18,9 @@ type MagicWANStaticRouteResultDataSourceEnvelope struct {
 }
 
 type MagicWANStaticRouteDataSourceModel struct {
-	AccountID types.String                             `tfsdk:"account_id" path:"account_id"`
-	RouteID   types.String                             `tfsdk:"route_id" path:"route_id"`
-	Route     *MagicWANStaticRouteRouteDataSourceModel `tfsdk:"route" json:"route"`
+	AccountID types.String                             `tfsdk:"account_id" path:"account_id,required"`
+	RouteID   types.String                             `tfsdk:"route_id" path:"route_id,required"`
+	Route     *MagicWANStaticRouteRouteDataSourceModel `tfsdk:"route" json:"route,optional"`
 }
 
 func (m *MagicWANStaticRouteDataSourceModel) toReadParams(_ context.Context) (params magic_transit.RouteGetParams, diags diag.Diagnostics) {

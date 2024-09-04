@@ -21,12 +21,12 @@ type ZeroTrustAccessShortLivedCertificateResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessShortLivedCertificateDataSourceModel struct {
-	AccountID types.String                                                  `tfsdk:"account_id" path:"account_id"`
-	AppID     types.String                                                  `tfsdk:"app_id" path:"app_id"`
-	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
-	AUD       types.String                                                  `tfsdk:"aud" json:"aud"`
-	ID        types.String                                                  `tfsdk:"id" json:"id"`
-	PublicKey types.String                                                  `tfsdk:"public_key" json:"public_key"`
+	AccountID types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	AppID     types.String                                                  `tfsdk:"app_id" path:"app_id,optional"`
+	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
+	AUD       types.String                                                  `tfsdk:"aud" json:"aud,optional"`
+	ID        types.String                                                  `tfsdk:"id" json:"id,optional"`
+	PublicKey types.String                                                  `tfsdk:"public_key" json:"public_key,optional"`
 	Filter    *ZeroTrustAccessShortLivedCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -55,6 +55,6 @@ func (m *ZeroTrustAccessShortLivedCertificateDataSourceModel) toListParams(_ con
 }
 
 type ZeroTrustAccessShortLivedCertificateFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

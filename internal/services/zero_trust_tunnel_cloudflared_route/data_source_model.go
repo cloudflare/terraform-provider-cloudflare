@@ -22,11 +22,11 @@ type ZeroTrustTunnelCloudflaredRouteResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustTunnelCloudflaredRouteDataSourceModel struct {
-	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id"`
-	RouteID            types.String                                             `tfsdk:"route_id" path:"route_id"`
-	TunType            types.String                                             `tfsdk:"tun_type" json:"tun_type"`
-	TunnelName         types.String                                             `tfsdk:"tunnel_name" json:"tunnel_name"`
-	VirtualNetworkName types.String                                             `tfsdk:"virtual_network_name" json:"virtual_network_name"`
+	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
+	RouteID            types.String                                             `tfsdk:"route_id" path:"route_id,optional"`
+	TunType            types.String                                             `tfsdk:"tun_type" json:"tun_type,optional"`
+	TunnelName         types.String                                             `tfsdk:"tunnel_name" json:"tunnel_name,optional"`
+	VirtualNetworkName types.String                                             `tfsdk:"virtual_network_name" json:"virtual_network_name,optional"`
 	Comment            types.String                                             `tfsdk:"comment" json:"comment,computed"`
 	CreatedAt          timetypes.RFC3339                                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt          timetypes.RFC3339                                        `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -85,14 +85,14 @@ func (m *ZeroTrustTunnelCloudflaredRouteDataSourceModel) toListParams(_ context.
 }
 
 type ZeroTrustTunnelCloudflaredRouteFindOneByDataSourceModel struct {
-	AccountID        types.String      `tfsdk:"account_id" path:"account_id"`
-	Comment          types.String      `tfsdk:"comment" query:"comment"`
-	ExistedAt        timetypes.RFC3339 `tfsdk:"existed_at" query:"existed_at" format:"date-time"`
-	IsDeleted        types.Bool        `tfsdk:"is_deleted" query:"is_deleted"`
-	NetworkSubset    types.String      `tfsdk:"network_subset" query:"network_subset"`
-	NetworkSuperset  types.String      `tfsdk:"network_superset" query:"network_superset"`
-	RouteID          types.String      `tfsdk:"route_id" query:"route_id"`
-	TunTypes         types.String      `tfsdk:"tun_types" query:"tun_types"`
-	TunnelID         types.String      `tfsdk:"tunnel_id" query:"tunnel_id"`
-	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" query:"virtual_network_id"`
+	AccountID        types.String      `tfsdk:"account_id" path:"account_id,required"`
+	Comment          types.String      `tfsdk:"comment" query:"comment,optional"`
+	ExistedAt        timetypes.RFC3339 `tfsdk:"existed_at" query:"existed_at,optional" format:"date-time"`
+	IsDeleted        types.Bool        `tfsdk:"is_deleted" query:"is_deleted,optional"`
+	NetworkSubset    types.String      `tfsdk:"network_subset" query:"network_subset,optional"`
+	NetworkSuperset  types.String      `tfsdk:"network_superset" query:"network_superset,optional"`
+	RouteID          types.String      `tfsdk:"route_id" query:"route_id,optional"`
+	TunTypes         types.String      `tfsdk:"tun_types" query:"tun_types,optional"`
+	TunnelID         types.String      `tfsdk:"tunnel_id" query:"tunnel_id,optional"`
+	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" query:"virtual_network_id,optional"`
 }

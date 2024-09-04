@@ -23,8 +23,8 @@ type NotificationPolicyResultListDataSourceEnvelope struct {
 }
 
 type NotificationPolicyDataSourceModel struct {
-	AccountID     types.String                                                       `tfsdk:"account_id" path:"account_id"`
-	PolicyID      types.String                                                       `tfsdk:"policy_id" path:"policy_id"`
+	AccountID     types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	PolicyID      types.String                                                       `tfsdk:"policy_id" path:"policy_id,optional"`
 	AlertInterval types.String                                                       `tfsdk:"alert_interval" json:"alert_interval,computed"`
 	AlertType     types.String                                                       `tfsdk:"alert_type" json:"alert_type,computed"`
 	Created       timetypes.RFC3339                                                  `tfsdk:"created" json:"created,computed" format:"date-time"`
@@ -98,5 +98,5 @@ type NotificationPolicyFiltersDataSourceModel struct {
 }
 
 type NotificationPolicyFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

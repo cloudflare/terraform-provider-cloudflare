@@ -13,7 +13,7 @@ type R2BucketResultEnvelope struct {
 type R2BucketModel struct {
 	ID           types.String `tfsdk:"id" json:"-,computed"`
 	Name         types.String `tfsdk:"name" json:"name,computed_optional"`
-	AccountID    types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID    types.String `tfsdk:"account_id" path:"account_id,required"`
 	Location     types.String `tfsdk:"location" json:"locationHint,computed_optional"`
 	StorageClass types.String `tfsdk:"storage_class" json:"storageClass,computed_optional"`
 	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`

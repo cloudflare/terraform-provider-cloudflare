@@ -21,7 +21,7 @@ type ZeroTrustDeviceProfilesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceProfilesDataSourceModel struct {
-	AccountID           types.String                                                                        `tfsdk:"account_id" path:"account_id"`
+	AccountID           types.String                                                                        `tfsdk:"account_id" path:"account_id,optional"`
 	PolicyID            types.String                                                                        `tfsdk:"policy_id" path:"policy_id,computed_optional"`
 	AllowModeSwitch     types.Bool                                                                          `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed"`
 	AllowUpdates        types.Bool                                                                          `tfsdk:"allow_updates" json:"allow_updates,computed"`
@@ -95,5 +95,5 @@ type ZeroTrustDeviceProfilesTargetTestsDataSourceModel struct {
 }
 
 type ZeroTrustDeviceProfilesFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

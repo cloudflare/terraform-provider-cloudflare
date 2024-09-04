@@ -143,11 +143,11 @@ type CloudflareProvider struct {
 
 // CloudflareProviderModel describes the provider data model.
 type CloudflareProviderModel struct {
-	BaseURL        types.String `tfsdk:"base_url" json:"base_url"`
-	APIToken       types.String `tfsdk:"api_token" json:"api_token"`
-	APIKey         types.String `tfsdk:"api_key" json:"api_key"`
-	APIEmail       types.String `tfsdk:"api_email" json:"api_email"`
-	UserServiceKey types.String `tfsdk:"user_service_key" json:"user_service_key"`
+	BaseURL        types.String `tfsdk:"base_url" json:"base_url,optional"`
+	APIToken       types.String `tfsdk:"api_token" json:"api_token,optional"`
+	APIKey         types.String `tfsdk:"api_key" json:"api_key,optional"`
+	APIEmail       types.String `tfsdk:"api_email" json:"api_email,optional"`
+	UserServiceKey types.String `tfsdk:"user_service_key" json:"user_service_key,optional"`
 }
 
 func (p *CloudflareProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
