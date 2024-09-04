@@ -178,7 +178,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Type:         schema.TypeString,
 						Optional:     true,
 						ValidateFunc: validation.StringInSlice([]string{">", ">=", "<", "<=", "=="}, true),
-						Description:  fmt.Sprintf("The version comparison operator for crowdstrike. %s", renderAvailableDocumentationValuesStringSlice([]string{">", ">=", "<", "<=", "=="})),
+						Description:  fmt.Sprintf("The version comparison operator for Crowdstrike. %s", renderAvailableDocumentationValuesStringSlice([]string{">", ">=", "<", "<=", "=="})),
 					},
 					"last_seen": {
 						Type:        schema.TypeString,
@@ -287,7 +287,7 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 							},
 						},
 						Optional:    true,
-						Description: "List of locations to check for client certificate.",
+						Description: "List of operating system locations to check for a client certificate..",
 					},
 				},
 			},
