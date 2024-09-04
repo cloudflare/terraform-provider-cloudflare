@@ -183,8 +183,8 @@ func SharedV1Client() (*cfv1.API, error) {
 // sweeper functions.
 func SharedV2Client() *cfv2.Client {
 	return cfv2.NewClient(
-		option.WithAPIKey("CLOUDFLARE_API_KEY"),
-		option.WithAPIEmail("CLOUDFLARE_EMAIL"),
+		option.WithAPIKey(os.Getenv("CLOUDFLARE_API_KEY")),
+		option.WithAPIEmail(os.Getenv("CLOUDFLARE_EMAIL")),
 	)
 }
 
