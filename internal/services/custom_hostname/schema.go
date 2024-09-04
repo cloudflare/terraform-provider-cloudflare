@@ -34,7 +34,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "The custom hostname that will point to your hostname via CNAME.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"ssl": schema.SingleNestedAttribute{
@@ -158,15 +159,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"custom_origin_server": schema.StringAttribute{
 				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"custom_origin_sni": schema.StringAttribute{
 				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"custom_metadata": schema.SingleNestedAttribute{
 				Description: "These are per-hostname (customer) settings.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameCustomMetadataModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"key": schema.StringAttribute{
 						Description: "Unique metadata for this hostname.",
@@ -218,12 +223,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"name": schema.StringAttribute{
 						Description: "DNS Name for record.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"type": schema.StringAttribute{
 						Description: "DNS Record type.",
 						Computed:    true,
-						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("txt"),
 						},
@@ -231,7 +234,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"value": schema.StringAttribute{
 						Description: "Content for the record.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},
@@ -243,12 +245,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"http_body": schema.StringAttribute{
 						Description: "Token to be served.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"http_url": schema.StringAttribute{
 						Description: "The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

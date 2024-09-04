@@ -28,26 +28,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"asn": schema.Int64Attribute{
 				Description:   "Autonomous System Number (ASN) the prefix will be advertised under.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"cidr": schema.StringAttribute{
 				Description:   "IP Prefix in Classless Inter-Domain Routing format.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"loa_document_id": schema.StringAttribute{
 				Description:   "Identifier for the uploaded LOA document.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of the prefix.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"advertised": schema.BoolAttribute{
@@ -89,13 +94,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -106,13 +111,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -124,22 +129,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"count": schema.Float64Attribute{
 						Description: "Total number of results for the requested service",
 						Computed:    true,
-						Optional:    true,
 					},
 					"page": schema.Float64Attribute{
 						Description: "Current page within paginated list of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"per_page": schema.Float64Attribute{
 						Description: "Number of results per page of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"total_count": schema.Float64Attribute{
 						Description: "Total results available without any search parameters",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

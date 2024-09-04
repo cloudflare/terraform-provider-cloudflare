@@ -14,8 +14,8 @@ type AuthenticatedOriginPullsCertificateResultEnvelope struct {
 type AuthenticatedOriginPullsCertificateModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
 	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id"`
-	Certificate types.String      `tfsdk:"certificate" json:"certificate"`
 	PrivateKey  types.String      `tfsdk:"private_key" json:"private_key"`
+	Certificate types.String      `tfsdk:"certificate" json:"certificate,computed_optional"`
 	ExpiresOn   timetypes.RFC3339 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	Issuer      types.String      `tfsdk:"issuer" json:"issuer,computed"`
 	Signature   types.String      `tfsdk:"signature" json:"signature,computed"`

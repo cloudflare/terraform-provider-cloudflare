@@ -5,6 +5,7 @@ package account
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -49,11 +50,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "Account name",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[AccountSettingsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"abuse_contact_email": schema.StringAttribute{
 						Description: "Sets an abuse contact email to notify for abuse reports.",

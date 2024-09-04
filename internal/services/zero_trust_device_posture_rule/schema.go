@@ -30,13 +30,30 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"description": schema.StringAttribute{
+				Description: "The description of the device posture rule.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"expiration": schema.StringAttribute{
+				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
+				Computed:    true,
+				Optional:    true,
+			},
 			"name": schema.StringAttribute{
 				Description: "The name of the device posture rule.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+			},
+			"schedule": schema.StringAttribute{
+				Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of device posture rule.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"file",
@@ -62,24 +79,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"description": schema.StringAttribute{
-				Description: "The description of the device posture rule.",
-				Optional:    true,
-			},
-			"expiration": schema.StringAttribute{
-				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
-				Optional:    true,
-			},
-			"schedule": schema.StringAttribute{
-				Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
-				Optional:    true,
-			},
 			"input": schema.SingleNestedAttribute{
 				Description: "The value to be checked against.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDevicePostureRuleInputModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"operating_system": schema.StringAttribute{
 						Description: "Operating system",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -94,30 +102,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"path": schema.StringAttribute{
 						Description: "File path.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"exists": schema.BoolAttribute{
 						Description: "Whether or not file exists",
+						Computed:    true,
 						Optional:    true,
 					},
 					"sha256": schema.StringAttribute{
 						Description: "SHA-256.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"thumbprint": schema.StringAttribute{
 						Description: "Signing certificate thumbprint.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"id": schema.StringAttribute{
 						Description: "List ID.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"domain": schema.StringAttribute{
 						Description: "Domain",
+						Computed:    true,
 						Optional:    true,
 					},
 					"operator": schema.StringAttribute{
 						Description: "operator",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -131,57 +146,72 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"version": schema.StringAttribute{
 						Description: "Version of OS",
+						Computed:    true,
 						Optional:    true,
 					},
 					"os_distro_name": schema.StringAttribute{
 						Description: "Operating System Distribution Name (linux only)",
+						Computed:    true,
 						Optional:    true,
 					},
 					"os_distro_revision": schema.StringAttribute{
 						Description: "Version of OS Distribution (linux only)",
+						Computed:    true,
 						Optional:    true,
 					},
 					"os_version_extra": schema.StringAttribute{
 						Description: "Additional version data. For Mac or iOS, the Product Verison Extra. For Linux, the kernel release version. (Mac, iOS, and Linux only)",
+						Computed:    true,
 						Optional:    true,
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Enabled",
+						Computed:    true,
 						Optional:    true,
 					},
 					"check_disks": schema.ListAttribute{
 						Description: "List of volume names to be checked for encryption.",
+						Computed:    true,
 						Optional:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"require_all": schema.BoolAttribute{
 						Description: "Whether to check all disks for encryption.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"certificate_id": schema.StringAttribute{
 						Description: "UUID of Cloudflare managed certificate.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"cn": schema.StringAttribute{
 						Description: "Common Name that is protected by the certificate",
+						Computed:    true,
 						Optional:    true,
 					},
 					"check_private_key": schema.BoolAttribute{
 						Description: "Confirm the certificate was not imported from another device. We recommend keeping this enabled unless the certificate was deployed without a private key.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"extended_key_usage": schema.ListAttribute{
 						Description: "List of values indicating purposes for which the certificate public key can be used",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(
 								stringvalidator.OneOfCaseInsensitive("clientAuth", "emailProtection"),
 							),
 						},
+						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"locations": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustDevicePostureRuleInputLocationsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"paths": schema.ListAttribute{
 								Description: "List of paths to check for client certificate on linux.",
@@ -206,6 +236,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"compliance_status": schema.StringAttribute{
 						Description: "Compliance Status",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -220,26 +251,32 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"connection_id": schema.StringAttribute{
 						Description: "Posture Integration ID.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"last_seen": schema.StringAttribute{
 						Description: "For more details on last seen, please refer to the Crowdstrike documentation.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"os": schema.StringAttribute{
 						Description: "Os Version",
+						Computed:    true,
 						Optional:    true,
 					},
 					"overall": schema.StringAttribute{
 						Description: "overall",
+						Computed:    true,
 						Optional:    true,
 					},
 					"sensor_config": schema.StringAttribute{
 						Description: "SensorConfig",
+						Computed:    true,
 						Optional:    true,
 					},
 					"state": schema.StringAttribute{
 						Description: "For more details on state, please refer to the Crowdstrike documentation.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -251,6 +288,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"version_operator": schema.StringAttribute{
 						Description: "Version Operator",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -264,6 +302,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"count_operator": schema.StringAttribute{
 						Description: "Count Operator",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -277,14 +316,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"issue_count": schema.StringAttribute{
 						Description: "The Number of Issues.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"eid_last_seen": schema.StringAttribute{
 						Description: "For more details on eid last seen, refer to the Tanium documentation.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"risk_level": schema.StringAttribute{
 						Description: "For more details on risk level, refer to the Tanium documentation.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -297,6 +339,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"score_operator": schema.StringAttribute{
 						Description: "Score Operator",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -310,22 +353,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"total_score": schema.Float64Attribute{
 						Description: "For more details on total score, refer to the Tanium documentation.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"active_threats": schema.Float64Attribute{
 						Description: "The Number of active threats.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"infected": schema.BoolAttribute{
 						Description: "Whether device is infected.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"is_active": schema.BoolAttribute{
 						Description: "Whether device is active.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"network_status": schema.StringAttribute{
 						Description: "Network status of device.",
+						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -340,7 +388,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"match": schema.ListNestedAttribute{
 				Description: "The conditions that the client must match to run the rule.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDevicePostureRuleMatchModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"platform": schema.StringAttribute{

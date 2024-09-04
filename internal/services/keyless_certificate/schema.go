@@ -52,37 +52,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Default:       stringdefault.StaticString("ubiquitous"),
 			},
-			"host": schema.StringAttribute{
-				Description: "The keyless SSL name.",
-				Required:    true,
-			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether or not the Keyless SSL is on or off.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"host": schema.StringAttribute{
+				Description: "The keyless SSL name.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",
+				Computed:    true,
 				Optional:    true,
-			},
-			"tunnel": schema.SingleNestedAttribute{
-				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
-				Optional:    true,
-				Attributes: map[string]schema.Attribute{
-					"private_ip": schema.StringAttribute{
-						Description: "Private IP of the Key Server Host",
-						Required:    true,
-					},
-					"vnet_id": schema.StringAttribute{
-						Description: "Cloudflare Tunnel Virtual Network ID",
-						Required:    true,
-					},
-				},
 			},
 			"port": schema.Float64Attribute{
 				Description: "The keyless SSL port used to communicate between Cloudflare and the client's Keyless SSL server.",
 				Computed:    true,
 				Optional:    true,
 				Default:     float64default.StaticFloat64(24008),
+			},
+			"tunnel": schema.SingleNestedAttribute{
+				Description: "Configuration for using Keyless SSL through a Cloudflare Tunnel",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[KeylessCertificateTunnelModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"private_ip": schema.StringAttribute{
+						Description: "Private IP of the Key Server Host",
+						Computed:    true,
+						Optional:    true,
+					},
+					"vnet_id": schema.StringAttribute{
+						Description: "Cloudflare Tunnel Virtual Network ID",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the Keyless SSL was created.",

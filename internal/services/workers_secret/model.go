@@ -15,7 +15,7 @@ type WorkersSecretModel struct {
 	ScriptName        types.String `tfsdk:"script_name" path:"script_name"`
 	AccountID         types.String `tfsdk:"account_id" path:"account_id"`
 	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
-	Name              types.String `tfsdk:"name" json:"name"`
 	Text              types.String `tfsdk:"text" json:"text"`
-	Type              types.String `tfsdk:"type" json:"type"`
+	Name              types.String `tfsdk:"name" json:"name,computed_optional"`
+	Type              types.String `tfsdk:"type" json:"type,computed_optional"`
 }

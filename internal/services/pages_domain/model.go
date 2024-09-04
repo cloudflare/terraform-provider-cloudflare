@@ -15,7 +15,7 @@ type PagesDomainModel struct {
 	ID                   types.String                                               `tfsdk:"id" json:"id,computed"`
 	AccountID            types.String                                               `tfsdk:"account_id" path:"account_id"`
 	ProjectName          types.String                                               `tfsdk:"project_name" path:"project_name"`
-	Name                 types.String                                               `tfsdk:"name" json:"name"`
+	Name                 types.String                                               `tfsdk:"name" json:"name,computed_optional"`
 	CertificateAuthority types.String                                               `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CreatedOn            types.String                                               `tfsdk:"created_on" json:"created_on,computed"`
 	DomainID             types.String                                               `tfsdk:"domain_id" json:"domain_id,computed"`
@@ -26,14 +26,14 @@ type PagesDomainModel struct {
 }
 
 type PagesDomainValidationDataModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed_optional"`
-	Method       types.String `tfsdk:"method" json:"method,computed_optional"`
-	Status       types.String `tfsdk:"status" json:"status,computed_optional"`
-	TXTName      types.String `tfsdk:"txt_name" json:"txt_name,computed_optional"`
-	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value,computed_optional"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
+	Method       types.String `tfsdk:"method" json:"method,computed"`
+	Status       types.String `tfsdk:"status" json:"status,computed"`
+	TXTName      types.String `tfsdk:"txt_name" json:"txt_name,computed"`
+	TXTValue     types.String `tfsdk:"txt_value" json:"txt_value,computed"`
 }
 
 type PagesDomainVerificationDataModel struct {
-	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed_optional"`
-	Status       types.String `tfsdk:"status" json:"status,computed_optional"`
+	ErrorMessage types.String `tfsdk:"error_message" json:"error_message,computed"`
+	Status       types.String `tfsdk:"status" json:"status,computed"`
 }

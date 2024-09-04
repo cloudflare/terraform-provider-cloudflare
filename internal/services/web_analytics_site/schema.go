@@ -33,16 +33,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"auto_install": schema.BoolAttribute{
-				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
-				Optional:    true,
-			},
 			"host": schema.StringAttribute{
 				Description: "The hostname to use for gray-clouded sites.",
 				Optional:    true,
 			},
 			"zone_tag": schema.StringAttribute{
 				Description: "The zone identifier.",
+				Optional:    true,
+			},
+			"auto_install": schema.BoolAttribute{
+				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{
@@ -66,7 +67,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "The Web Analytics rule identifier.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"created": schema.StringAttribute{
 							Computed:   true,
@@ -75,28 +75,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"host": schema.StringAttribute{
 							Description: "The hostname the rule will be applied to.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"inclusive": schema.BoolAttribute{
 							Description: "Whether the rule includes or excludes traffic from being measured.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"is_paused": schema.BoolAttribute{
 							Description: "Whether the rule is paused or not.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"paths": schema.ListAttribute{
 							Description: "The paths the rule will be applied to.",
 							Computed:    true,
-							Optional:    true,
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 						"priority": schema.Float64Attribute{
 							Computed: true,
-							Optional: true,
 						},
 					},
 				},
@@ -108,21 +103,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"id": schema.StringAttribute{
 						Description: "The Web Analytics ruleset identifier.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether the ruleset is enabled.",
 						Computed:    true,
-						Optional:    true,
 					},
 					"zone_name": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 					"zone_tag": schema.StringAttribute{
 						Description: "The zone identifier.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

@@ -26,7 +26,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"uid": schema.StringAttribute{
 				Description:   "UUID",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
@@ -34,24 +35,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"app_count": schema.Int64Attribute{
+				Description: "Number of apps the custom page is assigned to.",
+				Computed:    true,
+				Optional:    true,
+			},
 			"custom_html": schema.StringAttribute{
 				Description: "Custom page HTML.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Custom page name.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "Custom page type.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("identity_denied", "forbidden"),
 				},
-			},
-			"app_count": schema.Int64Attribute{
-				Description: "Number of apps the custom page is assigned to.",
-				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,

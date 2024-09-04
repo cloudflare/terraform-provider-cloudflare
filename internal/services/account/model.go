@@ -3,6 +3,7 @@
 package account
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -12,12 +13,12 @@ type AccountResultEnvelope struct {
 }
 
 type AccountModel struct {
-	ID        types.String          `tfsdk:"id" json:"id,computed"`
-	Type      types.String          `tfsdk:"type" json:"type"`
-	Unit      *AccountUnitModel     `tfsdk:"unit" json:"unit"`
-	Name      types.String          `tfsdk:"name" json:"name"`
-	Settings  *AccountSettingsModel `tfsdk:"settings" json:"settings"`
-	CreatedOn timetypes.RFC3339     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ID        types.String                                   `tfsdk:"id" json:"id,computed"`
+	Type      types.String                                   `tfsdk:"type" json:"type"`
+	Unit      *AccountUnitModel                              `tfsdk:"unit" json:"unit"`
+	Name      types.String                                   `tfsdk:"name" json:"name,computed_optional"`
+	Settings  customfield.NestedObject[AccountSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
+	CreatedOn timetypes.RFC3339                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 }
 
 type AccountUnitModel struct {

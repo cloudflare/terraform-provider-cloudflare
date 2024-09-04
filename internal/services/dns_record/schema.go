@@ -376,7 +376,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"auto_added": schema.BoolAttribute{
 						Description: "Will exist if Cloudflare automatically added this DNS record during initial setup.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},
