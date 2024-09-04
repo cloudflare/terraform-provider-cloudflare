@@ -33,8 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"on",
@@ -55,6 +54,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"name": schema.StringAttribute{
+				Description: "The name of the rule.",
+				Required:    true,
+			},
 			"description": schema.StringAttribute{
 				Description: "The description of the rule.",
 				Computed:    true,
@@ -72,11 +75,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"identity": schema.StringAttribute{
 				Description: "The wirefilter expression used for identity matching.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the rule.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -218,8 +216,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"ip": schema.StringAttribute{
 											Description: "IPv4 address of upstream resolver.",
-											Computed:    true,
-											Optional:    true,
+											Required:    true,
 										},
 										"port": schema.Int64Attribute{
 											Description: "A port number to use for upstream resolver. Defaults to 53 if unspecified.",
@@ -247,8 +244,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"ip": schema.StringAttribute{
 											Description: "IPv6 address of upstream resolver.",
-											Computed:    true,
-											Optional:    true,
+											Required:    true,
 										},
 										"port": schema.Int64Attribute{
 											Description: "A port number to use for upstream resolver. Defaults to 53 if unspecified.",

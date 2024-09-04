@@ -16,6 +16,9 @@ type ZeroTrustDeviceProfilesModel struct {
 	PolicyID            types.String                                                              `tfsdk:"policy_id" path:"policy_id,computed_optional"`
 	LANAllowMinutes     types.Float64                                                             `tfsdk:"lan_allow_minutes" json:"lan_allow_minutes,computed_optional"`
 	LANAllowSubnetSize  types.Float64                                                             `tfsdk:"lan_allow_subnet_size" json:"lan_allow_subnet_size,computed_optional"`
+	Match               types.String                                                              `tfsdk:"match" json:"match,required"`
+	Name                types.String                                                              `tfsdk:"name" json:"name,required"`
+	Precedence          types.Float64                                                             `tfsdk:"precedence" json:"precedence,required"`
 	AllowModeSwitch     types.Bool                                                                `tfsdk:"allow_mode_switch" json:"allow_mode_switch,computed_optional"`
 	AllowUpdates        types.Bool                                                                `tfsdk:"allow_updates" json:"allow_updates,computed_optional"`
 	AllowedToLeave      types.Bool                                                                `tfsdk:"allowed_to_leave" json:"allowed_to_leave,computed_optional"`
@@ -25,9 +28,6 @@ type ZeroTrustDeviceProfilesModel struct {
 	DisableAutoFallback types.Bool                                                                `tfsdk:"disable_auto_fallback" json:"disable_auto_fallback,computed_optional"`
 	Enabled             types.Bool                                                                `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ExcludeOfficeIPs    types.Bool                                                                `tfsdk:"exclude_office_ips" json:"exclude_office_ips,computed_optional"`
-	Match               types.String                                                              `tfsdk:"match" json:"match,computed_optional"`
-	Name                types.String                                                              `tfsdk:"name" json:"name,computed_optional"`
-	Precedence          types.Float64                                                             `tfsdk:"precedence" json:"precedence,computed_optional"`
 	SupportURL          types.String                                                              `tfsdk:"support_url" json:"support_url,computed_optional"`
 	SwitchLocked        types.Bool                                                                `tfsdk:"switch_locked" json:"switch_locked,computed_optional"`
 	TunnelProtocol      types.String                                                              `tfsdk:"tunnel_protocol" json:"tunnel_protocol,computed_optional"`

@@ -14,10 +14,10 @@ type ByoIPPrefixResultEnvelope struct {
 
 type ByoIPPrefixModel struct {
 	ID                   types.String                                           `tfsdk:"id" json:"id,computed"`
-	AccountID            types.String                                           `tfsdk:"account_id" path:"account_id,computed_optional"`
-	ASN                  types.Int64                                            `tfsdk:"asn" json:"asn,computed_optional"`
-	CIDR                 types.String                                           `tfsdk:"cidr" json:"cidr,computed_optional"`
-	LOADocumentID        types.String                                           `tfsdk:"loa_document_id" json:"loa_document_id,computed_optional"`
+	AccountID            types.String                                           `tfsdk:"account_id" path:"account_id,required"`
+	ASN                  types.Int64                                            `tfsdk:"asn" json:"asn,required"`
+	CIDR                 types.String                                           `tfsdk:"cidr" json:"cidr,required"`
+	LOADocumentID        types.String                                           `tfsdk:"loa_document_id" json:"loa_document_id,required"`
 	Description          types.String                                           `tfsdk:"description" json:"description,computed_optional"`
 	Advertised           types.Bool                                             `tfsdk:"advertised" json:"advertised,computed"`
 	AdvertisedModifiedAt timetypes.RFC3339                                      `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`

@@ -26,16 +26,80 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
+			"name": schema.StringAttribute{
+				Description: "Token name.",
+				Required:    true,
+			},
+			"policies": schema.ListNestedAttribute{
+				Description: "List of access policies assigned to the token.",
+				Required:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Description: "Policy identifier.",
+							Computed:    true,
+						},
+						"effect": schema.StringAttribute{
+							Description: "Allow or deny operations against the resources.",
+							Required:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
+							},
+						},
+						"permission_groups": schema.ListNestedAttribute{
+							Description: "A set of permission groups that are specified to the policy.",
+							Required:    true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"id": schema.StringAttribute{
+										Description: "Identifier of the group.",
+										Computed:    true,
+									},
+									"meta": schema.SingleNestedAttribute{
+										Description: "Attributes associated to the permission group.",
+										Computed:    true,
+										Optional:    true,
+										CustomType:  customfield.NewNestedObjectType[APITokenPoliciesPermissionGroupsMetaModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"key": schema.StringAttribute{
+												Computed: true,
+												Optional: true,
+											},
+											"value": schema.StringAttribute{
+												Computed: true,
+												Optional: true,
+											},
+										},
+									},
+									"name": schema.StringAttribute{
+										Description: "Name of the group.",
+										Computed:    true,
+									},
+								},
+							},
+						},
+						"resources": schema.SingleNestedAttribute{
+							Description: "A list of resource names that the policy applies to.",
+							Required:    true,
+							Attributes: map[string]schema.Attribute{
+								"resource": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+								},
+								"scope": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
 			"expires_on": schema.StringAttribute{
 				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"name": schema.StringAttribute{
-				Description: "Token name.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"not_before": schema.StringAttribute{
 				Description: "The time before which the token MUST NOT be accepted for processing.",
@@ -79,78 +143,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
-							},
-						},
-					},
-				},
-			},
-			"policies": schema.ListNestedAttribute{
-				Description: "List of access policies assigned to the token.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[APITokenPoliciesModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Description: "Policy identifier.",
-							Computed:    true,
-						},
-						"effect": schema.StringAttribute{
-							Description: "Allow or deny operations against the resources.",
-							Computed:    true,
-							Optional:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("allow", "deny"),
-							},
-						},
-						"permission_groups": schema.ListNestedAttribute{
-							Description: "A set of permission groups that are specified to the policy.",
-							Computed:    true,
-							Optional:    true,
-							CustomType:  customfield.NewNestedObjectListType[APITokenPoliciesPermissionGroupsModel](ctx),
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"id": schema.StringAttribute{
-										Description: "Identifier of the group.",
-										Computed:    true,
-									},
-									"meta": schema.SingleNestedAttribute{
-										Description: "Attributes associated to the permission group.",
-										Computed:    true,
-										Optional:    true,
-										CustomType:  customfield.NewNestedObjectType[APITokenPoliciesPermissionGroupsMetaModel](ctx),
-										Attributes: map[string]schema.Attribute{
-											"key": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-											"value": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
-											},
-										},
-									},
-									"name": schema.StringAttribute{
-										Description: "Name of the group.",
-										Computed:    true,
-									},
-								},
-							},
-						},
-						"resources": schema.SingleNestedAttribute{
-							Description: "A list of resource names that the policy applies to.",
-							Computed:    true,
-							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[APITokenPoliciesResourcesModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"resource": schema.StringAttribute{
-									Computed: true,
-									Optional: true,
-								},
-								"scope": schema.StringAttribute{
-									Computed: true,
-									Optional: true,
-								},
 							},
 						},
 					},

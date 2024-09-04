@@ -37,8 +37,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"address": schema.StringAttribute{
 				Description: "The hostname or IP address of the origin server to run health checks on.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
+				Required:    true,
 			},
 			"consecutive_fails": schema.Int64Attribute{
 				Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
@@ -62,11 +65,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(60),
-			},
-			"name": schema.StringAttribute{
-				Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"retries": schema.Int64Attribute{
 				Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",

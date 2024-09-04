@@ -28,8 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"title": schema.StringAttribute{
 				Description: "A human-readable string name for a Namespace.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"supports_url_encoding": schema.BoolAttribute{
 				Description: "True if keys written on the URL will be URL-decoded before storing. For example, if set to \"true\", a key written on the URL as \"%3F\" will be stored as \"?\".",

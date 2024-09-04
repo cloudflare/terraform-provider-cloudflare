@@ -29,8 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"expression": schema.StringAttribute{
 				Description:   "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{

@@ -35,6 +35,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"fallback_pool": schema.StringAttribute{
+				Description: "The pool ID to use when all other pools are detected as unhealthy.",
+				Required:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The DNS hostname to associate with your Load Balancer. If this hostname already exists as a DNS record in Cloudflare's DNS, the Load Balancer will take precedence and the DNS record will not be used.",
+				Required:    true,
+			},
+			"default_pools": schema.ListAttribute{
+				Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
+				Required:    true,
+				ElementType: types.StringType,
+			},
 			"description": schema.StringAttribute{
 				Description: "Object description.",
 				Computed:    true,
@@ -45,16 +58,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(true),
-			},
-			"fallback_pool": schema.StringAttribute{
-				Description: "The pool ID to use when all other pools are detected as unhealthy.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The DNS hostname to associate with your Load Balancer. If this hostname already exists as a DNS record in Cloudflare's DNS, the Load Balancer will take precedence and the DNS record will not be used.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"proxied": schema.BoolAttribute{
 				Description: "Whether the hostname should be gray clouded (false) or orange clouded (true).",
@@ -113,13 +116,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
-			},
-			"default_pools": schema.ListAttribute{
-				Description: "A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 			"networks": schema.ListAttribute{
 				Description: "List of networks where Load Balancer or Pool is enabled.",

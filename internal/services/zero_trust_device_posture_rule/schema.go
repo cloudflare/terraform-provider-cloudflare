@@ -30,30 +30,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"description": schema.StringAttribute{
-				Description: "The description of the device posture rule.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"expiration": schema.StringAttribute{
-				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"name": schema.StringAttribute{
 				Description: "The name of the device posture rule.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"schedule": schema.StringAttribute{
-				Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of device posture rule.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"file",
@@ -78,6 +61,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"sentinelone_s2s",
 					),
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the device posture rule.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"expiration": schema.StringAttribute{
+				Description: "Sets the expiration time for a posture check result. If empty, the result remains valid until it is overwritten by new data from the WARP client.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"schedule": schema.StringAttribute{
+				Description: "Polling frequency for the WARP client posture check. Default: `5m` (poll every five minutes). Minimum: `1m`.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"input": schema.SingleNestedAttribute{
 				Description: "The value to be checked against.",

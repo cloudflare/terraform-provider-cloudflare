@@ -24,38 +24,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description:   "The name of the DEX test. Must be unique.",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"description": schema.StringAttribute{
-				Description: "Additional details about the test.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"enabled": schema.BoolAttribute{
 				Description: "Determines whether or not the test is active.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"interval": schema.StringAttribute{
 				Description: "How often the test will run.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"targeted": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
+				Required:    true,
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "The configuration object which contains the details for the WARP client to conduct the test.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDEXTestDataModel](ctx),
+				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
@@ -73,6 +59,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "Additional details about the test.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"targeted": schema.BoolAttribute{
+				Computed: true,
+				Optional: true,
 			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "Device settings profiles targeted by this test",

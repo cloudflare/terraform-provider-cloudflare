@@ -14,8 +14,8 @@ type ZoneResultEnvelope struct {
 
 type ZoneModel struct {
 	ID                  types.String                             `tfsdk:"id" json:"id,computed"`
+	Name                types.String                             `tfsdk:"name" json:"name,required"`
 	Account             *ZoneAccountModel                        `tfsdk:"account" json:"account,required"`
-	Name                types.String                             `tfsdk:"name" json:"name,computed_optional"`
 	Type                types.String                             `tfsdk:"type" json:"type,computed_optional"`
 	VanityNameServers   customfield.List[types.String]           `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed_optional"`
 	ActivatedOn         timetypes.RFC3339                        `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`

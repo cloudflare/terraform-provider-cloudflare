@@ -15,10 +15,10 @@ type ZeroTrustDNSLocationResultEnvelope struct {
 type ZeroTrustDNSLocationModel struct {
 	ID                    types.String                                                    `tfsdk:"id" json:"id,computed"`
 	AccountID             types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	Name                  types.String                                                    `tfsdk:"name" json:"name,required"`
 	ClientDefault         types.Bool                                                      `tfsdk:"client_default" json:"client_default,computed_optional"`
 	DNSDestinationIPsID   types.String                                                    `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed_optional"`
 	ECSSupport            types.Bool                                                      `tfsdk:"ecs_support" json:"ecs_support,computed_optional"`
-	Name                  types.String                                                    `tfsdk:"name" json:"name,computed_optional"`
 	Endpoints             customfield.NestedObject[ZeroTrustDNSLocationEndpointsModel]    `tfsdk:"endpoints" json:"endpoints,computed_optional"`
 	Networks              customfield.NestedObjectList[ZeroTrustDNSLocationNetworksModel] `tfsdk:"networks" json:"networks,computed_optional"`
 	CreatedAt             timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -43,7 +43,7 @@ type ZeroTrustDNSLocationEndpointsDOHModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsDOHNetworksModel struct {
-	Network types.String `tfsdk:"network" json:"network,computed_optional"`
+	Network types.String `tfsdk:"network" json:"network,required"`
 }
 
 type ZeroTrustDNSLocationEndpointsDOTModel struct {
@@ -52,7 +52,7 @@ type ZeroTrustDNSLocationEndpointsDOTModel struct {
 }
 
 type ZeroTrustDNSLocationEndpointsDOTNetworksModel struct {
-	Network types.String `tfsdk:"network" json:"network,computed_optional"`
+	Network types.String `tfsdk:"network" json:"network,required"`
 }
 
 type ZeroTrustDNSLocationEndpointsIPV4Model struct {
@@ -65,9 +65,9 @@ type ZeroTrustDNSLocationEndpointsIPV6Model struct {
 }
 
 type ZeroTrustDNSLocationEndpointsIPV6NetworksModel struct {
-	Network types.String `tfsdk:"network" json:"network,computed_optional"`
+	Network types.String `tfsdk:"network" json:"network,required"`
 }
 
 type ZeroTrustDNSLocationNetworksModel struct {
-	Network types.String `tfsdk:"network" json:"network,computed_optional"`
+	Network types.String `tfsdk:"network" json:"network,required"`
 }

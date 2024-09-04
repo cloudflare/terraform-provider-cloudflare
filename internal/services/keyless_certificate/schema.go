@@ -52,13 +52,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Default:       stringdefault.StaticString("ubiquitous"),
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Whether or not the Keyless SSL is on or off.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"host": schema.StringAttribute{
 				Description: "The keyless SSL name.",
+				Required:    true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether or not the Keyless SSL is on or off.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -81,13 +80,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"private_ip": schema.StringAttribute{
 						Description: "Private IP of the Key Server Host",
-						Computed:    true,
-						Optional:    true,
+						Required:    true,
 					},
 					"vnet_id": schema.StringAttribute{
 						Description: "Cloudflare Tunnel Virtual Network ID",
-						Computed:    true,
-						Optional:    true,
+						Required:    true,
 					},
 				},
 			},

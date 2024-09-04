@@ -27,18 +27,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"comment": schema.StringAttribute{
-				Description: "Optional remark describing the route.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"network": schema.StringAttribute{
 				Description: "The private IPv4 or IPv6 range connected by the route, in CIDR notation.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"tunnel_id": schema.StringAttribute{
 				Description: "UUID of the tunnel.",
+				Required:    true,
+			},
+			"comment": schema.StringAttribute{
+				Description: "Optional remark describing the route.",
 				Computed:    true,
 				Optional:    true,
 			},

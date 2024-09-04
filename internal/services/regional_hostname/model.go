@@ -14,9 +14,9 @@ type RegionalHostnameResultEnvelope struct {
 
 type RegionalHostnameModel struct {
 	ID        types.String                                                `tfsdk:"id" json:"-,computed"`
-	Hostname  types.String                                                `tfsdk:"hostname" json:"hostname,computed_optional"`
+	Hostname  types.String                                                `tfsdk:"hostname" json:"hostname,required"`
 	ZoneID    types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
-	RegionKey types.String                                                `tfsdk:"region_key" json:"region_key,computed_optional"`
+	RegionKey types.String                                                `tfsdk:"region_key" json:"region_key,required"`
 	CreatedOn timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Success   types.Bool                                                  `tfsdk:"success" json:"success,computed"`
 	Errors    customfield.NestedObjectList[RegionalHostnameErrorsModel]   `tfsdk:"errors" json:"errors,computed"`

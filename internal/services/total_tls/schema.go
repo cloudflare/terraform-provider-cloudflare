@@ -29,6 +29,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
+			"enabled": schema.BoolAttribute{
+				Description: "If enabled, Total TLS will order a hostname specific TLS certificate for any proxied A, AAAA, or CNAME record in your zone.",
+				Required:    true,
+			},
 			"certificate_authority": schema.StringAttribute{
 				Description: "The Certificate Authority that Total TLS certificates will be issued through.",
 				Computed:    true,
@@ -40,11 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"ssl_com",
 					),
 				},
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "If enabled, Total TLS will order a hostname specific TLS certificate for any proxied A, AAAA, or CNAME record in your zone.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"validity_period": schema.Int64Attribute{
 				Description: "The validity period in days for the certificates ordered via Total TLS.",
