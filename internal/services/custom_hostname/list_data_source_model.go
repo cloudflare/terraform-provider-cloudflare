@@ -18,11 +18,11 @@ type CustomHostnamesResultListDataSourceEnvelope struct {
 }
 
 type CustomHostnamesDataSourceModel struct {
-	ZoneID    types.String                                                       `tfsdk:"zone_id" path:"zone_id"`
-	Direction types.String                                                       `tfsdk:"direction" query:"direction"`
-	Hostname  types.String                                                       `tfsdk:"hostname" query:"hostname"`
-	ID        types.String                                                       `tfsdk:"id" query:"id"`
-	SSL       types.Float64                                                      `tfsdk:"ssl" query:"ssl"`
+	ZoneID    types.String                                                       `tfsdk:"zone_id" path:"zone_id,required"`
+	Direction types.String                                                       `tfsdk:"direction" query:"direction,optional"`
+	Hostname  types.String                                                       `tfsdk:"hostname" query:"hostname,optional"`
+	ID        types.String                                                       `tfsdk:"id" query:"id,optional"`
+	SSL       types.Float64                                                      `tfsdk:"ssl" query:"ssl,optional"`
 	Order     types.String                                                       `tfsdk:"order" query:"order,computed_optional"`
 	MaxItems  types.Int64                                                        `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[CustomHostnamesResultDataSourceModel] `tfsdk:"result"`

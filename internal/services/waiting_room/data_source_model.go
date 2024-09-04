@@ -22,8 +22,8 @@ type WaitingRoomResultListDataSourceEnvelope struct {
 }
 
 type WaitingRoomDataSourceModel struct {
-	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id"`
-	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id"`
+	WaitingRoomID              types.String                                                             `tfsdk:"waiting_room_id" path:"waiting_room_id,optional"`
+	ZoneID                     types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	CookieSuffix               types.String                                                             `tfsdk:"cookie_suffix" json:"cookie_suffix,computed"`
 	CreatedOn                  timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	CustomPageHTML             types.String                                                             `tfsdk:"custom_page_html" json:"custom_page_html,computed"`
@@ -78,5 +78,5 @@ type WaitingRoomCookieAttributesDataSourceModel struct {
 }
 
 type WaitingRoomFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

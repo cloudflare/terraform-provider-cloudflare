@@ -22,8 +22,8 @@ type WorkersForPlatformsDispatchNamespaceResultListDataSourceEnvelope struct {
 }
 
 type WorkersForPlatformsDispatchNamespaceDataSourceModel struct {
-	AccountID         types.String                                                  `tfsdk:"account_id" path:"account_id"`
-	DispatchNamespace types.String                                                  `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
+	AccountID         types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
+	DispatchNamespace types.String                                                  `tfsdk:"dispatch_namespace" path:"dispatch_namespace,optional"`
 	CreatedBy         types.String                                                  `tfsdk:"created_by" json:"created_by,computed"`
 	CreatedOn         timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedBy        types.String                                                  `tfsdk:"modified_by" json:"modified_by,computed"`
@@ -51,5 +51,5 @@ func (m *WorkersForPlatformsDispatchNamespaceDataSourceModel) toListParams(_ con
 }
 
 type WorkersForPlatformsDispatchNamespaceFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

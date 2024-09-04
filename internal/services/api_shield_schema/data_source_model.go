@@ -22,9 +22,9 @@ type APIShieldSchemaResultListDataSourceEnvelope struct {
 }
 
 type APIShieldSchemaDataSourceModel struct {
-	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	SchemaID          types.String                             `tfsdk:"schema_id" path:"schema_id,computed_optional"`
-	OmitSource        types.Bool                               `tfsdk:"omit_source" query:"omit_source"`
+	OmitSource        types.Bool                               `tfsdk:"omit_source" query:"omit_source,optional"`
 	CreatedAt         timetypes.RFC3339                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Kind              types.String                             `tfsdk:"kind" json:"kind,computed"`
 	Name              types.String                             `tfsdk:"name" json:"name,computed"`
@@ -57,7 +57,7 @@ func (m *APIShieldSchemaDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type APIShieldSchemaFindOneByDataSourceModel struct {
-	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	OmitSource        types.Bool   `tfsdk:"omit_source" query:"omit_source,computed_optional"`
-	ValidationEnabled types.Bool   `tfsdk:"validation_enabled" query:"validation_enabled"`
+	ValidationEnabled types.Bool   `tfsdk:"validation_enabled" query:"validation_enabled,optional"`
 }

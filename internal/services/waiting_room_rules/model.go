@@ -11,11 +11,11 @@ type WaitingRoomRulesResultEnvelope struct {
 }
 
 type WaitingRoomRulesModel struct {
-	WaitingRoomID types.String `tfsdk:"waiting_room_id" path:"waiting_room_id"`
-	ZoneID        types.String `tfsdk:"zone_id" path:"zone_id"`
-	RuleID        types.String `tfsdk:"rule_id" path:"rule_id"`
-	Action        types.String `tfsdk:"action" json:"action"`
-	Expression    types.String `tfsdk:"expression" json:"expression"`
+	WaitingRoomID types.String `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
+	ZoneID        types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	RuleID        types.String `tfsdk:"rule_id" path:"rule_id,optional"`
+	Action        types.String `tfsdk:"action" json:"action,required"`
+	Expression    types.String `tfsdk:"expression" json:"expression,required"`
 	Description   types.String `tfsdk:"description" json:"description,computed_optional"`
 	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 }

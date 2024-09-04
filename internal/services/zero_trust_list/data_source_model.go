@@ -22,8 +22,8 @@ type ZeroTrustListResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustListDataSourceModel struct {
-	AccountID   types.String                           `tfsdk:"account_id" path:"account_id"`
-	ListID      types.String                           `tfsdk:"list_id" path:"list_id"`
+	AccountID   types.String                           `tfsdk:"account_id" path:"account_id,optional"`
+	ListID      types.String                           `tfsdk:"list_id" path:"list_id,optional"`
 	CreatedAt   timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Description types.String                           `tfsdk:"description" json:"description,computed"`
 	ID          types.String                           `tfsdk:"id" json:"id,computed"`
@@ -55,6 +55,6 @@ func (m *ZeroTrustListDataSourceModel) toListParams(_ context.Context) (params z
 }
 
 type ZeroTrustListFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	Type      types.String `tfsdk:"type" query:"type"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	Type      types.String `tfsdk:"type" query:"type,optional"`
 }

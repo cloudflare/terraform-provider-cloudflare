@@ -21,8 +21,8 @@ type ZeroTrustDevicePostureIntegrationResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureIntegrationDataSourceModel struct {
-	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id"`
-	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id"`
+	AccountID     types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	IntegrationID types.String                                                                     `tfsdk:"integration_id" path:"integration_id,optional"`
 	ID            types.String                                                                     `tfsdk:"id" json:"id,computed"`
 	Interval      types.String                                                                     `tfsdk:"interval" json:"interval,computed"`
 	Name          types.String                                                                     `tfsdk:"name" json:"name,computed"`
@@ -54,5 +54,5 @@ type ZeroTrustDevicePostureIntegrationConfigDataSourceModel struct {
 }
 
 type ZeroTrustDevicePostureIntegrationFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

@@ -14,8 +14,8 @@ type RulesetResultEnvelope struct {
 
 type RulesetModel struct {
 	ID          types.String                                    `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id"`
-	ZoneID      types.String                                    `tfsdk:"zone_id" path:"zone_id"`
+	AccountID   types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID      types.String                                    `tfsdk:"zone_id" path:"zone_id,optional"`
 	Description types.String                                    `tfsdk:"description" json:"description,computed_optional"`
 	Kind        types.String                                    `tfsdk:"kind" json:"kind,computed_optional"`
 	Name        types.String                                    `tfsdk:"name" json:"name,computed_optional"`

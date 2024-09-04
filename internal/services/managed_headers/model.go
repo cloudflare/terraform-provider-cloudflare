@@ -9,7 +9,7 @@ import (
 
 type ManagedHeadersModel struct {
 	ID                     types.String                                                            `tfsdk:"id" json:"-,computed"`
-	ZoneID                 types.String                                                            `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID                 types.String                                                            `tfsdk:"zone_id" path:"zone_id,required"`
 	ManagedRequestHeaders  customfield.NestedObjectList[ManagedHeadersManagedRequestHeadersModel]  `tfsdk:"managed_request_headers" json:"managed_request_headers,computed_optional"`
 	ManagedResponseHeaders customfield.NestedObjectList[ManagedHeadersManagedResponseHeadersModel] `tfsdk:"managed_response_headers" json:"managed_response_headers,computed_optional"`
 }

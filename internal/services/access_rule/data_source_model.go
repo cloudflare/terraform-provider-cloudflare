@@ -21,9 +21,9 @@ type AccessRuleResultListDataSourceEnvelope struct {
 }
 
 type AccessRuleDataSourceModel struct {
-	AccountID  types.String                        `tfsdk:"account_id" path:"account_id"`
-	Identifier types.String                        `tfsdk:"identifier" path:"identifier"`
-	ZoneID     types.String                        `tfsdk:"zone_id" path:"zone_id"`
+	AccountID  types.String                        `tfsdk:"account_id" path:"account_id,optional"`
+	Identifier types.String                        `tfsdk:"identifier" path:"identifier,optional"`
+	ZoneID     types.String                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	Filter     *AccessRuleFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -78,14 +78,14 @@ func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params fire
 }
 
 type AccessRuleFindOneByDataSourceModel struct {
-	AccountID     types.String                            `tfsdk:"account_id" path:"account_id"`
-	ZoneID        types.String                            `tfsdk:"zone_id" path:"zone_id"`
-	Configuration *AccessRuleConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration"`
-	Direction     types.String                            `tfsdk:"direction" query:"direction"`
+	AccountID     types.String                            `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID        types.String                            `tfsdk:"zone_id" path:"zone_id,optional"`
+	Configuration *AccessRuleConfigurationDataSourceModel `tfsdk:"configuration" query:"configuration,optional"`
+	Direction     types.String                            `tfsdk:"direction" query:"direction,optional"`
 	Match         types.String                            `tfsdk:"match" query:"match,computed_optional"`
-	Mode          types.String                            `tfsdk:"mode" query:"mode"`
-	Notes         types.String                            `tfsdk:"notes" query:"notes"`
-	Order         types.String                            `tfsdk:"order" query:"order"`
+	Mode          types.String                            `tfsdk:"mode" query:"mode,optional"`
+	Notes         types.String                            `tfsdk:"notes" query:"notes,optional"`
+	Order         types.String                            `tfsdk:"order" query:"order,optional"`
 }
 
 type AccessRuleConfigurationDataSourceModel struct {

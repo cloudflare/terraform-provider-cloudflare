@@ -12,9 +12,9 @@ import (
 )
 
 type WorkersKVDataSourceModel struct {
-	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
-	KeyName     types.String `tfsdk:"key_name" path:"key_name"`
-	NamespaceID types.String `tfsdk:"namespace_id" path:"namespace_id"`
+	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
+	KeyName     types.String `tfsdk:"key_name" path:"key_name,required"`
+	NamespaceID types.String `tfsdk:"namespace_id" path:"namespace_id,required"`
 }
 
 func (m *WorkersKVDataSourceModel) toReadParams(_ context.Context) (params kv.NamespaceValueGetParams, diags diag.Diagnostics) {

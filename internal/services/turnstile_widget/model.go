@@ -15,7 +15,7 @@ type TurnstileWidgetResultEnvelope struct {
 type TurnstileWidgetModel struct {
 	ID             types.String                   `tfsdk:"id" json:"-,computed"`
 	Sitekey        types.String                   `tfsdk:"sitekey" json:"sitekey,computed"`
-	AccountID      types.String                   `tfsdk:"account_id" path:"account_id"`
+	AccountID      types.String                   `tfsdk:"account_id" path:"account_id,required"`
 	Region         types.String                   `tfsdk:"region" json:"region,computed_optional"`
 	BotFightMode   types.Bool                     `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed_optional"`
 	ClearanceLevel types.String                   `tfsdk:"clearance_level" json:"clearance_level,computed_optional"`

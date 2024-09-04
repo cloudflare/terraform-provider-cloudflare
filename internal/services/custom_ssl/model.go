@@ -16,8 +16,8 @@ type CustomSSLModel struct {
 	ID              types.String                                            `tfsdk:"id" json:"id,computed"`
 	ZoneID          types.String                                            `tfsdk:"zone_id" path:"zone_id,computed_optional"`
 	Type            types.String                                            `tfsdk:"type" json:"type,computed_optional"`
-	Certificate     types.String                                            `tfsdk:"certificate" json:"certificate"`
-	PrivateKey      types.String                                            `tfsdk:"private_key" json:"private_key"`
+	Certificate     types.String                                            `tfsdk:"certificate" json:"certificate,required"`
+	PrivateKey      types.String                                            `tfsdk:"private_key" json:"private_key,required"`
 	BundleMethod    types.String                                            `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
 	Policy          types.String                                            `tfsdk:"policy" json:"policy,computed_optional"`
 	GeoRestrictions customfield.NestedObject[CustomSSLGeoRestrictionsModel] `tfsdk:"geo_restrictions" json:"geo_restrictions,computed_optional"`

@@ -12,9 +12,9 @@ type ZoneSubscriptionResultEnvelope struct {
 }
 
 type ZoneSubscriptionModel struct {
-	Identifier types.String                   `tfsdk:"identifier" path:"identifier"`
-	Frequency  types.String                   `tfsdk:"frequency" json:"frequency"`
-	RatePlan   *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan"`
+	Identifier types.String                   `tfsdk:"identifier" path:"identifier,required"`
+	Frequency  types.String                   `tfsdk:"frequency" json:"frequency,optional"`
+	RatePlan   *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
 }
 
 type ZoneSubscriptionRatePlanModel struct {

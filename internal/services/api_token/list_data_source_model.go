@@ -18,7 +18,7 @@ type APITokensResultListDataSourceEnvelope struct {
 }
 
 type APITokensDataSourceModel struct {
-	Direction types.String                                                 `tfsdk:"direction" query:"direction"`
+	Direction types.String                                                 `tfsdk:"direction" query:"direction,optional"`
 	MaxItems  types.Int64                                                  `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[APITokensResultDataSourceModel] `tfsdk:"result"`
 }

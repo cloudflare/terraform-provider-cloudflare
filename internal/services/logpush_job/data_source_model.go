@@ -22,9 +22,9 @@ type LogpushJobResultListDataSourceEnvelope struct {
 }
 
 type LogpushJobDataSourceModel struct {
-	AccountID                types.String                                                     `tfsdk:"account_id" path:"account_id"`
-	JobID                    types.Int64                                                      `tfsdk:"job_id" path:"job_id"`
-	ZoneID                   types.String                                                     `tfsdk:"zone_id" path:"zone_id"`
+	AccountID                types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	JobID                    types.Int64                                                      `tfsdk:"job_id" path:"job_id,optional"`
+	ZoneID                   types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	Dataset                  types.String                                                     `tfsdk:"dataset" json:"dataset,computed"`
 	DestinationConf          types.String                                                     `tfsdk:"destination_conf" json:"destination_conf,computed"`
 	Enabled                  types.Bool                                                       `tfsdk:"enabled" json:"enabled,computed"`
@@ -83,6 +83,6 @@ type LogpushJobOutputOptionsDataSourceModel struct {
 }
 
 type LogpushJobFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

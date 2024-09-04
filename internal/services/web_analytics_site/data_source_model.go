@@ -22,8 +22,8 @@ type WebAnalyticsSiteResultListDataSourceEnvelope struct {
 }
 
 type WebAnalyticsSiteDataSourceModel struct {
-	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id"`
-	SiteID      types.String                                                       `tfsdk:"site_id" path:"site_id"`
+	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
+	SiteID      types.String                                                       `tfsdk:"site_id" path:"site_id,optional"`
 	AutoInstall types.Bool                                                         `tfsdk:"auto_install" json:"auto_install,computed"`
 	Created     timetypes.RFC3339                                                  `tfsdk:"created" json:"created,computed" format:"date-time"`
 	SiteTag     types.String                                                       `tfsdk:"site_tag" json:"site_tag,computed"`
@@ -72,6 +72,6 @@ type WebAnalyticsSiteRulesetDataSourceModel struct {
 }
 
 type WebAnalyticsSiteFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	OrderBy   types.String `tfsdk:"order_by" query:"order_by"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	OrderBy   types.String `tfsdk:"order_by" query:"order_by,optional"`
 }

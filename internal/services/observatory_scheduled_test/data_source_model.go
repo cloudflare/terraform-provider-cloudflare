@@ -16,10 +16,10 @@ type ObservatoryScheduledTestResultDataSourceEnvelope struct {
 }
 
 type ObservatoryScheduledTestDataSourceModel struct {
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	URL       types.String `tfsdk:"url" path:"url,computed"`
 	Region    types.String `tfsdk:"region" query:"region,computed"`
-	Frequency types.String `tfsdk:"frequency" json:"frequency"`
+	Frequency types.String `tfsdk:"frequency" json:"frequency,optional"`
 }
 
 func (m *ObservatoryScheduledTestDataSourceModel) toReadParams(_ context.Context) (params speed.ScheduleGetParams, diags diag.Diagnostics) {

@@ -12,9 +12,9 @@ import (
 )
 
 type ManagedHeadersDataSourceModel struct {
-	ZoneID                 types.String                                            `tfsdk:"zone_id" path:"zone_id"`
-	ManagedRequestHeaders  *[]*ManagedHeadersManagedRequestHeadersDataSourceModel  `tfsdk:"managed_request_headers" json:"managed_request_headers"`
-	ManagedResponseHeaders *[]*ManagedHeadersManagedResponseHeadersDataSourceModel `tfsdk:"managed_response_headers" json:"managed_response_headers"`
+	ZoneID                 types.String                                            `tfsdk:"zone_id" path:"zone_id,required"`
+	ManagedRequestHeaders  *[]*ManagedHeadersManagedRequestHeadersDataSourceModel  `tfsdk:"managed_request_headers" json:"managed_request_headers,optional"`
+	ManagedResponseHeaders *[]*ManagedHeadersManagedResponseHeadersDataSourceModel `tfsdk:"managed_response_headers" json:"managed_response_headers,optional"`
 }
 
 func (m *ManagedHeadersDataSourceModel) toReadParams(_ context.Context) (params managed_headers.ManagedHeaderListParams, diags diag.Diagnostics) {

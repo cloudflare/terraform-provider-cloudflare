@@ -16,8 +16,8 @@ type SpectrumApplicationResultDataSourceEnvelope struct {
 }
 
 type SpectrumApplicationDataSourceModel struct {
-	AppID  types.String `tfsdk:"app_id" path:"app_id"`
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	AppID  types.String `tfsdk:"app_id" path:"app_id,required"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *SpectrumApplicationDataSourceModel) toReadParams(_ context.Context) (params spectrum.AppGetParams, diags diag.Diagnostics) {

@@ -17,12 +17,12 @@ type FiltersResultListDataSourceEnvelope struct {
 }
 
 type FiltersDataSourceModel struct {
-	ZoneIdentifier types.String                                               `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Description    types.String                                               `tfsdk:"description" query:"description"`
-	Expression     types.String                                               `tfsdk:"expression" query:"expression"`
-	ID             types.String                                               `tfsdk:"id" query:"id"`
-	Paused         types.Bool                                                 `tfsdk:"paused" query:"paused"`
-	Ref            types.String                                               `tfsdk:"ref" query:"ref"`
+	ZoneIdentifier types.String                                               `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	Description    types.String                                               `tfsdk:"description" query:"description,optional"`
+	Expression     types.String                                               `tfsdk:"expression" query:"expression,optional"`
+	ID             types.String                                               `tfsdk:"id" query:"id,optional"`
+	Paused         types.Bool                                                 `tfsdk:"paused" query:"paused,optional"`
+	Ref            types.String                                               `tfsdk:"ref" query:"ref,optional"`
 	MaxItems       types.Int64                                                `tfsdk:"max_items"`
 	Result         customfield.NestedObjectList[FiltersResultDataSourceModel] `tfsdk:"result"`
 }

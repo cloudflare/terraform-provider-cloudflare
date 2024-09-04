@@ -13,7 +13,7 @@ type ZeroTrustDevicePostureRuleResultEnvelope struct {
 
 type ZeroTrustDevicePostureRuleModel struct {
 	ID          types.String                                                       `tfsdk:"id" json:"id,computed"`
-	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id"`
+	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
 	Description types.String                                                       `tfsdk:"description" json:"description,computed_optional"`
 	Expiration  types.String                                                       `tfsdk:"expiration" json:"expiration,computed_optional"`
 	Name        types.String                                                       `tfsdk:"name" json:"name,computed_optional"`

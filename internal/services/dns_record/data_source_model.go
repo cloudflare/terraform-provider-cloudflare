@@ -23,8 +23,8 @@ type DNSRecordResultListDataSourceEnvelope struct {
 }
 
 type DNSRecordDataSourceModel struct {
-	DNSRecordID       types.String                                           `tfsdk:"dns_record_id" path:"dns_record_id"`
-	ZoneID            types.String                                           `tfsdk:"zone_id" path:"zone_id"`
+	DNSRecordID       types.String                                           `tfsdk:"dns_record_id" path:"dns_record_id,optional"`
+	ZoneID            types.String                                           `tfsdk:"zone_id" path:"zone_id,optional"`
 	Comment           types.String                                           `tfsdk:"comment" json:"comment,computed"`
 	CommentModifiedOn timetypes.RFC3339                                      `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
 	CreatedOn         timetypes.RFC3339                                      `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -133,18 +133,18 @@ type DNSRecordMetaDataSourceModel struct {
 }
 
 type DNSRecordFindOneByDataSourceModel struct {
-	ZoneID    types.String                     `tfsdk:"zone_id" path:"zone_id"`
-	Comment   *DNSRecordCommentDataSourceModel `tfsdk:"comment" query:"comment"`
-	Content   types.String                     `tfsdk:"content" query:"content"`
+	ZoneID    types.String                     `tfsdk:"zone_id" path:"zone_id,required"`
+	Comment   *DNSRecordCommentDataSourceModel `tfsdk:"comment" query:"comment,optional"`
+	Content   types.String                     `tfsdk:"content" query:"content,optional"`
 	Direction types.String                     `tfsdk:"direction" query:"direction,computed_optional"`
 	Match     types.String                     `tfsdk:"match" query:"match,computed_optional"`
-	Name      types.String                     `tfsdk:"name" query:"name"`
+	Name      types.String                     `tfsdk:"name" query:"name,optional"`
 	Order     types.String                     `tfsdk:"order" query:"order,computed_optional"`
 	Proxied   types.Bool                       `tfsdk:"proxied" query:"proxied,computed_optional"`
-	Search    types.String                     `tfsdk:"search" query:"search"`
-	Tag       *DNSRecordTagDataSourceModel     `tfsdk:"tag" query:"tag"`
+	Search    types.String                     `tfsdk:"search" query:"search,optional"`
+	Tag       *DNSRecordTagDataSourceModel     `tfsdk:"tag" query:"tag,optional"`
 	TagMatch  types.String                     `tfsdk:"tag_match" query:"tag_match,computed_optional"`
-	Type      types.String                     `tfsdk:"type" query:"type"`
+	Type      types.String                     `tfsdk:"type" query:"type,optional"`
 }
 
 type DNSRecordCommentDataSourceModel struct {

@@ -16,7 +16,7 @@ type BotManagementResultDataSourceEnvelope struct {
 }
 
 type BotManagementDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *BotManagementDataSourceModel) toReadParams(_ context.Context) (params bot_management.BotManagementGetParams, diags diag.Diagnostics) {

@@ -13,8 +13,8 @@ type CertificatePackResultEnvelope struct {
 
 type CertificatePackModel struct {
 	ID                   types.String                   `tfsdk:"id" json:"-,computed"`
-	CertificatePackID    types.String                   `tfsdk:"certificate_pack_id" path:"certificate_pack_id"`
-	ZoneID               types.String                   `tfsdk:"zone_id" path:"zone_id"`
+	CertificatePackID    types.String                   `tfsdk:"certificate_pack_id" path:"certificate_pack_id,required"`
+	ZoneID               types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
 	CertificateAuthority types.String                   `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CloudflareBranding   types.Bool                     `tfsdk:"cloudflare_branding" json:"cloudflare_branding,computed"`
 	Status               types.String                   `tfsdk:"status" json:"status,computed"`

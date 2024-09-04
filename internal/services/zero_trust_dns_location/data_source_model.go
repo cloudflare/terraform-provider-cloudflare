@@ -22,8 +22,8 @@ type ZeroTrustDNSLocationResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDNSLocationDataSourceModel struct {
-	AccountID             types.String                                                              `tfsdk:"account_id" path:"account_id"`
-	LocationID            types.String                                                              `tfsdk:"location_id" path:"location_id"`
+	AccountID             types.String                                                              `tfsdk:"account_id" path:"account_id,optional"`
+	LocationID            types.String                                                              `tfsdk:"location_id" path:"location_id,optional"`
 	ClientDefault         types.Bool                                                                `tfsdk:"client_default" json:"client_default,computed"`
 	CreatedAt             timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DNSDestinationIPsID   types.String                                                              `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed"`
@@ -100,5 +100,5 @@ type ZeroTrustDNSLocationNetworksDataSourceModel struct {
 }
 
 type ZeroTrustDNSLocationFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

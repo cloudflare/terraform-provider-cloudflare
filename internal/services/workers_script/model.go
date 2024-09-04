@@ -18,11 +18,11 @@ type WorkersScriptResultEnvelope struct {
 
 type WorkersScriptModel struct {
 	ID            types.String                                                  `tfsdk:"id" json:"-,computed"`
-	ScriptName    types.String                                                  `tfsdk:"script_name" path:"script_name"`
-	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id"`
-	Message       types.String                                                  `tfsdk:"message" json:"message"`
-	AnyPartName   *[]types.String                                               `tfsdk:"any_part_name" json:"<any part name>"`
-	Metadata      *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata"`
+	ScriptName    types.String                                                  `tfsdk:"script_name" path:"script_name,required"`
+	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
+	Message       types.String                                                  `tfsdk:"message" json:"message,optional"`
+	AnyPartName   *[]types.String                                               `tfsdk:"any_part_name" json:"<any part name>,optional"`
+	Metadata      *WorkersScriptMetadataModel                                   `tfsdk:"metadata" json:"metadata,optional"`
 	CreatedOn     timetypes.RFC3339                                             `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Etag          types.String                                                  `tfsdk:"etag" json:"etag,computed"`
 	Logpush       types.Bool                                                    `tfsdk:"logpush" json:"logpush,computed"`
@@ -70,13 +70,13 @@ type WorkersScriptMetadataBindingsModel struct {
 }
 
 type WorkersScriptMetadataMigrationsModel struct {
-	DeletedClasses     *[]types.String                                            `tfsdk:"deleted_classes" json:"deleted_classes"`
-	NewClasses         *[]types.String                                            `tfsdk:"new_classes" json:"new_classes"`
+	DeletedClasses     *[]types.String                                            `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
+	NewClasses         *[]types.String                                            `tfsdk:"new_classes" json:"new_classes,optional"`
 	NewTag             types.String                                               `tfsdk:"new_tag" json:"new_tag,computed_optional"`
 	OldTag             types.String                                               `tfsdk:"old_tag" json:"old_tag,computed_optional"`
-	RenamedClasses     *[]*WorkersScriptMetadataMigrationsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes"`
-	TransferredClasses *[]*WorkersScriptMetadataMigrationsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes"`
-	Steps              *[]*WorkersScriptMetadataMigrationsStepsModel              `tfsdk:"steps" json:"steps"`
+	RenamedClasses     *[]*WorkersScriptMetadataMigrationsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
+	TransferredClasses *[]*WorkersScriptMetadataMigrationsTransferredClassesModel `tfsdk:"transferred_classes" json:"transferred_classes,optional"`
+	Steps              *[]*WorkersScriptMetadataMigrationsStepsModel              `tfsdk:"steps" json:"steps,optional"`
 }
 
 type WorkersScriptMetadataMigrationsRenamedClassesModel struct {
@@ -113,7 +113,7 @@ type WorkersScriptMetadataPlacementModel struct {
 }
 
 type WorkersScriptMetadataTailConsumersModel struct {
-	Service     types.String `tfsdk:"service" json:"service"`
+	Service     types.String `tfsdk:"service" json:"service,required"`
 	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
 	Namespace   types.String `tfsdk:"namespace" json:"namespace,computed_optional"`
 }

@@ -13,8 +13,8 @@ type MTLSCertificateResultEnvelope struct {
 
 type MTLSCertificateModel struct {
 	ID           types.String      `tfsdk:"id" json:"id,computed"`
-	AccountID    types.String      `tfsdk:"account_id" path:"account_id"`
-	PrivateKey   types.String      `tfsdk:"private_key" json:"private_key"`
+	AccountID    types.String      `tfsdk:"account_id" path:"account_id,required"`
+	PrivateKey   types.String      `tfsdk:"private_key" json:"private_key,optional"`
 	CA           types.Bool        `tfsdk:"ca" json:"ca,computed_optional"`
 	Certificates types.String      `tfsdk:"certificates" json:"certificates,computed_optional"`
 	Name         types.String      `tfsdk:"name" json:"name,computed_optional"`

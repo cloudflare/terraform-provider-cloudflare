@@ -22,7 +22,7 @@ type ByoIPPrefixResultListDataSourceEnvelope struct {
 }
 
 type ByoIPPrefixDataSourceModel struct {
-	PrefixID             types.String                         `tfsdk:"prefix_id" path:"prefix_id"`
+	PrefixID             types.String                         `tfsdk:"prefix_id" path:"prefix_id,optional"`
 	AccountID            types.String                         `tfsdk:"account_id" path:"account_id,computed_optional"`
 	Advertised           types.Bool                           `tfsdk:"advertised" json:"advertised,computed"`
 	AdvertisedModifiedAt timetypes.RFC3339                    `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`
@@ -56,5 +56,5 @@ func (m *ByoIPPrefixDataSourceModel) toListParams(_ context.Context) (params add
 }
 
 type ByoIPPrefixFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

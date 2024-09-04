@@ -22,8 +22,8 @@ type ZeroTrustGatewayPolicyResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayPolicyDataSourceModel struct {
-	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id"`
-	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id"`
+	AccountID     types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
+	RuleID        types.String                                                                `tfsdk:"rule_id" path:"rule_id,optional"`
 	Action        types.String                                                                `tfsdk:"action" json:"action,computed"`
 	CreatedAt     timetypes.RFC3339                                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                           `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
@@ -155,5 +155,5 @@ type ZeroTrustGatewayPolicyScheduleDataSourceModel struct {
 }
 
 type ZeroTrustGatewayPolicyFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

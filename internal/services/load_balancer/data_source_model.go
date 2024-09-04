@@ -22,8 +22,8 @@ type LoadBalancerResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerDataSourceModel struct {
-	LoadBalancerID            types.String                                                                   `tfsdk:"load_balancer_id" path:"load_balancer_id"`
-	ZoneID                    types.String                                                                   `tfsdk:"zone_id" path:"zone_id"`
+	LoadBalancerID            types.String                                                                   `tfsdk:"load_balancer_id" path:"load_balancer_id,optional"`
+	ZoneID                    types.String                                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn                 timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description               types.String                                                                   `tfsdk:"description" json:"description,computed"`
 	Enabled                   types.Bool                                                                     `tfsdk:"enabled" json:"enabled,computed"`
@@ -155,5 +155,5 @@ type LoadBalancerSessionAffinityAttributesDataSourceModel struct {
 }
 
 type LoadBalancerFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

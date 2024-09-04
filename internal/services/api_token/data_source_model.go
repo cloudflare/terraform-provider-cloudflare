@@ -22,7 +22,7 @@ type APITokenResultListDataSourceEnvelope struct {
 }
 
 type APITokenDataSourceModel struct {
-	TokenID    types.String                                                  `tfsdk:"token_id" path:"token_id"`
+	TokenID    types.String                                                  `tfsdk:"token_id" path:"token_id,optional"`
 	ExpiresOn  timetypes.RFC3339                                             `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	ID         types.String                                                  `tfsdk:"id" json:"id,computed"`
 	IssuedOn   timetypes.RFC3339                                             `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
@@ -79,5 +79,5 @@ type APITokenPoliciesResourcesDataSourceModel struct {
 }
 
 type APITokenFindOneByDataSourceModel struct {
-	Direction types.String `tfsdk:"direction" query:"direction"`
+	Direction types.String `tfsdk:"direction" query:"direction,optional"`
 }

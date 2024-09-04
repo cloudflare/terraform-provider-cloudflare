@@ -17,8 +17,8 @@ type PagesDomainsResultListDataSourceEnvelope struct {
 }
 
 type PagesDomainsDataSourceModel struct {
-	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id"`
-	ProjectName types.String                                                    `tfsdk:"project_name" path:"project_name"`
+	AccountID   types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	ProjectName types.String                                                    `tfsdk:"project_name" path:"project_name,required"`
 	MaxItems    types.Int64                                                     `tfsdk:"max_items"`
 	Result      customfield.NestedObjectList[PagesDomainsResultDataSourceModel] `tfsdk:"result"`
 }

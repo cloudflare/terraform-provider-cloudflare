@@ -22,8 +22,8 @@ type AuthenticatedOriginPullsCertificateResultListDataSourceEnvelope struct {
 }
 
 type AuthenticatedOriginPullsCertificateDataSourceModel struct {
-	CertificateID types.String                                                 `tfsdk:"certificate_id" path:"certificate_id"`
-	ZoneID        types.String                                                 `tfsdk:"zone_id" path:"zone_id"`
+	CertificateID types.String                                                 `tfsdk:"certificate_id" path:"certificate_id,optional"`
+	ZoneID        types.String                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
 	Certificate   types.String                                                 `tfsdk:"certificate" json:"certificate,computed"`
 	ExpiresOn     timetypes.RFC3339                                            `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 	ID            types.String                                                 `tfsdk:"id" json:"id,computed"`
@@ -51,5 +51,5 @@ func (m *AuthenticatedOriginPullsCertificateDataSourceModel) toListParams(_ cont
 }
 
 type AuthenticatedOriginPullsCertificateFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

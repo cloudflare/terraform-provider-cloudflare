@@ -21,8 +21,8 @@ type CertificatePackResultListDataSourceEnvelope struct {
 }
 
 type CertificatePackDataSourceModel struct {
-	CertificatePackID types.String                             `tfsdk:"certificate_pack_id" path:"certificate_pack_id"`
-	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id"`
+	CertificatePackID types.String                             `tfsdk:"certificate_pack_id" path:"certificate_pack_id,optional"`
+	ZoneID            types.String                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	Filter            *CertificatePackFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -47,6 +47,6 @@ func (m *CertificatePackDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type CertificatePackFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
-	Status types.String `tfsdk:"status" query:"status"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Status types.String `tfsdk:"status" query:"status,optional"`
 }

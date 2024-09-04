@@ -14,8 +14,8 @@ type KeylessCertificateResultEnvelope struct {
 
 type KeylessCertificateModel struct {
 	ID           types.String                                            `tfsdk:"id" json:"id,computed"`
-	ZoneID       types.String                                            `tfsdk:"zone_id" path:"zone_id"`
-	Certificate  types.String                                            `tfsdk:"certificate" json:"certificate"`
+	ZoneID       types.String                                            `tfsdk:"zone_id" path:"zone_id,required"`
+	Certificate  types.String                                            `tfsdk:"certificate" json:"certificate,required"`
 	BundleMethod types.String                                            `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
 	Enabled      types.Bool                                              `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Host         types.String                                            `tfsdk:"host" json:"host,computed_optional"`

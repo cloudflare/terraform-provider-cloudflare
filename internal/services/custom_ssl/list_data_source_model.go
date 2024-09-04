@@ -18,8 +18,8 @@ type CustomSSLsResultListDataSourceEnvelope struct {
 }
 
 type CustomSSLsDataSourceModel struct {
-	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
-	Status   types.String                                                  `tfsdk:"status" query:"status"`
+	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
+	Status   types.String                                                  `tfsdk:"status" query:"status,optional"`
 	Match    types.String                                                  `tfsdk:"match" query:"match,computed_optional"`
 	MaxItems types.Int64                                                   `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[CustomSSLsResultDataSourceModel] `tfsdk:"result"`

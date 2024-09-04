@@ -12,6 +12,6 @@ type ArgoSmartRoutingResultEnvelope struct {
 
 type ArgoSmartRoutingModel struct {
 	ID     types.String `tfsdk:"id" json:"-,computed"`
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
-	Value  types.String `tfsdk:"value" json:"value"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Value  types.String `tfsdk:"value" json:"value,required"`
 }

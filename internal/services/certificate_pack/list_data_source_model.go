@@ -17,8 +17,8 @@ type CertificatePacksResultListDataSourceEnvelope struct {
 }
 
 type CertificatePacksDataSourceModel struct {
-	ZoneID   types.String                                                        `tfsdk:"zone_id" path:"zone_id"`
-	Status   types.String                                                        `tfsdk:"status" query:"status"`
+	ZoneID   types.String                                                        `tfsdk:"zone_id" path:"zone_id,required"`
+	Status   types.String                                                        `tfsdk:"status" query:"status,optional"`
 	MaxItems types.Int64                                                         `tfsdk:"max_items"`
 	Result   customfield.NestedObjectList[CertificatePacksResultDataSourceModel] `tfsdk:"result"`
 }

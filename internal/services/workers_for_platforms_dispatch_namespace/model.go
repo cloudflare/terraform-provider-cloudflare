@@ -14,8 +14,8 @@ type WorkersForPlatformsDispatchNamespaceResultEnvelope struct {
 type WorkersForPlatformsDispatchNamespaceModel struct {
 	ID            types.String      `tfsdk:"id" json:"-,computed"`
 	NamespaceID   types.String      `tfsdk:"namespace_id" json:"namespace_id,computed"`
-	AccountID     types.String      `tfsdk:"account_id" path:"account_id"`
-	Name          types.String      `tfsdk:"name" json:"name"`
+	AccountID     types.String      `tfsdk:"account_id" path:"account_id,required"`
+	Name          types.String      `tfsdk:"name" json:"name,optional"`
 	CreatedBy     types.String      `tfsdk:"created_by" json:"created_by,computed"`
 	CreatedOn     timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedBy    types.String      `tfsdk:"modified_by" json:"modified_by,computed"`

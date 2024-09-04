@@ -13,8 +13,8 @@ type WaitingRoomEventResultEnvelope struct {
 
 type WaitingRoomEventModel struct {
 	ID                    types.String      `tfsdk:"id" json:"id,computed"`
-	WaitingRoomID         types.String      `tfsdk:"waiting_room_id" path:"waiting_room_id"`
-	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id"`
+	WaitingRoomID         types.String      `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
+	ZoneID                types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	CustomPageHTML        types.String      `tfsdk:"custom_page_html" json:"custom_page_html,computed_optional"`
 	Description           types.String      `tfsdk:"description" json:"description,computed_optional"`
 	DisableSessionRenewal types.Bool        `tfsdk:"disable_session_renewal" json:"disable_session_renewal,computed_optional"`

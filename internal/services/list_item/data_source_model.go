@@ -21,9 +21,9 @@ type ListItemResultListDataSourceEnvelope struct {
 }
 
 type ListItemDataSourceModel struct {
-	AccountIdentifier types.String                      `tfsdk:"account_identifier" path:"account_identifier"`
-	ItemID            types.String                      `tfsdk:"item_id" path:"item_id"`
-	ListID            types.String                      `tfsdk:"list_id" path:"list_id"`
+	AccountIdentifier types.String                      `tfsdk:"account_identifier" path:"account_identifier,optional"`
+	ItemID            types.String                      `tfsdk:"item_id" path:"item_id,optional"`
+	ListID            types.String                      `tfsdk:"list_id" path:"list_id,optional"`
 	Filter            *ListItemFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -40,7 +40,7 @@ func (m *ListItemDataSourceModel) toListParams(_ context.Context) (params rules.
 }
 
 type ListItemFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ListID    types.String `tfsdk:"list_id" path:"list_id"`
-	Search    types.String `tfsdk:"search" query:"search"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	ListID    types.String `tfsdk:"list_id" path:"list_id,required"`
+	Search    types.String `tfsdk:"search" query:"search,optional"`
 }

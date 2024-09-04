@@ -17,20 +17,20 @@ type DNSZoneDNSSECResultDataSourceEnvelope struct {
 }
 
 type DNSZoneDNSSECDataSourceModel struct {
-	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id"`
-	Algorithm         types.String      `tfsdk:"algorithm" json:"algorithm"`
-	Digest            types.String      `tfsdk:"digest" json:"digest"`
-	DigestAlgorithm   types.String      `tfsdk:"digest_algorithm" json:"digest_algorithm"`
-	DigestType        types.String      `tfsdk:"digest_type" json:"digest_type"`
-	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer"`
-	DNSSECPresigned   types.Bool        `tfsdk:"dnssec_presigned" json:"dnssec_presigned"`
-	DS                types.String      `tfsdk:"ds" json:"ds"`
-	Flags             types.Float64     `tfsdk:"flags" json:"flags"`
-	KeyTag            types.Float64     `tfsdk:"key_tag" json:"key_tag"`
-	KeyType           types.String      `tfsdk:"key_type" json:"key_type"`
-	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
-	PublicKey         types.String      `tfsdk:"public_key" json:"public_key"`
-	Status            types.String      `tfsdk:"status" json:"status"`
+	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
+	Algorithm         types.String      `tfsdk:"algorithm" json:"algorithm,optional"`
+	Digest            types.String      `tfsdk:"digest" json:"digest,optional"`
+	DigestAlgorithm   types.String      `tfsdk:"digest_algorithm" json:"digest_algorithm,optional"`
+	DigestType        types.String      `tfsdk:"digest_type" json:"digest_type,optional"`
+	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer,optional"`
+	DNSSECPresigned   types.Bool        `tfsdk:"dnssec_presigned" json:"dnssec_presigned,optional"`
+	DS                types.String      `tfsdk:"ds" json:"ds,optional"`
+	Flags             types.Float64     `tfsdk:"flags" json:"flags,optional"`
+	KeyTag            types.Float64     `tfsdk:"key_tag" json:"key_tag,optional"`
+	KeyType           types.String      `tfsdk:"key_type" json:"key_type,optional"`
+	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
+	PublicKey         types.String      `tfsdk:"public_key" json:"public_key,optional"`
+	Status            types.String      `tfsdk:"status" json:"status,optional"`
 }
 
 func (m *DNSZoneDNSSECDataSourceModel) toReadParams(_ context.Context) (params dnssec.DNSSECGetParams, diags diag.Diagnostics) {

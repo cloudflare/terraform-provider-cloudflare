@@ -22,8 +22,8 @@ type Web3HostnameResultListDataSourceEnvelope struct {
 }
 
 type Web3HostnameDataSourceModel struct {
-	Identifier  types.String                          `tfsdk:"identifier" path:"identifier"`
-	ZoneID      types.String                          `tfsdk:"zone_id" path:"zone_id"`
+	Identifier  types.String                          `tfsdk:"identifier" path:"identifier,optional"`
+	ZoneID      types.String                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn   timetypes.RFC3339                     `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description types.String                          `tfsdk:"description" json:"description,computed"`
 	Dnslink     types.String                          `tfsdk:"dnslink" json:"dnslink,computed"`
@@ -52,5 +52,5 @@ func (m *Web3HostnameDataSourceModel) toListParams(_ context.Context) (params we
 }
 
 type Web3HostnameFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

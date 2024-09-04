@@ -21,8 +21,8 @@ type EmailRoutingRuleResultListDataSourceEnvelope struct {
 }
 
 type EmailRoutingRuleDataSourceModel struct {
-	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier"`
-	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id"`
+	RuleIdentifier types.String                                                          `tfsdk:"rule_identifier" path:"rule_identifier,optional"`
+	ZoneID         types.String                                                          `tfsdk:"zone_id" path:"zone_id,optional"`
 	Enabled        types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
 	ID             types.String                                                          `tfsdk:"id" json:"id,computed"`
 	Name           types.String                                                          `tfsdk:"name" json:"name,computed"`
@@ -65,6 +65,6 @@ type EmailRoutingRuleMatchersDataSourceModel struct {
 }
 
 type EmailRoutingRuleFindOneByDataSourceModel struct {
-	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id"`
-	Enabled types.Bool   `tfsdk:"enabled" query:"enabled"`
+	ZoneID  types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Enabled types.Bool   `tfsdk:"enabled" query:"enabled,optional"`
 }

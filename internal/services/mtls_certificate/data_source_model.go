@@ -22,8 +22,8 @@ type MTLSCertificateResultListDataSourceEnvelope struct {
 }
 
 type MTLSCertificateDataSourceModel struct {
-	AccountID         types.String                             `tfsdk:"account_id" path:"account_id"`
-	MTLSCertificateID types.String                             `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id"`
+	AccountID         types.String                             `tfsdk:"account_id" path:"account_id,optional"`
+	MTLSCertificateID types.String                             `tfsdk:"mtls_certificate_id" path:"mtls_certificate_id,optional"`
 	CA                types.Bool                               `tfsdk:"ca" json:"ca,computed"`
 	Certificates      types.String                             `tfsdk:"certificates" json:"certificates,computed"`
 	ExpiresOn         timetypes.RFC3339                        `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
@@ -53,5 +53,5 @@ func (m *MTLSCertificateDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type MTLSCertificateFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

@@ -12,9 +12,9 @@ import (
 )
 
 type APIShieldOperationSchemaValidationSettingsDataSourceModel struct {
-	OperationID      types.String `tfsdk:"operation_id" path:"operation_id"`
-	ZoneID           types.String `tfsdk:"zone_id" path:"zone_id"`
-	MitigationAction types.String `tfsdk:"mitigation_action" json:"mitigation_action"`
+	OperationID      types.String `tfsdk:"operation_id" path:"operation_id,required"`
+	ZoneID           types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	MitigationAction types.String `tfsdk:"mitigation_action" json:"mitigation_action,optional"`
 }
 
 func (m *APIShieldOperationSchemaValidationSettingsDataSourceModel) toReadParams(_ context.Context) (params api_gateway.OperationSchemaValidationGetParams, diags diag.Diagnostics) {

@@ -22,8 +22,8 @@ type LoadBalancerMonitorResultListDataSourceEnvelope struct {
 }
 
 type LoadBalancerMonitorDataSourceModel struct {
-	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id"`
-	MonitorID       types.String                                    `tfsdk:"monitor_id" path:"monitor_id"`
+	AccountID       types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	MonitorID       types.String                                    `tfsdk:"monitor_id" path:"monitor_id,optional"`
 	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
 	ConsecutiveDown types.Int64                                     `tfsdk:"consecutive_down" json:"consecutive_down,computed"`
 	ConsecutiveUp   types.Int64                                     `tfsdk:"consecutive_up" json:"consecutive_up,computed"`
@@ -63,5 +63,5 @@ func (m *LoadBalancerMonitorDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type LoadBalancerMonitorFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

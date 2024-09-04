@@ -21,11 +21,11 @@ type ZeroTrustLocalDomainFallbackResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustLocalDomainFallbackDataSourceModel struct {
-	AccountID   types.String                                          `tfsdk:"account_id" path:"account_id"`
-	PolicyID    types.String                                          `tfsdk:"policy_id" path:"policy_id"`
-	Description types.String                                          `tfsdk:"description" json:"description"`
-	Suffix      types.String                                          `tfsdk:"suffix" json:"suffix"`
-	DNSServer   *[]types.String                                       `tfsdk:"dns_server" json:"dns_server"`
+	AccountID   types.String                                          `tfsdk:"account_id" path:"account_id,optional"`
+	PolicyID    types.String                                          `tfsdk:"policy_id" path:"policy_id,optional"`
+	Description types.String                                          `tfsdk:"description" json:"description,optional"`
+	Suffix      types.String                                          `tfsdk:"suffix" json:"suffix,optional"`
+	DNSServer   *[]types.String                                       `tfsdk:"dns_server" json:"dns_server,optional"`
 	Filter      *ZeroTrustLocalDomainFallbackFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -46,5 +46,5 @@ func (m *ZeroTrustLocalDomainFallbackDataSourceModel) toListParams(_ context.Con
 }
 
 type ZeroTrustLocalDomainFallbackFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

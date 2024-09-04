@@ -21,7 +21,7 @@ type FilterResultListDataSourceEnvelope struct {
 }
 
 type FilterDataSourceModel struct {
-	ZoneIdentifier types.String                    `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String                    `tfsdk:"zone_identifier" path:"zone_identifier,optional"`
 	ID             types.String                    `tfsdk:"id" path:"id,computed_optional"`
 	Description    types.String                    `tfsdk:"description" json:"description,computed"`
 	Expression     types.String                    `tfsdk:"expression" json:"expression,computed"`
@@ -53,10 +53,10 @@ func (m *FilterDataSourceModel) toListParams(_ context.Context) (params filters.
 }
 
 type FilterFindOneByDataSourceModel struct {
-	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String `tfsdk:"id" query:"id"`
-	Description    types.String `tfsdk:"description" query:"description"`
-	Expression     types.String `tfsdk:"expression" query:"expression"`
-	Paused         types.Bool   `tfsdk:"paused" query:"paused"`
-	Ref            types.String `tfsdk:"ref" query:"ref"`
+	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	ID             types.String `tfsdk:"id" query:"id,optional"`
+	Description    types.String `tfsdk:"description" query:"description,optional"`
+	Expression     types.String `tfsdk:"expression" query:"expression,optional"`
+	Paused         types.Bool   `tfsdk:"paused" query:"paused,optional"`
+	Ref            types.String `tfsdk:"ref" query:"ref,optional"`
 }

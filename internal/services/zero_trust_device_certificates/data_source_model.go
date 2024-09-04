@@ -11,5 +11,5 @@ type ZeroTrustDeviceCertificatesResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDeviceCertificatesDataSourceModel struct {
-	ZoneTag types.String `tfsdk:"zone_tag" path:"zone_tag"`
+	ZoneTag types.String `tfsdk:"zone_tag" path:"zone_tag,required"`
 }

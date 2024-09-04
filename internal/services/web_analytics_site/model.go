@@ -15,9 +15,9 @@ type WebAnalyticsSiteResultEnvelope struct {
 type WebAnalyticsSiteModel struct {
 	ID          types.String                                             `tfsdk:"id" json:"-,computed"`
 	SiteTag     types.String                                             `tfsdk:"site_tag" json:"site_tag,computed"`
-	AccountID   types.String                                             `tfsdk:"account_id" path:"account_id"`
-	Host        types.String                                             `tfsdk:"host" json:"host"`
-	ZoneTag     types.String                                             `tfsdk:"zone_tag" json:"zone_tag"`
+	AccountID   types.String                                             `tfsdk:"account_id" path:"account_id,required"`
+	Host        types.String                                             `tfsdk:"host" json:"host,optional"`
+	ZoneTag     types.String                                             `tfsdk:"zone_tag" json:"zone_tag,optional"`
 	AutoInstall types.Bool                                               `tfsdk:"auto_install" json:"auto_install,computed_optional"`
 	Created     timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed" format:"date-time"`
 	SiteToken   types.String                                             `tfsdk:"site_token" json:"site_token,computed"`

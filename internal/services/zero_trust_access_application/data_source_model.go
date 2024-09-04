@@ -21,9 +21,9 @@ type ZeroTrustAccessApplicationResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessApplicationDataSourceModel struct {
-	AccountID types.String                                        `tfsdk:"account_id" path:"account_id"`
-	AppID     types.String                                        `tfsdk:"app_id" path:"app_id"`
-	ZoneID    types.String                                        `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String                                        `tfsdk:"account_id" path:"account_id,optional"`
+	AppID     types.String                                        `tfsdk:"app_id" path:"app_id,optional"`
+	ZoneID    types.String                                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	Filter    *ZeroTrustAccessApplicationFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -52,6 +52,6 @@ func (m *ZeroTrustAccessApplicationDataSourceModel) toListParams(_ context.Conte
 }
 
 type ZeroTrustAccessApplicationFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

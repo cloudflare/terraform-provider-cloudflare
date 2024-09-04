@@ -13,14 +13,14 @@ type MagicWANGRETunnelResultEnvelope struct {
 }
 
 type MagicWANGRETunnelModel struct {
-	AccountID             types.String                                                      `tfsdk:"account_id" path:"account_id"`
-	GRETunnelID           types.String                                                      `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id"`
-	CloudflareGREEndpoint types.String                                                      `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint"`
-	CustomerGREEndpoint   types.String                                                      `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint"`
-	Description           types.String                                                      `tfsdk:"description" json:"description"`
-	InterfaceAddress      types.String                                                      `tfsdk:"interface_address" json:"interface_address"`
-	Name                  types.String                                                      `tfsdk:"name" json:"name"`
-	HealthCheck           *MagicWANGRETunnelHealthCheckModel                                `tfsdk:"health_check" json:"health_check"`
+	AccountID             types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	GRETunnelID           types.String                                                      `tfsdk:"gre_tunnel_id" path:"gre_tunnel_id,optional"`
+	CloudflareGREEndpoint types.String                                                      `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,optional"`
+	CustomerGREEndpoint   types.String                                                      `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,optional"`
+	Description           types.String                                                      `tfsdk:"description" json:"description,optional"`
+	InterfaceAddress      types.String                                                      `tfsdk:"interface_address" json:"interface_address,optional"`
+	Name                  types.String                                                      `tfsdk:"name" json:"name,optional"`
+	HealthCheck           *MagicWANGRETunnelHealthCheckModel                                `tfsdk:"health_check" json:"health_check,optional"`
 	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional"`
 	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional"`
 	Deleted               types.Bool                                                        `tfsdk:"deleted" json:"deleted,computed"`

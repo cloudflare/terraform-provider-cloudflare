@@ -22,10 +22,10 @@ type D1DatabaseResultListDataSourceEnvelope struct {
 }
 
 type D1DatabaseDataSourceModel struct {
-	AccountID  types.String                        `tfsdk:"account_id" path:"account_id"`
-	DatabaseID types.String                        `tfsdk:"database_id" path:"database_id"`
-	FileSize   types.Float64                       `tfsdk:"file_size" json:"file_size"`
-	NumTables  types.Float64                       `tfsdk:"num_tables" json:"num_tables"`
+	AccountID  types.String                        `tfsdk:"account_id" path:"account_id,optional"`
+	DatabaseID types.String                        `tfsdk:"database_id" path:"database_id,optional"`
+	FileSize   types.Float64                       `tfsdk:"file_size" json:"file_size,optional"`
+	NumTables  types.Float64                       `tfsdk:"num_tables" json:"num_tables,optional"`
 	CreatedAt  timetypes.RFC3339                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Name       types.String                        `tfsdk:"name" json:"name,computed"`
 	UUID       types.String                        `tfsdk:"uuid" json:"uuid,computed"`
@@ -54,6 +54,6 @@ func (m *D1DatabaseDataSourceModel) toListParams(_ context.Context) (params d1.D
 }
 
 type D1DatabaseFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	Name      types.String `tfsdk:"name" query:"name"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	Name      types.String `tfsdk:"name" query:"name,optional"`
 }
