@@ -29,15 +29,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"private_key": schema.StringAttribute{
-				Description:   "The zone's private key.",
+			"certificate": schema.StringAttribute{
+				Description:   "The zone's leaf certificate.",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"certificate": schema.StringAttribute{
-				Description:   "The zone's leaf certificate.",
-				Computed:      true,
-				Optional:      true,
+			"private_key": schema.StringAttribute{
+				Description:   "The zone's private key.",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"expires_on": schema.StringAttribute{

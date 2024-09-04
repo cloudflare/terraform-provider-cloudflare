@@ -26,8 +26,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description:   "The name of your Zero Trust organization.",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
@@ -40,13 +39,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"allow_authenticate_via_warp": schema.BoolAttribute{
-				Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"auth_domain": schema.StringAttribute{
 				Description: "The unique subdomain assigned to your Zero Trust organization.",
+				Required:    true,
+			},
+			"allow_authenticate_via_warp": schema.BoolAttribute{
+				Description: "When set to true, users can authenticate via WARP for any application in your organization. Application settings will take precedence over this value.",
 				Computed:    true,
 				Optional:    true,
 			},

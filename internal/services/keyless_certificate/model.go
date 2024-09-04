@@ -17,8 +17,8 @@ type KeylessCertificateModel struct {
 	ZoneID       types.String                                            `tfsdk:"zone_id" path:"zone_id,required"`
 	Certificate  types.String                                            `tfsdk:"certificate" json:"certificate,required"`
 	BundleMethod types.String                                            `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
+	Host         types.String                                            `tfsdk:"host" json:"host,required"`
 	Enabled      types.Bool                                              `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Host         types.String                                            `tfsdk:"host" json:"host,computed_optional"`
 	Name         types.String                                            `tfsdk:"name" json:"name,computed_optional"`
 	Port         types.Float64                                           `tfsdk:"port" json:"port,computed_optional"`
 	Tunnel       customfield.NestedObject[KeylessCertificateTunnelModel] `tfsdk:"tunnel" json:"tunnel,computed_optional"`
@@ -29,6 +29,6 @@ type KeylessCertificateModel struct {
 }
 
 type KeylessCertificateTunnelModel struct {
-	PrivateIP types.String `tfsdk:"private_ip" json:"private_ip,computed_optional"`
-	VnetID    types.String `tfsdk:"vnet_id" json:"vnet_id,computed_optional"`
+	PrivateIP types.String `tfsdk:"private_ip" json:"private_ip,required"`
+	VnetID    types.String `tfsdk:"vnet_id" json:"vnet_id,required"`
 }

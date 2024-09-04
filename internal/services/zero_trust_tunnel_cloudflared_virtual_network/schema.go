@@ -33,6 +33,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description: "A user-friendly name for the virtual network.",
+				Required:    true,
+			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the virtual network.",
 				Computed:    true,
@@ -40,11 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"is_default_network": schema.BoolAttribute{
 				Description: "If `true`, this virtual network is the default for the account.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "A user-friendly name for the virtual network.",
 				Computed:    true,
 				Optional:    true,
 			},

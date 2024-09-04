@@ -39,8 +39,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"kind": schema.StringAttribute{
 				Description: "Kind of schema",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("openapi_v3"),
 				},

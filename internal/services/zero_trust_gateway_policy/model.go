@@ -15,12 +15,12 @@ type ZeroTrustGatewayPolicyResultEnvelope struct {
 type ZeroTrustGatewayPolicyModel struct {
 	ID            types.String                                                      `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
-	Action        types.String                                                      `tfsdk:"action" json:"action,computed_optional"`
+	Action        types.String                                                      `tfsdk:"action" json:"action,required"`
+	Name          types.String                                                      `tfsdk:"name" json:"name,required"`
 	Description   types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
 	DevicePosture types.String                                                      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
 	Enabled       types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Identity      types.String                                                      `tfsdk:"identity" json:"identity,computed_optional"`
-	Name          types.String                                                      `tfsdk:"name" json:"name,computed_optional"`
 	Precedence    types.Int64                                                       `tfsdk:"precedence" json:"precedence,computed_optional"`
 	Traffic       types.String                                                      `tfsdk:"traffic" json:"traffic,computed_optional"`
 	Filters       customfield.List[types.String]                                    `tfsdk:"filters" json:"filters,computed_optional"`
@@ -78,14 +78,14 @@ type ZeroTrustGatewayPolicyRuleSettingsDNSResolversModel struct {
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV4Model struct {
-	IP                         types.String `tfsdk:"ip" json:"ip,computed_optional"`
+	IP                         types.String `tfsdk:"ip" json:"ip,required"`
 	Port                       types.Int64  `tfsdk:"port" json:"port,computed_optional"`
 	RouteThroughPrivateNetwork types.Bool   `tfsdk:"route_through_private_network" json:"route_through_private_network,computed_optional"`
 	VnetID                     types.String `tfsdk:"vnet_id" json:"vnet_id,computed_optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDNSResolversIPV6Model struct {
-	IP                         types.String `tfsdk:"ip" json:"ip,computed_optional"`
+	IP                         types.String `tfsdk:"ip" json:"ip,required"`
 	Port                       types.Int64  `tfsdk:"port" json:"port,computed_optional"`
 	RouteThroughPrivateNetwork types.Bool   `tfsdk:"route_through_private_network" json:"route_through_private_network,computed_optional"`
 	VnetID                     types.String `tfsdk:"vnet_id" json:"vnet_id,computed_optional"`

@@ -14,8 +14,8 @@ type ZeroTrustTunnelCloudflaredConfigResultEnvelope struct {
 
 type ZeroTrustTunnelCloudflaredConfigModel struct {
 	ID        types.String                                                          `tfsdk:"id" json:"-,computed"`
-	TunnelID  types.String                                                          `tfsdk:"tunnel_id" path:"tunnel_id,computed_optional"`
-	AccountID types.String                                                          `tfsdk:"account_id" path:"account_id,computed_optional"`
+	TunnelID  types.String                                                          `tfsdk:"tunnel_id" path:"tunnel_id,required"`
+	AccountID types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
 	Config    customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigModel] `tfsdk:"config" json:"config,computed_optional"`
 	CreatedAt timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source    types.String                                                          `tfsdk:"source" json:"source,computed"`
@@ -29,8 +29,8 @@ type ZeroTrustTunnelCloudflaredConfigConfigModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressModel struct {
-	Hostname      types.String                                                                              `tfsdk:"hostname" json:"hostname,computed_optional"`
-	Service       types.String                                                                              `tfsdk:"service" json:"service,computed_optional"`
+	Hostname      types.String                                                                              `tfsdk:"hostname" json:"hostname,required"`
+	Service       types.String                                                                              `tfsdk:"service" json:"service,required"`
 	OriginRequest customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel] `tfsdk:"origin_request" json:"originRequest,computed_optional"`
 	Path          types.String                                                                              `tfsdk:"path" json:"path,computed_optional"`
 }
@@ -53,9 +53,9 @@ type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessModel struct {
-	AUDTag   customfield.List[types.String] `tfsdk:"aud_tag" json:"audTag,computed_optional"`
-	TeamName types.String                   `tfsdk:"team_name" json:"teamName,computed_optional"`
-	Required types.Bool                     `tfsdk:"required" json:"required,computed_optional"`
+	AUDTag   *[]types.String `tfsdk:"aud_tag" json:"audTag,required"`
+	TeamName types.String    `tfsdk:"team_name" json:"teamName,computed_optional"`
+	Required types.Bool      `tfsdk:"required" json:"required,computed_optional"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel struct {
@@ -76,9 +76,9 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel struct {
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel struct {
-	AUDTag   customfield.List[types.String] `tfsdk:"aud_tag" json:"audTag,computed_optional"`
-	TeamName types.String                   `tfsdk:"team_name" json:"teamName,computed_optional"`
-	Required types.Bool                     `tfsdk:"required" json:"required,computed_optional"`
+	AUDTag   *[]types.String `tfsdk:"aud_tag" json:"audTag,required"`
+	TeamName types.String    `tfsdk:"team_name" json:"teamName,computed_optional"`
+	Required types.Bool      `tfsdk:"required" json:"required,computed_optional"`
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigWARPRoutingModel struct {

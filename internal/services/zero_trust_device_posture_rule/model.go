@@ -14,11 +14,11 @@ type ZeroTrustDevicePostureRuleResultEnvelope struct {
 type ZeroTrustDevicePostureRuleModel struct {
 	ID          types.String                                                       `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
+	Name        types.String                                                       `tfsdk:"name" json:"name,required"`
+	Type        types.String                                                       `tfsdk:"type" json:"type,required"`
 	Description types.String                                                       `tfsdk:"description" json:"description,computed_optional"`
 	Expiration  types.String                                                       `tfsdk:"expiration" json:"expiration,computed_optional"`
-	Name        types.String                                                       `tfsdk:"name" json:"name,computed_optional"`
 	Schedule    types.String                                                       `tfsdk:"schedule" json:"schedule,computed_optional"`
-	Type        types.String                                                       `tfsdk:"type" json:"type,computed_optional"`
 	Input       customfield.NestedObject[ZeroTrustDevicePostureRuleInputModel]     `tfsdk:"input" json:"input,computed_optional"`
 	Match       customfield.NestedObjectList[ZeroTrustDevicePostureRuleMatchModel] `tfsdk:"match" json:"match,computed_optional"`
 }

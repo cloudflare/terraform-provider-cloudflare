@@ -31,28 +31,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Routing rule status.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
-			"name": schema.StringAttribute{
-				Description: "Routing rule name.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"actions": schema.ListNestedAttribute{
 				Description: "List actions for the catch-all routing rule.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[EmailRoutingCatchAllActionsModel](ctx),
+				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
 							Description: "Type of action for catch-all rule.",
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"drop",
@@ -72,21 +58,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"matchers": schema.ListNestedAttribute{
 				Description: "List of matchers for the catch-all routing rule.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[EmailRoutingCatchAllMatchersModel](ctx),
+				Required:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
 							Description: "Type of matcher. Default is 'all'.",
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("all"),
 							},
 						},
 					},
 				},
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Routing rule status.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"name": schema.StringAttribute{
+				Description: "Routing rule name.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"tag": schema.StringAttribute{
 				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",

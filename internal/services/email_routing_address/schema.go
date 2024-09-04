@@ -29,8 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"email": schema.StringAttribute{
 				Description:   "The contact email address of the user.",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created": schema.StringAttribute{

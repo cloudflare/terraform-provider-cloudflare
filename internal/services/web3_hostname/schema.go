@@ -31,8 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"target": schema.StringAttribute{
 				Description: "Target gateway of the hostname.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"ethereum",

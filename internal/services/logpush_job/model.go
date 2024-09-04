@@ -18,8 +18,8 @@ type LogpushJobModel struct {
 	ZoneID                   types.String                                           `tfsdk:"zone_id" path:"zone_id,optional"`
 	Dataset                  types.String                                           `tfsdk:"dataset" json:"dataset,computed_optional"`
 	Name                     types.String                                           `tfsdk:"name" json:"name,computed_optional"`
+	DestinationConf          types.String                                           `tfsdk:"destination_conf" json:"destination_conf,required"`
 	OwnershipChallenge       types.String                                           `tfsdk:"ownership_challenge" json:"ownership_challenge,optional"`
-	DestinationConf          types.String                                           `tfsdk:"destination_conf" json:"destination_conf,computed_optional"`
 	Enabled                  types.Bool                                             `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Frequency                types.String                                           `tfsdk:"frequency" json:"frequency,computed_optional"`
 	Kind                     types.String                                           `tfsdk:"kind" json:"kind,computed_optional"`

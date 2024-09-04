@@ -32,8 +32,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of list.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"SERIAL",
@@ -70,13 +69,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
-			"description": schema.StringAttribute{
-				Description: "The description of the list.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"name": schema.StringAttribute{
 				Description: "The name of the list.",
+				Required:    true,
+			},
+			"description": schema.StringAttribute{
+				Description: "The description of the list.",
 				Computed:    true,
 				Optional:    true,
 			},

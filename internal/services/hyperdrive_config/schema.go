@@ -25,14 +25,53 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"origin": schema.SingleNestedAttribute{
+				Required: true,
+				Attributes: map[string]schema.Attribute{
+					"database": schema.StringAttribute{
+						Description: "The name of your origin database.",
+						Required:    true,
+					},
+					"host": schema.StringAttribute{
+						Description: "The host (hostname or IP) of your origin database.",
+						Required:    true,
+					},
+					"scheme": schema.StringAttribute{
+						Description: "Specifies the URL scheme used to connect to your origin database.",
+						Computed:    true,
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"postgres",
+								"postgresql",
+								"mysql",
+							),
+						},
+						Default: stringdefault.StaticString("postgres"),
+					},
+					"user": schema.StringAttribute{
+						Description: "The user of your origin database.",
+						Required:    true,
+					},
+					"access_client_id": schema.StringAttribute{
+						Description: "The Client ID of the Access token to use when connecting to the origin database",
+						Computed:    true,
+						Optional:    true,
+					},
+					"port": schema.Int64Attribute{
+						Description: "The port (default: 5432 for Postgres) of your origin database.",
+						Computed:    true,
+						Optional:    true,
+					},
+				},
 			},
 			"caching": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -51,51 +90,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"stale_while_revalidate": schema.Int64Attribute{
 						Description: "When present, indicates the number of seconds cache may serve the response after it becomes stale. (Default: 15)",
-						Computed:    true,
-						Optional:    true,
-					},
-				},
-			},
-			"origin": schema.SingleNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectType[HyperdriveConfigOriginModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"database": schema.StringAttribute{
-						Description: "The name of your origin database.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"host": schema.StringAttribute{
-						Description: "The host (hostname or IP) of your origin database.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"scheme": schema.StringAttribute{
-						Description: "Specifies the URL scheme used to connect to your origin database.",
-						Computed:    true,
-						Optional:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive(
-								"postgres",
-								"postgresql",
-								"mysql",
-							),
-						},
-						Default: stringdefault.StaticString("postgres"),
-					},
-					"user": schema.StringAttribute{
-						Description: "The user of your origin database.",
-						Computed:    true,
-						Optional:    true,
-					},
-					"access_client_id": schema.StringAttribute{
-						Description: "The Client ID of the Access token to use when connecting to the origin database",
-						Computed:    true,
-						Optional:    true,
-					},
-					"port": schema.Int64Attribute{
-						Description: "The port (default: 5432 for Postgres) of your origin database.",
 						Computed:    true,
 						Optional:    true,
 					},

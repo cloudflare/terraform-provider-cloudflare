@@ -27,8 +27,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
@@ -38,8 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"region_key": schema.StringAttribute{
 				Description: "Identifying key for the region",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the regional hostname was created",

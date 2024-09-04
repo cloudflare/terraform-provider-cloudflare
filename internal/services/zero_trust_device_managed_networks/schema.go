@@ -5,7 +5,6 @@ package zero_trust_device_managed_networks
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -34,27 +33,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the device managed network. This name must be unique.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of device managed network.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("tls"),
 				},
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The configuration object containing information for the WARP client to detect the managed network.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZeroTrustDeviceManagedNetworksConfigModel](ctx),
+				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"tls_sockaddr": schema.StringAttribute{
 						Description: "A network address of the form \"host:port\" that the WARP client will use to detect the presence of a TLS host.",
-						Computed:    true,
-						Optional:    true,
+						Required:    true,
 					},
 					"sha256": schema.StringAttribute{
 						Description: "The SHA-256 hash of the TLS certificate presented by the host found at tls_sockaddr. If absent, regular certificate verification (trusted roots, valid timestamp, etc) will be used to validate the certificate.",

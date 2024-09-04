@@ -50,8 +50,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "Account name",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "Account settings",

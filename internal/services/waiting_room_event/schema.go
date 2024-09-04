@@ -34,6 +34,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"event_end_time": schema.StringAttribute{
+				Description: "An ISO 8601 timestamp that marks the end of the event.",
+				Required:    true,
+			},
+			"event_start_time": schema.StringAttribute{
+				Description: "An ISO 8601 timestamp that marks the start of the event. At this time, queued users will be processed with the event's configuration. The start time must be at least one minute before `event_end_time`.",
+				Required:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.",
+				Required:    true,
+			},
 			"custom_page_html": schema.StringAttribute{
 				Description: "If set, the event will override the waiting room's `custom_page_html` property while it is active. If null, the event will inherit it.",
 				Computed:    true,
@@ -47,21 +59,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"disable_session_renewal": schema.BoolAttribute{
 				Description: "If set, the event will override the waiting room's `disable_session_renewal` property while it is active. If null, the event will inherit it.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"event_end_time": schema.StringAttribute{
-				Description: "An ISO 8601 timestamp that marks the end of the event.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"event_start_time": schema.StringAttribute{
-				Description: "An ISO 8601 timestamp that marks the start of the event. At this time, queued users will be processed with the event's configuration. The start time must be at least one minute before `event_end_time`.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "A unique name to identify the event. Only alphanumeric characters, hyphens and underscores are allowed.",
 				Computed:    true,
 				Optional:    true,
 			},
