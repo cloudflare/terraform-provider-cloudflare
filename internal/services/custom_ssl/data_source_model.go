@@ -22,7 +22,7 @@ type CustomSSLResultListDataSourceEnvelope struct {
 }
 
 type CustomSSLDataSourceModel struct {
-	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id"`
+	CustomCertificateID types.String                                                      `tfsdk:"custom_certificate_id" path:"custom_certificate_id,optional"`
 	ZoneID              types.String                                                      `tfsdk:"zone_id" path:"zone_id,computed_optional"`
 	BundleMethod        types.String                                                      `tfsdk:"bundle_method" json:"bundle_method,computed"`
 	ExpiresOn           timetypes.RFC3339                                                 `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
@@ -86,7 +86,7 @@ type CustomSSLKeylessServerTunnelDataSourceModel struct {
 }
 
 type CustomSSLFindOneByDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Match  types.String `tfsdk:"match" query:"match,computed_optional"`
-	Status types.String `tfsdk:"status" query:"status"`
+	Status types.String `tfsdk:"status" query:"status,optional"`
 }

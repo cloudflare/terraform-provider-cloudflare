@@ -22,8 +22,8 @@ type NotificationPolicyWebhooksResultListDataSourceEnvelope struct {
 }
 
 type NotificationPolicyWebhooksDataSourceModel struct {
-	AccountID   types.String                                        `tfsdk:"account_id" path:"account_id"`
-	WebhookID   types.String                                        `tfsdk:"webhook_id" path:"webhook_id"`
+	AccountID   types.String                                        `tfsdk:"account_id" path:"account_id,optional"`
+	WebhookID   types.String                                        `tfsdk:"webhook_id" path:"webhook_id,optional"`
 	CreatedAt   timetypes.RFC3339                                   `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ID          types.String                                        `tfsdk:"id" json:"id,computed"`
 	LastFailure timetypes.RFC3339                                   `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`
@@ -52,5 +52,5 @@ func (m *NotificationPolicyWebhooksDataSourceModel) toListParams(_ context.Conte
 }
 
 type NotificationPolicyWebhooksFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

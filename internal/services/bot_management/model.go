@@ -12,15 +12,15 @@ type BotManagementResultEnvelope struct {
 
 type BotManagementModel struct {
 	ID                           types.String `tfsdk:"id" json:"-,computed"`
-	ZoneID                       types.String `tfsdk:"zone_id" path:"zone_id"`
-	AIBotsProtection             types.String `tfsdk:"ai_bots_protection" json:"ai_bots_protection"`
-	AutoUpdateModel              types.Bool   `tfsdk:"auto_update_model" json:"auto_update_model"`
-	EnableJS                     types.Bool   `tfsdk:"enable_js" json:"enable_js"`
-	FightMode                    types.Bool   `tfsdk:"fight_mode" json:"fight_mode"`
-	OptimizeWordpress            types.Bool   `tfsdk:"optimize_wordpress" json:"optimize_wordpress"`
-	SBFMDefinitelyAutomated      types.String `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated"`
-	SBFMLikelyAutomated          types.String `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated"`
-	SBFMStaticResourceProtection types.Bool   `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection"`
-	SBFMVerifiedBots             types.String `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots"`
+	ZoneID                       types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	AIBotsProtection             types.String `tfsdk:"ai_bots_protection" json:"ai_bots_protection,optional"`
+	AutoUpdateModel              types.Bool   `tfsdk:"auto_update_model" json:"auto_update_model,optional"`
+	EnableJS                     types.Bool   `tfsdk:"enable_js" json:"enable_js,optional"`
+	FightMode                    types.Bool   `tfsdk:"fight_mode" json:"fight_mode,optional"`
+	OptimizeWordpress            types.Bool   `tfsdk:"optimize_wordpress" json:"optimize_wordpress,optional"`
+	SBFMDefinitelyAutomated      types.String `tfsdk:"sbfm_definitely_automated" json:"sbfm_definitely_automated,optional"`
+	SBFMLikelyAutomated          types.String `tfsdk:"sbfm_likely_automated" json:"sbfm_likely_automated,optional"`
+	SBFMStaticResourceProtection types.Bool   `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection,optional"`
+	SBFMVerifiedBots             types.String `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots,optional"`
 	SuppressSessionScore         types.Bool   `tfsdk:"suppress_session_score" json:"suppress_session_score,computed_optional"`
 }

@@ -20,9 +20,9 @@ type ZeroTrustTunnelCloudflaredConfigResultDataSourceEnvelope struct {
 type ZeroTrustTunnelCloudflaredConfigDataSourceModel struct {
 	AccountID types.String                                           `tfsdk:"account_id" path:"account_id,computed"`
 	TunnelID  types.String                                           `tfsdk:"tunnel_id" path:"tunnel_id,computed"`
-	CreatedAt timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at" format:"date-time"`
-	Version   types.Int64                                            `tfsdk:"version" json:"version"`
-	Config    *ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel `tfsdk:"config" json:"config"`
+	CreatedAt timetypes.RFC3339                                      `tfsdk:"created_at" json:"created_at,optional" format:"date-time"`
+	Version   types.Int64                                            `tfsdk:"version" json:"version,optional"`
+	Config    *ZeroTrustTunnelCloudflaredConfigConfigDataSourceModel `tfsdk:"config" json:"config,optional"`
 	Source    types.String                                           `tfsdk:"source" json:"source,computed_optional"`
 }
 

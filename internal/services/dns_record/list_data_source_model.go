@@ -19,13 +19,13 @@ type DNSRecordsResultListDataSourceEnvelope struct {
 }
 
 type DNSRecordsDataSourceModel struct {
-	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id"`
-	Content   types.String                                                  `tfsdk:"content" query:"content"`
-	Name      types.String                                                  `tfsdk:"name" query:"name"`
-	Search    types.String                                                  `tfsdk:"search" query:"search"`
-	Type      types.String                                                  `tfsdk:"type" query:"type"`
-	Comment   *DNSRecordsCommentDataSourceModel                             `tfsdk:"comment" query:"comment"`
-	Tag       *DNSRecordsTagDataSourceModel                                 `tfsdk:"tag" query:"tag"`
+	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
+	Content   types.String                                                  `tfsdk:"content" query:"content,optional"`
+	Name      types.String                                                  `tfsdk:"name" query:"name,optional"`
+	Search    types.String                                                  `tfsdk:"search" query:"search,optional"`
+	Type      types.String                                                  `tfsdk:"type" query:"type,optional"`
+	Comment   *DNSRecordsCommentDataSourceModel                             `tfsdk:"comment" query:"comment,optional"`
+	Tag       *DNSRecordsTagDataSourceModel                                 `tfsdk:"tag" query:"tag,optional"`
 	Direction types.String                                                  `tfsdk:"direction" query:"direction,computed_optional"`
 	Match     types.String                                                  `tfsdk:"match" query:"match,computed_optional"`
 	Order     types.String                                                  `tfsdk:"order" query:"order,computed_optional"`

@@ -12,7 +12,7 @@ type ZoneHoldResultEnvelope struct {
 
 type ZoneHoldModel struct {
 	ID                types.String `tfsdk:"id" json:"-,computed"`
-	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Hold              types.Bool   `tfsdk:"hold" json:"hold,computed"`
 	HoldAfter         types.String `tfsdk:"hold_after" json:"hold_after,computed"`
 	IncludeSubdomains types.String `tfsdk:"include_subdomains" json:"include_subdomains,computed"`

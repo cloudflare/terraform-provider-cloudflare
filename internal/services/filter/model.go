@@ -11,7 +11,7 @@ type FilterResultEnvelope struct {
 }
 
 type FilterModel struct {
-	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier,required"`
 	ID             types.String `tfsdk:"id" path:"id,computed_optional"`
 	Expression     types.String `tfsdk:"expression" json:"expression,computed_optional"`
 	Description    types.String `tfsdk:"description" json:"description,computed"`

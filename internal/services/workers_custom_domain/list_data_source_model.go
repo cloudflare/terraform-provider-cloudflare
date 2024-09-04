@@ -17,12 +17,12 @@ type WorkersCustomDomainsResultListDataSourceEnvelope struct {
 }
 
 type WorkersCustomDomainsDataSourceModel struct {
-	AccountID   types.String                                                            `tfsdk:"account_id" path:"account_id"`
-	Environment types.String                                                            `tfsdk:"environment" query:"environment"`
-	Hostname    types.String                                                            `tfsdk:"hostname" query:"hostname"`
-	Service     types.String                                                            `tfsdk:"service" query:"service"`
-	ZoneID      types.String                                                            `tfsdk:"zone_id" query:"zone_id"`
-	ZoneName    types.String                                                            `tfsdk:"zone_name" query:"zone_name"`
+	AccountID   types.String                                                            `tfsdk:"account_id" path:"account_id,required"`
+	Environment types.String                                                            `tfsdk:"environment" query:"environment,optional"`
+	Hostname    types.String                                                            `tfsdk:"hostname" query:"hostname,optional"`
+	Service     types.String                                                            `tfsdk:"service" query:"service,optional"`
+	ZoneID      types.String                                                            `tfsdk:"zone_id" query:"zone_id,optional"`
+	ZoneName    types.String                                                            `tfsdk:"zone_name" query:"zone_name,optional"`
 	MaxItems    types.Int64                                                             `tfsdk:"max_items"`
 	Result      customfield.NestedObjectList[WorkersCustomDomainsResultDataSourceModel] `tfsdk:"result"`
 }

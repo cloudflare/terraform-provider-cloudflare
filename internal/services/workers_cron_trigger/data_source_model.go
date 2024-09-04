@@ -16,9 +16,9 @@ type WorkersCronTriggerResultDataSourceEnvelope struct {
 }
 
 type WorkersCronTriggerDataSourceModel struct {
-	AccountID  types.String                                   `tfsdk:"account_id" path:"account_id"`
-	ScriptName types.String                                   `tfsdk:"script_name" path:"script_name"`
-	Schedules  *[]*WorkersCronTriggerSchedulesDataSourceModel `tfsdk:"schedules" json:"schedules"`
+	AccountID  types.String                                   `tfsdk:"account_id" path:"account_id,required"`
+	ScriptName types.String                                   `tfsdk:"script_name" path:"script_name,required"`
+	Schedules  *[]*WorkersCronTriggerSchedulesDataSourceModel `tfsdk:"schedules" json:"schedules,optional"`
 }
 
 func (m *WorkersCronTriggerDataSourceModel) toReadParams(_ context.Context) (params workers.ScriptScheduleGetParams, diags diag.Diagnostics) {

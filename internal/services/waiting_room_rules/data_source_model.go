@@ -16,8 +16,8 @@ type WaitingRoomRulesResultDataSourceEnvelope struct {
 }
 
 type WaitingRoomRulesDataSourceModel struct {
-	WaitingRoomID types.String `tfsdk:"waiting_room_id" path:"waiting_room_id"`
-	ZoneID        types.String `tfsdk:"zone_id" path:"zone_id"`
+	WaitingRoomID types.String `tfsdk:"waiting_room_id" path:"waiting_room_id,required"`
+	ZoneID        types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }
 
 func (m *WaitingRoomRulesDataSourceModel) toReadParams(_ context.Context) (params waiting_rooms.RuleGetParams, diags diag.Diagnostics) {

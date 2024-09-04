@@ -16,8 +16,8 @@ type LogpullRetentionResultDataSourceEnvelope struct {
 }
 
 type LogpullRetentionDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
-	Flag   types.Bool   `tfsdk:"flag" json:"flag"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Flag   types.Bool   `tfsdk:"flag" json:"flag,optional"`
 }
 
 func (m *LogpullRetentionDataSourceModel) toReadParams(_ context.Context) (params logs.ControlRetentionGetParams, diags diag.Diagnostics) {

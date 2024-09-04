@@ -8,7 +8,7 @@ import (
 
 type URLNormalizationSettingsModel struct {
 	ID     types.String `tfsdk:"id" json:"-,computed"`
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Scope  types.String `tfsdk:"scope" json:"scope,computed_optional"`
 	Type   types.String `tfsdk:"type" json:"type,computed_optional"`
 }

@@ -22,7 +22,7 @@ type ZoneResultListDataSourceEnvelope struct {
 }
 
 type ZoneDataSourceModel struct {
-	ZoneID              types.String                                         `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID              types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	ActivatedOn         timetypes.RFC3339                                    `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
 	CreatedOn           timetypes.RFC3339                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DevelopmentMode     types.Float64                                        `tfsdk:"development_mode" json:"development_mode,computed"`
@@ -105,10 +105,10 @@ type ZoneOwnerDataSourceModel struct {
 }
 
 type ZoneFindOneByDataSourceModel struct {
-	Account   *ZoneAccountDataSourceModel `tfsdk:"account" query:"account"`
-	Direction types.String                `tfsdk:"direction" query:"direction"`
+	Account   *ZoneAccountDataSourceModel `tfsdk:"account" query:"account,optional"`
+	Direction types.String                `tfsdk:"direction" query:"direction,optional"`
 	Match     types.String                `tfsdk:"match" query:"match,computed_optional"`
-	Name      types.String                `tfsdk:"name" query:"name"`
-	Order     types.String                `tfsdk:"order" query:"order"`
-	Status    types.String                `tfsdk:"status" query:"status"`
+	Name      types.String                `tfsdk:"name" query:"name,optional"`
+	Order     types.String                `tfsdk:"order" query:"order,optional"`
+	Status    types.String                `tfsdk:"status" query:"status,optional"`
 }

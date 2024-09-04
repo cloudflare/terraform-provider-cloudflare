@@ -16,8 +16,8 @@ type ZeroTrustGatewayProxyEndpointResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustGatewayProxyEndpointDataSourceModel struct {
-	AccountID       types.String `tfsdk:"account_id" path:"account_id"`
-	ProxyEndpointID types.String `tfsdk:"proxy_endpoint_id" path:"proxy_endpoint_id"`
+	AccountID       types.String `tfsdk:"account_id" path:"account_id,required"`
+	ProxyEndpointID types.String `tfsdk:"proxy_endpoint_id" path:"proxy_endpoint_id,required"`
 }
 
 func (m *ZeroTrustGatewayProxyEndpointDataSourceModel) toReadParams(_ context.Context) (params zero_trust.GatewayProxyEndpointGetParams, diags diag.Diagnostics) {

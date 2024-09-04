@@ -12,10 +12,10 @@ type WorkersSecretResultEnvelope struct {
 
 type WorkersSecretModel struct {
 	ID                types.String `tfsdk:"id" json:"-,computed"`
-	ScriptName        types.String `tfsdk:"script_name" path:"script_name"`
-	AccountID         types.String `tfsdk:"account_id" path:"account_id"`
-	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
-	Text              types.String `tfsdk:"text" json:"text"`
+	ScriptName        types.String `tfsdk:"script_name" path:"script_name,required"`
+	AccountID         types.String `tfsdk:"account_id" path:"account_id,required"`
+	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace,required"`
+	Text              types.String `tfsdk:"text" json:"text,optional"`
 	Name              types.String `tfsdk:"name" json:"name,computed_optional"`
 	Type              types.String `tfsdk:"type" json:"type,computed_optional"`
 }

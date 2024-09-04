@@ -18,11 +18,11 @@ type ZeroTrustTunnelCloudflaredVirtualNetworksResultListDataSourceEnvelope struc
 }
 
 type ZeroTrustTunnelCloudflaredVirtualNetworksDataSourceModel struct {
-	AccountID types.String                                                                                 `tfsdk:"account_id" path:"account_id"`
-	ID        types.String                                                                                 `tfsdk:"id" query:"id"`
-	IsDefault types.Bool                                                                                   `tfsdk:"is_default" query:"is_default"`
-	IsDeleted types.Bool                                                                                   `tfsdk:"is_deleted" query:"is_deleted"`
-	Name      types.String                                                                                 `tfsdk:"name" query:"name"`
+	AccountID types.String                                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	ID        types.String                                                                                 `tfsdk:"id" query:"id,optional"`
+	IsDefault types.Bool                                                                                   `tfsdk:"is_default" query:"is_default,optional"`
+	IsDeleted types.Bool                                                                                   `tfsdk:"is_deleted" query:"is_deleted,optional"`
+	Name      types.String                                                                                 `tfsdk:"name" query:"name,optional"`
 	MaxItems  types.Int64                                                                                  `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustTunnelCloudflaredVirtualNetworksResultDataSourceModel] `tfsdk:"result"`
 }

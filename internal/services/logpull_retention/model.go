@@ -11,6 +11,6 @@ type LogpullRetentionResultEnvelope struct {
 }
 
 type LogpullRetentionModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Flag   types.Bool   `tfsdk:"flag" json:"flag,computed_optional"`
 }

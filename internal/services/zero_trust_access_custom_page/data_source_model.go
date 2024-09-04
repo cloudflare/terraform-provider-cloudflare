@@ -22,9 +22,9 @@ type ZeroTrustAccessCustomPageResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessCustomPageDataSourceModel struct {
-	AccountID    types.String                                       `tfsdk:"account_id" path:"account_id"`
-	CustomPageID types.String                                       `tfsdk:"custom_page_id" path:"custom_page_id"`
-	CustomHTML   types.String                                       `tfsdk:"custom_html" json:"custom_html"`
+	AccountID    types.String                                       `tfsdk:"account_id" path:"account_id,optional"`
+	CustomPageID types.String                                       `tfsdk:"custom_page_id" path:"custom_page_id,optional"`
+	CustomHTML   types.String                                       `tfsdk:"custom_html" json:"custom_html,optional"`
 	AppCount     types.Int64                                        `tfsdk:"app_count" json:"app_count,computed"`
 	CreatedAt    timetypes.RFC3339                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Name         types.String                                       `tfsdk:"name" json:"name,computed"`
@@ -51,5 +51,5 @@ func (m *ZeroTrustAccessCustomPageDataSourceModel) toListParams(_ context.Contex
 }
 
 type ZeroTrustAccessCustomPageFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

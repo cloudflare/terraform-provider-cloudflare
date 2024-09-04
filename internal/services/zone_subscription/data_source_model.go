@@ -11,5 +11,5 @@ type ZoneSubscriptionResultDataSourceEnvelope struct {
 }
 
 type ZoneSubscriptionDataSourceModel struct {
-	Identifier types.String `tfsdk:"identifier" path:"identifier"`
+	Identifier types.String `tfsdk:"identifier" path:"identifier,required"`
 }

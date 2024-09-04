@@ -17,9 +17,9 @@ type ListItemsResultListDataSourceEnvelope struct {
 }
 
 type ListItemsDataSourceModel struct {
-	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id"`
-	ListID    types.String                                                 `tfsdk:"list_id" path:"list_id"`
-	Search    types.String                                                 `tfsdk:"search" query:"search"`
+	AccountID types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
+	ListID    types.String                                                 `tfsdk:"list_id" path:"list_id,required"`
+	Search    types.String                                                 `tfsdk:"search" query:"search,optional"`
 	MaxItems  types.Int64                                                  `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ListItemsResultDataSourceModel] `tfsdk:"result"`
 }

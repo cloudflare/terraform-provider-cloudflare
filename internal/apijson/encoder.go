@@ -494,13 +494,13 @@ func (e *encoder) newTimeTypeEncoder() encoderFunc {
 
 func (e *encoder) newCustomTimeTypeEncoder() encoderFunc {
 	format := e.dateFormat
-	return func(value reflect.Value, state reflect.Value) (json []byte, err error) {
-		val, errs := value.Convert(reflect.TypeOf(timetypes.RFC3339{})).Interface().(timetypes.RFC3339).ValueRFC3339Time()
+	return handleNullAndUndefined(func(value attr.Value, state attr.Value) (json []byte, err error) {
+		val, errs := value.(timetypes.RFC3339).ValueRFC3339Time()
 		if errs != nil {
 			return nil, errorFromDiagnostics(errs)
 		}
 		return stdjson.Marshal(val.Format(format))
-	}
+	})
 }
 
 func (e encoder) newInterfaceEncoder() encoderFunc {

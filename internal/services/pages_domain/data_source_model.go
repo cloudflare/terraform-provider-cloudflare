@@ -21,9 +21,9 @@ type PagesDomainResultListDataSourceEnvelope struct {
 }
 
 type PagesDomainDataSourceModel struct {
-	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id"`
-	DomainName           types.String                                                         `tfsdk:"domain_name" path:"domain_name"`
-	ProjectName          types.String                                                         `tfsdk:"project_name" path:"project_name"`
+	AccountID            types.String                                                         `tfsdk:"account_id" path:"account_id,optional"`
+	DomainName           types.String                                                         `tfsdk:"domain_name" path:"domain_name,optional"`
+	ProjectName          types.String                                                         `tfsdk:"project_name" path:"project_name,optional"`
 	CertificateAuthority types.String                                                         `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CreatedOn            types.String                                                         `tfsdk:"created_on" json:"created_on,computed"`
 	DomainID             types.String                                                         `tfsdk:"domain_id" json:"domain_id,computed"`
@@ -66,6 +66,6 @@ type PagesDomainVerificationDataDataSourceModel struct {
 }
 
 type PagesDomainFindOneByDataSourceModel struct {
-	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
-	ProjectName types.String `tfsdk:"project_name" path:"project_name"`
+	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
+	ProjectName types.String `tfsdk:"project_name" path:"project_name,required"`
 }

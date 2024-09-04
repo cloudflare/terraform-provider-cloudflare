@@ -12,9 +12,9 @@ import (
 )
 
 type URLNormalizationSettingsDataSourceModel struct {
-	ZoneID types.String `tfsdk:"zone_id" path:"zone_id"`
-	Scope  types.String `tfsdk:"scope" json:"scope"`
-	Type   types.String `tfsdk:"type" json:"type"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	Scope  types.String `tfsdk:"scope" json:"scope,optional"`
+	Type   types.String `tfsdk:"type" json:"type,optional"`
 }
 
 func (m *URLNormalizationSettingsDataSourceModel) toReadParams(_ context.Context) (params url_normalization.URLNormalizationGetParams, diags diag.Diagnostics) {

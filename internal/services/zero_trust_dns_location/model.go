@@ -14,7 +14,7 @@ type ZeroTrustDNSLocationResultEnvelope struct {
 
 type ZeroTrustDNSLocationModel struct {
 	ID                    types.String                                                    `tfsdk:"id" json:"id,computed"`
-	AccountID             types.String                                                    `tfsdk:"account_id" path:"account_id"`
+	AccountID             types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	ClientDefault         types.Bool                                                      `tfsdk:"client_default" json:"client_default,computed_optional"`
 	DNSDestinationIPsID   types.String                                                    `tfsdk:"dns_destination_ips_id" json:"dns_destination_ips_id,computed_optional"`
 	ECSSupport            types.Bool                                                      `tfsdk:"ecs_support" json:"ecs_support,computed_optional"`

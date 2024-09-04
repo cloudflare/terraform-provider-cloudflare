@@ -12,11 +12,11 @@ type FirewallRuleResultEnvelope struct {
 }
 
 type FirewallRuleModel struct {
-	ZoneIdentifier types.String                   `tfsdk:"zone_identifier" path:"zone_identifier"`
-	PathID         types.String                   `tfsdk:"path_id" path:"id"`
+	ZoneIdentifier types.String                   `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	PathID         types.String                   `tfsdk:"path_id" path:"id,optional"`
 	ID             types.String                   `tfsdk:"id" path:"id,computed_optional"`
-	Action         *FirewallRuleActionModel       `tfsdk:"action" json:"action"`
-	Filter         *FirewallRuleFilterModel       `tfsdk:"filter" json:"filter"`
+	Action         *FirewallRuleActionModel       `tfsdk:"action" json:"action,required"`
+	Filter         *FirewallRuleFilterModel       `tfsdk:"filter" json:"filter,required"`
 	Description    types.String                   `tfsdk:"description" json:"description,computed"`
 	Paused         types.Bool                     `tfsdk:"paused" json:"paused,computed"`
 	Priority       types.Float64                  `tfsdk:"priority" json:"priority,computed"`

@@ -12,10 +12,10 @@ type ListItemResultEnvelope struct {
 }
 
 type ListItemModel struct {
-	ListID            types.String                                    `tfsdk:"list_id" path:"list_id"`
-	AccountID         types.String                                    `tfsdk:"account_id" path:"account_id"`
-	AccountIdentifier types.String                                    `tfsdk:"account_identifier" path:"account_identifier"`
-	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id"`
+	ListID            types.String                                    `tfsdk:"list_id" path:"list_id,required"`
+	AccountID         types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountIdentifier types.String                                    `tfsdk:"account_identifier" path:"account_identifier,optional"`
+	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id,optional"`
 	ASN               types.Int64                                     `tfsdk:"asn" json:"asn,computed_optional"`
 	Comment           types.String                                    `tfsdk:"comment" json:"comment,computed_optional"`
 	IP                types.String                                    `tfsdk:"ip" json:"ip,computed_optional"`
@@ -25,12 +25,12 @@ type ListItemModel struct {
 }
 
 type ListItemHostnameModel struct {
-	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname"`
+	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
 }
 
 type ListItemRedirectModel struct {
-	SourceURL           types.String `tfsdk:"source_url" json:"source_url"`
-	TargetURL           types.String `tfsdk:"target_url" json:"target_url"`
+	SourceURL           types.String `tfsdk:"source_url" json:"source_url,required"`
+	TargetURL           types.String `tfsdk:"target_url" json:"target_url,required"`
 	IncludeSubdomains   types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional"`
 	PreservePathSuffix  types.Bool   `tfsdk:"preserve_path_suffix" json:"preserve_path_suffix,computed_optional"`
 	PreserveQueryString types.Bool   `tfsdk:"preserve_query_string" json:"preserve_query_string,computed_optional"`

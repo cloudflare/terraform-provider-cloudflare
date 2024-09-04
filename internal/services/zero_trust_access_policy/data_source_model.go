@@ -23,10 +23,10 @@ type ZeroTrustAccessPolicyResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessPolicyDataSourceModel struct {
-	AccountID                    types.String                                                                     `tfsdk:"account_id" path:"account_id"`
-	AppID                        types.String                                                                     `tfsdk:"app_id" path:"app_id"`
-	PolicyID                     types.String                                                                     `tfsdk:"policy_id" path:"policy_id"`
-	ZoneID                       types.String                                                                     `tfsdk:"zone_id" path:"zone_id"`
+	AccountID                    types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
+	AppID                        types.String                                                                     `tfsdk:"app_id" path:"app_id,optional"`
+	PolicyID                     types.String                                                                     `tfsdk:"policy_id" path:"policy_id,optional"`
+	ZoneID                       types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
 	ApprovalRequired             types.Bool                                                                       `tfsdk:"approval_required" json:"approval_required,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Decision                     types.String                                                                     `tfsdk:"decision" json:"decision,computed"`
@@ -351,7 +351,7 @@ type ZeroTrustAccessPolicyRequireDevicePostureDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyFindOneByDataSourceModel struct {
-	AppID     types.String `tfsdk:"app_id" path:"app_id"`
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AppID     types.String `tfsdk:"app_id" path:"app_id,required"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

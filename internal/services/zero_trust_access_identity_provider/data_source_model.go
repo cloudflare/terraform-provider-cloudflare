@@ -21,9 +21,9 @@ type ZeroTrustAccessIdentityProviderResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessIdentityProviderDataSourceModel struct {
-	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id"`
-	IdentityProviderID types.String                                             `tfsdk:"identity_provider_id" path:"identity_provider_id"`
-	ZoneID             types.String                                             `tfsdk:"zone_id" path:"zone_id"`
+	AccountID          types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
+	IdentityProviderID types.String                                             `tfsdk:"identity_provider_id" path:"identity_provider_id,optional"`
+	ZoneID             types.String                                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	Filter             *ZeroTrustAccessIdentityProviderFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
@@ -52,6 +52,6 @@ func (m *ZeroTrustAccessIdentityProviderDataSourceModel) toListParams(_ context.
 }
 
 type ZeroTrustAccessIdentityProviderFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

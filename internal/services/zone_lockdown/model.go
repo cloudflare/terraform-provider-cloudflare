@@ -14,7 +14,7 @@ type ZoneLockdownResultEnvelope struct {
 
 type ZoneLockdownModel struct {
 	ID             types.String                                              `tfsdk:"id" json:"id,computed"`
-	ZoneIdentifier types.String                                              `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String                                              `tfsdk:"zone_identifier" path:"zone_identifier,required"`
 	URLs           customfield.List[types.String]                            `tfsdk:"urls" json:"urls,computed_optional"`
 	Configurations customfield.NestedObject[ZoneLockdownConfigurationsModel] `tfsdk:"configurations" json:"configurations,computed_optional"`
 	CreatedOn      timetypes.RFC3339                                         `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

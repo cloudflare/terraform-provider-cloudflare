@@ -12,15 +12,15 @@ type SpectrumApplicationResultEnvelope struct {
 
 type SpectrumApplicationModel struct {
 	ID               types.String                       `tfsdk:"id" json:"id,computed"`
-	ZoneID           types.String                       `tfsdk:"zone_id" path:"zone_id"`
-	Protocol         types.String                       `tfsdk:"protocol" json:"protocol"`
-	DNS              *SpectrumApplicationDNSModel       `tfsdk:"dns" json:"dns"`
-	IPFirewall       types.Bool                         `tfsdk:"ip_firewall" json:"ip_firewall"`
-	TLS              types.String                       `tfsdk:"tls" json:"tls"`
-	OriginDirect     *[]types.String                    `tfsdk:"origin_direct" json:"origin_direct"`
-	EdgeIPs          *SpectrumApplicationEdgeIPsModel   `tfsdk:"edge_ips" json:"edge_ips"`
-	OriginDNS        *SpectrumApplicationOriginDNSModel `tfsdk:"origin_dns" json:"origin_dns"`
-	OriginPort       types.Dynamic                      `tfsdk:"origin_port" json:"origin_port"`
+	ZoneID           types.String                       `tfsdk:"zone_id" path:"zone_id,required"`
+	Protocol         types.String                       `tfsdk:"protocol" json:"protocol,required"`
+	DNS              *SpectrumApplicationDNSModel       `tfsdk:"dns" json:"dns,required"`
+	IPFirewall       types.Bool                         `tfsdk:"ip_firewall" json:"ip_firewall,optional"`
+	TLS              types.String                       `tfsdk:"tls" json:"tls,optional"`
+	OriginDirect     *[]types.String                    `tfsdk:"origin_direct" json:"origin_direct,optional"`
+	EdgeIPs          *SpectrumApplicationEdgeIPsModel   `tfsdk:"edge_ips" json:"edge_ips,optional"`
+	OriginDNS        *SpectrumApplicationOriginDNSModel `tfsdk:"origin_dns" json:"origin_dns,optional"`
+	OriginPort       types.Dynamic                      `tfsdk:"origin_port" json:"origin_port,optional"`
 	ArgoSmartRouting types.Bool                         `tfsdk:"argo_smart_routing" json:"argo_smart_routing,computed_optional"`
 	ProxyProtocol    types.String                       `tfsdk:"proxy_protocol" json:"proxy_protocol,computed_optional"`
 	TrafficType      types.String                       `tfsdk:"traffic_type" json:"traffic_type,computed_optional"`
@@ -32,9 +32,9 @@ type SpectrumApplicationDNSModel struct {
 }
 
 type SpectrumApplicationEdgeIPsModel struct {
-	Connectivity types.String    `tfsdk:"connectivity" json:"connectivity"`
+	Connectivity types.String    `tfsdk:"connectivity" json:"connectivity,optional"`
 	Type         types.String    `tfsdk:"type" json:"type,computed_optional"`
-	IPs          *[]types.String `tfsdk:"ips" json:"ips"`
+	IPs          *[]types.String `tfsdk:"ips" json:"ips,optional"`
 }
 
 type SpectrumApplicationOriginDNSModel struct {

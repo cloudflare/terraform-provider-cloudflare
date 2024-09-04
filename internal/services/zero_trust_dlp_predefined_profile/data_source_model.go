@@ -16,8 +16,8 @@ type ZeroTrustDLPPredefinedProfileResultDataSourceEnvelope struct {
 }
 
 type ZeroTrustDLPPredefinedProfileDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ProfileID types.String `tfsdk:"profile_id" path:"profile_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
+	ProfileID types.String `tfsdk:"profile_id" path:"profile_id,required"`
 }
 
 func (m *ZeroTrustDLPPredefinedProfileDataSourceModel) toReadParams(_ context.Context) (params zero_trust.DLPProfilePredefinedGetParams, diags diag.Diagnostics) {

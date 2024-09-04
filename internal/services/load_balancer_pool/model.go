@@ -14,7 +14,7 @@ type LoadBalancerPoolResultEnvelope struct {
 
 type LoadBalancerPoolModel struct {
 	ID                 types.String                                                      `tfsdk:"id" json:"id,computed"`
-	AccountID          types.String                                                      `tfsdk:"account_id" path:"account_id"`
+	AccountID          types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
 	Description        types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
 	Enabled            types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Latitude           types.Float64                                                     `tfsdk:"latitude" json:"latitude,computed_optional"`

@@ -21,10 +21,10 @@ type WorkersSecretResultListDataSourceEnvelope struct {
 }
 
 type WorkersSecretDataSourceModel struct {
-	AccountID         types.String                           `tfsdk:"account_id" path:"account_id"`
-	DispatchNamespace types.String                           `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
-	ScriptName        types.String                           `tfsdk:"script_name" path:"script_name"`
-	SecretName        types.String                           `tfsdk:"secret_name" path:"secret_name"`
+	AccountID         types.String                           `tfsdk:"account_id" path:"account_id,optional"`
+	DispatchNamespace types.String                           `tfsdk:"dispatch_namespace" path:"dispatch_namespace,optional"`
+	ScriptName        types.String                           `tfsdk:"script_name" path:"script_name,optional"`
+	SecretName        types.String                           `tfsdk:"secret_name" path:"secret_name,optional"`
 	Name              types.String                           `tfsdk:"name" json:"name,computed"`
 	Type              types.String                           `tfsdk:"type" json:"type,computed"`
 	Filter            *WorkersSecretFindOneByDataSourceModel `tfsdk:"filter"`
@@ -47,7 +47,7 @@ func (m *WorkersSecretDataSourceModel) toListParams(_ context.Context) (params w
 }
 
 type WorkersSecretFindOneByDataSourceModel struct {
-	AccountID         types.String `tfsdk:"account_id" path:"account_id"`
-	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace"`
-	ScriptName        types.String `tfsdk:"script_name" path:"script_name"`
+	AccountID         types.String `tfsdk:"account_id" path:"account_id,required"`
+	DispatchNamespace types.String `tfsdk:"dispatch_namespace" path:"dispatch_namespace,required"`
+	ScriptName        types.String `tfsdk:"script_name" path:"script_name,required"`
 }

@@ -16,10 +16,10 @@ type TotalTLSResultDataSourceEnvelope struct {
 }
 
 type TotalTLSDataSourceModel struct {
-	ZoneID               types.String `tfsdk:"zone_id" path:"zone_id"`
-	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority"`
-	Enabled              types.Bool   `tfsdk:"enabled" json:"enabled"`
-	ValidityPeriod       types.Int64  `tfsdk:"validity_period" json:"validity_period"`
+	ZoneID               types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority,optional"`
+	Enabled              types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
+	ValidityPeriod       types.Int64  `tfsdk:"validity_period" json:"validity_period,optional"`
 }
 
 func (m *TotalTLSDataSourceModel) toReadParams(_ context.Context) (params acm.TotalTLSGetParams, diags diag.Diagnostics) {

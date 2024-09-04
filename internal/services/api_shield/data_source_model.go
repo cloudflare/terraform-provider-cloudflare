@@ -16,9 +16,9 @@ type APIShieldResultDataSourceEnvelope struct {
 }
 
 type APIShieldDataSourceModel struct {
-	ZoneID                types.String                                      `tfsdk:"zone_id" path:"zone_id"`
-	Properties            *[]types.String                                   `tfsdk:"properties" query:"properties"`
-	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsDataSourceModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics"`
+	ZoneID                types.String                                      `tfsdk:"zone_id" path:"zone_id,required"`
+	Properties            *[]types.String                                   `tfsdk:"properties" query:"properties,optional"`
+	AuthIDCharacteristics *[]*APIShieldAuthIDCharacteristicsDataSourceModel `tfsdk:"auth_id_characteristics" json:"auth_id_characteristics,optional"`
 }
 
 func (m *APIShieldDataSourceModel) toReadParams(_ context.Context) (params api_gateway.ConfigurationGetParams, diags diag.Diagnostics) {

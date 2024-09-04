@@ -18,16 +18,16 @@ type WorkersScriptResultListDataSourceEnvelope struct {
 }
 
 type WorkersScriptDataSourceModel struct {
-	AccountID     types.String                                  `tfsdk:"account_id" path:"account_id"`
-	ScriptName    types.String                                  `tfsdk:"script_name" path:"script_name"`
-	CreatedOn     timetypes.RFC3339                             `tfsdk:"created_on" json:"created_on" format:"date-time"`
-	Etag          types.String                                  `tfsdk:"etag" json:"etag"`
-	ID            types.String                                  `tfsdk:"id" json:"id"`
-	Logpush       types.Bool                                    `tfsdk:"logpush" json:"logpush"`
-	ModifiedOn    timetypes.RFC3339                             `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
-	PlacementMode types.String                                  `tfsdk:"placement_mode" json:"placement_mode"`
-	UsageModel    types.String                                  `tfsdk:"usage_model" json:"usage_model"`
-	TailConsumers *[]*WorkersScriptTailConsumersDataSourceModel `tfsdk:"tail_consumers" json:"tail_consumers"`
+	AccountID     types.String                                  `tfsdk:"account_id" path:"account_id,optional"`
+	ScriptName    types.String                                  `tfsdk:"script_name" path:"script_name,optional"`
+	CreatedOn     timetypes.RFC3339                             `tfsdk:"created_on" json:"created_on,optional" format:"date-time"`
+	Etag          types.String                                  `tfsdk:"etag" json:"etag,optional"`
+	ID            types.String                                  `tfsdk:"id" json:"id,optional"`
+	Logpush       types.Bool                                    `tfsdk:"logpush" json:"logpush,optional"`
+	ModifiedOn    timetypes.RFC3339                             `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
+	PlacementMode types.String                                  `tfsdk:"placement_mode" json:"placement_mode,optional"`
+	UsageModel    types.String                                  `tfsdk:"usage_model" json:"usage_model,optional"`
+	TailConsumers *[]*WorkersScriptTailConsumersDataSourceModel `tfsdk:"tail_consumers" json:"tail_consumers,optional"`
 	Filter        *WorkersScriptFindOneByDataSourceModel        `tfsdk:"filter"`
 }
 
@@ -54,5 +54,5 @@ type WorkersScriptTailConsumersDataSourceModel struct {
 }
 
 type WorkersScriptFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

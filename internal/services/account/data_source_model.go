@@ -22,7 +22,7 @@ type AccountResultListDataSourceEnvelope struct {
 }
 
 type AccountDataSourceModel struct {
-	AccountID types.String                                             `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String                                             `tfsdk:"account_id" path:"account_id,optional"`
 	CreatedOn timetypes.RFC3339                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ID        types.String                                             `tfsdk:"id" json:"id,computed"`
 	Name      types.String                                             `tfsdk:"name" json:"name,computed"`
@@ -59,6 +59,6 @@ type AccountSettingsDataSourceModel struct {
 }
 
 type AccountFindOneByDataSourceModel struct {
-	Direction types.String `tfsdk:"direction" query:"direction"`
-	Name      types.String `tfsdk:"name" query:"name"`
+	Direction types.String `tfsdk:"direction" query:"direction,optional"`
+	Name      types.String `tfsdk:"name" query:"name,optional"`
 }

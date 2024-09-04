@@ -17,10 +17,10 @@ type RegionalTieredCacheResultDataSourceEnvelope struct {
 }
 
 type RegionalTieredCacheDataSourceModel struct {
-	ZoneID     types.String                             `tfsdk:"zone_id" path:"zone_id"`
-	ID         types.String                             `tfsdk:"id" json:"id"`
-	ModifiedOn timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on" format:"date-time"`
-	Value      *RegionalTieredCacheValueDataSourceModel `tfsdk:"value" json:"value"`
+	ZoneID     types.String                             `tfsdk:"zone_id" path:"zone_id,required"`
+	ID         types.String                             `tfsdk:"id" json:"id,optional"`
+	ModifiedOn timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
+	Value      *RegionalTieredCacheValueDataSourceModel `tfsdk:"value" json:"value,optional"`
 }
 
 func (m *RegionalTieredCacheDataSourceModel) toReadParams(_ context.Context) (params cache.RegionalTieredCacheGetParams, diags diag.Diagnostics) {

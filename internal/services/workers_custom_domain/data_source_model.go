@@ -21,8 +21,8 @@ type WorkersCustomDomainResultListDataSourceEnvelope struct {
 }
 
 type WorkersCustomDomainDataSourceModel struct {
-	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id"`
-	DomainID    types.String                                 `tfsdk:"domain_id" path:"domain_id"`
+	AccountID   types.String                                 `tfsdk:"account_id" path:"account_id,optional"`
+	DomainID    types.String                                 `tfsdk:"domain_id" path:"domain_id,optional"`
 	Environment types.String                                 `tfsdk:"environment" json:"environment,computed"`
 	Hostname    types.String                                 `tfsdk:"hostname" json:"hostname,computed"`
 	ID          types.String                                 `tfsdk:"id" json:"id,computed"`
@@ -65,10 +65,10 @@ func (m *WorkersCustomDomainDataSourceModel) toListParams(_ context.Context) (pa
 }
 
 type WorkersCustomDomainFindOneByDataSourceModel struct {
-	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
-	Environment types.String `tfsdk:"environment" query:"environment"`
-	Hostname    types.String `tfsdk:"hostname" query:"hostname"`
-	Service     types.String `tfsdk:"service" query:"service"`
-	ZoneID      types.String `tfsdk:"zone_id" query:"zone_id"`
-	ZoneName    types.String `tfsdk:"zone_name" query:"zone_name"`
+	AccountID   types.String `tfsdk:"account_id" path:"account_id,required"`
+	Environment types.String `tfsdk:"environment" query:"environment,optional"`
+	Hostname    types.String `tfsdk:"hostname" query:"hostname,optional"`
+	Service     types.String `tfsdk:"service" query:"service,optional"`
+	ZoneID      types.String `tfsdk:"zone_id" query:"zone_id,optional"`
+	ZoneName    types.String `tfsdk:"zone_name" query:"zone_name,optional"`
 }

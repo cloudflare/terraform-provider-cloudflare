@@ -17,10 +17,10 @@ type UserAgentBlockingRulesResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRulesDataSourceModel struct {
-	ZoneIdentifier    types.String                                                              `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Description       types.String                                                              `tfsdk:"description" query:"description"`
-	DescriptionSearch types.String                                                              `tfsdk:"description_search" query:"description_search"`
-	UASearch          types.String                                                              `tfsdk:"ua_search" query:"ua_search"`
+	ZoneIdentifier    types.String                                                              `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	Description       types.String                                                              `tfsdk:"description" query:"description,optional"`
+	DescriptionSearch types.String                                                              `tfsdk:"description_search" query:"description_search,optional"`
+	UASearch          types.String                                                              `tfsdk:"ua_search" query:"ua_search,optional"`
 	MaxItems          types.Int64                                                               `tfsdk:"max_items"`
 	Result            customfield.NestedObjectList[UserAgentBlockingRulesResultDataSourceModel] `tfsdk:"result"`
 }

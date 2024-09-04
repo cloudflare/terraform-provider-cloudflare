@@ -12,12 +12,12 @@ type RateLimitResultEnvelope struct {
 }
 
 type RateLimitModel struct {
-	ZoneIdentifier types.String          `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String          `tfsdk:"zone_identifier" path:"zone_identifier,required"`
 	ID             types.String          `tfsdk:"id" path:"id,computed_optional"`
-	Period         types.Float64         `tfsdk:"period" json:"period"`
-	Threshold      types.Float64         `tfsdk:"threshold" json:"threshold"`
-	Action         *RateLimitActionModel `tfsdk:"action" json:"action"`
-	Match          *RateLimitMatchModel  `tfsdk:"match" json:"match"`
+	Period         types.Float64         `tfsdk:"period" json:"period,required"`
+	Threshold      types.Float64         `tfsdk:"threshold" json:"threshold,required"`
+	Action         *RateLimitActionModel `tfsdk:"action" json:"action,required"`
+	Match          *RateLimitMatchModel  `tfsdk:"match" json:"match,required"`
 }
 
 type RateLimitActionModel struct {

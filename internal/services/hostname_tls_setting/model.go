@@ -13,8 +13,8 @@ type HostnameTLSSettingResultEnvelope struct {
 
 type HostnameTLSSettingModel struct {
 	ID        types.String      `tfsdk:"id" json:"-,computed"`
-	SettingID types.String      `tfsdk:"setting_id" path:"setting_id"`
-	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id"`
+	SettingID types.String      `tfsdk:"setting_id" path:"setting_id,required"`
+	ZoneID    types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Hostname  types.String      `tfsdk:"hostname" path:"hostname,computed_optional"`
 	Value     types.Float64     `tfsdk:"value" json:"value,computed_optional"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

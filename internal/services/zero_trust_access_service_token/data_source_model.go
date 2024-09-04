@@ -22,9 +22,9 @@ type ZeroTrustAccessServiceTokenResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessServiceTokenDataSourceModel struct {
-	AccountID      types.String                                         `tfsdk:"account_id" path:"account_id"`
-	ServiceTokenID types.String                                         `tfsdk:"service_token_id" path:"service_token_id"`
-	ZoneID         types.String                                         `tfsdk:"zone_id" path:"zone_id"`
+	AccountID      types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ServiceTokenID types.String                                         `tfsdk:"service_token_id" path:"service_token_id,optional"`
+	ZoneID         types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	ClientID       types.String                                         `tfsdk:"client_id" json:"client_id,computed"`
 	CreatedAt      timetypes.RFC3339                                    `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Duration       types.String                                         `tfsdk:"duration" json:"duration,computed"`
@@ -60,6 +60,6 @@ func (m *ZeroTrustAccessServiceTokenDataSourceModel) toListParams(_ context.Cont
 }
 
 type ZeroTrustAccessServiceTokenFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
 }

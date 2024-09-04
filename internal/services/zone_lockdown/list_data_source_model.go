@@ -18,16 +18,16 @@ type ZoneLockdownsResultListDataSourceEnvelope struct {
 }
 
 type ZoneLockdownsDataSourceModel struct {
-	ZoneIdentifier    types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier"`
-	CreatedOn         timetypes.RFC3339                                                `tfsdk:"created_on" query:"created_on" format:"date-time"`
-	Description       types.String                                                     `tfsdk:"description" query:"description"`
-	DescriptionSearch types.String                                                     `tfsdk:"description_search" query:"description_search"`
-	IP                types.String                                                     `tfsdk:"ip" query:"ip"`
-	IPRangeSearch     types.String                                                     `tfsdk:"ip_range_search" query:"ip_range_search"`
-	IPSearch          types.String                                                     `tfsdk:"ip_search" query:"ip_search"`
-	ModifiedOn        timetypes.RFC3339                                                `tfsdk:"modified_on" query:"modified_on" format:"date-time"`
-	Priority          types.Float64                                                    `tfsdk:"priority" query:"priority"`
-	URISearch         types.String                                                     `tfsdk:"uri_search" query:"uri_search"`
+	ZoneIdentifier    types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	CreatedOn         timetypes.RFC3339                                                `tfsdk:"created_on" query:"created_on,optional" format:"date-time"`
+	Description       types.String                                                     `tfsdk:"description" query:"description,optional"`
+	DescriptionSearch types.String                                                     `tfsdk:"description_search" query:"description_search,optional"`
+	IP                types.String                                                     `tfsdk:"ip" query:"ip,optional"`
+	IPRangeSearch     types.String                                                     `tfsdk:"ip_range_search" query:"ip_range_search,optional"`
+	IPSearch          types.String                                                     `tfsdk:"ip_search" query:"ip_search,optional"`
+	ModifiedOn        timetypes.RFC3339                                                `tfsdk:"modified_on" query:"modified_on,optional" format:"date-time"`
+	Priority          types.Float64                                                    `tfsdk:"priority" query:"priority,optional"`
+	URISearch         types.String                                                     `tfsdk:"uri_search" query:"uri_search,optional"`
 	MaxItems          types.Int64                                                      `tfsdk:"max_items"`
 	Result            customfield.NestedObjectList[ZoneLockdownsResultDataSourceModel] `tfsdk:"result"`
 }

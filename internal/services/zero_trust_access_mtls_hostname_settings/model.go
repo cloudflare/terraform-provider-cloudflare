@@ -11,13 +11,13 @@ type ZeroTrustAccessMTLSHostnameSettingsResultEnvelope struct {
 }
 
 type ZeroTrustAccessMTLSHostnameSettingsModel struct {
-	AccountID types.String                                         `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                         `tfsdk:"zone_id" path:"zone_id"`
-	Settings  *[]*ZeroTrustAccessMTLSHostnameSettingsSettingsModel `tfsdk:"settings" json:"settings"`
+	AccountID types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`
+	Settings  *[]*ZeroTrustAccessMTLSHostnameSettingsSettingsModel `tfsdk:"settings" json:"settings,required"`
 }
 
 type ZeroTrustAccessMTLSHostnameSettingsSettingsModel struct {
-	ChinaNetwork                types.Bool   `tfsdk:"china_network" json:"china_network"`
-	ClientCertificateForwarding types.Bool   `tfsdk:"client_certificate_forwarding" json:"client_certificate_forwarding"`
-	Hostname                    types.String `tfsdk:"hostname" json:"hostname"`
+	ChinaNetwork                types.Bool   `tfsdk:"china_network" json:"china_network,required"`
+	ClientCertificateForwarding types.Bool   `tfsdk:"client_certificate_forwarding" json:"client_certificate_forwarding,required"`
+	Hostname                    types.String `tfsdk:"hostname" json:"hostname,required"`
 }

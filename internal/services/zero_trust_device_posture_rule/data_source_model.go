@@ -21,8 +21,8 @@ type ZeroTrustDevicePostureRuleResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustDevicePostureRuleDataSourceModel struct {
-	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id"`
-	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id"`
+	AccountID   types.String                                                                 `tfsdk:"account_id" path:"account_id,optional"`
+	RuleID      types.String                                                                 `tfsdk:"rule_id" path:"rule_id,optional"`
 	Description types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	Expiration  types.String                                                                 `tfsdk:"expiration" json:"expiration,computed"`
 	ID          types.String                                                                 `tfsdk:"id" json:"id,computed"`
@@ -101,5 +101,5 @@ type ZeroTrustDevicePostureRuleMatchDataSourceModel struct {
 }
 
 type ZeroTrustDevicePostureRuleFindOneByDataSourceModel struct {
-	AccountID types.String `tfsdk:"account_id" path:"account_id"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

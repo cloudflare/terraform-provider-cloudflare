@@ -15,9 +15,9 @@ type ZeroTrustAccessGroupResultEnvelope struct {
 
 type ZeroTrustAccessGroupModel struct {
 	ID        types.String                                                   `tfsdk:"id" json:"id,computed"`
-	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                                   `tfsdk:"zone_id" path:"zone_id"`
-	IsDefault types.Bool                                                     `tfsdk:"is_default" json:"is_default"`
+	AccountID types.String                                                   `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
+	IsDefault types.Bool                                                     `tfsdk:"is_default" json:"is_default,optional"`
 	Name      types.String                                                   `tfsdk:"name" json:"name,computed_optional"`
 	Exclude   customfield.NestedObjectList[ZeroTrustAccessGroupExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Include   customfield.NestedObjectList[ZeroTrustAccessGroupIncludeModel] `tfsdk:"include" json:"include,computed_optional"`

@@ -17,8 +17,8 @@ type ZeroTrustAccessShortLivedCertificatesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessShortLivedCertificatesDataSourceModel struct {
-	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id"`
-	ZoneID    types.String                                                                             `tfsdk:"zone_id" path:"zone_id"`
+	AccountID types.String                                                                             `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID    types.String                                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
 	MaxItems  types.Int64                                                                              `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustAccessShortLivedCertificatesResultDataSourceModel] `tfsdk:"result"`
 }

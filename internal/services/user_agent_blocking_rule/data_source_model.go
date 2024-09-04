@@ -21,12 +21,12 @@ type UserAgentBlockingRuleResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRuleDataSourceModel struct {
-	ZoneIdentifier types.String                                       `tfsdk:"zone_identifier" path:"zone_identifier"`
+	ZoneIdentifier types.String                                       `tfsdk:"zone_identifier" path:"zone_identifier,optional"`
 	ID             types.String                                       `tfsdk:"id" path:"id,computed_optional"`
-	Description    types.String                                       `tfsdk:"description" json:"description"`
-	Mode           types.String                                       `tfsdk:"mode" json:"mode"`
-	Paused         types.Bool                                         `tfsdk:"paused" json:"paused"`
-	Configuration  *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration"`
+	Description    types.String                                       `tfsdk:"description" json:"description,optional"`
+	Mode           types.String                                       `tfsdk:"mode" json:"mode,optional"`
+	Paused         types.Bool                                         `tfsdk:"paused" json:"paused,optional"`
+	Configuration  *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration,optional"`
 	Filter         *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
 }
 
@@ -52,8 +52,8 @@ type UserAgentBlockingRuleConfigurationDataSourceModel struct {
 }
 
 type UserAgentBlockingRuleFindOneByDataSourceModel struct {
-	ZoneIdentifier    types.String `tfsdk:"zone_identifier" path:"zone_identifier"`
-	Description       types.String `tfsdk:"description" query:"description"`
-	DescriptionSearch types.String `tfsdk:"description_search" query:"description_search"`
-	UASearch          types.String `tfsdk:"ua_search" query:"ua_search"`
+	ZoneIdentifier    types.String `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	Description       types.String `tfsdk:"description" query:"description,optional"`
+	DescriptionSearch types.String `tfsdk:"description_search" query:"description_search,optional"`
+	UASearch          types.String `tfsdk:"ua_search" query:"ua_search,optional"`
 }

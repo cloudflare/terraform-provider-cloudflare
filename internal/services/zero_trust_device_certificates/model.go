@@ -11,6 +11,6 @@ type ZeroTrustDeviceCertificatesResultEnvelope struct {
 }
 
 type ZeroTrustDeviceCertificatesModel struct {
-	ZoneTag types.String `tfsdk:"zone_tag" path:"zone_tag"`
-	Enabled types.Bool   `tfsdk:"enabled" json:"enabled"`
+	ZoneTag types.String `tfsdk:"zone_tag" path:"zone_tag,required"`
+	Enabled types.Bool   `tfsdk:"enabled" json:"enabled,required"`
 }
