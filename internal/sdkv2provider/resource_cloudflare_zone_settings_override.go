@@ -49,6 +49,7 @@ var fetchAsSingleSetting = []string{
 	"origin_max_http_version",
 	"fonts",
 	"nel",
+	"replace_insecure_js",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
