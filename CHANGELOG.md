@@ -1,5 +1,42 @@
 ## 4.41.0 (Unreleased)
 
+NOTES:
+
+* resource/cloudflare_logpush_job: Deprecate `frequency` in favour of `max_upload_interval_seconds` ([#3745](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3745))
+* resource/cloudflare_record: remove deprecated zone_name field ([#3855](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3855))
+
+FEATURES:
+
+* **New Data Source:** `cloudflare_dcv_delegation` ([#3885](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3885))
+* **New Resource:** `cloudflare_cloud_connector_rules` ([#3622](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3622))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_device_posture_rule: Modify Tanium's eid_last_seen field to be relative instead of a timestamp value ([#3764](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3764))
+* resource/cloudflare_teams_account: Add `disable_for_time` attribute ([#3526](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3526))
+* resource/cloudflare_waiting_room: Add enabled_origin_commands field. ([#3805](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3805))
+* resource/rulesets: add "contains" support to custom cache key headers ([#3820](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3820))
+
+BUG FIXES:
+
+* resource/cloudflare_access_mutual_tls_certificate: change associated hostnames to a set ([#3498](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3498))
+* resource/cloudflare_access_policy: Fix forcing new access policies when account id is not set through import ([#3358](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3358))
+* resource/cloudflare_record: Suppress matching ipv6 dns record ([#3888](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3888))
+* resource/cloudflare_record: handle scenarios where `content` and `value` are both being set in state and erroneously always thinking the `content` field is the source of truth ([#3776](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3776))
+* resource/cloudflare_zero_trust_access_group: Fix false deprecation warnings ([#3740](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3740))
+* resource/cloudflare_zone_settings_override: fix migration process with nil initial_settings ([#3829](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3829))
+* resource/hyperdrive_config: use hyperdrive_config id when updating resource ([#3704](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3704))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.27 to 1.27.31 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.27 to 1.17.30 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.58.3 to 1.60.1 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.3 to 1.30.4 ([#3801](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3801))
+* provider: bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.60.1 to 1.61.0 in the aws group ([#3823](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3823))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.101.0 to 0.102.0 ([#3713](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3713))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.102.0 to 0.103.0 ([#3824](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3824))
+
 ## 4.40.0 (August 21st, 2024)
 
 NOTES:
