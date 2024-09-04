@@ -5,6 +5,7 @@ package email_routing_rule
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -32,64 +33,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"actions": schema.ListNestedAttribute{
-				Description: "List actions patterns.",
-				Required:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Description: "Type of supported action.",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive(
-									"drop",
-									"forward",
-									"worker",
-								),
-							},
-						},
-						"value": schema.ListAttribute{
-							Required:    true,
-							ElementType: types.StringType,
-						},
-					},
-				},
-			},
-			"matchers": schema.ListNestedAttribute{
-				Description: "Matching patterns to forward to your actions.",
-				Required:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"field": schema.StringAttribute{
-							Description: "Field for type matcher.",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("to"),
-							},
-						},
-						"type": schema.StringAttribute{
-							Description: "Type of matcher.",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("literal"),
-							},
-						},
-						"value": schema.StringAttribute{
-							Description: "Value for matcher.",
-							Required:    true,
-						},
-					},
-				},
-			},
-			"name": schema.StringAttribute{
-				Description: "Routing rule name.",
-				Optional:    true,
-			},
 			"enabled": schema.BoolAttribute{
 				Description: "Routing rule status.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(true),
+			},
+			"name": schema.StringAttribute{
+				Description: "Routing rule name.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"priority": schema.Float64Attribute{
 				Description: "Priority of the routing rule.",
@@ -99,6 +52,65 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					float64validator.AtLeast(0),
 				},
 				Default: float64default.StaticFloat64(0),
+			},
+			"actions": schema.ListNestedAttribute{
+				Description: "List actions patterns.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[EmailRoutingRuleActionsModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Description: "Type of supported action.",
+							Computed:    true,
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"drop",
+									"forward",
+									"worker",
+								),
+							},
+						},
+						"value": schema.ListAttribute{
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewListType[types.String](ctx),
+							ElementType: types.StringType,
+						},
+					},
+				},
+			},
+			"matchers": schema.ListNestedAttribute{
+				Description: "Matching patterns to forward to your actions.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[EmailRoutingRuleMatchersModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"field": schema.StringAttribute{
+							Description: "Field for type matcher.",
+							Computed:    true,
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("to"),
+							},
+						},
+						"type": schema.StringAttribute{
+							Description: "Type of matcher.",
+							Computed:    true,
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("literal"),
+							},
+						},
+						"value": schema.StringAttribute{
+							Description: "Value for matcher.",
+							Computed:    true,
+							Optional:    true,
+						},
+					},
+				},
 			},
 			"tag": schema.StringAttribute{
 				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",

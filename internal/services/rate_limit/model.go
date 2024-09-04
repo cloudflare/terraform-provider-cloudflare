@@ -13,7 +13,7 @@ type RateLimitResultEnvelope struct {
 
 type RateLimitModel struct {
 	ZoneIdentifier types.String          `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String          `tfsdk:"id" path:"id"`
+	ID             types.String          `tfsdk:"id" path:"id,computed_optional"`
 	Period         types.Float64         `tfsdk:"period" json:"period"`
 	Threshold      types.Float64         `tfsdk:"threshold" json:"threshold"`
 	Action         *RateLimitActionModel `tfsdk:"action" json:"action"`

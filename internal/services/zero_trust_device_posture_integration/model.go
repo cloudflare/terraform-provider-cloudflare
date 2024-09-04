@@ -13,10 +13,10 @@ type ZeroTrustDevicePostureIntegrationResultEnvelope struct {
 type ZeroTrustDevicePostureIntegrationModel struct {
 	ID        types.String                                  `tfsdk:"id" json:"id,computed"`
 	AccountID types.String                                  `tfsdk:"account_id" path:"account_id"`
-	Interval  types.String                                  `tfsdk:"interval" json:"interval"`
-	Name      types.String                                  `tfsdk:"name" json:"name"`
-	Type      types.String                                  `tfsdk:"type" json:"type"`
 	Config    *ZeroTrustDevicePostureIntegrationConfigModel `tfsdk:"config" json:"config"`
+	Interval  types.String                                  `tfsdk:"interval" json:"interval,computed_optional"`
+	Name      types.String                                  `tfsdk:"name" json:"name,computed_optional"`
+	Type      types.String                                  `tfsdk:"type" json:"type,computed_optional"`
 }
 
 type ZeroTrustDevicePostureIntegrationConfigModel struct {

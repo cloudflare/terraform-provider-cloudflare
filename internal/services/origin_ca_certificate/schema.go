@@ -5,6 +5,7 @@ package origin_ca_certificate
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -31,11 +32,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"csr": schema.StringAttribute{
 				Description:   "The Certificate Signing Request (CSR). Must be newline-encoded.",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"request_type": schema.StringAttribute{
 				Description: "Signature type desired on certificate (\"origin-rsa\" (rsa), \"origin-ecc\" (ecdsa), or \"keyless-certificate\" (for Keyless SSL servers).",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -45,12 +48,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"hostnames": schema.ListAttribute{
-				Description:   "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
-				Optional:      true,
-				ElementType:   types.StringType,
-				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"requested_validity": schema.Float64Attribute{
 				Description: "The number of days for which the certificate should be valid.",
@@ -69,6 +66,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 				Default:       float64default.StaticFloat64(5475),
+			},
+			"hostnames": schema.ListAttribute{
+				Description:   "Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.",
+				Computed:      true,
+				Optional:      true,
+				CustomType:    customfield.NewListType[types.String](ctx),
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"certificate": schema.StringAttribute{
 				Description: "The Origin CA certificate. Will be newline-encoded.",

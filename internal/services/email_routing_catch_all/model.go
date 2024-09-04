@@ -12,20 +12,20 @@ type EmailRoutingCatchAllResultEnvelope struct {
 }
 
 type EmailRoutingCatchAllModel struct {
-	ID       types.String                          `tfsdk:"id" json:"-,computed"`
-	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id"`
-	Actions  *[]*EmailRoutingCatchAllActionsModel  `tfsdk:"actions" json:"actions"`
-	Matchers *[]*EmailRoutingCatchAllMatchersModel `tfsdk:"matchers" json:"matchers"`
-	Name     types.String                          `tfsdk:"name" json:"name"`
-	Enabled  types.Bool                            `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Tag      types.String                          `tfsdk:"tag" json:"tag,computed"`
+	ID       types.String                                                    `tfsdk:"id" json:"-,computed"`
+	ZoneID   types.String                                                    `tfsdk:"zone_id" path:"zone_id"`
+	Enabled  types.Bool                                                      `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Name     types.String                                                    `tfsdk:"name" json:"name,computed_optional"`
+	Actions  customfield.NestedObjectList[EmailRoutingCatchAllActionsModel]  `tfsdk:"actions" json:"actions,computed_optional"`
+	Matchers customfield.NestedObjectList[EmailRoutingCatchAllMatchersModel] `tfsdk:"matchers" json:"matchers,computed_optional"`
+	Tag      types.String                                                    `tfsdk:"tag" json:"tag,computed"`
 }
 
 type EmailRoutingCatchAllActionsModel struct {
-	Type  types.String                   `tfsdk:"type" json:"type"`
+	Type  types.String                   `tfsdk:"type" json:"type,computed_optional"`
 	Value customfield.List[types.String] `tfsdk:"value" json:"value,computed_optional"`
 }
 
 type EmailRoutingCatchAllMatchersModel struct {
-	Type types.String `tfsdk:"type" json:"type"`
+	Type types.String `tfsdk:"type" json:"type,computed_optional"`
 }

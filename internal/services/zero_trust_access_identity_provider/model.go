@@ -12,7 +12,7 @@ type ZeroTrustAccessIdentityProviderResultEnvelope struct {
 }
 
 type ZeroTrustAccessIdentityProviderModel struct {
-	ID         types.String                                    `tfsdk:"id" json:"id"`
+	ID         types.String                                    `tfsdk:"id" json:"id,computed_optional"`
 	AccountID  types.String                                    `tfsdk:"account_id" path:"account_id"`
 	ZoneID     types.String                                    `tfsdk:"zone_id" path:"zone_id"`
 	Name       types.String                                    `tfsdk:"name" json:"name"`

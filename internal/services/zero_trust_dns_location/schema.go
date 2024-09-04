@@ -26,25 +26,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of the location.",
-				Required:    true,
-			},
 			"client_default": schema.BoolAttribute{
 				Description: "True if the location is the default location.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"dns_destination_ips_id": schema.StringAttribute{
 				Description: "The identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set with null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if the field is absent or set with null, the pre-assigned pair remains unchanged.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"ecs_support": schema.BoolAttribute{
 				Description: "True if the location needs to resolve EDNS queries.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the location.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"endpoints": schema.SingleNestedAttribute{
 				Description: "The destination endpoints configured for this location. When updating a location, if this field is absent or set with null, the endpoints configuration remains unchanged.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDNSLocationEndpointsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"doh": schema.SingleNestedAttribute{
 						Computed:   true,
@@ -65,7 +71,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
 											Description: "The IP address or IP CIDR.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 										},
 									},
 								},
@@ -96,7 +103,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
 											Description: "The IP address or IP CIDR.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 										},
 									},
 								},
@@ -134,7 +142,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
 											Description: "The IPv6 address or IPv6 CIDR.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 										},
 									},
 								},
@@ -145,12 +154,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"networks": schema.ListNestedAttribute{
 				Description: "A list of network ranges that requests from this location would originate from. A non-empty list is only effective if the ipv4 endpoint is enabled for this location.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDNSLocationNetworksModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"network": schema.StringAttribute{
 							Description: "The IPv4 address or IPv4 CIDR. IPv4 CIDRs are limited to a maximum of /24.",
-							Required:    true,
+							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

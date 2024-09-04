@@ -3,6 +3,7 @@
 package zero_trust_dex_test
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,15 +12,15 @@ type ZeroTrustDEXTestResultEnvelope struct {
 }
 
 type ZeroTrustDEXTestModel struct {
-	ID             types.String                            `tfsdk:"id" json:"-,computed"`
-	Name           types.String                            `tfsdk:"name" json:"name"`
-	AccountID      types.String                            `tfsdk:"account_id" path:"account_id"`
-	Enabled        types.Bool                              `tfsdk:"enabled" json:"enabled"`
-	Interval       types.String                            `tfsdk:"interval" json:"interval"`
-	Data           *ZeroTrustDEXTestDataModel              `tfsdk:"data" json:"data"`
-	Description    types.String                            `tfsdk:"description" json:"description"`
-	Targeted       types.Bool                              `tfsdk:"targeted" json:"targeted"`
-	TargetPolicies *[]*ZeroTrustDEXTestTargetPoliciesModel `tfsdk:"target_policies" json:"target_policies"`
+	ID             types.String                                                      `tfsdk:"id" json:"-,computed"`
+	Name           types.String                                                      `tfsdk:"name" json:"name,computed_optional"`
+	AccountID      types.String                                                      `tfsdk:"account_id" path:"account_id"`
+	Description    types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
+	Enabled        types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Interval       types.String                                                      `tfsdk:"interval" json:"interval,computed_optional"`
+	Targeted       types.Bool                                                        `tfsdk:"targeted" json:"targeted,computed_optional"`
+	Data           customfield.NestedObject[ZeroTrustDEXTestDataModel]               `tfsdk:"data" json:"data,computed_optional"`
+	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 }
 
 type ZeroTrustDEXTestDataModel struct {

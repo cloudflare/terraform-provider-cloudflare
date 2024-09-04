@@ -41,7 +41,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"memberships": schema.ListNestedAttribute{
 				Description: "Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[AddressMapMembershipsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"can_delete": schema.BoolAttribute{
@@ -71,10 +73,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"default_sni": schema.StringAttribute{
 				Description: "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An optional description field which may be used to describe the types of IPs or zones on the map.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
@@ -109,13 +113,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -126,13 +130,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -144,22 +148,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"count": schema.Float64Attribute{
 						Description: "Total number of results for the requested service",
 						Computed:    true,
-						Optional:    true,
 					},
 					"page": schema.Float64Attribute{
 						Description: "Current page within paginated list of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"per_page": schema.Float64Attribute{
 						Description: "Number of results per page of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"total_count": schema.Float64Attribute{
 						Description: "Total results available without any search parameters",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

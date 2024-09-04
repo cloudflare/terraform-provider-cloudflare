@@ -16,12 +16,12 @@ type ListItemModel struct {
 	AccountID         types.String                                    `tfsdk:"account_id" path:"account_id"`
 	AccountIdentifier types.String                                    `tfsdk:"account_identifier" path:"account_identifier"`
 	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id"`
-	OperationID       types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
 	ASN               types.Int64                                     `tfsdk:"asn" json:"asn,computed_optional"`
 	Comment           types.String                                    `tfsdk:"comment" json:"comment,computed_optional"`
 	IP                types.String                                    `tfsdk:"ip" json:"ip,computed_optional"`
 	Hostname          customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed_optional"`
 	Redirect          customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed_optional"`
+	OperationID       types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
 }
 
 type ListItemHostnameModel struct {

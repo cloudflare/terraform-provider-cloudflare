@@ -14,11 +14,11 @@ type ByoIPPrefixResultEnvelope struct {
 
 type ByoIPPrefixModel struct {
 	ID                   types.String                                           `tfsdk:"id" json:"id,computed"`
-	AccountID            types.String                                           `tfsdk:"account_id" path:"account_id"`
-	ASN                  types.Int64                                            `tfsdk:"asn" json:"asn"`
-	CIDR                 types.String                                           `tfsdk:"cidr" json:"cidr"`
-	LOADocumentID        types.String                                           `tfsdk:"loa_document_id" json:"loa_document_id"`
-	Description          types.String                                           `tfsdk:"description" json:"description"`
+	AccountID            types.String                                           `tfsdk:"account_id" path:"account_id,computed_optional"`
+	ASN                  types.Int64                                            `tfsdk:"asn" json:"asn,computed_optional"`
+	CIDR                 types.String                                           `tfsdk:"cidr" json:"cidr,computed_optional"`
+	LOADocumentID        types.String                                           `tfsdk:"loa_document_id" json:"loa_document_id,computed_optional"`
+	Description          types.String                                           `tfsdk:"description" json:"description,computed_optional"`
 	Advertised           types.Bool                                             `tfsdk:"advertised" json:"advertised,computed"`
 	AdvertisedModifiedAt timetypes.RFC3339                                      `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`
 	Approved             types.String                                           `tfsdk:"approved" json:"approved,computed"`
@@ -33,18 +33,18 @@ type ByoIPPrefixModel struct {
 }
 
 type ByoIPPrefixErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type ByoIPPrefixMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type ByoIPPrefixResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count,computed_optional"`
-	Page       types.Float64 `tfsdk:"page" json:"page,computed_optional"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed_optional"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed_optional"`
+	Count      types.Float64 `tfsdk:"count" json:"count,computed"`
+	Page       types.Float64 `tfsdk:"page" json:"page,computed"`
+	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
+	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
 }

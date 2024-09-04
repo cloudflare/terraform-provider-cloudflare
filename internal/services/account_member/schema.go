@@ -101,7 +101,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"email": schema.StringAttribute{
 						Description: "The contact email address of the user.",
-						Required:    true,
+						Computed:    true,
 					},
 					"id": schema.StringAttribute{
 						Description: "Identifier",
@@ -110,12 +110,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"first_name": schema.StringAttribute{
 						Description: "User's first name",
 						Computed:    true,
-						Optional:    true,
 					},
 					"last_name": schema.StringAttribute{
 						Description: "User's last name",
 						Computed:    true,
-						Optional:    true,
 					},
 					"two_factor_authentication_enabled": schema.BoolAttribute{
 						Description: "Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.",

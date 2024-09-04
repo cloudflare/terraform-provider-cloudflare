@@ -27,7 +27,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"zone_id": schema.StringAttribute{
@@ -37,7 +38,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"region_key": schema.StringAttribute{
 				Description: "Identifying key for the region",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the regional hostname was created",
@@ -54,13 +56,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -71,13 +73,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},

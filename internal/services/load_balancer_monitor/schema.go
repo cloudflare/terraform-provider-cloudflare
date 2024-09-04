@@ -5,6 +5,7 @@ package load_balancer_monitor
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -32,25 +33,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"description": schema.StringAttribute{
-				Description: "Object description.",
-				Optional:    true,
-			},
-			"expected_body": schema.StringAttribute{
-				Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.",
-				Optional:    true,
-			},
-			"probe_zone": schema.StringAttribute{
-				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
-				Optional:    true,
-			},
-			"header": schema.MapAttribute{
-				Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.",
-				Optional:    true,
-				ElementType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
 			"allow_insecure": schema.BoolAttribute{
 				Description: "Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS monitors.",
 				Computed:    true,
@@ -68,6 +50,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(0),
+			},
+			"description": schema.StringAttribute{
+				Description: "Object description.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"expected_body": schema.StringAttribute{
+				Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.",
+				Computed:    true,
+				Optional:    true,
 			},
 			"expected_codes": schema.StringAttribute{
 				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
@@ -105,6 +97,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     int64default.StaticInt64(0),
 			},
+			"probe_zone": schema.StringAttribute{
+				Description: "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.",
+				Computed:    true,
+				Optional:    true,
+			},
 			"retries": schema.Int64Attribute{
 				Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
 				Computed:    true,
@@ -132,6 +129,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Default: stringdefault.StaticString("http"),
+			},
+			"header": schema.MapAttribute{
+				Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+				ElementType: types.ListType{
+					ElemType: types.StringType,
+				},
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,

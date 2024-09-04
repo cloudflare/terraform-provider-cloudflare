@@ -27,13 +27,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"id": schema.StringAttribute{
+			"path_id": schema.StringAttribute{
 				Description:   "The unique identifier of the firewall rule.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"path_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description:   "The unique identifier of the firewall rule.",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

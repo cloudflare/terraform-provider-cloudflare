@@ -34,6 +34,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -71,18 +72,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"error_message": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 					"method": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("http", "txt"),
 						},
 					},
 					"status": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"initializing",
@@ -95,11 +93,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"txt_name": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 					"txt_value": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 				},
 			},
@@ -109,11 +105,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"error_message": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 					},
 					"status": schema.StringAttribute{
 						Computed: true,
-						Optional: true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
 								"pending",

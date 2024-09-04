@@ -13,7 +13,7 @@ type ZeroTrustAccessTagResultEnvelope struct {
 
 type ZeroTrustAccessTagModel struct {
 	ID        types.String      `tfsdk:"id" json:"-,computed"`
-	Name      types.String      `tfsdk:"name" json:"name"`
+	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
 	AccountID types.String      `tfsdk:"account_id" path:"account_id"`
 	AppCount  types.Int64       `tfsdk:"app_count" json:"app_count,computed"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`

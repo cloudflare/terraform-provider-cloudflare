@@ -5,6 +5,7 @@ package zero_trust_list
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -31,7 +32,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of list.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"SERIAL",
@@ -45,7 +47,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"items": schema.ListNestedAttribute{
 				Description: "The items in the list.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustListItemsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"created_at": schema.StringAttribute{
@@ -66,12 +70,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of the list.",
-				Required:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "The description of the list.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the list.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{

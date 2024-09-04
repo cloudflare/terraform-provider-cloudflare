@@ -72,5 +72,5 @@ type DNSRecordDataModel struct {
 }
 
 type DNSRecordMetaModel struct {
-	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed_optional"`
+	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed"`
 }

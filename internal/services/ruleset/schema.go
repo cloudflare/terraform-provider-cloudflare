@@ -39,9 +39,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"description": schema.StringAttribute{
+				Description: "An informative description of the ruleset.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(""),
+			},
 			"kind": schema.StringAttribute{
 				Description: "The kind of the ruleset.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"managed",
@@ -53,11 +60,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "The human-readable name of the ruleset.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"phase": schema.StringAttribute{
 				Description: "The phase of the ruleset.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"ddos_l4",
@@ -89,7 +98,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rules": schema.ListNestedAttribute{
 				Description: "The list of rules in the ruleset.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[RulesetRulesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"last_updated": schema.StringAttribute{
@@ -147,15 +158,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"content": schema.StringAttribute{
 											Description: "The content to return.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 										},
 										"content_type": schema.StringAttribute{
 											Description: "The type of the content to return.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 										},
 										"status_code": schema.Int64Attribute{
 											Description: "The status code to return.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 											Validators: []validator.Int64{
 												int64validator.Between(400, 499),
 											},
@@ -195,7 +209,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to generate a log when the rule matches.",
-									Required:    true,
+									Computed:    true,
+									Optional:    true,
 								},
 							},
 						},
@@ -206,12 +221,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"description": schema.StringAttribute{
-				Description: "An informative description of the ruleset.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(""),
 			},
 			"last_updated": schema.StringAttribute{
 				Description: "The timestamp of when the ruleset was last modified.",

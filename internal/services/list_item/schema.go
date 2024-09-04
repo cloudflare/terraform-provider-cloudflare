@@ -41,10 +41,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"operation_id": schema.StringAttribute{
-				Description: "The unique operation ID of the asynchronous action.",
-				Computed:    true,
-			},
 			"asn": schema.Int64Attribute{
 				Description: "A non-negative 32 bit integer",
 				Computed:    true,
@@ -117,6 +113,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:  booldefault.StaticBool(false),
 					},
 				},
+			},
+			"operation_id": schema.StringAttribute{
+				Description: "The unique operation ID of the asynchronous action.",
+				Computed:    true,
 			},
 		},
 	}

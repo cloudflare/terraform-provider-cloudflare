@@ -28,7 +28,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"settings": schema.SingleNestedAttribute{
 				Description: "account settings.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"activity_log": schema.SingleNestedAttribute{
 						Description: "Activity log settings.",
@@ -181,7 +183,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate to be used for interception. Certificate must be active on the edge. A nil UUID will indicate the Cloudflare Root CA should be used.",
-								Required:    true,
+								Computed:    true,
+								Optional:    true,
 							},
 						},
 					},
@@ -193,7 +196,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
-								Required:    true,
+								Computed:    true,
+								Optional:    true,
 							},
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate (ID from MTLS certificate store).",

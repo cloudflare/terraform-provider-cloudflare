@@ -31,16 +31,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"auth_id_characteristics": schema.ListNestedAttribute{
-				Required: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectListType[APIShieldAuthIDCharacteristicsModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
 							Description: "The name of the characteristic field, i.e., the header or cookie name.",
-							Required:    true,
+							Computed:    true,
+							Optional:    true,
 						},
 						"type": schema.StringAttribute{
 							Description: "The type of characteristic.",
-							Required:    true,
+							Computed:    true,
+							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"header",
@@ -62,13 +66,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -79,13 +83,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
