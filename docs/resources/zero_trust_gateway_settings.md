@@ -90,7 +90,8 @@ resource "cloudflare_zero_trust_gateway_settings" "example" {
 - `antivirus` (Block List, Max: 1) Configuration block for antivirus traffic scanning. (see [below for nested schema](#nestedblock--antivirus))
 - `block_page` (Block List, Max: 1) Configuration for a custom block page. (see [below for nested schema](#nestedblock--block_page))
 - `body_scanning` (Block List, Max: 1) Configuration for body scanning. (see [below for nested schema](#nestedblock--body_scanning))
-- `custom_certificate` (Block List, Max: 1) Configuration for custom certificates / BYO-PKI. (see [below for nested schema](#nestedblock--custom_certificate))
+- `certificate` (Block List, Max: 1) Configuration for TLS interception certificate. This will be required starting Feb 2025. (see [below for nested schema](#nestedblock--certificate))
+- `custom_certificate` (Block List, Max: 1, Deprecated) Configuration for custom certificates / BYO-PKI. Conflicts with `certificate`. (see [below for nested schema](#nestedblock--custom_certificate))
 - `extended_email_matching` (Block List, Max: 1) Configuration for extended e-mail matching. (see [below for nested schema](#nestedblock--extended_email_matching))
 - `fips` (Block List, Max: 1) Configure compliance with Federal Information Processing Standards. (see [below for nested schema](#nestedblock--fips))
 - `logging` (Block List, Max: 1) (see [below for nested schema](#nestedblock--logging))
@@ -151,6 +152,14 @@ Optional:
 Required:
 
 - `inspection_mode` (String) Body scanning inspection mode. Available values: `deep`, `shallow`.
+
+
+<a id="nestedblock--certificate"></a>
+### Nested Schema for `certificate`
+
+Required:
+
+- `id` (String) ID of certificate for TLS interception.
 
 
 <a id="nestedblock--custom_certificate"></a>
@@ -244,6 +253,7 @@ Required:
 
 Required:
 
+- `disable_for_time` (Number) Sets the time limit in seconds that a user can use an override code to bypass WARP.
 - `root_ca` (Boolean) Whether root ca is enabled account wide for ZT clients.
 - `tcp` (Boolean) Whether gateway proxy is enabled on gateway devices for TCP traffic.
 - `udp` (Boolean) Whether gateway proxy is enabled on gateway devices for UDP traffic.

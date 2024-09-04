@@ -223,7 +223,7 @@ Read-Only:
 - `privacy_pass` (String)
 - `proxy_read_timeout` (String)
 - `pseudo_ipv4` (String)
-- `replace_insecure_js` (String) 
+- `replace_insecure_js` (String)
 - `response_buffering` (String)
 - `rocket_loader` (String)
 - `security_header` (List of Object) (see [below for nested schema](#nestedobjatt--initial_settings--security_header))

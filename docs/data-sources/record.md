@@ -38,3 +38,5 @@ data "cloudflare_record" "example" {
 - `proxied` (Boolean) Proxied status of the found DNS record.
 - `ttl` (Number) TTL of the found DNS record.
 - `value` (String) Value of the found DNS record.
+
+
