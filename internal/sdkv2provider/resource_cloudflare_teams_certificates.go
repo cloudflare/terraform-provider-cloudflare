@@ -137,7 +137,7 @@ func resourceCloudflareTeamsCertificateDelete(ctx context.Context, d *schema.Res
 		return diag.FromErr(fmt.Errorf("error deleting Teams Certificate with id %q: custom certificates must be deleted via the mTLS certificate manager api", d.Get("id")))
 	}
 
-	if d.Get("active").(bool) {
+	if d.Get("activate").(bool) {
 		return diag.FromErr(fmt.Errorf("error deleting Teams Certificate with id %q: certificate must be deactivated before it can be deleted", d.Get("id")))
 	} else {
 		_, err := client.TeamsDeactivateCertificate(ctx, accountID, d.Get("id").(string))
