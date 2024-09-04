@@ -119,7 +119,7 @@ type WorkersScriptMetadataTailConsumersModel struct {
 }
 
 type WorkersScriptTailConsumersModel struct {
-	Service     types.String `tfsdk:"service" json:"service"`
-	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
-	Namespace   types.String `tfsdk:"namespace" json:"namespace,computed_optional"`
+	Service     types.String `tfsdk:"service" json:"service,computed"`
+	Environment types.String `tfsdk:"environment" json:"environment,computed"`
+	Namespace   types.String `tfsdk:"namespace" json:"namespace,computed"`
 }

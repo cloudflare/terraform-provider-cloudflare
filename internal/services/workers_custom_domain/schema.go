@@ -23,7 +23,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "Hostname of the Worker Domain.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
@@ -33,15 +34,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"environment": schema.StringAttribute{
 				Description: "Worker environment associated with the zone and hostname.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"service": schema.StringAttribute{
 				Description: "Worker service associated with the zone and hostname.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"zone_id": schema.StringAttribute{
 				Description: "Identifier of the zone.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"zone_name": schema.StringAttribute{
 				Description: "Name of the zone.",

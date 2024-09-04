@@ -15,11 +15,11 @@ type CustomHostnameResultEnvelope struct {
 type CustomHostnameModel struct {
 	ID                        types.String                                                           `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id"`
-	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname"`
+	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname,computed_optional"`
 	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl"`
-	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server"`
-	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni"`
-	CustomMetadata            *CustomHostnameCustomMetadataModel                                     `tfsdk:"custom_metadata" json:"custom_metadata"`
+	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,computed_optional"`
+	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed_optional"`
+	CustomMetadata            customfield.NestedObject[CustomHostnameCustomMetadataModel]            `tfsdk:"custom_metadata" json:"custom_metadata,computed_optional"`
 	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status                    types.String                                                           `tfsdk:"status" json:"status,computed"`
 	VerificationErrors        customfield.List[types.String]                                         `tfsdk:"verification_errors" json:"verification_errors,computed"`
@@ -51,12 +51,12 @@ type CustomHostnameCustomMetadataModel struct {
 }
 
 type CustomHostnameOwnershipVerificationModel struct {
-	Name  types.String `tfsdk:"name" json:"name,computed_optional"`
-	Type  types.String `tfsdk:"type" json:"type,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Name  types.String `tfsdk:"name" json:"name,computed"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
+	Value types.String `tfsdk:"value" json:"value,computed"`
 }
 
 type CustomHostnameOwnershipVerificationHTTPModel struct {
-	HTTPBody types.String `tfsdk:"http_body" json:"http_body,computed_optional"`
-	HTTPURL  types.String `tfsdk:"http_url" json:"http_url,computed_optional"`
+	HTTPBody types.String `tfsdk:"http_body" json:"http_body,computed"`
+	HTTPURL  types.String `tfsdk:"http_url" json:"http_url,computed"`
 }

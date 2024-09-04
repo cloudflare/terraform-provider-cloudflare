@@ -30,7 +30,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"queue_name": schema.StringAttribute{
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"consumers_total_count": schema.Float64Attribute{
@@ -64,22 +65,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"settings": schema.SingleNestedAttribute{
 							Computed:   true,
-							Optional:   true,
 							CustomType: customfield.NewNestedObjectType[QueueConsumersSettingsModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"batch_size": schema.Float64Attribute{
 									Description: "The maximum number of messages to include in a batch.",
 									Computed:    true,
-									Optional:    true,
 								},
 								"max_retries": schema.Float64Attribute{
 									Description: "The maximum number of retries",
 									Computed:    true,
-									Optional:    true,
 								},
 								"max_wait_time_ms": schema.Float64Attribute{
 									Computed: true,
-									Optional: true,
 								},
 							},
 						},

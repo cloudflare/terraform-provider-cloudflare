@@ -31,7 +31,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"key_rotation_interval_days": schema.Float64Attribute{
 				Description: "The number of days between key rotations.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(21, 365),
 				},

@@ -37,18 +37,64 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"address": schema.StringAttribute{
 				Description: "The hostname or IP address of the origin server to run health checks on.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
-			"name": schema.StringAttribute{
-				Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
-				Required:    true,
+			"consecutive_fails": schema.Int64Attribute{
+				Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(1),
+			},
+			"consecutive_successes": schema.Int64Attribute{
+				Description: "The number of consecutive successes required from a health check before changing the health to healthy.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(1),
 			},
 			"description": schema.StringAttribute{
 				Description: "A human-readable description of the health check.",
+				Computed:    true,
 				Optional:    true,
+			},
+			"interval": schema.Int64Attribute{
+				Description: "The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(60),
+			},
+			"name": schema.StringAttribute{
+				Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"retries": schema.Int64Attribute{
+				Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(2),
+			},
+			"suspended": schema.BoolAttribute{
+				Description: "If suspended, no health checks are sent to the origin.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"timeout": schema.Int64Attribute{
+				Description: "The timeout (in seconds) before marking the health check as failed.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(5),
+			},
+			"type": schema.StringAttribute{
+				Description: "The protocol to use for the health check. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString("HTTP"),
 			},
 			"check_regions": schema.ListAttribute{
 				Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
@@ -70,11 +116,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"http_config": schema.SingleNestedAttribute{
 				Description: "Parameters specific to an HTTP or HTTPS health check.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[HealthcheckHTTPConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"allow_insecure": schema.BoolAttribute{
 						Description: "Do not validate the certificate when the health check uses HTTPS.",
@@ -134,7 +183,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tcp_config": schema.SingleNestedAttribute{
 				Description: "Parameters specific to TCP health check.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[HealthcheckTCPConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"method": schema.StringAttribute{
 						Description: "The TCP connection method to use for the health check.",
@@ -152,48 +203,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     int64default.StaticInt64(80),
 					},
 				},
-			},
-			"consecutive_fails": schema.Int64Attribute{
-				Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(1),
-			},
-			"consecutive_successes": schema.Int64Attribute{
-				Description: "The number of consecutive successes required from a health check before changing the health to healthy.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(1),
-			},
-			"interval": schema.Int64Attribute{
-				Description: "The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(60),
-			},
-			"retries": schema.Int64Attribute{
-				Description: "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(2),
-			},
-			"suspended": schema.BoolAttribute{
-				Description: "If suspended, no health checks are sent to the origin.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"timeout": schema.Int64Attribute{
-				Description: "The timeout (in seconds) before marking the health check as failed.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(5),
-			},
-			"type": schema.StringAttribute{
-				Description: "The protocol to use for the health check. Currently supported protocols are 'HTTP', 'HTTPS' and 'TCP'.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString("HTTP"),
 			},
 			"created_on": schema.StringAttribute{
 				Computed:   true,

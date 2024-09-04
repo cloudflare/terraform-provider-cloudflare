@@ -31,17 +31,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"tunnel_id": schema.StringAttribute{
 				Description:   "UUID of the tunnel.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"config": schema.SingleNestedAttribute{
 				Description: "The tunnel configuration and ingress rules.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustTunnelCloudflaredConfigConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"ingress": schema.ListNestedAttribute{
 						Description: "List of public hostname definitions. At least one ingress rule needs to be defined for the tunnel.",
@@ -52,11 +56,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"hostname": schema.StringAttribute{
 									Description: "Public hostname for this service.",
-									Required:    true,
+									Computed:    true,
+									Optional:    true,
 								},
 								"service": schema.StringAttribute{
 									Description: "Protocol and address of destination server. Supported protocols: http://, https://, unix://, tcp://, ssh://, rdp://, unix+tls://, smb://. Alternatively can return a HTTP status code http_status:[code] e.g. 'http_status:404'.\n",
-									Required:    true,
+									Computed:    true,
+									Optional:    true,
 								},
 								"origin_request": schema.SingleNestedAttribute{
 									Description: "Configuration parameters for the public hostname specific connection settings between cloudflared and origin server.",
@@ -72,7 +78,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Attributes: map[string]schema.Attribute{
 												"aud_tag": schema.ListAttribute{
 													Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
-													Required:    true,
+													Computed:    true,
+													Optional:    true,
+													CustomType:  customfield.NewListType[types.String](ctx),
 													ElementType: types.StringType,
 												},
 												"team_name": schema.StringAttribute{
@@ -188,7 +196,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"aud_tag": schema.ListAttribute{
 										Description: "Access applications that are allowed to reach this hostname for this Tunnel. Audience tags can be identified in the dashboard or via the List Access policies API.",
-										Required:    true,
+										Computed:    true,
+										Optional:    true,
+										CustomType:  customfield.NewListType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 									"team_name": schema.StringAttribute{

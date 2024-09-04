@@ -18,10 +18,10 @@ type APIShieldSchemaResultEnvelope struct {
 
 type APIShieldSchemaModel struct {
 	ZoneID            types.String                                                `tfsdk:"zone_id" path:"zone_id"`
-	SchemaID          types.String                                                `tfsdk:"schema_id" path:"schema_id"`
+	SchemaID          types.String                                                `tfsdk:"schema_id" path:"schema_id,computed_optional"`
 	File              types.String                                                `tfsdk:"file" json:"file"`
-	Kind              types.String                                                `tfsdk:"kind" json:"kind"`
-	Name              types.String                                                `tfsdk:"name" json:"name"`
+	Kind              types.String                                                `tfsdk:"kind" json:"kind,computed_optional"`
+	Name              types.String                                                `tfsdk:"name" json:"name,computed_optional"`
 	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled"`
 	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`
@@ -48,30 +48,30 @@ func (r APIShieldSchemaModel) MarshalMultipart() (data []byte, contentType strin
 }
 
 type APIShieldSchemaErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type APIShieldSchemaMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type APIShieldSchemaSchemaModel struct {
 	CreatedAt         timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Kind              types.String      `tfsdk:"kind" json:"kind"`
-	Name              types.String      `tfsdk:"name" json:"name"`
-	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id"`
-	Source            types.String      `tfsdk:"source" json:"source,computed_optional"`
-	ValidationEnabled types.Bool        `tfsdk:"validation_enabled" json:"validation_enabled,computed_optional"`
+	Kind              types.String      `tfsdk:"kind" json:"kind,computed"`
+	Name              types.String      `tfsdk:"name" json:"name,computed"`
+	SchemaID          types.String      `tfsdk:"schema_id" json:"schema_id,computed"`
+	Source            types.String      `tfsdk:"source" json:"source,computed"`
+	ValidationEnabled types.Bool        `tfsdk:"validation_enabled" json:"validation_enabled,computed"`
 }
 
 type APIShieldSchemaUploadDetailsModel struct {
-	Warnings customfield.NestedObjectList[APIShieldSchemaUploadDetailsWarningsModel] `tfsdk:"warnings" json:"warnings,computed_optional"`
+	Warnings customfield.NestedObjectList[APIShieldSchemaUploadDetailsWarningsModel] `tfsdk:"warnings" json:"warnings,computed"`
 }
 
 type APIShieldSchemaUploadDetailsWarningsModel struct {
-	Code      types.Int64                    `tfsdk:"code" json:"code"`
-	Locations customfield.List[types.String] `tfsdk:"locations" json:"locations,computed_optional"`
-	Message   types.String                   `tfsdk:"message" json:"message,computed_optional"`
+	Code      types.Int64                    `tfsdk:"code" json:"code,computed"`
+	Locations customfield.List[types.String] `tfsdk:"locations" json:"locations,computed"`
+	Message   types.String                   `tfsdk:"message" json:"message,computed"`
 }

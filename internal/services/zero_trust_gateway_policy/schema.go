@@ -33,7 +33,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"action": schema.StringAttribute{
 				Description: "The action to preform when the associated traffic, identity, and device posture expressions are either absent or evaluate to `true`.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"on",
@@ -54,36 +55,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"name": schema.StringAttribute{
-				Description: "The name of the rule.",
-				Required:    true,
-			},
 			"description": schema.StringAttribute{
 				Description: "The description of the rule.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"device_posture": schema.StringAttribute{
 				Description: "The wirefilter expression used for device posture check matching.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "True if the rule is enabled.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"identity": schema.StringAttribute{
 				Description: "The wirefilter expression used for identity matching.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the rule.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"precedence": schema.Int64Attribute{
 				Description: "Precedence sets the order of your rules. Lower values indicate higher precedence. At each processing phase, applicable rules are evaluated in ascending order of this value.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"traffic": schema.StringAttribute{
 				Description: "The wirefilter expression used for traffic matching.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"filters": schema.ListAttribute{
 				Description: "The protocol or layer to evaluate the traffic, identity, and device posture expressions.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
@@ -95,11 +104,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"rule_settings": schema.SingleNestedAttribute{
 				Description: "Additional settings that modify the rule's action.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"add_headers": schema.MapAttribute{
 						Description: "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).",
@@ -206,7 +218,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"ip": schema.StringAttribute{
 											Description: "IPv4 address of upstream resolver.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 										},
 										"port": schema.Int64Attribute{
 											Description: "A port number to use for upstream resolver. Defaults to 53 if unspecified.",
@@ -234,7 +247,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"ip": schema.StringAttribute{
 											Description: "IPv6 address of upstream resolver.",
-											Required:    true,
+											Computed:    true,
+											Optional:    true,
 										},
 										"port": schema.Int64Attribute{
 											Description: "A port number to use for upstream resolver. Defaults to 53 if unspecified.",
@@ -394,7 +408,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"schedule": schema.SingleNestedAttribute{
 				Description: "The schedule for activating DNS policies. This does not apply to HTTP or network policies.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyScheduleModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"fri": schema.StringAttribute{
 						Description: "The time intervals when the rule will be active on Fridays, in increasing order from 00:00-24:00.  If this parameter is omitted, the rule will be deactivated on Fridays.",

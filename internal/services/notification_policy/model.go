@@ -16,13 +16,13 @@ type NotificationPolicyResultEnvelope struct {
 type NotificationPolicyModel struct {
 	ID            types.String                                                  `tfsdk:"id" json:"id,computed"`
 	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id"`
-	AlertType     types.String                                                  `tfsdk:"alert_type" json:"alert_type"`
-	Name          types.String                                                  `tfsdk:"name" json:"name"`
-	Mechanisms    map[string]*[]jsontypes.Normalized                            `tfsdk:"mechanisms" json:"mechanisms"`
-	AlertInterval types.String                                                  `tfsdk:"alert_interval" json:"alert_interval"`
-	Description   types.String                                                  `tfsdk:"description" json:"description"`
-	Filters       *NotificationPolicyFiltersModel                               `tfsdk:"filters" json:"filters"`
+	AlertInterval types.String                                                  `tfsdk:"alert_interval" json:"alert_interval,computed_optional"`
+	AlertType     types.String                                                  `tfsdk:"alert_type" json:"alert_type,computed_optional"`
+	Description   types.String                                                  `tfsdk:"description" json:"description,computed_optional"`
 	Enabled       types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Name          types.String                                                  `tfsdk:"name" json:"name,computed_optional"`
+	Mechanisms    customfield.Map[customfield.List[jsontypes.Normalized]]       `tfsdk:"mechanisms" json:"mechanisms,computed_optional"`
+	Filters       customfield.NestedObject[NotificationPolicyFiltersModel]      `tfsdk:"filters" json:"filters,computed_optional"`
 	Created       timetypes.RFC3339                                             `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified      timetypes.RFC3339                                             `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Success       types.Bool                                                    `tfsdk:"success" json:"success,computed"`
@@ -75,18 +75,18 @@ type NotificationPolicyFiltersModel struct {
 }
 
 type NotificationPolicyErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type NotificationPolicyMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type NotificationPolicyResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count,computed_optional"`
-	Page       types.Float64 `tfsdk:"page" json:"page,computed_optional"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed_optional"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed_optional"`
+	Count      types.Float64 `tfsdk:"count" json:"count,computed"`
+	Page       types.Float64 `tfsdk:"page" json:"page,computed"`
+	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
+	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
 }

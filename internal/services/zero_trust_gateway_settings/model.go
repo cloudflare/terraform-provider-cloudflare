@@ -13,11 +13,11 @@ type ZeroTrustGatewaySettingsResultEnvelope struct {
 }
 
 type ZeroTrustGatewaySettingsModel struct {
-	ID        types.String                           `tfsdk:"id" json:"-,computed"`
-	AccountID types.String                           `tfsdk:"account_id" path:"account_id"`
-	Settings  *ZeroTrustGatewaySettingsSettingsModel `tfsdk:"settings" json:"settings"`
-	CreatedAt timetypes.RFC3339                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt timetypes.RFC3339                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id"`
+	Settings  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
+	CreatedAt timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UpdatedAt timetypes.RFC3339                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustGatewaySettingsSettingsModel struct {
@@ -73,11 +73,11 @@ type ZeroTrustGatewaySettingsSettingsBrowserIsolationModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsCertificateModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type ZeroTrustGatewaySettingsSettingsCustomCertificateModel struct {
-	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled"`
+	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	ID            types.String      `tfsdk:"id" json:"id,computed_optional"`
 	BindingStatus types.String      `tfsdk:"binding_status" json:"binding_status,computed"`
 	UpdatedAt     timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`

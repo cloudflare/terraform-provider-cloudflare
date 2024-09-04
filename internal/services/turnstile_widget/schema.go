@@ -5,6 +5,7 @@ package turnstile_widget
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -45,31 +46,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 				Default:       stringdefault.StaticString("world"),
 			},
-			"mode": schema.StringAttribute{
-				Description: "Widget Mode",
-				Required:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"non-interactive",
-						"invisible",
-						"managed",
-					),
-				},
-			},
-			"name": schema.StringAttribute{
-				Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
-				Required:    true,
-			},
-			"domains": schema.ListAttribute{
-				Required:    true,
-				ElementType: types.StringType,
-			},
 			"bot_fight_mode": schema.BoolAttribute{
 				Description: "If bot_fight_mode is set to `true`, Cloudflare issues computationally\nexpensive challenges in response to malicious bots (ENT only).\n",
+				Computed:    true,
 				Optional:    true,
 			},
 			"clearance_level": schema.StringAttribute{
 				Description: "If Turnstile is embedded on a Cloudflare site and the widget should grant challenge clearance,\nthis setting can determine the clearance level to be set\n",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -80,9 +64,33 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"mode": schema.StringAttribute{
+				Description: "Widget Mode",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"non-interactive",
+						"invisible",
+						"managed",
+					),
+				},
+			},
+			"name": schema.StringAttribute{
+				Description: "Human readable widget name. Not unique. Cloudflare suggests that you\nset this to a meaningful string to make it easier to identify your\nwidget, and where it is used.\n",
+				Computed:    true,
+				Optional:    true,
+			},
 			"offlabel": schema.BoolAttribute{
 				Description: "Do not show any Cloudflare branding on the widget (ENT only).\n",
+				Computed:    true,
 				Optional:    true,
+			},
+			"domains": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
+				ElementType: types.StringType,
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the widget was created.",

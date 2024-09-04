@@ -14,9 +14,9 @@ type RegionalHostnameResultEnvelope struct {
 
 type RegionalHostnameModel struct {
 	ID        types.String                                                `tfsdk:"id" json:"-,computed"`
-	Hostname  types.String                                                `tfsdk:"hostname" json:"hostname"`
+	Hostname  types.String                                                `tfsdk:"hostname" json:"hostname,computed_optional"`
 	ZoneID    types.String                                                `tfsdk:"zone_id" path:"zone_id"`
-	RegionKey types.String                                                `tfsdk:"region_key" json:"region_key"`
+	RegionKey types.String                                                `tfsdk:"region_key" json:"region_key,computed_optional"`
 	CreatedOn timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Success   types.Bool                                                  `tfsdk:"success" json:"success,computed"`
 	Errors    customfield.NestedObjectList[RegionalHostnameErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
@@ -24,11 +24,11 @@ type RegionalHostnameModel struct {
 }
 
 type RegionalHostnameErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type RegionalHostnameMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }

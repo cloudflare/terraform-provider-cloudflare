@@ -28,6 +28,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"schema_id": schema.StringAttribute{
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -38,7 +39,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"kind": schema.StringAttribute{
 				Description: "Kind of schema",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("openapi_v3"),
 				},
@@ -46,6 +48,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description:   "Name of the schema",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -74,13 +77,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -91,13 +94,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -112,28 +115,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"kind": schema.StringAttribute{
 						Description: "Kind of schema",
-						Required:    true,
+						Computed:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("openapi_v3"),
 						},
 					},
 					"name": schema.StringAttribute{
 						Description: "Name of the schema",
-						Required:    true,
+						Computed:    true,
 					},
 					"schema_id": schema.StringAttribute{
 						Description: "UUID",
-						Required:    true,
+						Computed:    true,
 					},
 					"source": schema.StringAttribute{
 						Description: "Source of the schema",
 						Computed:    true,
-						Optional:    true,
 					},
 					"validation_enabled": schema.BoolAttribute{
 						Description: "Flag whether schema is enabled for validation.",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},
@@ -144,25 +145,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"warnings": schema.ListNestedAttribute{
 						Description: "Diagnostic warning events that occurred during processing. These events are non-critical errors found within the schema.",
 						Computed:    true,
-						Optional:    true,
 						CustomType:  customfield.NewNestedObjectListType[APIShieldSchemaUploadDetailsWarningsModel](ctx),
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"code": schema.Int64Attribute{
 									Description: "Code that identifies the event that occurred.",
-									Required:    true,
+									Computed:    true,
 								},
 								"locations": schema.ListAttribute{
 									Description: "JSONPath location(s) in the schema where these events were encountered.  See [https://goessner.net/articles/JsonPath/](https://goessner.net/articles/JsonPath/) for JSONPath specification.",
 									Computed:    true,
-									Optional:    true,
 									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 								"message": schema.StringAttribute{
 									Description: "Diagnostic message that describes the event.",
 									Computed:    true,
-									Optional:    true,
 								},
 							},
 						},

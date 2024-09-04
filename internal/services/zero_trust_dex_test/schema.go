@@ -5,6 +5,7 @@ package zero_trust_dex_test
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -23,24 +24,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description:   "The name of the DEX test. Must be unique.",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"description": schema.StringAttribute{
+				Description: "Additional details about the test.",
+				Computed:    true,
+				Optional:    true,
+			},
 			"enabled": schema.BoolAttribute{
 				Description: "Determines whether or not the test is active.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"interval": schema.StringAttribute{
 				Description: "How often the test will run.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+			},
+			"targeted": schema.BoolAttribute{
+				Computed: true,
+				Optional: true,
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "The configuration object which contains the details for the WARP client to conduct the test.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDEXTestDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
@@ -59,16 +74,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"description": schema.StringAttribute{
-				Description: "Additional details about the test.",
-				Optional:    true,
-			},
-			"targeted": schema.BoolAttribute{
-				Optional: true,
-			},
 			"target_policies": schema.ListNestedAttribute{
 				Description: "Device settings profiles targeted by this test",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDEXTestTargetPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

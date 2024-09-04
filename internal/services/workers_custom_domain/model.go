@@ -12,10 +12,10 @@ type WorkersCustomDomainResultEnvelope struct {
 
 type WorkersCustomDomainModel struct {
 	ID          types.String `tfsdk:"id" json:"-,computed"`
-	Hostname    types.String `tfsdk:"hostname" json:"hostname"`
+	Hostname    types.String `tfsdk:"hostname" json:"hostname,computed_optional"`
 	AccountID   types.String `tfsdk:"account_id" path:"account_id"`
-	Environment types.String `tfsdk:"environment" json:"environment"`
-	Service     types.String `tfsdk:"service" json:"service"`
-	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id"`
+	Environment types.String `tfsdk:"environment" json:"environment,computed_optional"`
+	Service     types.String `tfsdk:"service" json:"service,computed_optional"`
+	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id,computed_optional"`
 	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name,computed"`
 }

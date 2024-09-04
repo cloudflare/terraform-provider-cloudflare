@@ -24,6 +24,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"flag": schema.BoolAttribute{
 				Description:   "The log retention flag for Logpull API.",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},

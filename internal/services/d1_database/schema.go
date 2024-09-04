@@ -32,10 +32,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"primary_location_hint": schema.StringAttribute{
 				Description: "Specify the region to create the D1 primary, if available. If this option is omitted, the D1 will be created as close as possible to the current user.",
 				Optional:    true,
@@ -49,6 +45,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"oc",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"name": schema.StringAttribute{
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"created_at": schema.StringAttribute{

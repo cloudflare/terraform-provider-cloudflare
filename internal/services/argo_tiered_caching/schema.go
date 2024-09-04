@@ -31,7 +31,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"value": schema.StringAttribute{
 				Description: "Enables Tiered Caching.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("on", "off"),
 				},

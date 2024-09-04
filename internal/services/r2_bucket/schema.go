@@ -26,7 +26,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description:   "Name of the bucket",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"account_id": schema.StringAttribute{
@@ -36,6 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"location": schema.StringAttribute{
 				Description: "Location of the bucket",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

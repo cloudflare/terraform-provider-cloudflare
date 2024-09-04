@@ -5,6 +5,7 @@ package zero_trust_gateway_proxy_endpoint
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -28,11 +29,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the proxy endpoint.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"ips": schema.ListAttribute{
 				Description: "A list of CIDRs to restrict ingress connections.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{

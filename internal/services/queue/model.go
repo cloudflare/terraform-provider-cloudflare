@@ -15,7 +15,7 @@ type QueueModel struct {
 	ID                  types.String                                      `tfsdk:"id" json:"-,computed"`
 	QueueID             types.String                                      `tfsdk:"queue_id" json:"queue_id,computed"`
 	AccountID           types.String                                      `tfsdk:"account_id" path:"account_id"`
-	QueueName           types.String                                      `tfsdk:"queue_name" json:"queue_name"`
+	QueueName           types.String                                      `tfsdk:"queue_name" json:"queue_name,computed_optional"`
 	ConsumersTotalCount types.Float64                                     `tfsdk:"consumers_total_count" json:"consumers_total_count,computed"`
 	CreatedOn           types.String                                      `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn          types.String                                      `tfsdk:"modified_on" json:"modified_on,computed"`
@@ -29,13 +29,13 @@ type QueueConsumersModel struct {
 	Environment types.String                                          `tfsdk:"environment" json:"environment,computed"`
 	QueueName   types.String                                          `tfsdk:"queue_name" json:"queue_name,computed"`
 	Service     types.String                                          `tfsdk:"service" json:"service,computed"`
-	Settings    customfield.NestedObject[QueueConsumersSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
+	Settings    customfield.NestedObject[QueueConsumersSettingsModel] `tfsdk:"settings" json:"settings,computed"`
 }
 
 type QueueConsumersSettingsModel struct {
-	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size,computed_optional"`
-	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries,computed_optional"`
-	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed_optional"`
+	BatchSize     types.Float64 `tfsdk:"batch_size" json:"batch_size,computed"`
+	MaxRetries    types.Float64 `tfsdk:"max_retries" json:"max_retries,computed"`
+	MaxWaitTimeMs types.Float64 `tfsdk:"max_wait_time_ms" json:"max_wait_time_ms,computed"`
 }
 
 type QueueProducersModel struct {

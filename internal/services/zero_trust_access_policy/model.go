@@ -14,304 +14,304 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 }
 
 type ZeroTrustAccessPolicyModel struct {
-	ID                           types.String                                 `tfsdk:"id" json:"id,computed"`
-	AppID                        types.String                                 `tfsdk:"app_id" path:"app_id"`
-	AccountID                    types.String                                 `tfsdk:"account_id" path:"account_id"`
-	ZoneID                       types.String                                 `tfsdk:"zone_id" path:"zone_id"`
-	Decision                     types.String                                 `tfsdk:"decision" json:"decision"`
-	Name                         types.String                                 `tfsdk:"name" json:"name"`
-	Include                      *[]*ZeroTrustAccessPolicyIncludeModel        `tfsdk:"include" json:"include"`
-	Precedence                   types.Int64                                  `tfsdk:"precedence" json:"precedence"`
-	PurposeJustificationPrompt   types.String                                 `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt"`
-	ApprovalGroups               *[]*ZeroTrustAccessPolicyApprovalGroupsModel `tfsdk:"approval_groups" json:"approval_groups"`
-	Exclude                      *[]*ZeroTrustAccessPolicyExcludeModel        `tfsdk:"exclude" json:"exclude"`
-	Require                      *[]*ZeroTrustAccessPolicyRequireModel        `tfsdk:"require" json:"require"`
-	ApprovalRequired             types.Bool                                   `tfsdk:"approval_required" json:"approval_required,computed_optional"`
-	IsolationRequired            types.Bool                                   `tfsdk:"isolation_required" json:"isolation_required,computed_optional"`
-	PurposeJustificationRequired types.Bool                                   `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed_optional"`
-	SessionDuration              types.String                                 `tfsdk:"session_duration" json:"session_duration,computed_optional"`
-	CreatedAt                    timetypes.RFC3339                            `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	UpdatedAt                    timetypes.RFC3339                            `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
-}
-
-type ZeroTrustAccessPolicyIncludeModel struct {
-	Email                *ZeroTrustAccessPolicyIncludeEmailModel              `tfsdk:"email" json:"email"`
-	EmailList            *ZeroTrustAccessPolicyIncludeEmailListModel          `tfsdk:"email_list" json:"email_list"`
-	EmailDomain          *ZeroTrustAccessPolicyIncludeEmailDomainModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             jsontypes.Normalized                                 `tfsdk:"everyone" json:"everyone"`
-	IP                   *ZeroTrustAccessPolicyIncludeIPModel                 `tfsdk:"ip" json:"ip"`
-	IPList               *ZeroTrustAccessPolicyIncludeIPListModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          jsontypes.Normalized                                 `tfsdk:"certificate" json:"certificate"`
-	Group                *ZeroTrustAccessPolicyIncludeGroupModel              `tfsdk:"group" json:"group"`
-	AzureAD              *ZeroTrustAccessPolicyIncludeAzureADModel            `tfsdk:"azure_ad" json:"azureAD"`
-	GitHubOrganization   *ZeroTrustAccessPolicyIncludeGitHubOrganizationModel `tfsdk:"github_organization" json:"github-organization"`
-	GSuite               *ZeroTrustAccessPolicyIncludeGSuiteModel             `tfsdk:"gsuite" json:"gsuite"`
-	Okta                 *ZeroTrustAccessPolicyIncludeOktaModel               `tfsdk:"okta" json:"okta"`
-	SAML                 *ZeroTrustAccessPolicyIncludeSAMLModel               `tfsdk:"saml" json:"saml"`
-	ServiceToken         *ZeroTrustAccessPolicyIncludeServiceTokenModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken jsontypes.Normalized                                 `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
-	ExternalEvaluation   *ZeroTrustAccessPolicyIncludeExternalEvaluationModel `tfsdk:"external_evaluation" json:"external_evaluation"`
-	Geo                  *ZeroTrustAccessPolicyIncludeGeoModel                `tfsdk:"geo" json:"geo"`
-	AuthMethod           *ZeroTrustAccessPolicyIncludeAuthMethodModel         `tfsdk:"auth_method" json:"auth_method"`
-	DevicePosture        *ZeroTrustAccessPolicyIncludeDevicePostureModel      `tfsdk:"device_posture" json:"device_posture"`
-}
-
-type ZeroTrustAccessPolicyIncludeEmailModel struct {
-	Email types.String `tfsdk:"email" json:"email"`
-}
-
-type ZeroTrustAccessPolicyIncludeEmailListModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type ZeroTrustAccessPolicyIncludeEmailDomainModel struct {
-	Domain types.String `tfsdk:"domain" json:"domain"`
-}
-
-type ZeroTrustAccessPolicyIncludeIPModel struct {
-	IP types.String `tfsdk:"ip" json:"ip"`
-}
-
-type ZeroTrustAccessPolicyIncludeIPListModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type ZeroTrustAccessPolicyIncludeGroupModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
-}
-
-type ZeroTrustAccessPolicyIncludeAzureADModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-}
-
-type ZeroTrustAccessPolicyIncludeGitHubOrganizationModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Name         types.String `tfsdk:"name" json:"name"`
-}
-
-type ZeroTrustAccessPolicyIncludeGSuiteModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
-}
-
-type ZeroTrustAccessPolicyIncludeOktaModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
-}
-
-type ZeroTrustAccessPolicyIncludeSAMLModel struct {
-	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name"`
-	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value"`
-}
-
-type ZeroTrustAccessPolicyIncludeServiceTokenModel struct {
-	TokenID types.String `tfsdk:"token_id" json:"token_id"`
-}
-
-type ZeroTrustAccessPolicyIncludeExternalEvaluationModel struct {
-	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url"`
-	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url"`
-}
-
-type ZeroTrustAccessPolicyIncludeGeoModel struct {
-	CountryCode types.String `tfsdk:"country_code" json:"country_code"`
-}
-
-type ZeroTrustAccessPolicyIncludeAuthMethodModel struct {
-	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method"`
-}
-
-type ZeroTrustAccessPolicyIncludeDevicePostureModel struct {
-	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+	ID                           types.String                                                           `tfsdk:"id" json:"id,computed"`
+	AppID                        types.String                                                           `tfsdk:"app_id" path:"app_id"`
+	AccountID                    types.String                                                           `tfsdk:"account_id" path:"account_id"`
+	ZoneID                       types.String                                                           `tfsdk:"zone_id" path:"zone_id"`
+	Precedence                   types.Int64                                                            `tfsdk:"precedence" json:"precedence"`
+	ApprovalRequired             types.Bool                                                             `tfsdk:"approval_required" json:"approval_required,computed_optional"`
+	Decision                     types.String                                                           `tfsdk:"decision" json:"decision,computed_optional"`
+	IsolationRequired            types.Bool                                                             `tfsdk:"isolation_required" json:"isolation_required,computed_optional"`
+	Name                         types.String                                                           `tfsdk:"name" json:"name,computed_optional"`
+	PurposeJustificationPrompt   types.String                                                           `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed_optional"`
+	PurposeJustificationRequired types.Bool                                                             `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed_optional"`
+	SessionDuration              types.String                                                           `tfsdk:"session_duration" json:"session_duration,computed_optional"`
+	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPolicyApprovalGroupsModel] `tfsdk:"approval_groups" json:"approval_groups,computed_optional"`
+	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeModel]        `tfsdk:"exclude" json:"exclude,computed_optional"`
+	Include                      customfield.NestedObjectList[ZeroTrustAccessPolicyIncludeModel]        `tfsdk:"include" json:"include,computed_optional"`
+	Require                      customfield.NestedObjectList[ZeroTrustAccessPolicyRequireModel]        `tfsdk:"require" json:"require,computed_optional"`
+	CreatedAt                    timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UpdatedAt                    timetypes.RFC3339                                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 type ZeroTrustAccessPolicyApprovalGroupsModel struct {
-	ApprovalsNeeded types.Float64                  `tfsdk:"approvals_needed" json:"approvals_needed"`
+	ApprovalsNeeded types.Float64                  `tfsdk:"approvals_needed" json:"approvals_needed,computed_optional"`
 	EmailAddresses  customfield.List[types.String] `tfsdk:"email_addresses" json:"email_addresses,computed_optional"`
 	EmailListUUID   types.String                   `tfsdk:"email_list_uuid" json:"email_list_uuid,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeModel struct {
-	Email                *ZeroTrustAccessPolicyExcludeEmailModel              `tfsdk:"email" json:"email"`
-	EmailList            *ZeroTrustAccessPolicyExcludeEmailListModel          `tfsdk:"email_list" json:"email_list"`
-	EmailDomain          *ZeroTrustAccessPolicyExcludeEmailDomainModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             jsontypes.Normalized                                 `tfsdk:"everyone" json:"everyone"`
-	IP                   *ZeroTrustAccessPolicyExcludeIPModel                 `tfsdk:"ip" json:"ip"`
-	IPList               *ZeroTrustAccessPolicyExcludeIPListModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          jsontypes.Normalized                                 `tfsdk:"certificate" json:"certificate"`
-	Group                *ZeroTrustAccessPolicyExcludeGroupModel              `tfsdk:"group" json:"group"`
-	AzureAD              *ZeroTrustAccessPolicyExcludeAzureADModel            `tfsdk:"azure_ad" json:"azureAD"`
-	GitHubOrganization   *ZeroTrustAccessPolicyExcludeGitHubOrganizationModel `tfsdk:"github_organization" json:"github-organization"`
-	GSuite               *ZeroTrustAccessPolicyExcludeGSuiteModel             `tfsdk:"gsuite" json:"gsuite"`
-	Okta                 *ZeroTrustAccessPolicyExcludeOktaModel               `tfsdk:"okta" json:"okta"`
-	SAML                 *ZeroTrustAccessPolicyExcludeSAMLModel               `tfsdk:"saml" json:"saml"`
-	ServiceToken         *ZeroTrustAccessPolicyExcludeServiceTokenModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken jsontypes.Normalized                                 `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
-	ExternalEvaluation   *ZeroTrustAccessPolicyExcludeExternalEvaluationModel `tfsdk:"external_evaluation" json:"external_evaluation"`
-	Geo                  *ZeroTrustAccessPolicyExcludeGeoModel                `tfsdk:"geo" json:"geo"`
-	AuthMethod           *ZeroTrustAccessPolicyExcludeAuthMethodModel         `tfsdk:"auth_method" json:"auth_method"`
-	DevicePosture        *ZeroTrustAccessPolicyExcludeDevicePostureModel      `tfsdk:"device_posture" json:"device_posture"`
+	Email                customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailModel]              `tfsdk:"email" json:"email,computed_optional"`
+	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailListModel]          `tfsdk:"email_list" json:"email_list,computed_optional"`
+	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailDomainModel]        `tfsdk:"email_domain" json:"email_domain,computed_optional"`
+	Everyone             jsontypes.Normalized                                                          `tfsdk:"everyone" json:"everyone,computed_optional"`
+	IP                   customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPModel]                 `tfsdk:"ip" json:"ip,computed_optional"`
+	IPList               customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPListModel]             `tfsdk:"ip_list" json:"ip_list,computed_optional"`
+	Certificate          jsontypes.Normalized                                                          `tfsdk:"certificate" json:"certificate,computed_optional"`
+	Group                customfield.NestedObject[ZeroTrustAccessPolicyExcludeGroupModel]              `tfsdk:"group" json:"group,computed_optional"`
+	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyExcludeAzureADModel]            `tfsdk:"azure_ad" json:"azureAD,computed_optional"`
+	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyExcludeGitHubOrganizationModel] `tfsdk:"github_organization" json:"github-organization,computed_optional"`
+	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyExcludeGSuiteModel]             `tfsdk:"gsuite" json:"gsuite,computed_optional"`
+	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeOktaModel]               `tfsdk:"okta" json:"okta,computed_optional"`
+	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeSAMLModel]               `tfsdk:"saml" json:"saml,computed_optional"`
+	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyExcludeServiceTokenModel]       `tfsdk:"service_token" json:"service_token,computed_optional"`
+	AnyValidServiceToken jsontypes.Normalized                                                          `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed_optional"`
+	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyExcludeExternalEvaluationModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed_optional"`
+	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyExcludeGeoModel]                `tfsdk:"geo" json:"geo,computed_optional"`
+	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyExcludeAuthMethodModel]         `tfsdk:"auth_method" json:"auth_method,computed_optional"`
+	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyExcludeDevicePostureModel]      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeEmailModel struct {
-	Email types.String `tfsdk:"email" json:"email"`
+	Email types.String `tfsdk:"email" json:"email,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeEmailListModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeEmailDomainModel struct {
-	Domain types.String `tfsdk:"domain" json:"domain"`
+	Domain types.String `tfsdk:"domain" json:"domain,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeIPModel struct {
-	IP types.String `tfsdk:"ip" json:"ip"`
+	IP types.String `tfsdk:"ip" json:"ip,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeIPListModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeGroupModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeAzureADModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
+	ID           types.String `tfsdk:"id" json:"id,computed_optional"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeGitHubOrganizationModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Name         types.String `tfsdk:"name" json:"name"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Name         types.String `tfsdk:"name" json:"name,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeGSuiteModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Email        types.String `tfsdk:"email" json:"email,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeOktaModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Email        types.String `tfsdk:"email" json:"email,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeSAMLModel struct {
-	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name"`
-	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed_optional"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeServiceTokenModel struct {
-	TokenID types.String `tfsdk:"token_id" json:"token_id"`
+	TokenID types.String `tfsdk:"token_id" json:"token_id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeExternalEvaluationModel struct {
-	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url"`
-	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url"`
+	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed_optional"`
+	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeGeoModel struct {
-	CountryCode types.String `tfsdk:"country_code" json:"country_code"`
+	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeAuthMethodModel struct {
-	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method"`
+	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyExcludeDevicePostureModel struct {
-	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeModel struct {
+	Email                customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailModel]              `tfsdk:"email" json:"email,computed_optional"`
+	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailListModel]          `tfsdk:"email_list" json:"email_list,computed_optional"`
+	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailDomainModel]        `tfsdk:"email_domain" json:"email_domain,computed_optional"`
+	Everyone             jsontypes.Normalized                                                          `tfsdk:"everyone" json:"everyone,computed_optional"`
+	IP                   customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPModel]                 `tfsdk:"ip" json:"ip,computed_optional"`
+	IPList               customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPListModel]             `tfsdk:"ip_list" json:"ip_list,computed_optional"`
+	Certificate          jsontypes.Normalized                                                          `tfsdk:"certificate" json:"certificate,computed_optional"`
+	Group                customfield.NestedObject[ZeroTrustAccessPolicyIncludeGroupModel]              `tfsdk:"group" json:"group,computed_optional"`
+	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyIncludeAzureADModel]            `tfsdk:"azure_ad" json:"azureAD,computed_optional"`
+	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyIncludeGitHubOrganizationModel] `tfsdk:"github_organization" json:"github-organization,computed_optional"`
+	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyIncludeGSuiteModel]             `tfsdk:"gsuite" json:"gsuite,computed_optional"`
+	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeOktaModel]               `tfsdk:"okta" json:"okta,computed_optional"`
+	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeSAMLModel]               `tfsdk:"saml" json:"saml,computed_optional"`
+	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyIncludeServiceTokenModel]       `tfsdk:"service_token" json:"service_token,computed_optional"`
+	AnyValidServiceToken jsontypes.Normalized                                                          `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed_optional"`
+	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyIncludeExternalEvaluationModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed_optional"`
+	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyIncludeGeoModel]                `tfsdk:"geo" json:"geo,computed_optional"`
+	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyIncludeAuthMethodModel]         `tfsdk:"auth_method" json:"auth_method,computed_optional"`
+	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyIncludeDevicePostureModel]      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeEmailModel struct {
+	Email types.String `tfsdk:"email" json:"email,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeEmailListModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeEmailDomainModel struct {
+	Domain types.String `tfsdk:"domain" json:"domain,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeIPModel struct {
+	IP types.String `tfsdk:"ip" json:"ip,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeIPListModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeGroupModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeAzureADModel struct {
+	ID           types.String `tfsdk:"id" json:"id,computed_optional"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeGitHubOrganizationModel struct {
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Name         types.String `tfsdk:"name" json:"name,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeGSuiteModel struct {
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Email        types.String `tfsdk:"email" json:"email,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeOktaModel struct {
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Email        types.String `tfsdk:"email" json:"email,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeSAMLModel struct {
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed_optional"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeServiceTokenModel struct {
+	TokenID types.String `tfsdk:"token_id" json:"token_id,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeExternalEvaluationModel struct {
+	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed_optional"`
+	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeGeoModel struct {
+	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeAuthMethodModel struct {
+	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed_optional"`
+}
+
+type ZeroTrustAccessPolicyIncludeDevicePostureModel struct {
+	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireModel struct {
-	Email                *ZeroTrustAccessPolicyRequireEmailModel              `tfsdk:"email" json:"email"`
-	EmailList            *ZeroTrustAccessPolicyRequireEmailListModel          `tfsdk:"email_list" json:"email_list"`
-	EmailDomain          *ZeroTrustAccessPolicyRequireEmailDomainModel        `tfsdk:"email_domain" json:"email_domain"`
-	Everyone             jsontypes.Normalized                                 `tfsdk:"everyone" json:"everyone"`
-	IP                   *ZeroTrustAccessPolicyRequireIPModel                 `tfsdk:"ip" json:"ip"`
-	IPList               *ZeroTrustAccessPolicyRequireIPListModel             `tfsdk:"ip_list" json:"ip_list"`
-	Certificate          jsontypes.Normalized                                 `tfsdk:"certificate" json:"certificate"`
-	Group                *ZeroTrustAccessPolicyRequireGroupModel              `tfsdk:"group" json:"group"`
-	AzureAD              *ZeroTrustAccessPolicyRequireAzureADModel            `tfsdk:"azure_ad" json:"azureAD"`
-	GitHubOrganization   *ZeroTrustAccessPolicyRequireGitHubOrganizationModel `tfsdk:"github_organization" json:"github-organization"`
-	GSuite               *ZeroTrustAccessPolicyRequireGSuiteModel             `tfsdk:"gsuite" json:"gsuite"`
-	Okta                 *ZeroTrustAccessPolicyRequireOktaModel               `tfsdk:"okta" json:"okta"`
-	SAML                 *ZeroTrustAccessPolicyRequireSAMLModel               `tfsdk:"saml" json:"saml"`
-	ServiceToken         *ZeroTrustAccessPolicyRequireServiceTokenModel       `tfsdk:"service_token" json:"service_token"`
-	AnyValidServiceToken jsontypes.Normalized                                 `tfsdk:"any_valid_service_token" json:"any_valid_service_token"`
-	ExternalEvaluation   *ZeroTrustAccessPolicyRequireExternalEvaluationModel `tfsdk:"external_evaluation" json:"external_evaluation"`
-	Geo                  *ZeroTrustAccessPolicyRequireGeoModel                `tfsdk:"geo" json:"geo"`
-	AuthMethod           *ZeroTrustAccessPolicyRequireAuthMethodModel         `tfsdk:"auth_method" json:"auth_method"`
-	DevicePosture        *ZeroTrustAccessPolicyRequireDevicePostureModel      `tfsdk:"device_posture" json:"device_posture"`
+	Email                customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailModel]              `tfsdk:"email" json:"email,computed_optional"`
+	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailListModel]          `tfsdk:"email_list" json:"email_list,computed_optional"`
+	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailDomainModel]        `tfsdk:"email_domain" json:"email_domain,computed_optional"`
+	Everyone             jsontypes.Normalized                                                          `tfsdk:"everyone" json:"everyone,computed_optional"`
+	IP                   customfield.NestedObject[ZeroTrustAccessPolicyRequireIPModel]                 `tfsdk:"ip" json:"ip,computed_optional"`
+	IPList               customfield.NestedObject[ZeroTrustAccessPolicyRequireIPListModel]             `tfsdk:"ip_list" json:"ip_list,computed_optional"`
+	Certificate          jsontypes.Normalized                                                          `tfsdk:"certificate" json:"certificate,computed_optional"`
+	Group                customfield.NestedObject[ZeroTrustAccessPolicyRequireGroupModel]              `tfsdk:"group" json:"group,computed_optional"`
+	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyRequireAzureADModel]            `tfsdk:"azure_ad" json:"azureAD,computed_optional"`
+	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyRequireGitHubOrganizationModel] `tfsdk:"github_organization" json:"github-organization,computed_optional"`
+	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyRequireGSuiteModel]             `tfsdk:"gsuite" json:"gsuite,computed_optional"`
+	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyRequireOktaModel]               `tfsdk:"okta" json:"okta,computed_optional"`
+	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyRequireSAMLModel]               `tfsdk:"saml" json:"saml,computed_optional"`
+	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyRequireServiceTokenModel]       `tfsdk:"service_token" json:"service_token,computed_optional"`
+	AnyValidServiceToken jsontypes.Normalized                                                          `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed_optional"`
+	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyRequireExternalEvaluationModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed_optional"`
+	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyRequireGeoModel]                `tfsdk:"geo" json:"geo,computed_optional"`
+	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyRequireAuthMethodModel]         `tfsdk:"auth_method" json:"auth_method,computed_optional"`
+	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyRequireDevicePostureModel]      `tfsdk:"device_posture" json:"device_posture,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireEmailModel struct {
-	Email types.String `tfsdk:"email" json:"email"`
+	Email types.String `tfsdk:"email" json:"email,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireEmailListModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireEmailDomainModel struct {
-	Domain types.String `tfsdk:"domain" json:"domain"`
+	Domain types.String `tfsdk:"domain" json:"domain,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireIPModel struct {
-	IP types.String `tfsdk:"ip" json:"ip"`
+	IP types.String `tfsdk:"ip" json:"ip,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireIPListModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireGroupModel struct {
-	ID types.String `tfsdk:"id" json:"id"`
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireAzureADModel struct {
-	ID           types.String `tfsdk:"id" json:"id"`
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
+	ID           types.String `tfsdk:"id" json:"id,computed_optional"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireGitHubOrganizationModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Name         types.String `tfsdk:"name" json:"name"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Name         types.String `tfsdk:"name" json:"name,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireGSuiteModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Email        types.String `tfsdk:"email" json:"email,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireOktaModel struct {
-	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id"`
-	Email        types.String `tfsdk:"email" json:"email"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed_optional"`
+	Email        types.String `tfsdk:"email" json:"email,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireSAMLModel struct {
-	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name"`
-	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed_optional"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireServiceTokenModel struct {
-	TokenID types.String `tfsdk:"token_id" json:"token_id"`
+	TokenID types.String `tfsdk:"token_id" json:"token_id,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireExternalEvaluationModel struct {
-	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url"`
-	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url"`
+	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed_optional"`
+	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireGeoModel struct {
-	CountryCode types.String `tfsdk:"country_code" json:"country_code"`
+	CountryCode types.String `tfsdk:"country_code" json:"country_code,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireAuthMethodModel struct {
-	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method"`
+	AuthMethod types.String `tfsdk:"auth_method" json:"auth_method,computed_optional"`
 }
 
 type ZeroTrustAccessPolicyRequireDevicePostureModel struct {
-	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid"`
+	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,computed_optional"`
 }

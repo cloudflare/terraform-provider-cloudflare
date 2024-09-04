@@ -16,9 +16,9 @@ type WebAnalyticsSiteModel struct {
 	ID          types.String                                             `tfsdk:"id" json:"-,computed"`
 	SiteTag     types.String                                             `tfsdk:"site_tag" json:"site_tag,computed"`
 	AccountID   types.String                                             `tfsdk:"account_id" path:"account_id"`
-	AutoInstall types.Bool                                               `tfsdk:"auto_install" json:"auto_install"`
 	Host        types.String                                             `tfsdk:"host" json:"host"`
 	ZoneTag     types.String                                             `tfsdk:"zone_tag" json:"zone_tag"`
+	AutoInstall types.Bool                                               `tfsdk:"auto_install" json:"auto_install,computed_optional"`
 	Created     timetypes.RFC3339                                        `tfsdk:"created" json:"created,computed" format:"date-time"`
 	SiteToken   types.String                                             `tfsdk:"site_token" json:"site_token,computed"`
 	Snippet     types.String                                             `tfsdk:"snippet" json:"snippet,computed"`
@@ -27,18 +27,18 @@ type WebAnalyticsSiteModel struct {
 }
 
 type WebAnalyticsSiteRulesModel struct {
-	ID        types.String                   `tfsdk:"id" json:"id,computed_optional"`
+	ID        types.String                   `tfsdk:"id" json:"id,computed"`
 	Created   timetypes.RFC3339              `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Host      types.String                   `tfsdk:"host" json:"host,computed_optional"`
-	Inclusive types.Bool                     `tfsdk:"inclusive" json:"inclusive,computed_optional"`
-	IsPaused  types.Bool                     `tfsdk:"is_paused" json:"is_paused,computed_optional"`
-	Paths     customfield.List[types.String] `tfsdk:"paths" json:"paths,computed_optional"`
-	Priority  types.Float64                  `tfsdk:"priority" json:"priority,computed_optional"`
+	Host      types.String                   `tfsdk:"host" json:"host,computed"`
+	Inclusive types.Bool                     `tfsdk:"inclusive" json:"inclusive,computed"`
+	IsPaused  types.Bool                     `tfsdk:"is_paused" json:"is_paused,computed"`
+	Paths     customfield.List[types.String] `tfsdk:"paths" json:"paths,computed"`
+	Priority  types.Float64                  `tfsdk:"priority" json:"priority,computed"`
 }
 
 type WebAnalyticsSiteRulesetModel struct {
-	ID       types.String `tfsdk:"id" json:"id,computed_optional"`
-	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
-	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,computed_optional"`
-	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag,computed_optional"`
+	ID       types.String `tfsdk:"id" json:"id,computed"`
+	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	ZoneName types.String `tfsdk:"zone_name" json:"zone_name,computed"`
+	ZoneTag  types.String `tfsdk:"zone_tag" json:"zone_tag,computed"`
 }

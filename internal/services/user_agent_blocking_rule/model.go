@@ -12,7 +12,7 @@ type UserAgentBlockingRuleResultEnvelope struct {
 
 type UserAgentBlockingRuleModel struct {
 	ZoneIdentifier types.String                             `tfsdk:"zone_identifier" path:"zone_identifier"`
-	ID             types.String                             `tfsdk:"id" path:"id"`
+	ID             types.String                             `tfsdk:"id" path:"id,computed_optional"`
 	Mode           types.String                             `tfsdk:"mode" json:"mode"`
 	Configuration  *UserAgentBlockingRuleConfigurationModel `tfsdk:"configuration" json:"configuration"`
 }

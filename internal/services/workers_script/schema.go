@@ -329,17 +329,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"service": schema.StringAttribute{
 							Description: "Name of Worker that is to be the consumer.",
-							Required:    true,
+							Computed:    true,
 						},
 						"environment": schema.StringAttribute{
 							Description: "Optional environment if the Worker utilizes one.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"namespace": schema.StringAttribute{
 							Description: "Optional dispatch namespace the script belongs to.",
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},

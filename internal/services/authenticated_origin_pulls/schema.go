@@ -27,6 +27,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "The hostname on the origin for which the client certificate uploaded will be used.",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

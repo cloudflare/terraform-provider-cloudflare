@@ -33,14 +33,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the webhook destination. This will be included in the request body when you receive a webhook notification.",
-				Required:    true,
-			},
-			"url": schema.StringAttribute{
-				Description: "The POST endpoint to call when dispatching a notification.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"secret": schema.StringAttribute{
 				Description: "Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"url": schema.StringAttribute{
+				Description: "The POST endpoint to call when dispatching a notification.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
@@ -79,13 +82,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -96,13 +99,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -114,22 +117,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"count": schema.Float64Attribute{
 						Description: "Total number of results for the requested service",
 						Computed:    true,
-						Optional:    true,
 					},
 					"page": schema.Float64Attribute{
 						Description: "Current page within paginated list of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"per_page": schema.Float64Attribute{
 						Description: "Number of results per page of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"total_count": schema.Float64Attribute{
 						Description: "Total results available without any search parameters",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

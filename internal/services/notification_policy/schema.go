@@ -35,9 +35,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"alert_interval": schema.StringAttribute{
+				Description: "Optional specification of how often to re-alert from the same incident, not support on all alert types.",
+				Computed:    true,
+				Optional:    true,
+			},
 			"alert_type": schema.StringAttribute{
 				Description: "Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"access_custom_certificate_expiration_type",
@@ -105,28 +111,36 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"description": schema.StringAttribute{
+				Description: "Optional description for the Notification policy.",
+				Computed:    true,
+				Optional:    true,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether or not the Notification policy is enabled.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
 			"name": schema.StringAttribute{
 				Description: "Name of the policy.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 			},
 			"mechanisms": schema.MapAttribute{
 				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewMapType[customfield.List[jsontypes.Normalized]](ctx),
 				ElementType: types.ListType{
 					ElemType: jsontypes.NormalizedType{},
 				},
 			},
-			"alert_interval": schema.StringAttribute{
-				Description: "Optional specification of how often to re-alert from the same incident, not support on all alert types.",
-				Optional:    true,
-			},
-			"description": schema.StringAttribute{
-				Description: "Optional description for the Notification policy.",
-				Optional:    true,
-			},
 			"filters": schema.SingleNestedAttribute{
 				Description: "Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[NotificationPolicyFiltersModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"actions": schema.ListAttribute{
 						Description: "Usage depends on specific alert type",
@@ -425,12 +439,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "Whether or not the Notification policy is enabled.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
 			"created": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
@@ -449,13 +457,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -466,13 +474,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"code": schema.Int64Attribute{
-							Required: true,
+							Computed: true,
 							Validators: []validator.Int64{
 								int64validator.AtLeast(1000),
 							},
 						},
 						"message": schema.StringAttribute{
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -484,22 +492,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"count": schema.Float64Attribute{
 						Description: "Total number of results for the requested service",
 						Computed:    true,
-						Optional:    true,
 					},
 					"page": schema.Float64Attribute{
 						Description: "Current page within paginated list of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"per_page": schema.Float64Attribute{
 						Description: "Number of results per page of results",
 						Computed:    true,
-						Optional:    true,
 					},
 					"total_count": schema.Float64Attribute{
 						Description: "Total results available without any search parameters",
 						Computed:    true,
-						Optional:    true,
 					},
 				},
 			},

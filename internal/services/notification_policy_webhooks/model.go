@@ -15,9 +15,9 @@ type NotificationPolicyWebhooksResultEnvelope struct {
 type NotificationPolicyWebhooksModel struct {
 	ID          types.String                                                          `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                                          `tfsdk:"account_id" path:"account_id"`
-	Name        types.String                                                          `tfsdk:"name" json:"name"`
-	URL         types.String                                                          `tfsdk:"url" json:"url"`
-	Secret      types.String                                                          `tfsdk:"secret" json:"secret"`
+	Name        types.String                                                          `tfsdk:"name" json:"name,computed_optional"`
+	Secret      types.String                                                          `tfsdk:"secret" json:"secret,computed_optional"`
+	URL         types.String                                                          `tfsdk:"url" json:"url,computed_optional"`
 	CreatedAt   timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastFailure timetypes.RFC3339                                                     `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`
 	LastSuccess timetypes.RFC3339                                                     `tfsdk:"last_success" json:"last_success,computed" format:"date-time"`
@@ -29,18 +29,18 @@ type NotificationPolicyWebhooksModel struct {
 }
 
 type NotificationPolicyWebhooksErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type NotificationPolicyWebhooksMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code"`
-	Message types.String `tfsdk:"message" json:"message"`
+	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
+	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type NotificationPolicyWebhooksResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count,computed_optional"`
-	Page       types.Float64 `tfsdk:"page" json:"page,computed_optional"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed_optional"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed_optional"`
+	Count      types.Float64 `tfsdk:"count" json:"count,computed"`
+	Page       types.Float64 `tfsdk:"page" json:"page,computed"`
+	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
+	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
 }

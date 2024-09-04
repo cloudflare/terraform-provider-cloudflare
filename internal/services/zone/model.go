@@ -14,10 +14,10 @@ type ZoneResultEnvelope struct {
 
 type ZoneModel struct {
 	ID                  types.String                             `tfsdk:"id" json:"id,computed"`
-	Name                types.String                             `tfsdk:"name" json:"name"`
 	Account             *ZoneAccountModel                        `tfsdk:"account" json:"account"`
-	VanityNameServers   *[]types.String                          `tfsdk:"vanity_name_servers" json:"vanity_name_servers"`
+	Name                types.String                             `tfsdk:"name" json:"name,computed_optional"`
 	Type                types.String                             `tfsdk:"type" json:"type,computed_optional"`
+	VanityNameServers   customfield.List[types.String]           `tfsdk:"vanity_name_servers" json:"vanity_name_servers,computed_optional"`
 	ActivatedOn         timetypes.RFC3339                        `tfsdk:"activated_on" json:"activated_on,computed" format:"date-time"`
 	CreatedOn           timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DevelopmentMode     types.Float64                            `tfsdk:"development_mode" json:"development_mode,computed"`
@@ -37,17 +37,17 @@ type ZoneAccountModel struct {
 }
 
 type ZoneMetaModel struct {
-	CDNOnly                types.Bool  `tfsdk:"cdn_only" json:"cdn_only,computed_optional"`
-	CustomCertificateQuota types.Int64 `tfsdk:"custom_certificate_quota" json:"custom_certificate_quota,computed_optional"`
-	DNSOnly                types.Bool  `tfsdk:"dns_only" json:"dns_only,computed_optional"`
-	FoundationDNS          types.Bool  `tfsdk:"foundation_dns" json:"foundation_dns,computed_optional"`
-	PageRuleQuota          types.Int64 `tfsdk:"page_rule_quota" json:"page_rule_quota,computed_optional"`
-	PhishingDetected       types.Bool  `tfsdk:"phishing_detected" json:"phishing_detected,computed_optional"`
-	Step                   types.Int64 `tfsdk:"step" json:"step,computed_optional"`
+	CDNOnly                types.Bool  `tfsdk:"cdn_only" json:"cdn_only,computed"`
+	CustomCertificateQuota types.Int64 `tfsdk:"custom_certificate_quota" json:"custom_certificate_quota,computed"`
+	DNSOnly                types.Bool  `tfsdk:"dns_only" json:"dns_only,computed"`
+	FoundationDNS          types.Bool  `tfsdk:"foundation_dns" json:"foundation_dns,computed"`
+	PageRuleQuota          types.Int64 `tfsdk:"page_rule_quota" json:"page_rule_quota,computed"`
+	PhishingDetected       types.Bool  `tfsdk:"phishing_detected" json:"phishing_detected,computed"`
+	Step                   types.Int64 `tfsdk:"step" json:"step,computed"`
 }
 
 type ZoneOwnerModel struct {
-	ID   types.String `tfsdk:"id" json:"id,computed_optional"`
-	Name types.String `tfsdk:"name" json:"name,computed_optional"`
-	Type types.String `tfsdk:"type" json:"type,computed_optional"`
+	ID   types.String `tfsdk:"id" json:"id,computed"`
+	Name types.String `tfsdk:"name" json:"name,computed"`
+	Type types.String `tfsdk:"type" json:"type,computed"`
 }

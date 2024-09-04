@@ -29,6 +29,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"id": schema.StringAttribute{
 				Description:   "The unique identifier of the rate limit.",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

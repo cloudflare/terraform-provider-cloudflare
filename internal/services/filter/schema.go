@@ -23,12 +23,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"id": schema.StringAttribute{
 				Description:   "The unique identifier of the filter.",
+				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"expression": schema.StringAttribute{
 				Description:   "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
-				Required:      true,
+				Computed:      true,
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{
