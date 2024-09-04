@@ -35,15 +35,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"alert_interval": schema.StringAttribute{
-				Description: "Optional specification of how often to re-alert from the same incident, not support on all alert types.",
-				Computed:    true,
-				Optional:    true,
-			},
 			"alert_type": schema.StringAttribute{
 				Description: "Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"access_custom_certificate_expiration_type",
@@ -111,6 +105,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"name": schema.StringAttribute{
+				Description: "Name of the policy.",
+				Required:    true,
+			},
+			"mechanisms": schema.MapAttribute{
+				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
+				Required:    true,
+				ElementType: types.ListType{
+					ElemType: jsontypes.NormalizedType{},
+				},
+			},
+			"alert_interval": schema.StringAttribute{
+				Description: "Optional specification of how often to re-alert from the same incident, not support on all alert types.",
+				Computed:    true,
+				Optional:    true,
+			},
 			"description": schema.StringAttribute{
 				Description: "Optional description for the Notification policy.",
 				Computed:    true,
@@ -121,20 +131,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(true),
-			},
-			"name": schema.StringAttribute{
-				Description: "Name of the policy.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"mechanisms": schema.MapAttribute{
-				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewMapType[customfield.List[jsontypes.Normalized]](ctx),
-				ElementType: types.ListType{
-					ElemType: jsontypes.NormalizedType{},
-				},
 			},
 			"filters": schema.SingleNestedAttribute{
 				Description: "Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details.",

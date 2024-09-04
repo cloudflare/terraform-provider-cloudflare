@@ -15,9 +15,9 @@ type NotificationPolicyWebhooksResultEnvelope struct {
 type NotificationPolicyWebhooksModel struct {
 	ID          types.String                                                          `tfsdk:"id" json:"id,computed"`
 	AccountID   types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
-	Name        types.String                                                          `tfsdk:"name" json:"name,computed_optional"`
+	Name        types.String                                                          `tfsdk:"name" json:"name,required"`
+	URL         types.String                                                          `tfsdk:"url" json:"url,required"`
 	Secret      types.String                                                          `tfsdk:"secret" json:"secret,computed_optional"`
-	URL         types.String                                                          `tfsdk:"url" json:"url,computed_optional"`
 	CreatedAt   timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastFailure timetypes.RFC3339                                                     `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`
 	LastSuccess timetypes.RFC3339                                                     `tfsdk:"last_success" json:"last_success,computed" format:"date-time"`

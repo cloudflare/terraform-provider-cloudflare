@@ -14,7 +14,7 @@ type ObservatoryScheduledTestResultEnvelope struct {
 
 type ObservatoryScheduledTestModel struct {
 	ID        types.String                                                    `tfsdk:"id" json:"-,computed"`
-	URL       types.String                                                    `tfsdk:"url" path:"url,computed_optional"`
+	URL       types.String                                                    `tfsdk:"url" path:"url,required"`
 	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
 	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed"`
 	ItemCount types.Float64                                                   `tfsdk:"item_count" json:"count,computed"`

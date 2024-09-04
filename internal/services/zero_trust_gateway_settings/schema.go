@@ -183,8 +183,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate to be used for interception. Certificate must be active on the edge. A nil UUID will indicate the Cloudflare Root CA should be used.",
-								Computed:    true,
-								Optional:    true,
+								Required:    true,
 							},
 						},
 					},
@@ -196,8 +195,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "Enable use of custom certificate authority for signing Gateway traffic.",
-								Computed:    true,
-								Optional:    true,
+								Required:    true,
 							},
 							"id": schema.StringAttribute{
 								Description: "UUID of certificate (ID from MTLS certificate store).",

@@ -33,8 +33,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"origin": schema.StringAttribute{
 				Description: "Your origin hostname that requests to your custom hostnames will be sent to.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"created_at": schema.StringAttribute{
 				Description: "This is the time the fallback origin was created.",

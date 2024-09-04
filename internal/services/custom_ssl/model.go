@@ -14,7 +14,7 @@ type CustomSSLResultEnvelope struct {
 
 type CustomSSLModel struct {
 	ID              types.String                                            `tfsdk:"id" json:"id,computed"`
-	ZoneID          types.String                                            `tfsdk:"zone_id" path:"zone_id,computed_optional"`
+	ZoneID          types.String                                            `tfsdk:"zone_id" path:"zone_id,required"`
 	Type            types.String                                            `tfsdk:"type" json:"type,computed_optional"`
 	Certificate     types.String                                            `tfsdk:"certificate" json:"certificate,required"`
 	PrivateKey      types.String                                            `tfsdk:"private_key" json:"private_key,required"`

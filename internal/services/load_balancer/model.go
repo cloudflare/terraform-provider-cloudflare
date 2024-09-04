@@ -15,17 +15,17 @@ type LoadBalancerResultEnvelope struct {
 type LoadBalancerModel struct {
 	ID                        types.String                                                         `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                                         `tfsdk:"zone_id" path:"zone_id,required"`
+	FallbackPool              types.String                                                         `tfsdk:"fallback_pool" json:"fallback_pool,required"`
+	Name                      types.String                                                         `tfsdk:"name" json:"name,required"`
+	DefaultPools              *[]types.String                                                      `tfsdk:"default_pools" json:"default_pools,required"`
 	Description               types.String                                                         `tfsdk:"description" json:"description,computed_optional"`
 	Enabled                   types.Bool                                                           `tfsdk:"enabled" json:"enabled,computed_optional"`
-	FallbackPool              types.String                                                         `tfsdk:"fallback_pool" json:"fallback_pool,computed_optional"`
-	Name                      types.String                                                         `tfsdk:"name" json:"name,computed_optional"`
 	Proxied                   types.Bool                                                           `tfsdk:"proxied" json:"proxied,computed_optional"`
 	SessionAffinity           types.String                                                         `tfsdk:"session_affinity" json:"session_affinity,computed_optional"`
 	SessionAffinityTTL        types.Float64                                                        `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed_optional"`
 	SteeringPolicy            types.String                                                         `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
 	TTL                       types.Float64                                                        `tfsdk:"ttl" json:"ttl,computed_optional"`
 	CountryPools              customfield.Map[customfield.List[types.String]]                      `tfsdk:"country_pools" json:"country_pools,computed_optional"`
-	DefaultPools              customfield.List[types.String]                                       `tfsdk:"default_pools" json:"default_pools,computed_optional"`
 	Networks                  customfield.List[types.String]                                       `tfsdk:"networks" json:"networks,computed_optional"`
 	PopPools                  customfield.Map[customfield.List[types.String]]                      `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RegionPools               customfield.Map[customfield.List[types.String]]                      `tfsdk:"region_pools" json:"region_pools,computed_optional"`

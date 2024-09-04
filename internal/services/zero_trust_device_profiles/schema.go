@@ -41,6 +41,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 			},
+			"match": schema.StringAttribute{
+				Description: "The wirefilter expression to match devices.",
+				Required:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the device settings profile.",
+				Required:    true,
+			},
+			"precedence": schema.Float64Attribute{
+				Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
+				Required:    true,
+			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
 				Computed:    true,
@@ -83,21 +95,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"exclude_office_ips": schema.BoolAttribute{
 				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"match": schema.StringAttribute{
-				Description: "The wirefilter expression to match devices.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the device settings profile.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"precedence": schema.Float64Attribute{
-				Description: "The precedence of the policy. Lower values indicate higher precedence. Policies will be evaluated in ascending order of this field.",
 				Computed:    true,
 				Optional:    true,
 			},

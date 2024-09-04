@@ -31,9 +31,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"value": schema.SingleNestedAttribute{
 				Description: "Value of the zone setting.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectType[ZoneCacheVariantsValueModel](ctx),
+				Required:    true,
 				Attributes: map[string]schema.Attribute{
 					"avif": schema.ListAttribute{
 						Description: "List of strings with the MIME types of all the variants that should be served for avif.",

@@ -15,12 +15,12 @@ type HealthcheckResultEnvelope struct {
 type HealthcheckModel struct {
 	ID                   types.String                                         `tfsdk:"id" json:"id,computed"`
 	ZoneID               types.String                                         `tfsdk:"zone_id" path:"zone_id,required"`
-	Address              types.String                                         `tfsdk:"address" json:"address,computed_optional"`
+	Address              types.String                                         `tfsdk:"address" json:"address,required"`
+	Name                 types.String                                         `tfsdk:"name" json:"name,required"`
 	ConsecutiveFails     types.Int64                                          `tfsdk:"consecutive_fails" json:"consecutive_fails,computed_optional"`
 	ConsecutiveSuccesses types.Int64                                          `tfsdk:"consecutive_successes" json:"consecutive_successes,computed_optional"`
 	Description          types.String                                         `tfsdk:"description" json:"description,computed_optional"`
 	Interval             types.Int64                                          `tfsdk:"interval" json:"interval,computed_optional"`
-	Name                 types.String                                         `tfsdk:"name" json:"name,computed_optional"`
 	Retries              types.Int64                                          `tfsdk:"retries" json:"retries,computed_optional"`
 	Suspended            types.Bool                                           `tfsdk:"suspended" json:"suspended,computed_optional"`
 	Timeout              types.Int64                                          `tfsdk:"timeout" json:"timeout,computed_optional"`

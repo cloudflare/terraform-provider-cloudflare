@@ -15,7 +15,7 @@ type CustomHostnameResultEnvelope struct {
 type CustomHostnameModel struct {
 	ID                        types.String                                                           `tfsdk:"id" json:"id,computed"`
 	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
-	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname,computed_optional"`
+	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname,required"`
 	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl,required"`
 	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,computed_optional"`
 	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed_optional"`

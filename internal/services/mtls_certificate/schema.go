@@ -28,20 +28,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"private_key": schema.StringAttribute{
-				Description:   "The private key for the certificate",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"ca": schema.BoolAttribute{
 				Description:   "Indicates whether the certificate is a CA or leaf certificate.",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
 			"certificates": schema.StringAttribute{
 				Description:   "The uploaded root CA certificate.",
-				Computed:      true,
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"private_key": schema.StringAttribute{
+				Description:   "The private key for the certificate",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

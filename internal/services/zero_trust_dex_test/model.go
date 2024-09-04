@@ -13,13 +13,13 @@ type ZeroTrustDEXTestResultEnvelope struct {
 
 type ZeroTrustDEXTestModel struct {
 	ID             types.String                                                      `tfsdk:"id" json:"-,computed"`
-	Name           types.String                                                      `tfsdk:"name" json:"name,computed_optional"`
+	Name           types.String                                                      `tfsdk:"name" json:"name,required"`
 	AccountID      types.String                                                      `tfsdk:"account_id" path:"account_id,required"`
+	Enabled        types.Bool                                                        `tfsdk:"enabled" json:"enabled,required"`
+	Interval       types.String                                                      `tfsdk:"interval" json:"interval,required"`
+	Data           *ZeroTrustDEXTestDataModel                                        `tfsdk:"data" json:"data,required"`
 	Description    types.String                                                      `tfsdk:"description" json:"description,computed_optional"`
-	Enabled        types.Bool                                                        `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Interval       types.String                                                      `tfsdk:"interval" json:"interval,computed_optional"`
 	Targeted       types.Bool                                                        `tfsdk:"targeted" json:"targeted,computed_optional"`
-	Data           customfield.NestedObject[ZeroTrustDEXTestDataModel]               `tfsdk:"data" json:"data,computed_optional"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
 }
 

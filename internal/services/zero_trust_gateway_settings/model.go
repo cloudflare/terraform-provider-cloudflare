@@ -73,11 +73,11 @@ type ZeroTrustGatewaySettingsSettingsBrowserIsolationModel struct {
 }
 
 type ZeroTrustGatewaySettingsSettingsCertificateModel struct {
-	ID types.String `tfsdk:"id" json:"id,computed_optional"`
+	ID types.String `tfsdk:"id" json:"id,required"`
 }
 
 type ZeroTrustGatewaySettingsSettingsCustomCertificateModel struct {
-	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Enabled       types.Bool        `tfsdk:"enabled" json:"enabled,required"`
 	ID            types.String      `tfsdk:"id" json:"id,computed_optional"`
 	BindingStatus types.String      `tfsdk:"binding_status" json:"binding_status,computed"`
 	UpdatedAt     timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`

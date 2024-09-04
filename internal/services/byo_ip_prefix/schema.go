@@ -28,26 +28,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"asn": schema.Int64Attribute{
 				Description:   "Autonomous System Number (ASN) the prefix will be advertised under.",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"cidr": schema.StringAttribute{
 				Description:   "IP Prefix in Classless Inter-Domain Routing format.",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"loa_document_id": schema.StringAttribute{
 				Description:   "Identifier for the uploaded LOA document.",
-				Computed:      true,
-				Optional:      true,
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"description": schema.StringAttribute{

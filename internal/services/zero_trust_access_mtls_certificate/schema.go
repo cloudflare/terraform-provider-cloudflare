@@ -41,8 +41,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "The name of the certificate.",
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 			},
 			"associated_hostnames": schema.ListAttribute{
 				Description: "The hostnames of the applications that will use this certificate.",

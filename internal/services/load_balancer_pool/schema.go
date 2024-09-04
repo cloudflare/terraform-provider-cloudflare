@@ -36,6 +36,68 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
+				Required:    true,
+			},
+			"origins": schema.ListNestedAttribute{
+				Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
+				Required:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							Description: "The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.",
+							Computed:    true,
+							Optional:    true,
+						},
+						"disabled_at": schema.StringAttribute{
+							Description: "This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"enabled": schema.BoolAttribute{
+							Description: "Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.",
+							Computed:    true,
+							Optional:    true,
+							Default:     booldefault.StaticBool(true),
+						},
+						"header": schema.SingleNestedAttribute{
+							Description: "The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'.",
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolOriginsHeaderModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"host": schema.ListAttribute{
+									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
+									Computed:    true,
+									Optional:    true,
+									CustomType:  customfield.NewListType[types.String](ctx),
+									ElementType: types.StringType,
+								},
+							},
+						},
+						"name": schema.StringAttribute{
+							Description: "A human-identifiable name for the origin.",
+							Computed:    true,
+							Optional:    true,
+						},
+						"virtual_network_id": schema.StringAttribute{
+							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
+							Computed:    true,
+							Optional:    true,
+						},
+						"weight": schema.Float64Attribute{
+							Description: "The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.\n- `origin_steering.policy=\"least_outstanding_requests\"`: Use weight to scale the origin's outstanding requests.\n- `origin_steering.policy=\"least_connections\"`: Use weight to scale the origin's open connections.",
+							Computed:    true,
+							Optional:    true,
+							Validators: []validator.Float64{
+								float64validator.Between(0, 1),
+							},
+							Default: float64default.StaticFloat64(1),
+						},
+					},
+				},
+			},
 			"description": schema.StringAttribute{
 				Description: "A human-readable description of the pool.",
 				Computed:    true,
@@ -65,11 +127,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"monitor": schema.StringAttribute{
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -214,66 +271,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							),
 						},
 						Default: stringdefault.StaticString("random"),
-					},
-				},
-			},
-			"origins": schema.ListNestedAttribute{
-				Description: "The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[LoadBalancerPoolOriginsModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"address": schema.StringAttribute{
-							Description: "The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.",
-							Computed:    true,
-							Optional:    true,
-						},
-						"disabled_at": schema.StringAttribute{
-							Description: "This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
-						"enabled": schema.BoolAttribute{
-							Description: "Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.",
-							Computed:    true,
-							Optional:    true,
-							Default:     booldefault.StaticBool(true),
-						},
-						"header": schema.SingleNestedAttribute{
-							Description: "The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'.",
-							Computed:    true,
-							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolOriginsHeaderModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"host": schema.ListAttribute{
-									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
-									Computed:    true,
-									Optional:    true,
-									CustomType:  customfield.NewListType[types.String](ctx),
-									ElementType: types.StringType,
-								},
-							},
-						},
-						"name": schema.StringAttribute{
-							Description: "A human-identifiable name for the origin.",
-							Computed:    true,
-							Optional:    true,
-						},
-						"virtual_network_id": schema.StringAttribute{
-							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
-							Computed:    true,
-							Optional:    true,
-						},
-						"weight": schema.Float64Attribute{
-							Description: "The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.\n- `origin_steering.policy=\"least_outstanding_requests\"`: Use weight to scale the origin's outstanding requests.\n- `origin_steering.policy=\"least_connections\"`: Use weight to scale the origin's open connections.",
-							Computed:    true,
-							Optional:    true,
-							Validators: []validator.Float64{
-								float64validator.Between(0, 1),
-							},
-							Default: float64default.StaticFloat64(1),
-						},
 					},
 				},
 			},

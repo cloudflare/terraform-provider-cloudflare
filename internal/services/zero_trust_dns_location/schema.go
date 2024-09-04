@@ -26,6 +26,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description: "The name of the location.",
+				Required:    true,
+			},
 			"client_default": schema.BoolAttribute{
 				Description: "True if the location is the default location.",
 				Computed:    true,
@@ -38,11 +42,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ecs_support": schema.BoolAttribute{
 				Description: "True if the location needs to resolve EDNS queries.",
-				Computed:    true,
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "The name of the location.",
 				Computed:    true,
 				Optional:    true,
 			},
@@ -71,8 +70,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
 											Description: "The IP address or IP CIDR.",
-											Computed:    true,
-											Optional:    true,
+											Required:    true,
 										},
 									},
 								},
@@ -103,8 +101,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
 											Description: "The IP address or IP CIDR.",
-											Computed:    true,
-											Optional:    true,
+											Required:    true,
 										},
 									},
 								},
@@ -142,8 +139,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"network": schema.StringAttribute{
 											Description: "The IPv6 address or IPv6 CIDR.",
-											Computed:    true,
-											Optional:    true,
+											Required:    true,
 										},
 									},
 								},
@@ -161,8 +157,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"network": schema.StringAttribute{
 							Description: "The IPv4 address or IPv4 CIDR. IPv4 CIDRs are limited to a maximum of /24.",
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 						},
 					},
 				},

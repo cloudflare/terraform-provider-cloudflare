@@ -14,11 +14,11 @@ type ZeroTrustOrganizationResultEnvelope struct {
 
 type ZeroTrustOrganizationModel struct {
 	ID                             types.String                                                    `tfsdk:"id" json:"-,computed"`
-	Name                           types.String                                                    `tfsdk:"name" json:"name,computed_optional"`
+	Name                           types.String                                                    `tfsdk:"name" json:"name,required"`
 	AccountID                      types.String                                                    `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID                         types.String                                                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	AuthDomain                     types.String                                                    `tfsdk:"auth_domain" json:"auth_domain,required"`
 	AllowAuthenticateViaWARP       types.Bool                                                      `tfsdk:"allow_authenticate_via_warp" json:"allow_authenticate_via_warp,computed_optional"`
-	AuthDomain                     types.String                                                    `tfsdk:"auth_domain" json:"auth_domain,computed_optional"`
 	AutoRedirectToIdentity         types.Bool                                                      `tfsdk:"auto_redirect_to_identity" json:"auto_redirect_to_identity,computed_optional"`
 	IsUIReadOnly                   types.Bool                                                      `tfsdk:"is_ui_read_only" json:"is_ui_read_only,computed_optional"`
 	SessionDuration                types.String                                                    `tfsdk:"session_duration" json:"session_duration,computed_optional"`

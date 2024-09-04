@@ -31,20 +31,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
 			},
 			"auth_id_characteristics": schema.ListNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[APIShieldAuthIDCharacteristicsModel](ctx),
+				Required: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
 							Description: "The name of the characteristic field, i.e., the header or cookie name.",
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 						},
 						"type": schema.StringAttribute{
 							Description: "The type of characteristic.",
-							Computed:    true,
-							Optional:    true,
+							Required:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
 									"header",
