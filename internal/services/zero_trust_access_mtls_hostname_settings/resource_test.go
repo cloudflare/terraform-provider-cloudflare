@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
+	cfv2 "github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -81,27 +83,20 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.State) error {
-	client, err := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if err != nil {
-		return fmt.Errorf("Failed to create Cloudflare client: %w", err)
-	}
+	client := acctest.SharedV2Client()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_zero_trust_access_mtls_hostname_settings" {
 			continue
 		}
 
-		if rs.Primary.Attributes[consts.ZoneIDSchemaKey] != "" {
-			settings, _ := client.GetAccessMutualTLSHostnameSettings(context.Background(), cfv1.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]))
-			if len(settings) != 0 {
-				return fmt.Errorf("AccessMutualTLSHostnameSettings still exists")
-			}
-		}
+		for _, rs := range s.RootModule().Resources {
+			certificates, _ := client.ZeroTrust.Access.Certificates.Get(context.Background(), rs.Primary.Attributes["id"], zero_trust.AccessCertificateGetParams{
+				AccountID: cfv2.F(rs.Primary.Attributes[consts.AccountIDSchemaKey]),
+			})
 
-		if rs.Primary.Attributes[consts.AccountIDSchemaKey] != "" {
-			settings, _ := client.GetAccessMutualTLSHostnameSettings(context.Background(), cfv1.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]))
-			if len(settings) != 0 {
-				return fmt.Errorf("AccessMutualTLSHostnameSettings still exists")
+			if certificates != nil {
+				return fmt.Errorf("access_mtls_hostname_settings still exists")
 			}
 		}
 	}
