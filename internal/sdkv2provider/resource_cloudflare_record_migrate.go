@@ -59,14 +59,6 @@ func resourceCloudflareRecordV1() *schema.Resource {
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
-						"proto": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"priority": {
 							Type:     schema.TypeInt,
 							Optional: true,
