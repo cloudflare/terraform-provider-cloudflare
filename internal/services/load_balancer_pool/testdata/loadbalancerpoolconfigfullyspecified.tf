@@ -8,8 +8,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
       enabled = false
       weight  = 1.0
       header = {
-        header = "Host"
-        values = ["test1.%[2]s"]
+        host = ["test1.%[2]s"]
       }
     },
     {
@@ -17,8 +16,7 @@ resource "cloudflare_load_balancer_pool" "%[1]s" {
       address = "192.0.2.2"
       weight  = 0.5
       header = {
-        header = "Host"
-        values = ["test2.%[2]s"]
+        host = ["test2.%[2]s"]
       }
     },
   ]
