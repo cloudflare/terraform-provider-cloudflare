@@ -61,11 +61,12 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	items := customfield.NullObjectList[WorkersSecretsResultDataSourceModel](ctx)
-	env := WorkersSecretsResultListDataSourceEnvelope{items}
+	env := WorkersSecretsResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.List(
 		ctx,
 		data.DispatchNamespace.ValueString(),
@@ -84,7 +85,7 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -95,7 +96,7 @@ func (d *WorkersSecretsDataSource) Read(ctx context.Context, req datasource.Read
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[WorkersSecretsResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result

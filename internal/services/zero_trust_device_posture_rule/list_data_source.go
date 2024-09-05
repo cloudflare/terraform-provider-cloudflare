@@ -61,11 +61,12 @@ func (d *ZeroTrustDevicePostureRulesDataSource) Read(ctx context.Context, req da
 		return
 	}
 
-	items := customfield.NullObjectList[ZeroTrustDevicePostureRulesResultDataSourceModel](ctx)
-	env := ZeroTrustDevicePostureRulesResultListDataSourceEnvelope{items}
+	env := ZeroTrustDevicePostureRulesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.ZeroTrust.Devices.Posture.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -79,7 +80,7 @@ func (d *ZeroTrustDevicePostureRulesDataSource) Read(ctx context.Context, req da
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -90,7 +91,7 @@ func (d *ZeroTrustDevicePostureRulesDataSource) Read(ctx context.Context, req da
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[ZeroTrustDevicePostureRulesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result

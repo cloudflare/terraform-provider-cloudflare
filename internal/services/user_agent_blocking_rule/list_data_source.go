@@ -61,11 +61,12 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 		return
 	}
 
-	items := customfield.NullObjectList[UserAgentBlockingRulesResultDataSourceModel](ctx)
-	env := UserAgentBlockingRulesResultListDataSourceEnvelope{items}
+	env := UserAgentBlockingRulesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.Firewall.UARules.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
@@ -83,7 +84,7 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -94,7 +95,7 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[UserAgentBlockingRulesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result

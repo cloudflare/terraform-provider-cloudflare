@@ -61,11 +61,12 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 		return
 	}
 
-	items := customfield.NullObjectList[AuthenticatedOriginPullsCertificatesResultDataSourceModel](ctx)
-	env := AuthenticatedOriginPullsCertificatesResultListDataSourceEnvelope{items}
+	env := AuthenticatedOriginPullsCertificatesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.OriginTLSClientAuth.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -79,7 +80,7 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -90,7 +91,7 @@ func (d *AuthenticatedOriginPullsCertificatesDataSource) Read(ctx context.Contex
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[AuthenticatedOriginPullsCertificatesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result

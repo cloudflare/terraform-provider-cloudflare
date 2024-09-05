@@ -61,11 +61,12 @@ func (d *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	items := customfield.NullObjectList[NotificationPoliciesResultDataSourceModel](ctx)
-	env := NotificationPoliciesResultListDataSourceEnvelope{items}
+	env := NotificationPoliciesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.Alerting.Policies.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -79,7 +80,7 @@ func (d *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -90,7 +91,7 @@ func (d *NotificationPoliciesDataSource) Read(ctx context.Context, req datasourc
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[NotificationPoliciesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result

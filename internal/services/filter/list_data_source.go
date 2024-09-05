@@ -61,11 +61,12 @@ func (d *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	items := customfield.NullObjectList[FiltersResultDataSourceModel](ctx)
-	env := FiltersResultListDataSourceEnvelope{items}
+	env := FiltersResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.Filters.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
@@ -83,7 +84,7 @@ func (d *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -94,7 +95,7 @@ func (d *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[FiltersResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
