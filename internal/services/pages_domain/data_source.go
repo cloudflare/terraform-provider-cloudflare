@@ -11,7 +11,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -93,9 +92,7 @@ func (d *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 			return
 		}
 
-		items := customfield.NullObjectList[PagesDomainDataSourceModel](ctx)
-		env := PagesDomainResultListDataSourceEnvelope{items}
-
+		env := PagesDomainResultListDataSourceEnvelope{}
 		page, err := d.client.Pages.Projects.Domains.List(
 			ctx,
 			data.Filter.ProjectName.ValueString(),
@@ -113,11 +110,11 @@ func (d *PagesDomainDataSource) Read(ctx context.Context, req datasource.ReadReq
 			return
 		}
 
-		if count := len(items.Elements()); count != 1 {
+		if count := len(env.Result.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		ts, diags := items.AsStructSliceT(ctx)
+		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
 		data = &ts[0]
 	}

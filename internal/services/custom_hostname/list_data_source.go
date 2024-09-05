@@ -61,11 +61,12 @@ func (d *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	items := customfield.NullObjectList[CustomHostnamesResultDataSourceModel](ctx)
-	env := CustomHostnamesResultListDataSourceEnvelope{items}
+	env := CustomHostnamesResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.CustomHostnames.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -79,7 +80,7 @@ func (d *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -90,7 +91,7 @@ func (d *CustomHostnamesDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[CustomHostnamesResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result

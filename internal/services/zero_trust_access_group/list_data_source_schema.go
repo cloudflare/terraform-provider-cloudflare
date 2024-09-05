@@ -9,9 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessGroupsDataSource)(nil)
@@ -30,6 +32,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 			"max_items": schema.Int64Attribute{
 				Description: "Max items to fetch, default: 1000",
 				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(0),
+				},
 			},
 			"result": schema.ListNestedAttribute{
 				Description: "The items returned by the data source",

@@ -61,11 +61,12 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	items := customfield.NullObjectList[ZoneLockdownsResultDataSourceModel](ctx)
-	env := ZoneLockdownsResultListDataSourceEnvelope{items}
+	env := ZoneLockdownsResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.Firewall.Lockdowns.List(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
@@ -83,7 +84,7 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -94,7 +95,7 @@ func (d *ZoneLockdownsDataSource) Read(ctx context.Context, req datasource.ReadR
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[ZoneLockdownsResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
