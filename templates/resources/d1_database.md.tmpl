@@ -1,0 +1,28 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+!> When a D1 Database is replaced all the data is lost. Please ensure you have a
+   backup of your data before replacing a D1 Database.
+
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+{{- end }}
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile}}
