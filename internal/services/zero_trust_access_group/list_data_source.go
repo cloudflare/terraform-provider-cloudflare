@@ -61,11 +61,12 @@ func (d *ZeroTrustAccessGroupsDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	items := customfield.NullObjectList[ZeroTrustAccessGroupsResultDataSourceModel](ctx)
-	env := ZeroTrustAccessGroupsResultListDataSourceEnvelope{items}
+	env := ZeroTrustAccessGroupsResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
-
+	if maxItems <= 0 {
+		maxItems = 1000
+	}
 	page, err := d.client.ZeroTrust.Access.Groups.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -79,7 +80,7 @@ func (d *ZeroTrustAccessGroupsDataSource) Read(ctx context.Context, req datasour
 			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
 			return
 		}
-		acc = append(acc, items.Elements()...)
+		acc = append(acc, env.Result.Elements()...)
 		if len(acc) >= maxItems {
 			break
 		}
@@ -90,7 +91,7 @@ func (d *ZeroTrustAccessGroupsDataSource) Read(ctx context.Context, req datasour
 		}
 	}
 
-	acc = acc[:maxItems]
+	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[ZeroTrustAccessGroupsResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result

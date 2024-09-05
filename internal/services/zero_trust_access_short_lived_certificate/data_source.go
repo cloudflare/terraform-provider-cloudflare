@@ -11,7 +11,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
@@ -92,9 +91,7 @@ func (d *ZeroTrustAccessShortLivedCertificateDataSource) Read(ctx context.Contex
 			return
 		}
 
-		items := customfield.NullObjectList[ZeroTrustAccessShortLivedCertificateDataSourceModel](ctx)
-		env := ZeroTrustAccessShortLivedCertificateResultListDataSourceEnvelope{items}
-
+		env := ZeroTrustAccessShortLivedCertificateResultListDataSourceEnvelope{}
 		page, err := d.client.ZeroTrust.Access.Applications.CAs.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
@@ -108,11 +105,11 @@ func (d *ZeroTrustAccessShortLivedCertificateDataSource) Read(ctx context.Contex
 			return
 		}
 
-		if count := len(items.Elements()); count != 1 {
+		if count := len(env.Result.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")
 			return
 		}
-		ts, diags := items.AsStructSliceT(ctx)
+		ts, diags := env.Result.AsStructSliceT(ctx)
 		resp.Diagnostics.Append(diags...)
 		data = &ts[0]
 	}
