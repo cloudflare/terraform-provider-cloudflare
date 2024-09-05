@@ -22,8 +22,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:   "UUID",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"account_id": schema.StringAttribute{
 				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
