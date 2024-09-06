@@ -24,6 +24,8 @@ func resourceCloudflareManagedHeaders() *schema.Resource {
 			The [Cloudflare Managed Headers](https://developers.cloudflare.com/rules/transform/managed-transforms/)
 			allows you to add or remove some predefined headers to one's
 			requests or origin responses.
+
+			-> You can find which headers are available with the [List Managed Transforms API](https://developers.cloudflare.com/api/operations/managed-transforms-list-managed-transforms).
 		`),
 	}
 }
