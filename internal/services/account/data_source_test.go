@@ -43,7 +43,7 @@ func testAccCloudflareAccountsSize(n string) resource.TestCheckFunc {
 			err          error
 		)
 
-		if accountsSize, err = strconv.Atoi(a["%"]); err != nil {
+		if accountsSize, err = strconv.Atoi(a["result.#"]); err != nil {
 			return err
 		}
 
