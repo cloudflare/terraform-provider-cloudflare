@@ -17,7 +17,7 @@ func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_zero_trust_access_custom_page.%s", rnd)
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -26,7 +26,7 @@ func TestAccCloudflareAccessCustomPage_IdentityDenied(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, zoneID, "identity_denied", "<html><body><h1>Access Denied</h1></body></html>"),
+				Config: testAccCheckCloudflareAccessCustomPage_CustomHTML(rnd, accountID, "identity_denied", "<html><body><h1>Access Denied</h1></body></html>"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "identity_denied"),
