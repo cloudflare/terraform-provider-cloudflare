@@ -4,6 +4,8 @@
     name = "%[2]s"
     address = "example.com"
     type = "TCP"
-    method = "connection_established"
-    port = 80
+    tcp_config = {
+      method = "connection_established"
+      port = 80
+    }
   }
