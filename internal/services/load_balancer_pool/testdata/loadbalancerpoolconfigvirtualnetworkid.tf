@@ -5,9 +5,9 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" "%[2]s" {
 }
 
 resource "cloudflare_zero_trust_tunnel_cloudflared" "%[3]s" {
-  account_id = "%[1]s"
-  name       = "my-tf-tunnel-for-pool-%[3]s"
-  tunnel_secret     = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
+  account_id    = "%[1]s"
+  name          = "my-tf-tunnel-for-pool-%[3]s"
+  tunnel_secret = "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="
 }
 
 resource "cloudflare_zero_trust_tunnel_cloudflared_route" "%[4]s" {
