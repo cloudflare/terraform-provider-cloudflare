@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/cloudflare-go/v2/workers_for_platforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
