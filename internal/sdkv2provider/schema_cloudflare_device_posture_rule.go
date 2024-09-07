@@ -9,7 +9,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 )
 
-var devicePostureRuleTypes = []string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "client_certificate", "client_certificate_v2", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune", "sentinelone_s2s"}
+var devicePostureRuleTypes = []string{"serial_number", "file", "application", "gateway", "warp", "domain_joined", "os_version", "disk_encryption", "firewall", "client_certificate", "client_certificate_v2", "workspace_one", "unique_client_id", "crowdstrike_s2s", "sentinelone", "kolide", "tanium_s2s", "intune", "sentinelone_s2s", "custom_s2s"}
 
 func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
@@ -288,6 +288,11 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						},
 						Optional:    true,
 						Description: "List of operating system locations to check for a client certificate..",
+					},
+					"score": {
+						Type:        schema.TypeInt,
+						Optional:    true,
+						Description: "A value between 0-100 assigned to devices set by the 3rd party posture provider for custom device posture integrations.",
 					},
 				},
 			},
