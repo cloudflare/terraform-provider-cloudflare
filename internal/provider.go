@@ -29,6 +29,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dlp_datasets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
@@ -113,6 +114,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_local_domain_fallback"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_organization"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_risk_score_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_tunnel_cloudflared_route"
@@ -322,6 +324,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_tag.NewResource,
 		zero_trust_tunnel_cloudflared.NewResource,
 		zero_trust_tunnel_cloudflared_config.NewResource,
+		dlp_datasets.NewResource,
 		zero_trust_dlp_custom_profile.NewResource,
 		zero_trust_dlp_predefined_profile.NewResource,
 		zero_trust_gateway_settings.NewResource,
@@ -331,6 +334,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_gateway_policy.NewResource,
 		zero_trust_tunnel_cloudflared_route.NewResource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewResource,
+		zero_trust_risk_score_integration.NewResource,
 		turnstile_widget.NewResource,
 		hyperdrive_config.NewResource,
 		web_analytics_site.NewResource,
@@ -505,6 +509,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredDataSource,
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredsDataSource,
 		zero_trust_tunnel_cloudflared_config.NewZeroTrustTunnelCloudflaredConfigDataSource,
+		dlp_datasets.NewDLPDatasetsDataSource,
+		dlp_datasets.NewDLPDatasetsListDataSource,
 		zero_trust_dlp_custom_profile.NewZeroTrustDLPCustomProfileDataSource,
 		zero_trust_dlp_predefined_profile.NewZeroTrustDLPPredefinedProfileDataSource,
 		zero_trust_gateway_settings.NewZeroTrustGatewaySettingsDataSource,
@@ -519,6 +525,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_tunnel_cloudflared_route.NewZeroTrustTunnelCloudflaredRoutesDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworkDataSource,
 		zero_trust_tunnel_cloudflared_virtual_network.NewZeroTrustTunnelCloudflaredVirtualNetworksDataSource,
+		zero_trust_risk_score_integration.NewZeroTrustRiskScoreIntegrationDataSource,
+		zero_trust_risk_score_integration.NewZeroTrustRiskScoreIntegrationsDataSource,
 		turnstile_widget.NewTurnstileWidgetDataSource,
 		turnstile_widget.NewTurnstileWidgetsDataSource,
 		hyperdrive_config.NewHyperdriveConfigDataSource,
