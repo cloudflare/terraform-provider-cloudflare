@@ -105,7 +105,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"priority": schema.Float64Attribute{
 				Description: "The order/priority in which the certificate will be used in a request. The higher priority will break ties across overlapping 'legacy_custom' certificates, but 'legacy_custom' certificates will always supercede 'sni_custom' certificates.",
 				Computed:    true,
-				Default:     float64default.StaticFloat64(20),
+				Default:     float64default.StaticFloat64(0),
 			},
 			"signature": schema.StringAttribute{
 				Description: "The type of hash used for the certificate.",
