@@ -195,14 +195,12 @@ func (r *WorkersSecretResource) ImportState(ctx context.Context, req resource.Im
 
 	path_account_id := ""
 	path_dispatch_namespace := ""
-	path_script_name := ""
 	path_secret_name := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<account_id>/<dispatch_namespace>/<script_name>/<secret_name>",
+		"<account_id>/<dispatch_namespace>/<secret_name>",
 		&path_account_id,
 		&path_dispatch_namespace,
-		&path_script_name,
 		&path_secret_name,
 	)
 	resp.Diagnostics.Append(diags...)
@@ -215,7 +213,6 @@ func (r *WorkersSecretResource) ImportState(ctx context.Context, req resource.Im
 	_, err := r.client.WorkersForPlatforms.Dispatch.Namespaces.Scripts.Secrets.Get(
 		ctx,
 		path_dispatch_namespace,
-		path_script_name,
 		path_secret_name,
 		workers_for_platforms.DispatchNamespaceScriptSecretGetParams{
 			AccountID: cloudflare.F(path_account_id),
