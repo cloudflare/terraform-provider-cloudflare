@@ -55,6 +55,7 @@ type NotificationPolicyFiltersModel struct {
 	NewStatus                    customfield.List[types.String] `tfsdk:"new_status" json:"new_status,computed_optional"`
 	PacketsPerSecond             customfield.List[types.String] `tfsdk:"packets_per_second" json:"packets_per_second,computed_optional"`
 	PoolID                       customfield.List[types.String] `tfsdk:"pool_id" json:"pool_id,computed_optional"`
+	PopName                      customfield.List[types.String] `tfsdk:"pop_name" json:"pop_name,computed_optional"`
 	Product                      customfield.List[types.String] `tfsdk:"product" json:"product,computed_optional"`
 	ProjectID                    customfield.List[types.String] `tfsdk:"project_id" json:"project_id,computed_optional"`
 	Protocol                     customfield.List[types.String] `tfsdk:"protocol" json:"protocol,computed_optional"`
