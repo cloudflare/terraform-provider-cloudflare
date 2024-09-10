@@ -4,6 +4,7 @@ package dns_record
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -13,7 +14,7 @@ type DNSRecordResultEnvelope struct {
 }
 
 type DNSRecordModel struct {
-	ID                types.String                                 `tfsdk:"id" json:"id,computed"`
+  ID                types.String                                 `tfsdk:"id" json:"id,computed"`
 	ZoneID            types.String                                 `tfsdk:"zone_id" path:"zone_id,required"`
 	Content           types.String                                 `tfsdk:"content" json:"content,computed_optional"`
 	Priority          types.Float64                                `tfsdk:"priority" json:"priority,optional"`
@@ -69,8 +70,4 @@ type DNSRecordDataModel struct {
 	Port          types.Float64 `tfsdk:"port" json:"port,optional"`
 	Weight        types.Float64 `tfsdk:"weight" json:"weight,optional"`
 	Fingerprint   types.String  `tfsdk:"fingerprint" json:"fingerprint,optional"`
-}
-
-type DNSRecordMetaModel struct {
-	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed"`
 }

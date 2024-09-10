@@ -290,6 +290,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
+					"pop_name": schema.ListAttribute{
+						Description: "Usage depends on specific alert type",
+						Computed:    true,
+						CustomType:  customfield.NewListType[types.String](ctx),
+						ElementType: types.StringType,
+					},
 					"product": schema.ListAttribute{
 						Description: "Used for configuring billing_usage_alert",
 						Computed:    true,
