@@ -64,7 +64,7 @@ func (d *ManagedHeadersDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	res := new(http.Response)
-	_, err := d.client.ManagedHeaders.List(
+	_, err := d.client.ManagedTransforms.List(
 		ctx,
 		params,
 		option.WithResponseBodyInto(&res),
