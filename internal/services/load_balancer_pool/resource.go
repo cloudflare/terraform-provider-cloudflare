@@ -91,6 +91,7 @@ func (r *LoadBalancerPoolResource) Create(ctx context.Context, req resource.Crea
 	}
 	data = &env.Result
 
+	fmt.Printf("########## CREATE ##########\n%+v\n########## CREATE ##########\n", data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -140,6 +141,7 @@ func (r *LoadBalancerPoolResource) Update(ctx context.Context, req resource.Upda
 	}
 	data = &env.Result
 
+	fmt.Printf("########## UPDATE ##########\n%+v\n########## UPDATE ##########\n", data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -175,6 +177,7 @@ func (r *LoadBalancerPoolResource) Read(ctx context.Context, req resource.ReadRe
 	}
 	data = &env.Result
 
+	fmt.Printf("########## READ ##########\n%+v\n########## READ ##########\n", data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -200,6 +203,7 @@ func (r *LoadBalancerPoolResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	fmt.Printf("########## DELETE ##########\n%+v\n########## DELETE ##########\n", data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
