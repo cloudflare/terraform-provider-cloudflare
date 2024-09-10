@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield_operation"
@@ -284,6 +285,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 	return []func() resource.Resource{
 		account.NewResource,
 		account_member.NewResource,
+		account_subscription.NewResource,
 		origin_ca_certificate.NewResource,
 		api_token.NewResource,
 		zone.NewResource,
@@ -407,6 +409,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account.NewAccountsDataSource,
 		account_member.NewAccountMemberDataSource,
 		account_member.NewAccountMembersDataSource,
+		account_subscription.NewAccountSubscriptionDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
 		api_token.NewAPITokenDataSource,
