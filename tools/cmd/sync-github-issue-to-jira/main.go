@@ -50,6 +50,12 @@ type IssueFields struct {
 	StepsToReplicate  string       `json:"customfield_17004"`
 	UserID            string       `json:"customfield_21112"`
 	Template          IssueValue   `json:"customfield_21039"`
+	AccountID         string       `json:"customfield_21113"`
+	AccountName       string       `json:"customfield_23208"`
+	AccountTag        string       `json:"customfield_18304"`
+	ZoneID            string       `json:"customfield_21111"`
+	ZoneTag           string       `json:"customfield_23209"`
+	ZoneName          string       `json:"customfield_20502"`
 	IssueType         IssueName    `json:"issuetype"`
 	Components        []IssueName  `json:"components"`
 }
@@ -91,6 +97,7 @@ var (
 		"service/zero_trust_devices",
 		"service/lists",
 		"service/firewall",
+		"service/rulesets",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -270,6 +277,12 @@ func main() {
 		StepsToReplicate:  "n/a",
 		UserID:            "0",
 		Template:          IssueValue{Value: "Yes"},
+		AccountID:         "0",
+		AccountName:       "n/a",
+		AccountTag:        "0",
+		ZoneID:            "0",
+		ZoneTag:           "0",
+		ZoneName:          "n/a",
 	}}
 
 	res, err := json.Marshal(newIssue)
