@@ -171,6 +171,10 @@ var (
 			teamName: "WAF (FW, RL, MR)",
 			owner:    "jborys",
 		},
+		"service/rulesets": {
+			teamName: "Rulesets",
+			owner:    "wwoodhead",
+		},
 	}
 )
 
