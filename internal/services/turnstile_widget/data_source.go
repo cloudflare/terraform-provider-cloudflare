@@ -66,7 +66,7 @@ func (d *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 
 		res := new(http.Response)
 		env := TurnstileWidgetResultDataSourceEnvelope{*data}
-		_, err := d.client.Challenges.Widgets.Get(
+		_, err := d.client.Turnstile.Widgets.Get(
 			ctx,
 			data.Sitekey.ValueString(),
 			params,
@@ -92,7 +92,7 @@ func (d *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 
 		env := TurnstileWidgetResultListDataSourceEnvelope{}
-		page, err := d.client.Challenges.Widgets.List(ctx, params)
+		page, err := d.client.Turnstile.Widgets.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

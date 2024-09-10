@@ -67,7 +67,7 @@ func (d *TurnstileWidgetsDataSource) Read(ctx context.Context, req datasource.Re
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Challenges.Widgets.List(ctx, params)
+	page, err := d.client.Turnstile.Widgets.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
