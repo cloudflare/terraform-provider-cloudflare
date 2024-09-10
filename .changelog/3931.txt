@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/zero_trust_gateway_settings: Add missing disable_for_time example field
+```
