@@ -90,6 +90,7 @@ Read-Only:
 - `browser_ttl` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--browser_ttl))
 - `cache` (Boolean)
 - `cache_key` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--cache_key))
+- `cache_reserve` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--cache_reserve))
 - `content` (String)
 - `content_type` (String)
 - `cookie_fields` (Set of String)
@@ -162,6 +163,14 @@ Read-Only:
 - `cache_deception_armor` (Boolean)
 - `custom_key` (List of Object) (see [below for nested schema](#nestedobjatt--rulesets--rules--action_parameters--version--custom_key))
 - `ignore_query_strings_order` (Boolean)
+
+<a id="nestedobjatt--rulesets--rules--action_parameters--cache_reserve"></a>
+### Nested Schema for `rulesets.rules.action_parameters.version`
+
+Read-Only:
+
+- `eligible` (Boolean)
+- `minimum_file_size` (Number)
 
 <a id="nestedobjatt--rulesets--rules--action_parameters--version--custom_key"></a>
 ### Nested Schema for `rulesets.rules.action_parameters.version.custom_key`

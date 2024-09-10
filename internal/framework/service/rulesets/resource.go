@@ -590,6 +590,17 @@ func toRulesetResourceModel(ctx context.Context, zoneID, accountID basetypes.Str
 				}
 			}
 
+			if ruleResponse.ActionParameters.CacheReserve != nil {
+				eligible := flatteners.Bool(ruleResponse.ActionParameters.CacheReserve.Eligible)
+				rule.ActionParameters[0].CacheReserve = []*ActionParameterCacheReserveModel{{
+					Eligible: eligible,
+				}}
+
+				if eligible.ValueBool() {
+					rule.ActionParameters[0].CacheReserve[0].MinimumFileSize = flatteners.Int64(int64(cfv1.Uint(ruleResponse.ActionParameters.CacheReserve.MinimumFileSize)))
+				}
+			}
+
 			if ruleResponse.ActionParameters.EdgeTTL != nil {
 				var defaultVal basetypes.Int64Value
 				if cfv1.Uint(ruleResponse.ActionParameters.EdgeTTL.Default) > 0 {
@@ -1239,6 +1250,16 @@ func (r *RulesModel) toRulesetRule(ctx context.Context) cfv1.RulesetRule {
 			}
 
 			rr.ActionParameters.CacheKey = &key
+		}
+
+		if len(ap.CacheReserve) > 0 {
+			rr.ActionParameters.CacheReserve = &cfv1.RulesetRuleActionParametersCacheReserve{
+				Eligible: cfv1.BoolPtr(ap.CacheReserve[0].Eligible.ValueBool()),
+			}
+
+			if !ap.CacheReserve[0].MinimumFileSize.IsNull() {
+				rr.ActionParameters.CacheReserve.MinimumFileSize = cfv1.UintPtr(uint(ap.CacheReserve[0].MinimumFileSize.ValueInt64()))
+			}
 		}
 
 		if len(ap.EdgeTTL) > 0 {

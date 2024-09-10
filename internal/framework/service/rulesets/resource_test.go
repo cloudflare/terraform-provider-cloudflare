@@ -1877,7 +1877,7 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.%", "3"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.#", "2"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/web"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/webp"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.include.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.include.0", "cabc"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.cookie.0.include.1", "cdef"),
@@ -1887,6 +1887,8 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.device_type", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.user.0.geo", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_reserve.0.eligible", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_reserve.0.minimum_file_size", "100000"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin_cache_control", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.origin_error_page_passthru", "false"),
 				),
@@ -1930,6 +1932,35 @@ func TestAccCloudflareRuleset_CacheSettingsOptionalsEmpty(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareRuleset_CacheSettingsCacheReserveFalse(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	resourceName := "cloudflare_ruleset." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareRulesetCacheSettingsCacheReserveFalse(rnd, "cache reserve false", zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "cache reserve false"),
+					resource.TestCheckResourceAttr(resourceName, "description", rnd+" ruleset description"),
+					resource.TestCheckResourceAttr(resourceName, "kind", "zone"),
+					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_cache_settings"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
+
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_reserve.0.eligible", "false"),
+					resource.TestCheckNoResourceAttr(resourceName, "rules.0.action_parameters.0.cache_reserve.0.minimum_file_size"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareRuleset_CacheSettingsOnlyExludeOrigin(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -1955,6 +1986,8 @@ func TestAccCloudflareRuleset_CacheSettingsOnlyExludeOrigin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.check_presence.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.%", "0"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_reserve.0.eligible", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_reserve.0.minimum_file_size", "100000"),
 				),
 			},
 		},
@@ -2586,7 +2619,7 @@ func TestAccCloudflareRuleset_CacheSettingsHandleDefaultHeaderExcludeOrigin(t *t
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.%", "3"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.#", "2"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/web"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/webp"),
 				),
 			},
 			{
@@ -2608,7 +2641,7 @@ func TestAccCloudflareRuleset_CacheSettingsHandleDefaultHeaderExcludeOrigin(t *t
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "false"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.%", "3"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.#", "2"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/web"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/webp"),
 				),
 			},
 			{
@@ -2630,7 +2663,7 @@ func TestAccCloudflareRuleset_CacheSettingsHandleDefaultHeaderExcludeOrigin(t *t
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.%", "3"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.#", "2"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/web"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "rules.0.action_parameters.0.cache_key.0.custom_key.0.header.0.contains.accept.*", "image/webp"),
 				),
 			},
 		},
@@ -4124,7 +4157,7 @@ func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID stri
 					check_presence = ["habc_t", "hdef_t"]
 					exclude_origin = true
 					contains       = {
-						"accept"          = ["image/web", "image/png"]
+						"accept"          = ["image/webp", "image/png"]
 						"accept-encoding" = ["br", "zstd"]
 						"some-header"     = ["some-value", "some-other-value"]
 					}
@@ -4142,8 +4175,35 @@ func testAccCloudflareRulesetCacheSettingsAllEnabled(rnd, accountID, zoneID stri
 				}
 			}
 		}
+		cache_reserve {
+			eligible = true
+			minimum_file_size = 100000
+		}
 		origin_cache_control = true
 		origin_error_page_passthru = false
+      }
+	  expression = "true"
+	  description = "%[1]s set cache settings rule"
+	  enabled = true
+    }
+  }`, rnd, accountID, zoneID)
+}
+
+func testAccCloudflareRulesetCacheSettingsCacheReserveFalse(rnd, accountID, zoneID string) string {
+	return fmt.Sprintf(`
+  resource "cloudflare_ruleset" "%[1]s" {
+	zone_id     = "%[3]s"
+    name        = "%[2]s"
+    description = "%[1]s ruleset description"
+    kind        = "zone"
+    phase       = "http_request_cache_settings"
+
+    rules {
+      action = "set_cache_settings"
+      action_parameters {
+		cache_reserve {
+			eligible = false
+		}
       }
 	  expression = "true"
 	  description = "%[1]s set cache settings rule"
@@ -4204,6 +4264,10 @@ func testAccCloudflareRulesetCacheSettingsOnlyExludeOrigin(rnd, accountID, zoneI
 					exclude_origin = true
 				}
 			}
+		}
+		cache_reserve {
+			eligible = true
+			minimum_file_size = 100000
 		}
       }
 	  expression = "true"
@@ -4805,7 +4869,7 @@ func testAccCloudflareRulesetCacheSettingsHandleDefaultHeaderExcludeOrigin(rnd, 
 					check_presence = ["x-forwarded-for"]
 					include        = ["x-test", "x-test2"]
 					contains       = {
-						"accept"          = ["image/web", "image/png"]
+						"accept"          = ["image/webp", "image/png"]
 						"accept-encoding" = ["br", "zstd"]
 						"some-header"     = ["some-value", "some-other-value"]
 					}
@@ -4844,7 +4908,7 @@ func testAccCloudflareRulesetCacheSettingsHandleHeaderExcludeOriginSet(rnd, zone
 					include        = ["x-test", "x-test2"]
 					exclude_origin = true
 					contains       = {
-						"accept"         = ["image/web", "image/png"]
+						"accept"         = ["image/webp", "image/png"]
 						"accept-encoding" = ["br", "zstd"]
 						"some-header"    = ["some-value", "some-other-value"]
 					}
@@ -4883,7 +4947,7 @@ func testAccCloudflareRulesetCacheSettingsHandleHeaderExcludeOriginFalse(rnd, zo
 					include        = ["x-test", "x-test2"]
 					exclude_origin = false
 					contains       = {
-						"accept"         = ["image/web", "image/png"]
+						"accept"         = ["image/webp", "image/png"]
 						"accept-encoding" = ["br", "zstd"]
 						"some-header"    = ["some-value", "some-other-value"]
 					}
