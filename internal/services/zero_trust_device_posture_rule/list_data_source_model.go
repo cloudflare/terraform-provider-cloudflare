@@ -80,6 +80,7 @@ type ZeroTrustDevicePostureRulesInputDataSourceModel struct {
 	Infected         types.Bool                                                                         `tfsdk:"infected" json:"infected,computed"`
 	IsActive         types.Bool                                                                         `tfsdk:"is_active" json:"is_active,computed"`
 	NetworkStatus    types.String                                                                       `tfsdk:"network_status" json:"network_status,computed"`
+	Score            types.Float64                                                                      `tfsdk:"score" json:"score,computed"`
 }
 
 type ZeroTrustDevicePostureRulesInputLocationsDataSourceModel struct {
