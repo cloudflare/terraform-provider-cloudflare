@@ -2,6 +2,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" "%[2]s" {
   account_id = "%[1]s"
   name       = "my-tf-vnet-for-pool-%[2]s"
   comment    = "test"
+  is_default = false
 }
 
 resource "cloudflare_zero_trust_tunnel_cloudflared" "%[3]s" {
