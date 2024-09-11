@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 	"testing"
 	"time"
 
@@ -221,37 +220,22 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// checking our overrides of default values worked
-					//// resource.TestCheckResourceAttr(name, "enabled", "false"),
-					//// resource.TestCheckResourceAttr(name, "load_shedding.#", "1"),
-					//// resource.TestCheckTypeSetElemNestedAttrs(name, "load_shedding.*", map[string]string{
-					//// 	"default_percent": "55",
-					//// 	"default_policy":  "random",
-					//// 	"session_percent": "12",
-					//// 	"session_policy":  "hash",
-					//// }),
-					//// resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
-					//// resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
-					//// resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
-					//// resource.TestCheckResourceAttr(name, "latitude", "12.3"),
-					//// resource.TestCheckResourceAttr(name, "longitude", "55"),
-					//// resource.TestCheckResourceAttr(name, "origin_steering.#", "1"),
-					//// resource.TestCheckTypeSetElemNestedAttrs(name, "origin_steering.*", map[string]string{
-					//// 	"policy": "random",
-					//// }),
-					func(state *terraform.State) error {
-						for _, rs := range state.RootModule().Resources {
-							for k, v := range rs.Primary.Attributes {
-								r, _ := regexp.Compile("origins.*\\.header.*\\.header")
-
-								if r.MatchString(k) {
-									if v == "Host" {
-										return nil
-									}
-								}
-							}
-						}
-						return errors.New("Not equal")
-					},
+					resource.TestCheckResourceAttr(name, "enabled", "false"),
+					resource.TestCheckResourceAttr(name, "load_shedding.%", "4"),
+					resource.TestCheckResourceAttr(name, "load_shedding.default_percent", "55"),
+					resource.TestCheckResourceAttr(name, "load_shedding.default_policy", "random"),
+					resource.TestCheckResourceAttr(name, "load_shedding.session_percent", "12"),
+					resource.TestCheckResourceAttr(name, "load_shedding.session_policy", "hash"),
+					resource.TestCheckResourceAttr(name, "description", "tfacc-fully-specified"),
+					resource.TestCheckResourceAttr(name, "check_regions.#", "1"),
+					resource.TestCheckResourceAttr(name, "check_regions.0", "WEU"),
+					resource.TestCheckResourceAttr(name, "minimum_origins", "2"),
+					resource.TestCheckResourceAttr(name, "latitude", "12.3"),
+					resource.TestCheckResourceAttr(name, "longitude", "55"),
+					resource.TestCheckResourceAttr(name, "origin_steering.%", "1"),
+					resource.TestCheckResourceAttr(name, "origin_steering.policy", "random"),
+					resource.TestCheckResourceAttr(name, "origins.0.header.host.0", "test1.terraform.cfapi.net"),
+					resource.TestCheckResourceAttr(name, "origins.1.header.host.0", "test2.terraform.cfapi.net"),
 				),
 			},
 		},
