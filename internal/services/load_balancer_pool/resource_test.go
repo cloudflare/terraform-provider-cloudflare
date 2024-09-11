@@ -78,8 +78,8 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
-					//// resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
-					//// resource.TestCheckResourceAttr(name, "header.#", "0"),
+					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
+					resource.TestCheckResourceAttr(name, "header.#", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
