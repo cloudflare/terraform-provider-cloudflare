@@ -98,6 +98,7 @@ var (
 		"service/lists",
 		"service/firewall",
 		"service/rulesets",
+		"service/gateway",
 	}
 
 	// Mapping of service label to owning internal team.
@@ -182,6 +183,10 @@ var (
 			teamName: "Rulesets",
 			owner:    "wwoodhead",
 		},
+		"service/gateway": {
+			teamName: "ZT Connectivity",
+			owner:    "carges",
+		},		
 	}
 )
 
