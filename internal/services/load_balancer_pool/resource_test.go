@@ -108,12 +108,10 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 					testAccCheckCloudflareLoadBalancerPoolExists(name, &loadBalancerPool),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
-					//// resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
-					//// resource.TestCheckResourceAttr(name, "header.#", "0"),
-					//// resource.TestCheckResourceAttr(name, "origin_steering.#", "1"),
-					//// resource.TestCheckTypeSetElemNestedAttrs(name, "origin_steering.*", map[string]string{
-					//// 	"policy": "least_outstanding_requests",
-					//// }),
+					resource.TestCheckResourceAttr(name, "check_regions.#", "0"),
+					resource.TestCheckResourceAttr(name, "header.#", "0"),
+					resource.TestCheckResourceAttr(name, "origin_steering.%", "1"),
+					resource.TestCheckResourceAttr(name, "origin_steering.policy", "least_outstanding_requests"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerPoolDates(name, &loadBalancerPool, testStartTime),
 				),
