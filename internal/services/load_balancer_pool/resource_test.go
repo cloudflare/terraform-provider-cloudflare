@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/cloudflare/cloudflare-go"
+	cfv2 "github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -405,12 +407,11 @@ func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *clo
 
 func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudflare.LoadBalancerPool, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
+		client := acctest.SharedV2Client() // TODO(terraform): replace with SharedV2Clent
 		*initialId = loadBalancerPool.ID
-		err := client.DeleteLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID")), loadBalancerPool.ID)
+		_, err := client.LoadBalancers.Pools.Delete(context.Background(), loadBalancerPool.ID, load_balancers.PoolDeleteParams{
+			AccountID: cfv2.F(os.Getenv("CLOUDFLARE_ACCOUNT_ID")),
+		})
 		if err != nil {
 			return err
 		}
