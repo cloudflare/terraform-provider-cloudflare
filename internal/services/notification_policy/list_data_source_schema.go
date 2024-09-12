@@ -82,6 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"http_alert_edge_error",
 									"http_alert_origin_error",
 									"incident_alert",
+									"image_notification",
 									"load_balancing_health_alert",
 									"load_balancing_pool_enablement_alert",
 									"logo_match_alert",
