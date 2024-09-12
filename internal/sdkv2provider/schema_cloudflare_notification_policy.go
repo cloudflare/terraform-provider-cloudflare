@@ -131,6 +131,7 @@ var notificationPolicyAlertTypes = []string{
 	"hostname_aop_custom_certificate_expiration_type",
 	"http_alert_edge_error",
 	"http_alert_origin_error",
+	"image_notification",
 	"incident_alert",
 	"load_balancing_health_alert",
 	"load_balancing_pool_enablement_alert",
