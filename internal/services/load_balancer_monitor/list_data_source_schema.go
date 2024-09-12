@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -53,8 +52,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"created_on": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed: true,
 						},
 						"description": schema.StringAttribute{
 							Description: "Object description.",
@@ -89,8 +87,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed: true,
 						},
 						"path": schema.StringAttribute{
 							Description: "The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.",
