@@ -4,7 +4,6 @@ package load_balancer
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -34,8 +33,8 @@ type LoadBalancerModel struct {
 	RandomSteering            customfield.NestedObject[LoadBalancerRandomSteeringModel]            `tfsdk:"random_steering" json:"random_steering,computed_optional"`
 	Rules                     customfield.NestedObjectList[LoadBalancerRulesModel]                 `tfsdk:"rules" json:"rules,computed_optional"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
-	CreatedOn                 timetypes.RFC3339                                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ModifiedOn                timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	CreatedOn                 types.String                                                         `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn                types.String                                                         `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type LoadBalancerAdaptiveRoutingModel struct {
