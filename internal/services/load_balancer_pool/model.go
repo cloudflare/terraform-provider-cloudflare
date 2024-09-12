@@ -28,9 +28,9 @@ type LoadBalancerPoolModel struct {
 	LoadShedding       customfield.NestedObject[LoadBalancerPoolLoadSheddingModel]       `tfsdk:"load_shedding" json:"load_shedding,computed_optional"`
 	NotificationFilter customfield.NestedObject[LoadBalancerPoolNotificationFilterModel] `tfsdk:"notification_filter" json:"notification_filter,computed_optional"`
 	OriginSteering     customfield.NestedObject[LoadBalancerPoolOriginSteeringModel]     `tfsdk:"origin_steering" json:"origin_steering,computed_optional"`
-	CreatedOn          timetypes.RFC3339                                                 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CreatedOn          types.String                                                      `tfsdk:"created_on" json:"created_on,computed"`
 	DisabledAt         timetypes.RFC3339                                                 `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
-	ModifiedOn         timetypes.RFC3339                                                 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ModifiedOn         types.String                                                      `tfsdk:"modified_on" json:"modified_on,computed"`
 	Networks           customfield.List[types.String]                                    `tfsdk:"networks" json:"networks,computed"`
 }
 

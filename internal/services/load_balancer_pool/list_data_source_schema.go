@@ -73,8 +73,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							ElementType: types.StringType,
 						},
 						"created_on": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed: true,
 						},
 						"description": schema.StringAttribute{
 							Description: "A human-readable description of the pool.",
@@ -137,8 +136,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"modified_on": schema.StringAttribute{
-							Computed:   true,
-							CustomType: timetypes.RFC3339Type{},
+							Computed: true,
 						},
 						"monitor": schema.StringAttribute{
 							Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
