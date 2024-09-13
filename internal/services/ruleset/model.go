@@ -4,7 +4,6 @@ package ruleset
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -48,7 +47,7 @@ type RulesetRulesActionParametersModel struct {
 	Overrides                customfield.NestedObject[RulesetRulesActionParametersOverridesModel]          `tfsdk:"overrides" json:"overrides,computed_optional"`
 	FromList                 customfield.NestedObject[RulesetRulesActionParametersFromListModel]           `tfsdk:"from_list" json:"from_list,computed_optional"`
 	FromValue                customfield.NestedObject[RulesetRulesActionParametersFromValueModel]          `tfsdk:"from_value" json:"from_value,computed_optional"`
-	Headers                  customfield.Map[jsontypes.Normalized]                                         `tfsdk:"headers" json:"headers,computed_optional"`
+	Headers                  customfield.NestedObjectMap[RulesetRulesActionParametersHeadersModel]         `tfsdk:"headers" json:"headers,computed_optional"`
 	URI                      customfield.NestedObject[RulesetRulesActionParametersURIModel]                `tfsdk:"uri" json:"uri,computed_optional"`
 	HostHeader               types.String                                                                  `tfsdk:"host_header" json:"host_header,computed_optional"`
 	Origin                   customfield.NestedObject[RulesetRulesActionParametersOriginModel]             `tfsdk:"origin" json:"origin,computed_optional"`
@@ -144,6 +143,12 @@ type RulesetRulesActionParametersFromValueModel struct {
 }
 
 type RulesetRulesActionParametersFromValueTargetURLModel struct {
+	Value      types.String `tfsdk:"value" json:"value,computed_optional"`
+	Expression types.String `tfsdk:"expression" json:"expression,computed_optional"`
+}
+
+type RulesetRulesActionParametersHeadersModel struct {
+	Operation  types.String `tfsdk:"operation" json:"operation,required"`
 	Value      types.String `tfsdk:"value" json:"value,computed_optional"`
 	Expression types.String `tfsdk:"expression" json:"expression,computed_optional"`
 }
