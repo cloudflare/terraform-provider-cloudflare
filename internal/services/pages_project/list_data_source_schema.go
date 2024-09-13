@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -114,11 +113,22 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"env_vars": schema.MapAttribute{
+						"env_vars": schema.MapNestedAttribute{
 							Description: "A dict of env variables to build this deploy.",
 							Computed:    true,
-							CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-							ElementType: jsontypes.NormalizedType{},
+							CustomType:  customfield.NewNestedObjectMapType[PagesProjectsEnvVarsDataSourceModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"value": schema.StringAttribute{
+										Description: "Environment variable value.",
+										Computed:    true,
+									},
+									"type": schema.StringAttribute{
+										Description: "The type of environment variable.",
+										Computed:    true,
+									},
+								},
+							},
 						},
 						"environment": schema.StringAttribute{
 							Description: "Type of deploy.",

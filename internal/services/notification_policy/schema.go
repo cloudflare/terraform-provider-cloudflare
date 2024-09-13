@@ -6,11 +6,11 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -114,7 +114,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 				Required:    true,
 				ElementType: types.ListType{
-					ElemType: jsontypes.NormalizedType{},
+					ElemType: types.ObjectType{
+						AttrTypes: map[string]attr.Type{"id": schema.StringAttribute{
+							Description: "UUID",
+							Computed:    true,
+							Optional:    true,
+						}.GetType()},
+					},
 				},
 			},
 			"alert_interval": schema.StringAttribute{

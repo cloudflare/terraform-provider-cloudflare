@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/alerting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -23,19 +22,19 @@ type NotificationPolicyResultListDataSourceEnvelope struct {
 }
 
 type NotificationPolicyDataSourceModel struct {
-	AccountID     types.String                                                       `tfsdk:"account_id" path:"account_id,optional"`
-	PolicyID      types.String                                                       `tfsdk:"policy_id" path:"policy_id,optional"`
-	AlertInterval types.String                                                       `tfsdk:"alert_interval" json:"alert_interval,computed"`
-	AlertType     types.String                                                       `tfsdk:"alert_type" json:"alert_type,computed"`
-	Created       timetypes.RFC3339                                                  `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Description   types.String                                                       `tfsdk:"description" json:"description,computed"`
-	Enabled       types.Bool                                                         `tfsdk:"enabled" json:"enabled,computed"`
-	ID            types.String                                                       `tfsdk:"id" json:"id,computed"`
-	Modified      timetypes.RFC3339                                                  `tfsdk:"modified" json:"modified,computed" format:"date-time"`
-	Name          types.String                                                       `tfsdk:"name" json:"name,computed"`
-	Mechanisms    customfield.Map[customfield.List[jsontypes.Normalized]]            `tfsdk:"mechanisms" json:"mechanisms,computed"`
-	Filters       customfield.NestedObject[NotificationPolicyFiltersDataSourceModel] `tfsdk:"filters" json:"filters,computed"`
-	Filter        *NotificationPolicyFindOneByDataSourceModel                        `tfsdk:"filter"`
+	AccountID     types.String                                                                               `tfsdk:"account_id" path:"account_id,optional"`
+	PolicyID      types.String                                                                               `tfsdk:"policy_id" path:"policy_id,optional"`
+	AlertInterval types.String                                                                               `tfsdk:"alert_interval" json:"alert_interval,computed"`
+	AlertType     types.String                                                                               `tfsdk:"alert_type" json:"alert_type,computed"`
+	Created       timetypes.RFC3339                                                                          `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Description   types.String                                                                               `tfsdk:"description" json:"description,computed"`
+	Enabled       types.Bool                                                                                 `tfsdk:"enabled" json:"enabled,computed"`
+	ID            types.String                                                                               `tfsdk:"id" json:"id,computed"`
+	Modified      timetypes.RFC3339                                                                          `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Name          types.String                                                                               `tfsdk:"name" json:"name,computed"`
+	Mechanisms    customfield.Map[customfield.NestedObjectList[NotificationPolicyMechanismsDataSourceModel]] `tfsdk:"mechanisms" json:"mechanisms,computed"`
+	Filters       customfield.NestedObject[NotificationPolicyFiltersDataSourceModel]                         `tfsdk:"filters" json:"filters,computed"`
+	Filter        *NotificationPolicyFindOneByDataSourceModel                                                `tfsdk:"filter"`
 }
 
 func (m *NotificationPolicyDataSourceModel) toReadParams(_ context.Context) (params alerting.PolicyGetParams, diags diag.Diagnostics) {
@@ -52,6 +51,10 @@ func (m *NotificationPolicyDataSourceModel) toListParams(_ context.Context) (par
 	}
 
 	return
+}
+
+type NotificationPolicyMechanismsDataSourceModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type NotificationPolicyFiltersDataSourceModel struct {

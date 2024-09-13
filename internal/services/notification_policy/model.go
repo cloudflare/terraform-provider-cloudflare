@@ -4,7 +4,6 @@ package notification_policy
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,7 +17,7 @@ type NotificationPolicyModel struct {
 	AccountID     types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	AlertType     types.String                                                  `tfsdk:"alert_type" json:"alert_type,required"`
 	Name          types.String                                                  `tfsdk:"name" json:"name,required"`
-	Mechanisms    map[string]*[]jsontypes.Normalized                            `tfsdk:"mechanisms" json:"mechanisms,required"`
+	Mechanisms    map[string]*[]*NotificationPolicyMechanismsModel              `tfsdk:"mechanisms" json:"mechanisms,required"`
 	AlertInterval types.String                                                  `tfsdk:"alert_interval" json:"alert_interval,computed_optional"`
 	Description   types.String                                                  `tfsdk:"description" json:"description,computed_optional"`
 	Enabled       types.Bool                                                    `tfsdk:"enabled" json:"enabled,computed_optional"`
@@ -29,6 +28,10 @@ type NotificationPolicyModel struct {
 	Errors        customfield.NestedObjectList[NotificationPolicyErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages      customfield.NestedObjectList[NotificationPolicyMessagesModel] `tfsdk:"messages" json:"messages,computed"`
 	ResultInfo    customfield.NestedObject[NotificationPolicyResultInfoModel]   `tfsdk:"result_info" json:"result_info,computed"`
+}
+
+type NotificationPolicyMechanismsModel struct {
+	ID types.String `tfsdk:"id" json:"id,computed_optional"`
 }
 
 type NotificationPolicyFiltersModel struct {

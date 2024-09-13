@@ -78,11 +78,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"env_vars": schema.MapAttribute{
-				Description: "A dict of env variables to build this deploy.",
-				Optional:    true,
-				ElementType: jsontypes.NormalizedType{},
-			},
 			"canonical_deployment": schema.SingleNestedAttribute{
 				Description: "Most recent deployment to the repo.",
 				Optional:    true,
@@ -163,11 +158,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"env_vars": schema.MapAttribute{
+					"env_vars": schema.MapNestedAttribute{
 						Description: "A dict of env variables to build this deploy.",
 						Computed:    true,
-						CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-						ElementType: jsontypes.NormalizedType{},
+						CustomType:  customfield.NewNestedObjectMapType[PagesProjectCanonicalDeploymentEnvVarsDataSourceModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"value": schema.StringAttribute{
+									Description: "Environment variable value.",
+									Computed:    true,
+								},
+								"type": schema.StringAttribute{
+									Description: "The type of environment variable.",
+									Computed:    true,
+								},
+							},
+						},
 					},
 					"environment": schema.StringAttribute{
 						Description: "Type of deploy.",
@@ -324,17 +330,30 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsPreviewDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
-							"ai_bindings": schema.MapAttribute{
+							"ai_bindings": schema.MapNestedAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"project_id": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
-							"analytics_engine_datasets": schema.MapAttribute{
+							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"dataset": schema.StringAttribute{
+											Description: "Name of the dataset.",
+											Computed:    true,
+										},
+									},
+								},
 							},
 							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
@@ -352,41 +371,88 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
-							"d1_databases": schema.MapAttribute{
+							"d1_databases": schema.MapNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Description: "UUID of the D1 database.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"durable_object_namespaces": schema.MapAttribute{
+							"durable_object_namespaces": schema.MapNestedAttribute{
 								Description: "Durabble Object namespaces used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewDurableObjectNamespacesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"namespace_id": schema.StringAttribute{
+											Description: "ID of the Durabble Object namespace.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"env_vars": schema.MapAttribute{
+							"env_vars": schema.MapNestedAttribute{
 								Description: "Environment variables for build configs.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewEnvVarsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"value": schema.StringAttribute{
+											Description: "Environment variable value.",
+											Computed:    true,
+										},
+										"type": schema.StringAttribute{
+											Description: "The type of environment variable.",
+											Computed:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
+											},
+										},
+									},
+								},
 							},
-							"hyperdrive_bindings": schema.MapAttribute{
+							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewHyperdriveBindingsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
-							"kv_namespaces": schema.MapAttribute{
+							"kv_namespaces": schema.MapNestedAttribute{
 								Description: "KV namespaces used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewKVNamespacesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"namespace_id": schema.StringAttribute{
+											Description: "ID of the KV namespace.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"mtls_certificates": schema.MapAttribute{
+							"mtls_certificates": schema.MapNestedAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewMTLSCertificatesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"certificate_id": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
 							"placement": schema.SingleNestedAttribute{
 								Description: "Placement setting used for Pages Functions.",
@@ -399,29 +465,68 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"queue_producers": schema.MapAttribute{
+							"queue_producers": schema.MapNestedAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewQueueProducersDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"name": schema.StringAttribute{
+											Description: "Name of the Queue.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"r2_buckets": schema.MapAttribute{
+							"r2_buckets": schema.MapNestedAttribute{
 								Description: "R2 buckets used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewR2BucketsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"jurisdiction": schema.StringAttribute{
+											Description: "Jurisdiction of the R2 bucket.",
+											Computed:    true,
+										},
+										"name": schema.StringAttribute{
+											Description: "Name of the R2 bucket.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"services": schema.MapAttribute{
+							"services": schema.MapNestedAttribute{
 								Description: "Services used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewServicesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"entrypoint": schema.StringAttribute{
+											Description: "The entrypoint to bind to.",
+											Computed:    true,
+										},
+										"environment": schema.StringAttribute{
+											Description: "The Service environment.",
+											Computed:    true,
+										},
+										"service": schema.StringAttribute{
+											Description: "The Service name.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"vectorize_bindings": schema.MapAttribute{
+							"vectorize_bindings": schema.MapNestedAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsPreviewVectorizeBindingsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"index_name": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
 						},
 					},
@@ -430,17 +535,30 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 						CustomType:  customfield.NewNestedObjectType[PagesProjectDeploymentConfigsProductionDataSourceModel](ctx),
 						Attributes: map[string]schema.Attribute{
-							"ai_bindings": schema.MapAttribute{
+							"ai_bindings": schema.MapNestedAttribute{
 								Description: "Constellation bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"project_id": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
-							"analytics_engine_datasets": schema.MapAttribute{
+							"analytics_engine_datasets": schema.MapNestedAttribute{
 								Description: "Analytics Engine bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"dataset": schema.StringAttribute{
+											Description: "Name of the dataset.",
+											Computed:    true,
+										},
+									},
+								},
 							},
 							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
@@ -458,41 +576,88 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
-							"d1_databases": schema.MapAttribute{
+							"d1_databases": schema.MapNestedAttribute{
 								Description: "D1 databases used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Description: "UUID of the D1 database.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"durable_object_namespaces": schema.MapAttribute{
+							"durable_object_namespaces": schema.MapNestedAttribute{
 								Description: "Durabble Object namespaces used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionDurableObjectNamespacesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"namespace_id": schema.StringAttribute{
+											Description: "ID of the Durabble Object namespace.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"env_vars": schema.MapAttribute{
+							"env_vars": schema.MapNestedAttribute{
 								Description: "Environment variables for build configs.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionEnvVarsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"value": schema.StringAttribute{
+											Description: "Environment variable value.",
+											Computed:    true,
+										},
+										"type": schema.StringAttribute{
+											Description: "The type of environment variable.",
+											Computed:    true,
+											Validators: []validator.String{
+												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
+											},
+										},
+									},
+								},
 							},
-							"hyperdrive_bindings": schema.MapAttribute{
+							"hyperdrive_bindings": schema.MapNestedAttribute{
 								Description: "Hyperdrive bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionHyperdriveBindingsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
-							"kv_namespaces": schema.MapAttribute{
+							"kv_namespaces": schema.MapNestedAttribute{
 								Description: "KV namespaces used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionKVNamespacesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"namespace_id": schema.StringAttribute{
+											Description: "ID of the KV namespace.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"mtls_certificates": schema.MapAttribute{
+							"mtls_certificates": schema.MapNestedAttribute{
 								Description: "mTLS bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionMTLSCertificatesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"certificate_id": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
 							"placement": schema.SingleNestedAttribute{
 								Description: "Placement setting used for Pages Functions.",
@@ -505,29 +670,68 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"queue_producers": schema.MapAttribute{
+							"queue_producers": schema.MapNestedAttribute{
 								Description: "Queue Producer bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionQueueProducersDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"name": schema.StringAttribute{
+											Description: "Name of the Queue.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"r2_buckets": schema.MapAttribute{
+							"r2_buckets": schema.MapNestedAttribute{
 								Description: "R2 buckets used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionR2BucketsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"jurisdiction": schema.StringAttribute{
+											Description: "Jurisdiction of the R2 bucket.",
+											Computed:    true,
+										},
+										"name": schema.StringAttribute{
+											Description: "Name of the R2 bucket.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"services": schema.MapAttribute{
+							"services": schema.MapNestedAttribute{
 								Description: "Services used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionServicesDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"entrypoint": schema.StringAttribute{
+											Description: "The entrypoint to bind to.",
+											Computed:    true,
+										},
+										"environment": schema.StringAttribute{
+											Description: "The Service environment.",
+											Computed:    true,
+										},
+										"service": schema.StringAttribute{
+											Description: "The Service name.",
+											Computed:    true,
+										},
+									},
+								},
 							},
-							"vectorize_bindings": schema.MapAttribute{
+							"vectorize_bindings": schema.MapNestedAttribute{
 								Description: "Vectorize bindings used for Pages Functions.",
 								Computed:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-								ElementType: jsontypes.NormalizedType{},
+								CustomType:  customfield.NewNestedObjectMapType[PagesProjectDeploymentConfigsProductionVectorizeBindingsDataSourceModel](ctx),
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"index_name": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+								},
 							},
 						},
 					},
@@ -559,6 +763,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"type": schema.StringAttribute{
 						Description: "What caused the deployment.",
 						Computed:    true,
+					},
+				},
+			},
+			"env_vars": schema.MapNestedAttribute{
+				Description: "A dict of env variables to build this deploy.",
+				Optional:    true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							Description: "Environment variable value.",
+							Computed:    true,
+						},
+						"type": schema.StringAttribute{
+							Description: "The type of environment variable.",
+							Computed:    true,
+						},
 					},
 				},
 			},
@@ -642,11 +862,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"env_vars": schema.MapAttribute{
+					"env_vars": schema.MapNestedAttribute{
 						Description: "A dict of env variables to build this deploy.",
 						Computed:    true,
-						CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-						ElementType: jsontypes.NormalizedType{},
+						CustomType:  customfield.NewNestedObjectMapType[PagesProjectLatestDeploymentEnvVarsDataSourceModel](ctx),
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"value": schema.StringAttribute{
+									Description: "Environment variable value.",
+									Computed:    true,
+								},
+								"type": schema.StringAttribute{
+									Description: "The type of environment variable.",
+									Computed:    true,
+								},
+							},
+						},
 					},
 					"environment": schema.StringAttribute{
 						Description: "Type of deploy.",

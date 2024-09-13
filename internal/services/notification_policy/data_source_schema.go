@@ -6,11 +6,11 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -133,9 +133,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"mechanisms": schema.MapAttribute{
 				Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 				Computed:    true,
-				CustomType:  customfield.NewMapType[customfield.List[jsontypes.Normalized]](ctx),
+				CustomType:  customfield.NewMapType[customfield.NestedObjectList[NotificationPolicyMechanismsDataSourceModel]](ctx),
 				ElementType: types.ListType{
-					ElemType: jsontypes.NormalizedType{},
+					ElemType: types.ObjectType{
+						AttrTypes: map[string]attr.Type{"id": schema.StringAttribute{
+							Description: "UUID",
+							Computed:    true,
+							Optional:    true,
+						}.GetType()},
+					},
 				},
 			},
 			"filters": schema.SingleNestedAttribute{
