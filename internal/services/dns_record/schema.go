@@ -49,6 +49,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"priority": schema.Float64Attribute{
+				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 65535),
+				},
+			},
 			"type": schema.StringAttribute{
 				Description: "Record type.",
 				Required:    true,

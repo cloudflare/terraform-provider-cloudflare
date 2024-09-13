@@ -7,7 +7,6 @@ import (
 	"math"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -379,12 +378,31 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
-								"headers": schema.MapAttribute{
+								"headers": schema.MapNestedAttribute{
 									Description: "Map of request headers to modify.",
 									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
-									ElementType: jsontypes.NormalizedType{},
+									CustomType:  customfield.NewNestedObjectMapType[RulesetRulesActionParametersHeadersModel](ctx),
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"operation": schema.StringAttribute{
+												Required: true,
+												Validators: []validator.String{
+													stringvalidator.OneOfCaseInsensitive("remove", "set"),
+												},
+											},
+											"value": schema.StringAttribute{
+												Description: "Static value for the header.",
+												Computed:    true,
+												Optional:    true,
+											},
+											"expression": schema.StringAttribute{
+												Description: "Expression for the header value.",
+												Computed:    true,
+												Optional:    true,
+											},
+										},
+									},
 								},
 								"uri": schema.SingleNestedAttribute{
 									Description: "URI to rewrite the request to.",

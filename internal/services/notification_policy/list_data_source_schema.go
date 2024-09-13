@@ -6,11 +6,11 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -82,6 +82,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"http_alert_edge_error",
 									"http_alert_origin_error",
 									"incident_alert",
+									"image_notification",
 									"load_balancing_health_alert",
 									"load_balancing_pool_enablement_alert",
 									"logo_match_alert",
@@ -400,9 +401,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"mechanisms": schema.MapAttribute{
 							Description: "List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.",
 							Computed:    true,
-							CustomType:  customfield.NewMapType[customfield.List[jsontypes.Normalized]](ctx),
+							CustomType:  customfield.NewMapType[customfield.NestedObjectList[NotificationPoliciesMechanismsDataSourceModel]](ctx),
 							ElementType: types.ListType{
-								ElemType: jsontypes.NormalizedType{},
+								ElemType: types.ObjectType{
+									AttrTypes: map[string]attr.Type{"id": schema.StringAttribute{
+										Description: "UUID",
+										Computed:    true,
+										Optional:    true,
+									}.GetType()},
+								},
 							},
 						},
 						"modified": schema.StringAttribute{

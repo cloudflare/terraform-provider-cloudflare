@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -83,7 +82,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	Overrides                customfield.NestedObject[RulesetRulesActionParametersOverridesDataSourceModel]          `tfsdk:"overrides" json:"overrides,computed"`
 	FromList                 customfield.NestedObject[RulesetRulesActionParametersFromListDataSourceModel]           `tfsdk:"from_list" json:"from_list,computed"`
 	FromValue                customfield.NestedObject[RulesetRulesActionParametersFromValueDataSourceModel]          `tfsdk:"from_value" json:"from_value,computed"`
-	Headers                  customfield.Map[jsontypes.Normalized]                                                   `tfsdk:"headers" json:"headers,computed"`
+	Headers                  customfield.NestedObjectMap[RulesetRulesActionParametersHeadersDataSourceModel]         `tfsdk:"headers" json:"headers,computed"`
 	URI                      customfield.NestedObject[RulesetRulesActionParametersURIDataSourceModel]                `tfsdk:"uri" json:"uri,computed"`
 	HostHeader               types.String                                                                            `tfsdk:"host_header" json:"host_header,computed"`
 	Origin                   customfield.NestedObject[RulesetRulesActionParametersOriginDataSourceModel]             `tfsdk:"origin" json:"origin,computed"`
@@ -179,6 +178,12 @@ type RulesetRulesActionParametersFromValueDataSourceModel struct {
 }
 
 type RulesetRulesActionParametersFromValueTargetURLDataSourceModel struct {
+	Value      types.String `tfsdk:"value" json:"value,computed"`
+	Expression types.String `tfsdk:"expression" json:"expression,computed"`
+}
+
+type RulesetRulesActionParametersHeadersDataSourceModel struct {
+	Operation  types.String `tfsdk:"operation" json:"operation,computed"`
 	Value      types.String `tfsdk:"value" json:"value,computed"`
 	Expression types.String `tfsdk:"expression" json:"expression,computed"`
 }
