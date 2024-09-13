@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -38,7 +37,7 @@ type PagesProjectsResultDataSourceModel struct {
 	BuildConfig       customfield.NestedObject[PagesProjectsBuildConfigDataSourceModel]       `tfsdk:"build_config" json:"build_config,computed"`
 	CreatedOn         timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	DeploymentTrigger customfield.NestedObject[PagesProjectsDeploymentTriggerDataSourceModel] `tfsdk:"deployment_trigger" json:"deployment_trigger,computed"`
-	EnvVars           customfield.Map[jsontypes.Normalized]                                   `tfsdk:"env_vars" json:"env_vars,computed"`
+	EnvVars           customfield.NestedObjectMap[PagesProjectsEnvVarsDataSourceModel]        `tfsdk:"env_vars" json:"env_vars,computed"`
 	Environment       types.String                                                            `tfsdk:"environment" json:"environment,computed"`
 	IsSkipped         types.Bool                                                              `tfsdk:"is_skipped" json:"is_skipped,computed"`
 	LatestStage       customfield.NestedObject[PagesProjectsLatestStageDataSourceModel]       `tfsdk:"latest_stage" json:"latest_stage,computed"`
@@ -69,6 +68,11 @@ type PagesProjectsDeploymentTriggerMetadataDataSourceModel struct {
 	Branch        types.String `tfsdk:"branch" json:"branch,computed"`
 	CommitHash    types.String `tfsdk:"commit_hash" json:"commit_hash,computed"`
 	CommitMessage types.String `tfsdk:"commit_message" json:"commit_message,computed"`
+}
+
+type PagesProjectsEnvVarsDataSourceModel struct {
+	Value types.String `tfsdk:"value" json:"value,computed"`
+	Type  types.String `tfsdk:"type" json:"type,computed"`
 }
 
 type PagesProjectsLatestStageDataSourceModel struct {
