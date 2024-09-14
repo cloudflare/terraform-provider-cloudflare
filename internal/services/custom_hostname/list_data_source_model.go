@@ -57,7 +57,7 @@ type CustomHostnamesResultDataSourceModel struct {
 	Hostname                  types.String                                                                      `tfsdk:"hostname" json:"hostname,computed"`
 	SSL                       customfield.NestedObject[CustomHostnamesSSLDataSourceModel]                       `tfsdk:"ssl" json:"ssl,computed"`
 	CreatedAt                 timetypes.RFC3339                                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	CustomMetadata            customfield.NestedObject[CustomHostnamesCustomMetadataDataSourceModel]            `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
+	CustomMetadata            customfield.Map[types.String]                                                     `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	CustomOriginServer        types.String                                                                      `tfsdk:"custom_origin_server" json:"custom_origin_server,computed"`
 	CustomOriginSNI           types.String                                                                      `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed"`
 	OwnershipVerification     customfield.NestedObject[CustomHostnamesOwnershipVerificationDataSourceModel]     `tfsdk:"ownership_verification" json:"ownership_verification,computed"`
@@ -106,10 +106,6 @@ type CustomHostnamesSSLValidationRecordsDataSourceModel struct {
 	HTTPURL  types.String                   `tfsdk:"http_url" json:"http_url,computed"`
 	TXTName  types.String                   `tfsdk:"txt_name" json:"txt_name,computed"`
 	TXTValue types.String                   `tfsdk:"txt_value" json:"txt_value,computed"`
-}
-
-type CustomHostnamesCustomMetadataDataSourceModel struct {
-	Key types.String `tfsdk:"key" json:"key,computed"`
 }
 
 type CustomHostnamesOwnershipVerificationDataSourceModel struct {

@@ -295,16 +295,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
-						"custom_metadata": schema.SingleNestedAttribute{
-							Description: "These are per-hostname (customer) settings.",
+						"custom_metadata": schema.MapAttribute{
+							Description: "Unique key/value metadata for this hostname. These are per-hostname (customer) settings.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[CustomHostnamesCustomMetadataDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"key": schema.StringAttribute{
-									Description: "Unique metadata for this hostname.",
-									Computed:    true,
-								},
-							},
+							CustomType:  customfield.NewMapType[types.String](ctx),
+							ElementType: types.StringType,
 						},
 						"custom_origin_server": schema.StringAttribute{
 							Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
