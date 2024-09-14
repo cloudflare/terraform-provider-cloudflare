@@ -276,6 +276,7 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_observatory_scheduled_test":                      resourceCloudflareObservatoryScheduledTest(),
 				"cloudflare_origin_ca_certificate":                           resourceCloudflareOriginCACertificate(),
 				"cloudflare_page_rule":                                       resourceCloudflarePageRule(),
+				"cloudflare_page_shield":                                     resourceCloudflarePageShield(),
 				"cloudflare_pages_domain":                                    resourceCloudflarePagesDomain(),
 				"cloudflare_pages_project":                                   resourceCloudflarePagesProject(),
 				"cloudflare_queue":                                           resourceCloudflareQueue(),
