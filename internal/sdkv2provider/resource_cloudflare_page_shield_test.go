@@ -78,7 +78,7 @@ func testAccCheckPageShieldDelete(s *terraform.State) error {
 
 func testAccCloudflarePageShieldDefaultEnabledSet(resourceName, zone string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_api_shield_schema_validation_settings" "%[1]s" {
+	resource "cloudflare_page_shield" "%[1]s" {
 		zone_id = "%[2]s"
 	}
 `, resourceName, zone)
@@ -86,7 +86,7 @@ func testAccCloudflarePageShieldDefaultEnabledSet(resourceName, zone string) str
 
 func testAccCloudflarePageShieldAllFieldsSet(resourceName, zone string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_api_shield_schema_validation_settings" "%[1]s" {
+	resource "cloudflare_page_shield" "%[1]s" {
 		zone_id = "%[2]s"
         use_cloudflare_reporting_endpoint = true
         use_connection_url_path = true
