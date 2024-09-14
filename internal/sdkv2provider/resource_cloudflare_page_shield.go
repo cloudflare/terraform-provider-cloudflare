@@ -68,7 +68,7 @@ func resourceCloudflarePageShieldDelete(ctx context.Context, d *schema.ResourceD
 
 	tflog.Info(ctx, "Disabling Page Shield")
 
-	// There is no DELETE endpoint for schema validation settings,
+	// There is no DELETE endpoint for Page Shield settings,
 	// so terraform should reset the state to default settings
 	params := cloudflare.UpdatePageShieldSettingsParams{
 		Enabled:                        cloudflare.BoolPtr(false),

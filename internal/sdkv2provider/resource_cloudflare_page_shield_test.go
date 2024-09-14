@@ -57,7 +57,7 @@ func testAccCheckPageShieldDelete(s *terraform.State) error {
 			cloudflare.GetPageShieldSettingsParams{},
 		)
 		if err != nil {
-			return fmt.Errorf("encountered error getting schema validation settings: %w", err)
+			return fmt.Errorf("encountered error getting page shield: %w", err)
 		}
 
 		if *result.PageShield.Enabled != false {
