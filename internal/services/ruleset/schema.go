@@ -106,7 +106,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"action": schema.StringAttribute{
 							Description: "The action to perform when the rule matches.",
@@ -386,7 +385,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Required: true,
+												Computed: true,
+												Optional: true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("remove", "set"),
 												},
@@ -857,50 +857,64 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												},
 												"query_string": schema.SingleNestedAttribute{
 													Description: "Use the presence or absence of parameters in the query string to build the cache key.",
-													Computed:    true,
-													Optional:    true,
-													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel](ctx),
+
+													Optional:   true,
+													CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel](ctx),
 													Attributes: map[string]schema.Attribute{
-														"exclude": schema.SingleNestedAttribute{
-															Description: "build the cache key using all query string parameters EXCECPT these excluded parameters",
+														"exclude": schema.ListAttribute{
+															Description: "Build the cache key using all query string parameters EXCECPT these excluded parameters",
 															Computed:    true,
 															Optional:    true,
-															CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel](ctx),
-															Attributes: map[string]schema.Attribute{
-																"all": schema.BoolAttribute{
-																	Description: "Exclude all query string parameters from use in building the cache key.",
-																	Computed:    true,
-																	Optional:    true,
-																},
-																"list": schema.ListAttribute{
-																	Description: "A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.",
-																	Computed:    true,
-																	Optional:    true,
-																	CustomType:  customfield.NewListType[types.String](ctx),
-																	ElementType: types.StringType,
-																},
-															},
+															CustomType:  customfield.NewListType[types.String](ctx),
+															ElementType: types.StringType,
 														},
-														"include": schema.SingleNestedAttribute{
-															Description: "build the cache key using a list of query string parameters that ARE in the request.",
+														// "exclude": schema.SingleNestedAttribute{
+														// 	Description: "build the cache key using all query string parameters EXCECPT these excluded parameters",
+														// 	Computed:    true,
+														// 	Optional:    true,
+														// 	CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel](ctx),
+														// 	Attributes: map[string]schema.Attribute{
+														// 		"all": schema.BoolAttribute{
+														// 			Description: "Exclude all query string parameters from use in building the cache key.",
+														// 			Computed:    true,
+														// 			Optional:    true,
+														// 		},
+														// 		"list": schema.ListAttribute{
+														// 			Description: "A list of query string parameters NOT used to build the cache key. All parameters present in the request but missing in this list will be used to build the cache key.",
+														// 			Computed:    true,
+														// 			Optional:    true,
+														// 			CustomType:  customfield.NewListType[types.String](ctx),
+														// 			ElementType: types.StringType,
+														// 		},
+														// 	},
+														// },
+														"include": schema.ListAttribute{
+															Description: "Build the cache key using a list of query string parameters that ARE in the request.",
 															Computed:    true,
 															Optional:    true,
-															CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel](ctx),
-															Attributes: map[string]schema.Attribute{
-																"all": schema.BoolAttribute{
-																	Description: "Use all query string parameters in the cache key.",
-																	Computed:    true,
-																	Optional:    true,
-																},
-																"list": schema.ListAttribute{
-																	Description: "A list of query string parameters used to build the cache key.",
-																	Computed:    true,
-																	Optional:    true,
-																	CustomType:  customfield.NewListType[types.String](ctx),
-																	ElementType: types.StringType,
-																},
-															},
+															CustomType:  customfield.NewListType[types.String](ctx),
+															ElementType: types.StringType,
 														},
+														// "include": schema.SingleNestedAttribute{
+														// 	Description: "build the cache key using a list of query string parameters that ARE in the request.",
+														// 	Computed:    true,
+														// 	Optional:    true,
+														// 	CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel](ctx),
+														// 	Attributes: map[string]schema.Attribute{
+														// 		"all": schema.BoolAttribute{
+														// 			Description: "Use all query string parameters in the cache key.",
+														// 			Computed:    true,
+														// 			Optional:    true,
+														// 		},
+														// 		"list": schema.ListAttribute{
+														// 			Description: "A list of query string parameters used to build the cache key.",
+														// 			Computed:    true,
+														// 			Optional:    true,
+														// 			CustomType:  customfield.NewListType[types.String](ctx),
+														// 			ElementType: types.StringType,
+														// 		},
+														// 	},
+														// },
 													},
 												},
 												"user": schema.SingleNestedAttribute{
@@ -947,7 +961,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"minimum_file_size": schema.Int64Attribute{
 											Description: "The minimum file size eligible for store in cache reserve.",
-											Required:    true,
+											Optional:    true,
 										},
 									},
 								},
@@ -959,7 +973,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"default": schema.Int64Attribute{
 											Description: "The TTL (in seconds) if you choose override_origin mode.",
-											Required:    true,
+											Optional:    true,
 											Validators: []validator.Int64{
 												int64validator.Between(0, math.MaxInt64),
 											},
@@ -977,7 +991,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"status_code_ttl": schema.ListNestedAttribute{
 											Description: "List of single status codes, or status code ranges to apply the selected mode",
-											Required:    true,
+											Optional:    true,
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"value": schema.Int64Attribute{
@@ -992,15 +1006,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														Attributes: map[string]schema.Attribute{
 															"from": schema.Int64Attribute{
 																Description: "response status code lower bound",
-																Required:    true,
+																Optional:    true,
 															},
 															"to": schema.Int64Attribute{
 																Description: "response status code upper bound",
-																Required:    true,
+																Optional:    true,
 															},
 														},
 													},
-													"status_code_value": schema.Int64Attribute{
+													"status_code": schema.Int64Attribute{
 														Description: "Set the ttl for responses with this specific status code",
 														Computed:    true,
 														Optional:    true,
@@ -1109,18 +1123,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 							Optional:    true,
 						},
-						"logging": schema.SingleNestedAttribute{
-							Description: "An object configuring the rule's logging behavior.",
-							Computed:    true,
-							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[RulesetRulesLoggingModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"enabled": schema.BoolAttribute{
-									Description: "Whether to generate a log when the rule matches.",
-									Required:    true,
-								},
-							},
-						},
+						// "logging": schema.SingleNestedAttribute{
+						// 	Description: "An object configuring the rule's logging behavior.",
+						// 	Computed:    true,
+						// 	Optional:    true,
+						// 	CustomType:  customfield.NewNestedObjectType[RulesetRulesLoggingModel](ctx),
+						// 	Attributes: map[string]schema.Attribute{
+						// 		"enabled": schema.BoolAttribute{
+						// 			Description: "Whether to generate a log when the rule matches.",
+						// 			Required:    true,
+						// 		},
+						// 	},
+						// },
 						"ref": schema.StringAttribute{
 							Description: "The reference of the rule (the rule ID by default).",
 							Computed:    true,
