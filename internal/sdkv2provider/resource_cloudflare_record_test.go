@@ -420,7 +420,7 @@ func TestAccCloudflareRecord_CreateAfterManualDestroy(t *testing.T) {
 				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(name, &afterCreate),
-					testAccManuallyDeleteRecord(&afterCreate),
+					testAccManuallyDeleteRecord(&afterCreate, zoneID),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -775,10 +775,10 @@ func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord, zoneID string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
-		err := client.DeleteDNSRecord(context.Background(), cloudflare.ZoneIdentifier(record.ZoneID), record.ID)
+		err := client.DeleteDNSRecord(context.Background(), cloudflare.ZoneIdentifier(zoneID), record.ID)
 		if err != nil {
 			return err
 		}
