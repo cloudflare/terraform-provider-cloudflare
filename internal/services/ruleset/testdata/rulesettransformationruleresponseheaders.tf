@@ -9,20 +9,19 @@ resource "cloudflare_ruleset" "%[1]s" {
   rules = [{
     action = "rewrite"
     action_parameters = {
-      headers = [{
-        name      = "example1"
-        operation = "set"
-        value     = "my-http-header-value1"
+      headers = {
+        example1 = {
+          operation = "set"
+          value     = "my-http-header-value1"
         },
-        {
-          name       = "example2"
+        example2 = {
           operation  = "set"
           expression = "cf.zone.name"
         },
-        {
-          name      = "example3"
+        example3 = {
           operation = "remove"
-      }]
+        }
+      }
     }
 
     expression  = "true"
