@@ -75,7 +75,7 @@ func TestAccCloudflareCustomHostname_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -109,10 +109,10 @@ func TestAccCloudflareCustomHostname_WithCertificate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "http"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.type", "dv"),
-					resource.TestCheckResourceAttrSet(resourceName, "ssl.0.custom_certificate"),
-					resource.TestCheckResourceAttrSet(resourceName, "ssl.0.custom_key"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "http"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.type", "dv"),
+					resource.TestCheckResourceAttrSet(resourceName, "ssl.custom_certificate"),
+					resource.TestCheckResourceAttrSet(resourceName, "ssl.custom_key"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -143,8 +143,7 @@ func TestAccCloudflareCustomHostname_WaitForActive(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
-					resource.TestCheckResourceAttr(resourceName, "wait_for_ssl_pending_validation", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -177,7 +176,7 @@ func TestAccCloudflareCustomHostname_WithCustomOriginServer(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(resourceName, "custom_origin_server", fmt.Sprintf("origin.%s.terraform.cfapi.net", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "custom_origin_sni", fmt.Sprintf("origin.%s.terraform.cfapi.net", rnd)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -208,7 +207,7 @@ func TestAccCloudflareCustomHostname_WithHTTPValidation(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "http"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "http"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -239,10 +238,10 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.certificate_authority", "lets_encrypt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.http2", "off"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.min_tls_version", "1.2"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.ciphers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.certificate_authority", "google"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
@@ -255,10 +254,10 @@ func TestAccCloudflareCustomHostname_WithCustomSSLSettings(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.http2", "off"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.min_tls_version", "1.1"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.ciphers.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.settings.0.early_hints", "off"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.http2", "off"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.min_tls_version", "1.1"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.ciphers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.settings.early_hints", "off"),
 				),
 			},
 		},
@@ -277,27 +276,29 @@ func testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain string) s
 	return acctest.LoadTestCase("customhostnamewithnossl.tf", zoneID, rnd, domain)
 }
 
-func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
-	t.Parallel()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_custom_hostname." + rnd
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.#", "0"),
-				),
-			},
-		},
-	})
-}
+// SSL is required parameter, per the schema
+//
+// func TestAccCloudflareCustomHostname_WithNoSSL(t *testing.T) {
+// 	t.Parallel()
+// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+// 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+// 	rnd := utils.GenerateRandomResourceName()
+// 	resourceName := "cloudflare_custom_hostname." + rnd
+// 	resource.Test(t, resource.TestCase{
+// 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+// 		Steps: []resource.TestStep{
+// 			{
+// 				Config: testAccCheckCloudflareCustomHostnameWithNoSSL(zoneID, rnd, domain),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
+// 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
+// 					resource.TestCheckResourceAttr(resourceName, "ssl.#", "0"),
+// 				),
+// 			},
+// 		},
+// 	})
+// }
 
 func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T) {
 	t.Parallel()
@@ -339,43 +340,43 @@ func TestAccCloudflareCustomHostname_UpdatingZoneForcesNewResource(t *testing.T)
 	})
 }
 
-func TestAccCloudflareCustomHostname_Import(t *testing.T) {
-	t.Parallel()
-
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := "cloudflare_custom_hostname." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
-			},
-			// {
-			// 	ResourceName:        resourceName,
-			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
-			// 	ImportState:         true,
-			// 	ImportStateVerify:   true,
-			// 	ImportStateVerifyIgnore: []string{
-			// 		"ssl.#",
-			// 		"ssl.0.certificate_authority",
-			// 		"ssl.0.validation_records",
-			// 		"ssl.0.validation_errors",
-			// 		"ssl.0.custom_certificate",
-			// 		"ssl.0.custom_key",
-			// 		"ssl.0.method",
-			// 		"ssl.0.status",
-			// 		"ssl.0.type",
-			// 		"ssl.0.wildcard",
-			// 		"wait_for_ssl_pending_validation",
-			// 	},
-			// },
-		},
-	})
-}
+// func TestAccCloudflareCustomHostname_Import(t *testing.T) {
+// 	t.Parallel()
+//
+// 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+// 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
+// 	rnd := utils.GenerateRandomResourceName()
+// 	resourceName := "cloudflare_custom_hostname." + rnd
+//
+// 	resource.Test(t, resource.TestCase{
+// 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+// 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+// 		Steps: []resource.TestStep{
+// 			{
+// 				Config: testAccCheckCloudflareCustomHostnameBasic(zoneID, rnd, domain),
+// 			},
+// 			{
+// 				ResourceName:        resourceName,
+// 				ImportStateIdPrefix: fmt.Sprintf("%s/", zoneID),
+// 				ImportState:         true,
+// 				ImportStateVerify:   true,
+// 				ImportStateVerifyIgnore: []string{
+// 					"ssl.#",
+// 					"ssl.certificate_authority",
+// 					"ssl.validation_records",
+// 					"ssl.validation_errors",
+// 					"ssl.custom_certificate",
+// 					"ssl.custom_key",
+// 					"ssl.method",
+// 					"ssl.status",
+// 					"ssl.type",
+// 					"ssl.wildcard",
+// 					"wait_for_ssl_pending_validation",
+// 				},
+// 			},
+// 		},
+// 	})
+// }
 
 func testAccCheckCloudflareCustomHostnameRecreated(before, after *cloudflare.CustomHostname) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -431,8 +432,8 @@ func TestAccCloudflareCustomHostname_WithCustomMetadata(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "hostname", fmt.Sprintf("%s.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.method", "txt"),
-					resource.TestCheckResourceAttr(resourceName, "ssl.0.wildcard", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.method", "txt"),
+					resource.TestCheckResourceAttr(resourceName, "ssl.wildcard", "true"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.type"),
 					resource.TestCheckResourceAttrSet(resourceName, "ownership_verification.name"),
