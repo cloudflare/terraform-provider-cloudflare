@@ -50,6 +50,7 @@ resource "cloudflare_zero_trust_gateway_settings" "example" {
     udp        = true
     root_ca    = true
     virtual_ip = false
+    disable_for_time = 3600
   }
 
   url_browser_isolation_enabled = true
