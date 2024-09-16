@@ -21,6 +21,9 @@ func resourceCloudflareApiToken() *schema.Resource {
 		ReadContext:   resourceCloudflareApiTokenRead,
 		UpdateContext: resourceCloudflareApiTokenUpdate,
 		DeleteContext: resourceCloudflareApiTokenDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceCloudflareApiTokenImport,
+		},
 		Description: heredoc.Doc(`
 			Provides a resource which manages Cloudflare API tokens.
 
@@ -229,4 +232,16 @@ func resourceCloudflareApiTokenDelete(ctx context.Context, d *schema.ResourceDat
 	}
 
 	return nil
+}
+
+func resourceCloudflareApiTokenImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	tokenID := d.Id()
+
+	tflog.Info(ctx, fmt.Sprintf("Importing Cloudflare API token: id %s", tokenID))
+
+	if err := resourceCloudflareApiTokenRead(ctx, d, meta); err != nil {
+		return nil, errors.New(err[0].Summary)
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
