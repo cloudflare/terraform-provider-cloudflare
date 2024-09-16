@@ -11,8 +11,6 @@ import (
 )
 
 func TestAccCloudflareLoadBalancerPools(t *testing.T) {
-	t.Parallel()
-
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("data.cloudflare_load_balancer_pools.%s", rnd)
@@ -24,7 +22,7 @@ func TestAccCloudflareLoadBalancerPools(t *testing.T) {
 			{
 				Config: testAccCloudflareLoadBalancerPoolsConfig(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "pools.#", "2"),
+					resource.TestCheckResourceAttr(name, "result.#", "2"),
 				),
 			},
 		},
