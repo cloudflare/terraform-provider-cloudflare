@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/cloudflare_workers_script: Add support for `hyperdrive` binding type
+```
