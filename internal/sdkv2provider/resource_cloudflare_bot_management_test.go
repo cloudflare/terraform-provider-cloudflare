@@ -23,6 +23,7 @@ func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 		SBFMVerifiedBots:             cloudflare.StringPtr("allow"),
 		SBFMStaticResourceProtection: cloudflare.BoolPtr(false),
 		OptimizeWordpress:            cloudflare.BoolPtr(true),
+		AIBotsProtection:             cloudflare.StringPtr("block"),
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -39,6 +40,7 @@ func TestAccCloudflareBotManagement_SBFM(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "sbfm_verified_bots", "allow"),
 					resource.TestCheckResourceAttr(resourceID, "sbfm_static_resource_protection", "false"),
 					resource.TestCheckResourceAttr(resourceID, "optimize_wordpress", "true"),
+					resource.TestCheckResourceAttr(resourceID, "ai_bots_protection", "block"),
 				),
 			},
 			{
@@ -59,6 +61,7 @@ func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 		EnableJS:             cloudflare.BoolPtr(true),
 		SuppressSessionScore: cloudflare.BoolPtr(false),
 		AutoUpdateModel:      cloudflare.BoolPtr(false),
+		AIBotsProtection:     cloudflare.StringPtr("disabled"),
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -72,6 +75,7 @@ func TestAccCloudflareBotManagement_Unentitled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, "enable_js", "true"),
 					resource.TestCheckResourceAttr(resourceID, "suppress_session_score", "false"),
 					resource.TestCheckResourceAttr(resourceID, "auto_update_model", "false"),
+					resource.TestCheckResourceAttr(resourceID, "ai_bots_protection", "disabled"),
 				),
 				ExpectError: regexp.MustCompile("zone not entitled to disable"),
 			},
@@ -91,11 +95,12 @@ func testCloudflareBotManagementSBFM(resourceName, rnd string, bm cloudflare.Bot
 		sbfm_verified_bots = "%[6]s"
 		sbfm_static_resource_protection = "%[7]t"
 		optimize_wordpress = "%[8]t"
+		ai_bots_protection = "%[9]s"
 	}
 `, resourceName, rnd,
 		*bm.EnableJS, *bm.SBFMDefinitelyAutomated,
 		*bm.SBFMLikelyAutomated, *bm.SBFMVerifiedBots,
-		*bm.SBFMStaticResourceProtection, *bm.OptimizeWordpress)
+		*bm.SBFMStaticResourceProtection, *bm.OptimizeWordpress, *bm.AIBotsProtection)
 }
 
 func testCloudflareBotManagementEntSubscription(resourceName, rnd string, bm cloudflare.BotManagement) string {
@@ -107,7 +112,8 @@ func testCloudflareBotManagementEntSubscription(resourceName, rnd string, bm clo
 
 		suppress_session_score = "%[4]t"
 		auto_update_model = "%[5]t"
+		ai_bots_protection = "%[6]s"
 	}
 `, resourceName, rnd,
-		*bm.EnableJS, *bm.SuppressSessionScore, *bm.AutoUpdateModel)
+		*bm.EnableJS, *bm.SuppressSessionScore, *bm.AutoUpdateModel, *bm.AIBotsProtection)
 }
