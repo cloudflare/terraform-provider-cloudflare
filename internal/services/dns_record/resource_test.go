@@ -1,4 +1,4 @@
-package record_test
+package dns_record_test
 
 import (
 	"context"
