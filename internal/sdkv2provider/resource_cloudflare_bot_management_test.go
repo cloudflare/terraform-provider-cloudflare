@@ -112,7 +112,7 @@ func testCloudflareBotManagementEntSubscription(resourceName, rnd string, bm clo
 
 		suppress_session_score = "%[4]t"
 		auto_update_model = "%[5]t"
-		ai_bots_protection = '%[6]s'
+		ai_bots_protection = "%[6]s"
 	}
 `, resourceName, rnd,
 		*bm.EnableJS, *bm.SuppressSessionScore, *bm.AutoUpdateModel, *bm.AIBotsProtection)
