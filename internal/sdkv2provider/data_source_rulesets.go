@@ -852,6 +852,26 @@ func resourceCloudflareRulesetSchema() map[string]*schema.Schema {
 										},
 									},
 								},
+								"cache_reserve": {
+									Type:        schema.TypeList,
+									MaxItems:    1,
+									Optional:    true,
+									Description: "List of cache reserve parameters to apply to the request.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"eligible": {
+												Type:        schema.TypeBool,
+												Required:    true,
+												Description: "Determines whether Cloudflare will write the eligible resource to cache reserve.",
+											},
+											"minimum_file_size": {
+												Type:        schema.TypeInt,
+												Optional:    true,
+												Description: "The minimum file size, in bytes, eligible for storage in cache reserve. If omitted and \"eligible\" is true, Cloudflare will use 0 bytes by default.",
+											},
+										},
+									},
+								},
 								"origin_cache_control": {
 									Type:        schema.TypeBool,
 									Optional:    true,
