@@ -29,7 +29,7 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			Applications are used to restrict access to a whole application using an
 			authorisation gateway managed by Cloudflare.
 		`),
-		DeprecationMessage: "`cloudflare_access_application` is now deprecated and will be removed in the next major version. Use `zero_trust_access_application` instead.",
+		DeprecationMessage: "`cloudflare_access_application` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_application` instead.",
 	}
 }
 
