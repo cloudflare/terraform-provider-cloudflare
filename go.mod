@@ -4,11 +4,7 @@ go 1.21
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
-<<<<<<< HEAD
 	github.com/cloudflare/cloudflare-go v0.104.0
-=======
-	github.com/cloudflare/cloudflare-go v0.103.0
->>>>>>> e1c900c1 (Add hyperdrive_config_binding to Cloudflare Workers)
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
