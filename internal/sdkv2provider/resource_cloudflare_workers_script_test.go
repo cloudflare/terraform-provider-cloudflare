@@ -23,7 +23,7 @@ const (
 	encodedWasm        = "AGFzbQEAAAAGgYCAgAAA" // wat source: `(module)`, so literally just an empty wasm module
 	compatibilityDate  = "2023-03-19"
 	d1DatabaseID       = "ce8b95dc-b376-4ff8-9b9e-1801ed6d745d"
-	hyperdriveConfigID = "TODO"
+	hyperdriveConfigID = "d08bc4a1c3c140aa95e4ceec535f832e"
 )
 
 var (
