@@ -4,7 +4,9 @@
     name = "%[2]s"
     address = "example.com"
     type = "HTTP"
-    expected_codes = [
-      "200"
-    ]
+    http_config = {
+      expected_codes = [
+        "200"
+      ]
+    }
   }
