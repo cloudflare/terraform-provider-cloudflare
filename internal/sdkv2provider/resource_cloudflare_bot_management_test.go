@@ -95,7 +95,7 @@ func testCloudflareBotManagementSBFM(resourceName, rnd string, bm cloudflare.Bot
 		sbfm_verified_bots = "%[6]s"
 		sbfm_static_resource_protection = "%[7]t"
 		optimize_wordpress = "%[8]t",
-		ai_bots_protection = "%[9]t"
+		ai_bots_protection = "%[9]s"
 	}
 `, resourceName, rnd,
 		*bm.EnableJS, *bm.SBFMDefinitelyAutomated,
@@ -112,7 +112,7 @@ func testCloudflareBotManagementEntSubscription(resourceName, rnd string, bm clo
 
 		suppress_session_score = "%[4]t"
 		auto_update_model = "%[5]t",
-		ai_bots_protection = '%[6]t'
+		ai_bots_protection = '%[6]s'
 	}
 `, resourceName, rnd,
 		*bm.EnableJS, *bm.SuppressSessionScore, *bm.AutoUpdateModel, *bm.AIBotsProtection)
