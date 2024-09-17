@@ -893,15 +893,15 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 				}
 			}
 
+			if d.HasChange("saas_app.0.custom_claim") {
+				SaasConfig.CustomClaims = &[]cloudflare.OIDCClaimConfig{}
+			}
+
 			customClaims, _ := d.Get("saas_app.0.custom_claim").([]interface{})
 			for _, customClaims := range customClaims {
 				claimAsMap := customClaims.(map[string]interface{})
 				claim := convertOIDCClaimSchemaToStruct(claimAsMap)
-				if SaasConfig.CustomClaims == nil {
-					SaasConfig.CustomClaims = &[]cloudflare.OIDCClaimConfig{claim}
-				} else {
-					*SaasConfig.CustomClaims = append(*SaasConfig.CustomClaims, claim)
-				}
+				*SaasConfig.CustomClaims = append(*SaasConfig.CustomClaims, claim)
 			}
 
 			if _, ok := d.GetOk("saas_app.0.hybrid_and_implicit_options"); ok {
@@ -918,15 +918,15 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 			SaasConfig.NameIDTransformJsonata = d.Get("saas_app.0.name_id_transform_jsonata").(string)
 			SaasConfig.SamlAttributeTransformJsonata = d.Get("saas_app.0.saml_attribute_transform_jsonata").(string)
 
+			if d.HasChanges("saas_app.0.custom_attribute") {
+				SaasConfig.CustomAttributes = &[]cloudflare.SAMLAttributeConfig{}
+			}
+
 			customAttributes, _ := d.Get("saas_app.0.custom_attribute").([]interface{})
 			for _, customAttributes := range customAttributes {
 				attributeAsMap := customAttributes.(map[string]interface{})
 				attribute := convertSAMLAttributeSchemaToStruct(attributeAsMap)
-				if SaasConfig.CustomAttributes == nil {
-					SaasConfig.CustomAttributes = &[]cloudflare.SAMLAttributeConfig{attribute}
-				} else {
-					*SaasConfig.CustomAttributes = append(*SaasConfig.CustomAttributes, convertSAMLAttributeSchemaToStruct(attributeAsMap))
-				}
+				*SaasConfig.CustomAttributes = append(*SaasConfig.CustomAttributes, attribute)
 			}
 		}
 	}

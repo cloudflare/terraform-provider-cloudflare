@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: reconcile access application custom attributes logic
+```
