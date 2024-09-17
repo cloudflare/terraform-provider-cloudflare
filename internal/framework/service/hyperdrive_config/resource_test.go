@@ -42,7 +42,7 @@ func init() {
 				if q.ID == "d08bc4a1c3c140aa95e4ceec535f832e" {
 					continue
 				}
-				
+
 				err := client.DeleteHyperdriveConfig(ctx, cfv1.AccountIdentifier(accountID), q.ID)
 				if err != nil {
 					return err
