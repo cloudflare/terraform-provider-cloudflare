@@ -1,4 +1,6 @@
-## 4.42.0 (Unreleased)
+## 4.43.0 (Unreleased)
+
+## 4.42.0 (September 18th, 2024)
 
 FEATURES:
 
@@ -6,7 +8,7 @@ FEATURES:
 
 ENHANCEMENTS:
 
-* * resource/cloudflare_notification_policy: add support for `image_notification` alert type ([#3981](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3981))
+* resource/cloudflare_notification_policy: add support for `image_notification` alert type ([#3981](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3981))
 * resource/cloudflare_access_group: Added description strings to all rule types ([#3792](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3792))
 * resource/cloudflare_bot_management: Add support for ai_bots_protection settings ([#3960](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3960))
 * resource/cloudflare_record: remove internal references to deprecated ZoneID and ZoneName fields ([#4018](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4018))
