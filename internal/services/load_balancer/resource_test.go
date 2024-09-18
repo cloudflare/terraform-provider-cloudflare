@@ -263,9 +263,9 @@ func TestAccCloudflareLoadBalancer_LocationStrategy(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
 					// explicitly verify that location_strategy has been set
-					resource.TestCheckResourceAttr(name, "location_strategy.#", "1"),
-					resource.TestCheckResourceAttr(name, "location_strategy.0.prefer_ecs", "proximity"),
-					resource.TestCheckResourceAttr(name, "location_strategy.0.mode", "pop"),
+					resource.TestCheckResourceAttr(name, "location_strategy.%", "2"),
+					resource.TestCheckResourceAttr(name, "location_strategy.prefer_ecs", "proximity"),
+					resource.TestCheckResourceAttr(name, "location_strategy.mode", "pop"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
