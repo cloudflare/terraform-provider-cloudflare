@@ -77,21 +77,8 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 		}
 		params.Comment = cloudflare.F(paramsComment)
 	}
-	if m.Filter.Content != nil {
-		paramsContent := dns.RecordListParamsContent{}
-		if !m.Filter.Content.Contains.IsNull() {
-			paramsContent.Contains = cloudflare.F(m.Filter.Content.Contains.ValueString())
-		}
-		if !m.Filter.Content.Endswith.IsNull() {
-			paramsContent.Endswith = cloudflare.F(m.Filter.Content.Endswith.ValueString())
-		}
-		if !m.Filter.Content.Exact.IsNull() {
-			paramsContent.Exact = cloudflare.F(m.Filter.Content.Exact.ValueString())
-		}
-		if !m.Filter.Content.Startswith.IsNull() {
-			paramsContent.Startswith = cloudflare.F(m.Filter.Content.Startswith.ValueString())
-		}
-		params.Content = cloudflare.F(paramsContent)
+	if !m.Filter.Content.IsNull() {
+		params.Content = cloudflare.F(m.Filter.Content.ValueString())
 	}
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(shared.SortDirection(m.Filter.Direction.ValueString()))
@@ -99,21 +86,8 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 	if !m.Filter.Match.IsNull() {
 		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Filter.Match.ValueString()))
 	}
-	if m.Filter.Name != nil {
-		paramsName := dns.RecordListParamsName{}
-		if !m.Filter.Name.Contains.IsNull() {
-			paramsName.Contains = cloudflare.F(m.Filter.Name.Contains.ValueString())
-		}
-		if !m.Filter.Name.Endswith.IsNull() {
-			paramsName.Endswith = cloudflare.F(m.Filter.Name.Endswith.ValueString())
-		}
-		if !m.Filter.Name.Exact.IsNull() {
-			paramsName.Exact = cloudflare.F(m.Filter.Name.Exact.ValueString())
-		}
-		if !m.Filter.Name.Startswith.IsNull() {
-			paramsName.Startswith = cloudflare.F(m.Filter.Name.Startswith.ValueString())
-		}
-		params.Name = cloudflare.F(paramsName)
+	if !m.Filter.Name.IsNull() {
+		params.Name = cloudflare.F(m.Filter.Name.ValueString())
 	}
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(dns.RecordListParamsOrder(m.Filter.Order.ValueString()))
@@ -159,10 +133,10 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 type DNSRecordFindOneByDataSourceModel struct {
 	ZoneID    types.String                     `tfsdk:"zone_id" path:"zone_id,required"`
 	Comment   *DNSRecordCommentDataSourceModel `tfsdk:"comment" query:"comment,optional"`
-	Content   *DNSRecordContentDataSourceModel `tfsdk:"content" query:"content,optional"`
+	Content   types.String                     `tfsdk:"content" query:"content,optional"`
 	Direction types.String                     `tfsdk:"direction" query:"direction,computed_optional"`
 	Match     types.String                     `tfsdk:"match" query:"match,computed_optional"`
-	Name      *DNSRecordNameDataSourceModel    `tfsdk:"name" query:"name,optional"`
+	Name      types.String                     `tfsdk:"name" query:"name,optional"`
 	Order     types.String                     `tfsdk:"order" query:"order,computed_optional"`
 	Proxied   types.Bool                       `tfsdk:"proxied" query:"proxied,computed_optional"`
 	Search    types.String                     `tfsdk:"search" query:"search,optional"`
@@ -177,20 +151,6 @@ type DNSRecordCommentDataSourceModel struct {
 	Endswith   types.String `tfsdk:"endswith" json:"endswith,computed_optional"`
 	Exact      types.String `tfsdk:"exact" json:"exact,computed_optional"`
 	Present    types.String `tfsdk:"present" json:"present,computed_optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,computed_optional"`
-}
-
-type DNSRecordContentDataSourceModel struct {
-	Contains   types.String `tfsdk:"contains" json:"contains,computed_optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,computed_optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,computed_optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,computed_optional"`
-}
-
-type DNSRecordNameDataSourceModel struct {
-	Contains   types.String `tfsdk:"contains" json:"contains,computed_optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,computed_optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,computed_optional"`
 	Startswith types.String `tfsdk:"startswith" json:"startswith,computed_optional"`
 }
 
