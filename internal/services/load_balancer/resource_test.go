@@ -121,11 +121,11 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					// explicitly verify that our session_affinity has been set
 					resource.TestCheckResourceAttr(name, "session_affinity", "cookie"),
 					resource.TestCheckResourceAttr(name, "session_affinity_ttl", "1800"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.#", "1"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.samesite", "Auto"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.secure", "Auto"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.drain_duration", "60"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.zero_downtime_failover", "sticky"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.%", "4"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.samesite", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.secure", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.drain_duration", "60"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.zero_downtime_failover", "sticky"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
