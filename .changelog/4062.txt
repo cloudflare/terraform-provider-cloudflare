@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bump the aws group across 1 directory with 3 updates
+```
