@@ -231,8 +231,8 @@ func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
 					// explicitly verify that adaptive_routing has been set
-					resource.TestCheckResourceAttr(name, "adaptive_routing.#", "1"),
-					resource.TestCheckResourceAttr(name, "adaptive_routing.0.failover_across_pools", "true"),
+					resource.TestCheckResourceAttr(name, "adaptive_routing.%", "1"),
+					resource.TestCheckResourceAttr(name, "adaptive_routing.failover_across_pools", "true"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
