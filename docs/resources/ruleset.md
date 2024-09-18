@@ -319,6 +319,10 @@ resource "cloudflare_ruleset" "cache_settings_example" {
           }
         }
       }
+      cache_reserve = {
+        eligible = true
+        minimum_file_size = 100000
+      }
       origin_error_page_passthru = false
     }
     expression  = "(http.host eq \"example.host.com\")"
@@ -495,7 +499,7 @@ Optional:
 - `browser_ttl` (Block List) List of browser TTL parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--browser_ttl))
 - `cache` (Boolean) Whether to cache if expression matches.
 - `cache_key` (Block List) List of cache key parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key))
-- `cache_reserve` (Block List) List of cache reserve parameters to apply to the request (see [below for nested schema](#nestedblock--rules--action_parameters--cache_reserve))
+- `cache_reserve` (Block List) List of cache reserve parameters to apply to the request. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_reserve))
 - `content` (String) Content of the custom error response.
 - `content_type` (String) Content-Type of the custom error response.
 - `cookie_fields` (Set of String) List of cookie values to include as part of custom fields logging.
@@ -582,18 +586,6 @@ Optional:
 - `custom_key` (Block List) Custom key parameters for the request. (see [below for nested schema](#nestedblock--rules--action_parameters--cache_key--custom_key))
 - `ignore_query_strings_order` (Boolean) Ignore query strings order.
 
-<a id="nestedblock--rules--action_parameters--cache_reserve"></a>
-### Nested Schema for `rules.action_parameters.cache_reserve`
-
-Required:
-
-- `eligible` (Boolean) Determines whether Cloudflare will write the eligible resource to cache reserve.
-
-Optional:
-
-- `minimum_file_size` (Number) The minimum file size, in bytes, eligible for storage in cache reserve. If omitted and "eligible" is true, Cloudflare will use 0 bytes by default.
-
-
 <a id="nestedblock--rules--action_parameters--cache_key--custom_key"></a>
 ### Nested Schema for `rules.action_parameters.cache_key.custom_key`
 
@@ -652,6 +644,18 @@ Optional:
 - `lang` (Boolean) Add language data to the custom key.
 
 
+
+
+<a id="nestedblock--rules--action_parameters--cache_reserve"></a>
+### Nested Schema for `rules.action_parameters.cache_reserve`
+
+Required:
+
+- `eligible` (Boolean) Determines whether Cloudflare will write the eligible resource to cache reserve.
+
+Optional:
+
+- `minimum_file_size` (Number) The minimum file size, in bytes, eligible for storage in cache reserve. If omitted and "eligible" is true, Cloudflare will use 0 bytes by default.
 
 
 <a id="nestedblock--rules--action_parameters--edge_ttl"></a>
