@@ -114,7 +114,7 @@ func (r *HyperdriveConfigResource) Update(ctx context.Context, req resource.Upda
 	config := buildHyperdriveCreateUpdateConfigsFromModel(data, caching)
 
 	updatedConfig, err := r.client.V1.UpdateHyperdriveConfig(ctx, cfv1.AccountIdentifier(data.AccountID.ValueString()), cfv1.UpdateHyperdriveConfigParams{
-		HyperdriveID: data.ID.String(),
+		HyperdriveID: data.ID.ValueString(),
 		Name:         config.Name,
 		Origin:       config.Origin,
 		Caching:      config.Caching,
