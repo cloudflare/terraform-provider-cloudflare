@@ -251,7 +251,7 @@ resource "cloudflare_workers_script" "%[1]s" {
 
   hyperdrive_config_binding {
 	binding = "MY_HYPERDRIVE"
-	id      = %[5]s
+	id      = "%[5]s"
   }
 
 }`, rnd, scriptContent2, encodedWasm, accountID, hyperdriveConfigID)
