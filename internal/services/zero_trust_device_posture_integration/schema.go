@@ -47,7 +47,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"kolide",
 						"tanium",
 						"sentinelone_s2s",
-						"custom_s2s",
 					),
 				},
 			},
@@ -69,7 +68,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"client_secret": schema.StringAttribute{
 						Description: "The Workspace One client secret provided in the Workspace One Admin Dashboard.",
-						Optional:    true,
+						Required:    true,
 					},
 					"customer_id": schema.StringAttribute{
 						Description: "The Crowdstrike customer ID.",

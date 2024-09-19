@@ -19,6 +19,5 @@ type OriginCACertificateModel struct {
 	RequestedValidity types.Float64                  `tfsdk:"requested_validity" json:"requested_validity,computed_optional"`
 	Hostnames         customfield.List[types.String] `tfsdk:"hostnames" json:"hostnames,computed_optional"`
 	Certificate       types.String                   `tfsdk:"certificate" json:"certificate,computed"`
-	ExpiresOn         types.String                   `tfsdk:"expires_on" json:"expires_on,computed"`
-	RevokedAt         timetypes.RFC3339              `tfsdk:"revoked_at" json:"revoked_at,computed" format:"date-time"`
+	ExpiresOn         timetypes.RFC3339              `tfsdk:"expires_on" json:"expires_on,computed" format:"date-time"`
 }

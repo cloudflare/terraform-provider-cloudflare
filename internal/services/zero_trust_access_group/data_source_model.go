@@ -108,29 +108,28 @@ type ZeroTrustAccessGroupExcludeGroupDataSourceModel struct {
 }
 
 type ZeroTrustAccessGroupExcludeAzureADDataSourceModel struct {
-	ID                 types.String `tfsdk:"id" json:"id,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type ZeroTrustAccessGroupExcludeGitHubOrganizationDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type ZeroTrustAccessGroupExcludeGSuiteDataSourceModel struct {
-	Email              types.String `tfsdk:"email" json:"email,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupExcludeOktaDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupExcludeSAMLDataSourceModel struct {
-	AttributeName      types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
-	AttributeValue     types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type ZeroTrustAccessGroupExcludeServiceTokenDataSourceModel struct {
@@ -201,29 +200,28 @@ type ZeroTrustAccessGroupIncludeGroupDataSourceModel struct {
 }
 
 type ZeroTrustAccessGroupIncludeAzureADDataSourceModel struct {
-	ID                 types.String `tfsdk:"id" json:"id,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type ZeroTrustAccessGroupIncludeGitHubOrganizationDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type ZeroTrustAccessGroupIncludeGSuiteDataSourceModel struct {
-	Email              types.String `tfsdk:"email" json:"email,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupIncludeOktaDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupIncludeSAMLDataSourceModel struct {
-	AttributeName      types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
-	AttributeValue     types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type ZeroTrustAccessGroupIncludeServiceTokenDataSourceModel struct {
@@ -294,29 +292,28 @@ type ZeroTrustAccessGroupIsDefaultGroupDataSourceModel struct {
 }
 
 type ZeroTrustAccessGroupIsDefaultAzureADDataSourceModel struct {
-	ID                 types.String `tfsdk:"id" json:"id,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type ZeroTrustAccessGroupIsDefaultGitHubOrganizationDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type ZeroTrustAccessGroupIsDefaultGSuiteDataSourceModel struct {
-	Email              types.String `tfsdk:"email" json:"email,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupIsDefaultOktaDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupIsDefaultSAMLDataSourceModel struct {
-	AttributeName      types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
-	AttributeValue     types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type ZeroTrustAccessGroupIsDefaultServiceTokenDataSourceModel struct {
@@ -387,29 +384,28 @@ type ZeroTrustAccessGroupRequireGroupDataSourceModel struct {
 }
 
 type ZeroTrustAccessGroupRequireAzureADDataSourceModel struct {
-	ID                 types.String `tfsdk:"id" json:"id,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
 }
 
 type ZeroTrustAccessGroupRequireGitHubOrganizationDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Name         types.String `tfsdk:"name" json:"name,computed"`
 }
 
 type ZeroTrustAccessGroupRequireGSuiteDataSourceModel struct {
-	Email              types.String `tfsdk:"email" json:"email,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupRequireOktaDataSourceModel struct {
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
-	Name               types.String `tfsdk:"name" json:"name,computed"`
+	ConnectionID types.String `tfsdk:"connection_id" json:"connection_id,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
 }
 
 type ZeroTrustAccessGroupRequireSAMLDataSourceModel struct {
-	AttributeName      types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
-	AttributeValue     types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
-	IdentityProviderID types.String `tfsdk:"identity_provider_id" json:"identity_provider_id,computed"`
+	AttributeName  types.String `tfsdk:"attribute_name" json:"attribute_name,computed"`
+	AttributeValue types.String `tfsdk:"attribute_value" json:"attribute_value,computed"`
 }
 
 type ZeroTrustAccessGroupRequireServiceTokenDataSourceModel struct {

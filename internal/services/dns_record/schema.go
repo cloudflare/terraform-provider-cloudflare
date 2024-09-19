@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -324,7 +323,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"comment_modified_on": schema.StringAttribute{
-				Description: "When the record comment was last modified. Omitted if there is no comment.",
+				Description: "When the record comment was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -352,7 +351,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Default:     booldefault.StaticBool(false),
 			},
 			"tags_modified_on": schema.StringAttribute{
-				Description: "When the record tags were last modified. Omitted if there are no tags.",
+				Description: "When the record tags were last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
@@ -369,15 +368,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"meta": schema.StringAttribute{
+			"meta": schema.SingleNestedAttribute{
 				Description: "Extra Cloudflare-specific information about the record.",
 				Computed:    true,
-				CustomType:  jsontypes.NormalizedType{},
-			},
-			"settings": schema.StringAttribute{
-				Description: "Settings for the DNS record.",
-				Computed:    true,
-				CustomType:  jsontypes.NormalizedType{},
+				CustomType:  customfield.NewNestedObjectType[DNSRecordMetaModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"auto_added": schema.BoolAttribute{
+						Description: "Will exist if Cloudflare automatically added this DNS record during initial setup.",
+						Computed:    true,
+					},
+				},
 			},
 		},
 	}
