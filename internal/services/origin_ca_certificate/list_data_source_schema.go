@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -85,7 +84,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"expires_on": schema.StringAttribute{
 							Description: "When the certificate will expire.",
 							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},

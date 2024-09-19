@@ -30,8 +30,8 @@ type CustomHostnameDataSourceModel struct {
 	Hostname                  types.String                                                                     `tfsdk:"hostname" json:"hostname,computed"`
 	ID                        types.String                                                                     `tfsdk:"id" json:"id,computed"`
 	Status                    types.String                                                                     `tfsdk:"status" json:"status,computed"`
+	CustomMetadata            customfield.Map[types.String]                                                    `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	VerificationErrors        customfield.List[types.String]                                                   `tfsdk:"verification_errors" json:"verification_errors,computed"`
-	CustomMetadata            customfield.NestedObject[CustomHostnameCustomMetadataDataSourceModel]            `tfsdk:"custom_metadata" json:"custom_metadata,computed"`
 	OwnershipVerification     customfield.NestedObject[CustomHostnameOwnershipVerificationDataSourceModel]     `tfsdk:"ownership_verification" json:"ownership_verification,computed"`
 	OwnershipVerificationHTTP customfield.NestedObject[CustomHostnameOwnershipVerificationHTTPDataSourceModel] `tfsdk:"ownership_verification_http" json:"ownership_verification_http,computed"`
 	SSL                       customfield.NestedObject[CustomHostnameSSLDataSourceModel]                       `tfsdk:"ssl" json:"ssl,computed"`
@@ -68,10 +68,6 @@ func (m *CustomHostnameDataSourceModel) toListParams(_ context.Context) (params 
 	}
 
 	return
-}
-
-type CustomHostnameCustomMetadataDataSourceModel struct {
-	Key types.String `tfsdk:"key" json:"key,computed"`
 }
 
 type CustomHostnameOwnershipVerificationDataSourceModel struct {
