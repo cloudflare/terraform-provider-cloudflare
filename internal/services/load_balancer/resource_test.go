@@ -196,14 +196,14 @@ func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
 					// explicitly verify that our session_affinity has been set
 					resource.TestCheckResourceAttr(name, "session_affinity", "header"),
 					resource.TestCheckResourceAttr(name, "session_affinity_ttl", "1800"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.#", "1"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.samesite", "Auto"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.secure", "Auto"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.drain_duration", "60"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.zero_downtime_failover", "temporary"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.headers.#", "1"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.headers.0", "x-custom"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.0.require_all_headers", "true"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.%", "6"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.samesite", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.secure", "Auto"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.drain_duration", "60"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.zero_downtime_failover", "temporary"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.headers.#", "1"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.headers.0", "x-custom"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.require_all_headers", "true"),
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
