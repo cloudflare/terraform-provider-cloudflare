@@ -95,6 +95,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"magic_transit",
 									"magic_transit_ids_managed",
 									"magic_transit_managed",
+									"magic_transit_ratelimit",
 								),
 							},
 						},
