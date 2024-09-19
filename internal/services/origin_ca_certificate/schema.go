@@ -82,10 +82,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate will expire.",
 				Computed:    true,
-			},
-			"revoked_at": schema.StringAttribute{
-				Description: "When the certificate was revoked.",
-				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 		},

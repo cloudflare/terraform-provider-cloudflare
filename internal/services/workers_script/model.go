@@ -72,7 +72,6 @@ type WorkersScriptMetadataBindingsModel struct {
 type WorkersScriptMetadataMigrationsModel struct {
 	DeletedClasses     *[]types.String                                            `tfsdk:"deleted_classes" json:"deleted_classes,optional"`
 	NewClasses         *[]types.String                                            `tfsdk:"new_classes" json:"new_classes,optional"`
-	NewSqliteClasses   *[]types.String                                            `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,optional"`
 	NewTag             types.String                                               `tfsdk:"new_tag" json:"new_tag,computed_optional"`
 	OldTag             types.String                                               `tfsdk:"old_tag" json:"old_tag,computed_optional"`
 	RenamedClasses     *[]*WorkersScriptMetadataMigrationsRenamedClassesModel     `tfsdk:"renamed_classes" json:"renamed_classes,optional"`
@@ -94,7 +93,6 @@ type WorkersScriptMetadataMigrationsTransferredClassesModel struct {
 type WorkersScriptMetadataMigrationsStepsModel struct {
 	DeletedClasses     customfield.List[types.String]                                                            `tfsdk:"deleted_classes" json:"deleted_classes,computed_optional"`
 	NewClasses         customfield.List[types.String]                                                            `tfsdk:"new_classes" json:"new_classes,computed_optional"`
-	NewSqliteClasses   customfield.List[types.String]                                                            `tfsdk:"new_sqlite_classes" json:"new_sqlite_classes,computed_optional"`
 	RenamedClasses     customfield.NestedObjectList[WorkersScriptMetadataMigrationsStepsRenamedClassesModel]     `tfsdk:"renamed_classes" json:"renamed_classes,computed_optional"`
 	TransferredClasses customfield.NestedObjectList[WorkersScriptMetadataMigrationsStepsTransferredClassesModel] `tfsdk:"transferred_classes" json:"transferred_classes,computed_optional"`
 }
