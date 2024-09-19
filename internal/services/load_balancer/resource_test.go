@@ -429,7 +429,7 @@ func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "description", "tf-acctest load balancer using proximity-balancing"),
 					resource.TestCheckResourceAttr(name, "proxied", "true"),
-					resource.TestCheckResourceAttr(name, "ttl", "0"),
+					resource.TestCheckResourceAttr(name, "ttl", "30"),
 					resource.TestCheckResourceAttr(name, "steering_policy", "proximity"),
 				),
 			},
