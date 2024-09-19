@@ -1,10 +1,5 @@
 # Cloudflare Terraform Provider
 
-## Quickstarts
-
-- [Getting started with Cloudflare and Terraform](https://developers.cloudflare.com/terraform/installing)
-- [Developing the provider](contributing/development.md)
-
 ## Minimum requirements
 
 - Terraform 1.2 or newer. We recommend running the [latest version](https://developer.hashicorp.com/terraform/downloads?product_intent=terraform) for optimal compatibility with the Cloudflare provider. Terraform versions older than 1.2 have known issues with newer features and internals.
