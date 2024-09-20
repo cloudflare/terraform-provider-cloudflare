@@ -1,23 +1,25 @@
-name: Semgrep
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
-
+  pull_request: {}
+  workflow_dispatch: {}
+  push: 
+    branches:
+      - main
+      - master
+  schedule:
+    - cron: '0 0 * * *'
+name: Semgrep config
 jobs:
   semgrep:
-    name: Scan
-    runs-on: ubuntu-latest
+    name: semgrep/ci
+    runs-on: ubuntu-20.04
+    env:
+      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+      SEMGREP_URL: https://cloudflare.semgrep.dev
+      SEMGREP_APP_URL: https://cloudflare.semgrep.dev
+      SEMGREP_VERSION_CHECK_URL: https://cloudflare.semgrep.dev/api/check-version
     container:
       image: returntocorp/semgrep
-    if: (github.actor != 'dependabot[bot]')
     steps:
-      - uses: actions/checkout@v4
-      - run: semgrep ci --config .semgrep.yml
-        env:
-          # only trigger for files in this change
-          SEMGREP_BASELINE_BRANCH: ${{ github.head_ref }}
+      - uses: actions/checkout@v3
+      - run: semgrep ci
