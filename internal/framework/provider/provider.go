@@ -41,6 +41,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/user"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace_deprecated"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_access_groups"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_access_mtls_hostname_settings"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_infrastructure_access_target"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_behavior"
@@ -409,6 +410,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		dcv_delegation.NewDataSource,
 		infrastructure_access_target_deprecated.NewDataSource,
 		zero_trust_infrastructure_access_target.NewDataSource,
+		zero_trust_access_groups.NewDataSource,
 	}
 }
 
