@@ -1,20 +1,22 @@
-package sdkv2provider
+package infrastructure_access_target_test
 
 import (
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareTarget_MatchHostname(t *testing.T) {
-	rnd1 := generateRandomResourceName()
-	rnd2 := generateRandomResourceName()
+func TestAccCloudflareInfraAccessTarget_DataSource(t *testing.T) {
+	rnd1 := utils.GenerateRandomResourceName()
+	rnd2 := utils.GenerateRandomResourceName()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testCloudflareInfrastructureTargetsMatchNoIpv6(rnd1),
