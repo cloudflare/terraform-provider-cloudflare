@@ -5,14 +5,12 @@ import (
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
-	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 // Resource Schema
@@ -40,6 +38,40 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 				MarkdownDescription: "A non-unique field that refers to a target.",
 				Required:            true,
 			},
+			"ip": schema.SingleNestedAttribute{
+				MarkdownDescription: "The IPv4/IPv6 address that identifies where to reach a target.",
+				Required:            true,
+				Attributes: map[string]schema.Attribute{
+					"ipv4": schema.SingleNestedAttribute{
+						MarkdownDescription: "The target's IPv4 address.",
+						Optional:            true,
+						Attributes: map[string]schema.Attribute{
+							"ip_addr": schema.StringAttribute{
+								MarkdownDescription: "The IP address of the target.",
+								Required:            true,
+							},
+							"virtual_network_id": schema.StringAttribute{
+								MarkdownDescription: "The private virtual network identifier for the target.",
+								Required:            true,
+							},
+						},
+					},
+					"ipv6": schema.SingleNestedAttribute{
+						MarkdownDescription: "The target's IPv6 address.",
+						Optional:            true,
+						Attributes: map[string]schema.Attribute{
+							"ip_addr": schema.StringAttribute{
+								MarkdownDescription: "The IP address of the target.",
+								Required:            true,
+							},
+							"virtual_network_id": schema.StringAttribute{
+								MarkdownDescription: "The private virtual network identifier for the target.",
+								Required:            true,
+							},
+						},
+					},
+				},
+			},
 			"created_at": schema.StringAttribute{
 				MarkdownDescription: "The date and time at which the target was created.",
 				// Set value to read-only
@@ -49,46 +81,6 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 				MarkdownDescription: "The date and time at which the target was last modified.",
 				// Set value to read-only
 				Computed: true,
-			},
-		},
-		Blocks: map[string]schema.Block{
-			"ip": schema.SetNestedBlock{
-				MarkdownDescription: "The IPv4/IPv6 address that identifies where to reach a target.",
-				Validators: []validator.Set{
-					setvalidator.IsRequired(),
-				},
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"ipv4": schema.SingleNestedAttribute{
-							MarkdownDescription: "The target's IPv4 address.",
-							Optional:            true,
-							Attributes: map[string]schema.Attribute{
-								"ip_addr": schema.StringAttribute{
-									MarkdownDescription: "The IP address of the target.",
-									Required:            true,
-								},
-								"virtual_network_id": schema.StringAttribute{
-									MarkdownDescription: "The private virtual network identifier for the target.",
-									Required:            true,
-								},
-							},
-						},
-						"ipv6": schema.SingleNestedAttribute{
-							MarkdownDescription: "The target's IPv6 address.",
-							Optional:            true,
-							Attributes: map[string]schema.Attribute{
-								"ip_addr": schema.StringAttribute{
-									MarkdownDescription: "The IP address of the target.",
-									Required:            true,
-								},
-								"virtual_network_id": schema.StringAttribute{
-									MarkdownDescription: "The private virtual network identifier for the target.",
-									Required:            true,
-								},
-							},
-						},
-					},
-				},
 			},
 		},
 	}
