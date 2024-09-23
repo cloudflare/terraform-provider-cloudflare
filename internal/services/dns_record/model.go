@@ -31,6 +31,7 @@ type DNSRecordModel struct {
 	TTL               types.Float64                  `tfsdk:"ttl" json:"ttl,required"`
 	Tags              customfield.List[types.String] `tfsdk:"tags" json:"tags,computed_optional"`
 	Meta              jsontypes.Normalized           `tfsdk:"meta" json:"meta,computed"`
+	Settings          jsontypes.Normalized           `tfsdk:"settings" json:"settings,computed"`
 }
 
 type DNSRecordDataModel struct {
@@ -70,8 +71,4 @@ type DNSRecordDataModel struct {
 	Port          types.Float64 `tfsdk:"port" json:"port,optional"`
 	Weight        types.Float64 `tfsdk:"weight" json:"weight,optional"`
 	Fingerprint   types.String  `tfsdk:"fingerprint" json:"fingerprint,optional"`
-}
-
-type DNSRecordMetaModel struct {
-	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed"`
 }

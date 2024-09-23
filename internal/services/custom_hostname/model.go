@@ -19,7 +19,7 @@ type CustomHostnameModel struct {
 	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl,required"`
 	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,computed_optional"`
 	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed_optional"`
-	CustomMetadata            customfield.NestedObject[CustomHostnameCustomMetadataModel]            `tfsdk:"custom_metadata" json:"custom_metadata,computed_optional"`
+	CustomMetadata            customfield.Map[types.String]                                          `tfsdk:"custom_metadata" json:"custom_metadata,computed_optional"`
 	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status                    types.String                                                           `tfsdk:"status" json:"status,computed"`
 	VerificationErrors        customfield.List[types.String]                                         `tfsdk:"verification_errors" json:"verification_errors,computed"`
@@ -44,10 +44,6 @@ type CustomHostnameSSLSettingsModel struct {
 	HTTP2         types.String                   `tfsdk:"http2" json:"http2,computed_optional"`
 	MinTLSVersion types.String                   `tfsdk:"min_tls_version" json:"min_tls_version,computed_optional"`
 	TLS1_3        types.String                   `tfsdk:"tls_1_3" json:"tls_1_3,computed_optional"`
-}
-
-type CustomHostnameCustomMetadataModel struct {
-	Key types.String `tfsdk:"key" json:"key,computed_optional"`
 }
 
 type CustomHostnameOwnershipVerificationModel struct {

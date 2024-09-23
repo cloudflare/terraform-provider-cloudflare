@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -200,26 +201,15 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
 							Computed:    true,
 						},
-						"comment_modified_on": schema.StringAttribute{
-							Description: "When the record comment was last modified.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
-						},
 						"created_on": schema.StringAttribute{
 							Description: "When the record was created.",
 							Computed:    true,
 							CustomType:  timetypes.RFC3339Type{},
 						},
-						"meta": schema.SingleNestedAttribute{
+						"meta": schema.StringAttribute{
 							Description: "Extra Cloudflare-specific information about the record.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[DNSRecordsMetaDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"auto_added": schema.BoolAttribute{
-									Description: "Will exist if Cloudflare automatically added this DNS record during initial setup.",
-									Computed:    true,
-								},
-							},
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"modified_on": schema.StringAttribute{
 							Description: "When the record was last modified.",
@@ -238,16 +228,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
 							Computed:    true,
 						},
+						"settings": schema.StringAttribute{
+							Description: "Settings for the DNS record.",
+							Computed:    true,
+							CustomType:  jsontypes.NormalizedType{},
+						},
 						"tags": schema.ListAttribute{
 							Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
 							Computed:    true,
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
-						},
-						"tags_modified_on": schema.StringAttribute{
-							Description: "When the record tags were last modified.",
-							Computed:    true,
-							CustomType:  timetypes.RFC3339Type{},
 						},
 						"ttl": schema.Float64Attribute{
 							Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
@@ -255,6 +245,16 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Validators: []validator.Float64{
 								float64validator.Between(30, 86400),
 							},
+						},
+						"comment_modified_on": schema.StringAttribute{
+							Description: "When the record comment was last modified. Omitted if there is no comment.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"tags_modified_on": schema.StringAttribute{
+							Description: "When the record tags were last modified. Omitted if there are no tags.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
 						},
 					},
 				},
