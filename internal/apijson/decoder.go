@@ -36,7 +36,7 @@ func Unmarshal(raw []byte, to any) error {
 // UnmarshalComputed is similar to [Unmarshal], but leaves non-computed
 // properties (e.g. required and optional) unchanged.
 func UnmarshalComputed(raw []byte, to any) error {
-	d := &decoderBuilder{dateFormat: time.RFC3339, computedOnly: true}
+	d := &decoderBuilder{dateFormat: time.RFC3339, unmarshalComputedOnly: true}
 	return d.unmarshal(raw, to)
 }
 
@@ -48,18 +48,17 @@ func UnmarshalRoot(raw []byte, to any) error {
 	return d.unmarshal(raw, to)
 }
 
-type TerraformSkipBehavior int
+type TerraformUpdateBehavior int
 
 const (
-	// don't skip the property
-	NoSkip TerraformSkipBehavior = iota
+	// always update the property from JSON
+	Always TerraformUpdateBehavior = iota
 
 	// if the value is Null or Undefined, then update the value, otherwise skip
-	ComputedOptional
+	IfUnset
 
-	// if the value is a primitive, skip it. If it's a nested object, then update
-	// the inner properties
-	NotComputed
+	// always leave this property unchanged, but possibly update nested values
+	OnlyNested
 )
 
 // decoderBuilder contains the 'compile-time' state of the decoder.
@@ -72,11 +71,11 @@ type decoderBuilder struct {
 	dateFormat string
 
 	// Only updates computed properties on structs
-	computedOnly bool
+	unmarshalComputedOnly bool
 
 	// This is used to control decoding behavior for computed and computed_optional
 	// fields.
-	tfSkipBehavior TerraformSkipBehavior
+	updateBehavior TerraformUpdateBehavior
 }
 
 // decoderState contains the 'run-time' state of the decoder.
@@ -115,7 +114,7 @@ type decoderEntry struct {
 	reflect.Type
 	dateFormat     string
 	root           bool
-	tfSkipBehavior TerraformSkipBehavior
+	tfSkipBehavior TerraformUpdateBehavior
 }
 
 func (d *decoderBuilder) unmarshal(raw []byte, to any) error {
@@ -132,7 +131,7 @@ func (d *decoderBuilder) typeDecoder(t reflect.Type) decoderFunc {
 		Type:           t,
 		dateFormat:     d.dateFormat,
 		root:           d.root,
-		tfSkipBehavior: d.tfSkipBehavior,
+		tfSkipBehavior: d.updateBehavior,
 	}
 
 	if fi, ok := decoders.Load(entry); ok {
@@ -168,6 +167,8 @@ func unmarshalerDecoder(n gjson.Result, v reflect.Value, state *decoderState) er
 }
 
 func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
+	b := d.updateBehavior
+
 	if t.ConvertibleTo(reflect.TypeOf(time.Time{})) {
 		return d.newTimeTypeDecoder(t)
 	}
@@ -191,6 +192,11 @@ func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
 		return func(n gjson.Result, v reflect.Value, state *decoderState) error {
 			if !v.IsValid() {
 				return fmt.Errorf("apijson: unexpected invalid reflection value %+#v", v)
+			}
+
+			//
+			if (v.IsNil() && b == OnlyNested) || (!v.IsNil() && b == IfUnset) {
+				return nil
 			}
 
 			newValue := reflect.New(inner).Elem()
@@ -365,12 +371,11 @@ func (d *decoderBuilder) newArrayTypeDecoder(t reflect.Type) decoderFunc {
 func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	ctx := context.TODO()
 
-	b := d.tfSkipBehavior
-	shouldSkipPrimitive := shouldSkipPrimitiveFunc(b)
+	b := d.updateBehavior
 
 	if (t == reflect.TypeOf(basetypes.StringValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdatePrimitive(value, b) {
 				return nil
 			}
 			if node.Type == gjson.Null {
@@ -387,7 +392,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.Int64Value{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdatePrimitive(value, b) {
 				return nil
 			}
 			if node.Type == gjson.Null {
@@ -406,7 +411,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.Float64Value{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdatePrimitive(value, b) {
 				return nil
 			}
 			if node.Type == gjson.Null {
@@ -425,7 +430,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.NumberValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdatePrimitive(value, b) {
 				return nil
 			}
 			if node.Type == gjson.Null {
@@ -443,7 +448,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.BoolValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdatePrimitive(value, b) {
 				return nil
 			}
 			if node.Type == gjson.Null {
@@ -460,7 +465,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.ListValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdateNested(value, b) {
 				return nil
 			}
 			eleType := value.Interface().(basetypes.ListValue).ElementType(ctx)
@@ -483,7 +488,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.SetValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdateNested(value, b) {
 				return nil
 			}
 			eleType := value.Interface().(basetypes.SetValue).ElementType(ctx)
@@ -510,6 +515,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.MapValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdateNested(value, b) {
+				return nil
+			}
 			eleType := value.Interface().(basetypes.MapValue).ElementType(ctx)
 			switch node.Type {
 			case gjson.Null:
@@ -544,6 +552,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.ObjectValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdateNested(value, b) {
+				return nil
+			}
 			objValue := value.Interface().(basetypes.ObjectValue)
 			attrTypes := objValue.AttributeTypes(ctx)
 			switch node.Type {
@@ -592,6 +603,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		structType := t.Field(0).Type
 		decoderFunc := d.newStructTypeDecoder(structType)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdateNested(value, b) {
+				return nil
+			}
 			objectValue := value.Interface().(customfield.NestedObjectLike)
 			if node.Type == gjson.Null {
 				nullValue := objectValue.NullValue(ctx)
@@ -619,6 +633,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		structSliceType := reflect.SliceOf(structType)
 		dec := d.typeDecoder(structSliceType)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdateNested(value, b) {
+				return nil
+			}
 			existingObjectListValue := value.Interface().(customfield.NestedObjectListLike)
 			if node.Type == gjson.Null {
 				nullValue := existingObjectListValue.NullValue(ctx)
@@ -645,6 +662,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		sliceOfStruct := reflect.SliceOf(structType)
 		dec := d.typeDecoder(sliceOfStruct)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdatePrimitive(value, b) {
+				return nil
+			}
 			objectListValue := value.Interface().(customfield.ListLike)
 			if node.Type == gjson.Null {
 				nullValue := objectListValue.NullValue(ctx)
@@ -669,6 +689,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		structMapType := reflect.MapOf(reflect.TypeOf(""), structType)
 		dec := d.typeDecoder(structMapType)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdateNested(value, b) {
+				return nil
+			}
 			existingObjectMapValue := value.Interface().(customfield.NestedObjectMapLike)
 			if node.Type == gjson.Null {
 				nullValue := existingObjectMapValue.NullValue(ctx)
@@ -695,6 +718,9 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		mapOfStruct := reflect.MapOf(reflect.TypeOf(""), structType)
 		dec := d.typeDecoder(mapOfStruct)
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdatePrimitive(value, b) {
+				return nil
+			}
 			objectMapValue := value.Interface().(customfield.MapLike)
 			if node.Type == gjson.Null {
 				nullValue := objectMapValue.NullValue(ctx)
@@ -716,12 +742,15 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(basetypes.DynamicValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdatePrimitive(value, b) {
+				return nil
+			}
 			dynamic := value.Interface().(basetypes.DynamicValue)
 			underlying := dynamic.UnderlyingValue()
+			if !shouldUpdatePrimitive(reflect.ValueOf(underlying), b) {
+				return nil
+			}
 			if node.Type == gjson.Null && underlying == nil {
-				if shouldSkipPrimitive(value) {
-					return nil
-				}
 				// special case of null means we don't have an underlying type
 				value.Set(reflect.ValueOf(types.DynamicNull()))
 				return nil
@@ -751,7 +780,7 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 
 	if (t == reflect.TypeOf(jsontypes.Normalized{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
-			if shouldSkipPrimitive(value) {
+			if !shouldUpdatePrimitive(value, b) {
 				return nil
 			}
 			raw := ""
@@ -776,23 +805,41 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 	}
 }
 
-func shouldSkipPrimitiveFunc(behavior TerraformSkipBehavior) func(reflect.Value) bool {
-	return func(value reflect.Value) bool {
-		switch behavior {
-		case ComputedOptional:
-			attr, ok := value.Interface().(attr.Value)
-			// skip if the value is already known
-			if ok && !attr.IsNull() && !attr.IsUnknown() {
-				return true
-			}
-			return false
-		case NotComputed:
-			return true
-		case NoSkip:
-			return false
-		default:
+func shouldUpdateNested(value reflect.Value, behavior TerraformUpdateBehavior) bool {
+	switch behavior {
+	case IfUnset:
+		// even if the value is set, nested properties may be
+		// unset, so we still update recursively.
+		return true
+	case OnlyNested:
+		attr, ok := value.Interface().(attr.Value)
+		if ok && attr.IsNull() {
 			return false
 		}
+		// if the value is not null, we may have nested
+		// properties to update.
+		return true
+	case Always:
+		return true
+	default:
+		return true
+	}
+}
+
+func shouldUpdatePrimitive(value reflect.Value, behavior TerraformUpdateBehavior) bool {
+	switch behavior {
+	case IfUnset:
+		attr, ok := value.Interface().(attr.Value)
+		if ok && (attr.IsNull() || attr.IsUnknown()) {
+			return true
+		}
+		return false
+	case OnlyNested:
+		return false
+	case Always:
+		return true
+	default:
+		return true
 	}
 }
 
@@ -830,18 +877,21 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 				continue
 			}
 
-			// if in computed-only mode, skip non-computed fields
-			if d.computedOnly {
-				// always skip non-computed fields
-				if !ptag.computed && !ptag.computed_optional {
-					d.tfSkipBehavior = NotComputed
+			// sets the appropriate unmarshal behavior if we are only un-marshaling
+			// computed properties.
+			if d.unmarshalComputedOnly {
+				// always skip non-computed fields, but update nested fields
+				// if the value is not null
+				if ptag.required || ptag.optional {
+					d.updateBehavior = OnlyNested
 				} else if ptag.computed_optional {
 					// skip computed_optional fields only if they are non-null
-					// we need the current value to decide if we should skip, so
-					// we set a flag to be used in field decoder later
-					d.tfSkipBehavior = ComputedOptional
+					d.updateBehavior = IfUnset
 				} else {
-					d.tfSkipBehavior = NoSkip
+					// if the value is computed, we always update it.
+					// note this is also set for untagged properties, so the default
+					// is to update.
+					d.updateBehavior = Always
 				}
 			}
 
@@ -872,7 +922,7 @@ func (d *decoderBuilder) newStructTypeDecoder(t reflect.Type) decoderFunc {
 			}
 			decoderFields[ptag.name] = decoderField{ptag, d.typeDecoder(field.Type), idx, field.Name}
 			d.dateFormat = oldFormat
-			d.tfSkipBehavior = NoSkip // reset the flag
+			d.updateBehavior = Always // reset the flag
 		}
 	}
 	collectFieldDecoders(t, []int{})
@@ -1083,10 +1133,10 @@ func (d *decoderBuilder) newTimeTypeDecoder(t reflect.Type) decoderFunc {
 }
 
 func (d *decoderBuilder) newCustomTimeTypeDecoder(t reflect.Type) decoderFunc {
-	shouldSkipPrimitive := shouldSkipPrimitiveFunc(d.tfSkipBehavior)
+	b := d.updateBehavior
 	format := d.dateFormat
 	return func(n gjson.Result, v reflect.Value, state *decoderState) error {
-		if shouldSkipPrimitive(v) {
+		if !shouldUpdatePrimitive(v, b) {
 			return nil
 		}
 		if n.Type == gjson.Null {
