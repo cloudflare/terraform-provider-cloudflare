@@ -241,8 +241,8 @@ type RulesetRulesActionParametersCacheKeyCustomKeyUserModel struct {
 }
 
 type RulesetRulesActionParametersCacheReserveModel struct {
-	Eligible        types.Bool  `tfsdk:"eligible" json:"eligible,required"`
-	MinimumFileSize types.Int64 `tfsdk:"minimum_file_size" json:"minimum_file_size,optional"`
+	Eligible    types.Bool  `tfsdk:"eligible" json:"eligible,required"`
+	MinFileSize types.Int64 `tfsdk:"min_file_size" json:"min_file_size,required"`
 }
 
 type RulesetRulesActionParametersEdgeTTLModel struct {

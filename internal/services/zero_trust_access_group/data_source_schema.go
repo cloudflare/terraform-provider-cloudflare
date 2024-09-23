@@ -132,7 +132,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of an Azure group.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Azure identity provider.",
 									Computed:    true,
 								},
@@ -142,7 +142,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeGitHubOrganizationDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Github identity provider.",
 									Computed:    true,
 								},
@@ -156,12 +156,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeGSuiteDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"email": schema.StringAttribute{
-									Description: "The email of the Google Workspace group.",
+								"connection_id": schema.StringAttribute{
+									Description: "The ID of your Google Workspace identity provider.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your Google Workspace identity provider.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Google Workspace group.",
 									Computed:    true,
 								},
 							},
@@ -170,12 +170,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeOktaDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Okta identity provider.",
 									Computed:    true,
 								},
-								"name": schema.StringAttribute{
-									Description: "The name of the Okta group.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Okta group.",
 									Computed:    true,
 								},
 							},
@@ -190,10 +190,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"attribute_value": schema.StringAttribute{
 									Description: "The SAML attribute value to look for.",
-									Computed:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your SAML identity provider.",
 									Computed:    true,
 								},
 							},
@@ -242,7 +238,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeAuthMethodDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"auth_method": schema.StringAttribute{
-									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
+									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
 									Computed:    true,
 								},
 							},
@@ -343,7 +339,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of an Azure group.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Azure identity provider.",
 									Computed:    true,
 								},
@@ -353,7 +349,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIncludeGitHubOrganizationDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Github identity provider.",
 									Computed:    true,
 								},
@@ -367,12 +363,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIncludeGSuiteDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"email": schema.StringAttribute{
-									Description: "The email of the Google Workspace group.",
+								"connection_id": schema.StringAttribute{
+									Description: "The ID of your Google Workspace identity provider.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your Google Workspace identity provider.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Google Workspace group.",
 									Computed:    true,
 								},
 							},
@@ -381,12 +377,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIncludeOktaDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Okta identity provider.",
 									Computed:    true,
 								},
-								"name": schema.StringAttribute{
-									Description: "The name of the Okta group.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Okta group.",
 									Computed:    true,
 								},
 							},
@@ -401,10 +397,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"attribute_value": schema.StringAttribute{
 									Description: "The SAML attribute value to look for.",
-									Computed:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your SAML identity provider.",
 									Computed:    true,
 								},
 							},
@@ -453,7 +445,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIncludeAuthMethodDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"auth_method": schema.StringAttribute{
-									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
+									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
 									Computed:    true,
 								},
 							},
@@ -554,7 +546,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of an Azure group.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Azure identity provider.",
 									Computed:    true,
 								},
@@ -564,7 +556,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIsDefaultGitHubOrganizationDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Github identity provider.",
 									Computed:    true,
 								},
@@ -578,12 +570,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIsDefaultGSuiteDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"email": schema.StringAttribute{
-									Description: "The email of the Google Workspace group.",
+								"connection_id": schema.StringAttribute{
+									Description: "The ID of your Google Workspace identity provider.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your Google Workspace identity provider.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Google Workspace group.",
 									Computed:    true,
 								},
 							},
@@ -592,12 +584,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIsDefaultOktaDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Okta identity provider.",
 									Computed:    true,
 								},
-								"name": schema.StringAttribute{
-									Description: "The name of the Okta group.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Okta group.",
 									Computed:    true,
 								},
 							},
@@ -612,10 +604,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"attribute_value": schema.StringAttribute{
 									Description: "The SAML attribute value to look for.",
-									Computed:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your SAML identity provider.",
 									Computed:    true,
 								},
 							},
@@ -664,7 +652,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIsDefaultAuthMethodDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"auth_method": schema.StringAttribute{
-									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
+									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
 									Computed:    true,
 								},
 							},
@@ -765,7 +753,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 									Description: "The ID of an Azure group.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Azure identity provider.",
 									Computed:    true,
 								},
@@ -775,7 +763,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupRequireGitHubOrganizationDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Github identity provider.",
 									Computed:    true,
 								},
@@ -789,12 +777,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupRequireGSuiteDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"email": schema.StringAttribute{
-									Description: "The email of the Google Workspace group.",
+								"connection_id": schema.StringAttribute{
+									Description: "The ID of your Google Workspace identity provider.",
 									Computed:    true,
 								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your Google Workspace identity provider.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Google Workspace group.",
 									Computed:    true,
 								},
 							},
@@ -803,12 +791,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Computed:   true,
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupRequireOktaDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
-								"identity_provider_id": schema.StringAttribute{
+								"connection_id": schema.StringAttribute{
 									Description: "The ID of your Okta identity provider.",
 									Computed:    true,
 								},
-								"name": schema.StringAttribute{
-									Description: "The name of the Okta group.",
+								"email": schema.StringAttribute{
+									Description: "The email of the Okta group.",
 									Computed:    true,
 								},
 							},
@@ -823,10 +811,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 								"attribute_value": schema.StringAttribute{
 									Description: "The SAML attribute value to look for.",
-									Computed:    true,
-								},
-								"identity_provider_id": schema.StringAttribute{
-									Description: "The ID of your SAML identity provider.",
 									Computed:    true,
 								},
 							},
@@ -875,7 +859,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupRequireAuthMethodDataSourceModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"auth_method": schema.StringAttribute{
-									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
+									Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176.",
 									Computed:    true,
 								},
 							},

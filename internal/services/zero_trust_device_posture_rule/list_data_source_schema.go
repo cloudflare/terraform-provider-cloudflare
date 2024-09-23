@@ -312,10 +312,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										),
 									},
 								},
-								"score": schema.Float64Attribute{
-									Description: "A value between 0-100 assigned to devices set by the 3rd party posture provider.",
-									Computed:    true,
-								},
 							},
 						},
 						"match": schema.ListNestedAttribute{
@@ -372,7 +368,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"intune",
 									"workspace_one",
 									"sentinelone_s2s",
-									"custom_s2s",
 								),
 							},
 						},

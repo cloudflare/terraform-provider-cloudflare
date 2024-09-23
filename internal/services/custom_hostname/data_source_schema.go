@@ -75,17 +75,22 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"custom_metadata": schema.MapAttribute{
-				Description: "Unique key/value metadata for this hostname. These are per-hostname (customer) settings.",
-				Computed:    true,
-				CustomType:  customfield.NewMapType[types.String](ctx),
-				ElementType: types.StringType,
-			},
 			"verification_errors": schema.ListAttribute{
 				Description: "These are errors that were encountered while trying to activate a hostname.",
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+			},
+			"custom_metadata": schema.SingleNestedAttribute{
+				Description: "These are per-hostname (customer) settings.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[CustomHostnameCustomMetadataDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"key": schema.StringAttribute{
+						Description: "Unique metadata for this hostname.",
+						Computed:    true,
+					},
+				},
 			},
 			"ownership_verification": schema.SingleNestedAttribute{
 				Description: "This is a record which can be placed to activate a hostname.",

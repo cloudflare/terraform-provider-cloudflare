@@ -119,11 +119,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Optional:    true,
 								ElementType: types.StringType,
 							},
-							"new_sqlite_classes": schema.ListAttribute{
-								Description: "A list of classes to create Durable Object namespaces with SQLite from.",
-								Optional:    true,
-								ElementType: types.StringType,
-							},
 							"new_tag": schema.StringAttribute{
 								Description: "Tag to set as the latest migration tag.",
 								Computed:    true,
@@ -184,13 +179,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"new_classes": schema.ListAttribute{
 											Description: "A list of classes to create Durable Object namespaces from.",
-											Computed:    true,
-											Optional:    true,
-											CustomType:  customfield.NewListType[types.String](ctx),
-											ElementType: types.StringType,
-										},
-										"new_sqlite_classes": schema.ListAttribute{
-											Description: "A list of classes to create Durable Object namespaces with SQLite from.",
 											Computed:    true,
 											Optional:    true,
 											CustomType:  customfield.NewListType[types.String](ctx),

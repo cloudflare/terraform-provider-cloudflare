@@ -790,7 +790,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 											Description: "Determines whether cache reserve is enabled. If this is true and a request meets eligibility criteria, Cloudflare will write the resource to cache reserve.",
 											Computed:    true,
 										},
-										"minimum_file_size": schema.Int64Attribute{
+										"min_file_size": schema.Int64Attribute{
 											Description: "The minimum file size eligible for store in cache reserve.",
 											Computed:    true,
 										},

@@ -71,3 +71,7 @@ type DNSRecordDataModel struct {
 	Weight        types.Float64 `tfsdk:"weight" json:"weight,optional"`
 	Fingerprint   types.String  `tfsdk:"fingerprint" json:"fingerprint,optional"`
 }
+
+type DNSRecordMetaModel struct {
+	AutoAdded types.Bool `tfsdk:"auto_added" json:"auto_added,computed"`
+}

@@ -77,7 +77,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"kolide",
 									"tanium",
 									"sentinelone_s2s",
-									"custom_s2s",
 								),
 							},
 						},
