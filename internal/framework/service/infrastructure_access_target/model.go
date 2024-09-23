@@ -15,13 +15,13 @@ type InfrastructureAccessTargetModel struct {
 }
 
 type InfrastructureAccessTargetIPInfoModel struct {
-	IPV4 types.Object `json:"ipv4,omitempty"`
-	IPV6 types.Object `json:"ipv6,omitempty"`
+	IPV4 types.Object `tfsdk:"ipv4"`
+	IPV6 types.Object `tfsdk:"ipv6"`
 }
 
 type InfrastructureAccessTargetIPDetailsModel struct {
-	IPAddr           string `json:"ip_addr"`
-	VirtualNetworkId string `json:"virtual_network_id"`
+	IPAddr           types.String `tfsdk:"ip_addr"`
+	VirtualNetworkId types.String `tfsdk:"virtual_network_id"`
 }
 
 // Data source model

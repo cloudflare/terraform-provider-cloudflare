@@ -61,7 +61,7 @@ func (r *InfrastructureAccessTargetResource) Create(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to create infrastructure access target", "account id cannot be an empty string")
 		return
 	}
-	ipInfo, err := validateParseIPInfoCreate(ctx, data, resp)
+	ipInfo, err := buildCreateIPInfoFromDetails(ctx, data.IP, resp)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create infrastructure access target", "account id cannot be an empty string")
 		return
@@ -121,7 +121,7 @@ func (r *InfrastructureAccessTargetResource) Update(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to update infrastructure access target", "account id cannot be an empty string")
 		return
 	}
-	ipInfo, err := validateParseIPInfoUpdate(ctx, data, resp)
+	ipInfo, err := buildUpdateIPInfoFromDetails(ctx, data.IP, resp)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create infrastructure access target", "account id cannot be an empty string")
 		return
@@ -161,60 +161,81 @@ func (r *InfrastructureAccessTargetResource) Delete(ctx context.Context, req res
 	}
 }
 
-func validateParseIPInfoCreate(ctx context.Context, data *InfrastructureAccessTargetModel, resp *resource.CreateResponse) (cloudflare.InfrastructureAccessTargetIPInfo, error) {
+func buildCreateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.ObjectValue, resp *resource.CreateResponse) (cloudflare.InfrastructureAccessTargetIPInfo, error) {
+	if ipInfoModel.IsNull() || ipInfoModel.IsUnknown() {
+		return cloudflare.InfrastructureAccessTargetIPInfo{}, fmt.Errorf("failed: ip info model is empty")
+	}
 	var ipInfo *InfrastructureAccessTargetIPInfoModel
-	resp.Diagnostics.Append(data.IP.As(ctx, &ipInfo, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+	resp.Diagnostics.Append(ipInfoModel.As(ctx, &ipInfo, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 
-	var ipv4Details *InfrastructureAccessTargetIPDetailsModel
-	resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-	var ipv6Details *InfrastructureAccessTargetIPDetailsModel
-	resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-
-	return validateParseIPInfo(ipv4Details, ipv6Details)
-}
-
-func validateParseIPInfoUpdate(ctx context.Context, data *InfrastructureAccessTargetModel, resp *resource.UpdateResponse) (cloudflare.InfrastructureAccessTargetIPInfo, error) {
-	var ipInfo *InfrastructureAccessTargetIPInfoModel
-	resp.Diagnostics.Append(data.IP.As(ctx, &ipInfo, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-
-	var ipv4Details *InfrastructureAccessTargetIPDetailsModel
-	resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-	var ipv6Details *InfrastructureAccessTargetIPDetailsModel
-	resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-
-	return validateParseIPInfo(ipv4Details, ipv6Details)
-}
-
-func validateParseIPInfo(ipv4Details *InfrastructureAccessTargetIPDetailsModel, ipv6Details *InfrastructureAccessTargetIPDetailsModel) (cloudflare.InfrastructureAccessTargetIPInfo, error) {
-	if ipv4Details == nil && ipv6Details == nil {
+	if (ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && (ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
 		return cloudflare.InfrastructureAccessTargetIPInfo{}, fmt.Errorf("error creating target resource: one of ipv4 or ipv6 must be configured")
 	}
 
-	if ipv4Details != nil && ipv6Details != nil {
-		return cloudflare.InfrastructureAccessTargetIPInfo{
-			IPV4: &cloudflare.InfrastructureAccessTargetIPDetails{
-				IPAddr:           ipv4Details.IPAddr,
-				VirtualNetworkId: ipv4Details.VirtualNetworkId,
-			},
-			IPV6: &cloudflare.InfrastructureAccessTargetIPDetails{
-				IPAddr:           ipv6Details.IPAddr,
-				VirtualNetworkId: ipv6Details.VirtualNetworkId,
-			},
-		}, nil
-	} else if ipv4Details != nil {
-		return cloudflare.InfrastructureAccessTargetIPInfo{
-			IPV4: &cloudflare.InfrastructureAccessTargetIPDetails{
-				IPAddr:           ipv4Details.IPAddr,
-				VirtualNetworkId: ipv4Details.VirtualNetworkId,
-			},
-		}, nil
+	if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && !(ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
+		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		return buildIPInfoFromAttributes(ipv4Details.IPAddr.String(), ipv6Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String(), ipv6Details.VirtualNetworkId.String()), nil
+	} else if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) {
+		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		return buildIPInfoFromAttributesSingle(ipv4Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String()), nil
 	} else {
-		return cloudflare.InfrastructureAccessTargetIPInfo{
-			IPV6: &cloudflare.InfrastructureAccessTargetIPDetails{
-				IPAddr:           ipv6Details.IPAddr,
-				VirtualNetworkId: ipv6Details.VirtualNetworkId,
-			},
-		}, nil
+		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		return buildIPInfoFromAttributesSingle(ipv6Details.IPAddr.String(), ipv6Details.VirtualNetworkId.String()), nil
+	}
+}
+
+func buildUpdateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.ObjectValue, resp *resource.UpdateResponse) (cloudflare.InfrastructureAccessTargetIPInfo, error) {
+	if ipInfoModel.IsNull() || ipInfoModel.IsUnknown() {
+		return cloudflare.InfrastructureAccessTargetIPInfo{}, fmt.Errorf("failed: ip info model is empty")
+	}
+	var ipInfo *InfrastructureAccessTargetIPInfoModel
+	resp.Diagnostics.Append(ipInfoModel.As(ctx, &ipInfo, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+
+	if (ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && (ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
+		return cloudflare.InfrastructureAccessTargetIPInfo{}, fmt.Errorf("error creating target resource: one of ipv4 or ipv6 must be configured")
+	}
+
+	if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && !(ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
+		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		return buildIPInfoFromAttributes(ipv4Details.IPAddr.String(), ipv6Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String(), ipv6Details.VirtualNetworkId.String()), nil
+	} else if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) {
+		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		return buildIPInfoFromAttributesSingle(ipv4Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String()), nil
+	} else {
+		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
+		return buildIPInfoFromAttributesSingle(ipv6Details.IPAddr.String(), ipv6Details.VirtualNetworkId.String()), nil
+	}
+}
+
+func buildIPInfoFromAttributes(ipv4Addr string, ipv6Addr string, ipv4VirtualNetworkId string, ipv6VirtualNetworkId string) cloudflare.InfrastructureAccessTargetIPInfo {
+	return cloudflare.InfrastructureAccessTargetIPInfo{
+		IPV4: &cloudflare.InfrastructureAccessTargetIPDetails{
+			IPAddr:           ipv4Addr,
+			VirtualNetworkId: ipv4VirtualNetworkId,
+		},
+		IPV6: &cloudflare.InfrastructureAccessTargetIPDetails{
+			IPAddr:           ipv6Addr,
+			VirtualNetworkId: ipv6VirtualNetworkId,
+		},
+	}
+}
+
+func buildIPInfoFromAttributesSingle(ipAddr string, virtualNetworkId string) cloudflare.InfrastructureAccessTargetIPInfo {
+	return cloudflare.InfrastructureAccessTargetIPInfo{
+		IPV6: &cloudflare.InfrastructureAccessTargetIPDetails{
+			IPAddr:           ipAddr,
+			VirtualNetworkId: virtualNetworkId,
+		},
 	}
 }
 
