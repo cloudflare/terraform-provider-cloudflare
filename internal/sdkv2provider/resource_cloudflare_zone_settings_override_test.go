@@ -248,6 +248,38 @@ resource "cloudflare_zone_settings_override" "%[1]s" {
 }`, rnd, zoneID)
 }
 
+func TestAccCloudflareZoneSettingsOverride_SpeedBrain(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := generateRandomResourceName()
+	name := "cloudflare_zone_settings_override." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckCloudflareZoneSettingsOverrideSpeedBrain(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareZoneSettings(name),
+					resource.TestCheckResourceAttr(name, "settings.0.speed_brain", "on"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckCloudflareZoneSettingsOverrideSpeedBrain(rnd, zoneID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zone_settings_override" "%[1]s" {
+  zone_id = "%[2]s"
+  settings {
+    speed_brain {
+      value = "on"
+	}
+  }
+}`, rnd, zoneID)
+}
+
 func TestAccCloudflareZoneSettingsOverride_ReplaceInsecureJS(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := generateRandomResourceName()
