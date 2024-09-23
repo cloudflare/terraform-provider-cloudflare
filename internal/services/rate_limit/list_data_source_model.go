@@ -5,7 +5,7 @@ package rate_limit
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v2/rate_limits"
+	"github.com/cloudflare/cloudflare-go/v3/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
