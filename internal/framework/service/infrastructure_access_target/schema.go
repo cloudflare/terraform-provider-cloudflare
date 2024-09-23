@@ -44,16 +44,12 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 			},
 			"created_at": schema.StringAttribute{
 				MarkdownDescription: "The date and time at which the target was created.",
-				// Setting both Optional and Required to false will set this value to read-only
-				Optional: false,
-				Required: false,
+				// Set value to read-only
 				Computed: true,
 			},
 			"modified_at": schema.StringAttribute{
 				MarkdownDescription: "The date and time at which the target was last modified.",
-				// Setting both Optional and Required to false will set this value to read-only
-				Optional: false,
-				Required: false,
+				// Set value to read-only
 				Computed: true,
 			},
 		},
