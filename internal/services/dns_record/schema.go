@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -340,17 +339,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"comment_modified_on": schema.StringAttribute{
 				Description: "When the record comment was last modified. Omitted if there is no comment.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"created_on": schema.StringAttribute{
 				Description: "When the record was created.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "When the record was last modified.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"name": schema.StringAttribute{
 				Description: "DNS record name (or @ for the zone apex) in Punycode.",
@@ -369,7 +365,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"tags_modified_on": schema.StringAttribute{
 				Description: "When the record tags were last modified. Omitted if there are no tags.",
 				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 			"ttl": schema.Float64Attribute{
 				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
