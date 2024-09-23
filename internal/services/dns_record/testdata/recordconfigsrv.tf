@@ -1,5 +1,5 @@
 
-resource "cloudflare_record" "%[2]s" {
+resource "cloudflare_dns_record" "%[2]s" {
   zone_id = "%[1]s"
   name = "_xmpp-client._tcp.%[2]s"
   data = {

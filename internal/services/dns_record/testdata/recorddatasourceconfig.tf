@@ -1,11 +1,11 @@
 
-data "cloudflare_record" "%[1]s" {
+data "cloudflare_dns_record" "%[1]s" {
   zone_id = "%[2]s"
-  hostname = cloudflare_record.%[1]s.hostname
+  hostname = cloudflare_dns_record.%[1]s.hostname
 }
-resource "cloudflare_record" "%[1]s" {
+resource "cloudflare_dns_record" "%[1]s" {
 	zone_id = "%[2]s"
 	type = "A"
 	name = "%[1]s.%[3]s"
-	value = "192.0.2.0"
+	content = "192.0.2.0"
 }
