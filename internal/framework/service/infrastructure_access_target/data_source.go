@@ -61,7 +61,7 @@ func (d *InfrastructureAccessTargetDataSource) Read(ctx context.Context, req dat
 			return &s
 		}
 	}
-	params := cloudflare.TargetListParams{
+	params := cloudflare.InfrastructureAccessTargetListParams{
 		Hostname:         *checkSetNil(data.Hostname.String()),
 		HostnameContains: *checkSetNil(data.HostnameContains.String()),
 		IPV4:             *checkSetNil(data.IPV4.String()),
@@ -86,7 +86,7 @@ func (d *InfrastructureAccessTargetDataSource) Read(ctx context.Context, req dat
 			AccountID:  types.StringValue(accountId),
 			Hostname:   types.StringValue(target.Hostname),
 			ID:         types.StringValue(target.ID),
-			IP:         target.IP,
+			IP:         convertIPInfoToBaseTypeObject(target.IP),
 			CreatedAt:  types.StringValue(target.CreatedAt),
 			ModifiedAt: types.StringValue(target.ModifiedAt),
 		})

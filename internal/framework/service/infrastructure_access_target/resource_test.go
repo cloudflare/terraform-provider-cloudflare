@@ -29,7 +29,7 @@ func init() {
 
 			ctx := context.Background()
 			// Retrieve all targets created under the current test account
-			targets, _, err := client.ListInfrastructureAccessTargets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.TargetListParams{})
+			targets, _, err := client.ListInfrastructureAccessTargets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.InfrastructureAccessTargetListParams{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch rulesets: %w", err)
 			}

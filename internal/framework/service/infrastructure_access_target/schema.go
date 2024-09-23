@@ -21,7 +21,6 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 		MarkdownDescription: heredoc.Doc(`
 			The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/insights/risk-score/) resource allows you to configure Cloudflare Risk Behaviors for an account.
 		`),
-
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				MarkdownDescription: consts.AccountIDSchemaDescription,
@@ -32,7 +31,6 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 			},
 			consts.IDSchemaKey: schema.StringAttribute{
 				Computed:            true,
-				Optional:            true,
 				MarkdownDescription: consts.IDSchemaDescription + " This is target's unique identifier.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),

@@ -1,18 +1,27 @@
 package infrastructure_access_target
 
 import (
-	"github.com/cloudflare/cloudflare-go"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Resource model
 type InfrastructureAccessTargetModel struct {
-	AccountID  types.String      `tfsdk:"account_id"`
-	Hostname   types.String      `tfsdk:"hostname"`
-	ID         types.String      `tfsdk:"id"`
-	IP         cloudflare.IPInfo `tfsdk:"ip"`
-	CreatedAt  types.String      `tfsdk:"hostname"`
-	ModifiedAt types.String      `tfsdk:"hostname"`
+	AccountID  types.String `tfsdk:"account_id"`
+	Hostname   types.String `tfsdk:"hostname"`
+	ID         types.String `tfsdk:"id"`
+	IP         types.Object `tfsdk:"ip"`
+	CreatedAt  types.String `tfsdk:"created_at"`
+	ModifiedAt types.String `tfsdk:"modified_at"`
+}
+
+type InfrastructureAccessTargetIPInfoModel struct {
+	IPV4 types.Object `json:"ipv4,omitempty"`
+	IPV6 types.Object `json:"ipv6,omitempty"`
+}
+
+type InfrastructureAccessTargetIPDetailsModel struct {
+	IPAddr           string `json:"ip_addr"`
+	VirtualNetworkId string `json:"virtual_network_id"`
 }
 
 // Data source model
