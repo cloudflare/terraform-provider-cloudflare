@@ -10,10 +10,11 @@ const formatStructTag = "format"
 
 type parsedStructTag struct {
 	name              string
-	required          bool
 	extras            bool
 	metadata          bool
 	inline            bool
+	required          bool
+	optional          bool
 	computed          bool
 	computed_optional bool
 }
@@ -30,14 +31,16 @@ func parseJSONStructTag(field reflect.StructField) (tag parsedStructTag, ok bool
 	tag.name = parts[0]
 	for _, part := range parts[1:] {
 		switch part {
-		case "required":
-			tag.required = true
 		case "extras":
 			tag.extras = true
 		case "metadata":
 			tag.metadata = true
 		case "inline":
 			tag.inline = true
+		case "required":
+			tag.required = true
+		case "optional":
+			tag.optional = true
 		case "computed":
 			tag.computed = true
 		case "computed_optional":

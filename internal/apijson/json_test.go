@@ -923,19 +923,20 @@ func TestDecodeFromValue(t *testing.T) {
 }
 
 type StructWithComputedFields struct {
-	RegStr            types.String                                             `tfsdk:"str" json:"str"`
+	RegStr            types.String                                             `tfsdk:"str" json:"str,optional"`
 	CompStr           types.String                                             `tfsdk:"comp_str" json:"comp_str,computed"`
 	CompOptStr        types.String                                             `tfsdk:"opt_str" json:"opt_str,computed_optional"`
 	CompTime          timetypes.RFC3339                                        `tfsdk:"time" json:"time,computed"`
 	CompOptTime       timetypes.RFC3339                                        `tfsdk:"opt_time" json:"opt_time,computed_optional"`
-	Nested            NestedStructWithComputedFields                           `tfsdk:"nested" json:"nested"`
-	NestedCust        customfield.NestedObject[NestedStructWithComputedFields] `tfsdk:"nested_obj" json:"nested_obj"`
+	Nested            NestedStructWithComputedFields                           `tfsdk:"nested" json:"nested,optional"`
+	NestedCust        customfield.NestedObject[NestedStructWithComputedFields] `tfsdk:"nested_obj" json:"nested_obj,optional"`
 	CompOptNestedCust customfield.NestedObject[NestedStructWithComputedFields] `tfsdk:"opt_nested_obj" json:"opt_nested_obj,computed_optional"`
-	NestedList        *[]*NestedStructWithComputedFields                       `tfsdk:"nested_list" json:"nested_list"`
+	NestedList        *[]*NestedStructWithComputedFields                       `tfsdk:"nested_list" json:"nested_list,optional"`
+	MapCust           customfield.Map[customfield.List[types.String]]          `tfsdk:"map_cust" json:"map_cust,optional"`
 }
 
 type NestedStructWithComputedFields struct {
-	RegStr     types.String `tfsdk:"nested_str" json:"nested_str"`
+	RegStr     types.String `tfsdk:"nested_str" json:"nested_str,required"`
 	CompStr    types.String `tfsdk:"nested_comp_str" json:"nested_comp_str,computed"`
 	CompOptInt types.Int64  `tfsdk:"nested_comp_opt_int" json:"nested_comp_opt_int,computed_optional"`
 }
@@ -950,6 +951,7 @@ var exampleNestedJson = `{
 	"nested_obj":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42},
 	"opt_nested_obj":{"nested_str":"nested_str","nested_comp_str":"nested_comp_str","nested_comp_opt_int":42}
 	"nested_list":[{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_1","nested_comp_opt_int":43},{"nested_str":"nested_str","nested_comp_str":"list_nested_comp_str_2","nested_comp_opt_int":44}]
+	"map_cust":{"key":["val1","val2"]}
 }`
 
 var decode_computed_only_tests = map[string]struct {
@@ -984,25 +986,13 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			},
-			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
-				RegStr:     types.StringNull(),
-				CompStr:    types.StringValue("nested_comp_str"),
-				CompOptInt: types.Int64Value(42),
-			}),
+			NestedCust: customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
 			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
 				RegStr:     types.StringNull(),
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			}),
-			NestedList: &[]*NestedStructWithComputedFields{{
-				RegStr:     types.StringNull(),
-				CompStr:    types.StringValue("list_nested_comp_str_1"),
-				CompOptInt: types.Int64Value(43),
-			}, {
-				RegStr:     types.StringNull(),
-				CompStr:    types.StringValue("list_nested_comp_str_2"),
-				CompOptInt: types.Int64Value(44),
-			}},
+			NestedList: nil,
 		},
 	},
 	"only_updates_computed_props_from_unknown": {
@@ -1018,7 +1008,9 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringUnknown(),
 				CompOptInt: types.Int64Unknown(),
 			},
-			NestedCust:        customfield.UnknownObject[NestedStructWithComputedFields](context.TODO()),
+			// when the value is nested and optional/required, we don't currently convert from unknown to null
+			// this is because optional/required properties cannot be unknown
+			NestedCust:        customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
 			CompOptNestedCust: customfield.UnknownObject[NestedStructWithComputedFields](context.TODO()),
 		},
 		StructWithComputedFields{
@@ -1032,25 +1024,13 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			},
-			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
-				RegStr:     types.StringNull(),
-				CompStr:    types.StringValue("nested_comp_str"),
-				CompOptInt: types.Int64Value(42),
-			}),
+			NestedCust: customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
 			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
 				RegStr:     types.StringNull(),
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			}),
-			NestedList: &[]*NestedStructWithComputedFields{{
-				RegStr:     types.StringNull(),
-				CompStr:    types.StringValue("list_nested_comp_str_1"),
-				CompOptInt: types.Int64Value(43),
-			}, {
-				RegStr:     types.StringNull(),
-				CompStr:    types.StringValue("list_nested_comp_str_2"),
-				CompOptInt: types.Int64Value(44),
-			}},
+			NestedList: nil,
 		},
 	},
 
