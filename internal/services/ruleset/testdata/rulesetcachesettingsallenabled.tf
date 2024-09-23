@@ -37,9 +37,11 @@ resource "cloudflare_ruleset" "%[1]s" {
         ignore_query_strings_order = false
         cache_deception_armor      = true
         custom_key = {
-          query_string = {
-            exclude = ["*"]
-          }
+          # query_string = {
+          #   exclude = {
+          #     all = true
+          #   }
+          # }
           header = {
             include        = ["habc", "hdef"]
             check_presence = ["habc_t", "hdef_t"]

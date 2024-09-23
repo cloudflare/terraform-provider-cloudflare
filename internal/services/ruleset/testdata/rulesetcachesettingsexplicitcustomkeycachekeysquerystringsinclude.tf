@@ -20,7 +20,9 @@ resource "cloudflare_ruleset" "%[1]s" {
         ignore_query_strings_order = true
         custom_key = {
           query_string = {
-            include = ["another_example"]
+            include = {
+              list = ["another_example"]
+            }
           }
         }
       }

@@ -35,8 +35,8 @@ type RulesetRulesModel struct {
 	Description      types.String                                                `tfsdk:"description" json:"description,computed_optional"`
 	Enabled          types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Expression       types.String                                                `tfsdk:"expression" json:"expression,computed_optional"`
-	// Logging          customfield.NestedObject[RulesetRulesLoggingModel]          `tfsdk:"logging" json:"logging,computed_optional"`
-	Ref types.String `tfsdk:"ref" json:"ref,computed_optional"`
+	Logging          customfield.NestedObject[RulesetRulesLoggingModel]          `tfsdk:"logging" json:"logging,computed_optional"`
+	Ref              types.String                                                `tfsdk:"ref" json:"ref,computed_optional"`
 }
 
 type RulesetRulesActionParametersModel struct {
@@ -220,8 +220,8 @@ type RulesetRulesActionParametersCacheKeyCustomKeyHostModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel struct {
-	Exclude customfield.List[types.String] `tfsdk:"exclude" json:"exclude,computed_optional"`
-	Include customfield.List[types.String] `tfsdk:"include" json:"include,computed_optional"`
+	Exclude customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel] `tfsdk:"exclude" json:"exclude,optional"`
+	Include customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel] `tfsdk:"include" json:"include,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel struct {

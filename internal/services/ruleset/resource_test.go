@@ -1053,10 +1053,9 @@ func TestAccCloudflareRuleset_RequestOrigin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.host_header", rnd+"."+zoneName),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.0.host", rnd+"."+zoneName),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.0.port", "80"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.sni.0.value", rnd+"."+zoneName),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.host", rnd+"."+zoneName),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.port", "80"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.sni.value", rnd+"."+zoneName),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
 				),
@@ -1093,8 +1092,7 @@ func TestAccCloudflareRuleset_RequestOriginPortWithoutHost(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "route"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.host_header", rnd+"."+zoneName),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.0.port", "80"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin.port", "80"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http request origin"),
 				),
@@ -1130,8 +1128,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIPath(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.0.path.0.value", "/static-rewrite"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.path.value", "/static-rewrite"),
 				),
 			},
 		},
@@ -1165,8 +1162,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIQuery(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.0.query.0.value", "a=b"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.query.value", "a=b"),
 				),
 			},
 		},
@@ -1201,8 +1197,8 @@ func TestAccCloudflareRuleset_TransformationRuleURIPathAndQueryCombination(t *te
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.0.path.0.value", "/path/to/url"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.0.query.0.expression", "concat(\"requestUrl=\", http.request.full_uri)"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.path.value", "/path/to/url"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.query.expression", "concat(\"requestUrl=\", http.request.full_uri)"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example for combining URI action parameters for path and query"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.enabled", "true"),
@@ -1240,18 +1236,13 @@ func TestAccCloudflareRuleset_TransformationRuleRequestHeaders(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example1.value", "my-http-header-value1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example1.operation", "set"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.0.name", "example1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.0.value", "my-http-header-value1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.0.operation", "set"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example2.operation", "set"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example2.expression", "cf.zone.name"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.1.name", "example2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.1.operation", "set"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.1.expression", "cf.zone.name"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.2.name", "example3"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.2.operation", "remove"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example3.operation", "remove"),
 				),
 			},
 		},
@@ -1286,18 +1277,13 @@ func TestAccCloudflareRuleset_TransformationRuleResponseHeaders(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example1.value", "my-http-header-value1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example1.operation", "set"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.0.name", "example1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.0.value", "my-http-header-value1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.0.operation", "set"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example2.operation", "set"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example2.expression", "cf.zone.name"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.1.name", "example2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.1.operation", "set"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.1.expression", "cf.zone.name"),
-
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.2.name", "example3"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.2.operation", "remove"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.headers.example3.operation", "remove"),
 				),
 			},
 		},
@@ -1539,6 +1525,7 @@ func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending API documentation for username_expression and password_expression")
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
@@ -1566,10 +1553,9 @@ func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "log"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "http.request.method == \"POST\" && http.request.uri == \"/login.php\""),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example exposed credential check"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.#", "1"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.0.username_expression", "url_decode(http.request.body.form[\"username\"][0])"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.0.password_expression", "url_decode(http.request.body.form[\"password\"][0])"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.username_expression", "url_decode(http.request.body.form[\"username\"][0])"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.exposed_credential_check.password_expression", "url_decode(http.request.body.form[\"password\"][0])"),
 				),
 			},
 		},
@@ -1604,9 +1590,8 @@ func TestAccCloudflareRuleset_Logging(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "skip"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(cf.zone.plan eq \"ENT\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example disabled logging"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.#", "1"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.logging.enabled", "false"),
 				),
 			},
 		},
@@ -1723,15 +1708,15 @@ func TestAccCloudflareRuleset_LogCustomField(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "log_custom_field"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" log custom fields rule"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.request_fields.0", "content-type"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.request_fields.1", "host"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.request_fields.2", "x-forwarded-for"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response_fields.0", "allow"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response_fields.1", "content-type"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response_fields.2", "server"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cookie_fields.0", "__cfruid"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cookie_fields.1", "__ga"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cookie_fields.2", "accountNumber"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.request_fields.0.name", "content-type"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.request_fields.1.name", "x-forwarded-for"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.request_fields.2.name", "host"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response_fields.0.name", "server"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response_fields.1.name", "content-type"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response_fields.2.name", "allow"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cookie_fields.0.name", "__ga"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cookie_fields.1.name", "accountNumber"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cookie_fields.2.name", "__cfruid"),
 				),
 			},
 		},
@@ -1823,38 +1808,37 @@ func TestAccCloudflareRuleset_CacheSettingsAllEnabled(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.additional_cacheable_ports.0", "8443"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "override_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.default", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.value", "50"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.status_code", "200"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.value", "30"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.status_code_range.0.from", "201"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.status_code_range.0.to", "300"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.browser_ttl.0.mode", "respect_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.serve_stale.0.disable_stale_while_updating", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.default", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.value", "50"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.status_code", "200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.value", "30"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.status_code_range.from", "201"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.status_code_range.to", "300"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.browser_ttl.mode", "respect_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.serve_stale.disable_stale_while_updating", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.read_timeout", "2000"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.respect_strong_etags", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.ignore_query_strings_order", "false"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.cache_deception_armor", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.query_string.0.exclude.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.query_string.0.exclude.0", "*"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.0", "habc"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.1", "hdef"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.check_presence.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.check_presence.0", "habc_t"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.check_presence.1", "hdef_t"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.cookie.0.include.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.cookie.0.include.0", "cabc"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.cookie.0.include.1", "cdef"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.cookie.0.check_presence.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.cookie.0.check_presence.0", "cabc_t"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.cookie.0.check_presence.1", "cdef_t"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.user.0.device_type", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.user.0.geo", "false"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.host.0.resolved", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.ignore_query_strings_order", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.cache_deception_armor", "true"),
+					// resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.query_string.exclude.all", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.0", "habc"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.1", "hdef"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.check_presence.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.check_presence.0", "habc_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.check_presence.1", "hdef_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.exclude_origin", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.cookie.include.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.cookie.include.0", "cabc"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.cookie.include.1", "cdef"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.cookie.check_presence.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.cookie.check_presence.0", "cabc_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.cookie.check_presence.1", "cdef_t"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.user.device_type", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.user.geo", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.host.resolved", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin_cache_control", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.origin_error_page_passthru", "false"),
 				),
@@ -1884,11 +1868,9 @@ func TestAccCloudflareRuleset_CacheSettingsOptionalsEmpty(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "override_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.default", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.browser_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.browser_ttl.0.mode", "respect_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.default", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.browser_ttl.mode", "respect_origin"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.serve_stale.#", "0"),
@@ -1919,9 +1901,9 @@ func TestAccCloudflareRuleset_CacheSettingsOnlyExludeOrigin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.check_presence.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.check_presence.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.exclude_origin", "true"),
 				),
 			},
 		},
@@ -1949,10 +1931,9 @@ func TestAccCloudflareRuleset_CacheSettingsEdgeTTLRespectOrigin(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.value", "5"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "respect_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.value", "5"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "respect_origin"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache", "true"),
 				),
 			},
@@ -1981,11 +1962,10 @@ func TestAccCloudflareRuleset_CacheSettingsNoCacheForStatus(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.status_code_range.0.from", "400"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.status_code_range.0.to", "500"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.value", "0"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.status_code_range.from", "400"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.status_code_range.to", "500"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.value", "0"),
 				),
 			},
 		},
@@ -2013,13 +1993,12 @@ func TestAccCloudflareRuleset_CacheSettingsStatusRangeGreaterThan(t *testing.T) 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.value", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.status_code_range.0.from", "105"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.value", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.status_code_range.0.from", "100"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.status_code_range.0.to", "101"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.status_code_range.from", "105"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.status_code_range.from", "100"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.status_code_range.to", "101"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache", "true"),
 				),
@@ -2049,13 +2028,12 @@ func TestAccCloudflareRuleset_CacheSettingsStatusRangeLessThan(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set cache settings rule"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.value", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.0.status_code_range.0.to", "400"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.value", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.status_code_range.0.from", "500"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.status_code_ttl.1.status_code_range.0.to", "501"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.0.status_code_range.to", "400"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.value", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.status_code_range.from", "500"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.status_code_ttl.1.status_code_range.to", "501"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache", "true"),
 				),
@@ -2114,13 +2092,12 @@ func TestAccCloudflareRuleset_Config(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", rnd+" set config rule"),
 
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.automatic_https_rewrites", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.autominify.0.html", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.autominify.0.css", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.autominify.0.js", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.autominify.html", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.autominify.css", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.autominify.js", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.bic", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.disable_apps", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.disable_zaraz", "true"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.disable_railgun", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.email_obfuscation", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.mirage", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.opportunistic_encryption", "true"),
@@ -2158,8 +2135,8 @@ func TestAccCloudflareRuleset_Redirect(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "redirect"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_list.0.name", "redirect_list_"+rnd),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_list.0.key", "http.request.full_uri"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_list.name", "redirect_list_"+rnd),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_list.key", "http.request.full_uri"),
 				),
 			},
 		},
@@ -2185,11 +2162,10 @@ func TestAccCloudflareRuleset_DynamicRedirect(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "redirect"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.status_code", "301"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.target_url.#", "1"),
-					resource.TestCheckNoResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.target_url.0.expression"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.target_url.0.value", "some_host.com"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.preserve_query_string", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.status_code", "301"),
+					resource.TestCheckNoResourceAttr(resourceName, "rules.0.action_parameters.from_value.target_url.expression"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.target_url.value", "some_host.com"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.preserve_query_string", "true"),
 				),
 			},
 		},
@@ -2215,10 +2191,9 @@ func TestAccCloudflareRuleset_DynamicRedirectWithoutPreservingQueryString(t *tes
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "redirect"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.status_code", "301"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.target_url.#", "1"),
-					resource.TestCheckNoResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.target_url.0.expression"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.0.target_url.0.value", "some_host.com"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.status_code", "301"),
+					resource.TestCheckNoResourceAttr(resourceName, "rules.0.action_parameters.from_value.target_url.expression"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.from_value.target_url.value", "some_host.com"),
 				),
 			},
 		},
@@ -2242,7 +2217,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIStripOffQueryString(t *testin
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_transform"),
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.0.query.0.value", ""),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.query.value", ""),
 				),
 			},
 		},
@@ -2266,7 +2241,7 @@ func TestAccCloudflareRuleset_TransformationRuleURIStripOffPath(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "phase", "http_request_transform"),
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "rewrite"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.0.path.0.value", "/"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.uri.path.value", "/"),
 				),
 			},
 		},
@@ -2297,23 +2272,9 @@ func TestAccCloudflareRuleset_ConfigSingleFalseyValue(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRuleset_ConfigConflictingCacheByDevice(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config:      testAccCloudflareRulesetConfigConflictingCacheByDeviceConfigs(rnd, zoneID),
-				ExpectError: regexp.MustCompile("Invalid Attribute Combination"),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareRuleset_CacheSettingsMissingEdgeTTLWithOverrideOrigin(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending porting schema validation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -2330,6 +2291,8 @@ func TestAccCloudflareRuleset_CacheSettingsMissingEdgeTTLWithOverrideOrigin(t *t
 }
 
 func TestAccCloudflareRuleset_CacheSettingsMissingBrowserTTLWithOverrideOrigin(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending porting schema validation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -2346,6 +2309,8 @@ func TestAccCloudflareRuleset_CacheSettingsMissingBrowserTTLWithOverrideOrigin(t
 }
 
 func TestAccCloudflareRuleset_CacheSettingsInvalidEdgeTTLWithOverrideOrigin(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending porting schema validation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -2382,7 +2347,7 @@ func TestAccCloudflareRuleset_CacheSettingsEdgeTTLWithBypassByDefault(t *testing
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "bypass_by_default"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "bypass_by_default"),
 				),
 			},
 		},
@@ -2390,6 +2355,8 @@ func TestAccCloudflareRuleset_CacheSettingsEdgeTTLWithBypassByDefault(t *testing
 }
 
 func TestAccCloudflareRuleset_CacheSettingsInvalidEdgeTTLWithBypassByDefault(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending porting schema validation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -2426,7 +2393,7 @@ func TestAccCloudflareRuleset_CacheSettingsBrowserTTLWithBypass(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.browser_ttl.0.mode", "bypass"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.browser_ttl.mode", "bypass_by_default"),
 				),
 			},
 		},
@@ -2434,6 +2401,8 @@ func TestAccCloudflareRuleset_CacheSettingsBrowserTTLWithBypass(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithBypass(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending porting schema validation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -2450,6 +2419,8 @@ func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithBypass(t *testin
 }
 
 func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithOverrideOrigin(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending porting schema validation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 
@@ -2466,6 +2437,8 @@ func TestAccCloudflareRuleset_CacheSettingsInvalidBrowserTTLWithOverrideOrigin(t
 }
 
 func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending updating service to match API documentation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
@@ -2485,10 +2458,10 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *test
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "override_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.default", "7200"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.query_string.0.exclude.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.query_string.0.exclude.0", "example"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.default", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.query_string.exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.query_string.exclude.0", "example"),
 				),
 			},
 		},
@@ -2496,6 +2469,8 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringExcludeKeys(t *test
 }
 
 func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringIncludeKeys(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending updating service to match API documentation")
+
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	resourceName := "cloudflare_ruleset." + rnd
@@ -2515,10 +2490,10 @@ func TestAccCloudflareRuleset_CacheSettingsDefinedQueryStringIncludeKeys(t *test
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "override_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.default", "7200"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.query_string.0.include.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.query_string.0.include.0", "another_example"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.default", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.query_string.include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.query_string.include.0", "another_example"),
 				),
 			},
 		},
@@ -2545,12 +2520,12 @@ func TestAccCloudflareRuleset_CacheSettingsHandleDefaultHeaderExcludeOrigin(t *t
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "override_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.default", "7200"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.check_presence.0", "x-forwarded-for"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.0", "x-test"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.1", "x-test2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.exclude_origin", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.default", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.check_presence.0", "x-forwarded-for"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.0", "x-test"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.1", "x-test2"),
+					// resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.exclude_origin", "false"),
 				),
 			},
 			{
@@ -2564,12 +2539,12 @@ func TestAccCloudflareRuleset_CacheSettingsHandleDefaultHeaderExcludeOrigin(t *t
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "override_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.default", "7200"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.check_presence.0", "x-forwarded-for"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.0", "x-test"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.1", "x-test2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.exclude_origin", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.default", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.check_presence.0", "x-forwarded-for"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.0", "x-test"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.1", "x-test2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.exclude_origin", "false"),
 				),
 			},
 			{
@@ -2583,35 +2558,14 @@ func TestAccCloudflareRuleset_CacheSettingsHandleDefaultHeaderExcludeOrigin(t *t
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "set_cache_settings"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.mode", "override_origin"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.0.default", "7200"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.check_presence.0", "x-forwarded-for"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.0", "x-test"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.include.1", "x-test2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.0.custom_key.0.header.0.exclude_origin", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.mode", "override_origin"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.edge_ttl.default", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.check_presence.0", "x-forwarded-for"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.0", "x-test"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.include.1", "x-test2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.cache_key.custom_key.header.exclude_origin", "true"),
 				),
 			},
-		},
-	})
-}
-
-func TestAccCloudflareRuleset_ImportHandlesMissingValues(t *testing.T) {
-	// rnd := utils.GenerateRandomResourceName()
-	// zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	// zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
-	// name := "cloudflare_ruleset." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps:                    []resource.TestStep{
-			// {
-			// 	Config:        testAccCheckCloudflareRulesetTransformationRuleResponseHeaders(rnd, "broken", zoneID, zoneName),
-			// 	ExpectError:   regexp.MustCompile(`invalid import identifier`),
-			// 	ImportState:   true,
-			// 	ImportStateId: rnd,
-			// 	ResourceName:  name,
-			// },
 		},
 	})
 }

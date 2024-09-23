@@ -13,10 +13,9 @@ resource "cloudflare_ruleset" "%[1]s" {
     action_parameters = {
       cache = true
       browser_ttl = {
-        mode    = "bypass"
+        mode    = "bypass_by_default"
         default = 100
       }
     }
   }]
 }
- 
