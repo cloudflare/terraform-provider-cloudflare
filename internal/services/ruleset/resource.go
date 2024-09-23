@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/cloudflare/cloudflare-go/v2"
 	"github.com/cloudflare/cloudflare-go/v2/option"
@@ -16,7 +15,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -122,11 +124,7 @@ func (r *RulesetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	jsonRemappedRuleRefs, _ := apijson.Marshal(remapPreservedRuleRefs)
-	var tmp *[]*RulesetRulesModel
-	apijson.UnmarshalComputed(jsonRemappedRuleRefs, &tmp)
-
-	data.Rules = tmp
+	data.Rules = &remapPreservedRuleRefs
 
 	dataBytes, err := apijson.MarshalForUpdate(data, state)
 	if err != nil {
@@ -309,22 +307,23 @@ type ruleRefs struct {
 }
 
 // newRuleRefs creates a new ruleRefs.
-func newRuleRefs(rulesetRules []rulesets.RulesetNewResponseRule, explicitRefs map[string]struct{}) (ruleRefs, error) {
+func newRuleRefs(rulesetRules *[]*RulesetRulesModel, explicitRefs map[string]struct{}) (ruleRefs, error) {
 	r := ruleRefs{make(map[string][]string)}
-	for _, rule := range rulesetRules {
-		if rule.Ref == "" {
+	thing := rulesetRules
+	for _, rule := range *thing {
+		if rule.Ref.IsNull() {
 			// This is unexpected. We only invoke this function for the old
 			// values of rules, which have their refs populated.
-			return ruleRefs{}, errors.New(fmt.Sprintf("unable to determine ID or ref of existing rule. rule %+v", rule))
+			return ruleRefs{}, errors.New("unable to determine ID or ref of existing rule")
 		}
 
-		if _, ok := explicitRefs[rule.Ref]; ok {
+		if _, ok := explicitRefs[rule.Ref.ValueString()]; ok {
 			// We should not add explicitly-set refs, to avoid them being
 			// "stolen" by other rules.
 			continue
 		}
 
-		if err := r.add(rule); err != nil {
+		if err := r.add(rule, rule.Ref); err != nil {
 			return ruleRefs{}, err
 		}
 	}
@@ -333,35 +332,34 @@ func newRuleRefs(rulesetRules []rulesets.RulesetNewResponseRule, explicitRefs ma
 }
 
 // add stores a ref for the given rule.
-func (r *ruleRefs) add(rule rulesets.RulesetNewResponseRule) error {
+func (r *ruleRefs) add(rule *RulesetRulesModel, ruleRef basetypes.StringValue) error {
 	key, err := ruleToKey(rule)
 	if err != nil {
 		return err
 	}
 
-	r.refs[key] = append(r.refs[key], rule.Ref)
+	r.refs[key.ValueString()] = append(r.refs[key.ValueString()], ruleRef.ValueString())
 	return nil
 }
 
 // pop removes a ref for the given rule and returns it. If no ref was found for
-// the rule, pop returns an empty string.
-func (r *ruleRefs) pop(rule rulesets.RulesetNewResponseRule) (string, error) {
+// the rule, pop returns an `null` value.
+func (r *ruleRefs) pop(rule *RulesetRulesModel) (basetypes.StringValue, error) {
 	key, err := ruleToKey(rule)
-
 	if err != nil {
-		return "", err
+		return types.StringNull(), err
 	}
 
-	refs := r.refs[key]
+	refs := r.refs[key.ValueString()]
 	if len(refs) == 0 {
-		return "", nil
+		return types.StringNull(), nil
 	}
 
 	ref, refs := refs[0], refs[1:]
 
-	r.refs[key] = refs
+	r.refs[key.ValueString()] = refs
 
-	return ref, nil
+	return types.StringValue(ref), nil
 }
 
 // isEmpty returns true if the store does not contain any rule refs.
@@ -372,40 +370,35 @@ func (r *ruleRefs) isEmpty() bool {
 // ruleToKey converts a ruleset rule to a key that can be used to track
 // equivalent rules. Internally, it serializes the rule to JSON after removing
 // computed fields.
-func ruleToKey(rule rulesets.RulesetNewResponseRule) (string, error) {
-	rule.Ref = ""
-	rule.ID = ""
-	rule.Version = ""
-	rule.LastUpdated = time.Time{}
+func ruleToKey(rule *RulesetRulesModel) (basetypes.StringValue, error) {
+	// For the purposes of preserving existing rule refs, we don't want to
+	// include computed fields as a part of the key value.
+	rule.ID = types.StringNull()
+	rule.Ref = types.StringNull()
+	rule.Version = types.StringNull()
+	rule.LastUpdated = timetypes.RFC3339{}
 
-	d, _ := apijson.Marshal(rule)
-	return string(d), nil
+	data, err := apijson.Marshal(rule)
+	if err != nil {
+		return types.StringNull(), err
+	}
+
+	return types.StringValue(string(data)), nil
 }
 
 // remapPreservedRuleRefs tries to preserve the refs of rules that have not
 // changed in the ruleset, while also allowing users to explicitly set the ref
 // if they choose to.
-func remapPreservedRuleRefs(state, plan *RulesetModel) ([]rulesets.RulesetNewResponseRule, error) {
-	var currentRuleset rulesets.RulesetNewResponse
-	var plannedRuleset rulesets.RulesetNewResponse
-
-	jsonState, _ := apijson.Marshal(state)
-	jsonPlan, _ := apijson.Marshal(plan)
-
-	err := apijson.Unmarshal(jsonState, &currentRuleset)
-	if err != nil {
-		return nil, err
-	}
-
-	err = apijson.Unmarshal(jsonPlan, &plannedRuleset)
-	if err != nil {
-		return nil, err
-	}
+func remapPreservedRuleRefs(state, plan *RulesetModel) ([]*RulesetRulesModel, error) {
+	currentRuleset := state
+	plannedRuleset := plan
 
 	plannedExplicitRefs := make(map[string]struct{})
-	for _, rule := range plannedRuleset.Rules {
-		if rule.Ref != "" {
-			plannedExplicitRefs[rule.Ref] = struct{}{}
+	plannedRules := plannedRuleset.Rules
+
+	for _, rule := range *plannedRules {
+		if !rule.Ref.IsNull() {
+			plannedExplicitRefs[rule.Ref.ValueString()] = struct{}{}
 		}
 	}
 
@@ -416,18 +409,21 @@ func remapPreservedRuleRefs(state, plan *RulesetModel) ([]rulesets.RulesetNewRes
 
 	if refs.isEmpty() {
 		// There are no rule refs when the ruleset is first created.
-		return plannedRuleset.Rules, nil
+		return *plannedRuleset.Rules, nil
 	}
 
-	for i := range plannedRuleset.Rules {
-		rule := &plannedRuleset.Rules[i]
+	for i := range *plannedRules {
+		thing := *plannedRuleset.Rules
+		rule := thing[i]
+
 		// We should not override refs that have been explicitly set.
-		if rule.Ref == "" {
-			if rule.Ref, err = refs.pop(*rule); err != nil {
+		if rule.Ref.IsUnknown() {
+
+			if rule.Ref, err = refs.pop(rule); err != nil {
 				return nil, err
 			}
 		}
 	}
 
-	return plannedRuleset.Rules, nil
+	return *plannedRules, nil
 }
