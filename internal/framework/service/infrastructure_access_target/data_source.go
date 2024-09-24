@@ -70,7 +70,7 @@ func (d *InfrastructureAccessTargetDataSource) Read(ctx context.Context, req dat
 		return
 	}
 	if len(allTargets) == 0 {
-		resp.Diagnostics.AddError("failed to fetch Infrastructure Access Targets", "no Infrastructure Targets matching given query parameters")
+		resp.Diagnostics.AddError("failed to fetch Infrastructure Access Targets", "no Infrastructure Access Targets matching given query parameters")
 	}
 
 	var targets []InfrastructureAccessTargetModel
