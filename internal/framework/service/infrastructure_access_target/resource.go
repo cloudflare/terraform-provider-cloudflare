@@ -68,15 +68,15 @@ func (r *InfrastructureAccessTargetResource) Create(ctx context.Context, req res
 	}
 	createTargetParams := cloudflare.CreateInfrastructureAccessTargetParams{
 		InfrastructureAccessTargetParams: cloudflare.InfrastructureAccessTargetParams{
-			Hostname: data.Hostname.String(),
+			Hostname: data.Hostname.ValueString(),
 			IP:       ipInfo,
 		},
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Infrastructure Target from struct %+v", createTargetParams))
+	tflog.Debug(ctx, fmt.Sprintf("Creating Cloudflare Infrastructure Access Target from struct %+v", createTargetParams))
 	target, err := r.client.V1.CreateInfrastructureAccessTarget(ctx, cloudflare.AccountIdentifier(accountId), createTargetParams)
 	if err != nil {
-		resp.Diagnostics.AddError(fmt.Sprintf("error creating Infrastructure Target for account %q", accountId), err.Error())
+		resp.Diagnostics.AddError(fmt.Sprintf("error creating Infrastructure Access Target for account %q", accountId), err.Error())
 		return
 	}
 
@@ -92,15 +92,15 @@ func (r *InfrastructureAccessTargetResource) Read(ctx context.Context, req resou
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Retrieving Cloudflare Infrastructure Target with ID %s", data.ID))
-	target, err := r.client.V1.GetInfrastructureAccessTarget(ctx, cloudflare.AccountIdentifier(data.AccountID.String()), data.ID.String())
+	tflog.Debug(ctx, fmt.Sprintf("Retrieving Cloudflare Infrastructure Access Target with ID %s", data.ID))
+	target, err := r.client.V1.GetInfrastructureAccessTarget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
 	if err != nil {
 		var notFoundError *cloudflare.NotFoundError
 		if errors.As(err, &notFoundError) {
-			resp.Diagnostics.AddError(fmt.Sprintf("Infrastructure Target with ID %s does not exist", data.ID), err.Error())
+			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError(fmt.Sprintf("error finding Infrastructure Target with ID %s", data.ID), err.Error())
+		resp.Diagnostics.AddError(fmt.Sprintf("error finding Infrastructure Access Target with ID %s", data.ID), err.Error())
 		return
 	}
 
@@ -127,17 +127,17 @@ func (r *InfrastructureAccessTargetResource) Update(ctx context.Context, req res
 		return
 	}
 	updatedTargetParams := cloudflare.UpdateInfrastructureAccessTargetParams{
-		ID: data.ID.String(),
+		ID: data.ID.ValueString(),
 		ModifyParams: cloudflare.InfrastructureAccessTargetParams{
-			Hostname: data.Hostname.String(),
+			Hostname: data.Hostname.ValueString(),
 			IP:       ipInfo,
 		},
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Infrastructure Target from struct: %+v", updatedTargetParams))
+	tflog.Debug(ctx, fmt.Sprintf("Updating Cloudflare Infrastructure Access Target from struct: %+v", updatedTargetParams))
 	updatedTarget, err := r.client.V1.UpdateInfrastructureAccessTarget(ctx, cloudflare.AccountIdentifier(accountId), updatedTargetParams)
 	if err != nil {
-		resp.Diagnostics.AddError(fmt.Sprintf("error updating Infrastructure Target with ID %s for account %q", data.ID, accountId), err.Error())
+		resp.Diagnostics.AddError(fmt.Sprintf("error updating Infrastructure Access Target with ID %s for account %q", data.ID, accountId), err.Error())
 		return
 	}
 
@@ -153,10 +153,15 @@ func (r *InfrastructureAccessTargetResource) Delete(ctx context.Context, req res
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Infrastructure Target with ID: %s", data.ID))
-	err := r.client.V1.DeleteInfrastructureAccessTarget(ctx, cloudflare.AccountIdentifier(data.AccountID.String()), data.ID.String())
+	tflog.Debug(ctx, fmt.Sprintf("Deleting Cloudflare Infrastructure Access Target with ID: %s", data.ID))
+	err := r.client.V1.DeleteInfrastructureAccessTarget(ctx, cloudflare.AccountIdentifier(data.AccountID.ValueString()), data.ID.ValueString())
+	var notFoundError *cloudflare.NotFoundError
+	if errors.As(err, &notFoundError) {
+		// Return early without error if target is already deleted
+		return
+	}
 	if err != nil {
-		resp.Diagnostics.AddError(fmt.Sprintf("error deleting Infrastructure Target with ID %s for account %q", data.ID, data.AccountID.String()), err.Error())
+		resp.Diagnostics.AddError(fmt.Sprintf("error deleting Infrastructure Access Target with ID %s for account %q", data.ID, data.AccountID.ValueString()), err.Error())
 		return
 	}
 }
@@ -177,15 +182,15 @@ func buildCreateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.Obj
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		return buildIPInfoFromAttributes(ipv4Details.IPAddr.String(), ipv6Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String(), ipv6Details.VirtualNetworkId.String()), nil
+		return buildIPInfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv6Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	} else if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) {
 		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		return buildIPInfoFromAttributesSingle(ipv4Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String()), nil
+		return buildIPV4InfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString()), nil
 	} else {
 		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		return buildIPInfoFromAttributesSingle(ipv6Details.IPAddr.String(), ipv6Details.VirtualNetworkId.String()), nil
+		return buildIPV6InfoFromAttributes(ipv6Details.IPAddr.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	}
 }
 
@@ -205,15 +210,15 @@ func buildUpdateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.Obj
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		return buildIPInfoFromAttributes(ipv4Details.IPAddr.String(), ipv6Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String(), ipv6Details.VirtualNetworkId.String()), nil
+		return buildIPInfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv6Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	} else if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) {
 		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		return buildIPInfoFromAttributesSingle(ipv4Details.IPAddr.String(), ipv4Details.VirtualNetworkId.String()), nil
+		return buildIPV4InfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString()), nil
 	} else {
 		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		return buildIPInfoFromAttributesSingle(ipv6Details.IPAddr.String(), ipv6Details.VirtualNetworkId.String()), nil
+		return buildIPV6InfoFromAttributes(ipv6Details.IPAddr.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	}
 }
 
@@ -230,7 +235,16 @@ func buildIPInfoFromAttributes(ipv4Addr string, ipv6Addr string, ipv4VirtualNetw
 	}
 }
 
-func buildIPInfoFromAttributesSingle(ipAddr string, virtualNetworkId string) cloudflare.InfrastructureAccessTargetIPInfo {
+func buildIPV4InfoFromAttributes(ipAddr string, virtualNetworkId string) cloudflare.InfrastructureAccessTargetIPInfo {
+	return cloudflare.InfrastructureAccessTargetIPInfo{
+		IPV4: &cloudflare.InfrastructureAccessTargetIPDetails{
+			IPAddr:           ipAddr,
+			VirtualNetworkId: virtualNetworkId,
+		},
+	}
+}
+
+func buildIPV6InfoFromAttributes(ipAddr string, virtualNetworkId string) cloudflare.InfrastructureAccessTargetIPInfo {
 	return cloudflare.InfrastructureAccessTargetIPInfo{
 		IPV6: &cloudflare.InfrastructureAccessTargetIPDetails{
 			IPAddr:           ipAddr,
@@ -276,10 +290,10 @@ func convertIPInfoToBaseTypeObject(ipInfo cloudflare.InfrastructureAccessTargetI
 		return parentObjectValue
 	} else if ipInfo.IPV4 != nil {
 		ipv4Object := buildObjectFromIpDetails(ipInfo.IPV4.IPAddr, ipInfo.IPV4.VirtualNetworkId)
-		return buildObjectFromIpInfo("ipv4", ipv4Object)
+		return buildObjectFromIpInfoV4(ipv4Object)
 	} else {
 		ipv6Object := buildObjectFromIpDetails(ipInfo.IPV6.IPAddr, ipInfo.IPV6.VirtualNetworkId)
-		return buildObjectFromIpInfo("ipv6", ipv6Object)
+		return buildObjectFromIpInfoV6(ipv6Object)
 	}
 }
 
@@ -296,17 +310,42 @@ func buildObjectFromIpDetails(ipAddr string, virtualNetworkId string) basetypes.
 	return ipDetailsObjectType
 }
 
-func buildObjectFromIpInfo(ipv string, baseObjectMap basetypes.ObjectValue) basetypes.ObjectValue {
+func buildObjectFromIpInfoV4(baseObjectMap basetypes.ObjectValue) basetypes.ObjectValue {
 	parentObjectMap := map[string]attr.Value{
-		ipv: baseObjectMap,
+		"ipv4": baseObjectMap,
+		"ipv6": basetypes.NewObjectNull(map[string]attr.Type{
+			"ip_addr":            tftypes.StringType,
+			"virtual_network_id": tftypes.StringType,
+		}),
 	}
-	parentObjectValue, _ := tftypes.ObjectValue(map[string]attr.Type{
-		ipv: tftypes.ObjectType{
+	return buildIPInfoObjectValue(parentObjectMap)
+}
+
+func buildObjectFromIpInfoV6(baseObjectMap basetypes.ObjectValue) basetypes.ObjectValue {
+	parentObjectMap := map[string]attr.Value{
+		"ipv4": basetypes.NewObjectNull(map[string]attr.Type{
+			"ip_addr":            tftypes.StringType,
+			"virtual_network_id": tftypes.StringType,
+		}),
+		"ipv6": baseObjectMap,
+	}
+	return buildIPInfoObjectValue(parentObjectMap)
+}
+
+func buildIPInfoObjectValue(objectMap map[string]attr.Value) basetypes.ObjectValue {
+	ipInfoObjectValue, _ := tftypes.ObjectValue(map[string]attr.Type{
+		"ipv4": tftypes.ObjectType{
 			AttrTypes: map[string]attr.Type{
 				"ip_addr":            tftypes.StringType,
 				"virtual_network_id": tftypes.StringType,
 			},
 		},
-	}, parentObjectMap)
-	return parentObjectValue
+		"ipv6": tftypes.ObjectType{
+			AttrTypes: map[string]attr.Type{
+				"ip_addr":            tftypes.StringType,
+				"virtual_network_id": tftypes.StringType,
+			},
+		},
+	}, objectMap)
+	return ipInfoObjectValue
 }

@@ -76,6 +76,9 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 				MarkdownDescription: "The date and time at which the target was created.",
 				// Set value to read-only
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"modified_at": schema.StringAttribute{
 				MarkdownDescription: "The date and time at which the target was last modified.",
