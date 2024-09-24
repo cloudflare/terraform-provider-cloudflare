@@ -15,14 +15,12 @@ description: |-
 
 ### Required
 
-- `account_identifier` (String) Identifier
+- `account_id` (String) Identifier
 
 ### Optional
 
 - `direction` (String) Sorts results in an ascending or descending order.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 - `verified` (Boolean) Filter by verified destination addresses.
 
 ### Read-Only
@@ -32,13 +30,10 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `email` (String) The contact email address of the user.
-
 Read-Only:
 
 - `created` (String) The date and time the destination address has been created.
+- `email` (String) The contact email address of the user.
 - `id` (String) Destination address identifier.
 - `modified` (String) The date and time the destination address was last modified.
 - `tag` (String) Destination address tag. (Deprecated, replaced by destination address identifier)

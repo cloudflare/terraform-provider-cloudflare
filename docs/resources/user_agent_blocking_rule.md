@@ -39,11 +39,21 @@ resource "cloudflare_user_agent_blocking_rule" "example_2" {
 
 ### Required
 
+- `configuration` (Attributes) The rule configuration. (see [below for nested schema](#nestedatt--configuration))
+- `mode` (String) The action to apply to a matched request.
 - `zone_identifier` (String) Identifier
 
 ### Optional
 
 - `id` (String) The unique identifier of the User Agent Blocking rule.
+
+<a id="nestedatt--configuration"></a>
+### Nested Schema for `configuration`
+
+Optional:
+
+- `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the rule.
+- `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.
 
 ## Import
 

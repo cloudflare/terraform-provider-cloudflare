@@ -61,7 +61,7 @@ resource "cloudflare_load_balancer_monitor" "example" {
 - `expected_body` (String) A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
 - `expected_codes` (String) The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.
 - `follow_redirects` (Boolean) Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
-- `header` (String) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
+- `header` (Map of List of String) The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
 - `interval` (Number) The interval between each health check. Shorter intervals may improve failover time, but will increase load on the origins as we check from multiple locations.
 - `method` (String) The method to use for the health check. This defaults to 'GET' for HTTP/HTTPS based checks and 'connection_established' for TCP based health checks.
 - `path` (String) The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.

@@ -1,1 +1,1 @@
-$ terraform import cloudflare_access_organization.example <account_id>
+$ terraform import cloudflare_zero_trust_organization.example <account_id>

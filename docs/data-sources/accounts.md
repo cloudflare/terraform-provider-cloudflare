@@ -24,8 +24,6 @@ data "cloudflare_accounts" "example" {
 - `direction` (String) Direction to order results.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (String) Name of the account.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 
 ### Read-Only
 
@@ -33,5 +31,33 @@ data "cloudflare_accounts" "example" {
 
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
+
+Read-Only:
+
+- `created_on` (String) Timestamp for the creation of the account
+- `id` (String) Identifier
+- `name` (String) Account name
+- `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--result--settings))
+
+<a id="nestedatt--result--settings"></a>
+### Nested Schema for `result.settings`
+
+Read-Only:
+
+- `abuse_contact_email` (String) Sets an abuse contact email to notify for abuse reports.
+- `default_nameservers` (String) Specifies the default nameservers to be used for new zones added to this account.
+
+- `cloudflare.standard` for Cloudflare-branded nameservers
+- `custom.account` for account custom nameservers
+- `custom.tenant` for tenant custom nameservers
+
+See [Custom Nameservers](https://developers.cloudflare.com/dns/additional-options/custom-nameservers/)
+for more information.
+- `enforce_twofactor` (Boolean) Indicates whether membership in this account requires that
+Two-Factor Authentication is enabled
+- `use_account_custom_ns_by_default` (Boolean) Indicates whether new zones should use the account-level custom
+nameservers by default.
+
+Deprecated in favor of `default_nameservers`.
 
 

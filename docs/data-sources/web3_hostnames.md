@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
@@ -28,18 +28,15 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `description` (String) An optional description of the hostname.
-- `dnslink` (String) DNSLink value used if the target is ipfs.
-- `target` (String) Target gateway of the hostname.
-
 Read-Only:
 
 - `created_on` (String)
+- `description` (String) An optional description of the hostname.
+- `dnslink` (String) DNSLink value used if the target is ipfs.
 - `id` (String) Identifier
 - `modified_on` (String)
 - `name` (String) The hostname that will point to the target gateway via CNAME.
 - `status` (String) Status of the hostname's activation.
+- `target` (String) Target gateway of the hostname.
 
 

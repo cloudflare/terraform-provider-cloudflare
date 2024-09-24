@@ -47,7 +47,7 @@ resource "cloudflare_notification_policy_webhooks" "example" {
 <a id="nestedatt--errors"></a>
 ### Nested Schema for `errors`
 
-Required:
+Read-Only:
 
 - `code` (Number)
 - `message` (String)
@@ -56,7 +56,7 @@ Required:
 <a id="nestedatt--messages"></a>
 ### Nested Schema for `messages`
 
-Required:
+Read-Only:
 
 - `code` (Number)
 - `message` (String)
@@ -65,7 +65,7 @@ Required:
 <a id="nestedatt--result_info"></a>
 ### Nested Schema for `result_info`
 
-Optional:
+Read-Only:
 
 - `count` (Number) Total number of results for the requested service
 - `page` (Number) Current page within paginated list of results

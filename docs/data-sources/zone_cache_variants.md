@@ -26,7 +26,7 @@ description: |-
 <a id="nestedatt--value"></a>
 ### Nested Schema for `value`
 
-Optional:
+Read-Only:
 
 - `avif` (List of String) List of strings with the MIME types of all the variants that should be served for avif.
 - `bmp` (List of String) List of strings with the MIME types of all the variants that should be served for bmp.

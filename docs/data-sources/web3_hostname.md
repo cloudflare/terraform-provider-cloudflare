@@ -15,26 +15,26 @@ description: |-
 
 ### Optional
 
-- `description` (String) An optional description of the hostname.
-- `dnslink` (String) DNSLink value used if the target is ipfs.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `identifier` (String) Identifier
-- `target` (String) Target gateway of the hostname.
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Read-Only
 
 - `created_on` (String)
+- `description` (String) An optional description of the hostname.
+- `dnslink` (String) DNSLink value used if the target is ipfs.
 - `id` (String) Identifier
 - `modified_on` (String)
 - `name` (String) The hostname that will point to the target gateway via CNAME.
 - `status` (String) Status of the hostname's activation.
+- `target` (String) Target gateway of the hostname.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 
 Required:
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 

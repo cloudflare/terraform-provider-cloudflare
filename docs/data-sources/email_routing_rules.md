@@ -15,14 +15,12 @@ description: |-
 
 ### Required
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
 - `enabled` (Boolean) Filter by enabled routing rules.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 
 ### Read-Only
 
@@ -31,16 +29,13 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--result--actions))
-- `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--result--matchers))
-- `name` (String) Routing rule name.
-
 Read-Only:
 
+- `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--result--actions))
 - `enabled` (Boolean) Routing rule status.
 - `id` (String) Routing rule identifier.
+- `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--result--matchers))
+- `name` (String) Routing rule name.
 - `priority` (Number) Priority of the routing rule.
 - `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
 

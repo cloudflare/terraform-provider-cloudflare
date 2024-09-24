@@ -31,12 +31,43 @@ resource "cloudflare_pages_domain" "my-domain" {
 
 ### Optional
 
-- `domain_name` (String) Name of the domain.
+- `name` (String)
+
+### Read-Only
+
+- `certificate_authority` (String)
+- `created_on` (String)
+- `domain_id` (String)
+- `id` (String) The ID of this resource.
+- `status` (String)
+- `validation_data` (Attributes) (see [below for nested schema](#nestedatt--validation_data))
+- `verification_data` (Attributes) (see [below for nested schema](#nestedatt--verification_data))
+- `zone_tag` (String)
+
+<a id="nestedatt--validation_data"></a>
+### Nested Schema for `validation_data`
+
+Read-Only:
+
+- `error_message` (String)
+- `method` (String)
+- `status` (String)
+- `txt_name` (String)
+- `txt_value` (String)
+
+
+<a id="nestedatt--verification_data"></a>
+### Nested Schema for `verification_data`
+
+Read-Only:
+
+- `error_message` (String)
+- `status` (String)
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_pages_domain.example <account_id>/<project_name>/<domain-name>
+$ terraform import cloudflare_pages_domain.example <account_id>/<project_name>/<domaincloudflare_access_service_tokenname>
 ```

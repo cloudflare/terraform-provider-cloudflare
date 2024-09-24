@@ -16,7 +16,7 @@ description: |-
 ### Required
 
 - `target` (String) Target gateway of the hostname.
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 

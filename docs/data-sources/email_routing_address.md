@@ -15,14 +15,14 @@ description: |-
 
 ### Optional
 
-- `account_identifier` (String) Identifier
+- `account_id` (String) Identifier
 - `destination_address_identifier` (String) Destination address identifier.
-- `email` (String) The contact email address of the user.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 
 ### Read-Only
 
 - `created` (String) The date and time the destination address has been created.
+- `email` (String) The contact email address of the user.
 - `id` (String) Destination address identifier.
 - `modified` (String) The date and time the destination address was last modified.
 - `tag` (String) Destination address tag. (Deprecated, replaced by destination address identifier)
@@ -33,13 +33,11 @@ description: |-
 
 Required:
 
-- `account_identifier` (String) Identifier
+- `account_id` (String) Identifier
 
 Optional:
 
 - `direction` (String) Sorts results in an ascending or descending order.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 - `verified` (Boolean) Filter by verified destination addresses.
 
 

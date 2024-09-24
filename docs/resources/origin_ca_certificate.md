@@ -41,7 +41,6 @@ resource "cloudflare_origin_ca_certificate" "example" {
 
 ### Optional
 
-- `certificate_id` (String) Identifier
 - `csr` (String) The Certificate Signing Request (CSR). Must be newline-encoded.
 - `hostnames` (List of String) Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.
 - `request_type` (String) Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
@@ -49,7 +48,10 @@ resource "cloudflare_origin_ca_certificate" "example" {
 
 ### Read-Only
 
+- `certificate` (String) The Origin CA certificate. Will be newline-encoded.
+- `expires_on` (String) When the certificate will expire.
 - `id` (String) Identifier
+- `revoked_at` (String) When the certificate was revoked.
 
 ## Import
 

@@ -34,18 +34,15 @@ data "cloudflare_lists" "example" {
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `description` (String) An informative summary of the list.
-- `num_referencing_filters` (Number) The number of [filters](/operations/filters-list-filters) referencing the list.
-
 Read-Only:
 
 - `created_on` (String) The RFC 3339 timestamp of when the list was created.
+- `description` (String) An informative summary of the list.
 - `id` (String) The unique ID of the list.
 - `kind` (String) The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).
 - `modified_on` (String) The RFC 3339 timestamp of when the list was last modified.
 - `name` (String) An informative name for the list. Use this name in filter and rule expressions.
 - `num_items` (Number) The number of items in the list.
+- `num_referencing_filters` (Number) The number of [filters](/operations/filters-list-filters) referencing the list.
 
 

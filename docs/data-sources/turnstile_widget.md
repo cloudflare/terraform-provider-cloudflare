@@ -47,7 +47,5 @@ Optional:
 
 - `direction` (String) Direction to order widgets.
 - `order` (String) Field to order widgets by.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Number of items per page.
 
 

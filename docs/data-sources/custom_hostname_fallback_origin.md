@@ -17,4 +17,12 @@ description: |-
 
 - `zone_id` (String) Identifier
 
+### Optional
+
+- `created_at` (String) This is the time the fallback origin was created.
+- `errors` (List of String) These are errors that were encountered while trying to activate a fallback origin.
+- `origin` (String) Your origin hostname that requests to your custom hostnames will be sent to.
+- `status` (String) Status of the fallback origin's activation.
+- `updated_at` (String) This is the time the fallback origin was updated.
+
 

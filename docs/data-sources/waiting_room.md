@@ -15,21 +15,15 @@ description: |-
 
 ### Optional
 
-- `additional_routes` (Attributes List) Only available for the Waiting Room Advanced subscription. Additional hostname and path combinations to which this waiting room will be applied. There is an implied wildcard at the end of the path. The hostname and path combination must be unique to this and all other waiting rooms. (see [below for nested schema](#nestedatt--additional_routes))
-- `cookie_attributes` (Attributes) Configures cookie attributes for the waiting room cookie. This encrypted cookie stores a user's status in the waiting room, such as queue position. (see [below for nested schema](#nestedatt--cookie_attributes))
-- `cookie_suffix` (String) Appends a '_' + a custom suffix to the end of Cloudflare Waiting Room's cookie name(__cf_waitingroom). If `cookie_suffix` is "abcd", the cookie name will be `__cf_waitingroom_abcd`. This field is required if using `additional_routes`.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `host` (String) The host name to which the waiting room will be applied (no wildcards). Please do not include the scheme (http:// or https://). The host and path combination must be unique.
-- `name` (String) A unique name to identify the waiting room. Only alphanumeric characters, hyphens and underscores are allowed.
-- `new_users_per_minute` (Number) Sets the number of new users that will be let into the route every minute. This value is used as baseline for the number of users that are let in per minute. So it is possible that there is a little more or little less traffic coming to the route based on the traffic patterns at that time around the world.
-- `next_event_prequeue_start_time` (String) An ISO 8601 timestamp that marks when the next event will begin queueing.
-- `next_event_start_time` (String) An ISO 8601 timestamp that marks when the next event will start.
-- `total_active_users` (Number) Sets the total number of active user sessions on the route at a point in time. A route is a combination of host and path on which a waiting room is available. This value is used as a baseline for the total number of active user sessions on the route. It is possible to have a situation where there are more or less active users sessions on the route based on the traffic patterns at that time around the world.
 - `waiting_room_id` (String)
 - `zone_id` (String) Identifier
 
 ### Read-Only
 
+- `additional_routes` (Attributes List) Only available for the Waiting Room Advanced subscription. Additional hostname and path combinations to which this waiting room will be applied. There is an implied wildcard at the end of the path. The hostname and path combination must be unique to this and all other waiting rooms. (see [below for nested schema](#nestedatt--additional_routes))
+- `cookie_attributes` (Attributes) Configures cookie attributes for the waiting room cookie. This encrypted cookie stores a user's status in the waiting room, such as queue position. (see [below for nested schema](#nestedatt--cookie_attributes))
+- `cookie_suffix` (String) Appends a '_' + a custom suffix to the end of Cloudflare Waiting Room's cookie name(__cf_waitingroom). If `cookie_suffix` is "abcd", the cookie name will be `__cf_waitingroom_abcd`. This field is required if using `additional_routes`.
 - `created_on` (String)
 - `custom_page_html` (String) Only available for the Waiting Room Advanced subscription. This is a template html file that will be rendered at the edge. If no custom_page_html is provided, the default waiting room will be used. The template is based on mustache ( https://mustache.github.io/ ). There are several variables that are evaluated by the Cloudflare edge:
 1. waitTimeKnown Acts like a boolean value that indicates the behavior to take when wait time is not available, for instance when queue_all is **true**.
@@ -43,6 +37,8 @@ To view the full list of variables, look at the `cfWaitingRoom` object described
 - `default_template_language` (String) The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.
 - `description` (String) A note that you can use to add more details about the waiting room.
 - `disable_session_renewal` (Boolean) Only available for the Waiting Room Advanced subscription. Disables automatic renewal of session cookies. If `true`, an accepted user will have session_duration minutes to browse the site. After that, they will have to go through the waiting room again. If `false`, a user's session cookie will be automatically renewed on every request.
+- `enabled_origin_commands` (List of String) A list of enabled origin commands.
+- `host` (String) The host name to which the waiting room will be applied (no wildcards). Please do not include the scheme (http:// or https://). The host and path combination must be unique.
 - `id` (String) The ID of this resource.
 - `json_response_enabled` (Boolean) Only available for the Waiting Room Advanced subscription. If `true`, requests to the waiting room with the header `Accept: application/json` will receive a JSON response object with information on the user's status in the waiting room as opposed to the configured static HTML page. This JSON response object has one property `cfWaitingRoom` which is an object containing the following fields:
 1. `inWaitingRoom`: Boolean indicating if the user is in the waiting room (always **true**).
@@ -71,7 +67,8 @@ To view the full list of variables, look at the `cfWaitingRoom` object described
 
 An example cURL to a waiting room could be:
 
-	curl -X GET "https://example.com/waitingroom" \n		-H "Accept: application/json"
+	curl -X GET "https://example.com/waitingroom" \
+		-H "Accept: application/json"
 
 If `json_response_enabled` is **true** and the request hits the waiting room, an example JSON response when `queueingMethod` is **fifo** and no event is active could be:
 
@@ -133,6 +130,10 @@ If `json_response_enabled` is **true** and the request hits the waiting room, an
 		}
 	}.
 - `modified_on` (String)
+- `name` (String) A unique name to identify the waiting room. Only alphanumeric characters, hyphens and underscores are allowed.
+- `new_users_per_minute` (Number) Sets the number of new users that will be let into the route every minute. This value is used as baseline for the number of users that are let in per minute. So it is possible that there is a little more or little less traffic coming to the route based on the traffic patterns at that time around the world.
+- `next_event_prequeue_start_time` (String) An ISO 8601 timestamp that marks when the next event will begin queueing.
+- `next_event_start_time` (String) An ISO 8601 timestamp that marks when the next event will start.
 - `path` (String) Sets the path within the host to enable the waiting room on. The waiting room will be enabled for all subpaths as well. If there are two waiting rooms on the same subpath, the waiting room for the most specific path will be chosen. Wildcards and query parameters are not supported.
 - `queue_all` (Boolean) If queue_all is `true`, all the traffic that is coming to a route will be sent to the waiting room. No new traffic can get to the route once this field is set and estimated time will become unavailable.
 - `queueing_method` (String) Sets the queueing method used by the waiting room. Changing this parameter from the **default** queueing method is only available for the Waiting Room Advanced subscription. Regardless of the queueing method, if `queue_all` is enabled or an event is prequeueing, users in the waiting room will not be accepted to the origin. These users will always see a waiting room page that refreshes automatically. The valid queueing methods are:
@@ -143,16 +144,22 @@ If `json_response_enabled` is **true** and the request hits the waiting room, an
 - `queueing_status_code` (Number) HTTP status code returned to a user while in the queue.
 - `session_duration` (Number) Lifetime of a cookie (in minutes) set by Cloudflare for users who get access to the route. If a user is not seen by Cloudflare again in that time period, they will be treated as a new user that visits the route.
 - `suspended` (Boolean) Suspends or allows traffic going to the waiting room. If set to `true`, the traffic will not go to the waiting room.
+- `total_active_users` (Number) Sets the total number of active user sessions on the route at a point in time. A route is a combination of host and path on which a waiting room is available. This value is used as a baseline for the total number of active user sessions on the route. It is possible to have a situation where there are more or less active users sessions on the route based on the traffic patterns at that time around the world.
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Required:
+
+- `zone_id` (String) Identifier
+
 
 <a id="nestedatt--additional_routes"></a>
 ### Nested Schema for `additional_routes`
 
-Optional:
-
-- `host` (String) The hostname to which this waiting room will be applied (no wildcards). The hostname must be the primary domain, subdomain, or custom hostname (if using SSL for SaaS) of this zone. Please do not include the scheme (http:// or https://).
-
 Read-Only:
 
+- `host` (String) The hostname to which this waiting room will be applied (no wildcards). The hostname must be the primary domain, subdomain, or custom hostname (if using SSL for SaaS) of this zone. Please do not include the scheme (http:// or https://).
 - `path` (String) Sets the path within the host to enable the waiting room on. The waiting room will be enabled for all subpaths as well. If there are two waiting rooms on the same subpath, the waiting room for the most specific path will be chosen. Wildcards and query parameters are not supported.
 
 
@@ -163,18 +170,5 @@ Read-Only:
 
 - `samesite` (String) Configures the SameSite attribute on the waiting room cookie. Value `auto` will be translated to `lax` or `none` depending if **Always Use HTTPS** is enabled. Note that when using value `none`, the secure attribute cannot be set to `never`.
 - `secure` (String) Configures the Secure attribute on the waiting room cookie. Value `always` indicates that the Secure attribute will be set in the Set-Cookie header, `never` indicates that the Secure attribute will not be set, and `auto` will set the Secure attribute depending if **Always Use HTTPS** is enabled.
-
-
-<a id="nestedatt--filter"></a>
-### Nested Schema for `filter`
-
-Required:
-
-- `zone_id` (String) Identifier
-
-Optional:
-
-- `page` (String) Page number of paginated results.
-- `per_page` (String) Maximum number of results per page. Must be a multiple of 5.
 
 

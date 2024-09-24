@@ -23,16 +23,18 @@ resource "cloudflare_account" "example" {
 
 ### Required
 
-- `account_id` (String)
 - `name` (String) Account name
+- `type` (String) the type of account being created. For self-serve customers, use standard. for enterprise customers, use enterprise.
 
 ### Optional
 
 - `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
+- `unit` (Attributes) information related to the tenant unit, and optionally, an id of the unit to create the account on. see https://developers.cloudflare.com/tenant/how-to/manage-accounts/ (see [below for nested schema](#nestedatt--unit))
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `created_on` (String) Timestamp for the creation of the account
+- `id` (String) Identifier
 
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`
@@ -54,6 +56,14 @@ Two-Factor Authentication is enabled
 nameservers by default.
 
 Deprecated in favor of `default_nameservers`.
+
+
+<a id="nestedatt--unit"></a>
+### Nested Schema for `unit`
+
+Optional:
+
+- `id` (String) Tenant unit ID
 
 ## Import
 

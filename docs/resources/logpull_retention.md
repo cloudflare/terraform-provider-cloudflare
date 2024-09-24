@@ -22,12 +22,11 @@ resource "cloudflare_logpull_retention" "example" {
 
 ### Required
 
+- `zone_id` (String) Identifier
+
+### Optional
+
 - `flag` (Boolean) The log retention flag for Logpull API.
-- `zone_identifier` (String) Identifier
-
-### Read-Only
-
-- `id` (String) Identifier
 
 ## Import
 

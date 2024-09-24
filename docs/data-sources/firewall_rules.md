@@ -23,9 +23,7 @@ description: |-
 - `description` (String) A case-insensitive string to find in the description.
 - `id` (String) The unique identifier of the firewall rule.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `page` (Number) Page number of paginated results.
 - `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
-- `per_page` (Number) Number of firewall rules per page.
 
 ### Read-Only
 
@@ -34,33 +32,27 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
+Read-Only:
 
+- `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
 - `description` (String) An informative summary of the firewall rule.
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--result--filter))
+- `id` (String) The unique identifier of the firewall rule.
+- `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
 - `priority` (Number) The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.
 - `products` (List of String)
 - `ref` (String) A short reference tag. Allows you to select related firewall rules.
 
-Read-Only:
-
-- `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--result--filter))
-- `id` (String) The unique identifier of the firewall rule.
-- `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
-
 <a id="nestedatt--result--filter"></a>
 ### Nested Schema for `result.filter`
 
-Optional:
+Read-Only:
 
 - `deleted` (Boolean) When true, indicates that the firewall rule was deleted.
 - `description` (String) An informative summary of the filter.
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
+- `id` (String) The unique identifier of the filter.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
-
-Read-Only:
-
-- `id` (String) The unique identifier of the filter.
 
 

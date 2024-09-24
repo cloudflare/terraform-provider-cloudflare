@@ -78,6 +78,7 @@ resource "cloudflare_load_balancer_pool" "example" {
 - `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
 - `id` (String) The ID of this resource.
 - `modified_on` (String)
+- `networks` (List of String) List of networks where Load Balancer or Pool is enabled.
 
 <a id="nestedatt--origins"></a>
 ### Nested Schema for `origins`

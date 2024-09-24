@@ -31,7 +31,7 @@ resource "cloudflare_custom_hostname" "example" {
 
 ### Optional
 
-- `custom_metadata` (Attributes) These are per-hostname (customer) settings. (see [below for nested schema](#nestedatt--custom_metadata))
+- `custom_metadata` (Map of String) Unique key/value metadata for this hostname. These are per-hostname (customer) settings.
 - `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
 - `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
 
@@ -71,18 +71,10 @@ Optional:
 
 
 
-<a id="nestedatt--custom_metadata"></a>
-### Nested Schema for `custom_metadata`
-
-Optional:
-
-- `key` (String) Unique metadata for this hostname.
-
-
 <a id="nestedatt--ownership_verification"></a>
 ### Nested Schema for `ownership_verification`
 
-Optional:
+Read-Only:
 
 - `name` (String) DNS Name for record.
 - `type` (String) DNS Record type.
@@ -92,7 +84,7 @@ Optional:
 <a id="nestedatt--ownership_verification_http"></a>
 ### Nested Schema for `ownership_verification_http`
 
-Optional:
+Read-Only:
 
 - `http_body` (String) Token to be served.
 - `http_url` (String) The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.
@@ -102,5 +94,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_custom_hostname.example 1d5fdc9e88c8a8c4518b068cd94331fe/0d89c70d-ad9f-4843-b99f-6cc0252067e9
+$ terraform import cloudflare_custom_hostname.example 1d5fdc9e88c8a8c4518b068cd94331fe/0d89c70dcloudflare_access_service_tokenad9fcloudflare_access_service_token4843cloudflare_access_service_tokenb99fcloudflare_access_service_token6cc0252067e9
 ```

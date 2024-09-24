@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
@@ -29,13 +29,10 @@ description: |-
 <a id="nestedatt--actions"></a>
 ### Nested Schema for `actions`
 
-Optional:
-
-- `value` (List of String)
-
 Read-Only:
 
 - `type` (String) Type of action for catch-all rule.
+- `value` (List of String)
 
 
 <a id="nestedatt--matchers"></a>

@@ -1,4 +1,4 @@
-resource "cloudflare_access_organization" "example" {
+resource "cloudflare_zero_trust_organization" "example" {
   account_id                         = "f037e56e89293a057740de681ac9abbe"
   name                               = "example.cloudflareaccess.com"
   auth_domain                        = "example.cloudflareaccess.com"

@@ -62,6 +62,7 @@ To view the full list of variables, look at the `cfWaitingRoom` object described
 - `default_template_language` (String) The language of the default page template. If no default_template_language is provided, then `en-US` (English) will be used.
 - `description` (String) A note that you can use to add more details about the waiting room.
 - `disable_session_renewal` (Boolean) Only available for the Waiting Room Advanced subscription. Disables automatic renewal of session cookies. If `true`, an accepted user will have session_duration minutes to browse the site. After that, they will have to go through the waiting room again. If `false`, a user's session cookie will be automatically renewed on every request.
+- `enabled_origin_commands` (List of String) A list of enabled origin commands.
 - `json_response_enabled` (Boolean) Only available for the Waiting Room Advanced subscription. If `true`, requests to the waiting room with the header `Accept: application/json` will receive a JSON response object with information on the user's status in the waiting room as opposed to the configured static HTML page. This JSON response object has one property `cfWaitingRoom` which is an object containing the following fields:
 1. `inWaitingRoom`: Boolean indicating if the user is in the waiting room (always **true**).
 2. `waitTimeKnown`: Boolean indicating if the current estimated wait times are accurate. If **false**, they are not available.
@@ -89,7 +90,8 @@ To view the full list of variables, look at the `cfWaitingRoom` object described
 
 An example cURL to a waiting room could be:
 
-	curl -X GET "https://example.com/waitingroom" \n		-H "Accept: application/json"
+	curl -X GET "https://example.com/waitingroom" \
+		-H "Accept: application/json"
 
 If `json_response_enabled` is **true** and the request hits the waiting room, an example JSON response when `queueingMethod` is **fifo** and no event is active could be:
 

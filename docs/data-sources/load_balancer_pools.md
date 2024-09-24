@@ -38,28 +38,26 @@ data "cloudflare_load_balancer_pools" "example" {
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
+Read-Only:
 
 - `check_regions` (List of String) A list of regions from which to run health checks. Null means every Cloudflare data center.
+- `created_on` (String)
 - `description` (String) A human-readable description of the pool.
+- `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
+- `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
 - `id` (String)
 - `latitude` (Number) The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.
 - `load_shedding` (Attributes) Configures load shedding policies and percentages for the pool. (see [below for nested schema](#nestedatt--result--load_shedding))
 - `longitude` (Number) The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.
+- `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
+- `modified_on` (String)
 - `monitor` (String) The ID of the Monitor to use for checking the health of origins within this pool.
 - `name` (String) A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.
+- `networks` (List of String) List of networks where Load Balancer or Pool is enabled.
 - `notification_email` (String) This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
 - `notification_filter` (Attributes) Filter pool and origin health notifications by resource type or health status. Use null to reset. (see [below for nested schema](#nestedatt--result--notification_filter))
 - `origin_steering` (Attributes) Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity. (see [below for nested schema](#nestedatt--result--origin_steering))
 - `origins` (Attributes List) The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy. (see [below for nested schema](#nestedatt--result--origins))
-
-Read-Only:
-
-- `created_on` (String)
-- `disabled_at` (String) This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
-- `enabled` (Boolean) Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
-- `minimum_origins` (Number) The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
-- `modified_on` (String)
 
 <a id="nestedatt--result--load_shedding"></a>
 ### Nested Schema for `result.load_shedding`
@@ -75,7 +73,7 @@ Read-Only:
 <a id="nestedatt--result--notification_filter"></a>
 ### Nested Schema for `result.notification_filter`
 
-Optional:
+Read-Only:
 
 - `origin` (Attributes) Filter options for a particular resource type (pool or origin). Use null to reset. (see [below for nested schema](#nestedatt--result--notification_filter--origin))
 - `pool` (Attributes) Filter options for a particular resource type (pool or origin). Use null to reset. (see [below for nested schema](#nestedatt--result--notification_filter--pool))
@@ -83,25 +81,19 @@ Optional:
 <a id="nestedatt--result--notification_filter--origin"></a>
 ### Nested Schema for `result.notification_filter.origin`
 
-Optional:
-
-- `healthy` (Boolean) If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).
-
 Read-Only:
 
 - `disable` (Boolean) If set true, disable notifications for this type of resource (pool or origin).
+- `healthy` (Boolean) If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).
 
 
 <a id="nestedatt--result--notification_filter--pool"></a>
 ### Nested Schema for `result.notification_filter.pool`
 
-Optional:
-
-- `healthy` (Boolean) If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).
-
 Read-Only:
 
 - `disable` (Boolean) If set true, disable notifications for this type of resource (pool or origin).
+- `healthy` (Boolean) If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).
 
 
 
@@ -120,17 +112,14 @@ Read-Only:
 <a id="nestedatt--result--origins"></a>
 ### Nested Schema for `result.origins`
 
-Optional:
+Read-Only:
 
 - `address` (String) The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.
+- `disabled_at` (String) This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.
+- `enabled` (Boolean) Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
 - `header` (Attributes) The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'. (see [below for nested schema](#nestedatt--result--origins--header))
 - `name` (String) A human-identifiable name for the origin.
 - `virtual_network_id` (String) The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.
-
-Read-Only:
-
-- `disabled_at` (String) This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.
-- `enabled` (Boolean) Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
 - `weight` (Number) The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.
 - `origin_steering.policy="least_outstanding_requests"`: Use weight to scale the origin's outstanding requests.
 - `origin_steering.policy="least_connections"`: Use weight to scale the origin's open connections.
@@ -138,7 +127,7 @@ Read-Only:
 <a id="nestedatt--result--origins--header"></a>
 ### Nested Schema for `result.origins.header`
 
-Optional:
+Read-Only:
 
 - `host` (List of String) The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.
 

@@ -63,7 +63,7 @@ resource "cloudflare_access_rule" "office_network" {
 ### Optional
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
-- `identifier` (String)
+- `identifier` (String) The unique identifier of the resource.
 - `notes` (String) An informative summary of the rule, typically used as a reminder or explanation.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 

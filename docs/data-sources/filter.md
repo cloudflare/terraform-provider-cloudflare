@@ -15,13 +15,16 @@ description: |-
 
 ### Optional
 
-- `description` (String) An informative summary of the filter.
-- `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `id` (String) The unique identifier of the filter.
+- `zone_identifier` (String) Identifier
+
+### Read-Only
+
+- `description` (String) An informative summary of the filter.
+- `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
-- `zone_identifier` (String) Identifier
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -35,9 +38,7 @@ Optional:
 - `description` (String) A case-insensitive string to find in the description.
 - `expression` (String) A case-insensitive string to find in the expression.
 - `id` (String) The unique identifier of the filter.
-- `page` (Number) Page number of paginated results.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
-- `per_page` (Number) Number of filters per page.
 - `ref` (String) The filter ref (a short reference tag) to search for. Must be an exact match.
 
 

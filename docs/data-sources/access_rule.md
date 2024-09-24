@@ -17,7 +17,7 @@ description: |-
 
 - `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `identifier` (String)
+- `identifier` (String) The unique identifier of the resource.
 - `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
 
 <a id="nestedatt--filter"></a>
@@ -25,41 +25,23 @@ description: |-
 
 Optional:
 
+- `account_id` (String) The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.
+- `configuration` (Attributes) (see [below for nested schema](#nestedatt--filter--configuration))
 - `direction` (String) The direction used to sort returned rules.
-- `egs_pagination` (Attributes) (see [below for nested schema](#nestedatt--filter--egs_pagination))
-- `filters` (Attributes) (see [below for nested schema](#nestedatt--filter--filters))
-- `order` (String) The field used to sort returned rules.
-- `page` (Number) Requested page within paginated list of results.
-- `per_page` (Number) Maximum number of results requested.
-
-<a id="nestedatt--filter--egs_pagination"></a>
-### Nested Schema for `filter.egs_pagination`
-
-Optional:
-
-- `json` (Attributes) (see [below for nested schema](#nestedatt--filter--egs_pagination--json))
-
-<a id="nestedatt--filter--egs_pagination--json"></a>
-### Nested Schema for `filter.egs_pagination.json`
-
-Optional:
-
-- `page` (Number) The page number of paginated results.
-- `per_page` (Number) The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.
-
-
-
-<a id="nestedatt--filter--filters"></a>
-### Nested Schema for `filter.filters`
-
-Optional:
-
-- `configuration_target` (String) The target to search in existing rules.
-- `configuration_value` (String) The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.
-Notes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.
 - `match` (String) When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.
 - `mode` (String) The action to apply to a matched request.
 - `notes` (String) The string to search for in the notes of existing IP Access rules.
 Notes: For example, the string 'attack' would match IP Access rules with notes 'Attack 26/02' and 'Attack 27/02'. The search is case insensitive.
+- `order` (String) The field used to sort returned rules.
+- `zone_id` (String) The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.
+
+<a id="nestedatt--filter--configuration"></a>
+### Nested Schema for `filter.configuration`
+
+Optional:
+
+- `target` (String) The target to search in existing rules.
+- `value` (String) The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.
+Notes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.
 
 

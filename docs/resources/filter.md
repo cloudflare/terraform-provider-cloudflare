@@ -30,6 +30,7 @@ resource "cloudflare_filter" "wordpress" {
 
 ### Required
 
+- `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `zone_identifier` (String) Identifier
 
 ### Optional
@@ -39,7 +40,6 @@ resource "cloudflare_filter" "wordpress" {
 ### Read-Only
 
 - `description` (String) An informative summary of the filter.
-- `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
 - `ref` (String) A short reference tag. Allows you to select related filters.
 

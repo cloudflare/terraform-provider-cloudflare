@@ -22,8 +22,6 @@ description: |-
 - `direction` (String) Direction to order widgets.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order widgets by.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Number of items per page.
 
 ### Read-Only
 

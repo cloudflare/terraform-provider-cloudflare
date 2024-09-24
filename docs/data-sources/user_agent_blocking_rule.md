@@ -26,7 +26,7 @@ description: |-
 <a id="nestedatt--configuration"></a>
 ### Nested Schema for `configuration`
 
-Optional:
+Read-Only:
 
 - `target` (String) The configuration target for this rule. You must set the target to `ua` for User Agent Blocking rules.
 - `value` (String) The exact user agent string to match. This value will be compared to the received `User-Agent` HTTP header value.
@@ -43,8 +43,6 @@ Optional:
 
 - `description` (String) A string to search for in the description of existing rules.
 - `description_search` (String) A string to search for in the description of existing rules.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.
 - `ua_search` (String) A string to search for in the user agent values of existing rules.
 
 

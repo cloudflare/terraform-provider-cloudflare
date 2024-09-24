@@ -36,7 +36,5 @@ Optional:
 
 - `direction` (String) Direction to order namespaces.
 - `order` (String) Field to order results by.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 
 

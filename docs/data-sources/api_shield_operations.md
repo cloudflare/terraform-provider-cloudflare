@@ -29,8 +29,6 @@ description: |-
 - `origin` (String) Filter results to only include discovery results sourced from a particular discovery engine
   * `ML` - Discovered operations that were sourced using ML API Discovery
   * `SessionIdentifier` - Discovered operations that were sourced using Session Identifier API Discovery
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 - `state` (String) Filter results to only include discovery results in a particular state. States are as follows
   * `review` - Discovered operations that are not saved into API Shield Endpoint Management
   * `saved` - Discovered operations that are already saved into API Shield Endpoint Management
@@ -60,7 +58,7 @@ Read-Only:
 <a id="nestedatt--result--features"></a>
 ### Nested Schema for `result.features`
 
-Optional:
+Read-Only:
 
 - `traffic_stats` (Attributes) (see [below for nested schema](#nestedatt--result--features--traffic_stats))
 

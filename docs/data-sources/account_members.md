@@ -22,8 +22,6 @@ description: |-
 - `direction` (String) Direction to order results.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order results by.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 - `status` (String) A member's status in the account.
 
 ### Read-Only
@@ -33,55 +31,61 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--result--policies))
-- `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--result--roles))
-
 Read-Only:
 
 - `id` (String) Membership identifier tag.
+- `policies` (Attributes List) Access policy for the membership (see [below for nested schema](#nestedatt--result--policies))
+- `roles` (Attributes List) Roles assigned to this Member. (see [below for nested schema](#nestedatt--result--roles))
 - `status` (String) A member's status in the account.
 - `user` (Attributes) Details of the user associated to the membership. (see [below for nested schema](#nestedatt--result--user))
 
 <a id="nestedatt--result--policies"></a>
 ### Nested Schema for `result.policies`
 
-Optional:
-
-- `access` (String) Allow or deny operations against the resources.
-- `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--result--policies--permission_groups))
-- `resource_groups` (Attributes List) A list of resource groups that the policy applies to. (see [below for nested schema](#nestedatt--result--policies--resource_groups))
-
 Read-Only:
 
+- `access` (String) Allow or deny operations against the resources.
 - `id` (String) Policy identifier.
+- `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--result--policies--permission_groups))
+- `resource_groups` (Attributes List) A list of resource groups that the policy applies to. (see [below for nested schema](#nestedatt--result--policies--resource_groups))
 
 <a id="nestedatt--result--policies--permission_groups"></a>
 ### Nested Schema for `result.policies.permission_groups`
 
-Optional:
-
-- `meta` (String) Attributes associated to the permission group.
-
 Read-Only:
 
 - `id` (String) Identifier of the group.
+- `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--result--policies--permission_groups--meta))
 - `name` (String) Name of the group.
+
+<a id="nestedatt--result--policies--permission_groups--meta"></a>
+### Nested Schema for `result.policies.permission_groups.name`
+
+Read-Only:
+
+- `key` (String)
+- `value` (String)
+
 
 
 <a id="nestedatt--result--policies--resource_groups"></a>
 ### Nested Schema for `result.policies.resource_groups`
 
-Optional:
-
-- `meta` (String) Attributes associated to the resource group.
-
 Read-Only:
 
 - `id` (String) Identifier of the group.
+- `meta` (Attributes) Attributes associated to the resource group. (see [below for nested schema](#nestedatt--result--policies--resource_groups--meta))
 - `name` (String) Name of the resource group.
 - `scope` (Attributes List) The scope associated to the resource group (see [below for nested schema](#nestedatt--result--policies--resource_groups--scope))
+
+<a id="nestedatt--result--policies--resource_groups--meta"></a>
+### Nested Schema for `result.policies.resource_groups.scope`
+
+Read-Only:
+
+- `key` (String)
+- `value` (String)
+
 
 <a id="nestedatt--result--policies--resource_groups--scope"></a>
 ### Nested Schema for `result.policies.resource_groups.scope`
@@ -116,15 +120,12 @@ Read-Only:
 <a id="nestedatt--result--user"></a>
 ### Nested Schema for `result.user`
 
-Optional:
-
-- `first_name` (String) User's first name
-- `last_name` (String) User's last name
-
 Read-Only:
 
 - `email` (String) The contact email address of the user.
+- `first_name` (String) User's first name
 - `id` (String) Identifier
+- `last_name` (String) User's last name
 - `two_factor_authentication_enabled` (Boolean) Indicates whether two-factor authentication is enabled for the user account. Does not apply to API authentication.
 
 

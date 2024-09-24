@@ -147,11 +147,13 @@ resource "cloudflare_api_token" "dns_edit_all_account" {
 - `expires_on` (String) The expiration time on or after which the JWT MUST NOT be accepted for processing.
 - `not_before` (String) The time before which the token MUST NOT be accepted for processing.
 - `status` (String) Status of the token.
-- `token_id` (String)
 
 ### Read-Only
 
-- `id` (String) Identifier
+- `id` (String) Token identifier tag.
+- `issued_on` (String) The time on which the token was created.
+- `last_used_on` (String) Last time the token was used.
+- `modified_on` (String) Last time the token was modified.
 - `value` (String) The token value.
 
 <a id="nestedatt--policies"></a>
@@ -161,7 +163,7 @@ Required:
 
 - `effect` (String) Allow or deny operations against the resources.
 - `permission_groups` (Attributes List) A set of permission groups that are specified to the policy. (see [below for nested schema](#nestedatt--policies--permission_groups))
-- `resources` (String) A list of resource names that the policy applies to.
+- `resources` (Attributes) A list of resource names that the policy applies to. (see [below for nested schema](#nestedatt--policies--resources))
 
 Read-Only:
 
@@ -172,12 +174,30 @@ Read-Only:
 
 Optional:
 
-- `meta` (String) Attributes associated to the permission group.
+- `meta` (Attributes) Attributes associated to the permission group. (see [below for nested schema](#nestedatt--policies--permission_groups--meta))
 
 Read-Only:
 
 - `id` (String) Identifier of the group.
 - `name` (String) Name of the group.
+
+<a id="nestedatt--policies--permission_groups--meta"></a>
+### Nested Schema for `policies.permission_groups.meta`
+
+Optional:
+
+- `key` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--policies--resources"></a>
+### Nested Schema for `policies.resources`
+
+Optional:
+
+- `resource` (String)
+- `scope` (String)
 
 
 

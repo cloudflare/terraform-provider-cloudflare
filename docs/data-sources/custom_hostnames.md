@@ -24,8 +24,6 @@ description: |-
 - `id` (String) Hostname ID to match against. This ID was generated and returned during the initial custom_hostname creation. This parameter cannot be used with the 'hostname' parameter.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order hostnames by.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Number of hostnames per page.
 - `ssl` (Number) Whether to filter hostnames based on if they have SSL enabled.
 
 ### Read-Only
@@ -35,35 +33,24 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `custom_metadata` (Attributes) These are per-hostname (customer) settings. (see [below for nested schema](#nestedatt--result--custom_metadata))
-- `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
-- `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
-- `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification))
-- `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification_http))
-- `status` (String) Status of the hostname's activation.
-- `verification_errors` (List of String) These are errors that were encountered while trying to activate a hostname.
-
 Read-Only:
 
 - `created_at` (String) This is the time the hostname was created.
+- `custom_metadata` (Map of String) Unique key/value metadata for this hostname. These are per-hostname (customer) settings.
+- `custom_origin_server` (String) a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.
+- `custom_origin_sni` (String) A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.
 - `hostname` (String) The custom hostname that will point to your hostname via CNAME.
 - `id` (String) Identifier
+- `ownership_verification` (Attributes) This is a record which can be placed to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification))
+- `ownership_verification_http` (Attributes) This presents the token to be served by the given http url to activate a hostname. (see [below for nested schema](#nestedatt--result--ownership_verification_http))
 - `ssl` (Attributes) SSL properties for the custom hostname. (see [below for nested schema](#nestedatt--result--ssl))
-
-<a id="nestedatt--result--custom_metadata"></a>
-### Nested Schema for `result.custom_metadata`
-
-Optional:
-
-- `key` (String) Unique metadata for this hostname.
-
+- `status` (String) Status of the hostname's activation.
+- `verification_errors` (List of String) These are errors that were encountered while trying to activate a hostname.
 
 <a id="nestedatt--result--ownership_verification"></a>
 ### Nested Schema for `result.ownership_verification`
 
-Optional:
+Read-Only:
 
 - `name` (String) DNS Name for record.
 - `type` (String) DNS Record type.
@@ -73,7 +60,7 @@ Optional:
 <a id="nestedatt--result--ownership_verification_http"></a>
 ### Nested Schema for `result.ownership_verification_http`
 
-Optional:
+Read-Only:
 
 - `http_body` (String) Token to be served.
 - `http_url` (String) The HTTP URL that will be checked during custom hostname verification and where the customer should host the token.
@@ -82,8 +69,9 @@ Optional:
 <a id="nestedatt--result--ssl"></a>
 ### Nested Schema for `result.ssl`
 
-Optional:
+Read-Only:
 
+- `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
 - `certificate_authority` (String) The Certificate Authority that will issue the certificate
 - `custom_certificate` (String) If a custom uploaded certificate is used.
 - `custom_csr_id` (String) The identifier for the Custom CSR that was used.
@@ -96,21 +84,17 @@ Optional:
 - `serial_number` (String) The serial number on a custom uploaded certificate.
 - `settings` (Attributes) SSL specific settings. (see [below for nested schema](#nestedatt--result--ssl--settings))
 - `signature` (String) The signature on a custom uploaded certificate.
+- `status` (String) Status of the hostname's SSL certificates.
 - `type` (String) Level of validation to be used for this hostname. Domain validation (dv) must be used.
 - `uploaded_on` (String) The time the custom certificate was uploaded.
 - `validation_errors` (Attributes List) Domain validation errors that have been received by the certificate authority (CA). (see [below for nested schema](#nestedatt--result--ssl--validation_errors))
 - `validation_records` (Attributes List) (see [below for nested schema](#nestedatt--result--ssl--validation_records))
 - `wildcard` (Boolean) Indicates whether the certificate covers a wildcard.
 
-Read-Only:
-
-- `bundle_method` (String) A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.
-- `status` (String) Status of the hostname's SSL certificates.
-
 <a id="nestedatt--result--ssl--settings"></a>
 ### Nested Schema for `result.ssl.settings`
 
-Optional:
+Read-Only:
 
 - `ciphers` (List of String) An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
 - `early_hints` (String) Whether or not Early Hints is enabled.
@@ -122,7 +106,7 @@ Optional:
 <a id="nestedatt--result--ssl--validation_errors"></a>
 ### Nested Schema for `result.ssl.validation_errors`
 
-Optional:
+Read-Only:
 
 - `message` (String) A domain validation error.
 
@@ -130,7 +114,7 @@ Optional:
 <a id="nestedatt--result--ssl--validation_records"></a>
 ### Nested Schema for `result.ssl.validation_records`
 
-Optional:
+Read-Only:
 
 - `emails` (List of String) The set of email addresses that the certificate authority (CA) will use to complete domain validation.
 - `http_body` (String) The content that the certificate authority (CA) will expect to find at the http_url during the domain validation.

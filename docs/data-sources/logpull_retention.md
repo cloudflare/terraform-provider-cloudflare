@@ -15,10 +15,10 @@ description: |-
 
 ### Required
 
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 
-- `flag` (Boolean)
+- `flag` (Boolean) The log retention flag for Logpull API.
 
 

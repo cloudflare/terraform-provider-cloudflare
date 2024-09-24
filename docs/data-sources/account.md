@@ -15,8 +15,15 @@ description: |-
 
 ### Optional
 
-- `account_id` (String)
+- `account_id` (String) Account identifier tag.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
+
+### Read-Only
+
+- `created_on` (String) Timestamp for the creation of the account
+- `id` (String) Identifier
+- `name` (String) Account name
+- `settings` (Attributes) Account settings (see [below for nested schema](#nestedatt--settings))
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -25,7 +32,27 @@ Optional:
 
 - `direction` (String) Direction to order results.
 - `name` (String) Name of the account.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
+
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Read-Only:
+
+- `abuse_contact_email` (String) Sets an abuse contact email to notify for abuse reports.
+- `default_nameservers` (String) Specifies the default nameservers to be used for new zones added to this account.
+
+- `cloudflare.standard` for Cloudflare-branded nameservers
+- `custom.account` for account custom nameservers
+- `custom.tenant` for tenant custom nameservers
+
+See [Custom Nameservers](https://developers.cloudflare.com/dns/additional-options/custom-nameservers/)
+for more information.
+- `enforce_twofactor` (Boolean) Indicates whether membership in this account requires that
+Two-Factor Authentication is enabled
+- `use_account_custom_ns_by_default` (Boolean) Indicates whether new zones should use the account-level custom
+nameservers by default.
+
+Deprecated in favor of `default_nameservers`.
 
 
