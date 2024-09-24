@@ -39,7 +39,7 @@ resource "cloudflare_observatory_scheduled_test" "example" {
 <a id="nestedatt--schedule"></a>
 ### Nested Schema for `schedule`
 
-Optional:
+Read-Only:
 
 - `frequency` (String) The frequency of the test.
 - `region` (String) A test region.
@@ -49,7 +49,7 @@ Optional:
 <a id="nestedatt--test"></a>
 ### Nested Schema for `test`
 
-Optional:
+Read-Only:
 
 - `date` (String)
 - `desktop_report` (Attributes) The Lighthouse report. (see [below for nested schema](#nestedatt--test--desktop_report))
@@ -62,7 +62,7 @@ Optional:
 <a id="nestedatt--test--desktop_report"></a>
 ### Nested Schema for `test.desktop_report`
 
-Optional:
+Read-Only:
 
 - `cls` (Number) Cumulative Layout Shift.
 - `device_type` (String) The type of device.
@@ -80,7 +80,7 @@ Optional:
 <a id="nestedatt--test--desktop_report--error"></a>
 ### Nested Schema for `test.desktop_report.error`
 
-Optional:
+Read-Only:
 
 - `code` (String) The error code of the Lighthouse result.
 - `detail` (String) Detailed error message.
@@ -91,7 +91,7 @@ Optional:
 <a id="nestedatt--test--mobile_report"></a>
 ### Nested Schema for `test.mobile_report`
 
-Optional:
+Read-Only:
 
 - `cls` (Number) Cumulative Layout Shift.
 - `device_type` (String) The type of device.
@@ -109,7 +109,7 @@ Optional:
 <a id="nestedatt--test--mobile_report--error"></a>
 ### Nested Schema for `test.mobile_report.error`
 
-Optional:
+Read-Only:
 
 - `code` (String) The error code of the Lighthouse result.
 - `detail` (String) Detailed error message.
@@ -120,7 +120,7 @@ Optional:
 <a id="nestedatt--test--region"></a>
 ### Nested Schema for `test.region`
 
-Optional:
+Read-Only:
 
 - `label` (String)
 - `value` (String) A test region.

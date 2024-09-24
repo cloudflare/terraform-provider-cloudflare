@@ -131,6 +131,28 @@ terraform_cloudflare_v5()
 ## cloudflare_email_routing_rule
 ## cloudflare_fallback_domain
 ## cloudflare_healthcheck
+## cloudflare_hostname_tls_setting
+
+- `setting` is now `setting_id`.
+
+  Before
+  ```hcl
+  resource "cloudflare_hostname_tls_setting" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    setting = "min_tls_version"
+    value = "1.2"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_hostname_tls_setting" "example" {
+    zone_id    = "0da42c8d2132a9ddaf714f9e7c920711"
+    setting_id = "min_tls_version"
+    value      = "1.2"
+  }
+  ```
+
 ## cloudflare_list
 ## cloudflare_list_item
 ## cloudflare_load_balancer
@@ -148,6 +170,32 @@ terraform_cloudflare_v5()
 ## cloudflare_r2_bucket
 ## cloudflare_spectrum_application
 ## cloudflare_split_tunneclououdflare_teams_account
+## cloudflare_teams_list
+
+- `items` is now an object of `value = $item` instead of `items = [$item1, $item2]`
+
+  Before
+  ```hcl
+  resource "cloudflare_teams_list" "example" {
+   	account_id  = "f037e56e89293a057740de681ac9abbe"
+   	name        = "example"
+   	description = "My description"
+   	type        = "SERIAL"
+   	items       = ["item-1234", "item-5678"	]
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_teams_list" "example" {
+   	account_id  = "f037e56e89293a057740de681ac9abbe"
+   	name        = "example"
+   	description = "My description"
+   	type        = "SERIAL"
+   	items       = [{value = "item-1234"}, {value = "item-5678"}]
+  }
+  ```
+
 ## cloudflare_teams_location
 ## cloudflare_teams_rule
 ## cloudflare_tunnel_config
@@ -155,6 +203,72 @@ terraform_cloudflare_v5()
 ## cloudflare_waiting_room
 ## cloudflare_waiting_room_rules
 ## cloudflare_worker_script
+## cloudflare_workers_kv
+
+- `key` is now `key_name`.
+
+  Before
+  ```hcl
+  resource "cloudflare_workers_kv" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    namespace_id = "9e5bd5c4acd7201064fe42d4e46cc48c"
+    key = "my-simple-key"
+    value = "foo"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_workers_kv" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    namespace_id = "9e5bd5c4acd7201064fe42d4e46cc48c"
+    key_name= "my-simple-key"
+    value = "foo"
+  }
+  ```
+
+## cloudflare_zone_cache_variants
+
+- file extensions are now nested under the `value` object.
+
+  Before
+  ```hcl
+  resource "cloudflare_zone_cache_variants" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    avif    = ["image/avif", "image/webp"]
+    bmp     = ["image/bmp", "image/webp"]
+    gif     = ["image/gif", "image/webp"]
+    jpeg    = ["image/jpeg", "image/webp"]
+    jpg     = ["image/jpg", "image/webp"]
+    jp2     = ["image/jp2", "image/webp"]
+    jpg2    = ["image/jpg2", "image/webp"]
+    png     = ["image/png"]
+    tif     = ["image/tif", "image/webp"]
+    tiff    = ["image/tiff", "image/webp"]
+    webp    = ["image/webp"]
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_zone_cache_variants" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    value = {
+      avif = ["image/avif", "image/webp"]
+      bmp  = ["image/bmp", "image/webp"]
+      gif  = ["image/gif", "image/webp"]
+      jpeg = ["image/jpeg", "image/webp"]
+      jpg  = ["image/jpg", "image/webp"]
+      jp2  = ["image/jp2", "image/webp"]
+      jpg2 = ["image/jpg2", "image/webp"]
+      png  = ["image/png"]
+      tif  = ["image/tif", "image/webp"]
+      tiff = ["image/tiff", "image/webp"]
+      webp = ["image/webp"]
+    }
+  }
+  ```
+
 ## cloudflare_zone_lockdown
 ## cloudflare_zone
 

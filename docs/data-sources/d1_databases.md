@@ -21,8 +21,6 @@ description: |-
 
 - `max_items` (Number) Max items to fetch, default: 1000
 - `name` (String) a database name to search for.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Number of items per page.
 
 ### Read-Only
 
@@ -31,14 +29,11 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `name` (String)
-- `version` (String)
-
 Read-Only:
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
+- `name` (String)
 - `uuid` (String)
+- `version` (String)
 
 

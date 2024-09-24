@@ -19,14 +19,14 @@ description: |-
 - `database_id` (String)
 - `file_size` (Number) The D1 database's size, in bytes.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `name` (String)
 - `num_tables` (Number)
-- `version` (String)
 
 ### Read-Only
 
 - `created_at` (String) Specifies the timestamp the resource was created as an ISO8601 string.
+- `name` (String)
 - `uuid` (String)
+- `version` (String)
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -38,7 +38,5 @@ Required:
 Optional:
 
 - `name` (String) a database name to search for.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Number of items per page.
 
 

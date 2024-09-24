@@ -28,7 +28,7 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
+Read-Only:
 
 - `caching` (Attributes) (see [below for nested schema](#nestedatt--result--caching))
 - `name` (String)
@@ -37,7 +37,7 @@ Optional:
 <a id="nestedatt--result--caching"></a>
 ### Nested Schema for `result.caching`
 
-Optional:
+Read-Only:
 
 - `disabled` (Boolean) When set to true, disables the caching of SQL responses. (Default: false)
 - `max_age` (Number) When present, specifies max duration for which items should persist in the cache. (Default: 60)
@@ -47,15 +47,12 @@ Optional:
 <a id="nestedatt--result--origin"></a>
 ### Nested Schema for `result.origin`
 
-Optional:
-
-- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
-- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
-
 Read-Only:
 
+- `access_client_id` (String) The Client ID of the Access token to use when connecting to the origin database
 - `database` (String) The name of your origin database.
 - `host` (String) The host (hostname or IP) of your origin database.
+- `port` (Number) The port (default: 5432 for Postgres) of your origin database.
 - `scheme` (String) Specifies the URL scheme used to connect to your origin database.
 - `user` (String) The user of your origin database.
 

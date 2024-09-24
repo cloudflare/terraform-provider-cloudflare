@@ -47,7 +47,7 @@ Required:
 <a id="nestedatt--errors"></a>
 ### Nested Schema for `errors`
 
-Required:
+Read-Only:
 
 - `code` (Number)
 - `message` (String)
@@ -56,7 +56,7 @@ Required:
 <a id="nestedatt--messages"></a>
 ### Nested Schema for `messages`
 
-Required:
+Read-Only:
 
 - `code` (Number)
 - `message` (String)

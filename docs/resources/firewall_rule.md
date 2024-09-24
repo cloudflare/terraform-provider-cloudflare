@@ -36,6 +36,8 @@ resource "cloudflare_firewall_rule" "wordpress" {
 
 ### Required
 
+- `action` (Attributes) The action to perform when the threshold of matched traffic within the configured period is exceeded. (see [below for nested schema](#nestedatt--action))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `zone_identifier` (String) Identifier
 
 ### Optional
@@ -45,20 +47,38 @@ resource "cloudflare_firewall_rule" "wordpress" {
 
 ### Read-Only
 
-- `action` (String) The action to apply to a matched request. The `log` action is only available on an Enterprise plan.
 - `description` (String) An informative summary of the firewall rule.
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `paused` (Boolean) When true, indicates that the firewall rule is currently paused.
 - `priority` (Number) The priority of the rule. Optional value used to define the processing order. A lower number indicates a higher priority. If not provided, rules with a defined priority will be processed before rules without a priority.
 - `products` (List of String)
 - `ref` (String) A short reference tag. Allows you to select related firewall rules.
+
+<a id="nestedatt--action"></a>
+### Nested Schema for `action`
+
+Optional:
+
+- `mode` (String) The action to perform.
+- `response` (Attributes) A custom content type and reponse to return when the threshold is exceeded. The custom response configured in this object will override the custom error for the zone. This object is optional.
+Notes: If you omit this object, Cloudflare will use the default HTML error page. If "mode" is "challenge", "managed_challenge", or "js_challenge", Cloudflare will use the zone challenge pages and you should not provide the "response" object. (see [below for nested schema](#nestedatt--action--response))
+- `timeout` (Number) The time in seconds during which Cloudflare will perform the mitigation action. Must be an integer value greater than or equal to the period.
+Notes: If "mode" is "challenge", "managed_challenge", or "js_challenge", Cloudflare will use the zone's Challenge Passage time and you should not provide this value.
+
+<a id="nestedatt--action--response"></a>
+### Nested Schema for `action.response`
+
+Optional:
+
+- `body` (String) The response body to return. The value must conform to the configured content type.
+- `content_type` (String) The content type of the body. Must be one of the following: `text/plain`, `text/xml`, or `application/json`.
+
+
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
 
 Optional:
 
-- `deleted` (Boolean) When true, indicates that the firewall rule was deleted.
 - `description` (String) An informative summary of the filter.
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `paused` (Boolean) When true, indicates that the filter is currently paused.

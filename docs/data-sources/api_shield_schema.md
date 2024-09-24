@@ -18,8 +18,6 @@ description: |-
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
 - `schema_id` (String)
-- `source` (String) Source of the schema
-- `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 - `zone_id` (String) Identifier
 
 ### Read-Only
@@ -27,6 +25,8 @@ description: |-
 - `created_at` (String)
 - `kind` (String) Kind of schema
 - `name` (String) Name of the schema
+- `source` (String) Source of the schema
+- `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`
@@ -38,8 +38,6 @@ Required:
 Optional:
 
 - `omit_source` (Boolean) Omit the source-files of schemas and only retrieve their meta-data.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 - `validation_enabled` (Boolean) Flag whether schema is enabled for validation.
 
 

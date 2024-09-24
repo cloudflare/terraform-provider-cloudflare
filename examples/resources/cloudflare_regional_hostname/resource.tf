@@ -1,6 +1,6 @@
 # Regionalized hostname record resources are managed independently from the
 # Regionalized Hostname resources.
-resource "cloudflare_record" "example" {
+resource "cloudflare_dns_record" "example" {
   zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name    = "example.com"
   value   = "192.0.2.1"

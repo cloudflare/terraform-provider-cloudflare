@@ -44,8 +44,6 @@ Optional:
 - `ip_range_search` (String) A single IP address range to search for in existing rules.
 - `ip_search` (String) A single IP address to search for in existing rules.
 - `modified_on` (String) The timestamp of when the rule was last modified.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.
 - `priority` (Number) The priority of the rule to control the processing order. A lower number indicates higher priority. If not provided, any rules with a configured priority will be processed before rules without a priority.
 - `uri_search` (String) A single URI to search for in the list of URLs of existing rules.
 
@@ -53,7 +51,7 @@ Optional:
 <a id="nestedatt--configurations"></a>
 ### Nested Schema for `configurations`
 
-Optional:
+Read-Only:
 
 - `target` (String) The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.
 - `value` (String) The IP address to match. This address will be compared to the IP address of incoming requests.

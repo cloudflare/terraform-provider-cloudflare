@@ -15,19 +15,31 @@ description: |-
 
 ### Optional
 
-- `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
-- `name` (String) Routing rule name.
 - `rule_identifier` (String) Routing rule identifier.
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Read-Only
 
+- `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
 - `enabled` (Boolean) Routing rule status.
 - `id` (String) Routing rule identifier.
+- `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
+- `name` (String) Routing rule name.
 - `priority` (Number) Priority of the routing rule.
 - `tag` (String) Routing rule tag. (Deprecated, replaced by routing rule identifier)
+
+<a id="nestedatt--filter"></a>
+### Nested Schema for `filter`
+
+Required:
+
+- `zone_id` (String) Identifier
+
+Optional:
+
+- `enabled` (Boolean) Filter by enabled routing rules.
+
 
 <a id="nestedatt--actions"></a>
 ### Nested Schema for `actions`
@@ -36,20 +48,6 @@ Read-Only:
 
 - `type` (String) Type of supported action.
 - `value` (List of String)
-
-
-<a id="nestedatt--filter"></a>
-### Nested Schema for `filter`
-
-Required:
-
-- `zone_identifier` (String) Identifier
-
-Optional:
-
-- `enabled` (Boolean) Filter by enabled routing rules.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 
 
 <a id="nestedatt--matchers"></a>

@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
 
 ### Optional
 
@@ -28,18 +28,45 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
+Read-Only:
 
+- `consumers` (Attributes List) (see [below for nested schema](#nestedatt--result--consumers))
+- `consumers_total_count` (Number)
+- `created_on` (String)
+- `modified_on` (String)
+- `producers` (Attributes List) (see [below for nested schema](#nestedatt--result--producers))
+- `producers_total_count` (Number)
+- `queue_id` (String)
 - `queue_name` (String)
+
+<a id="nestedatt--result--consumers"></a>
+### Nested Schema for `result.consumers`
 
 Read-Only:
 
-- `consumers` (String)
-- `consumers_total_count` (String)
 - `created_on` (String)
-- `modified_on` (String)
-- `producers` (String)
-- `producers_total_count` (String)
-- `queue_id` (String)
+- `environment` (String)
+- `queue_name` (String)
+- `service` (String)
+- `settings` (Attributes) (see [below for nested schema](#nestedatt--result--consumers--settings))
+
+<a id="nestedatt--result--consumers--settings"></a>
+### Nested Schema for `result.consumers.settings`
+
+Read-Only:
+
+- `batch_size` (Number) The maximum number of messages to include in a batch.
+- `max_retries` (Number) The maximum number of retries
+- `max_wait_time_ms` (Number)
+
+
+
+<a id="nestedatt--result--producers"></a>
+### Nested Schema for `result.producers`
+
+Read-Only:
+
+- `environment` (String)
+- `service` (String)
 
 

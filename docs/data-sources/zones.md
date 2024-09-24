@@ -76,8 +76,6 @@ data "cloudflare_zones" "example" {
   * `ends_with_case_sensitive`
   * `contains_case_sensitive`
 - `order` (String) Field to order zones by.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Number of zones per page.
 - `status` (String) A zone status
 
 ### Read-Only
@@ -104,10 +102,6 @@ Optional:
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
-
 Read-Only:
 
 - `account` (Attributes) The account the zone belongs to (see [below for nested schema](#nestedatt--result--account))
@@ -126,11 +120,18 @@ domain. If development mode has never been enabled, this value is 0.
 - `original_name_servers` (List of String) Original name servers before moving to Cloudflare
 - `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare
 - `owner` (Attributes) The owner of the zone (see [below for nested schema](#nestedatt--result--owner))
+- `paused` (Boolean) Indicates whether the zone is only using Cloudflare DNS services. A
+true value means the zone will not receive security or performance
+benefits.
+- `status` (String) The zone status on Cloudflare.
+- `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is
+typically a partner-hosted zone or a CNAME setup.
+- `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only available for Business and Enterprise plans.
 
 <a id="nestedatt--result--account"></a>
 ### Nested Schema for `result.account`
 
-Optional:
+Read-Only:
 
 - `id` (String) Identifier
 - `name` (String) The name of the account
@@ -139,7 +140,7 @@ Optional:
 <a id="nestedatt--result--meta"></a>
 ### Nested Schema for `result.meta`
 
-Optional:
+Read-Only:
 
 - `cdn_only` (Boolean) The zone is only configured for CDN
 - `custom_certificate_quota` (Number) Number of Custom Certificates the zone can have
@@ -153,7 +154,7 @@ Optional:
 <a id="nestedatt--result--owner"></a>
 ### Nested Schema for `result.owner`
 
-Optional:
+Read-Only:
 
 - `id` (String) Identifier
 - `name` (String) Name of the owner

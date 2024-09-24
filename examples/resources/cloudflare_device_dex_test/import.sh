@@ -1,1 +1,0 @@
-$ terraform import cloudflare_device_dex_test.example <account_id>/<device_dex_test_id>

@@ -28,26 +28,23 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
+Read-Only:
 
 - `alert_interval` (String) Optional specification of how often to re-alert from the same incident, not support on all alert types.
 - `alert_type` (String) Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.
-- `description` (String) Optional description for the Notification policy.
-- `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--result--filters))
-- `mechanisms` (Map of List of String) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
-- `name` (String) Name of the policy.
-
-Read-Only:
-
 - `created` (String)
+- `description` (String) Optional description for the Notification policy.
 - `enabled` (Boolean) Whether or not the Notification policy is enabled.
+- `filters` (Attributes) Optional filters that allow you to be alerted only on a subset of events for that alert type based on some criteria. This is only available for select alert types. See alert type documentation for more details. (see [below for nested schema](#nestedatt--result--filters))
 - `id` (String) The unique identifier of a notification policy
+- `mechanisms` (Map of List of Object) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
 - `modified` (String)
+- `name` (String) Name of the policy.
 
 <a id="nestedatt--result--filters"></a>
 ### Nested Schema for `result.filters`
 
-Optional:
+Read-Only:
 
 - `actions` (List of String) Usage depends on specific alert type
 - `affected_asns` (List of String) Used for configuring radar_notification
@@ -72,6 +69,7 @@ Optional:
 - `new_status` (List of String) Used for configuring tunnel_health_event
 - `packets_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
 - `pool_id` (List of String) Usage depends on specific alert type
+- `pop_name` (List of String) Usage depends on specific alert type
 - `product` (List of String) Used for configuring billing_usage_alert
 - `project_id` (List of String) Used for configuring pages_event_alert
 - `protocol` (List of String) Used for configuring advanced_ddos_attack_l4_alert

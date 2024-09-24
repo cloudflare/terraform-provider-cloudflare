@@ -37,9 +37,14 @@ resource "cloudflare_authenticated_origin_pulls_certificate" "my_per_hostname_ao
 - `private_key` (String) The zone's private key.
 - `zone_id` (String) Identifier
 
-### Optional
+### Read-Only
 
-- `certificate_id` (String) Identifier
+- `expires_on` (String) When the certificate from the authority expires.
+- `id` (String) Identifier
+- `issuer` (String) The certificate authority that issued the certificate.
+- `signature` (String) The type of hash used for the certificate.
+- `status` (String) Status of the certificate activation.
+- `uploaded_on` (String) This is the time the certificate was uploaded.
 
 ## Import
 

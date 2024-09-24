@@ -22,19 +22,49 @@ resource "cloudflare_queue" "example" {
 
 ### Required
 
-- `account_id` (String) Identifier
+- `account_id` (String) Identifier.
+- `queue_name` (String)
 
 ### Read-Only
 
-- `consumers` (String)
-- `consumers_total_count` (String)
+- `consumers` (Attributes List) (see [below for nested schema](#nestedatt--consumers))
+- `consumers_total_count` (Number)
 - `created_on` (String)
 - `id` (String) The ID of this resource.
 - `modified_on` (String)
-- `producers` (String)
-- `producers_total_count` (String)
+- `producers` (Attributes List) (see [below for nested schema](#nestedatt--producers))
+- `producers_total_count` (Number)
 - `queue_id` (String)
+
+<a id="nestedatt--consumers"></a>
+### Nested Schema for `consumers`
+
+Read-Only:
+
+- `created_on` (String)
+- `environment` (String)
 - `queue_name` (String)
+- `service` (String)
+- `settings` (Attributes) (see [below for nested schema](#nestedatt--consumers--settings))
+
+<a id="nestedatt--consumers--settings"></a>
+### Nested Schema for `consumers.settings`
+
+Read-Only:
+
+- `batch_size` (Number) The maximum number of messages to include in a batch.
+- `max_retries` (Number) The maximum number of retries
+- `max_wait_time_ms` (Number)
+
+
+
+<a id="nestedatt--producers"></a>
+### Nested Schema for `producers`
+
+Read-Only:
+
+- `environment` (String)
+- `service` (String)
 
 ## Import
 

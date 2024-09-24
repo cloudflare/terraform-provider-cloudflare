@@ -22,8 +22,6 @@ description: |-
 - `direction` (String) Direction to order namespaces.
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order` (String) Field to order results by.
-- `page` (Number) Page number of paginated results.
-- `per_page` (Number) Maximum number of results per page.
 
 ### Read-Only
 

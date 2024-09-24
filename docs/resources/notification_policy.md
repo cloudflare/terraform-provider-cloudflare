@@ -65,7 +65,7 @@ resource "cloudflare_notification_policy" "example" {
 
 - `account_id` (String) The account id
 - `alert_type` (String) Refers to which event will trigger a Notification dispatch. You can use the endpoint to get available alert types which then will give you a list of possible values.
-- `mechanisms` (Map of List of String) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
+- `mechanisms` (Map of List of Object) List of IDs that will be used when dispatching a notification. IDs for email type will be the email address.
 - `name` (String) Name of the policy.
 
 ### Optional
@@ -113,6 +113,7 @@ Optional:
 - `new_status` (List of String) Used for configuring tunnel_health_event
 - `packets_per_second` (List of String) Used for configuring advanced_ddos_attack_l4_alert
 - `pool_id` (List of String) Usage depends on specific alert type
+- `pop_name` (List of String) Usage depends on specific alert type
 - `product` (List of String) Used for configuring billing_usage_alert
 - `project_id` (List of String) Used for configuring pages_event_alert
 - `protocol` (List of String) Used for configuring advanced_ddos_attack_l4_alert
@@ -135,7 +136,7 @@ Optional:
 <a id="nestedatt--errors"></a>
 ### Nested Schema for `errors`
 
-Required:
+Read-Only:
 
 - `code` (Number)
 - `message` (String)
@@ -144,7 +145,7 @@ Required:
 <a id="nestedatt--messages"></a>
 ### Nested Schema for `messages`
 
-Required:
+Read-Only:
 
 - `code` (Number)
 - `message` (String)
@@ -153,7 +154,7 @@ Required:
 <a id="nestedatt--result_info"></a>
 ### Nested Schema for `result_info`
 
-Optional:
+Read-Only:
 
 - `count` (Number) Total number of results for the requested service
 - `page` (Number) Current page within paginated list of results

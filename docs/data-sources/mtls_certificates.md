@@ -28,19 +28,16 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
+Read-Only:
 
 - `ca` (Boolean) Indicates whether the certificate is a CA or leaf certificate.
 - `certificates` (String) The uploaded root CA certificate.
-- `id` (String) Identifier
-- `name` (String) Optional unique name for the certificate. Only used for human readability.
-- `uploaded_on` (String) This is the time the certificate was uploaded.
-
-Read-Only:
-
 - `expires_on` (String) When the certificate expires.
+- `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
+- `name` (String) Optional unique name for the certificate. Only used for human readability.
 - `serial_number` (String) The certificate serial number.
 - `signature` (String) The type of hash used for the certificate.
+- `uploaded_on` (String) This is the time the certificate was uploaded.
 
 

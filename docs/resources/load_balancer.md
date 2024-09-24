@@ -74,17 +74,18 @@ resource "cloudflare_load_balancer_pool" "example" {
 ### Optional
 
 - `adaptive_routing` (Attributes) Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin. (see [below for nested schema](#nestedatt--adaptive_routing))
-- `country_pools` (String) A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.
+- `country_pools` (Map of List of String) A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.
 - `description` (String) Object description.
 - `enabled` (Boolean) Whether to enable (the default) this load balancer.
 - `location_strategy` (Attributes) Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected. (see [below for nested schema](#nestedatt--location_strategy))
-- `pop_pools` (String) (Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.
+- `networks` (List of String) List of networks where Load Balancer or Pool is enabled.
+- `pop_pools` (Map of List of String) (Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.
 - `proxied` (Boolean) Whether the hostname should be gray clouded (false) or orange clouded (true).
 - `random_steering` (Attributes) Configures pool weights.
 - `steering_policy="random"`: A random pool is selected with probability proportional to pool weights.
 - `steering_policy="least_outstanding_requests"`: Use pool weights to scale each pool's outstanding requests.
 - `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--random_steering))
-- `region_pools` (String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
+- `region_pools` (Map of List of String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
 - `rules` (Attributes List) BETA Field Not General Access: A list of rules for this load balancer to execute. (see [below for nested schema](#nestedatt--rules))
 - `session_affinity` (String) Specifies the type of session affinity the load balancer should use unless specified as `"none"` or "" (default). The supported types are:
 - `"cookie"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.
@@ -140,7 +141,16 @@ Optional:
 Optional:
 
 - `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map.
-- `pool_weights` (String) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.
+- `pool_weights` (Attributes) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer. (see [below for nested schema](#nestedatt--random_steering--pool_weights))
+
+<a id="nestedatt--random_steering--pool_weights"></a>
+### Nested Schema for `random_steering.pool_weights`
+
+Optional:
+
+- `key` (String) Pool ID
+- `value` (Number) Weight
+
 
 
 <a id="nestedatt--rules"></a>
@@ -173,16 +183,16 @@ Optional:
 Optional:
 
 - `adaptive_routing` (Attributes) Controls features that modify the routing of requests to pools and origins in response to dynamic conditions, such as during the interval between active health monitoring requests. For example, zero-downtime failover occurs immediately when an origin becomes unavailable due to HTTP 521, 522, or 523 response codes. If there is another healthy origin in the same pool, the request is retried once against this alternate origin. (see [below for nested schema](#nestedatt--rules--overrides--adaptive_routing))
-- `country_pools` (String) A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.
+- `country_pools` (Map of List of String) A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.
 - `default_pools` (List of String) A list of pool IDs ordered by their failover priority. Pools defined here are used by default, or when region_pools are not configured for a given region.
 - `fallback_pool` (String) The pool ID to use when all other pools are detected as unhealthy.
 - `location_strategy` (Attributes) Controls location-based steering for non-proxied requests. See `steering_policy` to learn how steering is affected. (see [below for nested schema](#nestedatt--rules--overrides--location_strategy))
-- `pop_pools` (String) (Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.
+- `pop_pools` (Map of List of String) (Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.
 - `random_steering` (Attributes) Configures pool weights.
 - `steering_policy="random"`: A random pool is selected with probability proportional to pool weights.
 - `steering_policy="least_outstanding_requests"`: Use pool weights to scale each pool's outstanding requests.
 - `steering_policy="least_connections"`: Use pool weights to scale each pool's open connections. (see [below for nested schema](#nestedatt--rules--overrides--random_steering))
-- `region_pools` (String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
+- `region_pools` (Map of List of String) A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.
 - `session_affinity` (String) Specifies the type of session affinity the load balancer should use unless specified as `"none"` or "" (default). The supported types are:
 - `"cookie"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.
 - `"ip_cookie"`: Behaves the same as `"cookie"` except the initial origin selection is stable and based on the client's ip address.
@@ -231,7 +241,16 @@ Optional:
 Optional:
 
 - `default_weight` (Number) The default weight for pools in the load balancer that are not specified in the pool_weights map.
-- `pool_weights` (String) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.
+- `pool_weights` (Attributes) A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer. (see [below for nested schema](#nestedatt--rules--overrides--random_steering--pool_weights))
+
+<a id="nestedatt--rules--overrides--random_steering--pool_weights"></a>
+### Nested Schema for `rules.overrides.random_steering.pool_weights`
+
+Optional:
+
+- `key` (String) Pool ID
+- `value` (Number) Weight
+
 
 
 <a id="nestedatt--rules--overrides--session_affinity_attributes"></a>

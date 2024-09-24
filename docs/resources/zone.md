@@ -29,10 +29,6 @@ resource "cloudflare_zone" "example" {
 
 ### Optional
 
-- `plan` (Attributes) (Deprecated) Please use the `/zones/{zone_id}/subscription` API
-to update a zone's plan. Changing this value will create/cancel
-associated subscriptions. To view available plans for this zone,
-see Zone Plans. (see [below for nested schema](#nestedatt--plan))
 - `type` (String) A full zone implies that DNS is hosted with Cloudflare. A partial zone is
 typically a partner-hosted zone or a CNAME setup.
 - `vanity_name_servers` (List of String) An array of domains used for custom name servers. This is only
@@ -54,6 +50,10 @@ domain. If development mode has never been enabled, this value is 0.
 - `original_name_servers` (List of String) Original name servers before moving to Cloudflare
 - `original_registrar` (String) Registrar for the domain at the time of switching to Cloudflare
 - `owner` (Attributes) The owner of the zone (see [below for nested schema](#nestedatt--owner))
+- `paused` (Boolean) Indicates whether the zone is only using Cloudflare DNS services. A
+true value means the zone will not receive security or performance
+benefits.
+- `status` (String) The zone status on Cloudflare.
 
 <a id="nestedatt--account"></a>
 ### Nested Schema for `account`
@@ -63,18 +63,10 @@ Optional:
 - `id` (String) Identifier
 
 
-<a id="nestedatt--plan"></a>
-### Nested Schema for `plan`
-
-Optional:
-
-- `id` (String) Identifier
-
-
 <a id="nestedatt--meta"></a>
 ### Nested Schema for `meta`
 
-Optional:
+Read-Only:
 
 - `cdn_only` (Boolean) The zone is only configured for CDN
 - `custom_certificate_quota` (Number) Number of Custom Certificates the zone can have
@@ -88,7 +80,7 @@ Optional:
 <a id="nestedatt--owner"></a>
 ### Nested Schema for `owner`
 
-Optional:
+Read-Only:
 
 - `id` (String) Identifier
 - `name` (String) Name of the owner

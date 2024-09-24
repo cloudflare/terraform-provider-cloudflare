@@ -25,7 +25,7 @@ description: |-
 <a id="nestedatt--managed_request_headers"></a>
 ### Nested Schema for `managed_request_headers`
 
-Optional:
+Read-Only:
 
 - `enabled` (Boolean) When true, the Managed Transform is enabled.
 - `id` (String) Human-readable identifier of the Managed Transform.
@@ -34,7 +34,7 @@ Optional:
 <a id="nestedatt--managed_response_headers"></a>
 ### Nested Schema for `managed_response_headers`
 
-Optional:
+Read-Only:
 
 - `enabled` (Boolean) When true, the Managed Transform is enabled.
 - `id` (String) Human-readable identifier of the Managed Transform.

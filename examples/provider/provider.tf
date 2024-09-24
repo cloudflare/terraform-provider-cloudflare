@@ -15,7 +15,7 @@ provider "cloudflare" {
 }
 
 # Create a record
-resource "cloudflare_record" "www" {
+resource "cloudflare_dns_record" "www" {
   # ...
 }
 

@@ -17,10 +17,6 @@ description: |-
 
 - `account_id` (String) The account id
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `name` (String) The name of the webhook destination. This will be included in the request body when you receive a webhook notification.
-- `secret` (String) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
-- `type` (String) Type of webhook endpoint.
-- `url` (String) The POST endpoint to call when dispatching a notification.
 - `webhook_id` (String) The unique identifier of a webhook
 
 ### Read-Only
@@ -29,6 +25,10 @@ description: |-
 - `id` (String) The unique identifier of a webhook
 - `last_failure` (String) Timestamp of the last time an attempt to dispatch a notification to this webhook failed.
 - `last_success` (String) Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.
+- `name` (String) The name of the webhook destination. This will be included in the request body when you receive a webhook notification.
+- `secret` (String) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
+- `type` (String) Type of webhook endpoint.
+- `url` (String) The POST endpoint to call when dispatching a notification.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

@@ -21,8 +21,6 @@ description: |-
 
 - `max_items` (Number) Max items to fetch, default: 1000
 - `order_by` (String) The property used to sort the list of results.
-- `page` (Number) Current page within the paginated list of results.
-- `per_page` (Number) Number of items to return per page of results.
 
 ### Read-Only
 
@@ -31,24 +29,22 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
+Read-Only:
 
 - `auto_install` (Boolean) If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.
+- `created` (String)
 - `rules` (Attributes List) A list of rules. (see [below for nested schema](#nestedatt--result--rules))
 - `ruleset` (Attributes) (see [below for nested schema](#nestedatt--result--ruleset))
 - `site_tag` (String) The Web Analytics site identifier.
 - `site_token` (String) The Web Analytics site token.
 - `snippet` (String) Encoded JavaScript snippet.
 
-Read-Only:
-
-- `created` (String)
-
 <a id="nestedatt--result--rules"></a>
 ### Nested Schema for `result.rules`
 
-Optional:
+Read-Only:
 
+- `created` (String)
 - `host` (String) The hostname the rule will be applied to.
 - `id` (String) The Web Analytics rule identifier.
 - `inclusive` (Boolean) Whether the rule includes or excludes traffic from being measured.
@@ -56,15 +52,11 @@ Optional:
 - `paths` (List of String) The paths the rule will be applied to.
 - `priority` (Number)
 
-Read-Only:
-
-- `created` (String)
-
 
 <a id="nestedatt--result--ruleset"></a>
 ### Nested Schema for `result.ruleset`
 
-Optional:
+Read-Only:
 
 - `enabled` (Boolean) Whether the ruleset is enabled.
 - `id` (String) The Web Analytics ruleset identifier.

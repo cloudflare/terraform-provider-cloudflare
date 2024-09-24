@@ -16,20 +16,20 @@ description: |-
 ### Optional
 
 - `account_id` (String) Identifier
-- `ca` (Boolean) Indicates whether the certificate is a CA or leaf certificate.
-- `certificates` (String) The uploaded root CA certificate.
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--filter))
-- `id` (String) Identifier
 - `mtls_certificate_id` (String) Identifier
-- `name` (String) Optional unique name for the certificate. Only used for human readability.
-- `uploaded_on` (String) This is the time the certificate was uploaded.
 
 ### Read-Only
 
+- `ca` (Boolean) Indicates whether the certificate is a CA or leaf certificate.
+- `certificates` (String) The uploaded root CA certificate.
 - `expires_on` (String) When the certificate expires.
+- `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
+- `name` (String) Optional unique name for the certificate. Only used for human readability.
 - `serial_number` (String) The certificate serial number.
 - `signature` (String) The type of hash used for the certificate.
+- `uploaded_on` (String) This is the time the certificate was uploaded.
 
 <a id="nestedatt--filter"></a>
 ### Nested Schema for `filter`

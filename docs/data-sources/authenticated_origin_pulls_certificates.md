@@ -28,17 +28,14 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `certificate` (String) The zone's leaf certificate.
-- `id` (String) Identifier
-- `status` (String) Status of the certificate activation.
-- `uploaded_on` (String) This is the time the certificate was uploaded.
-
 Read-Only:
 
+- `certificate` (String) The zone's leaf certificate.
 - `expires_on` (String) When the certificate from the authority expires.
+- `id` (String) Identifier
 - `issuer` (String) The certificate authority that issued the certificate.
 - `signature` (String) The type of hash used for the certificate.
+- `status` (String) Status of the certificate activation.
+- `uploaded_on` (String) This is the time the certificate was uploaded.
 
 

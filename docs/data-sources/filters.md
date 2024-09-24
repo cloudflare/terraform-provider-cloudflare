@@ -23,9 +23,7 @@ description: |-
 - `expression` (String) A case-insensitive string to find in the expression.
 - `id` (String) The unique identifier of the filter.
 - `max_items` (Number) Max items to fetch, default: 1000
-- `page` (Number) Page number of paginated results.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
-- `per_page` (Number) Number of filters per page.
 - `ref` (String) The filter ref (a short reference tag) to search for. Must be an exact match.
 
 ### Read-Only
@@ -35,15 +33,12 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `description` (String) An informative summary of the filter.
-- `ref` (String) A short reference tag. Allows you to select related filters.
-
 Read-Only:
 
+- `description` (String) An informative summary of the filter.
 - `expression` (String) The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).
 - `id` (String) The unique identifier of the filter.
 - `paused` (Boolean) When true, indicates that the filter is currently paused.
+- `ref` (String) A short reference tag. Allows you to select related filters.
 
 

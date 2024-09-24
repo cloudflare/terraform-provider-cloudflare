@@ -36,7 +36,7 @@ resource "cloudflare_email_routing_rule" "main" {
 
 - `actions` (Attributes List) List actions patterns. (see [below for nested schema](#nestedatt--actions))
 - `matchers` (Attributes List) Matching patterns to forward to your actions. (see [below for nested schema](#nestedatt--matchers))
-- `zone_identifier` (String) Identifier
+- `zone_id` (String) Identifier
 
 ### Optional
 

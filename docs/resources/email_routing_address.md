@@ -22,7 +22,7 @@ resource "cloudflare_email_routing_address" "example" {
 
 ### Required
 
-- `account_identifier` (String) Identifier
+- `account_id` (String) Identifier
 - `email` (String) The contact email address of the user.
 
 ### Read-Only

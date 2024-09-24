@@ -29,4 +29,36 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
+Read-Only:
+
+- `certificate_authority` (String)
+- `created_on` (String)
+- `domain_id` (String)
+- `id` (String)
+- `name` (String)
+- `status` (String)
+- `validation_data` (Attributes) (see [below for nested schema](#nestedatt--result--validation_data))
+- `verification_data` (Attributes) (see [below for nested schema](#nestedatt--result--verification_data))
+- `zone_tag` (String)
+
+<a id="nestedatt--result--validation_data"></a>
+### Nested Schema for `result.validation_data`
+
+Read-Only:
+
+- `error_message` (String)
+- `method` (String)
+- `status` (String)
+- `txt_name` (String)
+- `txt_value` (String)
+
+
+<a id="nestedatt--result--verification_data"></a>
+### Nested Schema for `result.verification_data`
+
+Read-Only:
+
+- `error_message` (String)
+- `status` (String)
+
 

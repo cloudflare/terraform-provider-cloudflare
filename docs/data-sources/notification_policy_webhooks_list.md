@@ -28,18 +28,15 @@ description: |-
 <a id="nestedatt--result"></a>
 ### Nested Schema for `result`
 
-Optional:
-
-- `name` (String) The name of the webhook destination. This will be included in the request body when you receive a webhook notification.
-- `secret` (String) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
-- `type` (String) Type of webhook endpoint.
-- `url` (String) The POST endpoint to call when dispatching a notification.
-
 Read-Only:
 
 - `created_at` (String) Timestamp of when the webhook destination was created.
 - `id` (String) The unique identifier of a webhook
 - `last_failure` (String) Timestamp of the last time an attempt to dispatch a notification to this webhook failed.
 - `last_success` (String) Timestamp of the last time Cloudflare was able to successfully dispatch a notification using this webhook.
+- `name` (String) The name of the webhook destination. This will be included in the request body when you receive a webhook notification.
+- `secret` (String) Optional secret that will be passed in the `cf-webhook-auth` header when dispatching generic webhook notifications or formatted for supported destinations. Secrets are not returned in any API response body.
+- `type` (String) Type of webhook endpoint.
+- `url` (String) The POST endpoint to call when dispatching a notification.
 
 
