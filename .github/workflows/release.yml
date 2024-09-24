@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: Cleanup unused directories and tools
         run: |
+          df -h /
           sudo apt-get remove -y '^aspnetcore-.*' '^dotnet-.*' '^llvm-.*' 'php.*' '^mongodb-.*' '^mysql-.*' azure-cli google-chrome-stable firefox powershell mono-devel google-cloud-sdk google-cloud-cli microsoft-edge-stable snapd --fix-missing 
           sudo apt-get autoremove -y 
           sudo apt-get clean
@@ -26,12 +27,8 @@ jobs:
             /usr/local/share/chromium \
             /usr/local/share/powershell \
             /usr/share/dotnet \
-            /usr/share/swift \ 
-            /usr/local/.ghcup \
-            /opt/ghc \
-            /usr/local/share/boost \
-            /opt/hostedtoolcache/ \
-            /usr/local/graalvm/             
+            /usr/share/swift 
+          ghcup nuke
           df -h /
       - name: Checkout
         uses: actions/checkout@v4
