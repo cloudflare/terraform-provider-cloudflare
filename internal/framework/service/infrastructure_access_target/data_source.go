@@ -54,30 +54,23 @@ func (d *InfrastructureAccessTargetDataSource) Read(ctx context.Context, req dat
 		resp.Diagnostics.AddError("failed to update infrastructure access target", "account id cannot be an empty string")
 		return
 	}
-	checkSetNil := func(s string) *string {
-		if s == "" {
-			return nil
-		} else {
-			return &s
-		}
-	}
 	params := cloudflare.InfrastructureAccessTargetListParams{
-		Hostname:         *checkSetNil(data.Hostname.String()),
-		HostnameContains: *checkSetNil(data.HostnameContains.String()),
-		IPV4:             *checkSetNil(data.IPV4.String()),
-		IPV6:             *checkSetNil(data.IPV6.String()),
-		CreatedAfter:     *checkSetNil(data.CreatedAfter.String()),
-		ModifedAfter:     *checkSetNil(data.ModifiedAfter.String()),
-		VirtualNetworkId: *checkSetNil(data.VirtualNetworkId.String()),
+		Hostname:         data.Hostname.ValueString(),
+		HostnameContains: data.HostnameContains.ValueString(),
+		IPV4:             data.IPV4.ValueString(),
+		IPV6:             data.IPV6.ValueString(),
+		CreatedAfter:     data.CreatedAfter.ValueString(),
+		ModifedAfter:     data.ModifiedAfter.ValueString(),
+		VirtualNetworkId: data.VirtualNetworkId.ValueString(),
 	}
 
 	allTargets, _, err := d.client.V1.ListInfrastructureAccessTargets(ctx, cloudflare.AccountIdentifier(accountId), params)
 	if err != nil {
-		resp.Diagnostics.AddError("failed to fetch Infrastructure Targets: %w", err.Error())
+		resp.Diagnostics.AddError("failed to fetch Infrastructure Access Targets: %w", err.Error())
 		return
 	}
 	if len(allTargets) == 0 {
-		resp.Diagnostics.AddError("failed to fetch Infrastructure Targets", "no Infrastructure Targets matching given query parameters")
+		resp.Diagnostics.AddError("failed to fetch Infrastructure Access Targets", "no Infrastructure Targets matching given query parameters")
 	}
 
 	var targets []InfrastructureAccessTargetModel

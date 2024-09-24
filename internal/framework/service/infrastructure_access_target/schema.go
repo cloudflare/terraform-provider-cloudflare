@@ -137,41 +137,43 @@ func (d *InfrastructureAccessTargetDataSource) Schema(ctx context.Context, req d
 							MarkdownDescription: consts.AccountIDSchemaDescription,
 							Computed:            true,
 						},
+						consts.IDSchemaKey: schema.StringAttribute{
+							MarkdownDescription: consts.IDSchemaDescription + " This is target's unique identifier.",
+							Computed:            true,
+						},
 						"hostname": dschema.StringAttribute{
 							MarkdownDescription: "A non-unique field that refers to a target.",
 							Computed:            true,
 						},
-						"ip": dschema.MapNestedAttribute{
+						"ip": schema.SingleNestedAttribute{
 							MarkdownDescription: "The IPv4/IPv6 address that identifies where to reach a target.",
-							Computed:            true,
-							NestedObject: dschema.NestedAttributeObject{
-								Attributes: map[string]dschema.Attribute{
-									"ipv4": dschema.SingleNestedAttribute{
-										MarkdownDescription: "The target's IPv4 address.",
-										Computed:            true,
-										Attributes: map[string]dschema.Attribute{
-											"ip_addr": dschema.StringAttribute{
-												MarkdownDescription: "The IP address of the target.",
-												Computed:            true,
-											},
-											"virtual_network_id": dschema.StringAttribute{
-												MarkdownDescription: "The private virtual network identifier for the target.",
-												Computed:            true,
-											},
+							Required:            true,
+							Attributes: map[string]schema.Attribute{
+								"ipv4": schema.SingleNestedAttribute{
+									MarkdownDescription: "The target's IPv4 address.",
+									Optional:            true,
+									Attributes: map[string]schema.Attribute{
+										"ip_addr": schema.StringAttribute{
+											MarkdownDescription: "The IP address of the target.",
+											Required:            true,
+										},
+										"virtual_network_id": schema.StringAttribute{
+											MarkdownDescription: "The private virtual network identifier for the target.",
+											Required:            true,
 										},
 									},
-									"ipv6": dschema.SingleNestedAttribute{
-										MarkdownDescription: "The target's IPv6 address.",
-										Computed:            true,
-										Attributes: map[string]dschema.Attribute{
-											"ip_addr": dschema.StringAttribute{
-												MarkdownDescription: "The IP address of the target.",
-												Computed:            true,
-											},
-											"virtual_network_id": dschema.StringAttribute{
-												MarkdownDescription: "The private virtual network identifier for the target.",
-												Computed:            true,
-											},
+								},
+								"ipv6": schema.SingleNestedAttribute{
+									MarkdownDescription: "The target's IPv6 address.",
+									Optional:            true,
+									Attributes: map[string]schema.Attribute{
+										"ip_addr": schema.StringAttribute{
+											MarkdownDescription: "The IP address of the target.",
+											Required:            true,
+										},
+										"virtual_network_id": schema.StringAttribute{
+											MarkdownDescription: "The private virtual network identifier for the target.",
+											Required:            true,
 										},
 									},
 								},
