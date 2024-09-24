@@ -9,6 +9,10 @@ jobs:
     steps:
       - name: Cleanup unused directories and tools
         run: |
+          sudo apt-get remove -y '^aspnetcore-.*' '^dotnet-.*' '^llvm-.*' 'php.*' '^mongodb-.*' '^mysql-.*' azure-cli google-chrome-stable firefox powershell mono-devel google-cloud-sdk google-cloud-cli microsoft-edge-stable snapd --fix-missing 
+          sudo apt-get autoremove -y 
+          sudo apt-get clean
+          sudo docker image prune --all --force
           sudo rm -rf \
             "$AGENT_TOOLSDIRECTORY" \
             /opt/google/chrome \
@@ -22,7 +26,12 @@ jobs:
             /usr/local/share/chromium \
             /usr/local/share/powershell \
             /usr/share/dotnet \
-            /usr/share/swift
+            /usr/share/swift \ 
+            /usr/local/.ghcup \
+            /opt/ghc \
+            /usr/local/share/boost \
+            /opt/hostedtoolcache/ \
+            /usr/local/graalvm/             
           df -h /
       - name: Checkout
         uses: actions/checkout@v4
