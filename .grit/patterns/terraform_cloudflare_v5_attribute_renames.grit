@@ -15,6 +15,10 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     // cloudflare_hostname_tls_setting
     `setting = $v` as $setting => `setting_id = $v` where { $setting <: within `resource "cloudflare_hostname_tls_setting" $_ { $_ }` },
 
+    // cloudflare_load_balancer
+    `fallback_pool_id = $v` as $fp => `fallback_pool = $v` where { $fp <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
+    `default_pool_ids = $v` as $dp => `default_pools = $v` where { $dp <: within `resource "cloudflare_load_balancer" $_ { $_ }` },
+
     // cloudflare_teams_list
     `items = [$items]` as $all_items where {
         $values = [],

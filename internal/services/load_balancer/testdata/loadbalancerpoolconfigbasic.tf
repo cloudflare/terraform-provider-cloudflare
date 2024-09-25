@@ -1,4 +1,3 @@
-
 resource "cloudflare_load_balancer_pool" "%[1]s" {
   account_id = "%[2]s"
   name = "my-tf-pool-basic-%[1]s"
