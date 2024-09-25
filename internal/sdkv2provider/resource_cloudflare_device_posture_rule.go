@@ -293,6 +293,9 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 		if locations, ok := d.GetOk("input.0.locations"); ok {
 			input.Locations = locations.(cloudflare.CertificateLocations)
 		}
+		if score, ok := d.GetOk("input.0.score"); ok {
+			input.Score = score.(int)
+		}
 		rule.Input = input
 	}
 }
@@ -380,6 +383,7 @@ func convertInputToSchema(input cloudflare.DevicePostureRuleInput) []map[string]
 		"check_private_key":  input.CheckPrivateKey,
 		"extended_key_usage": input.ExtendedKeyUsage,
 		"locations":          formatLocationsToSchema,
+		"score":              input.Score,
 	}
 
 	return []map[string]interface{}{m}
