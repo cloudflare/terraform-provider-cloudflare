@@ -156,6 +156,43 @@ terraform_cloudflare_v5()
 ## cloudflare_list
 ## cloudflare_list_item
 ## cloudflare_load_balancer
+
+- `fallback_pool_id` is now `fallback_pool`.
+
+  Before
+  ```hcl
+  resource "cloudflare_load_balancer" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    fallback_pool_id = "520636c63a13852db69ca56570b0abf4"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_load_balancer" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    fallback_pool = "520636c63a13852db69ca56570b0abf4"
+  }
+  ```
+
+- `default_pool_ids` is now `default_pools`.
+
+  Before
+  ```hcl
+  resource "cloudflare_load_balancer" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    default_pool_ids = ["520636c63a13852db69ca56570b0abf4", "4cc60288984088b5188246199f87daa7"]
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_load_balancer" "example" {
+    zone_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    default_pools = ["520636c63a13852db69ca56570b0abf4", "4cc60288984088b5188246199f87daa7"]
+  }
+  ```
+
 ## cloudflare_load_balancer_monitor
 ## cloudflare_load_balancer_pool
 ## cloudflare_logpush_job
@@ -272,6 +309,22 @@ terraform_cloudflare_v5()
 ## cloudflare_zone_lockdown
 ## cloudflare_zone
 
+- `zone` is now an `name`.
+
+  Before
+  ```hcl
+  resource "cloudflare_zone" "example" {
+    zone = "example.com"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_zone" "example" {
+    name = "example.com"
+  }
+  ```
+
 - `account_id` is now an `account` object with the `id` attribute inside.
 
   Before
@@ -288,7 +341,7 @@ terraform_cloudflare_v5()
     account = {
       id = "f037e56e89293a057740de681ac9abbe"
     }
-    zone   = "example.com"
+    name   = "example.com"
   }
   ```
 
@@ -311,7 +364,7 @@ terraform_cloudflare_v5()
       account = {
         id = "f037e56e89293a057740de681ac9abbe"
       }
-      zone   = "example.com"
+      name   = "example.com"
     }
     ```
 
