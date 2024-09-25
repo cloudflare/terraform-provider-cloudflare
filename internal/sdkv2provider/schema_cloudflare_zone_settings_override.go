@@ -363,6 +363,13 @@ var resourceCloudflareZoneSettingsSchema = map[string]*schema.Schema{
 		Computed:     true,
 	},
 
+	"speed_brain": {
+		Type:         schema.TypeString,
+		ValidateFunc: validation.StringInSlice([]string{"on", "off"}, false),
+		Optional:     true,
+		Computed:     true,
+	},
+
 	"ssl": {
 		Type:         schema.TypeString,
 		Optional:     true,

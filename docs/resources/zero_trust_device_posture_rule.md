@@ -40,7 +40,7 @@ resource "cloudflare_zero_trust_device_posture_rule" "eaxmple" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `client_certificate`, `client_certificate_v2`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `sentinelone`, `kolide`, `tanium_s2s`, `intune`, `sentinelone_s2s`.
+- `type` (String) The device posture rule type. Available values: `serial_number`, `file`, `application`, `gateway`, `warp`, `domain_joined`, `os_version`, `disk_encryption`, `firewall`, `client_certificate`, `client_certificate_v2`, `workspace_one`, `unique_client_id`, `crowdstrike_s2s`, `sentinelone`, `kolide`, `tanium_s2s`, `intune`, `sentinelone_s2s`, `custom_s2s`.
 
 ### Optional
 
@@ -90,6 +90,7 @@ Optional:
 - `require_all` (Boolean) True if all drives must be encrypted.
 - `risk_level` (String) The risk level from Tanium. Available values: `low`, `medium`, `high`, `critical`.
 - `running` (Boolean) Checks if the application should be running.
+- `score` (Number) A value between 0-100 assigned to devices set by the 3rd party posture provider for custom device posture integrations.
 - `sensor_config` (String) Sensor signal score from Crowdstrike. Value must be between 1 and 100.
 - `sha256` (String) The sha256 hash of the file.
 - `state` (String) The host’s current online status from Crowdstrike. Available values: `online`, `offline`, `unknown`.
