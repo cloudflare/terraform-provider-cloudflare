@@ -273,9 +273,7 @@ func testAccCheckCloudflareZoneSettingsOverrideSpeedBrain(rnd, zoneID string) st
 resource "cloudflare_zone_settings_override" "%[1]s" {
   zone_id = "%[2]s"
   settings {
-    speed_brain {
-      value = "on"
-	}
+    speed_brain = "on"
   }
 }`, rnd, zoneID)
 }
