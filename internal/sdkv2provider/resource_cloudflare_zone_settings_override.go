@@ -50,6 +50,7 @@ var fetchAsSingleSetting = []string{
 	"fonts",
 	"nel",
 	"replace_insecure_js",
+	"speed_brain",
 }
 
 func resourceCloudflareZoneSettingsOverrideCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
