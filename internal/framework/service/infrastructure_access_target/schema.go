@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-// Resource Schema
 func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
@@ -29,7 +28,7 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 			},
 			consts.IDSchemaKey: schema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: consts.IDSchemaDescription + " This is target's unique identifier.",
+				MarkdownDescription: consts.IDSchemaDescription,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
@@ -74,7 +73,7 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 			},
 			"created_at": schema.StringAttribute{
 				MarkdownDescription: "The date and time at which the target was created.",
-				// Set value to read-only
+				// Set value to read-only.
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
@@ -82,15 +81,13 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 			},
 			"modified_at": schema.StringAttribute{
 				MarkdownDescription: "The date and time at which the target was last modified.",
-				// Set value to read-only
+				// Set value to read-only.
 				Computed: true,
 			},
 		},
 	}
 }
 
-// Data Source schema
-// This should be the model/request
 func (d *InfrastructureAccessTargetDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = dschema.Schema{
 		MarkdownDescription: "Use this data source to retrieve all Infrastructure Access Targets.",
@@ -107,11 +104,11 @@ func (d *InfrastructureAccessTargetDataSource) Schema(ctx context.Context, req d
 				Optional:    true,
 				Description: "The name of the app type.",
 			},
-			"ip_v4": dschema.StringAttribute{
+			"ipv4": dschema.StringAttribute{
 				Optional:    true,
 				Description: "The name of the app type.",
 			},
-			"ip_v6": dschema.StringAttribute{
+			"ipv6": dschema.StringAttribute{
 				Optional:    true,
 				Description: "The name of the app type.",
 			},
@@ -128,7 +125,7 @@ func (d *InfrastructureAccessTargetDataSource) Schema(ctx context.Context, req d
 				Description: "A date and time after a target was modified to filter on.",
 			},
 			// Schema for data source is separate from resource so attributes
-			// are re written here but modified to be computer aka read-only
+			// are re written here but modified to be computer aka read-only.
 			"targets": dschema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: dschema.NestedAttributeObject{

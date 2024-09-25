@@ -28,13 +28,11 @@ func init() {
 			}
 
 			ctx := context.Background()
-			// Retrieve all targets created under the current test account
 			targets, _, err := client.ListInfrastructureAccessTargets(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.InfrastructureAccessTargetListParams{})
 			if err != nil {
 				return fmt.Errorf("failed to fetch rulesets: %w", err)
 			}
 
-			// Delete each target
 			for _, target := range targets {
 				err := client.DeleteInfrastructureAccessTarget(ctx, cloudflare.AccountIdentifier(accountID), target.ID)
 				if err != nil {
