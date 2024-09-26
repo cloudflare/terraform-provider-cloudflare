@@ -1,11 +1,7 @@
-```release-note:enhancement
-provider: add new data source and resource for infrastructure access target
+```release-note:new-datasource
+cloudflare_infrastructure_access_targets
 ```
 
-```release-note:enhancement
-resource/cloudflare_zero_trust_infrastructure_target: add new resource infrastructure access target
-```
-
-```release-note:enhancement
-data_source/cloudflare_zero_trust_infrastructure_targets: add new data source to read infrastructure access targets
+```release-note:new-resource
+cloudflare_infrastructure_access_target
 ```
