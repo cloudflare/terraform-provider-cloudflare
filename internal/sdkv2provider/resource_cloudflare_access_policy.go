@@ -65,23 +65,23 @@ func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 }
 
 func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.InfraConnectionRules, error) {
-	usernamesStrings := []string{}
+	usernames := []string{}
 	if sshVal, ok := connectionRules["ssh"].([]interface{}); ok && len(sshVal) > 0 {
 		if sshMap, ok := sshVal[0].(map[string]interface{}); ok {
 			str_return := []string{}
-			if usernames, ok := sshMap["usernames"].([]interface{}); ok {
-				for _, username := range usernames {
+			if usernamesMap, ok := sshMap["usernames"].([]interface{}); ok {
+				for _, username := range usernamesMap {
 					valueMap := username.(map[string]interface{})
 					str_return = append(str_return, valueMap["value"].(string))
 				}
 			}
-			usernamesStrings = str_return
+			usernames = str_return
 		}
 	}
 
 	return &cloudflare.InfraConnectionRules{
 		SSH: &cloudflare.InfraConnectionRulesSSH{
-			Usernames: usernamesStrings,
+			Usernames: usernames,
 		},
 	}, nil
 }
@@ -91,25 +91,25 @@ func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.InfraCon
 		return []interface{}{}
 	}
 
-	var targetContextsSchema []interface{}
-	var usernameMap []map[string]interface{}
+	var connectionRulesSchema []interface{}
+	var usernameList []map[string]interface{}
 
-	var list []map[string]interface{}
+	var valueList []map[string]interface{}
 	for _, value := range connectionRules.SSH.Usernames {
-		list = append(list, map[string]interface{}{
+		valueList = append(valueList, map[string]interface{}{
 			"value": value,
 		})
-		attributeMap := map[string]interface{}{
-			"usernames": list,
+		usernameMap := map[string]interface{}{
+			"usernames": valueList,
 		}
-		usernameMap = append(usernameMap, attributeMap)
+		usernameList = append(usernameList, usernameMap)
 	}
 
-	targetContextsSchema = append(targetContextsSchema, map[string]interface{}{
-		"ssh": usernameMap,
+	connectionRulesSchema = append(connectionRulesSchema, map[string]interface{}{
+		"ssh": usernameList,
 	})
 
-	return targetContextsSchema
+	return connectionRulesSchema
 }
 
 func schemaAccessPolicyApprovalGroupToAPI(data map[string]interface{}) cloudflare.AccessApprovalGroup {
@@ -291,9 +291,9 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
 	}
 
-	connectionRulesSchema, ok := d.Get("connection_rules").(map[string]interface{})
+	connectionRulesSchema, ok := d.Get("connection_rules").([]interface{})
 	if ok {
-		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
+		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema[0].(map[string]interface{}))
 		if err != nil {
 			return diag.FromErr(err)
 		}
