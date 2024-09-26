@@ -414,33 +414,34 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 					"port": {
 						Type:        schema.TypeInt,
 						Required:    true,
-						Description: "Which SCIM resource type this mapping applies to.",
+						Description: "The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.",
 					},
 					"protocol": {
 						Type:        schema.TypeString,
 						Required:    true,
-						Description: "Whether or not this mapping is enabled.",
+						Description: "The communication protocol your application secures.",
 					},
 					"target_attributes": {
-						Type:     schema.TypeList,
-						Optional: true,
+						Type:        schema.TypeList,
+						Required:    true,
+						Description: "Contains a map of target attribute keys to target attribute values.",
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"name": {
 									Type:        schema.TypeString,
 									Required:    true,
-									Description: "The name of the attribute as provided by the IDP.",
+									Description: "The key of the attribute.",
 								},
 								"value": {
 									Type:        schema.TypeList,
 									Required:    true,
-									Description: "The name of the attribute as provided by the IDP.",
+									Description: "The values of the attribute.",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											"value": {
 												Type:        schema.TypeString,
 												Required:    true,
-												Description: "The string value of hostname.",
+												Description: "The string value of each value.",
 											},
 										},
 									},
