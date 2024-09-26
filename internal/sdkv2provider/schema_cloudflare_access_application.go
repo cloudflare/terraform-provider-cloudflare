@@ -427,16 +427,21 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								"hostname": {
+								"name": {
+									Type:        schema.TypeString,
+									Required:    true,
+									Description: "The name of the attribute as provided by the IDP.",
+								},
+								"value": {
 									Type:        schema.TypeList,
 									Required:    true,
 									Description: "The name of the attribute as provided by the IDP.",
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
-											"name": {
+											"value": {
 												Type:        schema.TypeString,
 												Required:    true,
-												Description: "The name of the attribute as provided by the IDP.",
+												Description: "The string value of hostname.",
 											},
 										},
 									},
@@ -997,15 +1002,18 @@ func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.InfraT
 				}
 			}
 
-			if targetAttributes, ok := itemMap["target_attributes"].(map[string]interface{}); ok {
-				attributes := make(map[string][]string)
-				for key, value := range targetAttributes {
-					valueList := value.([]interface{})
-					var stringValues []string
-					for _, val := range valueList {
-						stringValues = append(stringValues, val.(string))
+			attributes := make(map[string][]string)
+			if v, ok := itemMap["target_attributes"].(map[string]interface{}); ok && len(v) > 0 {
+				for _, attrItem := range v {
+					attrMap := attrItem.(map[string]interface{})
+					/// Unpack the nested "hostname" list
+					attrName := attrMap["name"].(string)
+					values := attrMap["value"].([]interface{})
+					for _, value := range values {
+						valueMap := value.(map[string]interface{})
+						attributes[attrName] = append(attributes[attrName], valueMap["value"].(string))
 					}
-					attributes[key] = stringValues
+
 				}
 
 				targetContext.TargetAttributes = attributes
@@ -1326,18 +1334,25 @@ func convertTargetContextsToSchema(targetContexts *[]cloudflare.InfraTargetConte
 
 	var targetContextsSchema []interface{}
 	for _, targetContext := range *targetContexts {
-		targetContextSchema := make(map[string]interface{})
+		targetAttributesList := []map[string]interface{}{}
 
-		targetContextSchema["port"] = targetContext.Port
-		targetContextSchema["protocol"] = targetContext.Protocol
-
-		attributeMap := make(map[string]interface{})
 		for key, values := range targetContext.TargetAttributes {
-			attributeMap[key] = values
+			keyValue := []map[string]interface{}{}
+			for _, value := range values {
+				keyValue = append(keyValue, map[string]interface{}{
+					"name": value,
+				})
+			}
+			targetAttributesList = append(targetAttributesList, map[string]interface{}{
+				key: keyValue,
+			})
 		}
-		targetContextSchema["target_attributes"] = attributeMap
 
-		targetContextsSchema = append(targetContextsSchema, targetContextSchema)
+		targetContextsSchema = append(targetContextsSchema, map[string]interface{}{
+			"port":              targetContext.Port,
+			"protocol":          targetContext.Protocol,
+			"target_attributes": targetAttributesList,
+		})
 	}
 	return targetContextsSchema
 }
