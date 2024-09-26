@@ -105,15 +105,31 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 		},
 		"connection_rules": {
 			Type:     schema.TypeList,
-			Required: true,
+			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"ssh": {
 						Type:     schema.TypeList,
 						Required: true,
-						Elem: &schema.Schema{
-							Type: schema.TypeString,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"usernames": {
+									Type:        schema.TypeList,
+									Required:    true,
+									Description: "The name of the attribute as provided by the IDP.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"value": {
+												Type:        schema.TypeString,
+												Required:    true,
+												Description: "The string value of hostname.",
+											},
+										},
+									},
+								},
+							},
 						},
 					},
 				},

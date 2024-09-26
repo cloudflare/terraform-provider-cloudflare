@@ -1007,15 +1007,13 @@ func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.InfraT
 				for _, attrItem := range v {
 					attrMap := attrItem.(map[string]interface{})
 					/// Unpack the nested "hostname" list
-					attrName := attrMap["name"].(string)
+					key := attrMap["name"].(string)
 					values := attrMap["value"].([]interface{})
 					for _, value := range values {
 						valueMap := value.(map[string]interface{})
-						attributes[attrName] = append(attributes[attrName], valueMap["value"].(string))
+						attributes[key] = append(attributes[key], valueMap["value"].(string))
 					}
-
 				}
-
 				targetContext.TargetAttributes = attributes
 			}
 
