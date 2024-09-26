@@ -22,35 +22,32 @@ func TestAccCloudflareInfraAccessTarget_DataSource(t *testing.T) {
 				Config: testCloudflareInfrastructureTargetsMatchNoIpv6(rnd1),
 				Check: resource.ComposeTestCheckFunc(
 					// We should expect this data source to have 1 resource.
-					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets."+rnd1, "resources.#", "1"),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets."+rnd1, "targets.#", "1"),
 					// Check that there is no ipv6 object in this resource.
 					resource.TestCheckNoResourceAttr("data.cloudflare_infrastructure_access_targets."+rnd1, "ip.ipv6"),
 					// Check the existing attributes of this resource.
-					resource.TestCheckTypeSetElemNestedAttrs("cloudflare_infrastructure_access_targets."+rnd1, "resources.*", map[string]string{
-						"hostname":                   rnd1,
-						"ip.ipv4.ip_addr":            "187.26.29.249",
-						"ip.ipv4.virtual_network_id": "b9c90134-52de-4903-81e8-004a3a06b435",
-					}),
+					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "hostname", rnd1),
+					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "hostname", rnd1),
+					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "ip.ipv4.ip_addr", "187.26.29.233"),
+					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "ip.ipv4.virtual_network_id", "b9c90134-52de-4903-81e8-004a3a06b435"),
 				),
 			},
 			{
 				Config: testCloudflareInfrastructureTargetsMatchAll(rnd1, rnd2),
 				Check: resource.ComposeTestCheckFunc(
 					// Expect this data source to have 2 resources.
-					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "resources.#", "2"),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.#", "2"),
 					// Check the attributes of the first resource.
-					resource.TestCheckTypeSetElemNestedAttrs("data.cloudflare_infrastructure_access_targets.all", "resources.*", map[string]string{
-						"hostname":                   rnd1,
-						"ip.ipv4.ip_addr":            "187.26.29.233",
-						"ip.ipv4.virtual_network_id": "b9c90134-52de-4903-81e8-004a3a06b435",
-					}),
-					// Check the attributes of the second resource.
-					resource.TestCheckTypeSetElemNestedAttrs("data.cloudflare_infrastructure_access_targets.all", "resources.*", map[string]string{
-						"hostname":                   rnd2,
-						"ip.ipv4.ip_addr":            "250.26.29.250",
-						"ip.ipv6.ip_addr":            "64c0:64e8:f0b4:8dbf:7104:72b0:ec8f:f5e0",
-						"ip.ipv6.virtual_network_id": "b9c90134-52de-4903-81e8-004a3a06b435",
-					}),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.0.hostname", rnd2),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.0.ip.ipv4.ip_addr", "250.26.29.250"),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.0.ip.ipv6.ip_addr", "64c0:64e8:f0b4:8dbf:7104:72b0:ec8f:f5e0"),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.0.ip.ipv6.virtual_network_id", "b9c90134-52de-4903-81e8-004a3a06b435"),
+					/// Check the attributes of the second resource.
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.1.hostname", rnd1),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.1.ip.ipv4.ip_addr", "187.26.29.249"),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.1.ip.ipv4.virtual_network_id", "b9c90134-52de-4903-81e8-004a3a06b435"),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.1.ip.ipv6.ip_addr", "64c0:64e8:f0b4:8dbf:7104:72b0:ec8f:f5e0"),
+					resource.TestCheckResourceAttr("data.cloudflare_infrastructure_access_targets.all", "targets.1.ip.ipv6.virtual_network_id", "b9c90134-52de-4903-81e8-004a3a06b435"),
 				),
 			},
 		},
