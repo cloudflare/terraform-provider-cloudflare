@@ -65,14 +65,24 @@ func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 }
 
 func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.InfraConnectionRules, error) {
-	sshData, ok := connectionRules["ssh"].(cloudflare.InfraConnectionRulesSSH)
+	sshRaw, ok := connectionRules["ssh"].([]interface{})
+
 	if !ok {
 		return &cloudflare.InfraConnectionRules{}, fmt.Errorf("failed to parse connection_rules: supported connection rule types: [SSH]")
 	}
 
+	// MaxItems is set to 1
+	sshData := sshRaw[0].(map[string]interface{})
+	usernamesRaw := sshData["usernames"].([]interface{})
+
+	usernames := []string{}
+	for _, v := range usernamesRaw {
+		usernames = append(usernames, v.(string))
+	}
+
 	return &cloudflare.InfraConnectionRules{
 		SSH: &cloudflare.InfraConnectionRulesSSH{
-			Usernames: sshData.Usernames,
+			Usernames: usernames,
 		},
 	}, nil
 }
@@ -83,8 +93,13 @@ func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.InfraCon
 	}
 
 	targetContextsSchema := make(map[string]interface{})
+	usernames := make([]interface{}, len(connectionRules.SSH.Usernames))
+	for _, username := range connectionRules.SSH.Usernames {
+		usernames = append(usernames, username)
+	}
+
 	targetContextsSchema["ssh"] = map[string]interface{}{
-		"usernames": connectionRules.SSH.Usernames,
+		"usernames": usernames,
 	}
 
 	return targetContextsSchema
@@ -196,9 +211,9 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("application_id is required for non-account level Access Policies"))
 	}
 
-	connectionRulesSchema, ok := d.Get("connection_rules").(map[string]interface{})
+	connectionRulesSchema, ok := d.Get("connection_rules").([]interface{})
 	if ok {
-		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
+		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema[0].(map[string]interface{}))
 		if err != nil {
 			return diag.FromErr(err)
 		}
