@@ -940,7 +940,7 @@ func TestAccCloudflareAccessApplication_WithTargetContexts(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "target_criteria.0.port", "22"),
 					resource.TestCheckResourceAttr(name, "target_criteria.0.protocol", "SSH"),
 					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.0.name", "hostname"),
-					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.0.value.0", "tfgo-acc-test"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.0.values.0", "tfgo-acc-test"),
 				),
 			},
 		},
@@ -1435,7 +1435,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
     protocol = "SSH"
     target_attributes {
       name = "hostname"
-      value { 
+      values { 
         value = "tfgo-acc-test"
       }
     }
