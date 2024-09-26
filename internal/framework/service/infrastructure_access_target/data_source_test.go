@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccCloudflareInfraAccessTarget_DataSource(t *testing.T) {
+func TestAccCloudflareInfrastructureAccessTarget_DataSource(t *testing.T) {
 	rnd1 := utils.GenerateRandomResourceName()
 	rnd2 := utils.GenerateRandomResourceName()
 
