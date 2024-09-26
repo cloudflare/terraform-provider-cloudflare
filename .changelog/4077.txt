@@ -1,0 +1,7 @@
+```release-note:new-datasource
+cloudflare_infrastructure_access_targets
+```
+
+```release-note:new-resource
+cloudflare_infrastructure_access_target
+```
