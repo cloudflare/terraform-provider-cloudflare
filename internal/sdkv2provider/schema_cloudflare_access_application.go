@@ -405,6 +405,36 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"target_criteria": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"port": {
+						Type:         schema.TypeInt,
+						Required:     true,
+						Description:  "Which SCIM resource type this mapping applies to.",
+						ValidateFunc: validation.StringMatch(regexp.MustCompile(`urn:.*`), "schema must begin with \"urn:\""),
+					},
+					"protocol": {
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "Whether or not this mapping is enabled.",
+					},
+					"target_attributes": {
+						Type:     schema.TypeMap,
+						Required: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeList,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
+			},
+		},
 		"auto_redirect_to_identity": {
 			Type:        schema.TypeBool,
 			Optional:    true,
@@ -933,6 +963,49 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 	return &SaasConfig
 }
 
+func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.InfraTargetContext, error) {
+	TargetContexts := []cloudflare.InfraTargetContext{}
+	if value, ok := d.GetOk("target_criteria"); ok {
+		targetCriteria := value.([]interface{})
+		targetContext := cloudflare.InfraTargetContext{}
+		for _, item := range targetCriteria {
+			itemMap := item.(map[string]interface{})
+
+			if port, ok := itemMap["port"].(int); ok {
+				targetContext.Port = port
+			}
+			if protocol, ok := itemMap["protocol"].(string); ok {
+				switch protocol {
+				case "SSH":
+					targetContext.Protocol = cloudflare.InfraSSH
+				case "RDP":
+					targetContext.Protocol = cloudflare.RDP
+				default:
+					return &[]cloudflare.InfraTargetContext{}, fmt.Errorf("failed to parse protocol: value must be one of SSH or RDP")
+				}
+			}
+
+			if targetAttributes, ok := itemMap["target_attributes"].(map[string]interface{}); ok {
+				attributes := make(map[string][]string)
+				for key, value := range targetAttributes {
+					valueList := value.([]interface{})
+					var stringValues []string
+					for _, val := range valueList {
+						stringValues = append(stringValues, val.(string))
+					}
+					attributes[key] = stringValues
+				}
+
+				targetContext.TargetAttributes = attributes
+			}
+
+			TargetContexts = append(TargetContexts, targetContext)
+		}
+
+	}
+	return &TargetContexts, nil
+}
+
 func convertLandingPageDesignSchemaToStruct(d *schema.ResourceData) *cloudflare.AccessLandingPageDesign {
 	LandingPageDesign := cloudflare.AccessLandingPageDesign{}
 	if _, ok := d.GetOk("landing_page_design"); ok {
@@ -1232,6 +1305,29 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 
 		return []interface{}{m}
 	}
+}
+
+func convertTargetContextsToSchema(targetContexts *[]cloudflare.InfraTargetContext) []interface{} {
+	if targetContexts == nil {
+		return []interface{}{}
+	}
+
+	var targetContextsSchema []interface{}
+	for _, targetContext := range *targetContexts {
+		targetContextSchema := make(map[string]interface{})
+
+		targetContextSchema["port"] = targetContext.Port
+		targetContextSchema["protocol"] = targetContext.Protocol
+
+		attributeMap := make(map[string]interface{})
+		for key, values := range targetContext.TargetAttributes {
+			attributeMap[key] = values
+		}
+		targetContextSchema["target_attributes"] = attributeMap
+
+		targetContextsSchema = append(targetContextsSchema, targetContextSchema)
+	}
+	return targetContextsSchema
 }
 
 func convertScimConfigStructToSchema(scimConfig *cloudflare.AccessApplicationSCIMConfig) []interface{} {

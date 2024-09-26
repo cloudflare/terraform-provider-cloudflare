@@ -64,6 +64,32 @@ func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 	return data
 }
 
+func apiAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.InfraConnectionRules, error) {
+	sshData, ok := connectionRules["ssh"].(cloudflare.InfraConnectionRulesSSH)
+	if !ok {
+		return &cloudflare.InfraConnectionRules{}, fmt.Errorf("failed to parse connection_rules: supported connection rule types: [SSH]")
+	}
+
+	return &cloudflare.InfraConnectionRules{
+		SSH: &cloudflare.InfraConnectionRulesSSH{
+			Usernames: sshData.Usernames,
+		},
+	}, nil
+}
+
+func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.InfraConnectionRules) map[string]interface{} {
+	if connectionRules == nil {
+		return map[string]interface{}{}
+	}
+
+	targetContextsSchema := make(map[string]interface{})
+	targetContextsSchema["ssh"] = map[string]interface{}{
+		"usernames": connectionRules.SSH.Usernames,
+	}
+
+	return targetContextsSchema
+}
+
 func schemaAccessPolicyApprovalGroupToAPI(data map[string]interface{}) cloudflare.AccessApprovalGroup {
 	var approvalGroup cloudflare.AccessApprovalGroup
 
@@ -86,6 +112,10 @@ func apiCloudflareAccessPolicyToResource(ctx context.Context, d *schema.Resource
 
 	d.Set("name", accessPolicy.Name)
 	d.Set("decision", accessPolicy.Decision)
+
+	if err := d.Set("connection_rules", apiAccessPolicyConnectionRulesToSchema(accessPolicy.InfraConnectionRules)); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set connection_rules attribute: %w", err))
+	}
 
 	if err := d.Set("require", TransformAccessGroupForSchema(ctx, accessPolicy.Require)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set require attribute: %w", err))
@@ -166,6 +196,15 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("application_id is required for non-account level Access Policies"))
 	}
 
+	connectionRulesSchema, ok := d.Get("connection_rules").(map[string]interface{})
+	if ok {
+		connectionRules, err := apiAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		newAccessPolicy.InfraConnectionRules = connectionRules
+	}
+
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
 		if value != nil {
@@ -228,6 +267,15 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 		Name:            d.Get("name").(string),
 		Decision:        d.Get("decision").(string),
 		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
+	}
+
+	connectionRulesSchema, ok := d.Get("connection_rules").(map[string]interface{})
+	if ok {
+		connectionRules, err := apiAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		updateReq.InfraConnectionRules = connectionRules
 	}
 
 	exclude := d.Get("exclude").([]interface{})

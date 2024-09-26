@@ -103,6 +103,21 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			},
 			Description: "How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`",
 		},
+		"connection_rules": {
+			Type:     schema.TypeMap,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"ssh": {
+						Type:     schema.TypeList,
+						Required: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
