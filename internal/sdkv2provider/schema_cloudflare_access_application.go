@@ -57,8 +57,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"}, false),
-			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"})),
+			ValidateFunc: validation.StringInSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp", "infrastructure"}, false),
+			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp", "infrastructure"})),
 		},
 		"policies": {
 			Type: schema.TypeList,
@@ -412,10 +412,9 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"port": {
-						Type:         schema.TypeInt,
-						Required:     true,
-						Description:  "Which SCIM resource type this mapping applies to.",
-						ValidateFunc: validation.StringMatch(regexp.MustCompile(`urn:.*`), "schema must begin with \"urn:\""),
+						Type:        schema.TypeInt,
+						Required:    true,
+						Description: "Which SCIM resource type this mapping applies to.",
 					},
 					"protocol": {
 						Type:        schema.TypeString,
@@ -423,12 +422,25 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 						Description: "Whether or not this mapping is enabled.",
 					},
 					"target_attributes": {
-						Type:     schema.TypeMap,
-						Required: true,
-						Elem: &schema.Schema{
-							Type: schema.TypeList,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"hostname": {
+									Type:        schema.TypeList,
+									Required:    true,
+									Description: "The name of the attribute as provided by the IDP.",
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											"name": {
+												Type:        schema.TypeString,
+												Required:    true,
+												Description: "The name of the attribute as provided by the IDP.",
+											},
+										},
+									},
+								},
 							},
 						},
 					},
