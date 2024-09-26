@@ -200,6 +200,8 @@ func time2time(t time.Time) timetypes.RFC3339 {
 	return timetypes.NewRFC3339TimePointerValue(&t)
 }
 
+var ctx = context.TODO()
+
 var tests = map[string]struct {
 	buf string
 	val interface{}
@@ -427,32 +429,32 @@ var tests = map[string]struct {
 			Data: &EmbeddedTfsdkStruct{
 				EmbeddedString: types.StringValue("embedded_string_value"),
 				EmbeddedInt:    types.Int64Value(17),
-				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 			},
-			DataObject: customfield.NewObjectMust(context.TODO(), &EmbeddedTfsdkStruct{
+			DataObject: customfield.NewObjectMust(ctx, &EmbeddedTfsdkStruct{
 				EmbeddedString: types.StringValue("embedded_data_string_value"),
 				EmbeddedInt:    types.Int64Value(18),
-				DataObject: customfield.NewObjectMust(context.TODO(), &DoubleNestedStruct{
+				DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
 					NestedInt: types.Int64Value(19),
 				}),
 			}),
-			ListObject: customfield.NewListMust[basetypes.StringValue](context.TODO(), []attr.Value{types.StringValue("hi_list"), types.StringValue("there_list")}),
-			NestedObjectList: customfield.NewObjectListMust(context.TODO(), []EmbeddedTfsdkStruct{{
+			ListObject: customfield.NewListMust[basetypes.StringValue](ctx, []attr.Value{types.StringValue("hi_list"), types.StringValue("there_list")}),
+			NestedObjectList: customfield.NewObjectListMust(ctx, []EmbeddedTfsdkStruct{{
 				EmbeddedString: types.StringValue("nested_object_string"),
 				EmbeddedInt:    types.Int64Value(20),
-				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 			}}),
-			SetObject: customfield.NewSetMust[basetypes.StringValue](context.TODO(), []attr.Value{types.StringValue("hi_set"), types.StringValue("there_set")}),
-			NestedObjectSet: customfield.NewObjectSetMust(context.TODO(), []EmbeddedTfsdkStruct{{
+			SetObject: customfield.NewSetMust[basetypes.StringValue](ctx, []attr.Value{types.StringValue("hi_set"), types.StringValue("there_set")}),
+			NestedObjectSet: customfield.NewObjectSetMust(ctx, []EmbeddedTfsdkStruct{{
 				EmbeddedString: types.StringValue("nested_object_string_in_set"),
 				EmbeddedInt:    types.Int64Value(21),
-				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 			}}),
-			MapObject: customfield.NewMapMust[basetypes.StringValue](context.TODO(), map[string]attr.Value{"hi_map": types.StringValue("there_map")}),
-			NestedObjectMap: customfield.NewObjectMapMust(context.TODO(), map[string]EmbeddedTfsdkStruct{"nested_object_map_key": {
+			MapObject: customfield.NewMapMust[basetypes.StringValue](ctx, map[string]attr.Value{"hi_map": types.StringValue("there_map")}),
+			NestedObjectMap: customfield.NewObjectMapMust(ctx, map[string]EmbeddedTfsdkStruct{"nested_object_map_key": {
 				EmbeddedString: types.StringValue("nested_object_string_in_map"),
 				EmbeddedInt:    types.Int64Value(21),
-				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 			}}),
 			FloatValue:    types.Float64Value(3.14),
 			OptionalArray: &[]types.String{types.StringValue("hi"), types.StringValue("there")},
@@ -461,7 +463,7 @@ var tests = map[string]struct {
 
 	"customfield_null_object": {
 		"",
-		customfield.NullObject[DoubleNestedStruct](context.TODO()),
+		customfield.NullObject[DoubleNestedStruct](ctx),
 	},
 
 	"json_struct_nil1": {`{}`, JsonModel{}},
@@ -503,13 +505,13 @@ var decode_only_tests = map[string]struct {
 			BoolValue:        types.BoolNull(),
 			StringValue:      types.StringNull(),
 			Data:             nil,
-			DataObject:       customfield.NullObject[EmbeddedTfsdkStruct](context.TODO()),
-			ListObject:       customfield.NullList[basetypes.StringValue](context.TODO()),
-			NestedObjectList: customfield.NullObjectList[EmbeddedTfsdkStruct](context.TODO()),
-			SetObject:        customfield.NullSet[basetypes.StringValue](context.TODO()),
-			NestedObjectSet:  customfield.NullObjectSet[EmbeddedTfsdkStruct](context.TODO()),
-			MapObject:        customfield.NullMap[basetypes.StringValue](context.TODO()),
-			NestedObjectMap:  customfield.NullObjectMap[EmbeddedTfsdkStruct](context.TODO()),
+			DataObject:       customfield.NullObject[EmbeddedTfsdkStruct](ctx),
+			ListObject:       customfield.NullList[basetypes.StringValue](ctx),
+			NestedObjectList: customfield.NullObjectList[EmbeddedTfsdkStruct](ctx),
+			SetObject:        customfield.NullSet[basetypes.StringValue](ctx),
+			NestedObjectSet:  customfield.NullObjectSet[EmbeddedTfsdkStruct](ctx),
+			MapObject:        customfield.NullMap[basetypes.StringValue](ctx),
+			NestedObjectMap:  customfield.NullObjectMap[EmbeddedTfsdkStruct](ctx),
 			FloatValue:       types.Float64Null(),
 			OptionalArray:    nil,
 		},
@@ -534,7 +536,7 @@ var decode_only_tests = map[string]struct {
 	"nested_object_list_missing_nested_field": {
 		`{"a":[{"b":"foo"}}]}`,
 		ListWithNestedObj{
-			A: customfield.NewObjectListMust(context.TODO(), []Embedded2{
+			A: customfield.NewObjectListMust(ctx, []Embedded2{
 				{
 					B: types.StringValue("foo"),
 					C: nil,
@@ -742,7 +744,7 @@ var updateTests = map[string]struct {
 			Data: &EmbeddedTfsdkStruct{
 				EmbeddedString: types.StringValue("embedded_string_value"),
 				EmbeddedInt:    types.Int64Value(17),
-				DataObject:     customfield.NullObject[DoubleNestedStruct](context.TODO()),
+				DataObject:     customfield.NullObject[DoubleNestedStruct](ctx),
 			},
 		},
 		TfsdkStructs{},
@@ -759,6 +761,15 @@ var updateTests = map[string]struct {
 			OptionalArray: &[]types.String{},
 		},
 		`{"float_value":3.14,"optional_array":[]}`,
+	},
+
+	"test nested map": {
+		DropDiagnostic(customfield.NewMap[customfield.List[types.String]](ctx, map[string]customfield.List[types.String]{})),
+		DropDiagnostic(customfield.NewMap[customfield.List[types.String]](ctx, map[string]customfield.List[types.String]{
+			"Key1": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value1")})),
+			"Key2": DropDiagnostic(customfield.NewList[types.String](ctx, []types.String{basetypes.NewStringValue("Value2")})),
+		})),
+		`{"Key1":["Value1"],"Key2":["Value2"]}`,
 	},
 }
 
@@ -879,12 +890,12 @@ var decode_from_value_tests = map[string]struct {
 		EmbeddedTfsdkStruct{
 			EmbeddedString: types.StringUnknown(),
 			EmbeddedInt:    types.Int64Unknown(),
-			DataObject:     customfield.UnknownObject[DoubleNestedStruct](context.TODO()),
+			DataObject:     customfield.UnknownObject[DoubleNestedStruct](ctx),
 		},
 		EmbeddedTfsdkStruct{
 			EmbeddedString: types.StringValue("some_string"),
 			EmbeddedInt:    types.Int64Null(),
-			DataObject: customfield.NewObjectMust(context.TODO(), &DoubleNestedStruct{
+			DataObject: customfield.NewObjectMust(ctx, &DoubleNestedStruct{
 				NestedInt: types.Int64Null(),
 			}),
 		},
@@ -972,8 +983,8 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringNull(),
 				CompOptInt: types.Int64Null(),
 			},
-			NestedCust:        customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
-			CompOptNestedCust: customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
+			NestedCust:        customfield.NullObject[NestedStructWithComputedFields](ctx),
+			CompOptNestedCust: customfield.NullObject[NestedStructWithComputedFields](ctx),
 		},
 		StructWithComputedFields{
 			RegStr:      types.StringNull(),
@@ -986,8 +997,8 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			},
-			NestedCust: customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
-			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+			NestedCust: customfield.NullObject[NestedStructWithComputedFields](ctx),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
 				RegStr:     types.StringNull(),
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
@@ -1010,8 +1021,8 @@ var decode_computed_only_tests = map[string]struct {
 			},
 			// when the value is nested and optional/required, we don't currently convert from unknown to null
 			// this is because optional/required properties cannot be unknown
-			NestedCust:        customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
-			CompOptNestedCust: customfield.UnknownObject[NestedStructWithComputedFields](context.TODO()),
+			NestedCust:        customfield.NullObject[NestedStructWithComputedFields](ctx),
+			CompOptNestedCust: customfield.UnknownObject[NestedStructWithComputedFields](ctx),
 		},
 		StructWithComputedFields{
 			RegStr:      types.StringUnknown(),
@@ -1024,8 +1035,8 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
 			},
-			NestedCust: customfield.NullObject[NestedStructWithComputedFields](context.TODO()),
-			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+			NestedCust: customfield.NullObject[NestedStructWithComputedFields](ctx),
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
 				RegStr:     types.StringNull(),
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(42),
@@ -1047,12 +1058,12 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("existing_nested_comp_str"),
 				CompOptInt: types.Int64Value(10),
 			},
-			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
 				RegStr:     types.StringValue("existing_nested_str"),
 				CompStr:    types.StringValue("existing_nested_comp_str"),
 				CompOptInt: types.Int64Value(10),
 			}),
-			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
 				RegStr:     types.StringValue("existing_nested_str"),
 				CompStr:    types.StringValue("existing_nested_comp_str"),
 				CompOptInt: types.Int64Value(10),
@@ -1078,12 +1089,12 @@ var decode_computed_only_tests = map[string]struct {
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(10),
 			},
-			NestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+			NestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
 				RegStr:     types.StringValue("existing_nested_str"),
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(10),
 			}),
-			CompOptNestedCust: customfield.NewObjectMust(context.TODO(), &NestedStructWithComputedFields{
+			CompOptNestedCust: customfield.NewObjectMust(ctx, &NestedStructWithComputedFields{
 				RegStr:     types.StringValue("existing_nested_str"),
 				CompStr:    types.StringValue("nested_comp_str"),
 				CompOptInt: types.Int64Value(10),
