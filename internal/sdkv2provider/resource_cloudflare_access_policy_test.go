@@ -1005,6 +1005,16 @@ func testAccessPolicyConnectionRulesConfig(resourceID, zone, accountID string) s
 	  type 		 = "infrastructure"
       account_id = "%[3]s"
       domain     = "%[1]s.%[2]s"
+	  target_criteria {
+		port     = 22
+		protocol = "SSH"
+		target_attributes {
+		  name = "hostname"
+		  value { 
+			  value = "tfgo-acc-test"
+		  }
+		}
+	  }
     }
 
     resource "cloudflare_access_policy" "%[1]s" {
@@ -1021,10 +1031,8 @@ func testAccessPolicyConnectionRulesConfig(resourceID, zone, accountID string) s
 		}
       }
       include {
-		[{
-		  email = ["devuser@cloudflare.com"]
-		}]
-      }
+		email = ["dadireddy00@gmail.com"]
+	  }
     }
 
   `, resourceID, zone, accountID)

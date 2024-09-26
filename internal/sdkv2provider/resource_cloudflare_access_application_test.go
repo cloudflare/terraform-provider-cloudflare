@@ -1440,7 +1440,6 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
       }
     }
   }
-  policies = []
 }
 `, rnd, domain, identifier.Type, identifier.Identifier)
 }
