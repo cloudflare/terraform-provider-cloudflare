@@ -64,7 +64,7 @@ func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 	return data
 }
 
-func apiAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.InfraConnectionRules, error) {
+func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.InfraConnectionRules, error) {
 	sshData, ok := connectionRules["ssh"].(cloudflare.InfraConnectionRulesSSH)
 	if !ok {
 		return &cloudflare.InfraConnectionRules{}, fmt.Errorf("failed to parse connection_rules: supported connection rule types: [SSH]")
@@ -198,7 +198,7 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 
 	connectionRulesSchema, ok := d.Get("connection_rules").(map[string]interface{})
 	if ok {
-		connectionRules, err := apiAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
+		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -271,7 +271,7 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 
 	connectionRulesSchema, ok := d.Get("connection_rules").(map[string]interface{})
 	if ok {
-		connectionRules, err := apiAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
+		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema)
 		if err != nil {
 			return diag.FromErr(err)
 		}
