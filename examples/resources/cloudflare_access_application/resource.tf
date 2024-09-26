@@ -41,8 +41,11 @@ resource "cloudflare_zero_trust_access_application" "infra-app-example" {
     protocol = "SSH"
     target_attributes {
       name = "hostname"
-      value {
-        value = "tfgo-acc-tests"
+      values {
+        value = "tfgo-tests-useast"
+      }
+      values {
+        value = "tfgo-tests-uswest"
       }
     }
   }

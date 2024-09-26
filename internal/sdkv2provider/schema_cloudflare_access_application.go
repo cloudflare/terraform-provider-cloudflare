@@ -432,7 +432,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 									Required:    true,
 									Description: "The key of the attribute.",
 								},
-								"value": {
+								"values": {
 									Type:        schema.TypeList,
 									Required:    true,
 									Description: "The values of the attribute.",
@@ -1008,7 +1008,7 @@ func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.InfraT
 					if sshMap, ok := attrItem.(map[string]interface{}); ok {
 						attributes := make(map[string][]string)
 						key := sshMap["name"].(string)
-						if usernames, ok := sshMap["value"].([]interface{}); ok {
+						if usernames, ok := sshMap["values"].([]interface{}); ok {
 							for _, username := range usernames {
 								valueMap := username.(map[string]interface{})
 								attributes[key] = append(attributes[key], valueMap["value"].(string))
@@ -1346,8 +1346,8 @@ func convertTargetContextsToSchema(targetContexts *[]cloudflare.InfraTargetConte
 				})
 			}
 			attributeMap := map[string]interface{}{
-				"name":  key,
-				"value": list,
+				"name":   key,
+				"values": list,
 			}
 
 			attributesReturned = append(attributesReturned, attributeMap)
