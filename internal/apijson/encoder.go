@@ -270,16 +270,27 @@ func (e *encoder) terraformUnwrappedDynamicEncoder(unwrap terraformUnwrappingFun
 
 func handleNullAndUndefined(innerFunc func(attr.Value, attr.Value) ([]byte, error)) encoderFunc {
 	return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
-		tfPlan := plan.Interface().(attr.Value)
-		tfState := state.Interface().(attr.Value)
-		if tfState.IsNull() && tfPlan.IsNull() {
+		var tfPlan attr.Value
+		var tfState attr.Value
+		if plan.IsValid() {
+			tfPlan = plan.Interface().(attr.Value)
+		}
+		if state.IsValid() {
+			tfState = state.Interface().(attr.Value)
+		}
+		planNull := !plan.IsValid() || tfPlan.IsNull()
+		stateNull := !state.IsValid() || tfState.IsNull()
+		planUnknown := plan.IsValid() && tfPlan.IsUnknown()
+		stateUnknown := state.IsValid() && tfState.IsUnknown()
+
+		if stateNull && planNull {
 			return nil, nil
-		} else if tfPlan.IsNull() {
+		} else if planNull {
 			return explicitJsonNull, nil
-		} else if tfPlan.IsUnknown() {
+		} else if planUnknown {
 			return nil, nil
 		} else {
-			if tfState.IsNull() || tfState.IsUnknown() {
+			if stateNull || stateUnknown {
 				tfState = tfPlan
 			}
 			return innerFunc(tfPlan, tfState)
@@ -519,7 +530,7 @@ func (e encoder) newInterfaceEncoder() encoderFunc {
 
 // Given a []byte of json (may either be an empty object or an object that already contains entries)
 // encode all of the entries in the map to the json byte array.
-func (e *encoder) encodeMapEntries(json []byte, p reflect.Value, s reflect.Value) ([]byte, error) {
+func (e *encoder) encodeMapEntries(json []byte, plan reflect.Value, state reflect.Value) ([]byte, error) {
 	type mapPair struct {
 		key   []byte
 		plan  reflect.Value
@@ -527,9 +538,9 @@ func (e *encoder) encodeMapEntries(json []byte, p reflect.Value, s reflect.Value
 	}
 
 	pairs := []mapPair{}
-	keyEncoder := e.typeEncoder(p.Type().Key())
+	keyEncoder := e.typeEncoder(plan.Type().Key())
 
-	iter := p.MapRange()
+	iter := plan.MapRange()
 	for iter.Next() {
 		var encodedKey []byte
 		if iter.Key().Type().Kind() == reflect.String {
@@ -541,7 +552,7 @@ func (e *encoder) encodeMapEntries(json []byte, p reflect.Value, s reflect.Value
 				return nil, err
 			}
 		}
-		stateValue := s.MapIndex(iter.Key())
+		stateValue := state.MapIndex(iter.Key())
 		pairs = append(pairs, mapPair{key: encodedKey, plan: iter.Value(), state: stateValue})
 	}
 
@@ -550,7 +561,7 @@ func (e *encoder) encodeMapEntries(json []byte, p reflect.Value, s reflect.Value
 		return bytes.Compare(pairs[i].key, pairs[j].key) < 0
 	})
 
-	elementEncoder := e.typeEncoder(p.Type().Elem())
+	elementEncoder := e.typeEncoder(plan.Type().Elem())
 	for _, pair := range pairs {
 		encodedValue, err := elementEncoder(pair.plan, pair.state)
 		if err != nil {
