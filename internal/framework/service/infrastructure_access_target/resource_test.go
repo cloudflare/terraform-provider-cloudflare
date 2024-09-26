@@ -56,7 +56,7 @@ func TestAccCloudflareInfrastructureAccessTarget_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Create resource configuration
-				Config: testAccCfInfrastructureAccessTargetCreate(accID, rnd),
+				Config: testAccCloudflareInfrastructureAccessTargetCreate(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "hostname", rnd),
 					resource.TestCheckResourceAttr(resourceName, "ip.ipv4.ip_addr", "250.26.29.250"),
@@ -65,7 +65,7 @@ func TestAccCloudflareInfrastructureAccessTarget_Basic(t *testing.T) {
 			},
 			{
 				// Update resource configuration
-				Config: testAccCfInfrastructureAccessTargetUpdate(accID, rnd),
+				Config: testAccCloudflareInfrastructureAccessTargetUpdate(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "hostname", rnd+"-updated"),
 					resource.TestCheckResourceAttr(resourceName, "ip.ipv4.ip_addr", "250.26.29.250"),
@@ -77,7 +77,7 @@ func TestAccCloudflareInfrastructureAccessTarget_Basic(t *testing.T) {
 	})
 }
 
-func testAccCfInfrastructureAccessTargetCreate(accID, hostname string) string {
+func testAccCloudflareInfrastructureAccessTargetCreate(accID, hostname string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_infrastructure_access_target" "%[2]s" {
 	account_id = "%[1]s"
@@ -91,7 +91,7 @@ resource "cloudflare_infrastructure_access_target" "%[2]s" {
 }`, accID, hostname)
 }
 
-func testAccCfInfrastructureAccessTargetUpdate(accID, hostname string) string {
+func testAccCloudflareInfrastructureAccessTargetUpdate(accID, hostname string) string {
 	return fmt.Sprintf(`
 resource "cloudflare_infrastructure_access_target" "%[2]s" {
 	account_id = "%[1]s"
