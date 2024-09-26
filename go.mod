@@ -33,8 +33,6 @@ require (
 	golang.org/x/time v0.6.0 // indirect
 )
 
-replace github.com/cloudflare/cloudflare-go => ../cloudflare-go
-
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/aws/aws-sdk-go-v2 v1.31.0
