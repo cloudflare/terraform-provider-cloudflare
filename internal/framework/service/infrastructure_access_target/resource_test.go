@@ -45,7 +45,7 @@ func init() {
 	})
 }
 
-func TestAccCfInfrastructureAccessTargetCreateUpdate(t *testing.T) {
+func TestAccCloudflareInfrastructureAccessTarget_Basic(t *testing.T) {
 	accID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_infrastructure_access_target.%s", rnd)
@@ -79,30 +79,32 @@ func TestAccCfInfrastructureAccessTargetCreateUpdate(t *testing.T) {
 
 func testAccCfInfrastructureAccessTargetCreate(accID, hostname string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_infrastructure_access_target" "%[2]s" {
+resource "cloudflare_infrastructure_access_target" "%[2]s" {
 	account_id = "%[1]s"
 	hostname   = "%[2]s"
 	ip = {
 		ipv4 = {
-           ip_addr = "250.26.29.250",
-           virtual_network_id = "01920a8c-dc14-7bb2-b67b-14c858494a54"
-        },
-	}`, accID, hostname)
+		  ip_addr = "250.26.29.250"
+      virtual_network_id = "01920a8c-dc14-7bb2-b67b-14c858494a54"
+    }
+  }
+}`, accID, hostname)
 }
 
 func testAccCfInfrastructureAccessTargetUpdate(accID, hostname string) string {
 	return fmt.Sprintf(`
-	resource "cloudflare_infrastructure_access_target" "%[2]s" {
+resource "cloudflare_infrastructure_access_target" "%[2]s" {
 	account_id = "%[1]s"
 	hostname   = "%[2]s-updated"
 	ip = {
 		ipv4 = {
-           ip_addr = "250.26.29.250",
+           ip_addr = "250.26.29.250"
            virtual_network_id = "01920a8c-dc14-7bb2-b67b-14c858494a54"
         },
 		ipv6 = {
-           ip_addr = "64c0:64e8:f0b4:8dbf:7104:72b0:ec8f:f5e0",
+           ip_addr = "64c0:64e8:f0b4:8dbf:7104:72b0:ec8f:f5e0"
            virtual_network_id = "01920a8c-dc14-7bb2-b67b-14c858494a54"
-        }
-	}`, accID, hostname)
+    }
+  }
+}`, accID, hostname)
 }
