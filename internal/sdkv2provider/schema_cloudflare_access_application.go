@@ -1001,19 +1001,22 @@ func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.InfraT
 				}
 			}
 
-			attributes := make(map[string][]string)
-			if v, ok := itemMap["target_attributes"].(map[string]interface{}); ok && len(v) > 0 {
-				for _, attrItem := range v {
-					attrMap := attrItem.(map[string]interface{})
-					/// Unpack the nested "hostname" list
-					key := attrMap["name"].(string)
-					values := attrMap["value"].([]interface{})
-					for _, value := range values {
-						valueMap := value.(map[string]interface{})
-						attributes[key] = append(attributes[key], valueMap["value"].(string))
+			str_return := make(map[string][]string)
+			if sshVal, ok := itemMap["target_attributes"].([]interface{}); ok && len(sshVal) > 0 {
+				for _, attrItem := range sshVal {
+					if sshMap, ok := attrItem.(map[string]interface{}); ok {
+						attributes := make(map[string][]string)
+						key := sshMap["name"].(string)
+						if usernames, ok := sshMap["value"].([]interface{}); ok {
+							for _, username := range usernames {
+								valueMap := username.(map[string]interface{})
+								attributes[key] = append(attributes[key], valueMap["value"].(string))
+							}
+						}
+						str_return = attributes
 					}
 				}
-				targetContext.TargetAttributes = attributes
+				targetContext.TargetAttributes = str_return
 			}
 
 			TargetContexts = append(TargetContexts, targetContext)
@@ -1328,27 +1331,31 @@ func convertTargetContextsToSchema(targetContexts *[]cloudflare.InfraTargetConte
 	if targetContexts == nil {
 		return []interface{}{}
 	}
-
 	var targetContextsSchema []interface{}
+
 	for _, targetContext := range *targetContexts {
-		targetAttributesList := []map[string]interface{}{}
+		//targetAttributesList := []map[string][]string{}
+		var attributesReturned []map[string]interface{}
 
 		for key, values := range targetContext.TargetAttributes {
-			keyValue := []map[string]interface{}{}
+			var list []map[string]interface{}
 			for _, value := range values {
-				keyValue = append(keyValue, map[string]interface{}{
-					"name": value,
+				list = append(list, map[string]interface{}{
+					"value": value,
 				})
 			}
-			targetAttributesList = append(targetAttributesList, map[string]interface{}{
-				key: keyValue,
-			})
+			attributeMap := map[string]interface{}{
+				"name":  key,
+				"value": list,
+			}
+
+			attributesReturned = append(attributesReturned, attributeMap)
 		}
 
 		targetContextsSchema = append(targetContextsSchema, map[string]interface{}{
 			"port":              targetContext.Port,
 			"protocol":          targetContext.Protocol,
-			"target_attributes": targetAttributesList,
+			"target_attributes": attributesReturned,
 		})
 	}
 	return targetContextsSchema

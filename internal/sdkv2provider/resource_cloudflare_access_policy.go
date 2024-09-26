@@ -65,42 +65,49 @@ func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 }
 
 func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.InfraConnectionRules, error) {
-	sshRaw, ok := connectionRules["ssh"].([]interface{})
-
-	if !ok {
-		return &cloudflare.InfraConnectionRules{}, fmt.Errorf("failed to parse connection_rules: supported connection rule types: [SSH]")
-	}
-
-	// MaxItems is set to 1
-	sshData := sshRaw[0].(map[string]interface{})
-	usernamesRaw := sshData["usernames"].([]interface{})
-
-	usernames := []string{}
-	for _, v := range usernamesRaw {
-		usernames = append(usernames, v.(string))
+	usernamesStrings := []string{}
+	if sshVal, ok := connectionRules["ssh"].([]interface{}); ok && len(sshVal) > 0 {
+		if sshMap, ok := sshVal[0].(map[string]interface{}); ok {
+			str_return := []string{}
+			if usernames, ok := sshMap["usernames"].([]interface{}); ok {
+				for _, username := range usernames {
+					valueMap := username.(map[string]interface{})
+					str_return = append(str_return, valueMap["value"].(string))
+				}
+			}
+			usernamesStrings = str_return
+		}
 	}
 
 	return &cloudflare.InfraConnectionRules{
 		SSH: &cloudflare.InfraConnectionRulesSSH{
-			Usernames: usernames,
+			Usernames: usernamesStrings,
 		},
 	}, nil
 }
 
-func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.InfraConnectionRules) map[string]interface{} {
+func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.InfraConnectionRules) []interface{} {
 	if connectionRules == nil {
-		return map[string]interface{}{}
+		return []interface{}{}
 	}
 
-	targetContextsSchema := make(map[string]interface{})
-	usernames := make([]interface{}, len(connectionRules.SSH.Usernames))
-	for _, username := range connectionRules.SSH.Usernames {
-		usernames = append(usernames, username)
+	var targetContextsSchema []interface{}
+	var usernameMap []map[string]interface{}
+
+	var list []map[string]interface{}
+	for _, value := range connectionRules.SSH.Usernames {
+		list = append(list, map[string]interface{}{
+			"value": value,
+		})
+		attributeMap := map[string]interface{}{
+			"usernames": list,
+		}
+		usernameMap = append(usernameMap, attributeMap)
 	}
 
-	targetContextsSchema["ssh"] = map[string]interface{}{
-		"usernames": usernames,
-	}
+	targetContextsSchema = append(targetContextsSchema, map[string]interface{}{
+		"ssh": usernameMap,
+	})
 
 	return targetContextsSchema
 }
