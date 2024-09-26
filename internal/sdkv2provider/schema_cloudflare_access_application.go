@@ -424,7 +424,6 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 					"target_attributes": {
 						Type:     schema.TypeList,
 						Optional: true,
-						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"name": {

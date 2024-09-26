@@ -919,6 +919,34 @@ func TestAccCloudflareAccessApplication_WithAppLauncherVisible(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_WithTargetContexts(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationWithTargetContexts(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "infrastructure"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.port", "22"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.protocol", "SSH"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.0.name", "hostname"),
+					resource.TestCheckResourceAttr(name, "target_criteria.0.target_attributes.0.value.0", "tfgo-acc-test"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareAccessApplication_WithSelfHostedDomains(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
@@ -1394,6 +1422,26 @@ func testAccessApplicationWithAppLauncherCustomizationFields(rnd, accountID stri
 			}
 	}
 	`, rnd, accountID)
+}
+
+func testAccCloudflareAccessApplicationWithTargetContexts(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_access_application" "%[1]s" {
+  %[3]s_id                  = "%[4]s"
+  name                      = "%[1]s"
+  type                      = "infrastructure"
+  target_criteria {
+    port     = 22
+    protocol = "SSH"
+    target_attributes {
+      name = "hostname"
+      value { 
+        value = "tfgo-acc-test"
+      }
+    }
+  }
+}
+`, rnd, domain, identifier.Type, identifier.Identifier)
 }
 
 func testAccCloudflareAccessApplicationWithSelfHostedDomains(rnd string, domain string, identifier *cloudflare.ResourceContainer) string {
