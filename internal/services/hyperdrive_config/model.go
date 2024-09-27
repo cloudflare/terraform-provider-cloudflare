@@ -24,12 +24,12 @@ type HyperdriveConfigOriginModel struct {
 	Host           types.String `tfsdk:"host" json:"host,required"`
 	Scheme         types.String `tfsdk:"scheme" json:"scheme,computed_optional"`
 	User           types.String `tfsdk:"user" json:"user,required"`
-	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,computed_optional"`
-	Port           types.Int64  `tfsdk:"port" json:"port,computed_optional"`
+	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,optional"`
+	Port           types.Int64  `tfsdk:"port" json:"port,optional"`
 }
 
 type HyperdriveConfigCachingModel struct {
-	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,computed_optional"`
-	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,computed_optional"`
-	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,computed_optional"`
+	Disabled             types.Bool  `tfsdk:"disabled" json:"disabled,optional"`
+	MaxAge               types.Int64 `tfsdk:"max_age" json:"max_age,optional"`
+	StaleWhileRevalidate types.Int64 `tfsdk:"stale_while_revalidate" json:"stale_while_revalidate,optional"`
 }

@@ -13,7 +13,7 @@ type AuthenticatedOriginPullsResultEnvelope struct {
 
 type AuthenticatedOriginPullsModel struct {
 	ZoneID         types.String                            `tfsdk:"zone_id" path:"zone_id,required"`
-	Hostname       types.String                            `tfsdk:"hostname" path:"hostname,computed_optional"`
+	Hostname       types.String                            `tfsdk:"hostname" path:"hostname,optional"`
 	Config         *[]*AuthenticatedOriginPullsConfigModel `tfsdk:"config" json:"config,required"`
 	CERTID         types.String                            `tfsdk:"cert_id" json:"cert_id,computed"`
 	CERTStatus     types.String                            `tfsdk:"cert_status" json:"cert_status,computed"`
@@ -31,7 +31,7 @@ type AuthenticatedOriginPullsModel struct {
 }
 
 type AuthenticatedOriginPullsConfigModel struct {
-	CERTID   types.String `tfsdk:"cert_id" json:"cert_id,computed_optional"`
-	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Hostname types.String `tfsdk:"hostname" json:"hostname,computed_optional"`
+	CERTID   types.String `tfsdk:"cert_id" json:"cert_id,optional"`
+	Enabled  types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
+	Hostname types.String `tfsdk:"hostname" json:"hostname,optional"`
 }

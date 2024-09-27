@@ -5,7 +5,6 @@ package zero_trust_access_mtls_certificate
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -45,9 +44,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"associated_hostnames": schema.ListAttribute{
 				Description: "The hostnames of the applications that will use this certificate.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{

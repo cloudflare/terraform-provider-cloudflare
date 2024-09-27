@@ -5,7 +5,6 @@ package web_analytics_rule
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -35,23 +34,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"host": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"inclusive": schema.BoolAttribute{
 				Description: "Whether the rule includes or excludes traffic from being measured.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"is_paused": schema.BoolAttribute{
 				Description: "Whether the rule is paused or not.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"paths": schema.ListAttribute{
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"created": schema.StringAttribute{

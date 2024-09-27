@@ -89,5 +89,5 @@ type NotificationPoliciesFiltersDataSourceModel struct {
 }
 
 type NotificationPoliciesMechanismsDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id,computed_optional"`
+	ID types.String `tfsdk:"id" json:"id,optional"`
 }

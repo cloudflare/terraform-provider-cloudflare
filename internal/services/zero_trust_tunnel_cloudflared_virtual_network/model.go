@@ -16,8 +16,8 @@ type ZeroTrustTunnelCloudflaredVirtualNetworkModel struct {
 	AccountID        types.String      `tfsdk:"account_id" path:"account_id,required"`
 	IsDefault        types.Bool        `tfsdk:"is_default" json:"is_default,optional"`
 	Name             types.String      `tfsdk:"name" json:"name,required"`
-	Comment          types.String      `tfsdk:"comment" json:"comment,computed_optional"`
-	IsDefaultNetwork types.Bool        `tfsdk:"is_default_network" json:"is_default_network,computed_optional"`
+	Comment          types.String      `tfsdk:"comment" json:"comment,optional"`
+	IsDefaultNetwork types.Bool        `tfsdk:"is_default_network" json:"is_default_network,optional"`
 	CreatedAt        timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt        timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 }

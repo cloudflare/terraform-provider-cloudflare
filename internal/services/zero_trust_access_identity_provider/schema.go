@@ -5,6 +5,7 @@ package zero_trust_access_identity_provider
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -165,12 +166,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"attribute_name": schema.StringAttribute{
 									Description: "attribute name from the IDP",
-									Computed:    true,
 									Optional:    true,
 								},
 								"header_name": schema.StringAttribute{
 									Description: "header that will be added on the request to the origin",
-									Computed:    true,
 									Optional:    true,
 								},
 							},
@@ -197,31 +196,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"scim_config": schema.SingleNestedAttribute{
 				Description: "The configuration settings for enabling a System for Cross-Domain Identity Management (SCIM) with the identity provider.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessIdentityProviderSCIMConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "A flag to enable or disable SCIM for the identity provider.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"group_member_deprovision": schema.BoolAttribute{
 						Description: "A flag to revoke a user's session in Access and force a reauthentication on the user's Gateway session when they have been added or removed from a group in the Identity Provider.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"seat_deprovision": schema.BoolAttribute{
 						Description: "A flag to remove a user's seat in Zero Trust when they have been deprovisioned in the Identity Provider.  This cannot be enabled unless user_deprovision is also enabled.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"secret": schema.StringAttribute{
 						Description: "A read-only token generated when the SCIM integration is enabled for the first time.  It is redacted on subsequent requests.  If you lose this you will need to refresh it token at /access/identity_providers/:idpID/refresh_scim_secret.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"user_deprovision": schema.BoolAttribute{
 						Description: "A flag to enable revoking a user's session in Access and Gateway when they have been deprovisioned in the Identity Provider.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

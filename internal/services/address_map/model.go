@@ -17,8 +17,8 @@ type AddressMapModel struct {
 	AccountID    types.String                                             `tfsdk:"account_id" path:"account_id,required"`
 	IPs          *[]types.String                                          `tfsdk:"ips" json:"ips,optional"`
 	Memberships  customfield.NestedObjectList[AddressMapMembershipsModel] `tfsdk:"memberships" json:"memberships,computed_optional"`
-	DefaultSNI   types.String                                             `tfsdk:"default_sni" json:"default_sni,computed_optional"`
-	Description  types.String                                             `tfsdk:"description" json:"description,computed_optional"`
+	DefaultSNI   types.String                                             `tfsdk:"default_sni" json:"default_sni,optional"`
+	Description  types.String                                             `tfsdk:"description" json:"description,optional"`
 	Enabled      types.Bool                                               `tfsdk:"enabled" json:"enabled,computed_optional"`
 	CanDelete    types.Bool                                               `tfsdk:"can_delete" json:"can_delete,computed"`
 	CanModifyIPs types.Bool                                               `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
@@ -33,8 +33,8 @@ type AddressMapModel struct {
 type AddressMapMembershipsModel struct {
 	CanDelete  types.Bool        `tfsdk:"can_delete" json:"can_delete,computed"`
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Identifier types.String      `tfsdk:"identifier" json:"identifier,computed_optional"`
-	Kind       types.String      `tfsdk:"kind" json:"kind,computed_optional"`
+	Identifier types.String      `tfsdk:"identifier" json:"identifier,optional"`
+	Kind       types.String      `tfsdk:"kind" json:"kind,optional"`
 }
 
 type AddressMapErrorsModel struct {

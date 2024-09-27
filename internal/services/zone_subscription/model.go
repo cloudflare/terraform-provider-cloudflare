@@ -12,17 +12,17 @@ type ZoneSubscriptionResultEnvelope struct {
 }
 
 type ZoneSubscriptionModel struct {
-	Identifier types.String                   `tfsdk:"identifier" path:"identifier,required"`
-	Frequency  types.String                   `tfsdk:"frequency" json:"frequency,optional"`
-	RatePlan   *ZoneSubscriptionRatePlanModel `tfsdk:"rate_plan" json:"rate_plan,optional"`
+	Identifier types.String                                            `tfsdk:"identifier" path:"identifier,required"`
+	Frequency  types.String                                            `tfsdk:"frequency" json:"frequency,optional"`
+	RatePlan   customfield.NestedObject[ZoneSubscriptionRatePlanModel] `tfsdk:"rate_plan" json:"rate_plan,computed_optional"`
 }
 
 type ZoneSubscriptionRatePlanModel struct {
-	ID                types.String                   `tfsdk:"id" json:"id,computed_optional"`
-	Currency          types.String                   `tfsdk:"currency" json:"currency,computed_optional"`
-	ExternallyManaged types.Bool                     `tfsdk:"externally_managed" json:"externally_managed,computed_optional"`
-	IsContract        types.Bool                     `tfsdk:"is_contract" json:"is_contract,computed_optional"`
-	PublicName        types.String                   `tfsdk:"public_name" json:"public_name,computed_optional"`
-	Scope             types.String                   `tfsdk:"scope" json:"scope,computed_optional"`
-	Sets              customfield.List[types.String] `tfsdk:"sets" json:"sets,computed_optional"`
+	ID                types.String    `tfsdk:"id" json:"id,optional"`
+	Currency          types.String    `tfsdk:"currency" json:"currency,optional"`
+	ExternallyManaged types.Bool      `tfsdk:"externally_managed" json:"externally_managed,optional"`
+	IsContract        types.Bool      `tfsdk:"is_contract" json:"is_contract,optional"`
+	PublicName        types.String    `tfsdk:"public_name" json:"public_name,optional"`
+	Scope             types.String    `tfsdk:"scope" json:"scope,optional"`
+	Sets              *[]types.String `tfsdk:"sets" json:"sets,optional"`
 }

@@ -17,9 +17,9 @@ type CustomHostnameModel struct {
 	ZoneID                    types.String                                                           `tfsdk:"zone_id" path:"zone_id,required"`
 	Hostname                  types.String                                                           `tfsdk:"hostname" json:"hostname,required"`
 	SSL                       *CustomHostnameSSLModel                                                `tfsdk:"ssl" json:"ssl,required"`
-	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,computed_optional"`
-	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,computed_optional"`
-	CustomMetadata            customfield.Map[types.String]                                          `tfsdk:"custom_metadata" json:"custom_metadata,computed_optional"`
+	CustomOriginServer        types.String                                                           `tfsdk:"custom_origin_server" json:"custom_origin_server,optional"`
+	CustomOriginSNI           types.String                                                           `tfsdk:"custom_origin_sni" json:"custom_origin_sni,optional"`
+	CustomMetadata            map[string]types.String                                                `tfsdk:"custom_metadata" json:"custom_metadata,optional"`
 	CreatedAt                 timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Status                    types.String                                                           `tfsdk:"status" json:"status,computed"`
 	VerificationErrors        customfield.List[types.String]                                         `tfsdk:"verification_errors" json:"verification_errors,computed"`
@@ -28,22 +28,22 @@ type CustomHostnameModel struct {
 }
 
 type CustomHostnameSSLModel struct {
-	BundleMethod         types.String                                             `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
-	CertificateAuthority types.String                                             `tfsdk:"certificate_authority" json:"certificate_authority,computed_optional"`
-	CustomCertificate    types.String                                             `tfsdk:"custom_certificate" json:"custom_certificate,computed_optional"`
-	CustomKey            types.String                                             `tfsdk:"custom_key" json:"custom_key,computed_optional"`
-	Method               types.String                                             `tfsdk:"method" json:"method,computed_optional"`
-	Settings             customfield.NestedObject[CustomHostnameSSLSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
-	Type                 types.String                                             `tfsdk:"type" json:"type,computed_optional"`
-	Wildcard             types.Bool                                               `tfsdk:"wildcard" json:"wildcard,computed_optional"`
+	BundleMethod         types.String                    `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
+	CertificateAuthority types.String                    `tfsdk:"certificate_authority" json:"certificate_authority,optional"`
+	CustomCertificate    types.String                    `tfsdk:"custom_certificate" json:"custom_certificate,optional"`
+	CustomKey            types.String                    `tfsdk:"custom_key" json:"custom_key,optional"`
+	Method               types.String                    `tfsdk:"method" json:"method,optional"`
+	Settings             *CustomHostnameSSLSettingsModel `tfsdk:"settings" json:"settings,optional"`
+	Type                 types.String                    `tfsdk:"type" json:"type,optional"`
+	Wildcard             types.Bool                      `tfsdk:"wildcard" json:"wildcard,optional"`
 }
 
 type CustomHostnameSSLSettingsModel struct {
-	Ciphers       customfield.List[types.String] `tfsdk:"ciphers" json:"ciphers,computed_optional"`
-	EarlyHints    types.String                   `tfsdk:"early_hints" json:"early_hints,computed_optional"`
-	HTTP2         types.String                   `tfsdk:"http2" json:"http2,computed_optional"`
-	MinTLSVersion types.String                   `tfsdk:"min_tls_version" json:"min_tls_version,computed_optional"`
-	TLS1_3        types.String                   `tfsdk:"tls_1_3" json:"tls_1_3,computed_optional"`
+	Ciphers       *[]types.String `tfsdk:"ciphers" json:"ciphers,optional"`
+	EarlyHints    types.String    `tfsdk:"early_hints" json:"early_hints,optional"`
+	HTTP2         types.String    `tfsdk:"http2" json:"http2,optional"`
+	MinTLSVersion types.String    `tfsdk:"min_tls_version" json:"min_tls_version,optional"`
+	TLS1_3        types.String    `tfsdk:"tls_1_3" json:"tls_1_3,optional"`
 }
 
 type CustomHostnameOwnershipVerificationModel struct {

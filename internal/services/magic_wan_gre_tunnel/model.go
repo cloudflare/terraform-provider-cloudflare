@@ -20,9 +20,9 @@ type MagicWANGRETunnelModel struct {
 	Description           types.String                                                      `tfsdk:"description" json:"description,optional"`
 	InterfaceAddress      types.String                                                      `tfsdk:"interface_address" json:"interface_address,optional"`
 	Name                  types.String                                                      `tfsdk:"name" json:"name,optional"`
-	HealthCheck           *MagicWANGRETunnelHealthCheckModel                                `tfsdk:"health_check" json:"health_check,optional"`
 	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional"`
 	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional"`
+	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel]       `tfsdk:"health_check" json:"health_check,computed_optional"`
 	Deleted               types.Bool                                                        `tfsdk:"deleted" json:"deleted,computed"`
 	Modified              types.Bool                                                        `tfsdk:"modified" json:"modified,computed"`
 	DeletedGRETunnel      customfield.NestedObject[MagicWANGRETunnelDeletedGRETunnelModel]  `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
@@ -35,7 +35,7 @@ type MagicWANGRETunnelHealthCheckModel struct {
 	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
 	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
-	Target    types.String `tfsdk:"target" json:"target,computed_optional"`
+	Target    types.String `tfsdk:"target" json:"target,optional"`
 	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 

@@ -41,12 +41,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"active": schema.BoolAttribute{
 				Description: "Whether this integration is enabled. If disabled, no risk changes will be exported to the third-party.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"reference_id": schema.StringAttribute{
 				Description: "A reference id that can be supplied by the client. Currently this should be set to the Access-Okta IDP ID (a UUIDv4).\nhttps://developers.cloudflare.com/api/operations/access-identity-providers-get-an-access-identity-provider",
-				Computed:    true,
 				Optional:    true,
 			},
 			"account_tag": schema.StringAttribute{

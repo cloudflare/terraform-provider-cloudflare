@@ -21,8 +21,8 @@ type MagicWANIPSECTunnelModel struct {
 	CustomerEndpoint    types.String                                                          `tfsdk:"customer_endpoint" json:"customer_endpoint,optional"`
 	Description         types.String                                                          `tfsdk:"description" json:"description,optional"`
 	PSK                 types.String                                                          `tfsdk:"psk" json:"psk,optional"`
-	HealthCheck         *MagicWANIPSECTunnelHealthCheckModel                                  `tfsdk:"health_check" json:"health_check,optional"`
 	ReplayProtection    types.Bool                                                            `tfsdk:"replay_protection" json:"replay_protection,computed_optional"`
+	HealthCheck         customfield.NestedObject[MagicWANIPSECTunnelHealthCheckModel]         `tfsdk:"health_check" json:"health_check,computed_optional"`
 	Deleted             types.Bool                                                            `tfsdk:"deleted" json:"deleted,computed"`
 	Modified            types.Bool                                                            `tfsdk:"modified" json:"modified,computed"`
 	DeletedIPSECTunnel  customfield.NestedObject[MagicWANIPSECTunnelDeletedIPSECTunnelModel]  `tfsdk:"deleted_ipsec_tunnel" json:"deleted_ipsec_tunnel,computed"`
@@ -35,7 +35,7 @@ type MagicWANIPSECTunnelHealthCheckModel struct {
 	Direction types.String `tfsdk:"direction" json:"direction,computed_optional"`
 	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Rate      types.String `tfsdk:"rate" json:"rate,computed_optional"`
-	Target    types.String `tfsdk:"target" json:"target,computed_optional"`
+	Target    types.String `tfsdk:"target" json:"target,optional"`
 	Type      types.String `tfsdk:"type" json:"type,computed_optional"`
 }
 

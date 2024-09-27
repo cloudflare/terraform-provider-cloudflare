@@ -57,12 +57,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"description": schema.StringAttribute{
 							Description: "The description of the list item, if present",
-							Computed:    true,
 							Optional:    true,
 						},
 						"value": schema.StringAttribute{
 							Description: "The value of the item in a list.",
-							Computed:    true,
 							Optional:    true,
 						},
 					},
@@ -75,7 +73,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the list.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{

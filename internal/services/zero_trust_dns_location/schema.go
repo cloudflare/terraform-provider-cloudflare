@@ -32,17 +32,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"client_default": schema.BoolAttribute{
 				Description: "True if the location is the default location.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"dns_destination_ips_id": schema.StringAttribute{
 				Description: "The identifier of the pair of IPv4 addresses assigned to this location. When creating a location, if this field is absent or set with null, the pair of shared IPv4 addresses (0e4a32c6-6fb8-4858-9296-98f51631e8e6) is auto-assigned. When updating a location, if the field is absent or set with null, the pre-assigned pair remains unchanged.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"ecs_support": schema.BoolAttribute{
 				Description: "True if the location needs to resolve EDNS queries.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"endpoints": schema.SingleNestedAttribute{
@@ -58,7 +55,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
@@ -77,7 +73,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"require_token": schema.BoolAttribute{
 								Description: "True if the endpoint requires [user identity](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/agentless/dns/dns-over-https/#filter-doh-requests-by-user) authentication.",
-								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -89,7 +84,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{
@@ -115,7 +109,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
-								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -127,7 +120,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
 								Description: "True if the endpoint is enabled for this location.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"networks": schema.ListNestedAttribute{

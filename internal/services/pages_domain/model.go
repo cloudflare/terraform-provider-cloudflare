@@ -15,7 +15,7 @@ type PagesDomainModel struct {
 	ID                   types.String                                               `tfsdk:"id" json:"id,computed"`
 	AccountID            types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	ProjectName          types.String                                               `tfsdk:"project_name" path:"project_name,required"`
-	Name                 types.String                                               `tfsdk:"name" json:"name,computed_optional"`
+	Name                 types.String                                               `tfsdk:"name" json:"name,optional"`
 	CertificateAuthority types.String                                               `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
 	CreatedOn            types.String                                               `tfsdk:"created_on" json:"created_on,computed"`
 	DomainID             types.String                                               `tfsdk:"domain_id" json:"domain_id,computed"`

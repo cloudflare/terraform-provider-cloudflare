@@ -16,9 +16,9 @@ type APITokenModel struct {
 	ID         types.String                                     `tfsdk:"id" json:"id,computed"`
 	Name       types.String                                     `tfsdk:"name" json:"name,required"`
 	Policies   *[]*APITokenPoliciesModel                        `tfsdk:"policies" json:"policies,required"`
-	ExpiresOn  timetypes.RFC3339                                `tfsdk:"expires_on" json:"expires_on,computed_optional" format:"date-time"`
-	NotBefore  timetypes.RFC3339                                `tfsdk:"not_before" json:"not_before,computed_optional" format:"date-time"`
-	Status     types.String                                     `tfsdk:"status" json:"status,computed_optional"`
+	ExpiresOn  timetypes.RFC3339                                `tfsdk:"expires_on" json:"expires_on,optional" format:"date-time"`
+	NotBefore  timetypes.RFC3339                                `tfsdk:"not_before" json:"not_before,optional" format:"date-time"`
+	Status     types.String                                     `tfsdk:"status" json:"status,optional"`
 	Condition  customfield.NestedObject[APITokenConditionModel] `tfsdk:"condition" json:"condition,computed_optional"`
 	IssuedOn   timetypes.RFC3339                                `tfsdk:"issued_on" json:"issued_on,computed" format:"date-time"`
 	LastUsedOn timetypes.RFC3339                                `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
@@ -34,19 +34,19 @@ type APITokenPoliciesModel struct {
 }
 
 type APITokenPoliciesPermissionGroupsModel struct {
-	ID   types.String                                                        `tfsdk:"id" json:"id,computed"`
-	Meta customfield.NestedObject[APITokenPoliciesPermissionGroupsMetaModel] `tfsdk:"meta" json:"meta,computed_optional"`
-	Name types.String                                                        `tfsdk:"name" json:"name,computed"`
+	ID   types.String                               `tfsdk:"id" json:"id,computed"`
+	Meta *APITokenPoliciesPermissionGroupsMetaModel `tfsdk:"meta" json:"meta,optional"`
+	Name types.String                               `tfsdk:"name" json:"name,computed"`
 }
 
 type APITokenPoliciesPermissionGroupsMetaModel struct {
-	Key   types.String `tfsdk:"key" json:"key,computed_optional"`
-	Value types.String `tfsdk:"value" json:"value,computed_optional"`
+	Key   types.String `tfsdk:"key" json:"key,optional"`
+	Value types.String `tfsdk:"value" json:"value,optional"`
 }
 
 type APITokenPoliciesResourcesModel struct {
-	Resource types.String `tfsdk:"resource" json:"resource,computed_optional"`
-	Scope    types.String `tfsdk:"scope" json:"scope,computed_optional"`
+	Resource types.String `tfsdk:"resource" json:"resource,optional"`
+	Scope    types.String `tfsdk:"scope" json:"scope,optional"`
 }
 
 type APITokenConditionModel struct {
@@ -54,6 +54,6 @@ type APITokenConditionModel struct {
 }
 
 type APITokenConditionRequestIPModel struct {
-	In    customfield.List[types.String] `tfsdk:"in" json:"in,computed_optional"`
-	NotIn customfield.List[types.String] `tfsdk:"not_in" json:"not_in,computed_optional"`
+	In    *[]types.String `tfsdk:"in" json:"in,optional"`
+	NotIn *[]types.String `tfsdk:"not_in" json:"not_in,optional"`
 }

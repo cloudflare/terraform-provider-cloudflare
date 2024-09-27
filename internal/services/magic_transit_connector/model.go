@@ -15,11 +15,11 @@ type MagicTransitConnectorModel struct {
 	ID                           types.String                                               `tfsdk:"id" json:"id,computed"`
 	AccountID                    types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	ConnectorID                  types.String                                               `tfsdk:"connector_id" path:"connector_id,required"`
-	Activated                    types.Bool                                                 `tfsdk:"activated" json:"activated,computed_optional"`
-	InterruptWindowDurationHours types.Float64                                              `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,computed_optional"`
-	InterruptWindowHourOfDay     types.Float64                                              `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,computed_optional"`
-	Notes                        types.String                                               `tfsdk:"notes" json:"notes,computed_optional"`
-	Timezone                     types.String                                               `tfsdk:"timezone" json:"timezone,computed_optional"`
+	Activated                    types.Bool                                                 `tfsdk:"activated" json:"activated,optional"`
+	InterruptWindowDurationHours types.Float64                                              `tfsdk:"interrupt_window_duration_hours" json:"interrupt_window_duration_hours,optional"`
+	InterruptWindowHourOfDay     types.Float64                                              `tfsdk:"interrupt_window_hour_of_day" json:"interrupt_window_hour_of_day,optional"`
+	Notes                        types.String                                               `tfsdk:"notes" json:"notes,optional"`
+	Timezone                     types.String                                               `tfsdk:"timezone" json:"timezone,optional"`
 	LastHeartbeat                types.String                                               `tfsdk:"last_heartbeat" json:"last_heartbeat,computed"`
 	LastSeenVersion              types.String                                               `tfsdk:"last_seen_version" json:"last_seen_version,computed"`
 	LastUpdated                  types.String                                               `tfsdk:"last_updated" json:"last_updated,computed"`

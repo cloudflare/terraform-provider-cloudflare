@@ -38,7 +38,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"content": schema.StringAttribute{
 				Description: "Content of message",
-				Computed:    true,
 				Optional:    true,
 			},
 			"author": schema.StringAttribute{

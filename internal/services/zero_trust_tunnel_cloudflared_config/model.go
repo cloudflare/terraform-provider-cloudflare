@@ -39,9 +39,9 @@ type ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestModel struct {
 	Access                 customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigIngressOriginRequestAccessModel] `tfsdk:"access" json:"access,computed_optional"`
 	CAPool                 types.String                                                                                    `tfsdk:"ca_pool" json:"caPool,computed_optional"`
 	ConnectTimeout         types.Int64                                                                                     `tfsdk:"connect_timeout" json:"connectTimeout,computed_optional"`
-	DisableChunkedEncoding types.Bool                                                                                      `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding,computed_optional"`
-	HTTP2Origin            types.Bool                                                                                      `tfsdk:"http2_origin" json:"http2Origin,computed_optional"`
-	HTTPHostHeader         types.String                                                                                    `tfsdk:"http_host_header" json:"httpHostHeader,computed_optional"`
+	DisableChunkedEncoding types.Bool                                                                                      `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding,optional"`
+	HTTP2Origin            types.Bool                                                                                      `tfsdk:"http2_origin" json:"http2Origin,optional"`
+	HTTPHostHeader         types.String                                                                                    `tfsdk:"http_host_header" json:"httpHostHeader,optional"`
 	KeepAliveConnections   types.Int64                                                                                     `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed_optional"`
 	KeepAliveTimeout       types.Int64                                                                                     `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed_optional"`
 	NoHappyEyeballs        types.Bool                                                                                      `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed_optional"`
@@ -62,9 +62,9 @@ type ZeroTrustTunnelCloudflaredConfigConfigOriginRequestModel struct {
 	Access                 customfield.NestedObject[ZeroTrustTunnelCloudflaredConfigConfigOriginRequestAccessModel] `tfsdk:"access" json:"access,computed_optional"`
 	CAPool                 types.String                                                                             `tfsdk:"ca_pool" json:"caPool,computed_optional"`
 	ConnectTimeout         types.Int64                                                                              `tfsdk:"connect_timeout" json:"connectTimeout,computed_optional"`
-	DisableChunkedEncoding types.Bool                                                                               `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding,computed_optional"`
-	HTTP2Origin            types.Bool                                                                               `tfsdk:"http2_origin" json:"http2Origin,computed_optional"`
-	HTTPHostHeader         types.String                                                                             `tfsdk:"http_host_header" json:"httpHostHeader,computed_optional"`
+	DisableChunkedEncoding types.Bool                                                                               `tfsdk:"disable_chunked_encoding" json:"disableChunkedEncoding,optional"`
+	HTTP2Origin            types.Bool                                                                               `tfsdk:"http2_origin" json:"http2Origin,optional"`
+	HTTPHostHeader         types.String                                                                             `tfsdk:"http_host_header" json:"httpHostHeader,optional"`
 	KeepAliveConnections   types.Int64                                                                              `tfsdk:"keep_alive_connections" json:"keepAliveConnections,computed_optional"`
 	KeepAliveTimeout       types.Int64                                                                              `tfsdk:"keep_alive_timeout" json:"keepAliveTimeout,computed_optional"`
 	NoHappyEyeballs        types.Bool                                                                               `tfsdk:"no_happy_eyeballs" json:"noHappyEyeballs,computed_optional"`

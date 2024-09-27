@@ -20,7 +20,7 @@ type MagicWANStaticRouteModel struct {
 	Prefix        types.String                                                    `tfsdk:"prefix" json:"prefix,optional"`
 	Priority      types.Int64                                                     `tfsdk:"priority" json:"priority,optional"`
 	Weight        types.Int64                                                     `tfsdk:"weight" json:"weight,optional"`
-	Scope         *MagicWANStaticRouteScopeModel                                  `tfsdk:"scope" json:"scope,optional"`
+	Scope         customfield.NestedObject[MagicWANStaticRouteScopeModel]         `tfsdk:"scope" json:"scope,computed_optional"`
 	Deleted       types.Bool                                                      `tfsdk:"deleted" json:"deleted,computed"`
 	Modified      types.Bool                                                      `tfsdk:"modified" json:"modified,computed"`
 	DeletedRoute  customfield.NestedObject[MagicWANStaticRouteDeletedRouteModel]  `tfsdk:"deleted_route" json:"deleted_route,computed"`
@@ -30,8 +30,8 @@ type MagicWANStaticRouteModel struct {
 }
 
 type MagicWANStaticRouteScopeModel struct {
-	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed_optional"`
-	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed_optional"`
+	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names,optional"`
+	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions,optional"`
 }
 
 type MagicWANStaticRouteDeletedRouteModel struct {

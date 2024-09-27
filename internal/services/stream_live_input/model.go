@@ -17,9 +17,9 @@ type StreamLiveInputModel struct {
 	AccountID                types.String                                                 `tfsdk:"account_id" path:"account_id,required"`
 	LiveInputIdentifier      types.String                                                 `tfsdk:"live_input_identifier" path:"live_input_identifier,optional"`
 	DefaultCreator           types.String                                                 `tfsdk:"default_creator" json:"defaultCreator,optional"`
-	DeleteRecordingAfterDays types.Float64                                                `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,computed_optional"`
+	DeleteRecordingAfterDays types.Float64                                                `tfsdk:"delete_recording_after_days" json:"deleteRecordingAfterDays,optional"`
+	Meta                     jsontypes.Normalized                                         `tfsdk:"meta" json:"meta,optional"`
 	Recording                customfield.NestedObject[StreamLiveInputRecordingModel]      `tfsdk:"recording" json:"recording,computed_optional"`
-	Meta                     jsontypes.Normalized                                         `tfsdk:"meta" json:"meta,computed_optional"`
 	Created                  timetypes.RFC3339                                            `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified                 timetypes.RFC3339                                            `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Status                   types.String                                                 `tfsdk:"status" json:"status,computed"`
@@ -33,11 +33,11 @@ type StreamLiveInputModel struct {
 }
 
 type StreamLiveInputRecordingModel struct {
-	AllowedOrigins      customfield.List[types.String] `tfsdk:"allowed_origins" json:"allowedOrigins,computed_optional"`
-	HideLiveViewerCount types.Bool                     `tfsdk:"hide_live_viewer_count" json:"hideLiveViewerCount,computed_optional"`
-	Mode                types.String                   `tfsdk:"mode" json:"mode,computed_optional"`
-	RequireSignedURLs   types.Bool                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
-	TimeoutSeconds      types.Int64                    `tfsdk:"timeout_seconds" json:"timeoutSeconds,computed_optional"`
+	AllowedOrigins      *[]types.String `tfsdk:"allowed_origins" json:"allowedOrigins,optional"`
+	HideLiveViewerCount types.Bool      `tfsdk:"hide_live_viewer_count" json:"hideLiveViewerCount,computed_optional"`
+	Mode                types.String    `tfsdk:"mode" json:"mode,computed_optional"`
+	RequireSignedURLs   types.Bool      `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
+	TimeoutSeconds      types.Int64     `tfsdk:"timeout_seconds" json:"timeoutSeconds,computed_optional"`
 }
 
 type StreamLiveInputRtmpsModel struct {

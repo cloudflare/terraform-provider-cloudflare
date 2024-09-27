@@ -43,6 +43,35 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A short name to identify the health check. Only alphanumeric characters, hyphens and underscores are allowed.",
 				Required:    true,
 			},
+			"description": schema.StringAttribute{
+				Description: "A human-readable description of the health check.",
+				Optional:    true,
+			},
+			"check_regions": schema.ListAttribute{
+				Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
+				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"WNAM",
+							"ENAM",
+							"WEU",
+							"EEU",
+							"NSAM",
+							"SSAM",
+							"OC",
+							"ME",
+							"NAF",
+							"SAF",
+							"IN",
+							"SEAS",
+							"NEAS",
+							"ALL_REGIONS",
+						),
+					),
+				},
+				ElementType: types.StringType,
+			},
 			"consecutive_fails": schema.Int64Attribute{
 				Description: "The number of consecutive fails required from a health check before changing the health to unhealthy.",
 				Computed:    true,
@@ -54,11 +83,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(1),
-			},
-			"description": schema.StringAttribute{
-				Description: "A human-readable description of the health check.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"interval": schema.Int64Attribute{
 				Description: "The interval between each health check. Shorter intervals may give quicker notifications if the origin status changes, but will increase load on the origin as we check from multiple locations.",
@@ -90,33 +114,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Default:     stringdefault.StaticString("HTTP"),
 			},
-			"check_regions": schema.ListAttribute{
-				Description: "A list of regions from which to run health checks. Null means Cloudflare will pick a default region.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.List{
-					listvalidator.ValueStringsAre(
-						stringvalidator.OneOfCaseInsensitive(
-							"WNAM",
-							"ENAM",
-							"WEU",
-							"EEU",
-							"NSAM",
-							"SSAM",
-							"OC",
-							"ME",
-							"NAF",
-							"SAF",
-							"IN",
-							"SEAS",
-							"NEAS",
-							"ALL_REGIONS",
-						),
-					),
-				},
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
-			},
 			"http_config": schema.SingleNestedAttribute{
 				Description: "Parameters specific to an HTTP or HTTPS health check.",
 				Computed:    true,
@@ -131,14 +128,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"expected_body": schema.StringAttribute{
 						Description: "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"expected_codes": schema.ListAttribute{
 						Description: "The expected HTTP response codes (e.g. \"200\") or code ranges (e.g. \"2xx\" for all codes starting with 2) of the health check.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"follow_redirects": schema.BoolAttribute{
@@ -149,9 +143,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"header": schema.MapAttribute{
 						Description: "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 						ElementType: types.ListType{
 							ElemType: types.StringType,
 						},

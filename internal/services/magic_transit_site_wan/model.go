@@ -17,8 +17,8 @@ type MagicTransitSiteWANModel struct {
 	WANID            types.String                                                       `tfsdk:"wan_id" path:"wan_id,optional"`
 	Physport         types.Int64                                                        `tfsdk:"physport" json:"physport,required"`
 	VlanTag          types.Int64                                                        `tfsdk:"vlan_tag" json:"vlan_tag,required"`
-	Name             types.String                                                       `tfsdk:"name" json:"name,computed_optional"`
-	Priority         types.Int64                                                        `tfsdk:"priority" json:"priority,computed_optional"`
+	Name             types.String                                                       `tfsdk:"name" json:"name,optional"`
+	Priority         types.Int64                                                        `tfsdk:"priority" json:"priority,optional"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteWANStaticAddressingModel] `tfsdk:"static_addressing" json:"static_addressing,computed_optional"`
 	ID               types.String                                                       `tfsdk:"id" json:"id,computed"`
 }
@@ -26,5 +26,5 @@ type MagicTransitSiteWANModel struct {
 type MagicTransitSiteWANStaticAddressingModel struct {
 	Address          types.String `tfsdk:"address" json:"address,required"`
 	GatewayAddress   types.String `tfsdk:"gateway_address" json:"gateway_address,required"`
-	SecondaryAddress types.String `tfsdk:"secondary_address" json:"secondary_address,computed_optional"`
+	SecondaryAddress types.String `tfsdk:"secondary_address" json:"secondary_address,optional"`
 }

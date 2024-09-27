@@ -31,6 +31,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"content": schema.StringAttribute{
+				Description: "Request content",
+				Optional:    true,
+			},
 			"priority": schema.StringAttribute{
 				Description: "Priority for analyzing the request",
 				Optional:    true,
@@ -39,19 +43,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "Requested information from request",
 				Optional:    true,
 			},
-			"content": schema.StringAttribute{
-				Description: "Request content",
-				Computed:    true,
-				Optional:    true,
-			},
 			"summary": schema.StringAttribute{
 				Description: "Brief description of the request",
-				Computed:    true,
 				Optional:    true,
 			},
 			"tlp": schema.StringAttribute{
 				Description: "The CISA defined Traffic Light Protocol (TLP)",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

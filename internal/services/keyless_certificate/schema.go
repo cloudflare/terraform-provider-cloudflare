@@ -58,12 +58,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether or not the Keyless SSL is on or off.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "The keyless SSL name.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"port": schema.Float64Attribute{

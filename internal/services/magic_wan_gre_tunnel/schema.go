@@ -53,8 +53,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The name of the tunnel. The name cannot contain spaces or special characters, must be 15 characters or less, and cannot share a name with another GRE tunnel.",
 				Optional:    true,
 			},
+			"mtu": schema.Int64Attribute{
+				Description: "Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(1476),
+			},
+			"ttl": schema.Int64Attribute{
+				Description: "Time To Live (TTL) in number of hops of the GRE tunnel.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(64),
+			},
 			"health_check": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[MagicWANGRETunnelHealthCheckModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"direction": schema.StringAttribute{
 						Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel. Note in the case of bidirecitonal healthchecks, the target field in health_check is ignored as the interface_address is used to send traffic into the tunnel.",
@@ -86,7 +100,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"target": schema.StringAttribute{
 						Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"type": schema.StringAttribute{
@@ -99,18 +112,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default: stringdefault.StaticString("reply"),
 					},
 				},
-			},
-			"mtu": schema.Int64Attribute{
-				Description: "Maximum Transmission Unit (MTU) in bytes for the GRE tunnel. The minimum value is 576.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(1476),
-			},
-			"ttl": schema.Int64Attribute{
-				Description: "Time To Live (TTL) in number of hops of the GRE tunnel.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(64),
 			},
 			"deleted": schema.BoolAttribute{
 				Computed: true,
