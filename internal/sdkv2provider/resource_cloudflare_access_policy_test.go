@@ -972,6 +972,68 @@ func testAccessPolicyExternalEvalautionConfig(resourceID, zone, accountID string
   `, resourceID, zone, accountID)
 }
 
+func TestAccCloudflareAccessPolicy_ConnectionRules(t *testing.T) {
+	rnd := generateRandomResourceName()
+	name := "cloudflare_access_policy." + rnd
+	zone := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccPreCheckAccount(t)
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessPolicyConnectionRulesConfig(rnd, zone, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "connection_rules.0.ssh.0.usernames.0", "tfgo-acc-test"),
+					resource.TestCheckResourceAttr(name, "include.0.email.0", "devuser@cloudflare.com"),
+				),
+			},
+		},
+	})
+}
+
+func testAccessPolicyConnectionRulesConfig(resourceID, zone, accountID string) string {
+	return fmt.Sprintf(`
+    resource "cloudflare_zero_trust_access_application" "%[1]s" {
+      name       = "%[1]s"
+	  type 		 = "infrastructure"
+      account_id = "%[3]s"
+      domain     = "%[1]s.%[2]s"
+	  target_criteria {
+		port     = 22
+		protocol = "SSH"
+		target_attributes {
+		  name = "hostname"
+		  values = ["tfgo-acc-test"]
+		}
+	  }
+    }
+
+    resource "cloudflare_access_policy" "%[1]s" {
+      application_id = cloudflare_zero_trust_access_application.%[1]s.id
+      name           = "%[1]s"
+      account_id     = "%[3]s"
+      decision       = "allow"
+      precedence     = "1"
+	  connection_rules {
+		ssh {
+		  usernames = ["tfgo-acc-test"]
+		}
+      }
+      include {
+		email = ["devuser@cloudflare.com"]
+	  }
+    }
+
+  `, resourceID, zone, accountID)
+}
+
 func TestAccCloudflareAccessPolicy_IsolationRequired(t *testing.T) {
 	rnd := generateRandomResourceName()
 	name := "cloudflare_access_policy." + rnd

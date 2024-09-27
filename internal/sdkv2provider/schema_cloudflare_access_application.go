@@ -44,6 +44,15 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Computed:    true,
 			Description: "The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.",
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				appType := d.Get("type").(string)
+				// Suppress the diff if it's an app type that doesn't need a `domain` value.
+				if appType == "infrastructure" {
+					return true
+				}
+
+				return oldValue == newValue
+			},
 		},
 		"self_hosted_domains": {
 			Type:     schema.TypeSet,
@@ -57,8 +66,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "self_hosted",
-			ValidateFunc: validation.StringInSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"}, false),
-			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp"})),
+			ValidateFunc: validation.StringInSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp", "infrastructure"}, false),
+			Description:  fmt.Sprintf("The application type. %s", renderAvailableDocumentationValuesStringSlice([]string{"app_launcher", "bookmark", "biso", "dash_sso", "saas", "self_hosted", "ssh", "vnc", "warp", "infrastructure"})),
 		},
 		"policies": {
 			Type: schema.TypeList,
@@ -76,9 +85,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Default:  "24h",
 			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
 				appType := d.Get("type").(string)
-				// Suppress the diff if it's a bookmark app type. Bookmarks don't have a session duration
-				// field which always creates a diff because of the default '24h' value.
-				if appType == "bookmark" {
+				// Suppress the diff if it's an app type that doesn't need a `session_duration` value.
+				if appType == "bookmark" || appType == "infrastructure" {
 					return true
 				}
 
@@ -405,6 +413,47 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"target_criteria": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"port": {
+						Type:        schema.TypeInt,
+						Required:    true,
+						Description: "The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.",
+					},
+					"protocol": {
+						Type:        schema.TypeString,
+						Required:    true,
+						Description: "The communication protocol your application secures.",
+					},
+					"target_attributes": {
+						Type:        schema.TypeList,
+						Required:    true,
+						Description: "Contains a map of target attribute keys to target attribute values.",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"name": {
+									Type:        schema.TypeString,
+									Required:    true,
+									Description: "The key of the attribute.",
+								},
+								"values": {
+									Type:        schema.TypeList,
+									Required:    true,
+									Description: "The values of the attribute.",
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 		"auto_redirect_to_identity": {
 			Type:        schema.TypeBool,
 			Optional:    true,
@@ -467,6 +516,16 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Default:     true,
 			Description: "Option to show/hide applications in App Launcher.",
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				appType := d.Get("type").(string)
+				// Suppress the diff if it's an app type that doesn't need a `app_launcher_visible`
+				// value.
+				if appType == "infrastructure" {
+					return true
+				}
+
+				return oldValue == newValue
+			},
 		},
 		"service_auth_401_redirect": {
 			Type:        schema.TypeBool,
@@ -933,6 +992,52 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 	return &SaasConfig
 }
 
+func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.AccessInfrastructureTargetContext, error) {
+	TargetContexts := []cloudflare.AccessInfrastructureTargetContext{}
+	if value, ok := d.GetOk("target_criteria"); ok {
+		targetCriteria := value.([]interface{})
+		targetContext := cloudflare.AccessInfrastructureTargetContext{}
+		for _, item := range targetCriteria {
+			itemMap := item.(map[string]interface{})
+
+			if port, ok := itemMap["port"].(int); ok {
+				targetContext.Port = port
+			}
+			if protocol, ok := itemMap["protocol"].(string); ok {
+				switch protocol {
+				case "SSH":
+					targetContext.Protocol = cloudflare.AccessInfrastructureSSH
+				case "RDP":
+					targetContext.Protocol = cloudflare.AccessInfrastructureRDP
+				default:
+					return &[]cloudflare.AccessInfrastructureTargetContext{}, fmt.Errorf("failed to parse protocol: value must be one of SSH or RDP")
+				}
+			}
+
+			str_return := make(map[string][]string)
+			if sshVal, ok := itemMap["target_attributes"].([]interface{}); ok && len(sshVal) > 0 {
+				for _, attrItem := range sshVal {
+					if sshMap, ok := attrItem.(map[string]interface{}); ok {
+						attributes := make(map[string][]string)
+						key := sshMap["name"].(string)
+						if usernames, ok := sshMap["values"].([]interface{}); ok {
+							for _, username := range usernames {
+								attributes[key] = append(attributes[key], username.(string))
+							}
+						}
+						str_return = attributes
+					}
+				}
+				targetContext.TargetAttributes = str_return
+			}
+
+			TargetContexts = append(TargetContexts, targetContext)
+		}
+	}
+
+	return &TargetContexts, nil
+}
+
 func convertLandingPageDesignSchemaToStruct(d *schema.ResourceData) *cloudflare.AccessLandingPageDesign {
 	LandingPageDesign := cloudflare.AccessLandingPageDesign{}
 	if _, ok := d.GetOk("landing_page_design"); ok {
@@ -1232,6 +1337,34 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 
 		return []interface{}{m}
 	}
+}
+
+func convertTargetContextsToSchema(targetContexts *[]cloudflare.AccessInfrastructureTargetContext) []interface{} {
+	if targetContexts == nil {
+		return []interface{}{}
+	}
+	var targetContextsSchema []interface{}
+
+	for _, targetContext := range *targetContexts {
+		//targetAttributesList := []map[string][]string{}
+		var attributesReturned []map[string]interface{}
+
+		for key, values := range targetContext.TargetAttributes {
+			attributeMap := map[string]interface{}{
+				"name":   key,
+				"values": values,
+			}
+
+			attributesReturned = append(attributesReturned, attributeMap)
+		}
+
+		targetContextsSchema = append(targetContextsSchema, map[string]interface{}{
+			"port":              targetContext.Port,
+			"protocol":          targetContext.Protocol,
+			"target_attributes": attributesReturned,
+		})
+	}
+	return targetContextsSchema
 }
 
 func convertScimConfigStructToSchema(scimConfig *cloudflare.AccessApplicationSCIMConfig) []interface{} {

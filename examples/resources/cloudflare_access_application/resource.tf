@@ -29,3 +29,22 @@ resource "cloudflare_access_application" "staging_app" {
     max_age           = 10
   }
 }
+
+# Infrastructure application configuration
+resource "cloudflare_zero_trust_access_application" "infra-app-example" {
+  account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  name       = "infra-app"
+  type       = "infrastructure"
+  
+  target_criteria {
+    port     = 22
+    protocol = "SSH"
+    target_attributes {
+      name = "hostname"
+      values = ["tfgo-tests-useast", "tfgo-tests-uswest"]
+    }
+  }
+
+  # specify existing access policies by id
+  policies = []
+}
