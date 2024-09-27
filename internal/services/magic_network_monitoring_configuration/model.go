@@ -1,0 +1,26 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package magic_network_monitoring_configuration
+
+import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+type MagicNetworkMonitoringConfigurationResultEnvelope struct {
+	Result MagicNetworkMonitoringConfigurationModel `json:"result"`
+}
+
+type MagicNetworkMonitoringConfigurationModel struct {
+	AccountID       types.String                                                                      `tfsdk:"account_id" path:"account_id,required"`
+	Name            types.String                                                                      `tfsdk:"name" json:"name,required"`
+	DefaultSampling types.Float64                                                                     `tfsdk:"default_sampling" json:"default_sampling,computed_optional"`
+	RouterIPs       customfield.List[types.String]                                                    `tfsdk:"router_ips" json:"router_ips,computed_optional"`
+	WARPDevices     customfield.NestedObjectList[MagicNetworkMonitoringConfigurationWARPDevicesModel] `tfsdk:"warp_devices" json:"warp_devices,computed_optional"`
+}
+
+type MagicNetworkMonitoringConfigurationWARPDevicesModel struct {
+	ID       types.String `tfsdk:"id" json:"id,required"`
+	Name     types.String `tfsdk:"name" json:"name,required"`
+	RouterIP types.String `tfsdk:"router_ip" json:"router_ip,required"`
+}
