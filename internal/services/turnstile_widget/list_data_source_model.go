@@ -5,8 +5,8 @@ package turnstile_widget
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/challenges"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/turnstile"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -25,16 +25,16 @@ type TurnstileWidgetsDataSourceModel struct {
 	Result    customfield.NestedObjectList[TurnstileWidgetsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *TurnstileWidgetsDataSourceModel) toListParams(_ context.Context) (params challenges.WidgetListParams, diags diag.Diagnostics) {
-	params = challenges.WidgetListParams{
+func (m *TurnstileWidgetsDataSourceModel) toListParams(_ context.Context) (params turnstile.WidgetListParams, diags diag.Diagnostics) {
+	params = turnstile.WidgetListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	if !m.Direction.IsNull() {
-		params.Direction = cloudflare.F(challenges.WidgetListParamsDirection(m.Direction.ValueString()))
+		params.Direction = cloudflare.F(turnstile.WidgetListParamsDirection(m.Direction.ValueString()))
 	}
 	if !m.Order.IsNull() {
-		params.Order = cloudflare.F(challenges.WidgetListParamsOrder(m.Order.ValueString()))
+		params.Order = cloudflare.F(turnstile.WidgetListParamsOrder(m.Order.ValueString()))
 	}
 
 	return

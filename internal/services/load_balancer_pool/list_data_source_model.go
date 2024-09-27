@@ -5,8 +5,8 @@ package load_balancer_pool
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -39,7 +39,7 @@ func (m *LoadBalancerPoolsDataSourceModel) toListParams(_ context.Context) (para
 type LoadBalancerPoolsResultDataSourceModel struct {
 	ID                 types.String                                                                 `tfsdk:"id" json:"id,computed"`
 	CheckRegions       customfield.List[types.String]                                               `tfsdk:"check_regions" json:"check_regions,computed"`
-	CreatedOn          timetypes.RFC3339                                                            `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CreatedOn          types.String                                                                 `tfsdk:"created_on" json:"created_on,computed"`
 	Description        types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                            `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled            types.Bool                                                                   `tfsdk:"enabled" json:"enabled,computed"`
@@ -47,7 +47,7 @@ type LoadBalancerPoolsResultDataSourceModel struct {
 	LoadShedding       customfield.NestedObject[LoadBalancerPoolsLoadSheddingDataSourceModel]       `tfsdk:"load_shedding" json:"load_shedding,computed"`
 	Longitude          types.Float64                                                                `tfsdk:"longitude" json:"longitude,computed"`
 	MinimumOrigins     types.Int64                                                                  `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
-	ModifiedOn         timetypes.RFC3339                                                            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ModifiedOn         types.String                                                                 `tfsdk:"modified_on" json:"modified_on,computed"`
 	Monitor            types.String                                                                 `tfsdk:"monitor" json:"monitor,computed"`
 	Name               types.String                                                                 `tfsdk:"name" json:"name,computed"`
 	Networks           customfield.List[types.String]                                               `tfsdk:"networks" json:"networks,computed"`

@@ -5,10 +5,9 @@ package load_balancer
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -35,13 +34,13 @@ type LoadBalancersResultDataSourceModel struct {
 	ID                        types.String                                                                    `tfsdk:"id" json:"id,computed"`
 	AdaptiveRouting           customfield.NestedObject[LoadBalancersAdaptiveRoutingDataSourceModel]           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed"`
 	CountryPools              customfield.Map[customfield.List[types.String]]                                 `tfsdk:"country_pools" json:"country_pools,computed"`
-	CreatedOn                 timetypes.RFC3339                                                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CreatedOn                 types.String                                                                    `tfsdk:"created_on" json:"created_on,computed"`
 	DefaultPools              customfield.List[types.String]                                                  `tfsdk:"default_pools" json:"default_pools,computed"`
 	Description               types.String                                                                    `tfsdk:"description" json:"description,computed"`
 	Enabled                   types.Bool                                                                      `tfsdk:"enabled" json:"enabled,computed"`
 	FallbackPool              types.String                                                                    `tfsdk:"fallback_pool" json:"fallback_pool,computed"`
 	LocationStrategy          customfield.NestedObject[LoadBalancersLocationStrategyDataSourceModel]          `tfsdk:"location_strategy" json:"location_strategy,computed"`
-	ModifiedOn                timetypes.RFC3339                                                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ModifiedOn                types.String                                                                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                      types.String                                                                    `tfsdk:"name" json:"name,computed"`
 	Networks                  customfield.List[types.String]                                                  `tfsdk:"networks" json:"networks,computed"`
 	PopPools                  customfield.Map[customfield.List[types.String]]                                 `tfsdk:"pop_pools" json:"pop_pools,computed"`
