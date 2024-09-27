@@ -992,11 +992,11 @@ func convertSaasSchemaToStruct(d *schema.ResourceData) *cloudflare.SaasApplicati
 	return &SaasConfig
 }
 
-func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.InfraTargetContext, error) {
-	TargetContexts := []cloudflare.InfraTargetContext{}
+func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.AccessInfrastructureTargetContext, error) {
+	TargetContexts := []cloudflare.AccessInfrastructureTargetContext{}
 	if value, ok := d.GetOk("target_criteria"); ok {
 		targetCriteria := value.([]interface{})
-		targetContext := cloudflare.InfraTargetContext{}
+		targetContext := cloudflare.AccessInfrastructureTargetContext{}
 		for _, item := range targetCriteria {
 			itemMap := item.(map[string]interface{})
 
@@ -1006,11 +1006,11 @@ func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.InfraT
 			if protocol, ok := itemMap["protocol"].(string); ok {
 				switch protocol {
 				case "SSH":
-					targetContext.Protocol = cloudflare.InfraSSH
+					targetContext.Protocol = cloudflare.AccessInfrastructureSSH
 				case "RDP":
-					targetContext.Protocol = cloudflare.RDP
+					targetContext.Protocol = cloudflare.AccessInfrastructureRDP
 				default:
-					return &[]cloudflare.InfraTargetContext{}, fmt.Errorf("failed to parse protocol: value must be one of SSH or RDP")
+					return &[]cloudflare.AccessInfrastructureTargetContext{}, fmt.Errorf("failed to parse protocol: value must be one of SSH or RDP")
 				}
 			}
 
@@ -1339,7 +1339,7 @@ func convertSaasStructToSchema(d *schema.ResourceData, app *cloudflare.SaasAppli
 	}
 }
 
-func convertTargetContextsToSchema(targetContexts *[]cloudflare.InfraTargetContext) []interface{} {
+func convertTargetContextsToSchema(targetContexts *[]cloudflare.AccessInfrastructureTargetContext) []interface{} {
 	if targetContexts == nil {
 		return []interface{}{}
 	}
