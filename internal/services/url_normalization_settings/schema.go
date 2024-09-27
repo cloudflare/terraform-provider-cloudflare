@@ -28,12 +28,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"scope": schema.StringAttribute{
 				Description: "The scope of the URL normalization.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"type": schema.StringAttribute{
 				Description: "The type of URL normalization performed by Cloudflare.",
-				Computed:    true,
 				Optional:    true,
 			},
 		},

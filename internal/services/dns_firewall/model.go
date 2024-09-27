@@ -17,12 +17,12 @@ type DNSFirewallModel struct {
 	AccountID            types.String                                               `tfsdk:"account_id" path:"account_id,required"`
 	Name                 types.String                                               `tfsdk:"name" json:"name,required"`
 	UpstreamIPs          *[]types.String                                            `tfsdk:"upstream_ips" json:"upstream_ips,required"`
-	DeprecateAnyRequests types.Bool                                                 `tfsdk:"deprecate_any_requests" json:"deprecate_any_requests,computed_optional"`
-	ECSFallback          types.Bool                                                 `tfsdk:"ecs_fallback" json:"ecs_fallback,computed_optional"`
+	DeprecateAnyRequests types.Bool                                                 `tfsdk:"deprecate_any_requests" json:"deprecate_any_requests,optional"`
+	ECSFallback          types.Bool                                                 `tfsdk:"ecs_fallback" json:"ecs_fallback,optional"`
+	NegativeCacheTTL     types.Float64                                              `tfsdk:"negative_cache_ttl" json:"negative_cache_ttl,optional"`
+	Ratelimit            types.Float64                                              `tfsdk:"ratelimit" json:"ratelimit,optional"`
 	MaximumCacheTTL      types.Float64                                              `tfsdk:"maximum_cache_ttl" json:"maximum_cache_ttl,computed_optional"`
 	MinimumCacheTTL      types.Float64                                              `tfsdk:"minimum_cache_ttl" json:"minimum_cache_ttl,computed_optional"`
-	NegativeCacheTTL     types.Float64                                              `tfsdk:"negative_cache_ttl" json:"negative_cache_ttl,computed_optional"`
-	Ratelimit            types.Float64                                              `tfsdk:"ratelimit" json:"ratelimit,computed_optional"`
 	Retries              types.Float64                                              `tfsdk:"retries" json:"retries,computed_optional"`
 	AttackMitigation     customfield.NestedObject[DNSFirewallAttackMitigationModel] `tfsdk:"attack_mitigation" json:"attack_mitigation,computed_optional"`
 	ModifiedOn           timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
@@ -30,6 +30,6 @@ type DNSFirewallModel struct {
 }
 
 type DNSFirewallAttackMitigationModel struct {
-	Enabled                   types.Bool `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Enabled                   types.Bool `tfsdk:"enabled" json:"enabled,optional"`
 	OnlyWhenUpstreamUnhealthy types.Bool `tfsdk:"only_when_upstream_unhealthy" json:"only_when_upstream_unhealthy,computed_optional"`
 }

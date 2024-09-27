@@ -18,7 +18,7 @@ type ByoIPPrefixModel struct {
 	ASN                  types.Int64                                            `tfsdk:"asn" json:"asn,required"`
 	CIDR                 types.String                                           `tfsdk:"cidr" json:"cidr,required"`
 	LOADocumentID        types.String                                           `tfsdk:"loa_document_id" json:"loa_document_id,required"`
-	Description          types.String                                           `tfsdk:"description" json:"description,computed_optional"`
+	Description          types.String                                           `tfsdk:"description" json:"description,optional"`
 	Advertised           types.Bool                                             `tfsdk:"advertised" json:"advertised,computed"`
 	AdvertisedModifiedAt timetypes.RFC3339                                      `tfsdk:"advertised_modified_at" json:"advertised_modified_at,computed" format:"date-time"`
 	Approved             types.String                                           `tfsdk:"approved" json:"approved,computed"`

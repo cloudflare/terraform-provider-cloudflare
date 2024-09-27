@@ -3,7 +3,6 @@
 package zero_trust_access_infrastructure_target
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,16 +21,16 @@ type ZeroTrustAccessInfrastructureTargetModel struct {
 }
 
 type ZeroTrustAccessInfrastructureTargetIPModel struct {
-	IPV4 customfield.NestedObject[ZeroTrustAccessInfrastructureTargetIPIPV4Model] `tfsdk:"ipv4" json:"ipv4,computed_optional"`
-	IPV6 customfield.NestedObject[ZeroTrustAccessInfrastructureTargetIPIPV6Model] `tfsdk:"ipv6" json:"ipv6,computed_optional"`
+	IPV4 *ZeroTrustAccessInfrastructureTargetIPIPV4Model `tfsdk:"ipv4" json:"ipv4,optional"`
+	IPV6 *ZeroTrustAccessInfrastructureTargetIPIPV6Model `tfsdk:"ipv6" json:"ipv6,optional"`
 }
 
 type ZeroTrustAccessInfrastructureTargetIPIPV4Model struct {
-	IPAddr           types.String `tfsdk:"ip_addr" json:"ip_addr,computed_optional"`
-	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,computed_optional"`
+	IPAddr           types.String `tfsdk:"ip_addr" json:"ip_addr,optional"`
+	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
 }
 
 type ZeroTrustAccessInfrastructureTargetIPIPV6Model struct {
-	IPAddr           types.String `tfsdk:"ip_addr" json:"ip_addr,computed_optional"`
-	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,computed_optional"`
+	IPAddr           types.String `tfsdk:"ip_addr" json:"ip_addr,optional"`
+	VirtualNetworkID types.String `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
 }

@@ -117,21 +117,21 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 }
 
 type DNSRecordsCommentDataSourceModel struct {
-	Absent     types.String `tfsdk:"absent" json:"absent,computed_optional"`
-	Contains   types.String `tfsdk:"contains" json:"contains,computed_optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,computed_optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,computed_optional"`
-	Present    types.String `tfsdk:"present" json:"present,computed_optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,computed_optional"`
+	Absent     types.String `tfsdk:"absent" json:"absent,optional"`
+	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
+	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
+	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
+	Present    types.String `tfsdk:"present" json:"present,optional"`
+	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
 }
 
 type DNSRecordsTagDataSourceModel struct {
-	Absent     types.String `tfsdk:"absent" json:"absent,computed_optional"`
-	Contains   types.String `tfsdk:"contains" json:"contains,computed_optional"`
-	Endswith   types.String `tfsdk:"endswith" json:"endswith,computed_optional"`
-	Exact      types.String `tfsdk:"exact" json:"exact,computed_optional"`
-	Present    types.String `tfsdk:"present" json:"present,computed_optional"`
-	Startswith types.String `tfsdk:"startswith" json:"startswith,computed_optional"`
+	Absent     types.String `tfsdk:"absent" json:"absent,optional"`
+	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
+	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
+	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
+	Present    types.String `tfsdk:"present" json:"present,optional"`
+	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
 }
 
 type DNSRecordsResultDataSourceModel struct {

@@ -68,8 +68,8 @@ func (m *AccessRulesDataSourceModel) toListParams(_ context.Context) (params fir
 }
 
 type AccessRulesConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target,computed_optional"`
-	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
+	Target types.String `tfsdk:"target" json:"target,optional"`
+	Value  types.String `tfsdk:"value" json:"value,optional"`
 }
 
 type AccessRulesResultDataSourceModel struct {

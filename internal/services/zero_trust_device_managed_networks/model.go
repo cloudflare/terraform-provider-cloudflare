@@ -21,5 +21,5 @@ type ZeroTrustDeviceManagedNetworksModel struct {
 
 type ZeroTrustDeviceManagedNetworksConfigModel struct {
 	TLSSockaddr types.String `tfsdk:"tls_sockaddr" json:"tls_sockaddr,required"`
-	Sha256      types.String `tfsdk:"sha256" json:"sha256,computed_optional"`
+	Sha256      types.String `tfsdk:"sha256" json:"sha256,optional"`
 }

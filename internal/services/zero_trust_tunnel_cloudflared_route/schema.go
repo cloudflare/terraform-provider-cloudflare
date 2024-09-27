@@ -37,12 +37,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the route.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"virtual_network_id": schema.StringAttribute{
 				Description: "UUID of the virtual network.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{

@@ -45,28 +45,23 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"host": schema.StringAttribute{
 						Description: "The desired endpoint to test.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"kind": schema.StringAttribute{
 						Description: "The type of test.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"method": schema.StringAttribute{
 						Description: "The HTTP request method type.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},
 			},
 			"description": schema.StringAttribute{
 				Description: "Additional details about the test.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"targeted": schema.BoolAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"target_policies": schema.ListNestedAttribute{
@@ -78,17 +73,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The id of the device settings profile",
-							Computed:    true,
 							Optional:    true,
 						},
 						"default": schema.BoolAttribute{
 							Description: "Whether the profile is the account default",
-							Computed:    true,
 							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the device settings profile",
-							Computed:    true,
 							Optional:    true,
 						},
 					},

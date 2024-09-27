@@ -33,7 +33,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"encoding_version": schema.Int64Attribute{
 				Description: "Dataset encoding version\n\nNon-secret custom word lists with no header are always version 1.\nSecret EDM lists with no header are version 1.\nMulticolumn CSV with headers are version 2.\nOmitting this field provides the default value 0, which is interpreted\nthe same as 1.",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(0),
@@ -42,7 +41,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"secret": schema.BoolAttribute{
 				Description:   "Generate a secret dataset.\n\nIf true, the response will include a secret to use with the EDM encoder.\nIf false, the response has no secret and the dataset is uploaded in plaintext.",
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
@@ -51,7 +49,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "The description of the dataset",
-				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{

@@ -35,18 +35,17 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"label": schema.StringAttribute{
+				Description:   "A string to uniquely identify the track amongst other audio track labels for the specified video.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"default": schema.BoolAttribute{
 				Description:   "Denotes whether the audio track will be played by default in a player.",
 				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 				Default:       booldefault.StaticBool(false),
-			},
-			"label": schema.StringAttribute{
-				Description:   "A string to uniquely identify the track amongst other audio track labels for the specified video.",
-				Computed:      true,
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"status": schema.StringAttribute{
 				Description: "Specifies the processing status of the video.",

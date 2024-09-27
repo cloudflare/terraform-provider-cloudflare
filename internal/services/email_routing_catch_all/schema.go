@@ -5,7 +5,6 @@ package email_routing_catch_all
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -48,9 +47,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"value": schema.ListAttribute{
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
 					},
@@ -71,16 +68,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"name": schema.StringAttribute{
+				Description: "Routing rule name.",
+				Optional:    true,
+			},
 			"enabled": schema.BoolAttribute{
 				Description: "Routing rule status.",
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(true),
-			},
-			"name": schema.StringAttribute{
-				Description: "Routing rule name.",
-				Computed:    true,
-				Optional:    true,
 			},
 			"tag": schema.StringAttribute{
 				Description: "Routing rule tag. (Deprecated, replaced by routing rule identifier)",

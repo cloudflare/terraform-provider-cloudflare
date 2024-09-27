@@ -38,14 +38,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"private_key": schema.StringAttribute{
-				Description:   "The private key for the certificate",
+			"name": schema.StringAttribute{
+				Description:   "Optional unique name for the certificate. Only used for human readability.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description:   "Optional unique name for the certificate. Only used for human readability.",
-				Computed:      true,
+			"private_key": schema.StringAttribute{
+				Description:   "The private key for the certificate",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

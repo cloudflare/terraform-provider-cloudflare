@@ -118,7 +118,7 @@ func (r *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 	_, err = r.client.Firewall.Rules.Update(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		data.PathID.ValueString(),
+		data.ID.ValueString(),
 		firewall.RuleUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
@@ -154,7 +154,7 @@ func (r *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 		ctx,
 		data.ZoneIdentifier.ValueString(),
 		firewall.RuleGetParams{
-			PathID: cloudflare.F(data.PathID.ValueString()),
+			PathID: cloudflare.F(data.ID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -186,7 +186,7 @@ func (r *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 	_, err := r.client.Firewall.Rules.Delete(
 		ctx,
 		data.ZoneIdentifier.ValueString(),
-		data.PathID.ValueString(),
+		data.ID.ValueString(),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

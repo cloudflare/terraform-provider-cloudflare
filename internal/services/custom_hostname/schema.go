@@ -56,7 +56,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"certificate_authority": schema.StringAttribute{
 						Description: "The Certificate Authority that will issue the certificate",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -69,17 +68,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"custom_certificate": schema.StringAttribute{
 						Description: "If a custom uploaded certificate is used.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"custom_key": schema.StringAttribute{
 						Description: "The key for a custom uploaded certificate.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"method": schema.StringAttribute{
 						Description: "Domain control validation (DCV) method used for this hostname.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -91,20 +87,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"settings": schema.SingleNestedAttribute{
 						Description: "SSL specific settings.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[CustomHostnameSSLSettingsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ciphers": schema.ListAttribute{
 								Description: "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"early_hints": schema.StringAttribute{
 								Description: "Whether or not Early Hints is enabled.",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
@@ -112,7 +103,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"http2": schema.StringAttribute{
 								Description: "Whether or not HTTP2 is enabled.",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
@@ -120,7 +110,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"min_tls_version": schema.StringAttribute{
 								Description: "The minimum TLS version supported.",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -133,7 +122,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"tls_1_3": schema.StringAttribute{
 								Description: "Whether or not TLS 1.3 is enabled.",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive("on", "off"),
@@ -143,7 +131,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"type": schema.StringAttribute{
 						Description: "Level of validation to be used for this hostname. Domain validation (dv) must be used.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("dv"),
@@ -151,26 +138,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"wildcard": schema.BoolAttribute{
 						Description: "Indicates whether the certificate covers a wildcard.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},
 			},
 			"custom_origin_server": schema.StringAttribute{
 				Description: "a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME record.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"custom_origin_sni": schema.StringAttribute{
 				Description: "A hostname that will be sent to your custom origin server as SNI for TLS handshake. This can be a valid subdomain of the zone or custom origin server name or the string ':request_host_header:' which will cause the host header in the request to be used as SNI. Not configurable with default/fallback origin server.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"custom_metadata": schema.MapAttribute{
 				Description: "Unique key/value metadata for this hostname. These are per-hostname (customer) settings.",
-				Computed:    true,
 				Optional:    true,
-				CustomType:  customfield.NewMapType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"created_at": schema.StringAttribute{

@@ -19,9 +19,9 @@ type TurnstileWidgetModel struct {
 	Mode           types.String      `tfsdk:"mode" json:"mode,required"`
 	Name           types.String      `tfsdk:"name" json:"name,required"`
 	Domains        *[]types.String   `tfsdk:"domains" json:"domains,required"`
-	BotFightMode   types.Bool        `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed_optional"`
-	ClearanceLevel types.String      `tfsdk:"clearance_level" json:"clearance_level,computed_optional"`
-	Offlabel       types.Bool        `tfsdk:"offlabel" json:"offlabel,computed_optional"`
+	BotFightMode   types.Bool        `tfsdk:"bot_fight_mode" json:"bot_fight_mode,optional"`
+	ClearanceLevel types.String      `tfsdk:"clearance_level" json:"clearance_level,optional"`
+	Offlabel       types.Bool        `tfsdk:"offlabel" json:"offlabel,optional"`
 	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Secret         types.String      `tfsdk:"secret" json:"secret,computed"`

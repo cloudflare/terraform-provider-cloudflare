@@ -33,17 +33,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"auto_install": schema.BoolAttribute{
+				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
+				Optional:    true,
+			},
 			"host": schema.StringAttribute{
 				Description: "The hostname to use for gray-clouded sites.",
 				Optional:    true,
 			},
 			"zone_tag": schema.StringAttribute{
 				Description: "The zone identifier.",
-				Optional:    true,
-			},
-			"auto_install": schema.BoolAttribute{
-				Description: "If enabled, the JavaScript snippet is automatically injected for orange-clouded sites.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"created": schema.StringAttribute{

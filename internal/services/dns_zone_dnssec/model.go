@@ -14,9 +14,9 @@ type DNSZoneDNSSECResultEnvelope struct {
 type DNSZoneDNSSECModel struct {
 	ID                types.String      `tfsdk:"id" json:"-,computed"`
 	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
-	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer,computed_optional"`
-	DNSSECPresigned   types.Bool        `tfsdk:"dnssec_presigned" json:"dnssec_presigned,computed_optional"`
-	Status            types.String      `tfsdk:"status" json:"status,computed_optional"`
+	DNSSECMultiSigner types.Bool        `tfsdk:"dnssec_multi_signer" json:"dnssec_multi_signer,optional"`
+	DNSSECPresigned   types.Bool        `tfsdk:"dnssec_presigned" json:"dnssec_presigned,optional"`
+	Status            types.String      `tfsdk:"status" json:"status,optional"`
 	Algorithm         types.String      `tfsdk:"algorithm" json:"algorithm,computed"`
 	Digest            types.String      `tfsdk:"digest" json:"digest,computed"`
 	DigestAlgorithm   types.String      `tfsdk:"digest_algorithm" json:"digest_algorithm,computed"`

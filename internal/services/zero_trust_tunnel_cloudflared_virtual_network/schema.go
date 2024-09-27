@@ -39,12 +39,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"comment": schema.StringAttribute{
 				Description: "Optional remark describing the virtual network.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"is_default_network": schema.BoolAttribute{
 				Description: "If `true`, this virtual network is the default for the account.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{

@@ -36,7 +36,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ha_link": schema.BoolAttribute{
 				Description:   "mark true to use this LAN for HA probing. only works for site with HA turned on. only one LAN can be set as the ha_link.",
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
@@ -48,7 +47,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"nat": schema.SingleNestedAttribute{
@@ -58,7 +56,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"static_prefix": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -84,7 +81,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Attributes: map[string]schema.Attribute{
 								"static_prefix": schema.StringAttribute{
 									Description: "A valid CIDR notation representing an IP range.",
-									Computed:    true,
 									Optional:    true,
 								},
 							},
@@ -109,9 +105,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"server_addresses": schema.ListAttribute{
 								Description: "List of DHCP server IPs.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 						},
@@ -123,36 +117,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"dhcp_pool_end": schema.StringAttribute{
 								Description: "A valid IPv4 address.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"dhcp_pool_start": schema.StringAttribute{
 								Description: "A valid IPv4 address.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"dns_server": schema.StringAttribute{
 								Description: "A valid IPv4 address.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"reservations": schema.MapAttribute{
 								Description: "Mapping of MAC addresses to IP addresses",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewMapType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 						},
 					},
 					"secondary_address": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"virtual_address": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

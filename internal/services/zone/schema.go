@@ -39,11 +39,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Identifier",
-						Computed:    true,
 						Optional:    true,
 					},
 				},
 				PlanModifiers: []planmodifier.Object{objectplanmodifier.RequiresReplace()},
+			},
+			"vanity_name_servers": schema.ListAttribute{
+				Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"type": schema.StringAttribute{
 				Description: "A full zone implies that DNS is hosted with Cloudflare. A partial zone is\ntypically a partner-hosted zone or a CNAME setup.\n",
@@ -57,13 +61,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				Default: stringdefault.StaticString("full"),
-			},
-			"vanity_name_servers": schema.ListAttribute{
-				Description: "An array of domains used for custom name servers. This is only\navailable for Business and Enterprise plans.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 			"activated_on": schema.StringAttribute{
 				Description: "The last time proof of ownership was detected and the zone was made\nactive",

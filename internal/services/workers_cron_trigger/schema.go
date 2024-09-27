@@ -33,7 +33,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"cron": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"schedules": schema.ListNestedAttribute{

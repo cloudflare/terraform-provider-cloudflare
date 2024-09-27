@@ -50,7 +50,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"target": schema.StringAttribute{
 								Description: "The target to search in existing rules.",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -63,7 +62,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 							"value": schema.StringAttribute{
 								Description: "The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.\nNotes: You can search for a single IPv4 address, an IP address range with a subnet of '/16' or '/24', or a two-letter ISO-3166-1 alpha-2 country code.",
-								Computed:    true,
 								Optional:    true,
 							},
 						},
