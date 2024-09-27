@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/cloudflare-go/v3/turnstile"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/challenges"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -70,9 +70,9 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 	}
 	res := new(http.Response)
 	env := TurnstileWidgetResultEnvelope{*data}
-	_, err = r.client.Turnstile.Widgets.New(
+	_, err = r.client.Challenges.Widgets.New(
 		ctx,
-		turnstile.WidgetNewParams{
+		challenges.WidgetNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -119,10 +119,10 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 	}
 	res := new(http.Response)
 	env := TurnstileWidgetResultEnvelope{*data}
-	_, err = r.client.Turnstile.Widgets.Update(
+	_, err = r.client.Challenges.Widgets.Update(
 		ctx,
 		data.Sitekey.ValueString(),
-		turnstile.WidgetUpdateParams{
+		challenges.WidgetUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -156,10 +156,10 @@ func (r *TurnstileWidgetResource) Read(ctx context.Context, req resource.ReadReq
 
 	res := new(http.Response)
 	env := TurnstileWidgetResultEnvelope{*data}
-	_, err := r.client.Turnstile.Widgets.Get(
+	_, err := r.client.Challenges.Widgets.Get(
 		ctx,
 		data.Sitekey.ValueString(),
-		turnstile.WidgetGetParams{
+		challenges.WidgetGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -190,10 +190,10 @@ func (r *TurnstileWidgetResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	_, err := r.client.Turnstile.Widgets.Delete(
+	_, err := r.client.Challenges.Widgets.Delete(
 		ctx,
 		data.Sitekey.ValueString(),
-		turnstile.WidgetDeleteParams{
+		challenges.WidgetDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -225,10 +225,10 @@ func (r *TurnstileWidgetResource) ImportState(ctx context.Context, req resource.
 
 	res := new(http.Response)
 	env := TurnstileWidgetResultEnvelope{*data}
-	_, err := r.client.Turnstile.Widgets.Get(
+	_, err := r.client.Challenges.Widgets.Get(
 		ctx,
 		path_sitekey,
-		turnstile.WidgetGetParams{
+		challenges.WidgetGetParams{
 			AccountID: cloudflare.F(path_account_id),
 		},
 		option.WithResponseBodyInto(&res),

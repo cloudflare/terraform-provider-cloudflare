@@ -5,8 +5,8 @@ package turnstile_widget
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/turnstile"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/challenges"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -37,24 +37,24 @@ type TurnstileWidgetDataSourceModel struct {
 	Filter         *TurnstileWidgetFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *TurnstileWidgetDataSourceModel) toReadParams(_ context.Context) (params turnstile.WidgetGetParams, diags diag.Diagnostics) {
-	params = turnstile.WidgetGetParams{
+func (m *TurnstileWidgetDataSourceModel) toReadParams(_ context.Context) (params challenges.WidgetGetParams, diags diag.Diagnostics) {
+	params = challenges.WidgetGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params turnstile.WidgetListParams, diags diag.Diagnostics) {
-	params = turnstile.WidgetListParams{
+func (m *TurnstileWidgetDataSourceModel) toListParams(_ context.Context) (params challenges.WidgetListParams, diags diag.Diagnostics) {
+	params = challenges.WidgetListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 
 	if !m.Filter.Direction.IsNull() {
-		params.Direction = cloudflare.F(turnstile.WidgetListParamsDirection(m.Filter.Direction.ValueString()))
+		params.Direction = cloudflare.F(challenges.WidgetListParamsDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Order.IsNull() {
-		params.Order = cloudflare.F(turnstile.WidgetListParamsOrder(m.Filter.Order.ValueString()))
+		params.Order = cloudflare.F(challenges.WidgetListParamsOrder(m.Filter.Order.ValueString()))
 	}
 
 	return

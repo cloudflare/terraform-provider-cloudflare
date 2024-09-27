@@ -5,8 +5,8 @@ package page_rule
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/pagerules"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/pagerules"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )

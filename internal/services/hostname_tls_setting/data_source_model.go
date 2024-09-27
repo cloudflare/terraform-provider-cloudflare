@@ -5,8 +5,8 @@ package hostname_tls_setting
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/hostnames"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/hostnames"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )

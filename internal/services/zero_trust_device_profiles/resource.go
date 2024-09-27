@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"

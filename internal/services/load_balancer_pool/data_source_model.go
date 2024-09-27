@@ -5,8 +5,8 @@ package load_balancer_pool
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -24,7 +24,7 @@ type LoadBalancerPoolResultListDataSourceEnvelope struct {
 type LoadBalancerPoolDataSourceModel struct {
 	AccountID          types.String                                                                `tfsdk:"account_id" path:"account_id,optional"`
 	PoolID             types.String                                                                `tfsdk:"pool_id" path:"pool_id,optional"`
-	CreatedOn          types.String                                                                `tfsdk:"created_on" json:"created_on,computed"`
+	CreatedOn          timetypes.RFC3339                                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description        types.String                                                                `tfsdk:"description" json:"description,computed"`
 	DisabledAt         timetypes.RFC3339                                                           `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	Enabled            types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
@@ -32,7 +32,7 @@ type LoadBalancerPoolDataSourceModel struct {
 	Latitude           types.Float64                                                               `tfsdk:"latitude" json:"latitude,computed"`
 	Longitude          types.Float64                                                               `tfsdk:"longitude" json:"longitude,computed"`
 	MinimumOrigins     types.Int64                                                                 `tfsdk:"minimum_origins" json:"minimum_origins,computed"`
-	ModifiedOn         types.String                                                                `tfsdk:"modified_on" json:"modified_on,computed"`
+	ModifiedOn         timetypes.RFC3339                                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Monitor            types.String                                                                `tfsdk:"monitor" json:"monitor,computed"`
 	Name               types.String                                                                `tfsdk:"name" json:"name,computed"`
 	NotificationEmail  types.String                                                                `tfsdk:"notification_email" json:"notification_email,computed"`

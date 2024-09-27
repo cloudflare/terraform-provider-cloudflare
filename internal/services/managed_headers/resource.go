@@ -8,9 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/managed_transforms"
-	"github.com/cloudflare/cloudflare-go/v3/option"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/managed_headers"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
@@ -69,9 +69,9 @@ func (r *ManagedHeadersResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 	res := new(http.Response)
-	_, err = r.client.ManagedTransforms.Edit(
+	_, err = r.client.ManagedHeaders.Edit(
 		ctx,
-		managed_transforms.ManagedTransformEditParams{
+		managed_headers.ManagedHeaderEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -116,9 +116,9 @@ func (r *ManagedHeadersResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 	res := new(http.Response)
-	_, err = r.client.ManagedTransforms.Edit(
+	_, err = r.client.ManagedHeaders.Edit(
 		ctx,
-		managed_transforms.ManagedTransformEditParams{
+		managed_headers.ManagedHeaderEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -150,9 +150,9 @@ func (r *ManagedHeadersResource) Read(ctx context.Context, req resource.ReadRequ
 	}
 
 	res := new(http.Response)
-	_, err := r.client.ManagedTransforms.List(
+	_, err := r.client.ManagedHeaders.List(
 		ctx,
-		managed_transforms.ManagedTransformListParams{
+		managed_headers.ManagedHeaderListParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -192,9 +192,9 @@ func (r *ManagedHeadersResource) ImportState(ctx context.Context, req resource.I
 	}
 
 	res := new(http.Response)
-	_, err := r.client.ManagedTransforms.List(
+	_, err := r.client.ManagedHeaders.List(
 		ctx,
-		managed_transforms.ManagedTransformListParams{
+		managed_headers.ManagedHeaderListParams{
 			ZoneID: cloudflare.F(path),
 		},
 		option.WithResponseBodyInto(&res),
