@@ -107,7 +107,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"id": schema.StringAttribute{
 							Description: "The unique ID of the rule.",
 							Computed:    true,
-							Optional:    true,
 						},
 						"action": schema.StringAttribute{
 							Description: "The action to perform when the rule matches.",
@@ -256,7 +255,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"enabled": schema.BoolAttribute{
 											Description: "Whether to enable execution of all rules. This option has lower precedence than rule and category overrides.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"rules": schema.ListNestedAttribute{
@@ -387,7 +385,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"operation": schema.StringAttribute{
-												Required: true,
+												Computed: true,
+												Optional: true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive("remove", "set"),
 												},
@@ -859,9 +858,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 												},
 												"query_string": schema.SingleNestedAttribute{
 													Description: "Use the presence or absence of parameters in the query string to build the cache key.",
-													Computed:    true,
-													Optional:    true,
-													CustomType:  customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel](ctx),
+
+													Optional:   true,
+													CustomType: customfield.NewNestedObjectType[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel](ctx),
 													Attributes: map[string]schema.Attribute{
 														"exclude": schema.SingleNestedAttribute{
 															Description: "build the cache key using all query string parameters EXCECPT these excluded parameters",
@@ -949,7 +948,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"minimum_file_size": schema.Int64Attribute{
 											Description: "The minimum file size eligible for store in cache reserve.",
-											Required:    true,
+											Optional:    true,
 										},
 									},
 								},
@@ -961,7 +960,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"default": schema.Int64Attribute{
 											Description: "The TTL (in seconds) if you choose override_origin mode.",
-											Required:    true,
+											Optional:    true,
 											Validators: []validator.Int64{
 												int64validator.Between(0, math.MaxInt64),
 											},
@@ -979,7 +978,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"status_code_ttl": schema.ListNestedAttribute{
 											Description: "List of single status codes, or status code ranges to apply the selected mode",
-											Required:    true,
+											Optional:    true,
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"value": schema.Int64Attribute{
@@ -994,15 +993,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 														Attributes: map[string]schema.Attribute{
 															"from": schema.Int64Attribute{
 																Description: "response status code lower bound",
-																Required:    true,
+																Optional:    true,
 															},
 															"to": schema.Int64Attribute{
 																Description: "response status code upper bound",
-																Required:    true,
+																Optional:    true,
 															},
 														},
 													},
-													"status_code_value": schema.Int64Attribute{
+													"status_code": schema.Int64Attribute{
 														Description: "Set the ttl for responses with this specific status code",
 														Computed:    true,
 														Optional:    true,

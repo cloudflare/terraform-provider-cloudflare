@@ -28,7 +28,7 @@ type RulesetModel struct {
 type RulesetRulesModel struct {
 	LastUpdated      timetypes.RFC3339                                           `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
 	Version          types.String                                                `tfsdk:"version" json:"version,computed"`
-	ID               types.String                                                `tfsdk:"id" json:"id,computed_optional"`
+	ID               types.String                                                `tfsdk:"id" json:"id,computed"`
 	Action           types.String                                                `tfsdk:"action" json:"action,computed_optional"`
 	ActionParameters customfield.NestedObject[RulesetRulesActionParametersModel] `tfsdk:"action_parameters" json:"action_parameters,computed_optional"`
 	Categories       customfield.List[types.String]                              `tfsdk:"categories" json:"categories,computed"`
@@ -148,7 +148,7 @@ type RulesetRulesActionParametersFromValueTargetURLModel struct {
 }
 
 type RulesetRulesActionParametersHeadersModel struct {
-	Operation  types.String `tfsdk:"operation" json:"operation,required"`
+	Operation  types.String `tfsdk:"operation" json:"operation,computed_optional"`
 	Value      types.String `tfsdk:"value" json:"value,computed_optional"`
 	Expression types.String `tfsdk:"expression" json:"expression,computed_optional"`
 }
@@ -220,8 +220,8 @@ type RulesetRulesActionParametersCacheKeyCustomKeyHostModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel struct {
-	Exclude customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
-	Include customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel] `tfsdk:"include" json:"include,computed_optional"`
+	Exclude customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel] `tfsdk:"exclude" json:"exclude,optional"`
+	Include customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel] `tfsdk:"include" json:"include,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel struct {
@@ -246,20 +246,20 @@ type RulesetRulesActionParametersCacheReserveModel struct {
 }
 
 type RulesetRulesActionParametersEdgeTTLModel struct {
-	Default       types.Int64                                               `tfsdk:"default" json:"default,required"`
+	Default       types.Int64                                               `tfsdk:"default" json:"default,optional"`
 	Mode          types.String                                              `tfsdk:"mode" json:"mode,required"`
-	StatusCodeTTL *[]*RulesetRulesActionParametersEdgeTTLStatusCodeTTLModel `tfsdk:"status_code_ttl" json:"status_code_ttl,required"`
+	StatusCodeTTL *[]*RulesetRulesActionParametersEdgeTTLStatusCodeTTLModel `tfsdk:"status_code_ttl" json:"status_code_ttl,optional"`
 }
 
 type RulesetRulesActionParametersEdgeTTLStatusCodeTTLModel struct {
 	Value           types.Int64                                                                                    `tfsdk:"value" json:"value,required"`
 	StatusCodeRange customfield.NestedObject[RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel] `tfsdk:"status_code_range" json:"status_code_range,computed_optional"`
-	StatusCodeValue types.Int64                                                                                    `tfsdk:"status_code_value" json:"status_code_value,computed_optional"`
+	StatusCode      types.Int64                                                                                    `tfsdk:"status_code" json:"status_code,computed_optional"`
 }
 
 type RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel struct {
-	From types.Int64 `tfsdk:"from" json:"from,required"`
-	To   types.Int64 `tfsdk:"to" json:"to,required"`
+	From types.Int64 `tfsdk:"from" json:"from,optional"`
+	To   types.Int64 `tfsdk:"to" json:"to,optional"`
 }
 
 type RulesetRulesActionParametersServeStaleModel struct {
