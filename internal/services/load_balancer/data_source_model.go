@@ -5,10 +5,9 @@ package load_balancer
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -24,12 +23,12 @@ type LoadBalancerResultListDataSourceEnvelope struct {
 type LoadBalancerDataSourceModel struct {
 	LoadBalancerID            types.String                                                                   `tfsdk:"load_balancer_id" path:"load_balancer_id,optional"`
 	ZoneID                    types.String                                                                   `tfsdk:"zone_id" path:"zone_id,optional"`
-	CreatedOn                 timetypes.RFC3339                                                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CreatedOn                 types.String                                                                   `tfsdk:"created_on" json:"created_on,computed"`
 	Description               types.String                                                                   `tfsdk:"description" json:"description,computed"`
 	Enabled                   types.Bool                                                                     `tfsdk:"enabled" json:"enabled,computed"`
 	FallbackPool              types.String                                                                   `tfsdk:"fallback_pool" json:"fallback_pool,computed"`
 	ID                        types.String                                                                   `tfsdk:"id" json:"id,computed"`
-	ModifiedOn                timetypes.RFC3339                                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ModifiedOn                types.String                                                                   `tfsdk:"modified_on" json:"modified_on,computed"`
 	Name                      types.String                                                                   `tfsdk:"name" json:"name,computed"`
 	Proxied                   types.Bool                                                                     `tfsdk:"proxied" json:"proxied,computed"`
 	SessionAffinity           types.String                                                                   `tfsdk:"session_affinity" json:"session_affinity,computed"`

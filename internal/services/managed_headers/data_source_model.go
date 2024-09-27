@@ -5,8 +5,8 @@ package managed_headers
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/managed_headers"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/managed_transforms"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,8 +17,8 @@ type ManagedHeadersDataSourceModel struct {
 	ManagedResponseHeaders *[]*ManagedHeadersManagedResponseHeadersDataSourceModel `tfsdk:"managed_response_headers" json:"managed_response_headers,optional"`
 }
 
-func (m *ManagedHeadersDataSourceModel) toReadParams(_ context.Context) (params managed_headers.ManagedHeaderListParams, diags diag.Diagnostics) {
-	params = managed_headers.ManagedHeaderListParams{
+func (m *ManagedHeadersDataSourceModel) toReadParams(_ context.Context) (params managed_transforms.ManagedTransformListParams, diags diag.Diagnostics) {
+	params = managed_transforms.ManagedTransformListParams{
 		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 

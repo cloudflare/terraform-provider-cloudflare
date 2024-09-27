@@ -5,10 +5,9 @@ package load_balancer_monitor
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -36,7 +35,7 @@ type LoadBalancerMonitorsResultDataSourceModel struct {
 	AllowInsecure   types.Bool                                      `tfsdk:"allow_insecure" json:"allow_insecure,computed"`
 	ConsecutiveDown types.Int64                                     `tfsdk:"consecutive_down" json:"consecutive_down,computed"`
 	ConsecutiveUp   types.Int64                                     `tfsdk:"consecutive_up" json:"consecutive_up,computed"`
-	CreatedOn       timetypes.RFC3339                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	CreatedOn       types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
 	Description     types.String                                    `tfsdk:"description" json:"description,computed"`
 	ExpectedBody    types.String                                    `tfsdk:"expected_body" json:"expected_body,computed"`
 	ExpectedCodes   types.String                                    `tfsdk:"expected_codes" json:"expected_codes,computed"`
@@ -44,7 +43,7 @@ type LoadBalancerMonitorsResultDataSourceModel struct {
 	Header          customfield.Map[customfield.List[types.String]] `tfsdk:"header" json:"header,computed"`
 	Interval        types.Int64                                     `tfsdk:"interval" json:"interval,computed"`
 	Method          types.String                                    `tfsdk:"method" json:"method,computed"`
-	ModifiedOn      timetypes.RFC3339                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	ModifiedOn      types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
 	Path            types.String                                    `tfsdk:"path" json:"path,computed"`
 	Port            types.Int64                                     `tfsdk:"port" json:"port,computed"`
 	ProbeZone       types.String                                    `tfsdk:"probe_zone" json:"probe_zone,computed"`
