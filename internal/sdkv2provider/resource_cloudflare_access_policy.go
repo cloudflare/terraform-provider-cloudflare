@@ -211,7 +211,7 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 	}
 
 	connectionRulesSchema, ok := d.Get("connection_rules").([]interface{})
-	if ok {
+	if ok && len(connectionRulesSchema) > 0 {
 		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema[0].(map[string]interface{}))
 		if err != nil {
 			return diag.FromErr(err)
