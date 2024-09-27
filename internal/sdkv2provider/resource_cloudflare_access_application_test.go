@@ -1435,9 +1435,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
     protocol = "SSH"
     target_attributes {
       name = "hostname"
-      values { 
-        value = "tfgo-acc-test"
-      }
+      values = ["tfgo-acc-test"]
     }
   }
 }

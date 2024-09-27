@@ -121,14 +121,8 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 									Type:        schema.TypeList,
 									Required:    true,
 									Description: "Contains the Unix usernames that may be used when connecting over SSH.",
-									Elem: &schema.Resource{
-										Schema: map[string]*schema.Schema{
-											"value": {
-												Type:        schema.TypeString,
-												Required:    true,
-												Description: "The string value of username.",
-											},
-										},
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
 									},
 								},
 							},

@@ -71,8 +71,7 @@ func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface
 			str_return := []string{}
 			if usernamesMap, ok := sshMap["usernames"].([]interface{}); ok {
 				for _, username := range usernamesMap {
-					valueMap := username.(map[string]interface{})
-					str_return = append(str_return, valueMap["value"].(string))
+					str_return = append(str_return, username.(string))
 				}
 			}
 			usernames = str_return
@@ -94,17 +93,10 @@ func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.InfraCon
 	var connectionRulesSchema []interface{}
 	var usernameList []map[string]interface{}
 
-	var valueList []map[string]interface{}
-	for _, value := range connectionRules.SSH.Usernames {
-		valueList = append(valueList, map[string]interface{}{
-			"value": value,
-		})
-		usernameMap := map[string]interface{}{
-			"usernames": valueList,
-		}
-		usernameList = append(usernameList, usernameMap)
+	usernameMap := map[string]interface{}{
+		"usernames": connectionRules.SSH.Usernames,
 	}
-
+	usernameList = append(usernameList, usernameMap)
 	connectionRulesSchema = append(connectionRulesSchema, map[string]interface{}{
 		"ssh": usernameList,
 	})

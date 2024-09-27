@@ -1010,9 +1010,7 @@ func testAccessPolicyConnectionRulesConfig(resourceID, zone, accountID string) s
 		protocol = "SSH"
 		target_attributes {
 		  name = "hostname"
-		  values { 
-			  value = "tfgo-acc-test"
-		  }
+		  values = ["tfgo-acc-test"]
 		}
 	  }
     }
@@ -1025,9 +1023,7 @@ func testAccessPolicyConnectionRulesConfig(resourceID, zone, accountID string) s
       precedence     = "1"
 	  connection_rules {
 		ssh {
-		  usernames {
-		  	value = "tfgo-acc-test"
-		  }
+		  usernames = ["tfgo-acc-test"]
 		}
       }
       include {
