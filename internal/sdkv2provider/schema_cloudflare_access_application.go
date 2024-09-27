@@ -44,6 +44,15 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Computed:    true,
 			Description: "The primary hostname and path that Access will secure. If the app is visible in the App Launcher dashboard, this is the domain that will be displayed.",
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				appType := d.Get("type").(string)
+				// Suppress the diff if it's an app type that doesn't need a `domain` value.
+				if appType == "infrastructure" {
+					return true
+				}
+
+				return oldValue == newValue
+			},
 		},
 		"self_hosted_domains": {
 			Type:     schema.TypeSet,
@@ -76,9 +85,8 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Default:  "24h",
 			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
 				appType := d.Get("type").(string)
-				// Suppress the diff if it's a bookmark app type. Bookmarks don't have a session duration
-				// field which always creates a diff because of the default '24h' value.
-				if appType == "bookmark" {
+				// Suppress the diff if it's an app type that doesn't need a `session_duration` value.
+				if appType == "bookmark" || appType == "infrastructure" {
 					return true
 				}
 
@@ -508,6 +516,16 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Default:     true,
 			Description: "Option to show/hide applications in App Launcher.",
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				appType := d.Get("type").(string)
+				// Suppress the diff if it's an app type that doesn't need a `app_launcher_visible`
+				// value.
+				if appType == "infrastructure" {
+					return true
+				}
+
+				return oldValue == newValue
+			},
 		},
 		"service_auth_401_redirect": {
 			Type:        schema.TypeBool,
