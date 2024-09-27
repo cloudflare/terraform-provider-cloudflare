@@ -10,6 +10,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/access_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_member"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_role"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/account_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/address_map"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/api_shield"
@@ -30,6 +31,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/custom_ssl"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/d1_database"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dcv_delegation"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_record"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/dns_zone_dnssec"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_routing_address"
@@ -48,6 +50,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_monitor"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/load_balancer_pool"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpull_retention"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_field"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_dataset_job"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_job"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/logpush_ownership_challenge"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_gre_tunnel"
@@ -62,13 +66,30 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/permission_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/resource_group"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/ruleset"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_acl"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_incoming"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_outgoing"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_peer"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_tsig"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_caption_language"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_download"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_key"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_live_input"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_watermark"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_webhook"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
@@ -83,6 +104,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/web_analytics_site"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_cron_trigger"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_custom_domain"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_deployment"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_for_platforms_dispatch_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
@@ -247,6 +269,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		custom_hostname.NewResource,
 		custom_hostname_fallback_origin.NewResource,
 		dns_record.NewResource,
+		dns_firewall.NewResource,
 		dns_zone_dnssec.NewResource,
 		email_routing_settings.NewResource,
 		email_routing_rule.NewResource,
@@ -266,6 +289,11 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		authenticated_origin_pulls.NewResource,
 		page_rule.NewResource,
 		rate_limit.NewResource,
+		secondary_dns_incoming.NewResource,
+		secondary_dns_outgoing.NewResource,
+		secondary_dns_acl.NewResource,
+		secondary_dns_peer.NewResource,
+		secondary_dns_tsig.NewResource,
 		waiting_room.NewResource,
 		waiting_room_event.NewResource,
 		waiting_room_rules.NewResource,
@@ -273,10 +301,12 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		web3_hostname.NewResource,
 		workers_script.NewResource,
 		workers_cron_trigger.NewResource,
+		workers_deployment.NewResource,
 		workers_custom_domain.NewResource,
 		workers_kv_namespace.NewResource,
 		workers_kv.NewResource,
 		queue.NewResource,
+		queue_consumer.NewResource,
 		api_shield.NewResource,
 		api_shield_operation.NewResource,
 		api_shield_operation_schema_validation_settings.NewResource,
@@ -295,8 +325,17 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		mtls_certificate.NewResource,
 		pages_project.NewResource,
 		pages_domain.NewResource,
+		registrar_domain.NewResource,
 		list.NewResource,
 		list_item.NewResource,
+		stream.NewResource,
+		stream_audio_track.NewResource,
+		stream_key.NewResource,
+		stream_live_input.NewResource,
+		stream_watermark.NewResource,
+		stream_webhook.NewResource,
+		stream_caption_language.NewResource,
+		stream_download.NewResource,
 		notification_policy_webhooks.NewResource,
 		notification_policy.NewResource,
 		d1_database.NewResource,
@@ -349,6 +388,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		account.NewAccountsDataSource,
 		account_member.NewAccountMemberDataSource,
 		account_member.NewAccountMembersDataSource,
+		account_role.NewAccountRoleDataSource,
+		account_role.NewAccountRolesDataSource,
 		account_subscription.NewAccountSubscriptionDataSource,
 		origin_ca_certificate.NewOriginCACertificateDataSource,
 		origin_ca_certificate.NewOriginCACertificatesDataSource,
@@ -381,6 +422,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		custom_hostname_fallback_origin.NewCustomHostnameFallbackOriginDataSource,
 		dns_record.NewDNSRecordDataSource,
 		dns_record.NewDNSRecordsDataSource,
+		dns_firewall.NewDNSFirewallDataSource,
+		dns_firewall.NewDNSFirewallsDataSource,
 		dns_zone_dnssec.NewDNSZoneDNSSECDataSource,
 		email_routing_settings.NewEmailRoutingSettingsDataSource,
 		email_routing_rule.NewEmailRoutingRuleDataSource,
@@ -402,6 +445,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		healthcheck.NewHealthchecksDataSource,
 		keyless_certificate.NewKeylessCertificateDataSource,
 		keyless_certificate.NewKeylessCertificatesDataSource,
+		logpush_dataset_field.NewLogpushDatasetFieldDataSource,
+		logpush_dataset_job.NewLogpushDatasetJobDataSource,
 		logpush_job.NewLogpushJobDataSource,
 		logpush_job.NewLogpushJobsDataSource,
 		logpull_retention.NewLogpullRetentionDataSource,
@@ -411,6 +456,14 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		page_rule.NewPageRuleDataSource,
 		rate_limit.NewRateLimitDataSource,
 		rate_limit.NewRateLimitsDataSource,
+		secondary_dns_incoming.NewSecondaryDNSIncomingDataSource,
+		secondary_dns_outgoing.NewSecondaryDNSOutgoingDataSource,
+		secondary_dns_acl.NewSecondaryDNSACLDataSource,
+		secondary_dns_acl.NewSecondaryDNSACLsDataSource,
+		secondary_dns_peer.NewSecondaryDNSPeerDataSource,
+		secondary_dns_peer.NewSecondaryDNSPeersDataSource,
+		secondary_dns_tsig.NewSecondaryDNSTSIGDataSource,
+		secondary_dns_tsig.NewSecondaryDNSTSIGsDataSource,
 		waiting_room.NewWaitingRoomDataSource,
 		waiting_room.NewWaitingRoomsDataSource,
 		waiting_room_event.NewWaitingRoomEventDataSource,
@@ -422,6 +475,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workers_script.NewWorkersScriptDataSource,
 		workers_script.NewWorkersScriptsDataSource,
 		workers_cron_trigger.NewWorkersCronTriggerDataSource,
+		workers_deployment.NewWorkersDeploymentDataSource,
 		workers_custom_domain.NewWorkersCustomDomainDataSource,
 		workers_custom_domain.NewWorkersCustomDomainsDataSource,
 		workers_kv_namespace.NewWorkersKVNamespaceDataSource,
@@ -429,6 +483,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		workers_kv.NewWorkersKVDataSource,
 		queue.NewQueueDataSource,
 		queue.NewQueuesDataSource,
+		queue_consumer.NewQueueConsumerDataSource,
 		api_shield.NewAPIShieldDataSource,
 		api_shield_operation.NewAPIShieldOperationDataSource,
 		api_shield_operation.NewAPIShieldOperationsDataSource,
@@ -456,10 +511,22 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		pages_project.NewPagesProjectsDataSource,
 		pages_domain.NewPagesDomainDataSource,
 		pages_domain.NewPagesDomainsDataSource,
+		registrar_domain.NewRegistrarDomainDataSource,
+		registrar_domain.NewRegistrarDomainsDataSource,
 		list.NewListDataSource,
 		list.NewListsDataSource,
 		list_item.NewListItemDataSource,
 		list_item.NewListItemsDataSource,
+		stream.NewStreamDataSource,
+		stream.NewStreamsDataSource,
+		stream_audio_track.NewStreamAudioTrackDataSource,
+		stream_key.NewStreamKeyDataSource,
+		stream_live_input.NewStreamLiveInputDataSource,
+		stream_watermark.NewStreamWatermarkDataSource,
+		stream_watermark.NewStreamWatermarksDataSource,
+		stream_webhook.NewStreamWebhookDataSource,
+		stream_caption_language.NewStreamCaptionLanguageDataSource,
+		stream_download.NewStreamDownloadDataSource,
 		notification_policy_webhooks.NewNotificationPolicyWebhooksDataSource,
 		notification_policy_webhooks.NewNotificationPolicyWebhooksListDataSource,
 		notification_policy.NewNotificationPolicyDataSource,
@@ -532,6 +599,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
+		permission_group.NewPermissionGroupDataSource,
+		permission_group.NewPermissionGroupsDataSource,
+		resource_group.NewResourceGroupDataSource,
+		resource_group.NewResourceGroupsDataSource,
 	}
 }
 
