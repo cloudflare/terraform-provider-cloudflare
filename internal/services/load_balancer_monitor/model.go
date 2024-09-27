@@ -4,6 +4,7 @@ package load_balancer_monitor
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -30,6 +31,6 @@ type LoadBalancerMonitorModel struct {
 	Timeout         types.Int64                                     `tfsdk:"timeout" json:"timeout,computed_optional"`
 	Type            types.String                                    `tfsdk:"type" json:"type,computed_optional"`
 	Header          customfield.Map[customfield.List[types.String]] `tfsdk:"header" json:"header,computed_optional"`
-	CreatedOn       types.String                                    `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn      types.String                                    `tfsdk:"modified_on" json:"modified_on,computed"`
+	CreatedOn       timetypes.RFC3339                               `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	ModifiedOn      timetypes.RFC3339                               `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 }

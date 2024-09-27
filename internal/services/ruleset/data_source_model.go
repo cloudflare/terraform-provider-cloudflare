@@ -5,8 +5,8 @@ package ruleset
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/rulesets"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -93,7 +93,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	StatusCode               types.Float64                                                                           `tfsdk:"status_code" json:"status_code,computed"`
 	AutomaticHTTPSRewrites   types.Bool                                                                              `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,computed"`
 	Autominify               customfield.NestedObject[RulesetRulesActionParametersAutominifyDataSourceModel]         `tfsdk:"autominify" json:"autominify,computed"`
-	BIC                      types.Bool                                                                              `tfsdk:"bic" json:"bic,computed"`
+	Bic                      types.Bool                                                                              `tfsdk:"bic" json:"bic,computed"`
 	DisableApps              types.Bool                                                                              `tfsdk:"disable_apps" json:"disable_apps,computed"`
 	DisableRUM               types.Bool                                                                              `tfsdk:"disable_rum" json:"disable_rum,computed"`
 	DisableZaraz             types.Bool                                                                              `tfsdk:"disable_zaraz" json:"disable_zaraz,computed"`
@@ -107,7 +107,7 @@ type RulesetRulesActionParametersDataSourceModel struct {
 	SecurityLevel            types.String                                                                            `tfsdk:"security_level" json:"security_level,computed"`
 	ServerSideExcludes       types.Bool                                                                              `tfsdk:"server_side_excludes" json:"server_side_excludes,computed"`
 	SSL                      types.String                                                                            `tfsdk:"ssl" json:"ssl,computed"`
-	SXG                      types.Bool                                                                              `tfsdk:"sxg" json:"sxg,computed"`
+	Sxg                      types.Bool                                                                              `tfsdk:"sxg" json:"sxg,computed"`
 	Phases                   customfield.List[types.String]                                                          `tfsdk:"phases" json:"phases,computed"`
 	Products                 customfield.List[types.String]                                                          `tfsdk:"products" json:"products,computed"`
 	Rules                    customfield.Map[customfield.List[types.String]]                                         `tfsdk:"rules" json:"rules,computed"`
@@ -213,7 +213,7 @@ type RulesetRulesActionParametersSNIDataSourceModel struct {
 }
 
 type RulesetRulesActionParametersAutominifyDataSourceModel struct {
-	CSS  types.Bool `tfsdk:"css" json:"css,computed"`
+	Css  types.Bool `tfsdk:"css" json:"css,computed"`
 	HTML types.Bool `tfsdk:"html" json:"html,computed"`
 	JS   types.Bool `tfsdk:"js" json:"js,computed"`
 }
