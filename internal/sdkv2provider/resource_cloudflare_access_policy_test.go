@@ -990,7 +990,7 @@ func TestAccCloudflareAccessPolicy_ConnectionRules(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "connection_rules.ssh.usernames.0", "tfgo-acc-test"),
+					resource.TestCheckResourceAttr(name, "connection_rules.0.ssh.0.usernames.0", "tfgo-acc-test"),
 					resource.TestCheckResourceAttr(name, "include.0.email.0", "devuser@cloudflare.com"),
 				),
 			},
