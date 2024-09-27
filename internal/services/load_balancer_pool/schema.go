@@ -275,7 +275,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"created_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"disabled_at": schema.StringAttribute{
 				Description: "This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.",
@@ -283,7 +284,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified_on": schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: timetypes.RFC3339Type{},
 			},
 			"networks": schema.ListAttribute{
 				Description: "List of networks where Load Balancer or Pool is enabled.",

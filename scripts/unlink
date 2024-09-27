@@ -5,4 +5,4 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Unlinking with local directory"
-go mod edit -dropreplace github.com/cloudflare/cloudflare-go/v3
+go mod edit -dropreplace github.com/cloudflare/cloudflare-go/v2

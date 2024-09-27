@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -66,7 +66,7 @@ func (d *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 
 		res := new(http.Response)
 		env := TurnstileWidgetResultDataSourceEnvelope{*data}
-		_, err := d.client.Turnstile.Widgets.Get(
+		_, err := d.client.Challenges.Widgets.Get(
 			ctx,
 			data.Sitekey.ValueString(),
 			params,
@@ -92,7 +92,7 @@ func (d *TurnstileWidgetDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 
 		env := TurnstileWidgetResultListDataSourceEnvelope{}
-		page, err := d.client.Turnstile.Widgets.List(ctx, params)
+		page, err := d.client.Challenges.Widgets.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

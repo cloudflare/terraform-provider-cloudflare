@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -64,7 +64,7 @@ func (d *ManagedHeadersDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	res := new(http.Response)
-	_, err := d.client.ManagedTransforms.List(
+	_, err := d.client.ManagedHeaders.List(
 		ctx,
 		params,
 		option.WithResponseBodyInto(&res),
