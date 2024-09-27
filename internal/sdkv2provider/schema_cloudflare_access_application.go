@@ -1033,8 +1033,8 @@ func convertTargetContextsToStruct(d *schema.ResourceData) (*[]cloudflare.Access
 
 			TargetContexts = append(TargetContexts, targetContext)
 		}
-
 	}
+
 	return &TargetContexts, nil
 }
 
