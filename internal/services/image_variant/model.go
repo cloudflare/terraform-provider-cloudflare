@@ -1,0 +1,40 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package image_variant
+
+import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+type ImageVariantResultEnvelope struct {
+	Result ImageVariantModel `json:"result"`
+}
+
+type ImageVariantModel struct {
+	ID                     types.String                                       `tfsdk:"id" json:"id,required"`
+	AccountID              types.String                                       `tfsdk:"account_id" path:"account_id,required"`
+	Options                *ImageVariantOptionsModel                          `tfsdk:"options" json:"options,required"`
+	NeverRequireSignedURLs types.Bool                                         `tfsdk:"never_require_signed_urls" json:"neverRequireSignedURLs,computed_optional"`
+	Variant                customfield.NestedObject[ImageVariantVariantModel] `tfsdk:"variant" json:"variant,computed"`
+}
+
+type ImageVariantOptionsModel struct {
+	Fit      types.String  `tfsdk:"fit" json:"fit,required"`
+	Height   types.Float64 `tfsdk:"height" json:"height,required"`
+	Metadata types.String  `tfsdk:"metadata" json:"metadata,required"`
+	Width    types.Float64 `tfsdk:"width" json:"width,required"`
+}
+
+type ImageVariantVariantModel struct {
+	ID                     types.String                                              `tfsdk:"id" json:"id,computed"`
+	Options                customfield.NestedObject[ImageVariantVariantOptionsModel] `tfsdk:"options" json:"options,computed"`
+	NeverRequireSignedURLs types.Bool                                                `tfsdk:"never_require_signed_urls" json:"neverRequireSignedURLs,computed"`
+}
+
+type ImageVariantVariantOptionsModel struct {
+	Fit      types.String  `tfsdk:"fit" json:"fit,computed"`
+	Height   types.Float64 `tfsdk:"height" json:"height,computed"`
+	Metadata types.String  `tfsdk:"metadata" json:"metadata,computed"`
+	Width    types.Float64 `tfsdk:"width" json:"width,computed"`
+}
