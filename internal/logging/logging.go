@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v3/option"
@@ -26,13 +27,16 @@ func Middleware(ctx context.Context) option.Middleware {
 }
 
 func LogRequest(ctx context.Context, req *http.Request) error {
-	lines := []string{"\n== Request ==", fmt.Sprintf("url: %s %s", req.Method, req.URL.Path)}
+	sensitiveHeaderNames := []string{"x-auth-email", "x-auth-key", "x-auth-user-service-key", "authorization"}
+	lines := []string{fmt.Sprintf("\n%s %s %s", req.Method, req.URL.Path, req.Proto)}
 
 	// Log headers
-	lines = append(lines, "== Headers ==")
 	for name, values := range req.Header {
 		for _, value := range values {
-			lines = append(lines, fmt.Sprintf("- %s: %s", name, value))
+			if slices.Contains(sensitiveHeaderNames, strings.ToLower(name)) {
+				value = "[redacted]"
+			}
+			lines = append(lines, fmt.Sprintf("> %s: %s", strings.ToLower(name), value))
 		}
 	}
 
@@ -47,23 +51,22 @@ func LogRequest(ctx context.Context, req *http.Request) error {
 		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		// Log the body
-		lines = append(lines, fmt.Sprintf("\n== Body ==\n%s\n", string(bodyBytes)))
+		lines = append(lines, ">\n", string(bodyBytes), "\n")
 	}
 
-	tflog.Warn(ctx, strings.Join(lines, "\n"))
+	tflog.Debug(ctx, strings.Join(lines, "\n"))
 
 	return nil
 }
 
 func LogResponse(ctx context.Context, resp *http.Response) error {
 	// Log the status code
-	lines := []string{"\n== Response ==", fmt.Sprintf("status: %s", resp.Status)}
+	lines := []string{fmt.Sprintf("\n< %s %s", resp.Proto, resp.Status)}
 
 	// Log headers
-	lines = append(lines, "== Headers ==")
 	for name, values := range resp.Header {
 		for _, value := range values {
-			lines = append(lines, fmt.Sprintf("- %s: %s", name, value))
+			lines = append(lines, fmt.Sprintf("< %s: %s", strings.ToLower(name), value))
 		}
 	}
 
@@ -76,10 +79,10 @@ func LogResponse(ctx context.Context, resp *http.Response) error {
 	// Restore the original body to the response so it can be read again
 	resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-	lines = append(lines, fmt.Sprintf("\n== Body ==\n%s\n", string(bodyBytes)))
+	lines = append(lines, "<\n", string(bodyBytes), "\n")
 
 	// Log the body
-	tflog.Warn(ctx, strings.Join(lines, "\n"))
+	tflog.Debug(ctx, strings.Join(lines, "\n"))
 
 	return nil
 }
