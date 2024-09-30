@@ -107,7 +107,7 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			Optional:    true,
 			MaxItems:    1,
-			Description: "The rules that define how users may connect to the targets secured by your application.",
+			Description: "The rules that define how users may connect to the targets secured by your application. Only applicable to Infrastructure Applications, in which case this field is required.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"ssh": {
