@@ -11,7 +11,7 @@ resource "cloudflare_load_balancer_monitor" "%[1]s" {
   port = 8080
   description = "this is a very weird load balancer"
   header ={
-    header = "Host"
+    header = ["Host"]
     values = ["%[2]s"]
   }
 }
