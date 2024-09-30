@@ -416,7 +416,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 		"target_criteria": {
 			Type:        schema.TypeList,
 			Optional:    true,
-			Description: "A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned.",
+			Description: "The payload for an infrastructure application which defines the port, protocol, and target attributes.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"port": {

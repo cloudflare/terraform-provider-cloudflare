@@ -1,0 +1,7 @@
+```release-note:enhancement
+data_source/cloudflare_infrastructure_access_target: updated data source parameter descriptions
+```
+
+```release-note:enhancement
+resource/cloudflare_access_application: updated target_criteria description
+```

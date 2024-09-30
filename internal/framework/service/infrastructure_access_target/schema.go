@@ -98,23 +98,23 @@ func (d *InfrastructureAccessTargetDataSource) Schema(ctx context.Context, req d
 			},
 			"hostname": dschema.StringAttribute{
 				Optional:    true,
-				Description: "The name of the app type.",
+				Description: "The hostname of the target.",
 			},
 			"hostname_contains": dschema.StringAttribute{
 				Optional:    true,
-				Description: "The name of the app type.",
+				Description: "Partial match to the hostname of a target",
 			},
 			"ipv4": dschema.StringAttribute{
 				Optional:    true,
-				Description: "The name of the app type.",
+				Description: "The target's IPv4 address.",
 			},
 			"ipv6": dschema.StringAttribute{
 				Optional:    true,
-				Description: "The name of the app type.",
+				Description: "The target's IPv6 address.",
 			},
 			"virtual_network_id": dschema.StringAttribute{
 				Optional:    true,
-				Description: "The name of the app type.",
+				Description: "The private virtual network identifier for the target.",
 			},
 			"created_after": dschema.StringAttribute{
 				Optional:    true,
