@@ -43,13 +43,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"deprecate_any_requests": schema.BoolAttribute{
 				Description: "Whether to refuse to answer queries for the ANY type",
-				Computed:    true,
 				Optional:    true,
 			},
 			"ecs_fallback": schema.BoolAttribute{
 				Description: "Whether to forward client IP (resolver) subnet if no EDNS Client Subnet is sent",
-				Computed:    true,
 				Optional:    true,
+			},
+			"negative_cache_ttl": schema.Float64Attribute{
+				Description: "Negative DNS cache TTL This setting controls how long DNS Firewall should cache negative responses (e.g., NXDOMAIN) from the upstream servers.",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(30, 36000),
+				},
+			},
+			"ratelimit": schema.Float64Attribute{
+				Description: "Ratelimit in queries per second per datacenter (applies to DNS queries sent to the upstream nameservers configured on the cluster)",
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(100, 1000000000),
+				},
 			},
 			"maximum_cache_ttl": schema.Float64Attribute{
 				Description: "Maximum DNS cache TTL This setting sets an upper bound on DNS TTLs for purposes of caching between DNS Firewall and the upstream servers. Higher TTLs will be decreased to the maximum defined here for caching purposes.",
@@ -69,22 +81,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: float64default.StaticFloat64(60),
 			},
-			"negative_cache_ttl": schema.Float64Attribute{
-				Description: "Negative DNS cache TTL This setting controls how long DNS Firewall should cache negative responses (e.g., NXDOMAIN) from the upstream servers.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(30, 36000),
-				},
-			},
-			"ratelimit": schema.Float64Attribute{
-				Description: "Ratelimit in queries per second per datacenter (applies to DNS queries sent to the upstream nameservers configured on the cluster)",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(100, 1000000000),
-				},
-			},
 			"retries": schema.Float64Attribute{
 				Description: "Number of retries for fetching DNS responses from upstream nameservers (not counting the initial attempt)",
 				Computed:    true,
@@ -102,7 +98,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "When enabled, automatically mitigate random-prefix attacks to protect upstream DNS servers",
-						Computed:    true,
 						Optional:    true,
 					},
 					"only_when_upstream_unhealthy": schema.BoolAttribute{

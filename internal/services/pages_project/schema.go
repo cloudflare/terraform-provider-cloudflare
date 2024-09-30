@@ -39,7 +39,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"production_branch": schema.StringAttribute{
 				Description: "Production branch of the project. Used to identify production deployments.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"build_config": schema.SingleNestedAttribute{
@@ -50,32 +49,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"build_caching": schema.BoolAttribute{
 						Description: "Enable build caching for the project.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"build_command": schema.StringAttribute{
 						Description: "Command used to build project.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"destination_dir": schema.StringAttribute{
 						Description: "Output directory of the build.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"root_dir": schema.StringAttribute{
 						Description: "Directory to run the command.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"web_analytics_tag": schema.StringAttribute{
 						Description: "The classifying tag for analytics.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"web_analytics_token": schema.StringAttribute{
 						Description: "The auth token for analytics.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -100,7 +93,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"project_id": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},
@@ -115,7 +107,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"dataset": schema.StringAttribute{
 											Description: "Name of the dataset.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -123,21 +114,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"d1_databases": schema.MapNestedAttribute{
@@ -149,7 +135,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
 											Description: "UUID of the D1 database.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -164,7 +149,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
 											Description: "ID of the Durabble Object namespace.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -183,7 +167,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"type": schema.StringAttribute{
 											Description: "The type of environment variable.",
-											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -200,7 +183,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},
@@ -215,7 +197,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
 											Description: "ID of the KV namespace.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -229,7 +210,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"certificate_id": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},
@@ -243,7 +223,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"mode": schema.StringAttribute{
 										Description: "Placement mode.",
-										Computed:    true,
 										Optional:    true,
 									},
 								},
@@ -257,7 +236,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"name": schema.StringAttribute{
 											Description: "Name of the Queue.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -272,12 +250,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"jurisdiction": schema.StringAttribute{
 											Description: "Jurisdiction of the R2 bucket.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"name": schema.StringAttribute{
 											Description: "Name of the R2 bucket.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -292,17 +268,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"entrypoint": schema.StringAttribute{
 											Description: "The entrypoint to bind to.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"environment": schema.StringAttribute{
 											Description: "The Service environment.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"service": schema.StringAttribute{
 											Description: "The Service name.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -316,7 +289,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"index_name": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},
@@ -338,7 +310,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"project_id": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},
@@ -353,7 +324,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"dataset": schema.StringAttribute{
 											Description: "Name of the dataset.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -361,21 +331,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"browsers": schema.MapAttribute{
 								Description: "Browser bindings used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewMapType[jsontypes.Normalized](ctx),
 								ElementType: jsontypes.NormalizedType{},
 							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"compatibility_flags": schema.ListAttribute{
 								Description: "Compatibility flags used for Pages Functions.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"d1_databases": schema.MapNestedAttribute{
@@ -387,7 +352,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
 											Description: "UUID of the D1 database.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -402,7 +366,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
 											Description: "ID of the Durabble Object namespace.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -421,7 +384,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"type": schema.StringAttribute{
 											Description: "The type of environment variable.",
-											Computed:    true,
 											Optional:    true,
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("plain_text", "secret_text"),
@@ -438,7 +400,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"id": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},
@@ -453,7 +414,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"namespace_id": schema.StringAttribute{
 											Description: "ID of the KV namespace.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -467,7 +427,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"certificate_id": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},
@@ -481,7 +440,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"mode": schema.StringAttribute{
 										Description: "Placement mode.",
-										Computed:    true,
 										Optional:    true,
 									},
 								},
@@ -495,7 +453,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"name": schema.StringAttribute{
 											Description: "Name of the Queue.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -510,12 +467,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"jurisdiction": schema.StringAttribute{
 											Description: "Jurisdiction of the R2 bucket.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"name": schema.StringAttribute{
 											Description: "Name of the R2 bucket.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -530,17 +485,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"entrypoint": schema.StringAttribute{
 											Description: "The entrypoint to bind to.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"environment": schema.StringAttribute{
 											Description: "The Service environment.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"service": schema.StringAttribute{
 											Description: "The Service name.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
@@ -554,7 +506,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
 										"index_name": schema.StringAttribute{
-											Computed: true,
 											Optional: true,
 										},
 									},

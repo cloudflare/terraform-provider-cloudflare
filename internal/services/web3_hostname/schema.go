@@ -43,12 +43,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "An optional description of the hostname.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"dnslink": schema.StringAttribute{
 				Description: "DNSLink value used if the target is ipfs.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"created_on": schema.StringAttribute{

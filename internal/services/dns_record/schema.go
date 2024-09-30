@@ -87,12 +87,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"data": schema.SingleNestedAttribute{
 				Description: "Components of a CAA record.",
+				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Object{
 					objectvalidator.All(
 						objectvalidator.ConflictsWith(path.MatchRoot("content")),
 					),
 				},
+				CustomType: customfield.NewNestedObjectType[DNSRecordDataModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"flags": schema.DynamicAttribute{
 						Description: "Flags for the CAA record.",

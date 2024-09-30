@@ -138,7 +138,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					ElemType: types.ObjectType{
 						AttrTypes: map[string]attr.Type{"id": schema.StringAttribute{
 							Description: "UUID",
-							Computed:    true,
 							Optional:    true,
 						}.GetType()},
 					},

@@ -29,6 +29,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The account name.",
 				Required:    true,
 			},
+			"router_ips": schema.ListAttribute{
+				Optional:    true,
+				ElementType: types.StringType,
+			},
 			"default_sampling": schema.Float64Attribute{
 				Description: "Fallback sampling rate of flow messages being sent in packets per second. This should match the packet sampling rate configured on the router.",
 				Computed:    true,
@@ -37,12 +41,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					float64validator.AtLeast(1),
 				},
 				Default: float64default.StaticFloat64(1),
-			},
-			"router_ips": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 			"warp_devices": schema.ListNestedAttribute{
 				Computed:   true,

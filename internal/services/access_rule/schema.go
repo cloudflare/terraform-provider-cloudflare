@@ -52,7 +52,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
 						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive(
@@ -66,7 +65,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"value": schema.StringAttribute{
 						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

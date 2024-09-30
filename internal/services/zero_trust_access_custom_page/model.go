@@ -18,7 +18,7 @@ type ZeroTrustAccessCustomPageModel struct {
 	CustomHTML types.String      `tfsdk:"custom_html" json:"custom_html,required"`
 	Name       types.String      `tfsdk:"name" json:"name,required"`
 	Type       types.String      `tfsdk:"type" json:"type,required"`
-	AppCount   types.Int64       `tfsdk:"app_count" json:"app_count,computed_optional"`
+	AppCount   types.Int64       `tfsdk:"app_count" json:"app_count,optional"`
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	UpdatedAt  timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }

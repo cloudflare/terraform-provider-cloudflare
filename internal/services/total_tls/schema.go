@@ -35,7 +35,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"certificate_authority": schema.StringAttribute{
 				Description: "The Certificate Authority that Total TLS certificates will be issued through.",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

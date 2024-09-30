@@ -3,7 +3,6 @@
 package email_routing_catch_all
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,14 +15,14 @@ type EmailRoutingCatchAllModel struct {
 	ZoneID   types.String                          `tfsdk:"zone_id" path:"zone_id,required"`
 	Actions  *[]*EmailRoutingCatchAllActionsModel  `tfsdk:"actions" json:"actions,required"`
 	Matchers *[]*EmailRoutingCatchAllMatchersModel `tfsdk:"matchers" json:"matchers,required"`
+	Name     types.String                          `tfsdk:"name" json:"name,optional"`
 	Enabled  types.Bool                            `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Name     types.String                          `tfsdk:"name" json:"name,computed_optional"`
 	Tag      types.String                          `tfsdk:"tag" json:"tag,computed"`
 }
 
 type EmailRoutingCatchAllActionsModel struct {
-	Type  types.String                   `tfsdk:"type" json:"type,required"`
-	Value customfield.List[types.String] `tfsdk:"value" json:"value,computed_optional"`
+	Type  types.String    `tfsdk:"type" json:"type,required"`
+	Value *[]types.String `tfsdk:"value" json:"value,optional"`
 }
 
 type EmailRoutingCatchAllMatchersModel struct {

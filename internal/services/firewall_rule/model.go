@@ -13,8 +13,8 @@ type FirewallRuleResultEnvelope struct {
 
 type FirewallRuleModel struct {
 	ZoneIdentifier types.String                   `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	ID             types.String                   `tfsdk:"id" path:"id,optional"`
 	PathID         types.String                   `tfsdk:"path_id" path:"id,optional"`
-	ID             types.String                   `tfsdk:"id" path:"id,computed_optional"`
 	Action         *FirewallRuleActionModel       `tfsdk:"action" json:"action,required"`
 	Filter         *FirewallRuleFilterModel       `tfsdk:"filter" json:"filter,required"`
 	Description    types.String                   `tfsdk:"description" json:"description,computed"`
@@ -25,20 +25,20 @@ type FirewallRuleModel struct {
 }
 
 type FirewallRuleActionModel struct {
-	Mode     types.String                                              `tfsdk:"mode" json:"mode,computed_optional"`
-	Response customfield.NestedObject[FirewallRuleActionResponseModel] `tfsdk:"response" json:"response,computed_optional"`
-	Timeout  types.Float64                                             `tfsdk:"timeout" json:"timeout,computed_optional"`
+	Mode     types.String                     `tfsdk:"mode" json:"mode,optional"`
+	Response *FirewallRuleActionResponseModel `tfsdk:"response" json:"response,optional"`
+	Timeout  types.Float64                    `tfsdk:"timeout" json:"timeout,optional"`
 }
 
 type FirewallRuleActionResponseModel struct {
-	Body        types.String `tfsdk:"body" json:"body,computed_optional"`
-	ContentType types.String `tfsdk:"content_type" json:"content_type,computed_optional"`
+	Body        types.String `tfsdk:"body" json:"body,optional"`
+	ContentType types.String `tfsdk:"content_type" json:"content_type,optional"`
 }
 
 type FirewallRuleFilterModel struct {
 	ID          types.String `tfsdk:"id" json:"id,computed"`
-	Description types.String `tfsdk:"description" json:"description,computed_optional"`
-	Expression  types.String `tfsdk:"expression" json:"expression,computed_optional"`
-	Paused      types.Bool   `tfsdk:"paused" json:"paused,computed_optional"`
-	Ref         types.String `tfsdk:"ref" json:"ref,computed_optional"`
+	Description types.String `tfsdk:"description" json:"description,optional"`
+	Expression  types.String `tfsdk:"expression" json:"expression,optional"`
+	Paused      types.Bool   `tfsdk:"paused" json:"paused,optional"`
+	Ref         types.String `tfsdk:"ref" json:"ref,optional"`
 }

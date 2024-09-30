@@ -120,39 +120,76 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"app_launcher_visible": schema.BoolAttribute{
+				Description: "Displays the application in the App Launcher.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"auto_redirect_to_identity": schema.BoolAttribute{
+				Description: "When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"enable_binding_cookie": schema.BoolAttribute{
+				Description: "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"http_only_cookie_attribute": schema.BoolAttribute{
+				Description: "Enables the HttpOnly cookie attribute, which increases security against XSS attacks.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"path_cookie_attribute": schema.BoolAttribute{
+				Description: "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"session_duration": schema.StringAttribute{
+				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString("24h"),
+			},
+			"skip_app_launcher_login_page": schema.BoolAttribute{
+				Description: "Determines when to skip the App Launcher landing page.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
 			"cors_headers": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationCORSHeadersModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"allow_all_headers": schema.BoolAttribute{
 						Description: "Allows all HTTP request headers.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"allow_all_methods": schema.BoolAttribute{
 						Description: "Allows all HTTP request methods.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"allow_all_origins": schema.BoolAttribute{
 						Description: "Allows all origins.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"allow_credentials": schema.BoolAttribute{
 						Description: "When set to `true`, includes credentials (cookies, authorization headers, or TLS client certificates) with requests.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"allowed_headers": schema.ListAttribute{
 						Description: "Allowed HTTP request headers.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"allowed_methods": schema.ListAttribute{
 						Description: "Allowed HTTP request methods.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.List{
 							listvalidator.ValueStringsAre(
@@ -169,19 +206,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								),
 							),
 						},
-						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"allowed_origins": schema.ListAttribute{
 						Description: "Allowed origins.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"max_age": schema.Float64Attribute{
 						Description: "The maximum number of seconds the results of a preflight request can be cached.",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.Float64{
 							float64validator.Between(-1, 86400),
@@ -191,7 +224,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"footer_links": schema.ListNestedAttribute{
 				Description: "The links in the App Launcher footer.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationFooterLinksModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
@@ -207,26 +242,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"landing_page_design": schema.SingleNestedAttribute{
 				Description: "The design of the App Launcher landing page shown to users when they log in.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationLandingPageDesignModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"button_color": schema.StringAttribute{
 						Description: "The background color of the log in button on the landing page.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"button_text_color": schema.StringAttribute{
 						Description: "The color of the text in the log in button on the landing page.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"image_url": schema.StringAttribute{
 						Description: "The URL of the image shown on the landing page.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"message": schema.StringAttribute{
 						Description: "The message shown on the landing page.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"title": schema.StringAttribute{
@@ -239,28 +272,29 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"policies": schema.ListNestedAttribute{
 				Description: "The policies that will apply to the application, in ascending order of precedence. Items can reference existing policies or create new policies exclusive to the application.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
 							Description: "The UUID of the policy",
-							Computed:    true,
 							Optional:    true,
 						},
 						"precedence": schema.Int64Attribute{
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
-							Computed:    true,
 							Optional:    true,
 						},
 					},
 				},
 			},
 			"saas_app": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"auth_type": schema.StringAttribute{
 						Description: "Optional identifier indicating the authentication protocol used for the saas app. Required for OIDC. Default if unset is \"saml\"",
-						Computed:    true,
 						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOfCaseInsensitive("saml", "oidc"),
@@ -275,21 +309,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: timetypes.RFC3339Type{},
 					},
 					"custom_attributes": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppCustomAttributesModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"friendly_name": schema.StringAttribute{
 								Description: "The SAML FriendlyName of the attribute.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"name": schema.StringAttribute{
 								Description: "The name of the attribute.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"name_format": schema.StringAttribute{
 								Description: "A globally unique name for an identity or service provider.",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -301,7 +334,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"required": schema.BoolAttribute{
 								Description: "If the attribute is required when building a SAML assertion.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"source": schema.SingleNestedAttribute{
@@ -311,14 +343,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
 										Description: "The name of the IdP attribute.",
-										Computed:    true,
 										Optional:    true,
 									},
 									"name_by_idp": schema.MapAttribute{
 										Description: "A mapping from IdP ID to attribute name.",
-										Computed:    true,
 										Optional:    true,
-										CustomType:  customfield.NewMapType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 								},
@@ -346,7 +375,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"public_key": schema.StringAttribute{
 						Description: "The Access public certificate that will be used to verify your identity.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"saml_attribute_transform_jsonata": schema.StringAttribute{
@@ -386,21 +414,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"custom_claims": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppCustomClaimsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"name": schema.StringAttribute{
 								Description: "The name of the claim.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"required": schema.BoolAttribute{
 								Description: "If the claim is required when building an OIDC token.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"scope": schema.StringAttribute{
 								Description: "The scope of the claim.",
-								Computed:    true,
 								Optional:    true,
 								Validators: []validator.String{
 									stringvalidator.OneOfCaseInsensitive(
@@ -418,14 +445,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								Attributes: map[string]schema.Attribute{
 									"name": schema.StringAttribute{
 										Description: "The name of the IdP claim.",
-										Computed:    true,
 										Optional:    true,
 									},
 									"name_by_idp": schema.MapAttribute{
 										Description: "A mapping from IdP ID to claim name.",
-										Computed:    true,
 										Optional:    true,
-										CustomType:  customfield.NewMapType[types.String](ctx),
 										ElementType: types.StringType,
 									},
 								},
@@ -453,16 +477,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Optional:    true,
 					},
 					"hybrid_and_implicit_options": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppHybridAndImplicitOptionsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"return_access_token_from_authorization_endpoint": schema.BoolAttribute{
 								Description: "If an Access Token should be returned from the OIDC Authorization endpoint",
-								Computed:    true,
 								Optional:    true,
 							},
 							"return_id_token_from_authorization_endpoint": schema.BoolAttribute{
 								Description: "If an ID Token should be returned from the OIDC Authorization endpoint",
-								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -473,11 +497,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						ElementType: types.StringType,
 					},
 					"refresh_token_options": schema.SingleNestedAttribute{
-						Optional: true,
+						Computed:   true,
+						Optional:   true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppRefreshTokenOptionsModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"lifetime": schema.StringAttribute{
 								Description: "How long a refresh token will be valid for after creation. Valid units are m,h,d. Must be longer than 1m.",
-								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -501,7 +526,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"scim_config": schema.SingleNestedAttribute{
 				Description: "Configuration for provisioning to this application via SCIM. This is currently in closed beta.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationSCIMConfigModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"idp_uid": schema.StringAttribute{
 						Description: "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
@@ -565,12 +592,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"deactivate_on_delete": schema.BoolAttribute{
 						Description: "If false, propagates DELETE requests to the target application for SCIM resources. If true, sets 'active' to false on the SCIM resource. Note: Some targets do not support DELETE operations.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"enabled": schema.BoolAttribute{
 						Description: "Whether SCIM provisioning is turned on for this application.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"mappings": schema.ListNestedAttribute{
@@ -586,12 +611,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"enabled": schema.BoolAttribute{
 									Description: "Whether or not this mapping is enabled.",
-									Computed:    true,
 									Optional:    true,
 								},
 								"filter": schema.StringAttribute{
 									Description: "A [SCIM filter expression](https://datatracker.ietf.org/doc/html/rfc7644#section-3.4.2.2) that matches resources that should be provisioned to this application.",
-									Computed:    true,
 									Optional:    true,
 								},
 								"operations": schema.SingleNestedAttribute{
@@ -602,72 +625,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"create": schema.BoolAttribute{
 											Description: "Whether or not this mapping applies to create (POST) operations.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"delete": schema.BoolAttribute{
 											Description: "Whether or not this mapping applies to DELETE operations.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"update": schema.BoolAttribute{
 											Description: "Whether or not this mapping applies to update (PATCH/PUT) operations.",
-											Computed:    true,
 											Optional:    true,
 										},
 									},
 								},
 								"transform_jsonata": schema.StringAttribute{
 									Description: "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
-									Computed:    true,
 									Optional:    true,
 								},
 							},
 						},
 					},
 				},
-			},
-			"app_launcher_visible": schema.BoolAttribute{
-				Description: "Displays the application in the App Launcher.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
-			"auto_redirect_to_identity": schema.BoolAttribute{
-				Description: "When set to `true`, users skip the identity provider selection step during login. You must specify only one identity provider in allowed_idps.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"enable_binding_cookie": schema.BoolAttribute{
-				Description: "Enables the binding cookie, which increases security against compromised authorization tokens and CSRF attacks.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"http_only_cookie_attribute": schema.BoolAttribute{
-				Description: "Enables the HttpOnly cookie attribute, which increases security against XSS attacks.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
-			},
-			"path_cookie_attribute": schema.BoolAttribute{
-				Description: "Enables cookie paths to scope an application's JWT to the application path. If disabled, the JWT will scope to the hostname by default",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"session_duration": schema.StringAttribute{
-				Description: "The amount of time that tokens issued for this application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString("24h"),
-			},
-			"skip_app_launcher_login_page": schema.BoolAttribute{
-				Description: "Determines when to skip the App Launcher landing page.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
 			},
 		},
 	}

@@ -15,11 +15,11 @@ type CloudforceOneRequestResultEnvelope struct {
 type CloudforceOneRequestModel struct {
 	ID                types.String                                                    `tfsdk:"id" json:"id,computed"`
 	AccountIdentifier types.String                                                    `tfsdk:"account_identifier" path:"account_identifier,required"`
+	Content           types.String                                                    `tfsdk:"content" json:"content,optional"`
 	Priority          types.String                                                    `tfsdk:"priority" json:"priority,optional"`
 	RequestType       types.String                                                    `tfsdk:"request_type" json:"request_type,optional"`
-	Content           types.String                                                    `tfsdk:"content" json:"content,computed_optional"`
-	Summary           types.String                                                    `tfsdk:"summary" json:"summary,computed_optional"`
-	Tlp               types.String                                                    `tfsdk:"tlp" json:"tlp,computed_optional"`
+	Summary           types.String                                                    `tfsdk:"summary" json:"summary,optional"`
+	Tlp               types.String                                                    `tfsdk:"tlp" json:"tlp,optional"`
 	Completed         timetypes.RFC3339                                               `tfsdk:"completed" json:"completed,computed" format:"date-time"`
 	Created           timetypes.RFC3339                                               `tfsdk:"created" json:"created,computed" format:"date-time"`
 	MessageTokens     types.Int64                                                     `tfsdk:"message_tokens" json:"message_tokens,computed"`

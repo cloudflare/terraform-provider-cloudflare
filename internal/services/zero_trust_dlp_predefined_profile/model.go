@@ -3,6 +3,7 @@
 package zero_trust_dlp_predefined_profile
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,13 +12,13 @@ type ZeroTrustDLPPredefinedProfileResultEnvelope struct {
 }
 
 type ZeroTrustDLPPredefinedProfileModel struct {
-	ID                types.String                                        `tfsdk:"id" json:"-,computed"`
-	ProfileID         types.String                                        `tfsdk:"profile_id" path:"profile_id,required"`
-	AccountID         types.String                                        `tfsdk:"account_id" path:"account_id,required"`
-	Entries           *[]*ZeroTrustDLPPredefinedProfileEntriesModel       `tfsdk:"entries" json:"entries,required"`
-	AllowedMatchCount types.Int64                                         `tfsdk:"allowed_match_count" json:"allowed_match_count,optional"`
-	OCREnabled        types.Bool                                          `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
-	ContextAwareness  *ZeroTrustDLPPredefinedProfileContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional"`
+	ID                types.String                                                                 `tfsdk:"id" json:"-,computed"`
+	ProfileID         types.String                                                                 `tfsdk:"profile_id" path:"profile_id,required"`
+	AccountID         types.String                                                                 `tfsdk:"account_id" path:"account_id,required"`
+	Entries           *[]*ZeroTrustDLPPredefinedProfileEntriesModel                                `tfsdk:"entries" json:"entries,required"`
+	AllowedMatchCount types.Int64                                                                  `tfsdk:"allowed_match_count" json:"allowed_match_count,optional"`
+	OCREnabled        types.Bool                                                                   `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
+	ContextAwareness  customfield.NestedObject[ZeroTrustDLPPredefinedProfileContextAwarenessModel] `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
 }
 
 type ZeroTrustDLPPredefinedProfileEntriesModel struct {

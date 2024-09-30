@@ -30,7 +30,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ha_mode": schema.BoolAttribute{
 				Description:   "Site high availability mode. If set to true, the site can have two connectors and runs in high availability mode.",
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
@@ -40,16 +39,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"connector_id": schema.StringAttribute{
 				Description: "Magic Connector identifier tag.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"secondary_connector_id": schema.StringAttribute{
 				Description: "Magic Connector identifier tag. Used when high availability mode is on.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"location": schema.SingleNestedAttribute{
@@ -60,12 +56,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"lat": schema.StringAttribute{
 						Description: "Latitude",
-						Computed:    true,
 						Optional:    true,
 					},
 					"lon": schema.StringAttribute{
 						Description: "Longitude",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

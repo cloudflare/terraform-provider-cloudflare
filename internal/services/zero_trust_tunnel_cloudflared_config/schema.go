@@ -104,17 +104,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 										"disable_chunked_encoding": schema.BoolAttribute{
 											Description: "Disables chunked transfer encoding. Useful if you are running a WSGI server.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"http2_origin": schema.BoolAttribute{
 											Description: "Attempt to connect to origin using HTTP2. Origin must be configured as https.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"http_host_header": schema.StringAttribute{
 											Description: "Sets the HTTP Host header on requests sent to the local service.",
-											Computed:    true,
 											Optional:    true,
 										},
 										"keep_alive_connections": schema.Int64Attribute{
@@ -220,17 +217,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"disable_chunked_encoding": schema.BoolAttribute{
 								Description: "Disables chunked transfer encoding. Useful if you are running a WSGI server.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"http2_origin": schema.BoolAttribute{
 								Description: "Attempt to connect to origin using HTTP2. Origin must be configured as https.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"http_host_header": schema.StringAttribute{
 								Description: "Sets the HTTP Host header on requests sent to the local service.",
-								Computed:    true,
 								Optional:    true,
 							},
 							"keep_alive_connections": schema.Int64Attribute{

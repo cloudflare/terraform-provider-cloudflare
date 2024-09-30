@@ -27,7 +27,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"hostname": schema.StringAttribute{
 				Description:   "The hostname on the origin for which the client certificate uploaded will be used.",
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
@@ -37,17 +36,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"cert_id": schema.StringAttribute{
 							Description: "Certificate identifier tag.",
-							Computed:    true,
 							Optional:    true,
 						},
 						"enabled": schema.BoolAttribute{
 							Description: "Indicates whether hostname-level authenticated origin pulls is enabled. A null value voids the association.",
-							Computed:    true,
 							Optional:    true,
 						},
 						"hostname": schema.StringAttribute{
 							Description: "The hostname on the origin for which the client certificate uploaded will be used.",
-							Computed:    true,
 							Optional:    true,
 						},
 					},

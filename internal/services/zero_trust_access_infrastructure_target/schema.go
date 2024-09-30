@@ -5,7 +5,6 @@ package zero_trust_access_infrastructure_target
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -38,36 +37,28 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"ipv4": schema.SingleNestedAttribute{
 						Description: "The target's IPv4 address",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessInfrastructureTargetIPIPV4Model](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ip_addr": schema.StringAttribute{
 								Description: "IP address of the target",
-								Computed:    true,
 								Optional:    true,
 							},
 							"virtual_network_id": schema.StringAttribute{
 								Description: "Private virtual network identifier for the target",
-								Computed:    true,
 								Optional:    true,
 							},
 						},
 					},
 					"ipv6": schema.SingleNestedAttribute{
 						Description: "The target's IPv6 address",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessInfrastructureTargetIPIPV6Model](ctx),
 						Attributes: map[string]schema.Attribute{
 							"ip_addr": schema.StringAttribute{
 								Description: "IP address of the target",
-								Computed:    true,
 								Optional:    true,
 							},
 							"virtual_network_id": schema.StringAttribute{
 								Description: "Private virtual network identifier for the target",
-								Computed:    true,
 								Optional:    true,
 							},
 						},

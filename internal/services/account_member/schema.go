@@ -53,7 +53,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"policies": schema.ListNestedAttribute{
 				Description: "Array of policies associated with this member.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[AccountMemberPoliciesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{

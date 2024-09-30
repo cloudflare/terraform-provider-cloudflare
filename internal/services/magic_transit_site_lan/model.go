@@ -15,10 +15,10 @@ type MagicTransitSiteLANModel struct {
 	AccountID        types.String                                                        `tfsdk:"account_id" path:"account_id,required"`
 	SiteID           types.String                                                        `tfsdk:"site_id" path:"site_id,required"`
 	LANID            types.String                                                        `tfsdk:"lan_id" path:"lan_id,optional"`
-	HaLink           types.Bool                                                          `tfsdk:"ha_link" json:"ha_link,computed_optional"`
+	HaLink           types.Bool                                                          `tfsdk:"ha_link" json:"ha_link,optional"`
 	Physport         types.Int64                                                         `tfsdk:"physport" json:"physport,required"`
 	VlanTag          types.Int64                                                         `tfsdk:"vlan_tag" json:"vlan_tag,required"`
-	Name             types.String                                                        `tfsdk:"name" json:"name,computed_optional"`
+	Name             types.String                                                        `tfsdk:"name" json:"name,optional"`
 	Nat              customfield.NestedObject[MagicTransitSiteLANNatModel]               `tfsdk:"nat" json:"nat,computed_optional"`
 	RoutedSubnets    customfield.NestedObjectList[MagicTransitSiteLANRoutedSubnetsModel] `tfsdk:"routed_subnets" json:"routed_subnets,computed_optional"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteLANStaticAddressingModel]  `tfsdk:"static_addressing" json:"static_addressing,computed_optional"`
@@ -26,7 +26,7 @@ type MagicTransitSiteLANModel struct {
 }
 
 type MagicTransitSiteLANNatModel struct {
-	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,computed_optional"`
+	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,optional"`
 }
 
 type MagicTransitSiteLANRoutedSubnetsModel struct {
@@ -36,24 +36,24 @@ type MagicTransitSiteLANRoutedSubnetsModel struct {
 }
 
 type MagicTransitSiteLANRoutedSubnetsNatModel struct {
-	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,computed_optional"`
+	StaticPrefix types.String `tfsdk:"static_prefix" json:"static_prefix,optional"`
 }
 
 type MagicTransitSiteLANStaticAddressingModel struct {
 	Address          types.String                                                                 `tfsdk:"address" json:"address,required"`
 	DHCPRelay        customfield.NestedObject[MagicTransitSiteLANStaticAddressingDHCPRelayModel]  `tfsdk:"dhcp_relay" json:"dhcp_relay,computed_optional"`
 	DHCPServer       customfield.NestedObject[MagicTransitSiteLANStaticAddressingDHCPServerModel] `tfsdk:"dhcp_server" json:"dhcp_server,computed_optional"`
-	SecondaryAddress types.String                                                                 `tfsdk:"secondary_address" json:"secondary_address,computed_optional"`
-	VirtualAddress   types.String                                                                 `tfsdk:"virtual_address" json:"virtual_address,computed_optional"`
+	SecondaryAddress types.String                                                                 `tfsdk:"secondary_address" json:"secondary_address,optional"`
+	VirtualAddress   types.String                                                                 `tfsdk:"virtual_address" json:"virtual_address,optional"`
 }
 
 type MagicTransitSiteLANStaticAddressingDHCPRelayModel struct {
-	ServerAddresses customfield.List[types.String] `tfsdk:"server_addresses" json:"server_addresses,computed_optional"`
+	ServerAddresses *[]types.String `tfsdk:"server_addresses" json:"server_addresses,optional"`
 }
 
 type MagicTransitSiteLANStaticAddressingDHCPServerModel struct {
-	DHCPPoolEnd   types.String                  `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,computed_optional"`
-	DHCPPoolStart types.String                  `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,computed_optional"`
-	DNSServer     types.String                  `tfsdk:"dns_server" json:"dns_server,computed_optional"`
-	Reservations  customfield.Map[types.String] `tfsdk:"reservations" json:"reservations,computed_optional"`
+	DHCPPoolEnd   types.String            `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,optional"`
+	DHCPPoolStart types.String            `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,optional"`
+	DNSServer     types.String            `tfsdk:"dns_server" json:"dns_server,optional"`
+	Reservations  map[string]types.String `tfsdk:"reservations" json:"reservations,optional"`
 }

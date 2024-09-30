@@ -39,43 +39,37 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"rate_plan": schema.SingleNestedAttribute{
 				Description: "The rate plan applied to the subscription.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZoneSubscriptionRatePlanModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "The ID of the rate plan.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"currency": schema.StringAttribute{
 						Description: "The currency applied to the rate plan subscription.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"externally_managed": schema.BoolAttribute{
 						Description: "Whether this rate plan is managed externally from Cloudflare.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"is_contract": schema.BoolAttribute{
 						Description: "Whether a rate plan is enterprise-based (or newly adopted term contract).",
-						Computed:    true,
 						Optional:    true,
 					},
 					"public_name": schema.StringAttribute{
 						Description: "The full name of the rate plan.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"scope": schema.StringAttribute{
 						Description: "The scope that this rate plan applies to.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"sets": schema.ListAttribute{
 						Description: "The list of sets this rate plan applies to.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 				},

@@ -48,7 +48,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of the prefix.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"advertised": schema.BoolAttribute{

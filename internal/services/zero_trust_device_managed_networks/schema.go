@@ -52,7 +52,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"sha256": schema.StringAttribute{
 						Description: "The SHA-256 hash of the TLS certificate presented by the host found at tls_sockaddr. If absent, regular certificate verification (trusted roots, valid timestamp, etc) will be used to validate the certificate.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},
