@@ -70,7 +70,7 @@ resource "cloudflare_zero_trust_access_policy" "test_policy" {
 - `application_id` (String) The ID of the application the policy is associated with. Required when using `precedence`. **Modifying this attribute will force creation of a new resource.**
 - `approval_group` (Block List) (see [below for nested schema](#nestedblock--approval_group))
 - `approval_required` (Boolean)
-- `connection_rules` (Block List, Max: 1) The rules that define how users may connect to the targets secured by your application. (see [below for nested schema](#nestedblock--connection_rules))
+- `connection_rules` (Block List, Max: 1) The rules that define how users may connect to the targets secured by your application. Only applicable to Infrastructure Applications, in which case this field is required. (see [below for nested schema](#nestedblock--connection_rules))
 - `exclude` (Block List) A series of access conditions, see [Access Groups](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group#conditions). (see [below for nested schema](#nestedblock--exclude))
 - `isolation_required` (Boolean) Require this application to be served in an isolated browser for users matching this policy.
 - `precedence` (Number) The unique precedence for policies on a single application. Required when using `application_id`.
