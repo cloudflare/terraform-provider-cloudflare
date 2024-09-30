@@ -1,5 +1,32 @@
 ## 4.43.0 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `cloudflare_infrastructure_access_target` ([#4077](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4077))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_access_application: added target contexts support for access application type infrastructure ([#4128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4128))
+* resource/cloudflare_access_policy: added infrastructure connection rule support for access policy ([#4128](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4128))
+* resource/cloudflare_device_posture_integration: add support for managing `custom_s2s` third party posture provider. ([#3917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3917))
+* resource/cloudflare_device_posture_rule: add ability to create custom_s2s posture rule ([#3917](https://github.com/cloudflare/terraform-provider-cloudflare/issues/3917))
+* resource/cloudflare_zone_settings_override: add support for Speed Brain ([#4113](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4113))
+
+DEPENDENCIES:
+
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.34 to 1.27.37 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump `github.com/aws/aws-sdk-go-v2/config` from 1.27.37 to 1.27.38 ([#4127](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4127))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.32 to 1.17.35 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump `github.com/aws/aws-sdk-go-v2/credentials` from 1.17.35 to 1.17.36 ([#4127](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4127))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.61.2 to 1.63.1 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump `github.com/aws/aws-sdk-go-v2/service/s3` from 1.63.1 to 1.63.2 ([#4127](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4127))
+* provider: bump `github.com/aws/aws-sdk-go-v2` from 1.30.5 to 1.31.0 ([#4124](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4124))
+* provider: bump actions/checkout from 3 to 4 ([#4101](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4101))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.104.0 to 0.105.0 ([#4125](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4125))
+* provider: bump github.com/cloudflare/cloudflare-go from 0.105.0 to 0.106.0 ([#4137](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4137))
+* provider: bump github.com/hashicorp/terraform-plugin-framework from 1.11.0 to 1.12.0 ([#4061](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4061))
+* provider: bump github.com/hashicorp/terraform-plugin-go from 0.23.0 to 0.24.0 ([#4060](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4060))
+
 ## 4.42.0 (September 18th, 2024)
 
 FEATURES:
