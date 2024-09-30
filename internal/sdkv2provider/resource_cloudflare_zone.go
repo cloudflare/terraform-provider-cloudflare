@@ -30,6 +30,8 @@ const (
 	planIDPartnerPro        = "partners_pro"
 	planIDPartnerBusiness   = "partners_business"
 	planIDPartnerEnterprise = "partners_enterprise"
+
+	planIDMspBiz = "msp_biz"
 )
 
 type subscriptionData struct {
@@ -86,6 +88,11 @@ var ratePlans = map[string]subscriptionData{
 		Name:        "PARTNERS_ENT",
 		ID:          planIDPartnerEnterprise,
 		Description: "Enterprise Website",
+	},
+	planIDMspBiz: {
+		Name:        "MSP_BIZ",
+		ID:          planIDMspBiz,
+		Description: "Business Website",
 	},
 }
 
@@ -187,6 +194,9 @@ func resourceCloudflareZoneRead(ctx context.Context, d *schema.ResourceData, met
 	var plan string
 	if zone.Status == "pending" && zone.PlanPending.LegacyID != "" {
 		plan = zone.PlanPending.LegacyID
+	} else if zone.Plan.ID == "1ac039f6c29b691475c3d74fe588d1ae" {
+		// Check if the plan is MSP_BIZ as it's legacy id is not equal to it's name in subscription
+		plan = "msp_biz"
 	} else {
 		plan = zone.Plan.LegacyID
 	}
@@ -244,6 +254,9 @@ func resourceCloudflareZoneUpdate(ctx context.Context, d *schema.ResourceData, m
 	// from `zone.PlanPending` instead to account for paid plans.
 	if zone.Status == "pending" && zone.PlanPending.Name != "" {
 		d.Set("plan", zone.PlanPending.LegacyID)
+	} else if zone.Plan.ID == "1ac039f6c29b691475c3d74fe588d1ae" {
+		// Check if the plan is MSP_BIZ as it's legacy id is not equal to it's name in subscription
+		d.Set("plan", "msp_biz")
 	}
 
 	if change := d.HasChange("plan"); change {
