@@ -16,11 +16,15 @@ import (
 
 func Middleware(ctx context.Context) option.Middleware {
 	return func(req *http.Request, next option.MiddlewareNext) (*http.Response, error) {
-		LogRequest(ctx, req)
+		if req != nil {
+			LogRequest(ctx, req)
+		}
 
 		resp, err := next(req)
 
-		LogResponse(ctx, resp)
+		if resp != nil {
+			LogResponse(ctx, resp)
+		}
 
 		return resp, err
 	}
@@ -28,14 +32,17 @@ func Middleware(ctx context.Context) option.Middleware {
 
 func LogRequest(ctx context.Context, req *http.Request) error {
 	sensitiveHeaderNames := []string{"x-auth-email", "x-auth-key", "x-auth-user-service-key", "authorization"}
+
 	lines := []string{fmt.Sprintf("\n%s %s %s", req.Method, req.URL.Path, req.Proto)}
 
 	// Log headers
 	for name, values := range req.Header {
 		for _, value := range values {
-			if slices.Contains(sensitiveHeaderNames, strings.ToLower(name)) {
+
+      if slices.Contains(sensitiveHeaderNames, strings.ToLower(name)) {
 				value = "[redacted]"
 			}
+      
 			lines = append(lines, fmt.Sprintf("> %s: %s", strings.ToLower(name), value))
 		}
 	}
