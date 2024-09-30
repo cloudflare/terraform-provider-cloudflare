@@ -26,9 +26,9 @@ a particular resource.
 ```terraform
 # Allowing access to `test@example.com` email address only
 resource "cloudflare_access_policy" "test_policy" {
-  account_id     = "f037e56e89293a057740de681ac9abbe"
-  name           = "staging policy"
-  decision       = "allow"
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "staging policy"
+  decision   = "allow"
 
   include {
     email = ["test@example.com"]
@@ -42,9 +42,9 @@ resource "cloudflare_access_policy" "test_policy" {
 # Allowing `test@example.com` to access but only when coming from a
 # specific IP.
 resource "cloudflare_access_policy" "test_policy" {
-  account_id     = "f037e56e89293a057740de681ac9abbe"
-  name           = "staging policy"
-  decision       = "allow"
+  account_id = "f037e56e89293a057740de681ac9abbe"
+  name       = "staging policy"
+  decision   = "allow"
 
   include {
     email = ["test@example.com"]
@@ -58,10 +58,10 @@ resource "cloudflare_access_policy" "test_policy" {
 # Access policy for an infrastructure application
 resource "cloudflare_access_policy" "infra-app-example-allow" {
   application_id = cloudflare_zero_trust_access_application.infra-app-example.id
-  account_id = "0da42c8d2132a9ddaf714f9e7c920711"
-  name       = "infra-app-example-allow"
-  decision   = "allow"
-  precedence = 1
+  account_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  name           = "infra-app-example-allow"
+  decision       = "allow"
+  precedence     = 1
 
   include {
     email = ["devuser@gmail.com"]
@@ -79,12 +79,12 @@ resource "cloudflare_zero_trust_access_application" "infra-app-example" {
   account_id = "0da42c8d2132a9ddaf714f9e7c920711"
   name       = "infra-app"
   type       = "infrastructure"
-  
+
   target_criteria {
     port     = 22
     protocol = "SSH"
     target_attributes {
-      name = "hostname"
+      name   = "hostname"
       values = ["tfgo-tests-useast", "tfgo-tests-uswest"]
     }
   }

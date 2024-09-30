@@ -29,9 +29,9 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
-  policies                  = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
 }
 
@@ -42,9 +42,9 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
   domain           = "staging.example.com"
   type             = "self_hosted"
   session_duration = "24h"
-  policies         = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
   cors_headers {
     allowed_methods   = ["GET", "POST", "OPTIONS"]
