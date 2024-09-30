@@ -25,19 +25,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"policy_id": schema.StringAttribute{
 				Description:   "Device ID.",
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"lan_allow_minutes": schema.Float64Attribute{
 				Description:   "The amount of time in minutes a user is allowed access to their LAN. A value of 0 will allow LAN access until the next WARP reconnection, such as a reboot or a laptop waking from sleep. Note that this field is omitted from the response if null or unset.",
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 			},
 			"lan_allow_subnet_size": schema.Float64Attribute{
 				Description:   "The size of the subnet for the local access network. Note that this field is omitted from the response if null or unset.",
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 			},
@@ -55,62 +52,50 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"allow_mode_switch": schema.BoolAttribute{
 				Description: "Whether to allow the user to switch WARP between modes.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"allow_updates": schema.BoolAttribute{
 				Description: "Whether to receive update notifications when a new version of the client is available.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"allowed_to_leave": schema.BoolAttribute{
 				Description: "Whether to allow devices to leave the organization.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"auto_connect": schema.Float64Attribute{
 				Description: "The amount of time in minutes to reconnect after having been disabled.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"captive_portal": schema.Float64Attribute{
 				Description: "Turn on the captive portal after the specified amount of time.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "A description of the policy.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"disable_auto_fallback": schema.BoolAttribute{
 				Description: "If the `dns_server` field of a fallback domain is not present, the client will fall back to a best guess of the default/system DNS resolvers unless this policy option is set to `true`.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "Whether the policy will be applied to matching devices.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"exclude_office_ips": schema.BoolAttribute{
 				Description: "Whether to add Microsoft IPs to Split Tunnel exclusions.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"support_url": schema.StringAttribute{
 				Description: "The URL to launch when the Send Feedback button is clicked.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"switch_locked": schema.BoolAttribute{
 				Description: "Whether to allow the user to turn off the WARP switch and disconnect the client.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"tunnel_protocol": schema.StringAttribute{
 				Description: "Determines which tunnel protocol to use.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"service_mode_v2": schema.SingleNestedAttribute{
@@ -120,12 +105,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
 						Description: "The mode to run the WARP client under.",
-						Computed:    true,
 						Optional:    true,
 					},
 					"port": schema.Float64Attribute{
 						Description: "The port number when used with proxy mode.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

@@ -40,11 +40,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"priority": schema.Int64Attribute{
-				Computed: true,
 				Optional: true,
 			},
 			"static_addressing": schema.SingleNestedAttribute{
@@ -63,7 +61,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"secondary_address": schema.StringAttribute{
 						Description: "A valid CIDR notation representing an IP range.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

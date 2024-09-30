@@ -13,24 +13,24 @@ type DNSRecordResultEnvelope struct {
 }
 
 type DNSRecordModel struct {
-	ID                types.String                   `tfsdk:"id" json:"id,computed"`
-	ZoneID            types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
-	Content           types.String                   `tfsdk:"content" json:"content,computed_optional"`
-	Priority          types.Float64                  `tfsdk:"priority" json:"priority,optional"`
-	Type              types.String                   `tfsdk:"type" json:"type,optional"`
-	Data              *DNSRecordDataModel            `tfsdk:"data" json:"data,optional"`
-	Comment           types.String                   `tfsdk:"comment" json:"comment,computed_optional"`
-	CommentModifiedOn types.String                   `tfsdk:"comment_modified_on" json:"comment_modified_on,computed"`
-	CreatedOn         types.String                   `tfsdk:"created_on" json:"created_on,computed"`
-	ModifiedOn        types.String                   `tfsdk:"modified_on" json:"modified_on,computed"`
-	Name              types.String                   `tfsdk:"name" json:"name,required"`
-	Proxiable         types.Bool                     `tfsdk:"proxiable" json:"proxiable,computed"`
-	Proxied           types.Bool                     `tfsdk:"proxied" json:"proxied"`
-	TagsModifiedOn    types.String                   `tfsdk:"tags_modified_on" json:"tags_modified_on,computed"`
-	TTL               types.Float64                  `tfsdk:"ttl" json:"ttl,required"`
-	Tags              customfield.List[types.String] `tfsdk:"tags" json:"tags,computed_optional"`
-	Meta              jsontypes.Normalized           `tfsdk:"meta" json:"meta,computed"`
-	Settings          jsontypes.Normalized           `tfsdk:"settings" json:"settings,computed"`
+	ID                types.String                                 `tfsdk:"id" json:"id,computed"`
+	ZoneID            types.String                                 `tfsdk:"zone_id" path:"zone_id,required"`
+	Content           types.String                                 `tfsdk:"content" json:"content,computed_optional"`
+	Priority          types.Float64                                `tfsdk:"priority" json:"priority,optional"`
+	Type              types.String                                 `tfsdk:"type" json:"type,optional"`
+	Data              customfield.NestedObject[DNSRecordDataModel] `tfsdk:"data" json:"data,computed_optional"`
+	Comment           types.String                                 `tfsdk:"comment" json:"comment,computed_optional"`
+	CommentModifiedOn types.String                                 `tfsdk:"comment_modified_on" json:"comment_modified_on,computed"`
+	CreatedOn         types.String                                 `tfsdk:"created_on" json:"created_on,computed"`
+	ModifiedOn        types.String                                 `tfsdk:"modified_on" json:"modified_on,computed"`
+	Name              types.String                                 `tfsdk:"name" json:"name,required"`
+	Proxiable         types.Bool                                   `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied           types.Bool                                   `tfsdk:"proxied" json:"proxied"`
+	TagsModifiedOn    types.String                                 `tfsdk:"tags_modified_on" json:"tags_modified_on,computed"`
+	TTL               types.Float64                                `tfsdk:"ttl" json:"ttl,required"`
+	Tags              customfield.List[types.String]               `tfsdk:"tags" json:"tags,computed_optional"`
+	Meta              jsontypes.Normalized                         `tfsdk:"meta" json:"meta,computed"`
+	Settings          jsontypes.Normalized                         `tfsdk:"settings" json:"settings,computed"`
 }
 
 type DNSRecordDataModel struct {

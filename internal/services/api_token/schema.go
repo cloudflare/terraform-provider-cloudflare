@@ -57,16 +57,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 									"meta": schema.SingleNestedAttribute{
 										Description: "Attributes associated to the permission group.",
-										Computed:    true,
 										Optional:    true,
-										CustomType:  customfield.NewNestedObjectType[APITokenPoliciesPermissionGroupsMetaModel](ctx),
 										Attributes: map[string]schema.Attribute{
 											"key": schema.StringAttribute{
-												Computed: true,
 												Optional: true,
 											},
 											"value": schema.StringAttribute{
-												Computed: true,
 												Optional: true,
 											},
 										},
@@ -83,11 +79,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required:    true,
 							Attributes: map[string]schema.Attribute{
 								"resource": schema.StringAttribute{
-									Computed: true,
 									Optional: true,
 								},
 								"scope": schema.StringAttribute{
-									Computed: true,
 									Optional: true,
 								},
 							},
@@ -97,19 +91,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"expires_on": schema.StringAttribute{
 				Description: "The expiration time on or after which the JWT MUST NOT be accepted for processing.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"not_before": schema.StringAttribute{
 				Description: "The time before which the token MUST NOT be accepted for processing.",
-				Computed:    true,
 				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the token.",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
@@ -132,16 +123,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 							"not_in": schema.ListAttribute{
 								Description: "List of IPv4/IPv6 CIDR addresses.",
-								Computed:    true,
 								Optional:    true,
-								CustomType:  customfield.NewListType[types.String](ctx),
 								ElementType: types.StringType,
 							},
 						},

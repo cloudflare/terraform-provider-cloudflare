@@ -15,10 +15,10 @@ type ZeroTrustDLPDatasetResultEnvelope struct {
 type ZeroTrustDLPDatasetModel struct {
 	AccountID       types.String                                                  `tfsdk:"account_id" path:"account_id,required"`
 	DatasetID       types.String                                                  `tfsdk:"dataset_id" path:"dataset_id,optional"`
-	EncodingVersion types.Int64                                                   `tfsdk:"encoding_version" json:"encoding_version,computed_optional"`
-	Secret          types.Bool                                                    `tfsdk:"secret" json:"secret,computed_optional"`
+	EncodingVersion types.Int64                                                   `tfsdk:"encoding_version" json:"encoding_version,optional"`
+	Secret          types.Bool                                                    `tfsdk:"secret" json:"secret,optional"`
 	Name            types.String                                                  `tfsdk:"name" json:"name,required"`
-	Description     types.String                                                  `tfsdk:"description" json:"description,computed_optional"`
+	Description     types.String                                                  `tfsdk:"description" json:"description,optional"`
 	CreatedAt       timetypes.RFC3339                                             `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ID              types.String                                                  `tfsdk:"id" json:"id,computed"`
 	MaxCells        types.Int64                                                   `tfsdk:"max_cells" json:"max_cells,computed"`

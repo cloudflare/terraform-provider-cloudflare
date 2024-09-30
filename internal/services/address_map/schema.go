@@ -56,12 +56,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"identifier": schema.StringAttribute{
 							Description: "The identifier for the membership (eg. a zone or account tag).",
-							Computed:    true,
 							Optional:    true,
 						},
 						"kind": schema.StringAttribute{
 							Description: "The type of the membership.",
-							Computed:    true,
 							Optional:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive("zone", "account"),
@@ -73,12 +71,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"default_sni": schema.StringAttribute{
 				Description: "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An optional description field which may be used to describe the types of IPs or zones on the map.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"enabled": schema.BoolAttribute{

@@ -3,6 +3,7 @@
 package zero_trust_access_identity_provider
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -11,13 +12,13 @@ type ZeroTrustAccessIdentityProviderResultEnvelope struct {
 }
 
 type ZeroTrustAccessIdentityProviderModel struct {
-	ID         types.String                                    `tfsdk:"id" json:"id,computed"`
-	AccountID  types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID     types.String                                    `tfsdk:"zone_id" path:"zone_id,optional"`
-	Name       types.String                                    `tfsdk:"name" json:"name,required"`
-	Type       types.String                                    `tfsdk:"type" json:"type,required"`
-	Config     *ZeroTrustAccessIdentityProviderConfigModel     `tfsdk:"config" json:"config,required"`
-	SCIMConfig *ZeroTrustAccessIdentityProviderSCIMConfigModel `tfsdk:"scim_config" json:"scim_config,optional"`
+	ID         types.String                                                             `tfsdk:"id" json:"id,computed"`
+	AccountID  types.String                                                             `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID     types.String                                                             `tfsdk:"zone_id" path:"zone_id,optional"`
+	Name       types.String                                                             `tfsdk:"name" json:"name,required"`
+	Type       types.String                                                             `tfsdk:"type" json:"type,required"`
+	Config     *ZeroTrustAccessIdentityProviderConfigModel                              `tfsdk:"config" json:"config,required"`
+	SCIMConfig customfield.NestedObject[ZeroTrustAccessIdentityProviderSCIMConfigModel] `tfsdk:"scim_config" json:"scim_config,computed_optional"`
 }
 
 type ZeroTrustAccessIdentityProviderConfigModel struct {
@@ -50,14 +51,14 @@ type ZeroTrustAccessIdentityProviderConfigModel struct {
 }
 
 type ZeroTrustAccessIdentityProviderConfigHeaderAttributesModel struct {
-	AttributeName types.String `tfsdk:"attribute_name" json:"attribute_name,computed_optional"`
-	HeaderName    types.String `tfsdk:"header_name" json:"header_name,computed_optional"`
+	AttributeName types.String `tfsdk:"attribute_name" json:"attribute_name,optional"`
+	HeaderName    types.String `tfsdk:"header_name" json:"header_name,optional"`
 }
 
 type ZeroTrustAccessIdentityProviderSCIMConfigModel struct {
-	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
-	GroupMemberDeprovision types.Bool   `tfsdk:"group_member_deprovision" json:"group_member_deprovision,computed_optional"`
-	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,computed_optional"`
-	Secret                 types.String `tfsdk:"secret" json:"secret,computed_optional"`
-	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,computed_optional"`
+	Enabled                types.Bool   `tfsdk:"enabled" json:"enabled,optional"`
+	GroupMemberDeprovision types.Bool   `tfsdk:"group_member_deprovision" json:"group_member_deprovision,optional"`
+	SeatDeprovision        types.Bool   `tfsdk:"seat_deprovision" json:"seat_deprovision,optional"`
+	Secret                 types.String `tfsdk:"secret" json:"secret,optional"`
+	UserDeprovision        types.Bool   `tfsdk:"user_deprovision" json:"user_deprovision,optional"`
 }

@@ -72,32 +72,26 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"absent": schema.StringAttribute{
 						Description: "If this parameter is present, only records *without* a comment are returned.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"contains": schema.StringAttribute{
 						Description: "Substring of the DNS record comment. Comment filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"endswith": schema.StringAttribute{
 						Description: "Suffix of the DNS record comment. Comment filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"exact": schema.StringAttribute{
 						Description: "Exact value of the DNS record comment. Comment filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"present": schema.StringAttribute{
 						Description: "If this parameter is present, only records *with* a comment are returned.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"startswith": schema.StringAttribute{
 						Description: "Prefix of the DNS record comment. Comment filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 				},
@@ -107,32 +101,26 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"absent": schema.StringAttribute{
 						Description: "Name of a tag which must *not* be present on the DNS record. Tag filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"contains": schema.StringAttribute{
 						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value contains `<tag-value>`. Tag filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"endswith": schema.StringAttribute{
 						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value ends with `<tag-value>`. Tag filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"exact": schema.StringAttribute{
 						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value is `<tag-value>`. Tag filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"present": schema.StringAttribute{
 						Description: "Name of a tag which must be present on the DNS record. Tag filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 					"startswith": schema.StringAttribute{
 						Description: "A tag and value, of the form `<tag-name>:<tag-value>`. The API will only return DNS records that have a tag named `<tag-name>` whose value starts with `<tag-value>`. Tag filters are case-insensitive.\n",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

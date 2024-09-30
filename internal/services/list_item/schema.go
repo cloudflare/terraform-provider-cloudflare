@@ -43,17 +43,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"asn": schema.Int64Attribute{
 				Description: "A non-negative 32 bit integer",
-				Computed:    true,
 				Optional:    true,
 			},
 			"comment": schema.StringAttribute{
 				Description: "An informative summary of the list item.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"ip": schema.StringAttribute{
 				Description: "An IPv4 address, an IPv4 CIDR, or an IPv6 CIDR. IPv6 CIDRs are limited to a maximum of /64.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"hostname": schema.SingleNestedAttribute{

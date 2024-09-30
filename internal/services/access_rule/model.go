@@ -21,6 +21,6 @@ type AccessRuleModel struct {
 }
 
 type AccessRuleConfigurationModel struct {
-	Target types.String `tfsdk:"target" json:"target,computed_optional"`
-	Value  types.String `tfsdk:"value" json:"value,computed_optional"`
+	Target types.String `tfsdk:"target" json:"target,optional"`
+	Value  types.String `tfsdk:"value" json:"value,optional"`
 }

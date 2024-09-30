@@ -67,7 +67,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"workers_message": schema.StringAttribute{
 						Description: "Human-readable message about the deployment.",
-						Computed:    true,
 						Optional:    true,
 					},
 				},

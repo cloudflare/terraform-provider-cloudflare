@@ -33,27 +33,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"activated": schema.BoolAttribute{
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
 			"interrupt_window_duration_hours": schema.Float64Attribute{
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 			},
 			"interrupt_window_hour_of_day": schema.Float64Attribute{
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.Float64{float64planmodifier.RequiresReplace()},
 			},
 			"notes": schema.StringAttribute{
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"timezone": schema.StringAttribute{
-				Computed:      true,
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

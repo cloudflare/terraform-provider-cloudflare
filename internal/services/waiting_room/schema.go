@@ -59,7 +59,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"cookie_suffix": schema.StringAttribute{
 				Description: "Appends a '_' + a custom suffix to the end of Cloudflare Waiting Room's cookie name(__cf_waitingroom). If `cookie_suffix` is \"abcd\", the cookie name will be `__cf_waitingroom_abcd`. This field is required if using `additional_routes`.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"custom_page_html": schema.StringAttribute{
@@ -188,7 +187,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"host": schema.StringAttribute{
 							Description: "The hostname to which this waiting room will be applied (no wildcards). The hostname must be the primary domain, subdomain, or custom hostname (if using SSL for SaaS) of this zone. Please do not include the scheme (http:// or https://).",
-							Computed:    true,
 							Optional:    true,
 						},
 						"path": schema.StringAttribute{

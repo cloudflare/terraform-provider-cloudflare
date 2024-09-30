@@ -47,7 +47,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					Attributes: map[string]schema.Attribute{
 						"address": schema.StringAttribute{
 							Description: "The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.",
-							Computed:    true,
 							Optional:    true,
 						},
 						"disabled_at": schema.StringAttribute{
@@ -63,27 +62,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"header": schema.SingleNestedAttribute{
 							Description: "The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'.",
-							Computed:    true,
 							Optional:    true,
-							CustomType:  customfield.NewNestedObjectType[LoadBalancerPoolOriginsHeaderModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"host": schema.ListAttribute{
 									Description: "The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.",
-									Computed:    true,
 									Optional:    true,
-									CustomType:  customfield.NewListType[types.String](ctx),
 									ElementType: types.StringType,
 								},
 							},
 						},
 						"name": schema.StringAttribute{
 							Description: "A human-identifiable name for the origin.",
-							Computed:    true,
 							Optional:    true,
 						},
 						"virtual_network_id": schema.StringAttribute{
 							Description: "The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.",
-							Computed:    true,
 							Optional:    true,
 						},
 						"weight": schema.Float64Attribute{
@@ -100,44 +93,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "A human-readable description of the pool.",
-				Computed:    true,
 				Optional:    true,
-			},
-			"enabled": schema.BoolAttribute{
-				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(true),
 			},
 			"latitude": schema.Float64Attribute{
 				Description: "The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"longitude": schema.Float64Attribute{
 				Description: "The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.",
-				Computed:    true,
 				Optional:    true,
-			},
-			"minimum_origins": schema.Int64Attribute{
-				Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.",
-				Computed:    true,
-				Optional:    true,
-				Default:     int64default.StaticInt64(1),
 			},
 			"monitor": schema.StringAttribute{
 				Description: "The ID of the Monitor to use for checking the health of origins within this pool.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"notification_email": schema.StringAttribute{
 				Description: "This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"check_regions": schema.ListAttribute{
 				Description: "A list of regions from which to run health checks. Null means every Cloudflare data center.",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
@@ -159,8 +134,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
-				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+			},
+			"enabled": schema.BoolAttribute{
+				Description: "Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+			},
+			"minimum_origins": schema.Int64Attribute{
+				Description: "The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.",
+				Computed:    true,
+				Optional:    true,
+				Default:     int64default.StaticInt64(1),
 			},
 			"load_shedding": schema.SingleNestedAttribute{
 				Description: "Configures load shedding policies and percentages for the pool.",
@@ -226,7 +212,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
-								Computed:    true,
 								Optional:    true,
 							},
 						},
@@ -245,7 +230,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"healthy": schema.BoolAttribute{
 								Description: "If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).",
-								Computed:    true,
 								Optional:    true,
 							},
 						},

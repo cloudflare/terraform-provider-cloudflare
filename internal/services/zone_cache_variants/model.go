@@ -3,7 +3,6 @@
 package zone_cache_variants
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,15 +19,15 @@ type ZoneCacheVariantsModel struct {
 }
 
 type ZoneCacheVariantsValueModel struct {
-	AVIF customfield.List[types.String] `tfsdk:"avif" json:"avif,computed_optional"`
-	BMP  customfield.List[types.String] `tfsdk:"bmp" json:"bmp,computed_optional"`
-	GIF  customfield.List[types.String] `tfsdk:"gif" json:"gif,computed_optional"`
-	JP2  customfield.List[types.String] `tfsdk:"jp2" json:"jp2,computed_optional"`
-	JPEG customfield.List[types.String] `tfsdk:"jpeg" json:"jpeg,computed_optional"`
-	JPG  customfield.List[types.String] `tfsdk:"jpg" json:"jpg,computed_optional"`
-	JPG2 customfield.List[types.String] `tfsdk:"jpg2" json:"jpg2,computed_optional"`
-	PNG  customfield.List[types.String] `tfsdk:"png" json:"png,computed_optional"`
-	TIF  customfield.List[types.String] `tfsdk:"tif" json:"tif,computed_optional"`
-	TIFF customfield.List[types.String] `tfsdk:"tiff" json:"tiff,computed_optional"`
-	WebP customfield.List[types.String] `tfsdk:"webp" json:"webp,computed_optional"`
+	AVIF *[]types.String `tfsdk:"avif" json:"avif,optional"`
+	BMP  *[]types.String `tfsdk:"bmp" json:"bmp,optional"`
+	GIF  *[]types.String `tfsdk:"gif" json:"gif,optional"`
+	JP2  *[]types.String `tfsdk:"jp2" json:"jp2,optional"`
+	JPEG *[]types.String `tfsdk:"jpeg" json:"jpeg,optional"`
+	JPG  *[]types.String `tfsdk:"jpg" json:"jpg,optional"`
+	JPG2 *[]types.String `tfsdk:"jpg2" json:"jpg2,optional"`
+	PNG  *[]types.String `tfsdk:"png" json:"png,optional"`
+	TIF  *[]types.String `tfsdk:"tif" json:"tif,optional"`
+	TIFF *[]types.String `tfsdk:"tiff" json:"tiff,optional"`
+	WebP *[]types.String `tfsdk:"webp" json:"webp,optional"`
 }

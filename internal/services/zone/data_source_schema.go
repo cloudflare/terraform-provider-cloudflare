@@ -181,12 +181,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Attributes: map[string]schema.Attribute{
 							"id": schema.StringAttribute{
 								Description: "An account ID",
-								Computed:    true,
 								Optional:    true,
 							},
 							"name": schema.StringAttribute{
 								Description: "An account Name. Optional filter operators can be provided to extend refine the search:\n  * `equal` (default)\n  * `not_equal`\n  * `starts_with`\n  * `ends_with`\n  * `contains`\n  * `starts_with_case_sensitive`\n  * `ends_with_case_sensitive`\n  * `contains_case_sensitive`\n",
-								Computed:    true,
 								Optional:    true,
 							},
 						},

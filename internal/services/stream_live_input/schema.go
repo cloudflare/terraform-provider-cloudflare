@@ -42,11 +42,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"delete_recording_after_days": schema.Float64Attribute{
 				Description: "Indicates the number of days after which the live inputs recordings will be deleted. When a stream completes and the recording is ready, the value is used to calculate a scheduled deletion date for that recording. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion.",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.Float64{
 					float64validator.AtLeast(30),
 				},
+			},
+			"meta": schema.StringAttribute{
+				Description: "A user modifiable key-value store used to reference other systems of record for managing live inputs.",
+				Optional:    true,
+				CustomType:  jsontypes.NormalizedType{},
 			},
 			"recording": schema.SingleNestedAttribute{
 				Description: "Records the input to a Cloudflare Stream video. Behavior depends on the mode. In most cases, the video will initially be viewable as a live video and transition to on-demand after a condition is satisfied.",
@@ -56,9 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"allowed_origins": schema.ListAttribute{
 						Description: "Lists the origins allowed to display videos created with this input. Enter allowed origin domains in an array and use `*` for wildcard subdomains. An empty array allows videos to be viewed on any origin.",
-						Computed:    true,
 						Optional:    true,
-						CustomType:  customfield.NewListType[types.String](ctx),
 						ElementType: types.StringType,
 					},
 					"hide_live_viewer_count": schema.BoolAttribute{
@@ -89,12 +91,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     int64default.StaticInt64(0),
 					},
 				},
-			},
-			"meta": schema.StringAttribute{
-				Description: "A user modifiable key-value store used to reference other systems of record for managing live inputs.",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the live input was created.",

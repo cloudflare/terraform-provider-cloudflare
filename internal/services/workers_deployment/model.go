@@ -30,7 +30,7 @@ type WorkersDeploymentVersionsModel struct {
 }
 
 type WorkersDeploymentAnnotationsModel struct {
-	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,computed_optional"`
+	WorkersMessage types.String `tfsdk:"workers_message" json:"workers/message,optional"`
 }
 
 type WorkersDeploymentDeploymentsModel struct {

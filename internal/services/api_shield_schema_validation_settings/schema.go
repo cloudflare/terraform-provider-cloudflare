@@ -41,7 +41,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"validation_override_mitigation_action": schema.StringAttribute{
 				Description: "When set, this overrides both zone level and operation level mitigation actions.\n\n  - `none` will skip running schema validation entirely for the request\n  - `null` indicates that no override is in place\n\nTo clear any override, use the special value `disable_override` or `null`\n",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive("none", "disable_override"),

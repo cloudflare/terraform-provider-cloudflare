@@ -30,22 +30,18 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ip": schema.StringAttribute{
 				Description: "IPv4/IPv6 address of primary or secondary nameserver, depending on what zone this peer is linked to. For primary zones this IP defines the IP of the secondary nameserver Cloudflare will NOTIFY upon zone changes. For secondary zones this IP defines the IP of the primary nameserver Cloudflare will send AXFR/IXFR requests to.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"ixfr_enable": schema.BoolAttribute{
 				Description: "Enable IXFR transfer protocol, default is AXFR. Only applicable to secondary zones.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"port": schema.Float64Attribute{
 				Description: "DNS port of primary or secondary nameserver, depending on what zone this peer is linked to.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"tsig_id": schema.StringAttribute{
 				Description: "TSIG authentication will be used for zone transfer if configured.",
-				Computed:    true,
 				Optional:    true,
 			},
 		},

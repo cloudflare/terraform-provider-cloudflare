@@ -5,6 +5,7 @@ package zero_trust_dlp_predefined_profile
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -49,7 +50,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPPredefinedProfileContextAwarenessModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"enabled": schema.BoolAttribute{
 						Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",

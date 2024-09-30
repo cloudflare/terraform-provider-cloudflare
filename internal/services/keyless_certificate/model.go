@@ -18,8 +18,8 @@ type KeylessCertificateModel struct {
 	Certificate  types.String                                            `tfsdk:"certificate" json:"certificate,required"`
 	BundleMethod types.String                                            `tfsdk:"bundle_method" json:"bundle_method,computed_optional"`
 	Host         types.String                                            `tfsdk:"host" json:"host,required"`
-	Enabled      types.Bool                                              `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Name         types.String                                            `tfsdk:"name" json:"name,computed_optional"`
+	Enabled      types.Bool                                              `tfsdk:"enabled" json:"enabled,optional"`
+	Name         types.String                                            `tfsdk:"name" json:"name,optional"`
 	Port         types.Float64                                           `tfsdk:"port" json:"port,computed_optional"`
 	Tunnel       customfield.NestedObject[KeylessCertificateTunnelModel] `tfsdk:"tunnel" json:"tunnel,computed_optional"`
 	CreatedOn    timetypes.RFC3339                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`

@@ -36,7 +36,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"location": schema.StringAttribute{
 				Description: "Location of the bucket",
-				Computed:    true,
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

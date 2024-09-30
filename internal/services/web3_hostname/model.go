@@ -15,8 +15,8 @@ type Web3HostnameModel struct {
 	ID          types.String      `tfsdk:"id" json:"id,computed"`
 	ZoneID      types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Target      types.String      `tfsdk:"target" json:"target,required"`
-	Description types.String      `tfsdk:"description" json:"description,computed_optional"`
-	Dnslink     types.String      `tfsdk:"dnslink" json:"dnslink,computed_optional"`
+	Description types.String      `tfsdk:"description" json:"description,optional"`
+	Dnslink     types.String      `tfsdk:"dnslink" json:"dnslink,optional"`
 	CreatedOn   timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name        types.String      `tfsdk:"name" json:"name,computed"`

@@ -17,7 +17,7 @@ type NotificationPolicyWebhooksModel struct {
 	AccountID   types.String                                                          `tfsdk:"account_id" path:"account_id,required"`
 	Name        types.String                                                          `tfsdk:"name" json:"name,required"`
 	URL         types.String                                                          `tfsdk:"url" json:"url,required"`
-	Secret      types.String                                                          `tfsdk:"secret" json:"secret,computed_optional"`
+	Secret      types.String                                                          `tfsdk:"secret" json:"secret,optional"`
 	CreatedAt   timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastFailure timetypes.RFC3339                                                     `tfsdk:"last_failure" json:"last_failure,computed" format:"date-time"`
 	LastSuccess timetypes.RFC3339                                                     `tfsdk:"last_success" json:"last_success,computed" format:"date-time"`

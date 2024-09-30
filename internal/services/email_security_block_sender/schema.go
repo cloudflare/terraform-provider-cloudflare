@@ -5,6 +5,7 @@ package email_security_block_sender
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -31,7 +32,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"body": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectListType[EmailSecurityBlockSenderBodyModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"is_regex": schema.BoolAttribute{
@@ -52,7 +55,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"comments": schema.StringAttribute{
-							Computed: true,
 							Optional: true,
 						},
 					},
@@ -60,19 +62,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"comments": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"is_regex": schema.BoolAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"pattern": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"pattern_type": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(

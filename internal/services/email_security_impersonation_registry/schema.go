@@ -5,6 +5,7 @@ package email_security_impersonation_registry
 import (
 	"context"
 
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -29,7 +30,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"body": schema.ListNestedAttribute{
-				Optional: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectListType[EmailSecurityImpersonationRegistryBodyModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"email": schema.StringAttribute{
@@ -46,15 +49,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"email": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"is_email_regex": schema.BoolAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
 			},
 			"comments": schema.StringAttribute{

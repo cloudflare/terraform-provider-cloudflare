@@ -18,10 +18,10 @@ type APIShieldSchemaResultEnvelope struct {
 
 type APIShieldSchemaModel struct {
 	ZoneID            types.String                                                `tfsdk:"zone_id" path:"zone_id,required"`
-	SchemaID          types.String                                                `tfsdk:"schema_id" path:"schema_id,computed_optional"`
+	SchemaID          types.String                                                `tfsdk:"schema_id" path:"schema_id,optional"`
 	File              types.String                                                `tfsdk:"file" json:"file,required"`
 	Kind              types.String                                                `tfsdk:"kind" json:"kind,required"`
-	Name              types.String                                                `tfsdk:"name" json:"name,computed_optional"`
+	Name              types.String                                                `tfsdk:"name" json:"name,optional"`
 	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled,optional"`
 	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`

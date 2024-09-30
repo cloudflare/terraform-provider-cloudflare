@@ -54,7 +54,7 @@ func (m *NotificationPolicyDataSourceModel) toListParams(_ context.Context) (par
 }
 
 type NotificationPolicyMechanismsDataSourceModel struct {
-	ID types.String `tfsdk:"id" json:"id,computed_optional"`
+	ID types.String `tfsdk:"id" json:"id,optional"`
 }
 
 type NotificationPolicyFiltersDataSourceModel struct {

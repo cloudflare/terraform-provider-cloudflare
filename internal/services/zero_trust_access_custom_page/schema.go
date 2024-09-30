@@ -50,7 +50,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"app_count": schema.Int64Attribute{
 				Description: "Number of apps the custom page is assigned to.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"created_at": schema.StringAttribute{
