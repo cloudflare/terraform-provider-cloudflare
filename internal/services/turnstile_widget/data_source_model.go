@@ -28,6 +28,7 @@ type TurnstileWidgetDataSourceModel struct {
 	BotFightMode   types.Bool                               `tfsdk:"bot_fight_mode" json:"bot_fight_mode,computed"`
 	ClearanceLevel types.String                             `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	EphemeralID    types.Bool                               `tfsdk:"ephemeral_id" json:"ephemeral_id,computed"`
 	Mode           types.String                             `tfsdk:"mode" json:"mode,computed"`
 	ModifiedOn     timetypes.RFC3339                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name           types.String                             `tfsdk:"name" json:"name,computed"`

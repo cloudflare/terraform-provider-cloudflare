@@ -55,6 +55,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"ephemeral_id": schema.BoolAttribute{
+				Description: "Return the Ephemeral ID in /siteverify (ENT only).\n",
+				Computed:    true,
+			},
 			"mode": schema.StringAttribute{
 				Description: "Widget Mode",
 				Computed:    true,

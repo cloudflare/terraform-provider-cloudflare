@@ -83,6 +83,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							CustomType:  customfield.NewListType[types.String](ctx),
 							ElementType: types.StringType,
 						},
+						"ephemeral_id": schema.BoolAttribute{
+							Description: "Return the Ephemeral ID in /siteverify (ENT only).\n",
+							Computed:    true,
+						},
 						"mode": schema.StringAttribute{
 							Description: "Widget Mode",
 							Computed:    true,
