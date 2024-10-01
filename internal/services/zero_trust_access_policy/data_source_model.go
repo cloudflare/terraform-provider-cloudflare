@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -37,7 +38,6 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 	SessionDuration              types.String                                                                     `tfsdk:"session_duration" json:"session_duration,computed"`
 	UpdatedAt                    timetypes.RFC3339                                                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPolicyApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
-	ConnectionRules              customfield.NestedObject[ZeroTrustAccessPolicyConnectionRulesDataSourceModel]    `tfsdk:"connection_rules" json:"connection_rules,computed"`
 	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeDataSourceModel]        `tfsdk:"exclude" json:"exclude,computed"`
 	Include                      customfield.NestedObjectList[ZeroTrustAccessPolicyIncludeDataSourceModel]        `tfsdk:"include" json:"include,computed"`
 	Require                      customfield.NestedObjectList[ZeroTrustAccessPolicyRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
@@ -74,34 +74,26 @@ type ZeroTrustAccessPolicyApprovalGroupsDataSourceModel struct {
 	EmailListUUID   types.String                   `tfsdk:"email_list_uuid" json:"email_list_uuid,computed"`
 }
 
-type ZeroTrustAccessPolicyConnectionRulesDataSourceModel struct {
-	SSH customfield.NestedObject[ZeroTrustAccessPolicyConnectionRulesSSHDataSourceModel] `tfsdk:"ssh" json:"ssh,computed"`
-}
-
-type ZeroTrustAccessPolicyConnectionRulesSSHDataSourceModel struct {
-	Usernames customfield.List[types.String] `tfsdk:"usernames" json:"usernames,computed"`
-}
-
 type ZeroTrustAccessPolicyExcludeDataSourceModel struct {
-	Email                customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailDataSourceModel]                `tfsdk:"email" json:"email,computed"`
-	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailListDataSourceModel]            `tfsdk:"email_list" json:"email_list,computed"`
-	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailDomainDataSourceModel]          `tfsdk:"email_domain" json:"email_domain,computed"`
-	Everyone             customfield.NestedObject[ZeroTrustAccessPolicyExcludeEveryoneDataSourceModel]             `tfsdk:"everyone" json:"everyone,computed"`
-	IP                   customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
-	IPList               customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
-	Certificate          customfield.NestedObject[ZeroTrustAccessPolicyExcludeCertificateDataSourceModel]          `tfsdk:"certificate" json:"certificate,computed"`
-	Group                customfield.NestedObject[ZeroTrustAccessPolicyExcludeGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
-	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyExcludeAzureADDataSourceModel]              `tfsdk:"azure_ad" json:"azureAD,computed"`
-	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyExcludeGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
-	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyExcludeGSuiteDataSourceModel]               `tfsdk:"gsuite" json:"gsuite,computed"`
-	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
-	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
-	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyExcludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
-	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessPolicyExcludeAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
-	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyExcludeExternalEvaluationDataSourceModel]   `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
-	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyExcludeGeoDataSourceModel]                  `tfsdk:"geo" json:"geo,computed"`
-	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyExcludeAuthMethodDataSourceModel]           `tfsdk:"auth_method" json:"auth_method,computed"`
-	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyExcludeDevicePostureDataSourceModel]        `tfsdk:"device_posture" json:"device_posture,computed"`
+	Email                customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailDataSourceModel]              `tfsdk:"email" json:"email,computed"`
+	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailListDataSourceModel]          `tfsdk:"email_list" json:"email_list,computed"`
+	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyExcludeEmailDomainDataSourceModel]        `tfsdk:"email_domain" json:"email_domain,computed"`
+	Everyone             jsontypes.Normalized                                                                    `tfsdk:"everyone" json:"everyone,computed"`
+	IP                   customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPDataSourceModel]                 `tfsdk:"ip" json:"ip,computed"`
+	IPList               customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPListDataSourceModel]             `tfsdk:"ip_list" json:"ip_list,computed"`
+	Certificate          jsontypes.Normalized                                                                    `tfsdk:"certificate" json:"certificate,computed"`
+	Group                customfield.NestedObject[ZeroTrustAccessPolicyExcludeGroupDataSourceModel]              `tfsdk:"group" json:"group,computed"`
+	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyExcludeAzureADDataSourceModel]            `tfsdk:"azure_ad" json:"azureAD,computed"`
+	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyExcludeGitHubOrganizationDataSourceModel] `tfsdk:"github_organization" json:"github-organization,computed"`
+	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyExcludeGSuiteDataSourceModel]             `tfsdk:"gsuite" json:"gsuite,computed"`
+	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeOktaDataSourceModel]               `tfsdk:"okta" json:"okta,computed"`
+	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyExcludeSAMLDataSourceModel]               `tfsdk:"saml" json:"saml,computed"`
+	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyExcludeServiceTokenDataSourceModel]       `tfsdk:"service_token" json:"service_token,computed"`
+	AnyValidServiceToken jsontypes.Normalized                                                                    `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
+	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyExcludeExternalEvaluationDataSourceModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
+	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyExcludeGeoDataSourceModel]                `tfsdk:"geo" json:"geo,computed"`
+	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyExcludeAuthMethodDataSourceModel]         `tfsdk:"auth_method" json:"auth_method,computed"`
+	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyExcludeDevicePostureDataSourceModel]      `tfsdk:"device_posture" json:"device_posture,computed"`
 }
 
 type ZeroTrustAccessPolicyExcludeEmailDataSourceModel struct {
@@ -116,18 +108,12 @@ type ZeroTrustAccessPolicyExcludeEmailDomainDataSourceModel struct {
 	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
-type ZeroTrustAccessPolicyExcludeEveryoneDataSourceModel struct {
-}
-
 type ZeroTrustAccessPolicyExcludeIPDataSourceModel struct {
 	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
 type ZeroTrustAccessPolicyExcludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
-}
-
-type ZeroTrustAccessPolicyExcludeCertificateDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyExcludeGroupDataSourceModel struct {
@@ -164,9 +150,6 @@ type ZeroTrustAccessPolicyExcludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
-type ZeroTrustAccessPolicyExcludeAnyValidServiceTokenDataSourceModel struct {
-}
-
 type ZeroTrustAccessPolicyExcludeExternalEvaluationDataSourceModel struct {
 	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
 	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
@@ -185,25 +168,25 @@ type ZeroTrustAccessPolicyExcludeDevicePostureDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyIncludeDataSourceModel struct {
-	Email                customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailDataSourceModel]                `tfsdk:"email" json:"email,computed"`
-	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailListDataSourceModel]            `tfsdk:"email_list" json:"email_list,computed"`
-	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailDomainDataSourceModel]          `tfsdk:"email_domain" json:"email_domain,computed"`
-	Everyone             customfield.NestedObject[ZeroTrustAccessPolicyIncludeEveryoneDataSourceModel]             `tfsdk:"everyone" json:"everyone,computed"`
-	IP                   customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
-	IPList               customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
-	Certificate          customfield.NestedObject[ZeroTrustAccessPolicyIncludeCertificateDataSourceModel]          `tfsdk:"certificate" json:"certificate,computed"`
-	Group                customfield.NestedObject[ZeroTrustAccessPolicyIncludeGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
-	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyIncludeAzureADDataSourceModel]              `tfsdk:"azure_ad" json:"azureAD,computed"`
-	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyIncludeGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
-	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyIncludeGSuiteDataSourceModel]               `tfsdk:"gsuite" json:"gsuite,computed"`
-	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
-	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
-	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyIncludeServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
-	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessPolicyIncludeAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
-	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyIncludeExternalEvaluationDataSourceModel]   `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
-	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyIncludeGeoDataSourceModel]                  `tfsdk:"geo" json:"geo,computed"`
-	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyIncludeAuthMethodDataSourceModel]           `tfsdk:"auth_method" json:"auth_method,computed"`
-	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyIncludeDevicePostureDataSourceModel]        `tfsdk:"device_posture" json:"device_posture,computed"`
+	Email                customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailDataSourceModel]              `tfsdk:"email" json:"email,computed"`
+	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailListDataSourceModel]          `tfsdk:"email_list" json:"email_list,computed"`
+	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyIncludeEmailDomainDataSourceModel]        `tfsdk:"email_domain" json:"email_domain,computed"`
+	Everyone             jsontypes.Normalized                                                                    `tfsdk:"everyone" json:"everyone,computed"`
+	IP                   customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPDataSourceModel]                 `tfsdk:"ip" json:"ip,computed"`
+	IPList               customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPListDataSourceModel]             `tfsdk:"ip_list" json:"ip_list,computed"`
+	Certificate          jsontypes.Normalized                                                                    `tfsdk:"certificate" json:"certificate,computed"`
+	Group                customfield.NestedObject[ZeroTrustAccessPolicyIncludeGroupDataSourceModel]              `tfsdk:"group" json:"group,computed"`
+	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyIncludeAzureADDataSourceModel]            `tfsdk:"azure_ad" json:"azureAD,computed"`
+	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyIncludeGitHubOrganizationDataSourceModel] `tfsdk:"github_organization" json:"github-organization,computed"`
+	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyIncludeGSuiteDataSourceModel]             `tfsdk:"gsuite" json:"gsuite,computed"`
+	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeOktaDataSourceModel]               `tfsdk:"okta" json:"okta,computed"`
+	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyIncludeSAMLDataSourceModel]               `tfsdk:"saml" json:"saml,computed"`
+	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyIncludeServiceTokenDataSourceModel]       `tfsdk:"service_token" json:"service_token,computed"`
+	AnyValidServiceToken jsontypes.Normalized                                                                    `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
+	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyIncludeExternalEvaluationDataSourceModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
+	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyIncludeGeoDataSourceModel]                `tfsdk:"geo" json:"geo,computed"`
+	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyIncludeAuthMethodDataSourceModel]         `tfsdk:"auth_method" json:"auth_method,computed"`
+	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyIncludeDevicePostureDataSourceModel]      `tfsdk:"device_posture" json:"device_posture,computed"`
 }
 
 type ZeroTrustAccessPolicyIncludeEmailDataSourceModel struct {
@@ -218,18 +201,12 @@ type ZeroTrustAccessPolicyIncludeEmailDomainDataSourceModel struct {
 	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
-type ZeroTrustAccessPolicyIncludeEveryoneDataSourceModel struct {
-}
-
 type ZeroTrustAccessPolicyIncludeIPDataSourceModel struct {
 	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
 type ZeroTrustAccessPolicyIncludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
-}
-
-type ZeroTrustAccessPolicyIncludeCertificateDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyIncludeGroupDataSourceModel struct {
@@ -266,9 +243,6 @@ type ZeroTrustAccessPolicyIncludeServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
 }
 
-type ZeroTrustAccessPolicyIncludeAnyValidServiceTokenDataSourceModel struct {
-}
-
 type ZeroTrustAccessPolicyIncludeExternalEvaluationDataSourceModel struct {
 	EvaluateURL types.String `tfsdk:"evaluate_url" json:"evaluate_url,computed"`
 	KeysURL     types.String `tfsdk:"keys_url" json:"keys_url,computed"`
@@ -287,25 +261,25 @@ type ZeroTrustAccessPolicyIncludeDevicePostureDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyRequireDataSourceModel struct {
-	Email                customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailDataSourceModel]                `tfsdk:"email" json:"email,computed"`
-	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailListDataSourceModel]            `tfsdk:"email_list" json:"email_list,computed"`
-	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailDomainDataSourceModel]          `tfsdk:"email_domain" json:"email_domain,computed"`
-	Everyone             customfield.NestedObject[ZeroTrustAccessPolicyRequireEveryoneDataSourceModel]             `tfsdk:"everyone" json:"everyone,computed"`
-	IP                   customfield.NestedObject[ZeroTrustAccessPolicyRequireIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
-	IPList               customfield.NestedObject[ZeroTrustAccessPolicyRequireIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
-	Certificate          customfield.NestedObject[ZeroTrustAccessPolicyRequireCertificateDataSourceModel]          `tfsdk:"certificate" json:"certificate,computed"`
-	Group                customfield.NestedObject[ZeroTrustAccessPolicyRequireGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
-	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyRequireAzureADDataSourceModel]              `tfsdk:"azure_ad" json:"azureAD,computed"`
-	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyRequireGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
-	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyRequireGSuiteDataSourceModel]               `tfsdk:"gsuite" json:"gsuite,computed"`
-	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyRequireOktaDataSourceModel]                 `tfsdk:"okta" json:"okta,computed"`
-	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyRequireSAMLDataSourceModel]                 `tfsdk:"saml" json:"saml,computed"`
-	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyRequireServiceTokenDataSourceModel]         `tfsdk:"service_token" json:"service_token,computed"`
-	AnyValidServiceToken customfield.NestedObject[ZeroTrustAccessPolicyRequireAnyValidServiceTokenDataSourceModel] `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
-	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyRequireExternalEvaluationDataSourceModel]   `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
-	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyRequireGeoDataSourceModel]                  `tfsdk:"geo" json:"geo,computed"`
-	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyRequireAuthMethodDataSourceModel]           `tfsdk:"auth_method" json:"auth_method,computed"`
-	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyRequireDevicePostureDataSourceModel]        `tfsdk:"device_posture" json:"device_posture,computed"`
+	Email                customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailDataSourceModel]              `tfsdk:"email" json:"email,computed"`
+	EmailList            customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailListDataSourceModel]          `tfsdk:"email_list" json:"email_list,computed"`
+	EmailDomain          customfield.NestedObject[ZeroTrustAccessPolicyRequireEmailDomainDataSourceModel]        `tfsdk:"email_domain" json:"email_domain,computed"`
+	Everyone             jsontypes.Normalized                                                                    `tfsdk:"everyone" json:"everyone,computed"`
+	IP                   customfield.NestedObject[ZeroTrustAccessPolicyRequireIPDataSourceModel]                 `tfsdk:"ip" json:"ip,computed"`
+	IPList               customfield.NestedObject[ZeroTrustAccessPolicyRequireIPListDataSourceModel]             `tfsdk:"ip_list" json:"ip_list,computed"`
+	Certificate          jsontypes.Normalized                                                                    `tfsdk:"certificate" json:"certificate,computed"`
+	Group                customfield.NestedObject[ZeroTrustAccessPolicyRequireGroupDataSourceModel]              `tfsdk:"group" json:"group,computed"`
+	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyRequireAzureADDataSourceModel]            `tfsdk:"azure_ad" json:"azureAD,computed"`
+	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyRequireGitHubOrganizationDataSourceModel] `tfsdk:"github_organization" json:"github-organization,computed"`
+	GSuite               customfield.NestedObject[ZeroTrustAccessPolicyRequireGSuiteDataSourceModel]             `tfsdk:"gsuite" json:"gsuite,computed"`
+	Okta                 customfield.NestedObject[ZeroTrustAccessPolicyRequireOktaDataSourceModel]               `tfsdk:"okta" json:"okta,computed"`
+	SAML                 customfield.NestedObject[ZeroTrustAccessPolicyRequireSAMLDataSourceModel]               `tfsdk:"saml" json:"saml,computed"`
+	ServiceToken         customfield.NestedObject[ZeroTrustAccessPolicyRequireServiceTokenDataSourceModel]       `tfsdk:"service_token" json:"service_token,computed"`
+	AnyValidServiceToken jsontypes.Normalized                                                                    `tfsdk:"any_valid_service_token" json:"any_valid_service_token,computed"`
+	ExternalEvaluation   customfield.NestedObject[ZeroTrustAccessPolicyRequireExternalEvaluationDataSourceModel] `tfsdk:"external_evaluation" json:"external_evaluation,computed"`
+	Geo                  customfield.NestedObject[ZeroTrustAccessPolicyRequireGeoDataSourceModel]                `tfsdk:"geo" json:"geo,computed"`
+	AuthMethod           customfield.NestedObject[ZeroTrustAccessPolicyRequireAuthMethodDataSourceModel]         `tfsdk:"auth_method" json:"auth_method,computed"`
+	DevicePosture        customfield.NestedObject[ZeroTrustAccessPolicyRequireDevicePostureDataSourceModel]      `tfsdk:"device_posture" json:"device_posture,computed"`
 }
 
 type ZeroTrustAccessPolicyRequireEmailDataSourceModel struct {
@@ -320,18 +294,12 @@ type ZeroTrustAccessPolicyRequireEmailDomainDataSourceModel struct {
 	Domain types.String `tfsdk:"domain" json:"domain,computed"`
 }
 
-type ZeroTrustAccessPolicyRequireEveryoneDataSourceModel struct {
-}
-
 type ZeroTrustAccessPolicyRequireIPDataSourceModel struct {
 	IP types.String `tfsdk:"ip" json:"ip,computed"`
 }
 
 type ZeroTrustAccessPolicyRequireIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
-}
-
-type ZeroTrustAccessPolicyRequireCertificateDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyRequireGroupDataSourceModel struct {
@@ -366,9 +334,6 @@ type ZeroTrustAccessPolicyRequireSAMLDataSourceModel struct {
 
 type ZeroTrustAccessPolicyRequireServiceTokenDataSourceModel struct {
 	TokenID types.String `tfsdk:"token_id" json:"token_id,computed"`
-}
-
-type ZeroTrustAccessPolicyRequireAnyValidServiceTokenDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyRequireExternalEvaluationDataSourceModel struct {
