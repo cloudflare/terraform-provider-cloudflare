@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -19,7 +20,7 @@ func TestAccCloudflareDLPDatasets_DataSource(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareDlpDatasetsDataSourceConfig(accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.cloudflare_dlp_datasets.my_datasets", "account_id"),
+					resource.TestCheckResourceAttrSet("data.cloudflare_dlp_datasets.my_datasets", consts.AccountIDSchemaKey),
 				),
 			},
 		},

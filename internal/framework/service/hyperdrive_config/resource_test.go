@@ -9,6 +9,7 @@ import (
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -113,7 +114,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -146,7 +147,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -207,7 +208,7 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -293,7 +294,7 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.port"),
@@ -324,7 +325,7 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.port"),
@@ -378,7 +379,7 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),

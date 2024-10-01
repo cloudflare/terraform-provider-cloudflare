@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -21,7 +22,7 @@ func TestAccCloudflareDCVDelegationDataSource(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.cloudflare_dcv_delegation.test", "id"),
 					resource.TestCheckResourceAttrSet("data.cloudflare_dcv_delegation.test", "hostname"),
-					resource.TestCheckResourceAttrSet("data.cloudflare_dcv_delegation.test", "zone_id"),
+					resource.TestCheckResourceAttrSet("data.cloudflare_dcv_delegation.test", consts.ZoneIDSchemaKey),
 				),
 			},
 		},

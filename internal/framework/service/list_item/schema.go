@@ -3,6 +3,7 @@ package list_item
 import (
 	"context"
 	"fmt"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"

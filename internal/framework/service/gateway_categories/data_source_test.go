@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -23,7 +24,7 @@ func TestAccCloudflareGatewayCategories_DataSource(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareGatewayCategoriesDataSourceConfig(accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.cloudflare_gateway_categories.my_categories", "account_id"),
+					resource.TestCheckResourceAttrSet("data.cloudflare_gateway_categories.my_categories", consts.AccountIDSchemaKey),
 					resource.TestCheckResourceAttrSet("data.cloudflare_gateway_categories.my_categories", "categories.#"),
 				),
 			},

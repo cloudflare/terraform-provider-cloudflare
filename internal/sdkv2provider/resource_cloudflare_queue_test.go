@@ -60,14 +60,14 @@ func TestAccCloudflareQueue_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareQueueExists(rnd, &queue),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareQueue(rnd, accountID, rnd+"-updated"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd+"-updated"),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 				),
 			},
 			{

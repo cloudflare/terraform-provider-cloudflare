@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -19,7 +20,7 @@ func TestAccCloudflareGatewayAppTypes_DataSource(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareGatewayAppTypesDataSourceConfig(accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.cloudflare_gateway_app_types.my_app_types", "account_id"),
+					resource.TestCheckResourceAttrSet("data.cloudflare_gateway_app_types.my_app_types", consts.AccountIDSchemaKey),
 					resource.TestCheckResourceAttrSet("data.cloudflare_gateway_app_types.my_app_types", "app_types.#"),
 				),
 			},

@@ -220,7 +220,7 @@ func TestAccCloudflareAccessIdentityProvider_AzureAD(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareAccessIdentityProviderAzureAD(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "type", "azureAD"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.client_id", "test"),
