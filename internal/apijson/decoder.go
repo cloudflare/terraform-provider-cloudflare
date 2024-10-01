@@ -178,6 +178,9 @@ func (d *decoderBuilder) newTypeDecoder(t reflect.Type) decoderFunc {
 	if !d.root && t.Implements(reflect.TypeOf((*json.Unmarshaler)(nil)).Elem()) {
 		return unmarshalerDecoder
 	}
+	if t == reflect.TypeOf((*big.Float)(nil)).Elem() {
+		return d.newBigFloatDecoder(t)
+	}
 	d.root = false
 
 	if _, ok := unionRegistry[t]; ok {
@@ -290,6 +293,17 @@ func (d *decoderBuilder) newUnionDecoder(t reflect.Type) decoderFunc {
 			return errors.New("apijson: was not able to coerce type as union strictly")
 		}
 
+		return nil
+	}
+}
+
+func (d *decoderBuilder) newBigFloatDecoder(_ reflect.Type) decoderFunc {
+	return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+		f, _, err := big.ParseFloat(node.Raw, 10, 0, big.ToNearestEven)
+		if err != nil {
+			return fmt.Errorf("apijson: failed to parse big.Float: %v", err)
+		}
+		value.Set(reflect.ValueOf(f))
 		return nil
 	}
 }

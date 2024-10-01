@@ -6,6 +6,7 @@ import (
 	stdjson "encoding/json"
 	"errors"
 	"fmt"
+	"math/big"
 	"reflect"
 	"sort"
 	"strconv"
@@ -131,6 +132,11 @@ func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
 	}
 	if t != reflect.TypeOf(jsontypes.Normalized{}) && t.ConvertibleTo(reflect.TypeOf(timetypes.RFC3339{})) {
 		return e.newCustomTimeTypeEncoder()
+	}
+	if t == reflect.TypeOf((*big.Float)(nil)) {
+		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+			return []byte(plan.Interface().(*big.Float).Text('g', 10)), nil
+		}
 	}
 	// if !e.root && t.Implements(reflect.TypeOf((*json.Marshaler)(nil)).Elem()) {
 	// 	return marshalerEncoder
@@ -311,6 +317,10 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 	} else if t == reflect.TypeOf(basetypes.Float64Value{}) {
 		return e.terraformUnwrappedEncoder(reflect.TypeOf(float64(0)), func(value attr.Value) any {
 			return value.(basetypes.Float64Value).ValueFloat64()
+		})
+	} else if t == reflect.TypeOf(basetypes.NumberValue{}) {
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(big.NewFloat(0)), func(value attr.Value) any {
+			return value.(basetypes.NumberValue).ValueBigFloat()
 		})
 	} else if t == reflect.TypeOf(basetypes.StringValue{}) {
 		return e.terraformUnwrappedEncoder(reflect.TypeOf(""), func(value attr.Value) any {
