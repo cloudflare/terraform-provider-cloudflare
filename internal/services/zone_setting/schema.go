@@ -8,9 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
@@ -91,20 +89,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"enabled": schema.BoolAttribute{
-				Description: "ssl-recommender enrollment setting.",
-				Computed:    true,
-				Optional:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"value": schema.StringAttribute{
+			"value": schema.DynamicAttribute{
 				Description: "Current value of the zone setting.",
-				Computed:    true,
-				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("on", "off"),
-				},
-				Default: stringdefault.StaticString("off"),
+				Required:    true,
 			},
 		},
 	}
