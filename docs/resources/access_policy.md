@@ -58,7 +58,7 @@ resource "cloudflare_access_policy" "test_policy" {
 # Access policy for an infrastructure application
 resource "cloudflare_access_policy" "infra-app-example-allow" {
   application_id = cloudflare_zero_trust_access_application.infra-app-example.id
-  account_id     = "0da42c8d2132a9ddaf714f9e7c920711"
+  account_id     = "f037e56e89293a057740de681ac9abbe"
   name           = "infra-app-example-allow"
   decision       = "allow"
   precedence     = 1
@@ -76,7 +76,7 @@ resource "cloudflare_access_policy" "infra-app-example-allow" {
 
 # Infrastructure application configuration for infra-app-example-allow
 resource "cloudflare_zero_trust_access_application" "infra-app-example" {
-  account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "infra-app"
   type       = "infrastructure"
 

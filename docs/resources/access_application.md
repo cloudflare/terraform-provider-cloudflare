@@ -56,7 +56,7 @@ resource "cloudflare_access_application" "staging_app" {
 
 # Infrastructure application configuration
 resource "cloudflare_zero_trust_access_application" "infra-app-example" {
-  account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+  account_id = "f037e56e89293a057740de681ac9abbe"
   name       = "infra-app"
   type       = "infrastructure"
 
