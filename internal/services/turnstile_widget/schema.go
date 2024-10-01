@@ -80,6 +80,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"ephemeral_id": schema.BoolAttribute{
+				Description: "Return the Ephemeral ID in /siteverify (ENT only).\n",
+				Optional:    true,
+			},
 			"offlabel": schema.BoolAttribute{
 				Description: "Do not show any Cloudflare branding on the widget (ENT only).\n",
 				Optional:    true,
