@@ -11,9 +11,9 @@ type ZoneSettingResultEnvelope struct {
 }
 
 type ZoneSettingModel struct {
-	ID        types.String `tfsdk:"id" json:"id,required"`
 	SettingID types.String `tfsdk:"setting_id" path:"setting_id,required"`
 	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ID        types.String `tfsdk:"id" json:"id,optional"`
 	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Value     types.String `tfsdk:"value" json:"value,computed_optional"`
 }
