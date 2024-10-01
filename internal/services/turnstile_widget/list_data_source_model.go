@@ -45,6 +45,7 @@ type TurnstileWidgetsResultDataSourceModel struct {
 	ClearanceLevel types.String                   `tfsdk:"clearance_level" json:"clearance_level,computed"`
 	CreatedOn      timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Domains        customfield.List[types.String] `tfsdk:"domains" json:"domains,computed"`
+	EphemeralID    types.Bool                     `tfsdk:"ephemeral_id" json:"ephemeral_id,computed"`
 	Mode           types.String                   `tfsdk:"mode" json:"mode,computed"`
 	ModifiedOn     timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name           types.String                   `tfsdk:"name" json:"name,computed"`
