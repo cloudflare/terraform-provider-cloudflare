@@ -3,6 +3,7 @@
 package account_member
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,6 +20,14 @@ type AccountMemberModel struct {
 	Roles     *[]types.String                                          `tfsdk:"roles" json:"roles,optional"`
 	Policies  customfield.NestedObjectList[AccountMemberPoliciesModel] `tfsdk:"policies" json:"policies,computed_optional"`
 	User      customfield.NestedObject[AccountMemberUserModel]         `tfsdk:"user" json:"user,computed"`
+}
+
+func (m AccountMemberModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m AccountMemberModel) MarshalJSONForUpdate(state AccountMemberModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type AccountMemberPoliciesModel struct {

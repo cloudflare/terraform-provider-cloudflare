@@ -3,6 +3,7 @@
 package zero_trust_access_mtls_hostname_settings
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -14,6 +15,14 @@ type ZeroTrustAccessMTLSHostnameSettingsModel struct {
 	AccountID types.String                                         `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID    types.String                                         `tfsdk:"zone_id" path:"zone_id,optional"`
 	Settings  *[]*ZeroTrustAccessMTLSHostnameSettingsSettingsModel `tfsdk:"settings" json:"settings,required"`
+}
+
+func (m ZeroTrustAccessMTLSHostnameSettingsModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustAccessMTLSHostnameSettingsModel) MarshalJSONForUpdate(state ZeroTrustAccessMTLSHostnameSettingsModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustAccessMTLSHostnameSettingsSettingsModel struct {

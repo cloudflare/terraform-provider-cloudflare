@@ -3,6 +3,7 @@
 package zone_cache_reserve
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,4 +18,12 @@ type ZoneCacheReserveModel struct {
 	Value         types.String      `tfsdk:"value" json:"value,computed_optional"`
 	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	ZoneSettingID types.String      `tfsdk:"zone_setting_id" json:"id,computed"`
+}
+
+func (m ZoneCacheReserveModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZoneCacheReserveModel) MarshalJSONForUpdate(state ZoneCacheReserveModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

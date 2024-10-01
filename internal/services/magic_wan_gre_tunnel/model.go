@@ -3,6 +3,7 @@
 package magic_wan_gre_tunnel
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,6 +30,14 @@ type MagicWANGRETunnelModel struct {
 	GRETunnel             customfield.NestedObject[MagicWANGRETunnelGRETunnelModel]         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 	GRETunnels            customfield.NestedObjectList[MagicWANGRETunnelGRETunnelsModel]    `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
 	ModifiedGRETunnel     customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelModel] `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
+}
+
+func (m MagicWANGRETunnelModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m MagicWANGRETunnelModel) MarshalJSONForUpdate(state MagicWANGRETunnelModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type MagicWANGRETunnelHealthCheckModel struct {

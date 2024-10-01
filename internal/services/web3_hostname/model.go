@@ -3,6 +3,7 @@
 package web3_hostname
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,4 +22,12 @@ type Web3HostnameModel struct {
 	ModifiedOn  timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Name        types.String      `tfsdk:"name" json:"name,computed"`
 	Status      types.String      `tfsdk:"status" json:"status,computed"`
+}
+
+func (m Web3HostnameModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m Web3HostnameModel) MarshalJSONForUpdate(state Web3HostnameModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

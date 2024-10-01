@@ -63,7 +63,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Create(ctx context.Co
 		return
 	}
 
-	dataBytes, err := apijson.Marshal(data)
+	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -111,7 +111,7 @@ func (r *ZeroTrustTunnelCloudflaredVirtualNetworkResource) Update(ctx context.Co
 		return
 	}
 
-	dataBytes, err := apijson.MarshalForUpdate(data, state)
+	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return

@@ -3,6 +3,7 @@
 package zero_trust_access_identity_provider
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,6 +20,14 @@ type ZeroTrustAccessIdentityProviderModel struct {
 	Type       types.String                                                             `tfsdk:"type" json:"type,required"`
 	Config     *ZeroTrustAccessIdentityProviderConfigModel                              `tfsdk:"config" json:"config,required"`
 	SCIMConfig customfield.NestedObject[ZeroTrustAccessIdentityProviderSCIMConfigModel] `tfsdk:"scim_config" json:"scim_config,computed_optional"`
+}
+
+func (m ZeroTrustAccessIdentityProviderModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustAccessIdentityProviderModel) MarshalJSONForUpdate(state ZeroTrustAccessIdentityProviderModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustAccessIdentityProviderConfigModel struct {

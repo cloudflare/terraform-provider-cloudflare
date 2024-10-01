@@ -63,7 +63,7 @@ func (r *TurnstileWidgetResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	dataBytes, err := apijson.Marshal(data)
+	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -112,7 +112,7 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	dataBytes, err := apijson.MarshalForUpdate(data, state)
+	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return

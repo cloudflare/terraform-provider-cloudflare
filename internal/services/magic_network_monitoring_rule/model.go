@@ -3,6 +3,7 @@
 package magic_network_monitoring_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,4 +21,12 @@ type MagicNetworkMonitoringRuleModel struct {
 	Prefixes               *[]types.String `tfsdk:"prefixes" json:"prefixes,optional"`
 	Duration               types.String    `tfsdk:"duration" json:"duration,computed_optional"`
 	BandwidthThreshold     types.Float64   `tfsdk:"bandwidth_threshold" json:"bandwidth_threshold,computed"`
+}
+
+func (m MagicNetworkMonitoringRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m MagicNetworkMonitoringRuleModel) MarshalJSONForUpdate(state MagicNetworkMonitoringRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

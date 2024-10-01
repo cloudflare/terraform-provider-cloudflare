@@ -3,6 +3,7 @@
 package call_app
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,4 +20,12 @@ type CallAppModel struct {
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Secret    types.String      `tfsdk:"secret" json:"secret,computed"`
 	UID       types.String      `tfsdk:"uid" json:"uid,computed"`
+}
+
+func (m CallAppModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m CallAppModel) MarshalJSONForUpdate(state CallAppModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

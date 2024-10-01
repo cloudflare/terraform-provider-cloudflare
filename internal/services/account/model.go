@@ -3,6 +3,7 @@
 package account
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,6 +20,14 @@ type AccountModel struct {
 	Name      types.String                                   `tfsdk:"name" json:"name,required"`
 	Settings  customfield.NestedObject[AccountSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
 	CreatedOn timetypes.RFC3339                              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+}
+
+func (m AccountModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m AccountModel) MarshalJSONForUpdate(state AccountModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type AccountUnitModel struct {

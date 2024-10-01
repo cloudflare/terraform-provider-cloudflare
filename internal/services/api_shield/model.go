@@ -3,6 +3,7 @@
 package api_shield
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,6 +19,14 @@ type APIShieldModel struct {
 	Success               types.Bool                                           `tfsdk:"success" json:"success,computed"`
 	Errors                customfield.NestedObjectList[APIShieldErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages              customfield.NestedObjectList[APIShieldMessagesModel] `tfsdk:"messages" json:"messages,computed"`
+}
+
+func (m APIShieldModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m APIShieldModel) MarshalJSONForUpdate(state APIShieldModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type APIShieldAuthIDCharacteristicsModel struct {

@@ -3,6 +3,7 @@
 package zero_trust_dlp_custom_profile
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,6 +23,14 @@ type ZeroTrustDLPCustomProfileModel struct {
 	ContextAwareness  customfield.NestedObject[ZeroTrustDLPCustomProfileContextAwarenessModel]  `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
 	Entries           customfield.NestedObjectList[ZeroTrustDLPCustomProfileEntriesModel]       `tfsdk:"entries" json:"entries,computed_optional"`
 	SharedEntries     customfield.NestedObjectList[ZeroTrustDLPCustomProfileSharedEntriesModel] `tfsdk:"shared_entries" json:"shared_entries,computed_optional"`
+}
+
+func (m ZeroTrustDLPCustomProfileModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDLPCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDLPCustomProfileModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDLPCustomProfileProfilesModel struct {

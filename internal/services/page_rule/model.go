@@ -3,6 +3,7 @@
 package page_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,6 +20,14 @@ type PageRuleModel struct {
 	Priority   types.Int64              `tfsdk:"priority" json:"priority,computed_optional"`
 	Status     types.String             `tfsdk:"status" json:"status,computed_optional"`
 	ID         types.String             `tfsdk:"id" json:"id,computed"`
+}
+
+func (m PageRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m PageRuleModel) MarshalJSONForUpdate(state PageRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type PageRuleActionsModel struct {

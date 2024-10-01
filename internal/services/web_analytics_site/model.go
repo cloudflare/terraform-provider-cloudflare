@@ -3,6 +3,7 @@
 package web_analytics_site
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,6 +25,14 @@ type WebAnalyticsSiteModel struct {
 	Snippet     types.String                                             `tfsdk:"snippet" json:"snippet,computed"`
 	Rules       customfield.NestedObjectList[WebAnalyticsSiteRulesModel] `tfsdk:"rules" json:"rules,computed"`
 	Ruleset     customfield.NestedObject[WebAnalyticsSiteRulesetModel]   `tfsdk:"ruleset" json:"ruleset,computed"`
+}
+
+func (m WebAnalyticsSiteModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WebAnalyticsSiteModel) MarshalJSONForUpdate(state WebAnalyticsSiteModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type WebAnalyticsSiteRulesModel struct {

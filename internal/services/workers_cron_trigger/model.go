@@ -3,6 +3,7 @@
 package workers_cron_trigger
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,6 +18,14 @@ type WorkersCronTriggerModel struct {
 	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
 	Cron       types.String                                                   `tfsdk:"cron" json:"cron,optional"`
 	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesModel] `tfsdk:"schedules" json:"schedules,computed"`
+}
+
+func (m WorkersCronTriggerModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WorkersCronTriggerModel) MarshalJSONForUpdate(state WorkersCronTriggerModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type WorkersCronTriggerSchedulesModel struct {

@@ -3,6 +3,7 @@
 package zero_trust_dns_location
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -27,6 +28,14 @@ type ZeroTrustDNSLocationModel struct {
 	IPV4Destination       types.String                                                    `tfsdk:"ipv4_destination" json:"ipv4_destination,computed"`
 	IPV4DestinationBackup types.String                                                    `tfsdk:"ipv4_destination_backup" json:"ipv4_destination_backup,computed"`
 	UpdatedAt             timetypes.RFC3339                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+}
+
+func (m ZeroTrustDNSLocationModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDNSLocationModel) MarshalJSONForUpdate(state ZeroTrustDNSLocationModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDNSLocationEndpointsModel struct {

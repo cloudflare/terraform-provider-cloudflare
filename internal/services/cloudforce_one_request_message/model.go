@@ -3,6 +3,7 @@
 package cloudforce_one_request_message
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,6 +25,14 @@ type CloudforceOneRequestMessageModel struct {
 	Updated           timetypes.RFC3339                                                      `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 	Errors            customfield.NestedObjectList[CloudforceOneRequestMessageErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages          customfield.NestedObjectList[CloudforceOneRequestMessageMessagesModel] `tfsdk:"messages" json:"messages,computed"`
+}
+
+func (m CloudforceOneRequestMessageModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m CloudforceOneRequestMessageModel) MarshalJSONForUpdate(state CloudforceOneRequestMessageModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type CloudforceOneRequestMessageErrorsModel struct {

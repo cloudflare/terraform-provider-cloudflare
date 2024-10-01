@@ -3,6 +3,7 @@
 package cloudforce_one_request_priority
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -32,6 +33,14 @@ type CloudforceOneRequestPriorityModel struct {
 	Updated           timetypes.RFC3339                                                       `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 	Errors            customfield.NestedObjectList[CloudforceOneRequestPriorityErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages          customfield.NestedObjectList[CloudforceOneRequestPriorityMessagesModel] `tfsdk:"messages" json:"messages,computed"`
+}
+
+func (m CloudforceOneRequestPriorityModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m CloudforceOneRequestPriorityModel) MarshalJSONForUpdate(state CloudforceOneRequestPriorityModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type CloudforceOneRequestPriorityErrorsModel struct {

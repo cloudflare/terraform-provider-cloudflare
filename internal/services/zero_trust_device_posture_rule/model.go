@@ -3,6 +3,7 @@
 package zero_trust_device_posture_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,6 +22,14 @@ type ZeroTrustDevicePostureRuleModel struct {
 	Schedule    types.String                                                       `tfsdk:"schedule" json:"schedule,optional"`
 	Input       customfield.NestedObject[ZeroTrustDevicePostureRuleInputModel]     `tfsdk:"input" json:"input,computed_optional"`
 	Match       customfield.NestedObjectList[ZeroTrustDevicePostureRuleMatchModel] `tfsdk:"match" json:"match,computed_optional"`
+}
+
+func (m ZeroTrustDevicePostureRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDevicePostureRuleModel) MarshalJSONForUpdate(state ZeroTrustDevicePostureRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDevicePostureRuleInputModel struct {

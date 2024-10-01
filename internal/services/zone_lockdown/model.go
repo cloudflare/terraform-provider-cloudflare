@@ -3,6 +3,7 @@
 package zone_lockdown
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,6 +21,14 @@ type ZoneLockdownModel struct {
 	Description    types.String                     `tfsdk:"description" json:"description,computed"`
 	ModifiedOn     timetypes.RFC3339                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Paused         types.Bool                       `tfsdk:"paused" json:"paused,computed"`
+}
+
+func (m ZoneLockdownModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZoneLockdownModel) MarshalJSONForUpdate(state ZoneLockdownModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZoneLockdownConfigurationsModel struct {

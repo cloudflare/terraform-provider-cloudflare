@@ -3,6 +3,7 @@
 package image_variant
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,6 +18,14 @@ type ImageVariantModel struct {
 	Options                *ImageVariantOptionsModel                          `tfsdk:"options" json:"options,required"`
 	NeverRequireSignedURLs types.Bool                                         `tfsdk:"never_require_signed_urls" json:"neverRequireSignedURLs,computed_optional"`
 	Variant                customfield.NestedObject[ImageVariantVariantModel] `tfsdk:"variant" json:"variant,computed"`
+}
+
+func (m ImageVariantModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ImageVariantModel) MarshalJSONForUpdate(state ImageVariantModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ImageVariantOptionsModel struct {

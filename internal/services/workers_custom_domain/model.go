@@ -3,6 +3,7 @@
 package workers_custom_domain
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,4 +19,12 @@ type WorkersCustomDomainModel struct {
 	Service     types.String `tfsdk:"service" json:"service,required"`
 	ZoneID      types.String `tfsdk:"zone_id" json:"zone_id,required"`
 	ZoneName    types.String `tfsdk:"zone_name" json:"zone_name,computed"`
+}
+
+func (m WorkersCustomDomainModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WorkersCustomDomainModel) MarshalJSONForUpdate(state WorkersCustomDomainModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

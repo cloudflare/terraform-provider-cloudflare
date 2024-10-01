@@ -3,6 +3,7 @@
 package queue_consumer
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,6 +22,14 @@ type QueueConsumerModel struct {
 	QueueName       types.String                                         `tfsdk:"queue_name" json:"queue_name,computed"`
 	ScriptName      types.String                                         `tfsdk:"script_name" json:"script_name,computed"`
 	Settings        customfield.NestedObject[QueueConsumerSettingsModel] `tfsdk:"settings" json:"settings,computed"`
+}
+
+func (m QueueConsumerModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m QueueConsumerModel) MarshalJSONForUpdate(state QueueConsumerModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type QueueConsumerSettingsModel struct {

@@ -3,6 +3,7 @@
 package zone
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,6 +31,14 @@ type ZoneModel struct {
 	OriginalNameServers customfield.List[types.String]           `tfsdk:"original_name_servers" json:"original_name_servers,computed"`
 	Meta                customfield.NestedObject[ZoneMetaModel]  `tfsdk:"meta" json:"meta,computed"`
 	Owner               customfield.NestedObject[ZoneOwnerModel] `tfsdk:"owner" json:"owner,computed"`
+}
+
+func (m ZoneModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZoneModel) MarshalJSONForUpdate(state ZoneModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZoneAccountModel struct {

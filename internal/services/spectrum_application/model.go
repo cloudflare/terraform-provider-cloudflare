@@ -3,6 +3,7 @@
 package spectrum_application
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -25,6 +26,14 @@ type SpectrumApplicationModel struct {
 	TrafficType      types.String                                                `tfsdk:"traffic_type" json:"traffic_type,computed_optional"`
 	EdgeIPs          customfield.NestedObject[SpectrumApplicationEdgeIPsModel]   `tfsdk:"edge_ips" json:"edge_ips,computed_optional"`
 	OriginDNS        customfield.NestedObject[SpectrumApplicationOriginDNSModel] `tfsdk:"origin_dns" json:"origin_dns,computed_optional"`
+}
+
+func (m SpectrumApplicationModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m SpectrumApplicationModel) MarshalJSONForUpdate(state SpectrumApplicationModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type SpectrumApplicationDNSModel struct {

@@ -3,6 +3,7 @@
 package email_security_allow_pattern
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,6 +27,14 @@ type EmailSecurityAllowPatternModel struct {
 	VerifySender types.Bool                                                       `tfsdk:"verify_sender" json:"verify_sender,optional"`
 	CreatedAt    timetypes.RFC3339                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastModified timetypes.RFC3339                                                `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+}
+
+func (m EmailSecurityAllowPatternModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m EmailSecurityAllowPatternModel) MarshalJSONForUpdate(state EmailSecurityAllowPatternModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type EmailSecurityAllowPatternBodyModel struct {

@@ -3,6 +3,7 @@
 package argo_tiered_caching
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,4 +18,12 @@ type ArgoTieredCachingModel struct {
 	Value      types.String      `tfsdk:"value" json:"value,required"`
 	Editable   types.Bool        `tfsdk:"editable" json:"editable,computed"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+}
+
+func (m ArgoTieredCachingModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ArgoTieredCachingModel) MarshalJSONForUpdate(state ArgoTieredCachingModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

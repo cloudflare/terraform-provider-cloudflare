@@ -3,6 +3,7 @@
 package page_shield_policy
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,4 +19,12 @@ type PageShieldPolicyModel struct {
 	Enabled     types.Bool   `tfsdk:"enabled" json:"enabled,required"`
 	Expression  types.String `tfsdk:"expression" json:"expression,required"`
 	Value       types.String `tfsdk:"value" json:"value,required"`
+}
+
+func (m PageShieldPolicyModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m PageShieldPolicyModel) MarshalJSONForUpdate(state PageShieldPolicyModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

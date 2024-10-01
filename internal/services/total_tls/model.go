@@ -3,6 +3,7 @@
 package total_tls
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,4 +17,12 @@ type TotalTLSModel struct {
 	Enabled              types.Bool   `tfsdk:"enabled" json:"enabled,required"`
 	CertificateAuthority types.String `tfsdk:"certificate_authority" json:"certificate_authority,optional"`
 	ValidityPeriod       types.Int64  `tfsdk:"validity_period" json:"validity_period,computed"`
+}
+
+func (m TotalTLSModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m TotalTLSModel) MarshalJSONForUpdate(state TotalTLSModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

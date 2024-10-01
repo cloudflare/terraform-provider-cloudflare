@@ -3,6 +3,7 @@
 package stream_audio_track
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,4 +19,12 @@ type StreamAudioTrackModel struct {
 	Default         types.Bool   `tfsdk:"default" json:"default,computed_optional"`
 	Status          types.String `tfsdk:"status" json:"status,computed"`
 	UID             types.String `tfsdk:"uid" json:"uid,computed"`
+}
+
+func (m StreamAudioTrackModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m StreamAudioTrackModel) MarshalJSONForUpdate(state StreamAudioTrackModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

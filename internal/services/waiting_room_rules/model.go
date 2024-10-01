@@ -3,6 +3,7 @@
 package waiting_room_rules
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,4 +19,12 @@ type WaitingRoomRulesModel struct {
 	Expression    types.String `tfsdk:"expression" json:"expression,required"`
 	Description   types.String `tfsdk:"description" json:"description,computed_optional"`
 	Enabled       types.Bool   `tfsdk:"enabled" json:"enabled,computed_optional"`
+}
+
+func (m WaitingRoomRulesModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WaitingRoomRulesModel) MarshalJSONForUpdate(state WaitingRoomRulesModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

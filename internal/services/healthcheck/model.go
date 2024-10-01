@@ -3,6 +3,7 @@
 package healthcheck
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -32,6 +33,14 @@ type HealthcheckModel struct {
 	FailureReason        types.String                                         `tfsdk:"failure_reason" json:"failure_reason,computed"`
 	ModifiedOn           timetypes.RFC3339                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Status               types.String                                         `tfsdk:"status" json:"status,computed"`
+}
+
+func (m HealthcheckModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m HealthcheckModel) MarshalJSONForUpdate(state HealthcheckModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type HealthcheckHTTPConfigModel struct {

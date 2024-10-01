@@ -3,6 +3,7 @@
 package list_item
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,6 +23,14 @@ type ListItemModel struct {
 	Hostname          customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed_optional"`
 	Redirect          customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed_optional"`
 	OperationID       types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
+}
+
+func (m ListItemModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ListItemModel) MarshalJSONForUpdate(state ListItemModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ListItemHostnameModel struct {

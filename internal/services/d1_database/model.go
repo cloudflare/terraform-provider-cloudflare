@@ -3,6 +3,7 @@
 package d1_database
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,4 +22,12 @@ type D1DatabaseModel struct {
 	FileSize            types.Float64     `tfsdk:"file_size" json:"file_size,computed"`
 	NumTables           types.Float64     `tfsdk:"num_tables" json:"num_tables,computed"`
 	Version             types.String      `tfsdk:"version" json:"version,computed"`
+}
+
+func (m D1DatabaseModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m D1DatabaseModel) MarshalJSONForUpdate(state D1DatabaseModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

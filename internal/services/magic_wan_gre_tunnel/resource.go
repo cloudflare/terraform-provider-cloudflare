@@ -61,7 +61,7 @@ func (r *MagicWANGRETunnelResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	dataBytes, err := apijson.Marshal(data)
+	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -109,7 +109,7 @@ func (r *MagicWANGRETunnelResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	dataBytes, err := apijson.MarshalForUpdate(data, state)
+	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return

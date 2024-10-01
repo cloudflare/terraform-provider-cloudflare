@@ -3,6 +3,7 @@
 package certificate_pack
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,4 +23,12 @@ type CertificatePackModel struct {
 	ValidationMethod     types.String                   `tfsdk:"validation_method" json:"validation_method,computed"`
 	ValidityDays         types.Int64                    `tfsdk:"validity_days" json:"validity_days,computed"`
 	Hosts                customfield.List[types.String] `tfsdk:"hosts" json:"hosts,computed"`
+}
+
+func (m CertificatePackModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m CertificatePackModel) MarshalJSONForUpdate(state CertificatePackModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

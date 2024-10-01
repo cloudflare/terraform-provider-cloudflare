@@ -3,6 +3,7 @@
 package r2_bucket
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,4 +18,12 @@ type R2BucketModel struct {
 	Location     types.String `tfsdk:"location" json:"locationHint,optional"`
 	StorageClass types.String `tfsdk:"storage_class" json:"storageClass,computed_optional"`
 	CreationDate types.String `tfsdk:"creation_date" json:"creation_date,computed"`
+}
+
+func (m R2BucketModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m R2BucketModel) MarshalJSONForUpdate(state R2BucketModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

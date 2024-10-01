@@ -3,6 +3,7 @@
 package waiting_room
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -38,6 +39,14 @@ type WaitingRoomModel struct {
 	ModifiedOn                 timetypes.RFC3339                                              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	NextEventPrequeueStartTime types.String                                                   `tfsdk:"next_event_prequeue_start_time" json:"next_event_prequeue_start_time,computed"`
 	NextEventStartTime         types.String                                                   `tfsdk:"next_event_start_time" json:"next_event_start_time,computed"`
+}
+
+func (m WaitingRoomModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WaitingRoomModel) MarshalJSONForUpdate(state WaitingRoomModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type WaitingRoomAdditionalRoutesModel struct {

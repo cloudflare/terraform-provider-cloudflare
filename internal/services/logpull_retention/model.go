@@ -3,6 +3,7 @@
 package logpull_retention
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,4 +14,12 @@ type LogpullRetentionResultEnvelope struct {
 type LogpullRetentionModel struct {
 	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Flag   types.Bool   `tfsdk:"flag" json:"flag,optional"`
+}
+
+func (m LogpullRetentionModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m LogpullRetentionModel) MarshalJSONForUpdate(state LogpullRetentionModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

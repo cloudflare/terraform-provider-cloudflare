@@ -3,6 +3,7 @@
 package secondary_dns_peer
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,4 +19,12 @@ type SecondaryDNSPeerModel struct {
 	IxfrEnable types.Bool    `tfsdk:"ixfr_enable" json:"ixfr_enable,optional"`
 	Port       types.Float64 `tfsdk:"port" json:"port,optional"`
 	TSIGID     types.String  `tfsdk:"tsig_id" json:"tsig_id,optional"`
+}
+
+func (m SecondaryDNSPeerModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m SecondaryDNSPeerModel) MarshalJSONForUpdate(state SecondaryDNSPeerModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

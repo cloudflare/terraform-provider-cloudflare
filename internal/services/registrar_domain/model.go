@@ -3,6 +3,7 @@
 package registrar_domain
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,4 +17,12 @@ type RegistrarDomainModel struct {
 	AutoRenew  types.Bool   `tfsdk:"auto_renew" json:"auto_renew,optional"`
 	Locked     types.Bool   `tfsdk:"locked" json:"locked,optional"`
 	Privacy    types.Bool   `tfsdk:"privacy" json:"privacy,optional"`
+}
+
+func (m RegistrarDomainModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m RegistrarDomainModel) MarshalJSONForUpdate(state RegistrarDomainModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

@@ -3,6 +3,7 @@
 package zero_trust_access_application
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -48,6 +49,14 @@ type ZeroTrustAccessApplicationModel struct {
 	Policies                 customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesModel]      `tfsdk:"policies" json:"policies,computed_optional"`
 	SaaSApp                  customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppModel]           `tfsdk:"saas_app" json:"saas_app,computed_optional"`
 	SCIMConfig               customfield.NestedObject[ZeroTrustAccessApplicationSCIMConfigModel]        `tfsdk:"scim_config" json:"scim_config,computed_optional"`
+}
+
+func (m ZeroTrustAccessApplicationModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustAccessApplicationModel) MarshalJSONForUpdate(state ZeroTrustAccessApplicationModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustAccessApplicationCORSHeadersModel struct {

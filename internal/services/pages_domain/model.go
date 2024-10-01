@@ -3,6 +3,7 @@
 package pages_domain
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -23,6 +24,14 @@ type PagesDomainModel struct {
 	ZoneTag              types.String                                               `tfsdk:"zone_tag" json:"zone_tag,computed"`
 	ValidationData       customfield.NestedObject[PagesDomainValidationDataModel]   `tfsdk:"validation_data" json:"validation_data,computed"`
 	VerificationData     customfield.NestedObject[PagesDomainVerificationDataModel] `tfsdk:"verification_data" json:"verification_data,computed"`
+}
+
+func (m PagesDomainModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m PagesDomainModel) MarshalJSONForUpdate(state PagesDomainModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type PagesDomainValidationDataModel struct {

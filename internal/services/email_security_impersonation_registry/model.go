@@ -3,6 +3,7 @@
 package email_security_impersonation_registry
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -25,6 +26,14 @@ type EmailSecurityImpersonationRegistryModel struct {
 	DirectoryNodeID types.String                                                              `tfsdk:"directory_node_id" json:"directory_node_id,computed"`
 	LastModified    timetypes.RFC3339                                                         `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
 	Provenance      types.String                                                              `tfsdk:"provenance" json:"provenance,computed"`
+}
+
+func (m EmailSecurityImpersonationRegistryModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m EmailSecurityImpersonationRegistryModel) MarshalJSONForUpdate(state EmailSecurityImpersonationRegistryModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type EmailSecurityImpersonationRegistryBodyModel struct {
