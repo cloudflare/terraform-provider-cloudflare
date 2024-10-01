@@ -59,7 +59,7 @@ func TestAccCloudflareInfrastructureAccessTarget_Basic(t *testing.T) {
 				Config: testAccCloudflareInfrastructureAccessTargetCreate(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "hostname", rnd),
-					resource.TestCheckResourceAttr(resourceName, "ip.ipv4.ip_addr", "250.26.29.250"),
+					resource.TestCheckResourceAttr(resourceName, "ip.ipv4.ip_addr", "198.51.100.1"),
 					resource.TestCheckNoResourceAttr(resourceName, "ip.ipv6"),
 				),
 			},
@@ -68,8 +68,8 @@ func TestAccCloudflareInfrastructureAccessTarget_Basic(t *testing.T) {
 				Config: testAccCloudflareInfrastructureAccessTargetUpdate(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "hostname", rnd+"-updated"),
-					resource.TestCheckResourceAttr(resourceName, "ip.ipv4.ip_addr", "250.26.29.250"),
-					resource.TestCheckResourceAttr(resourceName, "ip.ipv6.ip_addr", "64c0:64e8:f0b4:8dbf:7104:72b0:ec8f:f5e0"),
+					resource.TestCheckResourceAttr(resourceName, "ip.ipv4.ip_addr", "198.51.100.1"),
+					resource.TestCheckResourceAttr(resourceName, "ip.ipv6.ip_addr", "2001:db8::"),
 					resource.TestCheckResourceAttr(resourceName, "ip.ipv6.virtual_network_id", "01920a8c-dc14-7bb2-b67b-14c858494a54"),
 				),
 			},
@@ -84,7 +84,7 @@ resource "cloudflare_infrastructure_access_target" "%[2]s" {
 	hostname   = "%[2]s"
 	ip = {
 		ipv4 = {
-		  ip_addr = "250.26.29.250"
+		  ip_addr = "198.51.100.1"
       virtual_network_id = "01920a8c-dc14-7bb2-b67b-14c858494a54"
     }
   }
@@ -98,11 +98,11 @@ resource "cloudflare_infrastructure_access_target" "%[2]s" {
 	hostname   = "%[2]s-updated"
 	ip = {
 		ipv4 = {
-           ip_addr = "250.26.29.250"
+           ip_addr = "198.51.100.1"
            virtual_network_id = "01920a8c-dc14-7bb2-b67b-14c858494a54"
         },
 		ipv6 = {
-           ip_addr = "64c0:64e8:f0b4:8dbf:7104:72b0:ec8f:f5e0"
+           ip_addr = "2001:db8::"
            virtual_network_id = "01920a8c-dc14-7bb2-b67b-14c858494a54"
     }
   }

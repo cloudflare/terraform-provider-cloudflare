@@ -1,10 +1,11 @@
 package user_test
 
 import (
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"os"
 	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccCloudflareUserDataSource(t *testing.T) {

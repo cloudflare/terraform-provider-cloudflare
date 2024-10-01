@@ -69,7 +69,7 @@ resource "cloudflare_list" "example" {
 
   item {
     value {
-     asn = 989
+      asn = 989
     }
     comment = "two"
   }

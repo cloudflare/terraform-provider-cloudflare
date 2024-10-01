@@ -29,9 +29,9 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
-  policies                  = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
 }
 
@@ -42,9 +42,9 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
   domain           = "staging.example.com"
   type             = "self_hosted"
   session_duration = "24h"
-  policies         = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
   cors_headers {
     allowed_methods   = ["GET", "POST", "OPTIONS"]
@@ -90,7 +90,7 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
 - `skip_app_launcher_login_page` (Boolean) Option to skip the App Launcher landing page. Defaults to `false`.
 - `skip_interstitial` (Boolean) Option to skip the authorization interstitial when using the CLI. Defaults to `false`.
 - `tags` (Set of String) The itags associated with the application.
-- `target_criteria` (Block List) A list of mappings to apply to SCIM resources before provisioning them in this application. These can transform or filter the resources to be provisioned. (see [below for nested schema](#nestedblock--target_criteria))
+- `target_criteria` (Block List) The payload for an infrastructure application which defines the port, protocol, and target attributes. Only applicable to Infrastructure Applications, in which case this field is required. (see [below for nested schema](#nestedblock--target_criteria))
 - `type` (String) The application type. Available values: `app_launcher`, `bookmark`, `biso`, `dash_sso`, `saas`, `self_hosted`, `ssh`, `vnc`, `warp`, `infrastructure`. Defaults to `self_hosted`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 

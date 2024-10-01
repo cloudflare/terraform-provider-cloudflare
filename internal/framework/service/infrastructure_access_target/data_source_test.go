@@ -24,7 +24,7 @@ func TestAccCloudflareInfrastructureAccessTarget_DataSource(t *testing.T) {
 					resource.TestCheckNoResourceAttr("data.cloudflare_infrastructure_access_targets."+rnd1, "ip.ipv6"),
 
 					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "hostname", rnd1),
-					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "ip.ipv4.ip_addr", "250.26.29.250"),
+					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "ip.ipv4.ip_addr", "198.51.100.1"),
 					resource.TestCheckResourceAttr("cloudflare_infrastructure_access_target."+rnd1, "ip.ipv4.virtual_network_id", "b9c90134-52de-4903-81e8-004a3a06b435"),
 				),
 			},
@@ -40,7 +40,7 @@ resource "cloudflare_infrastructure_access_target" "%[2]s" {
 	hostname   = "%[2]s"
 	ip = {
 		ipv4 = {
-           ip_addr = "250.26.29.250",
+           ip_addr = "198.51.100.1",
            virtual_network_id = "b9c90134-52de-4903-81e8-004a3a06b435"
         }
 	}

@@ -8,6 +8,7 @@ import (
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -58,7 +59,7 @@ func TestAccCloudflareTurnstileWidget_Basic(t *testing.T) {
 				Config: testAccCheckCloudflareTurnstileWidgetBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "bot_fight_mode", "false"),
 					resource.TestCheckResourceAttr(resourceName, "domains.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "domains.0", "example.com"),
@@ -90,7 +91,7 @@ func TestAccCloudflareTurnstileWidget_Minimum(t *testing.T) {
 				Config: testAccCheckCloudflareTurnstileWidgetMinimum(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "bot_fight_mode", "false"),
 					resource.TestCheckResourceAttr(resourceName, "domains.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "domains.0", "example.com"),
@@ -122,7 +123,7 @@ func TestAccCloudflareTurnstileWidget_NoDomains(t *testing.T) {
 				Config: testAccCheckCloudflareTurnstileWidgetNoDomains(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "bot_fight_mode", "false"),
 					resource.TestCheckResourceAttr(resourceName, "domains.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "mode", "managed"),

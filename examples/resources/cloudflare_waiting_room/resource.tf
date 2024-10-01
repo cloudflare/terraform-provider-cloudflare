@@ -17,7 +17,7 @@ resource "cloudflare_waiting_room" "example" {
     host = "shop2.example.com"
   }
 
-  queueing_status_code  = 200
+  queueing_status_code = 200
 
   enabled_origin_commands = ["revoke"]
 }
