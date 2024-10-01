@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"reflect"
 	"strings"
 	"testing"
@@ -586,6 +587,8 @@ var encode_only_tests = map[string]struct {
 	},
 
 	"json_struct_nil3": {`{"nil":null}`, JsonModel{Nil: jsontypes.NewNormalizedValue("null")}},
+
+	"tfsdk_dynamic_number": {"5", types.DynamicValue(types.NumberValue(big.NewFloat(5)))},
 }
 
 func merge[T interface{}](test_array ...map[string]T) map[string]T {
@@ -815,6 +818,12 @@ var decode_from_value_tests = map[string]struct {
 		`"hey"`,
 		types.DynamicValue(types.StringValue("before_value")),
 		types.DynamicValue(types.StringValue("hey")),
+	},
+
+	"tfsdk_dynamic_number": {
+		"5",
+		types.DynamicValue(basetypes.NewNumberNull()),
+		types.DynamicValue(types.NumberValue(big.NewFloat(5))),
 	},
 
 	"tfsdk_dynamic_int_from_null": {
