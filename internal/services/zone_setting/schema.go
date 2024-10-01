@@ -20,9 +20,19 @@ var _ resource.ResourceWithConfigValidators = (*ZoneSettingResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"setting_id": schema.StringAttribute{
+				Description:   "Setting name",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
+			"zone_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"id": schema.StringAttribute{
 				Description: "ID of the zone setting.",
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"0rtt",
@@ -80,17 +90,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"websockets",
 					),
 				},
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
-			"setting_id": schema.StringAttribute{
-				Description:   "Setting name",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"zone_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{
 				Description: "ssl-recommender enrollment setting.",
