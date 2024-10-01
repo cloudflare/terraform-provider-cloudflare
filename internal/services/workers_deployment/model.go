@@ -3,6 +3,7 @@
 package workers_deployment
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,6 +23,14 @@ type WorkersDeploymentModel struct {
 	CreatedOn   types.String                                                    `tfsdk:"created_on" json:"created_on,computed"`
 	Source      types.String                                                    `tfsdk:"source" json:"source,computed"`
 	Deployments customfield.NestedObjectList[WorkersDeploymentDeploymentsModel] `tfsdk:"deployments" json:"deployments,computed"`
+}
+
+func (m WorkersDeploymentModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WorkersDeploymentModel) MarshalJSONForUpdate(state WorkersDeploymentModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type WorkersDeploymentVersionsModel struct {

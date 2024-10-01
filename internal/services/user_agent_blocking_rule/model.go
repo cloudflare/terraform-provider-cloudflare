@@ -3,6 +3,7 @@
 package user_agent_blocking_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,6 +16,14 @@ type UserAgentBlockingRuleModel struct {
 	ID             types.String                             `tfsdk:"id" path:"id,optional"`
 	Mode           types.String                             `tfsdk:"mode" json:"mode,required"`
 	Configuration  *UserAgentBlockingRuleConfigurationModel `tfsdk:"configuration" json:"configuration,required"`
+}
+
+func (m UserAgentBlockingRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m UserAgentBlockingRuleModel) MarshalJSONForUpdate(state UserAgentBlockingRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type UserAgentBlockingRuleConfigurationModel struct {

@@ -3,6 +3,7 @@
 package api_token
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,6 +25,14 @@ type APITokenModel struct {
 	LastUsedOn timetypes.RFC3339                                `tfsdk:"last_used_on" json:"last_used_on,computed" format:"date-time"`
 	ModifiedOn timetypes.RFC3339                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Value      types.String                                     `tfsdk:"value" json:"value,computed"`
+}
+
+func (m APITokenModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m APITokenModel) MarshalJSONForUpdate(state APITokenModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type APITokenPoliciesModel struct {

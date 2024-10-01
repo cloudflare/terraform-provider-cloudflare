@@ -3,6 +3,7 @@
 package load_balancer
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -35,6 +36,14 @@ type LoadBalancerModel struct {
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
 	CreatedOn                 types.String                                                         `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn                types.String                                                         `tfsdk:"modified_on" json:"modified_on,computed"`
+}
+
+func (m LoadBalancerModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m LoadBalancerModel) MarshalJSONForUpdate(state LoadBalancerModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type LoadBalancerAdaptiveRoutingModel struct {

@@ -3,6 +3,7 @@
 package email_routing_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,6 +20,14 @@ type EmailRoutingRuleModel struct {
 	Enabled  types.Bool                        `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Priority types.Float64                     `tfsdk:"priority" json:"priority,computed_optional"`
 	Tag      types.String                      `tfsdk:"tag" json:"tag,computed"`
+}
+
+func (m EmailRoutingRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m EmailRoutingRuleModel) MarshalJSONForUpdate(state EmailRoutingRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type EmailRoutingRuleActionsModel struct {

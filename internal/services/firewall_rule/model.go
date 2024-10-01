@@ -3,6 +3,7 @@
 package firewall_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,6 +23,14 @@ type FirewallRuleModel struct {
 	Priority       types.Float64                  `tfsdk:"priority" json:"priority,computed"`
 	Ref            types.String                   `tfsdk:"ref" json:"ref,computed"`
 	Products       customfield.List[types.String] `tfsdk:"products" json:"products,computed"`
+}
+
+func (m FirewallRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m FirewallRuleModel) MarshalJSONForUpdate(state FirewallRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type FirewallRuleActionModel struct {

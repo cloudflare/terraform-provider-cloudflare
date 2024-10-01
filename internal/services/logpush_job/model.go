@@ -3,6 +3,7 @@
 package logpush_job
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -31,6 +32,14 @@ type LogpushJobModel struct {
 	ErrorMessage             timetypes.RFC3339                                      `tfsdk:"error_message" json:"error_message,computed" format:"date-time"`
 	LastComplete             timetypes.RFC3339                                      `tfsdk:"last_complete" json:"last_complete,computed" format:"date-time"`
 	LastError                timetypes.RFC3339                                      `tfsdk:"last_error" json:"last_error,computed" format:"date-time"`
+}
+
+func (m LogpushJobModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m LogpushJobModel) MarshalJSONForUpdate(state LogpushJobModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type LogpushJobOutputOptionsModel struct {

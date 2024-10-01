@@ -3,6 +3,7 @@
 package workers_for_platforms_dispatch_namespace
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,4 +23,12 @@ type WorkersForPlatformsDispatchNamespaceModel struct {
 	ModifiedOn    timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	NamespaceName types.String      `tfsdk:"namespace_name" json:"namespace_name,computed"`
 	ScriptCount   types.Int64       `tfsdk:"script_count" json:"script_count,computed"`
+}
+
+func (m WorkersForPlatformsDispatchNamespaceModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WorkersForPlatformsDispatchNamespaceModel) MarshalJSONForUpdate(state WorkersForPlatformsDispatchNamespaceModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

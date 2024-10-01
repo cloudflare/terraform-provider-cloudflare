@@ -3,6 +3,7 @@
 package magic_transit_site_lan
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -23,6 +24,14 @@ type MagicTransitSiteLANModel struct {
 	RoutedSubnets    customfield.NestedObjectList[MagicTransitSiteLANRoutedSubnetsModel] `tfsdk:"routed_subnets" json:"routed_subnets,computed_optional"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteLANStaticAddressingModel]  `tfsdk:"static_addressing" json:"static_addressing,computed_optional"`
 	ID               types.String                                                        `tfsdk:"id" json:"id,computed"`
+}
+
+func (m MagicTransitSiteLANModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m MagicTransitSiteLANModel) MarshalJSONForUpdate(state MagicTransitSiteLANModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type MagicTransitSiteLANNatModel struct {

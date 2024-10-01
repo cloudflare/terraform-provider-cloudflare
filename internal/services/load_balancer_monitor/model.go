@@ -3,6 +3,7 @@
 package load_balancer_monitor
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -31,4 +32,12 @@ type LoadBalancerMonitorModel struct {
 	Type            types.String               `tfsdk:"type" json:"type,computed_optional"`
 	CreatedOn       types.String               `tfsdk:"created_on" json:"created_on,computed"`
 	ModifiedOn      types.String               `tfsdk:"modified_on" json:"modified_on,computed"`
+}
+
+func (m LoadBalancerMonitorModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m LoadBalancerMonitorModel) MarshalJSONForUpdate(state LoadBalancerMonitorModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

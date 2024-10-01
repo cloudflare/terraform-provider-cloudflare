@@ -3,6 +3,7 @@
 package zone_cache_variants
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,6 +17,14 @@ type ZoneCacheVariantsModel struct {
 	ZoneID     types.String                 `tfsdk:"zone_id" path:"zone_id,required"`
 	Value      *ZoneCacheVariantsValueModel `tfsdk:"value" json:"value,required"`
 	ModifiedOn timetypes.RFC3339            `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+}
+
+func (m ZoneCacheVariantsModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZoneCacheVariantsModel) MarshalJSONForUpdate(state ZoneCacheVariantsModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZoneCacheVariantsValueModel struct {

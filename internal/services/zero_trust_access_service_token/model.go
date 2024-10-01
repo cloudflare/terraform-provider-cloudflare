@@ -3,6 +3,7 @@
 package zero_trust_access_service_token
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,4 +23,12 @@ type ZeroTrustAccessServiceTokenModel struct {
 	CreatedAt    timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ExpiresAt    timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
 	UpdatedAt    timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+}
+
+func (m ZeroTrustAccessServiceTokenModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustAccessServiceTokenModel) MarshalJSONForUpdate(state ZeroTrustAccessServiceTokenModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

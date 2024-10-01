@@ -3,6 +3,7 @@
 package zero_trust_gateway_policy
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,6 +30,14 @@ type ZeroTrustGatewayPolicyModel struct {
 	CreatedAt     timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt     timetypes.RFC3339                                                 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
 	UpdatedAt     timetypes.RFC3339                                                 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+}
+
+func (m ZeroTrustGatewayPolicyModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustGatewayPolicyModel) MarshalJSONForUpdate(state ZeroTrustGatewayPolicyModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {

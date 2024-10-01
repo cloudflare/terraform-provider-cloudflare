@@ -3,6 +3,7 @@
 package secondary_dns_incoming
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,4 +21,12 @@ type SecondaryDNSIncomingModel struct {
 	CreatedTime        types.String    `tfsdk:"created_time" json:"created_time,computed"`
 	ModifiedTime       types.String    `tfsdk:"modified_time" json:"modified_time,computed"`
 	SOASerial          types.Float64   `tfsdk:"soa_serial" json:"soa_serial,computed"`
+}
+
+func (m SecondaryDNSIncomingModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m SecondaryDNSIncomingModel) MarshalJSONForUpdate(state SecondaryDNSIncomingModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

@@ -3,6 +3,7 @@
 package zero_trust_tunnel_cloudflared_config
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,6 +21,14 @@ type ZeroTrustTunnelCloudflaredConfigModel struct {
 	CreatedAt timetypes.RFC3339                                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source    types.String                                                          `tfsdk:"source" json:"source,computed"`
 	Version   types.Int64                                                           `tfsdk:"version" json:"version,computed"`
+}
+
+func (m ZeroTrustTunnelCloudflaredConfigModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustTunnelCloudflaredConfigModel) MarshalJSONForUpdate(state ZeroTrustTunnelCloudflaredConfigModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustTunnelCloudflaredConfigConfigModel struct {

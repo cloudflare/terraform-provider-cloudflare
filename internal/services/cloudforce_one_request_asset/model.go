@@ -3,6 +3,7 @@
 package cloudforce_one_request_asset
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -27,6 +28,14 @@ type CloudforceOneRequestAssetModel struct {
 	Success           types.Bool                                                           `tfsdk:"success" json:"success,computed"`
 	Errors            customfield.NestedObjectList[CloudforceOneRequestAssetErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages          customfield.NestedObjectList[CloudforceOneRequestAssetMessagesModel] `tfsdk:"messages" json:"messages,computed"`
+}
+
+func (m CloudforceOneRequestAssetModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m CloudforceOneRequestAssetModel) MarshalJSONForUpdate(state CloudforceOneRequestAssetModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type CloudforceOneRequestAssetErrorsModel struct {

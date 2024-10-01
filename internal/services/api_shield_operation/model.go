@@ -3,6 +3,7 @@
 package api_shield_operation
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -15,4 +16,12 @@ type APIShieldOperationModel struct {
 	OperationID types.String `tfsdk:"operation_id" path:"operation_id,required"`
 	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	State       types.String `tfsdk:"state" json:"state,optional"`
+}
+
+func (m APIShieldOperationModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m APIShieldOperationModel) MarshalJSONForUpdate(state APIShieldOperationModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

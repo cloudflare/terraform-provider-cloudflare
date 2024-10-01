@@ -3,6 +3,7 @@
 package rate_limit
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +18,14 @@ type RateLimitModel struct {
 	Threshold      types.Float64         `tfsdk:"threshold" json:"threshold,required"`
 	Action         *RateLimitActionModel `tfsdk:"action" json:"action,required"`
 	Match          *RateLimitMatchModel  `tfsdk:"match" json:"match,required"`
+}
+
+func (m RateLimitModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m RateLimitModel) MarshalJSONForUpdate(state RateLimitModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type RateLimitActionModel struct {

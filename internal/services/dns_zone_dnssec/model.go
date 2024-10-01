@@ -3,6 +3,7 @@
 package dns_zone_dnssec
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,4 +28,12 @@ type DNSZoneDNSSECModel struct {
 	KeyType           types.String      `tfsdk:"key_type" json:"key_type,computed"`
 	ModifiedOn        timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	PublicKey         types.String      `tfsdk:"public_key" json:"public_key,computed"`
+}
+
+func (m DNSZoneDNSSECModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m DNSZoneDNSSECModel) MarshalJSONForUpdate(state DNSZoneDNSSECModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

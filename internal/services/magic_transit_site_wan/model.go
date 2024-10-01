@@ -3,6 +3,7 @@
 package magic_transit_site_wan
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,6 +22,14 @@ type MagicTransitSiteWANModel struct {
 	Priority         types.Int64                                                        `tfsdk:"priority" json:"priority,optional"`
 	StaticAddressing customfield.NestedObject[MagicTransitSiteWANStaticAddressingModel] `tfsdk:"static_addressing" json:"static_addressing,computed_optional"`
 	ID               types.String                                                       `tfsdk:"id" json:"id,computed"`
+}
+
+func (m MagicTransitSiteWANModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m MagicTransitSiteWANModel) MarshalJSONForUpdate(state MagicTransitSiteWANModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type MagicTransitSiteWANStaticAddressingModel struct {

@@ -3,6 +3,7 @@
 package zero_trust_device_posture_integration
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +18,14 @@ type ZeroTrustDevicePostureIntegrationModel struct {
 	Name      types.String                                  `tfsdk:"name" json:"name,required"`
 	Type      types.String                                  `tfsdk:"type" json:"type,required"`
 	Config    *ZeroTrustDevicePostureIntegrationConfigModel `tfsdk:"config" json:"config,required"`
+}
+
+func (m ZeroTrustDevicePostureIntegrationModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDevicePostureIntegrationModel) MarshalJSONForUpdate(state ZeroTrustDevicePostureIntegrationModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDevicePostureIntegrationConfigModel struct {

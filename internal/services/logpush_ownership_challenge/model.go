@@ -3,6 +3,7 @@
 package logpush_ownership_challenge
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,4 +18,12 @@ type LogpushOwnershipChallengeModel struct {
 	Filename        types.String `tfsdk:"filename" json:"filename,computed"`
 	Message         types.String `tfsdk:"message" json:"message,computed"`
 	Valid           types.Bool   `tfsdk:"valid" json:"valid,computed"`
+}
+
+func (m LogpushOwnershipChallengeModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m LogpushOwnershipChallengeModel) MarshalJSONForUpdate(state LogpushOwnershipChallengeModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

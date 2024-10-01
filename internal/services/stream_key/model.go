@@ -3,6 +3,7 @@
 package stream_key
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,4 +18,12 @@ type StreamKeyModel struct {
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Jwk       types.String      `tfsdk:"jwk" json:"jwk,computed"`
 	Pem       types.String      `tfsdk:"pem" json:"pem,computed"`
+}
+
+func (m StreamKeyModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m StreamKeyModel) MarshalJSONForUpdate(state StreamKeyModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

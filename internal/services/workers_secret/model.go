@@ -3,6 +3,7 @@
 package workers_secret
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,4 +19,12 @@ type WorkersSecretModel struct {
 	Name              types.String `tfsdk:"name" json:"name,optional"`
 	Text              types.String `tfsdk:"text" json:"text,optional"`
 	Type              types.String `tfsdk:"type" json:"type,optional"`
+}
+
+func (m WorkersSecretModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WorkersSecretModel) MarshalJSONForUpdate(state WorkersSecretModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

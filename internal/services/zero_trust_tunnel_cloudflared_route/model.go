@@ -3,6 +3,7 @@
 package zero_trust_tunnel_cloudflared_route
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,4 +21,12 @@ type ZeroTrustTunnelCloudflaredRouteModel struct {
 	VirtualNetworkID types.String      `tfsdk:"virtual_network_id" json:"virtual_network_id,optional"`
 	CreatedAt        timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	DeletedAt        timetypes.RFC3339 `tfsdk:"deleted_at" json:"deleted_at,computed" format:"date-time"`
+}
+
+func (m ZeroTrustTunnelCloudflaredRouteModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustTunnelCloudflaredRouteModel) MarshalJSONForUpdate(state ZeroTrustTunnelCloudflaredRouteModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

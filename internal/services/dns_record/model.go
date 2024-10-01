@@ -3,6 +3,7 @@
 package dns_record
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -32,6 +33,14 @@ type DNSRecordModel struct {
 	Tags              customfield.List[types.String]               `tfsdk:"tags" json:"tags,computed"`
 	Meta              jsontypes.Normalized                         `tfsdk:"meta" json:"meta,computed"`
 	Settings          jsontypes.Normalized                         `tfsdk:"settings" json:"settings,computed"`
+}
+
+func (m DNSRecordModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m DNSRecordModel) MarshalJSONForUpdate(state DNSRecordModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type DNSRecordDataModel struct {

@@ -63,7 +63,7 @@ func (r *AddressMapResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	dataBytes, err := apijson.Marshal(data)
+	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
@@ -111,7 +111,7 @@ func (r *AddressMapResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	dataBytes, err := apijson.MarshalForUpdate(data, state)
+	dataBytes, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return

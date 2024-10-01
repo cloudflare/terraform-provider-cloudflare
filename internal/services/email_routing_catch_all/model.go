@@ -3,6 +3,7 @@
 package email_routing_catch_all
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,6 +19,14 @@ type EmailRoutingCatchAllModel struct {
 	Name     types.String                          `tfsdk:"name" json:"name,optional"`
 	Enabled  types.Bool                            `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Tag      types.String                          `tfsdk:"tag" json:"tag,computed"`
+}
+
+func (m EmailRoutingCatchAllModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m EmailRoutingCatchAllModel) MarshalJSONForUpdate(state EmailRoutingCatchAllModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type EmailRoutingCatchAllActionsModel struct {

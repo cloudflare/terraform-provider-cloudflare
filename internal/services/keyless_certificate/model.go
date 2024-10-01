@@ -3,6 +3,7 @@
 package keyless_certificate
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,6 +27,14 @@ type KeylessCertificateModel struct {
 	ModifiedOn   timetypes.RFC3339                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Status       types.String                                            `tfsdk:"status" json:"status,computed"`
 	Permissions  customfield.List[types.String]                          `tfsdk:"permissions" json:"permissions,computed"`
+}
+
+func (m KeylessCertificateModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m KeylessCertificateModel) MarshalJSONForUpdate(state KeylessCertificateModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type KeylessCertificateTunnelModel struct {
