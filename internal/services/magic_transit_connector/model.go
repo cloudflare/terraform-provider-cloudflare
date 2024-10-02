@@ -3,6 +3,7 @@
 package magic_transit_connector
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -24,6 +25,14 @@ type MagicTransitConnectorModel struct {
 	LastSeenVersion              types.String                                               `tfsdk:"last_seen_version" json:"last_seen_version,computed"`
 	LastUpdated                  types.String                                               `tfsdk:"last_updated" json:"last_updated,computed"`
 	Device                       customfield.NestedObject[MagicTransitConnectorDeviceModel] `tfsdk:"device" json:"device,computed"`
+}
+
+func (m MagicTransitConnectorModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m MagicTransitConnectorModel) MarshalJSONForUpdate(state MagicTransitConnectorModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type MagicTransitConnectorDeviceModel struct {

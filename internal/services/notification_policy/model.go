@@ -3,6 +3,7 @@
 package notification_policy
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,6 +29,14 @@ type NotificationPolicyModel struct {
 	Errors        customfield.NestedObjectList[NotificationPolicyErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages      customfield.NestedObjectList[NotificationPolicyMessagesModel] `tfsdk:"messages" json:"messages,computed"`
 	ResultInfo    customfield.NestedObject[NotificationPolicyResultInfoModel]   `tfsdk:"result_info" json:"result_info,computed"`
+}
+
+func (m NotificationPolicyModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m NotificationPolicyModel) MarshalJSONForUpdate(state NotificationPolicyModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type NotificationPolicyMechanismsModel struct {

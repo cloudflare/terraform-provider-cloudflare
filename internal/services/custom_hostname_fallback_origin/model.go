@@ -3,6 +3,7 @@
 package custom_hostname_fallback_origin
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -20,4 +21,12 @@ type CustomHostnameFallbackOriginModel struct {
 	Status    types.String                   `tfsdk:"status" json:"status,computed"`
 	UpdatedAt timetypes.RFC3339              `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Errors    customfield.List[types.String] `tfsdk:"errors" json:"errors,computed"`
+}
+
+func (m CustomHostnameFallbackOriginModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m CustomHostnameFallbackOriginModel) MarshalJSONForUpdate(state CustomHostnameFallbackOriginModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

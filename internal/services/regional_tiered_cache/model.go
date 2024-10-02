@@ -3,6 +3,7 @@
 package regional_tiered_cache
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -16,4 +17,12 @@ type RegionalTieredCacheModel struct {
 	ZoneID     types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	Value      types.String      `tfsdk:"value" json:"value,computed_optional"`
 	ModifiedOn timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+}
+
+func (m RegionalTieredCacheModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m RegionalTieredCacheModel) MarshalJSONForUpdate(state RegionalTieredCacheModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

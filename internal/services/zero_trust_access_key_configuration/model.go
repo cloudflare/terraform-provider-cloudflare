@@ -3,6 +3,7 @@
 package zero_trust_access_key_configuration
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,4 +18,12 @@ type ZeroTrustAccessKeyConfigurationModel struct {
 	KeyRotationIntervalDays types.Float64     `tfsdk:"key_rotation_interval_days" json:"key_rotation_interval_days,required"`
 	DaysUntilNextRotation   types.Float64     `tfsdk:"days_until_next_rotation" json:"days_until_next_rotation,computed"`
 	LastKeyRotationAt       timetypes.RFC3339 `tfsdk:"last_key_rotation_at" json:"last_key_rotation_at,computed" format:"date-time"`
+}
+
+func (m ZeroTrustAccessKeyConfigurationModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustAccessKeyConfigurationModel) MarshalJSONForUpdate(state ZeroTrustAccessKeyConfigurationModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

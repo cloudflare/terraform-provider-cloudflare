@@ -3,6 +3,7 @@
 package account_subscription
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,6 +18,14 @@ type AccountSubscriptionModel struct {
 	Frequency              types.String                                               `tfsdk:"frequency" json:"frequency,optional"`
 	RatePlan               customfield.NestedObject[AccountSubscriptionRatePlanModel] `tfsdk:"rate_plan" json:"rate_plan,computed_optional"`
 	SubscriptionID         types.String                                               `tfsdk:"subscription_id" json:"subscription_id,computed"`
+}
+
+func (m AccountSubscriptionModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m AccountSubscriptionModel) MarshalJSONForUpdate(state AccountSubscriptionModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type AccountSubscriptionRatePlanModel struct {

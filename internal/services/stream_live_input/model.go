@@ -3,6 +3,7 @@
 package stream_live_input
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -30,6 +31,14 @@ type StreamLiveInputModel struct {
 	SrtPlayback              customfield.NestedObject[StreamLiveInputSrtPlaybackModel]    `tfsdk:"srt_playback" json:"srtPlayback,computed"`
 	WebRtc                   customfield.NestedObject[StreamLiveInputWebRtcModel]         `tfsdk:"web_rtc" json:"webRTC,computed"`
 	WebRtcPlayback           customfield.NestedObject[StreamLiveInputWebRtcPlaybackModel] `tfsdk:"web_rtc_playback" json:"webRTCPlayback,computed"`
+}
+
+func (m StreamLiveInputModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m StreamLiveInputModel) MarshalJSONForUpdate(state StreamLiveInputModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type StreamLiveInputRecordingModel struct {

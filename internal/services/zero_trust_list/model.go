@@ -3,6 +3,7 @@
 package zero_trust_list
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -22,6 +23,14 @@ type ZeroTrustListModel struct {
 	CreatedAt   timetypes.RFC3339                                     `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ListCount   types.Float64                                         `tfsdk:"list_count" json:"count,computed"`
 	UpdatedAt   timetypes.RFC3339                                     `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+}
+
+func (m ZeroTrustListModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustListModel) MarshalJSONForUpdate(state ZeroTrustListModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustListItemsModel struct {

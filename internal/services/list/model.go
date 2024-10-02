@@ -3,6 +3,7 @@
 package list
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,4 +18,12 @@ type ListModel struct {
 	Name        types.String `tfsdk:"name" json:"name,required"`
 	Description types.String `tfsdk:"description" json:"description,optional"`
 	ID          types.String `tfsdk:"id" json:"id,computed"`
+}
+
+func (m ListModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ListModel) MarshalJSONForUpdate(state ListModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

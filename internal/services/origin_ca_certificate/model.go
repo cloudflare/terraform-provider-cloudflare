@@ -3,6 +3,7 @@
 package origin_ca_certificate
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -20,4 +21,12 @@ type OriginCACertificateModel struct {
 	Certificate       types.String      `tfsdk:"certificate" json:"certificate,computed"`
 	ExpiresOn         types.String      `tfsdk:"expires_on" json:"expires_on,computed"`
 	RevokedAt         timetypes.RFC3339 `tfsdk:"revoked_at" json:"revoked_at,computed" format:"date-time"`
+}
+
+func (m OriginCACertificateModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m OriginCACertificateModel) MarshalJSONForUpdate(state OriginCACertificateModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

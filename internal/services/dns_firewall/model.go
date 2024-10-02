@@ -3,6 +3,7 @@
 package dns_firewall
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -27,6 +28,14 @@ type DNSFirewallModel struct {
 	AttackMitigation     customfield.NestedObject[DNSFirewallAttackMitigationModel] `tfsdk:"attack_mitigation" json:"attack_mitigation,computed_optional"`
 	ModifiedOn           timetypes.RFC3339                                          `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	DNSFirewallIPs       customfield.List[types.String]                             `tfsdk:"dns_firewall_ips" json:"dns_firewall_ips,computed"`
+}
+
+func (m DNSFirewallModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m DNSFirewallModel) MarshalJSONForUpdate(state DNSFirewallModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type DNSFirewallAttackMitigationModel struct {

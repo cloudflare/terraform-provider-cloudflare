@@ -3,6 +3,7 @@
 package load_balancer_pool
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -32,6 +33,14 @@ type LoadBalancerPoolModel struct {
 	DisabledAt         timetypes.RFC3339                                                 `tfsdk:"disabled_at" json:"disabled_at,computed" format:"date-time"`
 	ModifiedOn         types.String                                                      `tfsdk:"modified_on" json:"modified_on,computed"`
 	Networks           customfield.List[types.String]                                    `tfsdk:"networks" json:"networks,computed"`
+}
+
+func (m LoadBalancerPoolModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m LoadBalancerPoolModel) MarshalJSONForUpdate(state LoadBalancerPoolModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type LoadBalancerPoolOriginsModel struct {

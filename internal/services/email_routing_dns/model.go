@@ -3,6 +3,7 @@
 package email_routing_dns
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,4 +22,12 @@ type EmailRoutingDNSModel struct {
 	SkipWizard types.Bool        `tfsdk:"skip_wizard" json:"skip_wizard,computed"`
 	Status     types.String      `tfsdk:"status" json:"status,computed"`
 	Tag        types.String      `tfsdk:"tag" json:"tag,computed"`
+}
+
+func (m EmailRoutingDNSModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m EmailRoutingDNSModel) MarshalJSONForUpdate(state EmailRoutingDNSModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

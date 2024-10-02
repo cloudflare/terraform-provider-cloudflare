@@ -3,6 +3,7 @@
 package waiting_room_event
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -30,4 +31,12 @@ type WaitingRoomEventModel struct {
 	Suspended             types.Bool        `tfsdk:"suspended" json:"suspended,computed_optional"`
 	CreatedOn             timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn            timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+}
+
+func (m WaitingRoomEventModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WaitingRoomEventModel) MarshalJSONForUpdate(state WaitingRoomEventModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

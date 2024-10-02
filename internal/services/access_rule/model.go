@@ -3,6 +3,7 @@
 package access_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,6 +19,14 @@ type AccessRuleModel struct {
 	Configuration *AccessRuleConfigurationModel `tfsdk:"configuration" json:"configuration,required"`
 	Notes         types.String                  `tfsdk:"notes" json:"notes,optional"`
 	ID            types.String                  `tfsdk:"id" json:"id,computed"`
+}
+
+func (m AccessRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m AccessRuleModel) MarshalJSONForUpdate(state AccessRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type AccessRuleConfigurationModel struct {

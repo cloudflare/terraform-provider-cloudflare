@@ -3,6 +3,7 @@
 package zero_trust_device_managed_networks
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,6 +18,14 @@ type ZeroTrustDeviceManagedNetworksModel struct {
 	Name      types.String                               `tfsdk:"name" json:"name,required"`
 	Type      types.String                               `tfsdk:"type" json:"type,required"`
 	Config    *ZeroTrustDeviceManagedNetworksConfigModel `tfsdk:"config" json:"config,required"`
+}
+
+func (m ZeroTrustDeviceManagedNetworksModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDeviceManagedNetworksModel) MarshalJSONForUpdate(state ZeroTrustDeviceManagedNetworksModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDeviceManagedNetworksConfigModel struct {

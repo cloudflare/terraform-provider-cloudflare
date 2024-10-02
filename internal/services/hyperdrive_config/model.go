@@ -3,6 +3,7 @@
 package hyperdrive_config
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -17,6 +18,14 @@ type HyperdriveConfigModel struct {
 	AccountID types.String                                           `tfsdk:"account_id" path:"account_id,required"`
 	Origin    *HyperdriveConfigOriginModel                           `tfsdk:"origin" json:"origin,required"`
 	Caching   customfield.NestedObject[HyperdriveConfigCachingModel] `tfsdk:"caching" json:"caching,computed_optional"`
+}
+
+func (m HyperdriveConfigModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m HyperdriveConfigModel) MarshalJSONForUpdate(state HyperdriveConfigModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type HyperdriveConfigOriginModel struct {

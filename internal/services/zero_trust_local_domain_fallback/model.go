@@ -3,6 +3,7 @@
 package zero_trust_local_domain_fallback
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -17,4 +18,12 @@ type ZeroTrustLocalDomainFallbackModel struct {
 	Suffix      types.String    `tfsdk:"suffix" json:"suffix,required"`
 	Description types.String    `tfsdk:"description" json:"description,optional"`
 	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server,optional"`
+}
+
+func (m ZeroTrustLocalDomainFallbackModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustLocalDomainFallbackModel) MarshalJSONForUpdate(state ZeroTrustLocalDomainFallbackModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

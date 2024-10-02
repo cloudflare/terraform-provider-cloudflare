@@ -3,6 +3,7 @@
 package zero_trust_tunnel_cloudflared
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -16,4 +17,12 @@ type ZeroTrustTunnelCloudflaredModel struct {
 	ConfigSrc    types.String `tfsdk:"config_src" json:"config_src,computed_optional"`
 	Name         types.String `tfsdk:"name" json:"name,required"`
 	TunnelSecret types.String `tfsdk:"tunnel_secret" json:"tunnel_secret,optional"`
+}
+
+func (m ZeroTrustTunnelCloudflaredModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustTunnelCloudflaredModel) MarshalJSONForUpdate(state ZeroTrustTunnelCloudflaredModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

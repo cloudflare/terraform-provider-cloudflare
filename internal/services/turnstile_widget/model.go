@@ -3,6 +3,7 @@
 package turnstile_widget
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -26,4 +27,12 @@ type TurnstileWidgetModel struct {
 	CreatedOn      timetypes.RFC3339 `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	ModifiedOn     timetypes.RFC3339 `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Secret         types.String      `tfsdk:"secret" json:"secret,computed"`
+}
+
+func (m TurnstileWidgetModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m TurnstileWidgetModel) MarshalJSONForUpdate(state TurnstileWidgetModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

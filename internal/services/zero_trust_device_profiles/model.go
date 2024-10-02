@@ -3,6 +3,7 @@
 package zero_trust_device_profiles
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -38,6 +39,14 @@ type ZeroTrustDeviceProfilesModel struct {
 	FallbackDomains     customfield.NestedObjectList[ZeroTrustDeviceProfilesFallbackDomainsModel] `tfsdk:"fallback_domains" json:"fallback_domains,computed"`
 	Include             customfield.NestedObjectList[ZeroTrustDeviceProfilesIncludeModel]         `tfsdk:"include" json:"include,computed"`
 	TargetTests         customfield.NestedObjectList[ZeroTrustDeviceProfilesTargetTestsModel]     `tfsdk:"target_tests" json:"target_tests,computed"`
+}
+
+func (m ZeroTrustDeviceProfilesModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDeviceProfilesModel) MarshalJSONForUpdate(state ZeroTrustDeviceProfilesModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDeviceProfilesServiceModeV2Model struct {

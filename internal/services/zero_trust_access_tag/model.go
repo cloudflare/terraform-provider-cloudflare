@@ -3,6 +3,7 @@
 package zero_trust_access_tag
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,4 +19,12 @@ type ZeroTrustAccessTagModel struct {
 	AppCount  types.Int64       `tfsdk:"app_count" json:"app_count,computed"`
 	CreatedAt timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	UpdatedAt timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+}
+
+func (m ZeroTrustAccessTagModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustAccessTagModel) MarshalJSONForUpdate(state ZeroTrustAccessTagModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

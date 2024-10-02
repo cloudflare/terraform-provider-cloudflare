@@ -3,6 +3,7 @@
 package stream
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
@@ -39,6 +40,14 @@ type StreamModel struct {
 	Status                customfield.NestedObject[StreamStatusModel]    `tfsdk:"status" json:"status,computed"`
 	Watermark             customfield.NestedObject[StreamWatermarkModel] `tfsdk:"watermark" json:"watermark,computed"`
 	Meta                  jsontypes.Normalized                           `tfsdk:"meta" json:"meta,computed"`
+}
+
+func (m StreamModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m StreamModel) MarshalJSONForUpdate(state StreamModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type StreamInputModel struct {

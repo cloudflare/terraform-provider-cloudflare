@@ -3,6 +3,7 @@
 package email_security_trusted_domains
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -23,6 +24,14 @@ type EmailSecurityTrustedDomainsModel struct {
 	Pattern      types.String                                                       `tfsdk:"pattern" json:"pattern,optional"`
 	CreatedAt    timetypes.RFC3339                                                  `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	LastModified timetypes.RFC3339                                                  `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+}
+
+func (m EmailSecurityTrustedDomainsModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m EmailSecurityTrustedDomainsModel) MarshalJSONForUpdate(state EmailSecurityTrustedDomainsModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type EmailSecurityTrustedDomainsBodyModel struct {

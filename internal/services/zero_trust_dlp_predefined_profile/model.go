@@ -3,6 +3,7 @@
 package zero_trust_dlp_predefined_profile
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,6 +20,14 @@ type ZeroTrustDLPPredefinedProfileModel struct {
 	AllowedMatchCount types.Int64                                                                  `tfsdk:"allowed_match_count" json:"allowed_match_count,optional"`
 	OCREnabled        types.Bool                                                                   `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
 	ContextAwareness  customfield.NestedObject[ZeroTrustDLPPredefinedProfileContextAwarenessModel] `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
+}
+
+func (m ZeroTrustDLPPredefinedProfileModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDLPPredefinedProfileModel) MarshalJSONForUpdate(state ZeroTrustDLPPredefinedProfileModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDLPPredefinedProfileEntriesModel struct {

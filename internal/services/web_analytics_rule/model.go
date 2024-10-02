@@ -3,6 +3,7 @@
 package web_analytics_rule
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,4 +22,12 @@ type WebAnalyticsRuleModel struct {
 	Paths     *[]types.String   `tfsdk:"paths" json:"paths,optional"`
 	Created   timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Priority  types.Float64     `tfsdk:"priority" json:"priority,computed"`
+}
+
+func (m WebAnalyticsRuleModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m WebAnalyticsRuleModel) MarshalJSONForUpdate(state WebAnalyticsRuleModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

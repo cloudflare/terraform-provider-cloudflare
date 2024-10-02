@@ -3,6 +3,7 @@
 package queue
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,6 +23,14 @@ type QueueModel struct {
 	ProducersTotalCount types.Float64                                     `tfsdk:"producers_total_count" json:"producers_total_count,computed"`
 	Consumers           customfield.NestedObjectList[QueueConsumersModel] `tfsdk:"consumers" json:"consumers,computed"`
 	Producers           customfield.NestedObjectList[QueueProducersModel] `tfsdk:"producers" json:"producers,computed"`
+}
+
+func (m QueueModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m QueueModel) MarshalJSONForUpdate(state QueueModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type QueueConsumersModel struct {

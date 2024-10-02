@@ -3,6 +3,7 @@
 package call_app_turn_key
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -19,4 +20,12 @@ type CallAppTURNKeyModel struct {
 	Key       types.String      `tfsdk:"key" json:"key,computed"`
 	Modified  timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	UID       types.String      `tfsdk:"uid" json:"uid,computed"`
+}
+
+func (m CallAppTURNKeyModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m CallAppTURNKeyModel) MarshalJSONForUpdate(state CallAppTURNKeyModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

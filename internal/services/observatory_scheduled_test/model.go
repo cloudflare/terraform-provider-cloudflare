@@ -3,6 +3,7 @@
 package observatory_scheduled_test
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,6 +22,14 @@ type ObservatoryScheduledTestModel struct {
 	Region    types.String                                                    `tfsdk:"region" json:"region,computed"`
 	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed"`
 	Test      customfield.NestedObject[ObservatoryScheduledTestTestModel]     `tfsdk:"test" json:"test,computed"`
+}
+
+func (m ObservatoryScheduledTestModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ObservatoryScheduledTestModel) MarshalJSONForUpdate(state ObservatoryScheduledTestModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ObservatoryScheduledTestScheduleModel struct {

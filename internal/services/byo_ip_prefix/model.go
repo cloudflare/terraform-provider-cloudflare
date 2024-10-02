@@ -3,6 +3,7 @@
 package byo_ip_prefix
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,6 +31,14 @@ type ByoIPPrefixModel struct {
 	Errors               customfield.NestedObjectList[ByoIPPrefixErrorsModel]   `tfsdk:"errors" json:"errors,computed"`
 	Messages             customfield.NestedObjectList[ByoIPPrefixMessagesModel] `tfsdk:"messages" json:"messages,computed"`
 	ResultInfo           customfield.NestedObject[ByoIPPrefixResultInfoModel]   `tfsdk:"result_info" json:"result_info,computed"`
+}
+
+func (m ByoIPPrefixModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ByoIPPrefixModel) MarshalJSONForUpdate(state ByoIPPrefixModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ByoIPPrefixErrorsModel struct {

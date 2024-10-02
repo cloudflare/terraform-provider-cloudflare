@@ -3,6 +3,7 @@
 package address_map
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,6 +29,14 @@ type AddressMapModel struct {
 	Errors       customfield.NestedObjectList[AddressMapErrorsModel]      `tfsdk:"errors" json:"errors,computed"`
 	Messages     customfield.NestedObjectList[AddressMapMessagesModel]    `tfsdk:"messages" json:"messages,computed"`
 	ResultInfo   customfield.NestedObject[AddressMapResultInfoModel]      `tfsdk:"result_info" json:"result_info,computed"`
+}
+
+func (m AddressMapModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m AddressMapModel) MarshalJSONForUpdate(state AddressMapModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type AddressMapMembershipsModel struct {

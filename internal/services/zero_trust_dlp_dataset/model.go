@@ -3,6 +3,7 @@
 package zero_trust_dlp_dataset
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,6 +30,14 @@ type ZeroTrustDLPDatasetModel struct {
 	Columns         customfield.NestedObjectList[ZeroTrustDLPDatasetColumnsModel] `tfsdk:"columns" json:"columns,computed"`
 	Dataset         customfield.NestedObject[ZeroTrustDLPDatasetDatasetModel]     `tfsdk:"dataset" json:"dataset,computed"`
 	Uploads         customfield.NestedObjectList[ZeroTrustDLPDatasetUploadsModel] `tfsdk:"uploads" json:"uploads,computed"`
+}
+
+func (m ZeroTrustDLPDatasetModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDLPDatasetModel) MarshalJSONForUpdate(state ZeroTrustDLPDatasetModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDLPDatasetColumnsModel struct {

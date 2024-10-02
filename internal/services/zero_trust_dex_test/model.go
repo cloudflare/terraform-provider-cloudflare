@@ -3,6 +3,7 @@
 package zero_trust_dex_test
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,6 +22,14 @@ type ZeroTrustDEXTestModel struct {
 	Description    types.String                                                      `tfsdk:"description" json:"description,optional"`
 	Targeted       types.Bool                                                        `tfsdk:"targeted" json:"targeted,optional"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesModel] `tfsdk:"target_policies" json:"target_policies,computed_optional"`
+}
+
+func (m ZeroTrustDEXTestModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustDEXTestModel) MarshalJSONForUpdate(state ZeroTrustDEXTestModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type ZeroTrustDEXTestDataModel struct {

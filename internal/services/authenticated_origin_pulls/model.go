@@ -3,6 +3,7 @@
 package authenticated_origin_pulls
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -28,6 +29,14 @@ type AuthenticatedOriginPullsModel struct {
 	Signature      types.String                            `tfsdk:"signature" json:"signature,computed"`
 	Status         types.String                            `tfsdk:"status" json:"status,computed"`
 	UpdatedAt      timetypes.RFC3339                       `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+}
+
+func (m AuthenticatedOriginPullsModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m AuthenticatedOriginPullsModel) MarshalJSONForUpdate(state AuthenticatedOriginPullsModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
 
 type AuthenticatedOriginPullsConfigModel struct {

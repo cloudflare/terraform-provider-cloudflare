@@ -3,6 +3,7 @@
 package zero_trust_risk_scoring_integration
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,4 +22,12 @@ type ZeroTrustRiskScoringIntegrationModel struct {
 	AccountTag      types.String      `tfsdk:"account_tag" json:"account_tag,computed"`
 	CreatedAt       timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	WellKnownURL    types.String      `tfsdk:"well_known_url" json:"well_known_url,computed"`
+}
+
+func (m ZeroTrustRiskScoringIntegrationModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m ZeroTrustRiskScoringIntegrationModel) MarshalJSONForUpdate(state ZeroTrustRiskScoringIntegrationModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

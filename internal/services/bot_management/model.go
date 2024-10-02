@@ -3,6 +3,7 @@
 package bot_management
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,4 +24,12 @@ type BotManagementModel struct {
 	SBFMStaticResourceProtection types.Bool   `tfsdk:"sbfm_static_resource_protection" json:"sbfm_static_resource_protection,optional"`
 	SBFMVerifiedBots             types.String `tfsdk:"sbfm_verified_bots" json:"sbfm_verified_bots,optional"`
 	SuppressSessionScore         types.Bool   `tfsdk:"suppress_session_score" json:"suppress_session_score,computed_optional"`
+}
+
+func (m BotManagementModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m BotManagementModel) MarshalJSONForUpdate(state BotManagementModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }

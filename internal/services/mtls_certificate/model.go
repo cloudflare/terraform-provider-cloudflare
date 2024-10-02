@@ -3,6 +3,7 @@
 package mtls_certificate
 
 import (
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -24,4 +25,12 @@ type MTLSCertificateModel struct {
 	Signature    types.String      `tfsdk:"signature" json:"signature,computed"`
 	UpdatedAt    timetypes.RFC3339 `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	UploadedOn   timetypes.RFC3339 `tfsdk:"uploaded_on" json:"uploaded_on,computed" format:"date-time"`
+}
+
+func (m MTLSCertificateModel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(m)
+}
+
+func (m MTLSCertificateModel) MarshalJSONForUpdate(state MTLSCertificateModel) (data []byte, err error) {
+	return apijson.MarshalForUpdate(m, state)
 }
