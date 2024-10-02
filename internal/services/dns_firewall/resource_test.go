@@ -1,13 +1,47 @@
 package dns_firewall_test
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"testing"
 
+	"github.com/cloudflare/cloudflare-go/v2"
+	"github.com/cloudflare/cloudflare-go/v2/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+func init() {
+	resource.AddTestSweepers("cloudflare_dns_firewall", &resource.Sweeper{
+		Name: "cloudflare_dns_firewall",
+		F: func(region string) error {
+			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+			ctx := context.Background()
+
+			client := acctest.SharedV2Client()
+
+			clusters, err := client.DNS.Firewall.List(ctx, dns.FirewallListParams{
+				AccountID: cloudflare.F(accountID),
+			})
+			if err != nil {
+				return fmt.Errorf("failed to fetch DNS Firewall clusters: %w", err)
+			}
+
+			for _, cluster := range clusters.Result {
+				_, err := client.DNS.Firewall.Delete(ctx, cluster.ID, dns.FirewallDeleteParams{
+					AccountID: cloudflare.F(accountID),
+				})
+				if err != nil {
+					return fmt.Errorf("failed to delete DNS Firewall cluster %q: %w", cluster.Name, err)
+				}
+			}
+
+			return nil
+		},
+	})
+}
 
 func TestAccCloudflareDNSFirewall_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
