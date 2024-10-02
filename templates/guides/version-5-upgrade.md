@@ -205,6 +205,27 @@ terraform_cloudflare_v5()
 ## cloudflare_risk_behavior
 ## cloudflare_ruleset
 ## cloudflare_r2_bucket
+
+- `location_hint` is now `location`.
+
+  Before
+  ```hcl
+  resource "cloudflare_r2_bucket" "example" {
+   	account_id    = "f037e56e89293a057740de681ac9abbe"
+   	name          = "example"
+   	location_hint = "APAC"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_r2_bucket" "example" {
+   	account_id = "f037e56e89293a057740de681ac9abbe"
+   	name       = "example"
+   	location   = "APAC"
+  }
+  ```
+
 ## cloudflare_spectrum_application
 ## cloudflare_split_tunneclououdflare_teams_account
 ## cloudflare_teams_list

@@ -117,7 +117,7 @@ func TestAccCloudflareR2Bucket_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
 					resource.TestCheckResourceAttr(resourceName, "id", rnd),
-					resource.TestCheckResourceAttr(resourceName, "location_hint", "ENAM"),
+					resource.TestCheckResourceAttr(resourceName, "location", "ENAM"),
 				),
 			},
 			// {
