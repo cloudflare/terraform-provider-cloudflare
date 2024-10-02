@@ -31,6 +31,9 @@ pattern terraform_cloudflare_v5_attribute_renames() {
     // cloudflare_queue
     `name = $v` as $name => `queue_name = $v` where { $name <: within `resource "cloudflare_queue" $_ { $_ }` },
 
+    // cloudflare_r2_bucket
+    `location_hint = $v` as $location => `location = $v` where { $location <: within `resource "cloudflare_r2_bucket" $_ { $_ }` },
+
     // cloudflare_worker_kv
     `key = $v` as $setting => `key_name = $v` where { $setting <: within `resource "cloudflare_workers_kv" $_ { $_ }` },
 
