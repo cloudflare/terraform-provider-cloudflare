@@ -147,6 +147,25 @@ func TestAccCloudflareZoneSetting_MinTLSVersion(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareZoneSetting_Ciphers(t *testing.T) {
+	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
+	rnd := utils.GenerateRandomResourceName()
+	name := "cloudflare_zone_setting." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testCloudflareZoneSettingConfigCiphers(rnd, zoneID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
+				),
+			},
+		},
+	})
+}
+
 func testCloudflareZoneSettingConfigOnOff(resourceID, zoneID string) string {
 	return acctest.LoadTestCase("on_off.tf", resourceID, zoneID)
 }
@@ -173,4 +192,8 @@ func testCloudflareZoneSettingConfigHSTS(resourceID, zoneID string) string {
 
 func testCloudflareZoneSettingConfigMinTLSVersion(resourceID, zoneID string) string {
 	return acctest.LoadTestCase("min_tls_version.tf", resourceID, zoneID)
+}
+
+func testCloudflareZoneSettingConfigCiphers(resourceID, zoneID string) string {
+	return acctest.LoadTestCase("ciphers.tf", resourceID, zoneID)
 }
