@@ -27,6 +27,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_categories"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/infrastructure_access_target"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/r2_bucket"
@@ -372,6 +373,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		email_routing_rule.NewResource,
 		hyperdrive_config.NewResource,
 		list_item.NewResource,
+		list.NewResource,
 		r2_bucket.NewResource,
 		risk_behavior.NewResource,
 		zero_trust_risk_behavior.NewResource,

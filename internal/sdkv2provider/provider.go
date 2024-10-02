@@ -261,7 +261,6 @@ func New(version string) func() *schema.Provider {
 				"cloudflare_ipsec_tunnel":                                    resourceCloudflareIPsecTunnel(),
 				"cloudflare_magic_wan_ipsec_tunnel":                          resourceCloudflareMagicWANIPsecTunnel(),
 				"cloudflare_keyless_certificate":                             resourceCloudflareKeylessCertificate(),
-				"cloudflare_list":                                            resourceCloudflareList(),
 				"cloudflare_load_balancer_monitor":                           resourceCloudflareLoadBalancerMonitor(),
 				"cloudflare_load_balancer_pool":                              resourceCloudflareLoadBalancerPool(),
 				"cloudflare_load_balancer":                                   resourceCloudflareLoadBalancer(),
