@@ -5,7 +5,7 @@ updates:
   schedule:
     interval: "daily"
   ignore:
-    - dependency-name: "aws-sdk-go"
+    - dependency-name: "*aws-sdk-go*"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
