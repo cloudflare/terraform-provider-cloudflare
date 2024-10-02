@@ -290,8 +290,19 @@ func setDevicePostureRuleInput(rule *cloudflare.DevicePostureRule, d *schema.Res
 				input.ExtendedKeyUsage = append(input.ExtendedKeyUsage, value.(string))
 			}
 		}
-		if locations, ok := d.GetOk("input.0.locations"); ok {
-			input.Locations = locations.(cloudflare.CertificateLocations)
+		if _, ok := d.GetOk("input.0.locations"); ok {
+			if paths, ok := d.GetOk("input.0.locations.0.paths"); ok {
+				values := paths.(*schema.Set).List()
+				for _, value := range values {
+					input.Locations.Paths = append(input.Locations.Paths, value.(string))
+				}
+			}
+			if trustStores, ok := d.GetOk("input.0.locations.0.trust_stores"); ok {
+				values := trustStores.(*schema.Set).List()
+				for _, value := range values {
+					input.Locations.TrustStores = append(input.Locations.TrustStores, value.(string))
+				}
+			}
 		}
 		if score, ok := d.GetOk("input.0.score"); ok {
 			input.Score = score.(int)

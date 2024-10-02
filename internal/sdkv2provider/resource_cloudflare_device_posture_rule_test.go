@@ -289,6 +289,53 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 	})
 }
 
+func TestAccCloudflareDevicePostureRule_ClientCertificateV2(t *testing.T) {
+	skipForDefaultAccount(t, "Assertion requires an active certificate configured")
+
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_DEVICE_POSTURE_CERTIFICATE_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_DEVICE_POSTURE_CERTIFICATE_ID must be set for this acceptance test")
+	}
+
+	certificateID := os.Getenv("CLOUDFLARE_DEVICE_POSTURE_CERTIFICATE_ID")
+
+	rnd := generateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCheckCloudflareDevicePostureRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareDevicePostureRuleConfigClientCertificateV2(rnd, accountID, certificateID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "name", rnd),
+					resource.TestCheckResourceAttr(name, "type", "client_certificate_v2"),
+					resource.TestCheckResourceAttr(name, "description", "My description"),
+					resource.TestCheckResourceAttr(name, "schedule", "24h"),
+					resource.TestCheckResourceAttr(name, "expiration", "24h"),
+					resource.TestCheckResourceAttr(name, "match.0.platform", "linux"),
+					resource.TestCheckResourceAttr(name, "input.0.certificate_id", certificateID),
+					resource.TestCheckResourceAttr(name, "input.0.check_private_key", "true"),
+					resource.TestCheckResourceAttr(name, "input.0.extended_key_usage.0", "clientAuth"),
+					resource.TestCheckResourceAttr(name, "input.0.locations.0.trust_stores.0", "system"),
+					resource.TestCheckResourceAttr(name, "input.0.locations.0.paths.0", "/path/to/file"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccCloudflareDevicePostureRule_Intune(t *testing.T) {
 	skipForDefaultAccount(t, "Assertion requires active Intune license.")
 
@@ -469,6 +516,35 @@ resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
 	}
 }
 `, rnd, accountID)
+}
+
+func testAccCloudflareDevicePostureRuleConfigClientCertificateV2(rnd, accountID, certificateID string) string {
+	return fmt.Sprintf(`
+resource "cloudflare_zero_trust_device_posture_rule" "%[1]s" {
+	account_id                = "%[2]s"
+	name                      = "%[1]s"
+	type                      = "client_certificate_v2"
+	description               = "My description"
+	schedule                  = "24h"
+	expiration                = "24h"
+	match {
+		platform = "linux"
+	}
+	input {
+		certificate_id = "%[3]s"
+		check_private_key  = true
+		extended_key_usage = ["clientAuth"]
+		locations {
+			paths = [
+				"/path/to/file"
+			]
+			trust_stores = [
+				"system"
+			]
+		}
+	}
+}
+`, rnd, accountID, certificateID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigFirewall(rnd, accountID string) string {

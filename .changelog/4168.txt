@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_device_posture_rule: fix bug where locations were not parsed correctly for client_certificate_v2 posture rules 
+```
