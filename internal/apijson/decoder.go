@@ -500,6 +500,40 @@ func (d *decoderBuilder) newTerraformTypeDecoder(t reflect.Type) decoderFunc {
 		}
 	}
 
+	if (t == reflect.TypeOf(basetypes.TupleValue{})) {
+		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
+			if !shouldUpdateNested(value, b) {
+				return nil
+			}
+			tuple := value.Interface().(basetypes.TupleValue)
+			elementTypes := tuple.ElementTypes(ctx)
+			switch node.Type {
+			case gjson.Null:
+				value.Set(reflect.ValueOf(types.TupleNull(elementTypes)))
+				return nil
+			case gjson.JSON:
+				nodes := node.Array()
+				elements := make([]attr.Value, len(elementTypes))
+				for i, elementType := range elementTypes {
+					elements[i] = elementType.ValueType(ctx)
+					element := &elements[i]
+					if i >= len(nodes) {
+						continue
+					}
+					decoder := d.newTerraformTypeDecoder(reflect.TypeOf(*element))
+					err := decoder(nodes[i], reflect.ValueOf(element).Elem(), state)
+					if err != nil {
+						return err
+					}
+				}
+				value.Set(reflect.ValueOf(types.TupleValueMust(elementTypes, elements)))
+				return nil
+			default:
+				return fmt.Errorf("apijson: cannot deserialize unexpected type %s to types.TupleValue", node.Type)
+			}
+		}
+	}
+
 	if (t == reflect.TypeOf(basetypes.SetValue{})) {
 		return func(node gjson.Result, value reflect.Value, state *decoderState) error {
 			if !shouldUpdateNested(value, b) {

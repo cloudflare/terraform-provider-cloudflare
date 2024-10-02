@@ -589,6 +589,30 @@ var encode_only_tests = map[string]struct {
 	"json_struct_nil3": {`{"nil":null}`, JsonModel{Nil: jsontypes.NewNormalizedValue("null")}},
 
 	"tfsdk_dynamic_number": {"5", types.DynamicValue(types.NumberValue(big.NewFloat(5)))},
+
+	"tfsdk_dynamic_tuple": {
+		`[5,"hi"]`,
+		types.DynamicValue(types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		)),
+	},
+
+	"tfsdk_tuple": {
+		`[5,"hi"]`,
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		),
+	},
+
+	"tfsdk_nested_tuple": {
+		`[10,["hey","there"]]`,
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.ListType{ElemType: basetypes.StringType{}}},
+			[]attr.Value{basetypes.NewInt64Value(10), types.ListValueMust(basetypes.StringType{}, []attr.Value{basetypes.NewStringValue("hey"), basetypes.NewStringValue("there")})},
+		),
+	},
 }
 
 func merge[T interface{}](test_array ...map[string]T) map[string]T {
@@ -844,10 +868,55 @@ var decode_from_value_tests = map[string]struct {
 		types.DynamicValue(types.Int64Value(14)),
 	},
 
+	"tfsdk_dynamic_tuple": {
+		`[5,"hi"]`,
+		types.DynamicValue(types.TupleNull(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+		)),
+		types.DynamicValue(types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		)),
+	},
+
 	"tfsdk_map_value": {
 		`{"foo":1,"bar":4}`,
 		types.MapNull(types.Int64Type),
 		types.MapValueMust(types.Int64Type, map[string]attr.Value{"foo": types.Int64Value(1), "bar": types.Int64Value(4)}),
+	},
+
+	"tfsdk_tuple": {
+		`[5,"hi"]`,
+		types.TupleNull(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+		),
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		),
+	},
+
+	"tfsdk_tuple_existing": {
+		`[10,"hello there"]`,
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		),
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(10), basetypes.NewStringValue("hello there")},
+		),
+	},
+
+	"tfsdk_tuple_missing_values": {
+		`[]`,
+		types.TupleNull(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+		),
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Null(), basetypes.NewStringNull()},
+		),
 	},
 
 	"tfsdk_map_value_existing_data": {
