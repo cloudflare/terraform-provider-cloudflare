@@ -12,11 +12,15 @@ type ListModel struct {
 }
 
 type ListItemModel struct {
+	Value   []ItemValueModel `tfsdk:"value"`
+	Comment types.String     `tfsdk:"comment"`
+}
+
+type ItemValueModel struct {
 	IP       types.String             `tfsdk:"ip"`
 	ASN      types.Int64              `tfsdk:"asn"`
 	Hostname []*ListItemHostnameModel `tfsdk:"hostname"`
 	Redirect []*ListItemRedirectModel `tfsdk:"redirect"`
-	Comment  types.String             `tfsdk:"comment"`
 }
 
 type ListItemHostnameModel struct {
