@@ -944,6 +944,20 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Optional:    true,
 							Default:     booldefault.StaticBool(true),
 						},
+						"exposed_credential_check": schema.SingleNestedAttribute{
+							Description: "Configure checks for exposed credentials.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"password_expression": schema.StringAttribute{
+									Description: "Expression that selects the password used in the credentials check.",
+									Required:    true,
+								},
+								"username_expression": schema.StringAttribute{
+									Description: "Expression that selects the user ID used in the credentials check.",
+									Required:    true,
+								},
+							},
+						},
 						"expression": schema.StringAttribute{
 							Description: "The expression defining which traffic will match the rule.",
 							Optional:    true,
@@ -955,6 +969,53 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"enabled": schema.BoolAttribute{
 									Description: "Whether to generate a log when the rule matches.",
 									Required:    true,
+								},
+							},
+						},
+						"ratelimit": schema.SingleNestedAttribute{
+							Description: "An object configuring the rule's ratelimit behavior.",
+							Optional:    true,
+							Attributes: map[string]schema.Attribute{
+								"characteristics": schema.ListAttribute{
+									Description: "Characteristics of the request on which the ratelimiter counter will be incremented.",
+									Required:    true,
+									ElementType: types.StringType,
+								},
+								"period": schema.Int64Attribute{
+									Description: "Period in seconds over which the counter is being incremented.",
+									Required:    true,
+									Validators: []validator.Int64{
+										int64validator.OneOf(
+											10,
+											60,
+											600,
+											3600,
+										),
+									},
+								},
+								"counting_expression": schema.StringAttribute{
+									Description: "Defines when the ratelimit counter should be incremented. It is optional and defaults to the same as the rule's expression.",
+									Optional:    true,
+								},
+								"mitigation_timeout": schema.Int64Attribute{
+									Description: "Period of time in seconds after which the action will be disabled following its first execution.",
+									Optional:    true,
+								},
+								"requests_per_period": schema.Int64Attribute{
+									Description: "The threshold of requests per period after which the action will be executed for the first time.",
+									Optional:    true,
+								},
+								"requests_to_origin": schema.BoolAttribute{
+									Description: "Defines if ratelimit counting is only done when an origin is reached.",
+									Optional:    true,
+								},
+								"score_per_period": schema.Int64Attribute{
+									Description: "The score threshold per period for which the action will be executed the first time.",
+									Optional:    true,
+								},
+								"score_response_header_name": schema.Int64Attribute{
+									Description: "The response header name provided by the origin which should contain the score to increment ratelimit counter on.",
+									Optional:    true,
 								},
 							},
 						},
