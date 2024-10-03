@@ -35,72 +35,72 @@ func (m RulesetModel) MarshalJSONForUpdate(state RulesetModel) (data []byte, err
 }
 
 type RulesetRulesModel struct {
-	LastUpdated      timetypes.RFC3339                                           `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Version          types.String                                                `tfsdk:"version" json:"version,computed"`
-	ID               types.String                                                `tfsdk:"id" json:"id,computed"`
-	Action           types.String                                                `tfsdk:"action" json:"action,computed_optional"`
-	ActionParameters customfield.NestedObject[RulesetRulesActionParametersModel] `tfsdk:"action_parameters" json:"action_parameters,computed_optional"`
-	Categories       customfield.List[types.String]                              `tfsdk:"categories" json:"categories,computed"`
-	Description      types.String                                                `tfsdk:"description" json:"description,computed_optional"`
-	Enabled          types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Expression       types.String                                                `tfsdk:"expression" json:"expression,computed_optional"`
-	Logging          customfield.NestedObject[RulesetRulesLoggingModel]          `tfsdk:"logging" json:"logging,computed_optional"`
-	Ref              types.String                                                `tfsdk:"ref" json:"ref,computed_optional"`
+	LastUpdated      timetypes.RFC3339                  `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version          types.String                       `tfsdk:"version" json:"version,computed"`
+	ID               types.String                       `tfsdk:"id" json:"id,computed"`
+	Action           types.String                       `tfsdk:"action" json:"action,computed_optional"`
+	ActionParameters *RulesetRulesActionParametersModel `tfsdk:"action_parameters" json:"action_parameters,optional"`
+	Categories       customfield.List[types.String]     `tfsdk:"categories" json:"categories,computed"`
+	Description      types.String                       `tfsdk:"description" json:"description,computed_optional"`
+	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled,computed_optional"`
+	Expression       types.String                       `tfsdk:"expression" json:"expression,computed_optional"`
+	Logging          *RulesetRulesLoggingModel          `tfsdk:"logging" json:"logging,optional"`
+	Ref              types.String                       `tfsdk:"ref" json:"ref,computed_optional"`
 }
 
 type RulesetRulesActionParametersModel struct {
-	Response                 *RulesetRulesActionParametersResponseModel          `tfsdk:"response" json:"response,optional"`
-	Algorithms               *[]*RulesetRulesActionParametersAlgorithmsModel     `tfsdk:"algorithms" json:"algorithms,optional"`
-	ID                       types.String                                        `tfsdk:"id" json:"id,optional"`
-	MatchedData              *RulesetRulesActionParametersMatchedDataModel       `tfsdk:"matched_data" json:"matched_data,optional"`
-	Overrides                *RulesetRulesActionParametersOverridesModel         `tfsdk:"overrides" json:"overrides,optional"`
-	FromList                 *RulesetRulesActionParametersFromListModel          `tfsdk:"from_list" json:"from_list,optional"`
-	FromValue                *RulesetRulesActionParametersFromValueModel         `tfsdk:"from_value" json:"from_value,optional"`
-	Headers                  map[string]RulesetRulesActionParametersHeadersModel `tfsdk:"headers" json:"headers,optional"`
-	URI                      *RulesetRulesActionParametersURIModel               `tfsdk:"uri" json:"uri,optional"`
-	HostHeader               types.String                                        `tfsdk:"host_header" json:"host_header,optional"`
-	Origin                   *RulesetRulesActionParametersOriginModel            `tfsdk:"origin" json:"origin,optional"`
-	SNI                      *RulesetRulesActionParametersSNIModel               `tfsdk:"sni" json:"sni,optional"`
-	Increment                types.Int64                                         `tfsdk:"increment" json:"increment,optional"`
-	Content                  types.String                                        `tfsdk:"content" json:"content,optional"`
-	ContentType              types.String                                        `tfsdk:"content_type" json:"content_type,optional"`
-	StatusCode               types.Float64                                       `tfsdk:"status_code" json:"status_code,optional"`
-	AutomaticHTTPSRewrites   types.Bool                                          `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
-	Autominify               *RulesetRulesActionParametersAutominifyModel        `tfsdk:"autominify" json:"autominify,optional"`
-	BIC                      types.Bool                                          `tfsdk:"bic" json:"bic,optional"`
-	DisableApps              types.Bool                                          `tfsdk:"disable_apps" json:"disable_apps,optional"`
-	DisableRUM               types.Bool                                          `tfsdk:"disable_rum" json:"disable_rum,optional"`
-	DisableZaraz             types.Bool                                          `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
-	EmailObfuscation         types.Bool                                          `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
-	Fonts                    types.Bool                                          `tfsdk:"fonts" json:"fonts,optional"`
-	HotlinkProtection        types.Bool                                          `tfsdk:"hotlink_protection" json:"hotlink_protection,optional"`
-	Mirage                   types.Bool                                          `tfsdk:"mirage" json:"mirage,optional"`
-	OpportunisticEncryption  types.Bool                                          `tfsdk:"opportunistic_encryption" json:"opportunistic_encryption,optional"`
-	Polish                   types.String                                        `tfsdk:"polish" json:"polish,optional"`
-	RocketLoader             types.Bool                                          `tfsdk:"rocket_loader" json:"rocket_loader,optional"`
-	SecurityLevel            types.String                                        `tfsdk:"security_level" json:"security_level,optional"`
-	ServerSideExcludes       types.Bool                                          `tfsdk:"server_side_excludes" json:"server_side_excludes,optional"`
-	SSL                      types.String                                        `tfsdk:"ssl" json:"ssl,optional"`
-	SXG                      types.Bool                                          `tfsdk:"sxg" json:"sxg,optional"`
-	Phases                   *[]types.String                                     `tfsdk:"phases" json:"phases,optional"`
-	Products                 *[]types.String                                     `tfsdk:"products" json:"products,optional"`
-	Rules                    map[string]*[]types.String                          `tfsdk:"rules" json:"rules,optional"`
-	Ruleset                  types.String                                        `tfsdk:"ruleset" json:"ruleset,optional"`
-	Rulesets                 *[]types.String                                     `tfsdk:"rulesets" json:"rulesets,optional"`
-	AdditionalCacheablePorts *[]types.Int64                                      `tfsdk:"additional_cacheable_ports" json:"additional_cacheable_ports,optional"`
-	BrowserTTL               *RulesetRulesActionParametersBrowserTTLModel        `tfsdk:"browser_ttl" json:"browser_ttl,optional"`
-	Cache                    types.Bool                                          `tfsdk:"cache" json:"cache,optional"`
-	CacheKey                 *RulesetRulesActionParametersCacheKeyModel          `tfsdk:"cache_key" json:"cache_key,optional"`
-	CacheReserve             *RulesetRulesActionParametersCacheReserveModel      `tfsdk:"cache_reserve" json:"cache_reserve,optional"`
-	EdgeTTL                  *RulesetRulesActionParametersEdgeTTLModel           `tfsdk:"edge_ttl" json:"edge_ttl,optional"`
-	OriginCacheControl       types.Bool                                          `tfsdk:"origin_cache_control" json:"origin_cache_control,optional"`
-	OriginErrorPagePassthru  types.Bool                                          `tfsdk:"origin_error_page_passthru" json:"origin_error_page_passthru,optional"`
-	ReadTimeout              types.Int64                                         `tfsdk:"read_timeout" json:"read_timeout,optional"`
-	RespectStrongEtags       types.Bool                                          `tfsdk:"respect_strong_etags" json:"respect_strong_etags,optional"`
-	ServeStale               *RulesetRulesActionParametersServeStaleModel        `tfsdk:"serve_stale" json:"serve_stale,optional"`
-	CookieFields             *[]*RulesetRulesActionParametersCookieFieldsModel   `tfsdk:"cookie_fields" json:"cookie_fields,optional"`
-	RequestFields            *[]*RulesetRulesActionParametersRequestFieldsModel  `tfsdk:"request_fields" json:"request_fields,optional"`
-	ResponseFields           *[]*RulesetRulesActionParametersResponseFieldsModel `tfsdk:"response_fields" json:"response_fields,optional"`
+	Response                 *RulesetRulesActionParametersResponseModel           `tfsdk:"response" json:"response,optional"`
+	Algorithms               *[]*RulesetRulesActionParametersAlgorithmsModel      `tfsdk:"algorithms" json:"algorithms,optional"`
+	ID                       types.String                                         `tfsdk:"id" json:"id,optional"`
+	MatchedData              *RulesetRulesActionParametersMatchedDataModel        `tfsdk:"matched_data" json:"matched_data,optional"`
+	Overrides                *RulesetRulesActionParametersOverridesModel          `tfsdk:"overrides" json:"overrides,optional"`
+	FromList                 *RulesetRulesActionParametersFromListModel           `tfsdk:"from_list" json:"from_list,optional"`
+	FromValue                *RulesetRulesActionParametersFromValueModel          `tfsdk:"from_value" json:"from_value,optional"`
+	Headers                  *map[string]RulesetRulesActionParametersHeadersModel `tfsdk:"headers" json:"headers,computed_optional"`
+	URI                      *RulesetRulesActionParametersURIModel                `tfsdk:"uri" json:"uri,optional"`
+	HostHeader               types.String                                         `tfsdk:"host_header" json:"host_header,optional"`
+	Origin                   *RulesetRulesActionParametersOriginModel             `tfsdk:"origin" json:"origin,optional"`
+	SNI                      *RulesetRulesActionParametersSNIModel                `tfsdk:"sni" json:"sni,optional"`
+	Increment                types.Int64                                          `tfsdk:"increment" json:"increment,optional"`
+	Content                  types.String                                         `tfsdk:"content" json:"content,optional"`
+	ContentType              types.String                                         `tfsdk:"content_type" json:"content_type,optional"`
+	StatusCode               types.Float64                                        `tfsdk:"status_code" json:"status_code,optional"`
+	AutomaticHTTPSRewrites   types.Bool                                           `tfsdk:"automatic_https_rewrites" json:"automatic_https_rewrites,optional"`
+	Autominify               *RulesetRulesActionParametersAutominifyModel         `tfsdk:"autominify" json:"autominify,optional"`
+	BIC                      types.Bool                                           `tfsdk:"bic" json:"bic,optional"`
+	DisableApps              types.Bool                                           `tfsdk:"disable_apps" json:"disable_apps,optional"`
+	DisableRUM               types.Bool                                           `tfsdk:"disable_rum" json:"disable_rum,optional"`
+	DisableZaraz             types.Bool                                           `tfsdk:"disable_zaraz" json:"disable_zaraz,optional"`
+	EmailObfuscation         types.Bool                                           `tfsdk:"email_obfuscation" json:"email_obfuscation,optional"`
+	Fonts                    types.Bool                                           `tfsdk:"fonts" json:"fonts,optional"`
+	HotlinkProtection        types.Bool                                           `tfsdk:"hotlink_protection" json:"hotlink_protection,optional"`
+	Mirage                   types.Bool                                           `tfsdk:"mirage" json:"mirage,optional"`
+	OpportunisticEncryption  types.Bool                                           `tfsdk:"opportunistic_encryption" json:"opportunistic_encryption,optional"`
+	Polish                   types.String                                         `tfsdk:"polish" json:"polish,optional"`
+	RocketLoader             types.Bool                                           `tfsdk:"rocket_loader" json:"rocket_loader,optional"`
+	SecurityLevel            types.String                                         `tfsdk:"security_level" json:"security_level,optional"`
+	ServerSideExcludes       types.Bool                                           `tfsdk:"server_side_excludes" json:"server_side_excludes,optional"`
+	SSL                      types.String                                         `tfsdk:"ssl" json:"ssl,optional"`
+	SXG                      types.Bool                                           `tfsdk:"sxg" json:"sxg,optional"`
+	Phases                   *[]types.String                                      `tfsdk:"phases" json:"phases,optional"`
+	Products                 *[]types.String                                      `tfsdk:"products" json:"products,optional"`
+	Rules                    customfield.Map[customfield.List[types.String]]      `tfsdk:"rules" json:"rules,optional"`
+	Ruleset                  types.String                                         `tfsdk:"ruleset" json:"ruleset,optional"`
+	Rulesets                 *[]types.String                                      `tfsdk:"rulesets" json:"rulesets,optional"`
+	AdditionalCacheablePorts *[]types.Int64                                       `tfsdk:"additional_cacheable_ports" json:"additional_cacheable_ports,optional"`
+	BrowserTTL               *RulesetRulesActionParametersBrowserTTLModel         `tfsdk:"browser_ttl" json:"browser_ttl,optional"`
+	Cache                    types.Bool                                           `tfsdk:"cache" json:"cache,optional"`
+	CacheKey                 *RulesetRulesActionParametersCacheKeyModel           `tfsdk:"cache_key" json:"cache_key,optional"`
+	CacheReserve             *RulesetRulesActionParametersCacheReserveModel       `tfsdk:"cache_reserve" json:"cache_reserve,optional"`
+	EdgeTTL                  *RulesetRulesActionParametersEdgeTTLModel            `tfsdk:"edge_ttl" json:"edge_ttl,optional"`
+	OriginCacheControl       types.Bool                                           `tfsdk:"origin_cache_control" json:"origin_cache_control,optional"`
+	OriginErrorPagePassthru  types.Bool                                           `tfsdk:"origin_error_page_passthru" json:"origin_error_page_passthru,optional"`
+	ReadTimeout              types.Int64                                          `tfsdk:"read_timeout" json:"read_timeout,optional"`
+	RespectStrongEtags       types.Bool                                           `tfsdk:"respect_strong_etags" json:"respect_strong_etags,optional"`
+	ServeStale               *RulesetRulesActionParametersServeStaleModel         `tfsdk:"serve_stale" json:"serve_stale,optional"`
+	CookieFields             *[]*RulesetRulesActionParametersCookieFieldsModel    `tfsdk:"cookie_fields" json:"cookie_fields,optional"`
+	RequestFields            *[]*RulesetRulesActionParametersRequestFieldsModel   `tfsdk:"request_fields" json:"request_fields,optional"`
+	ResponseFields           *[]*RulesetRulesActionParametersResponseFieldsModel  `tfsdk:"response_fields" json:"response_fields,optional"`
 }
 
 type RulesetRulesActionParametersResponseModel struct {
@@ -261,9 +261,9 @@ type RulesetRulesActionParametersEdgeTTLModel struct {
 }
 
 type RulesetRulesActionParametersEdgeTTLStatusCodeTTLModel struct {
-	Value           types.Int64                                                                                    `tfsdk:"value" json:"value,required"`
-	StatusCodeRange customfield.NestedObject[RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel] `tfsdk:"status_code_range" json:"status_code_range,computed_optional"`
-	StatusCode      types.Int64                                                                                    `tfsdk:"status_code" json:"status_code,computed_optional"`
+	Value           types.Int64                                                           `tfsdk:"value" json:"value,required"`
+	StatusCodeRange *RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel `tfsdk:"status_code_range" json:"status_code_range,optional"`
+	StatusCode      types.Int64                                                           `tfsdk:"status_code" json:"status_code,computed_optional"`
 }
 
 type RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel struct {
