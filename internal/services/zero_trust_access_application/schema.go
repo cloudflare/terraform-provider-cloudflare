@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -284,6 +285,789 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"precedence": schema.Int64Attribute{
 							Description: "The order of execution for this policy. Must be unique for each policy within an app.",
 							Optional:    true,
+						},
+						"approval_groups": schema.ListNestedAttribute{
+							Description: "Administrators who can approve a temporary authentication request.",
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesApprovalGroupsModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"approvals_needed": schema.Float64Attribute{
+										Description: "The number of approvals needed to obtain access.",
+										Required:    true,
+										Validators: []validator.Float64{
+											float64validator.AtLeast(0),
+										},
+									},
+									"email_addresses": schema.ListAttribute{
+										Description: "A list of emails that can approve the access request.",
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+									"email_list_uuid": schema.StringAttribute{
+										Description: "The UUID of an re-usable email list.",
+										Optional:    true,
+									},
+								},
+							},
+						},
+						"approval_required": schema.BoolAttribute{
+							Description: "Requires the user to request access from an administrator at the start of each session.",
+							Computed:    true,
+							Optional:    true,
+							Default:     booldefault.StaticBool(false),
+						},
+						"connection_rules": schema.SingleNestedAttribute{
+							Description: "The rules that define how users may connect to the targets secured by your application.",
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesConnectionRulesModel](ctx),
+							Attributes: map[string]schema.Attribute{
+								"ssh": schema.SingleNestedAttribute{
+									Description: "The SSH-specific rules that define how users may connect to the targets secured by your application.",
+									Computed:    true,
+									Optional:    true,
+									CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesConnectionRulesSSHModel](ctx),
+									Attributes: map[string]schema.Attribute{
+										"usernames": schema.ListAttribute{
+											Description: "Contains the Unix usernames that may be used when connecting over SSH.",
+											Required:    true,
+											ElementType: types.StringType,
+										},
+									},
+								},
+							},
+						},
+						"created_at": schema.StringAttribute{
+							Optional:   true,
+							CustomType: timetypes.RFC3339Type{},
+						},
+						"decision": schema.StringAttribute{
+							Description: "The action Access will take if a user matches this policy.",
+							Optional:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive(
+									"allow",
+									"deny",
+									"non_identity",
+									"bypass",
+								),
+							},
+						},
+						"exclude": schema.ListNestedAttribute{
+							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"email": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeEmailModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Description: "The email of the user.",
+												Required:    true,
+											},
+										},
+									},
+									"email_list": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeEmailListModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created email list.",
+												Required:    true,
+											},
+										},
+									},
+									"email_domain": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeEmailDomainModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"domain": schema.StringAttribute{
+												Description: "The email domain to match.",
+												Required:    true,
+											},
+										},
+									},
+									"everyone": schema.SingleNestedAttribute{
+										Description: "An empty object which matches on all users.",
+										Optional:    true,
+										Attributes:  map[string]schema.Attribute{},
+									},
+									"ip": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeIPModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"ip": schema.StringAttribute{
+												Description: "An IPv4 or IPv6 CIDR block.",
+												Required:    true,
+											},
+										},
+									},
+									"ip_list": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeIPListModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created IP list.",
+												Required:    true,
+											},
+										},
+									},
+									"certificate": schema.StringAttribute{
+										Optional:   true,
+										CustomType: jsontypes.NormalizedType{},
+									},
+									"group": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeGroupModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created Access group.",
+												Required:    true,
+											},
+										},
+									},
+									"azure_ad": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeAzureADModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an Azure group.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Azure identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"github_organization": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeGitHubOrganizationModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Github identity provider.",
+												Required:    true,
+											},
+											"name": schema.StringAttribute{
+												Description: "The name of the organization.",
+												Required:    true,
+											},
+										},
+									},
+									"gsuite": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeGSuiteModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Description: "The email of the Google Workspace group.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Google Workspace identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"okta": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeOktaModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Okta identity provider.",
+												Required:    true,
+											},
+											"name": schema.StringAttribute{
+												Description: "The name of the Okta group.",
+												Required:    true,
+											},
+										},
+									},
+									"saml": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeSAMLModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"attribute_name": schema.StringAttribute{
+												Description: "The name of the SAML attribute.",
+												Required:    true,
+											},
+											"attribute_value": schema.StringAttribute{
+												Description: "The SAML attribute value to look for.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your SAML identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"service_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeServiceTokenModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"token_id": schema.StringAttribute{
+												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"any_valid_service_token": schema.SingleNestedAttribute{
+										Description: "An empty object which matches on all service tokens.",
+										Optional:    true,
+										Attributes:  map[string]schema.Attribute{},
+									},
+									"external_evaluation": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeExternalEvaluationModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"evaluate_url": schema.StringAttribute{
+												Description: "The API endpoint containing your business logic.",
+												Required:    true,
+											},
+											"keys_url": schema.StringAttribute{
+												Description: "The API endpoint containing the key that Access uses to verify that the response came from your API.",
+												Required:    true,
+											},
+										},
+									},
+									"geo": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeGeoModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"country_code": schema.StringAttribute{
+												Description: "The country code that should be matched.",
+												Required:    true,
+											},
+										},
+									},
+									"auth_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeAuthMethodModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"auth_method": schema.StringAttribute{
+												Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
+												Required:    true,
+											},
+										},
+									},
+									"device_posture": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesExcludeDevicePostureModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"integration_uid": schema.StringAttribute{
+												Description: "The ID of a device posture integration.",
+												Required:    true,
+											},
+										},
+									},
+								},
+							},
+						},
+						"include": schema.ListNestedAttribute{
+							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"email": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeEmailModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Description: "The email of the user.",
+												Required:    true,
+											},
+										},
+									},
+									"email_list": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeEmailListModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created email list.",
+												Required:    true,
+											},
+										},
+									},
+									"email_domain": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeEmailDomainModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"domain": schema.StringAttribute{
+												Description: "The email domain to match.",
+												Required:    true,
+											},
+										},
+									},
+									"everyone": schema.SingleNestedAttribute{
+										Description: "An empty object which matches on all users.",
+										Optional:    true,
+										Attributes:  map[string]schema.Attribute{},
+									},
+									"ip": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeIPModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"ip": schema.StringAttribute{
+												Description: "An IPv4 or IPv6 CIDR block.",
+												Required:    true,
+											},
+										},
+									},
+									"ip_list": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeIPListModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created IP list.",
+												Required:    true,
+											},
+										},
+									},
+									"certificate": schema.StringAttribute{
+										Optional:   true,
+										CustomType: jsontypes.NormalizedType{},
+									},
+									"group": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeGroupModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created Access group.",
+												Required:    true,
+											},
+										},
+									},
+									"azure_ad": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeAzureADModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an Azure group.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Azure identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"github_organization": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeGitHubOrganizationModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Github identity provider.",
+												Required:    true,
+											},
+											"name": schema.StringAttribute{
+												Description: "The name of the organization.",
+												Required:    true,
+											},
+										},
+									},
+									"gsuite": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeGSuiteModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Description: "The email of the Google Workspace group.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Google Workspace identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"okta": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeOktaModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Okta identity provider.",
+												Required:    true,
+											},
+											"name": schema.StringAttribute{
+												Description: "The name of the Okta group.",
+												Required:    true,
+											},
+										},
+									},
+									"saml": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeSAMLModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"attribute_name": schema.StringAttribute{
+												Description: "The name of the SAML attribute.",
+												Required:    true,
+											},
+											"attribute_value": schema.StringAttribute{
+												Description: "The SAML attribute value to look for.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your SAML identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"service_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeServiceTokenModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"token_id": schema.StringAttribute{
+												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"any_valid_service_token": schema.SingleNestedAttribute{
+										Description: "An empty object which matches on all service tokens.",
+										Optional:    true,
+										Attributes:  map[string]schema.Attribute{},
+									},
+									"external_evaluation": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeExternalEvaluationModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"evaluate_url": schema.StringAttribute{
+												Description: "The API endpoint containing your business logic.",
+												Required:    true,
+											},
+											"keys_url": schema.StringAttribute{
+												Description: "The API endpoint containing the key that Access uses to verify that the response came from your API.",
+												Required:    true,
+											},
+										},
+									},
+									"geo": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeGeoModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"country_code": schema.StringAttribute{
+												Description: "The country code that should be matched.",
+												Required:    true,
+											},
+										},
+									},
+									"auth_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeAuthMethodModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"auth_method": schema.StringAttribute{
+												Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
+												Required:    true,
+											},
+										},
+									},
+									"device_posture": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesIncludeDevicePostureModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"integration_uid": schema.StringAttribute{
+												Description: "The ID of a device posture integration.",
+												Required:    true,
+											},
+										},
+									},
+								},
+							},
+						},
+						"isolation_required": schema.BoolAttribute{
+							Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
+							Computed:    true,
+							Optional:    true,
+							Default:     booldefault.StaticBool(false),
+						},
+						"name": schema.StringAttribute{
+							Description: "The name of the Access policy.",
+							Optional:    true,
+						},
+						"purpose_justification_prompt": schema.StringAttribute{
+							Description: "A custom message that will appear on the purpose justification screen.",
+							Optional:    true,
+						},
+						"purpose_justification_required": schema.BoolAttribute{
+							Description: "Require users to enter a justification when they log in to the application.",
+							Computed:    true,
+							Optional:    true,
+							Default:     booldefault.StaticBool(false),
+						},
+						"require": schema.ListNestedAttribute{
+							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
+							Computed:    true,
+							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireModel](ctx),
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"email": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireEmailModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Description: "The email of the user.",
+												Required:    true,
+											},
+										},
+									},
+									"email_list": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireEmailListModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created email list.",
+												Required:    true,
+											},
+										},
+									},
+									"email_domain": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireEmailDomainModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"domain": schema.StringAttribute{
+												Description: "The email domain to match.",
+												Required:    true,
+											},
+										},
+									},
+									"everyone": schema.SingleNestedAttribute{
+										Description: "An empty object which matches on all users.",
+										Optional:    true,
+										Attributes:  map[string]schema.Attribute{},
+									},
+									"ip": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireIPModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"ip": schema.StringAttribute{
+												Description: "An IPv4 or IPv6 CIDR block.",
+												Required:    true,
+											},
+										},
+									},
+									"ip_list": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireIPListModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created IP list.",
+												Required:    true,
+											},
+										},
+									},
+									"certificate": schema.StringAttribute{
+										Optional:   true,
+										CustomType: jsontypes.NormalizedType{},
+									},
+									"group": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireGroupModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of a previously created Access group.",
+												Required:    true,
+											},
+										},
+									},
+									"azure_ad": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireAzureADModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"id": schema.StringAttribute{
+												Description: "The ID of an Azure group.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Azure identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"github_organization": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireGitHubOrganizationModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Github identity provider.",
+												Required:    true,
+											},
+											"name": schema.StringAttribute{
+												Description: "The name of the organization.",
+												Required:    true,
+											},
+										},
+									},
+									"gsuite": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireGSuiteModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Description: "The email of the Google Workspace group.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Google Workspace identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"okta": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireOktaModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your Okta identity provider.",
+												Required:    true,
+											},
+											"name": schema.StringAttribute{
+												Description: "The name of the Okta group.",
+												Required:    true,
+											},
+										},
+									},
+									"saml": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireSAMLModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"attribute_name": schema.StringAttribute{
+												Description: "The name of the SAML attribute.",
+												Required:    true,
+											},
+											"attribute_value": schema.StringAttribute{
+												Description: "The SAML attribute value to look for.",
+												Required:    true,
+											},
+											"identity_provider_id": schema.StringAttribute{
+												Description: "The ID of your SAML identity provider.",
+												Required:    true,
+											},
+										},
+									},
+									"service_token": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireServiceTokenModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"token_id": schema.StringAttribute{
+												Description: "The ID of a Service Token.",
+												Required:    true,
+											},
+										},
+									},
+									"any_valid_service_token": schema.SingleNestedAttribute{
+										Description: "An empty object which matches on all service tokens.",
+										Optional:    true,
+										Attributes:  map[string]schema.Attribute{},
+									},
+									"external_evaluation": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireExternalEvaluationModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"evaluate_url": schema.StringAttribute{
+												Description: "The API endpoint containing your business logic.",
+												Required:    true,
+											},
+											"keys_url": schema.StringAttribute{
+												Description: "The API endpoint containing the key that Access uses to verify that the response came from your API.",
+												Required:    true,
+											},
+										},
+									},
+									"geo": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireGeoModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"country_code": schema.StringAttribute{
+												Description: "The country code that should be matched.",
+												Required:    true,
+											},
+										},
+									},
+									"auth_method": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireAuthMethodModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"auth_method": schema.StringAttribute{
+												Description: "The type of authentication method https://datatracker.ietf.org/doc/html/rfc8176#section-2.",
+												Required:    true,
+											},
+										},
+									},
+									"device_posture": schema.SingleNestedAttribute{
+										Computed:   true,
+										Optional:   true,
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationPoliciesRequireDevicePostureModel](ctx),
+										Attributes: map[string]schema.Attribute{
+											"integration_uid": schema.StringAttribute{
+												Description: "The ID of a device posture integration.",
+												Required:    true,
+											},
+										},
+									},
+								},
+							},
+						},
+						"session_duration": schema.StringAttribute{
+							Description: "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
+							Computed:    true,
+							Optional:    true,
+							Default:     stringdefault.StaticString("24h"),
+						},
+						"updated_at": schema.StringAttribute{
+							Optional:   true,
+							CustomType: timetypes.RFC3339Type{},
 						},
 					},
 				},
