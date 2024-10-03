@@ -8,8 +8,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -25,9 +23,6 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				Description: consts.AccountIDSchemaDescription,
@@ -57,17 +52,14 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					stringvalidator.OneOf("ip", "redirect", "hostname", "asn"),
 				},
 			},
-			"item": schema.SetNestedAttribute{
+		},
+		Blocks: map[string]schema.Block{
+			"item": schema.SetNestedBlock{
 				Description: "The items in the list.",
-				Optional:    true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"value": schema.ListNestedAttribute{
-							Required: true,
-							Validators: []validator.List{
-								listvalidator.SizeBetween(1, 1),
-							},
-							NestedObject: schema.NestedAttributeObject{
+				NestedObject: schema.NestedBlockObject{
+					Blocks: map[string]schema.Block{
+						"value": schema.ListNestedBlock{
+							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
 									"ip": schema.StringAttribute{
 										Optional: true,
@@ -79,12 +71,21 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 											),
 										},
 									},
-									"redirect": schema.ListNestedAttribute{
+									"asn": schema.Int64Attribute{
 										Optional: true,
-										Validators: []validator.List{
-											listvalidator.SizeBetween(1, 1),
+										Validators: []validator.Int64{
+											int64validator.AtLeast(1),
+											int64validator.ConflictsWith(
+												path.MatchRelative().AtParent().AtName("redirect"),
+												path.MatchRelative().AtParent().AtName("ip"),
+												path.MatchRelative().AtParent().AtName("hostname"),
+											),
 										},
-										NestedObject: schema.NestedAttributeObject{
+									},
+								},
+								Blocks: map[string]schema.Block{
+									"redirect": schema.ListNestedBlock{
+										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"source_url": schema.StringAttribute{
 													Description: "The source url of the redirect.",
@@ -127,50 +128,23 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													},
 												},
 											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(
-													path.MatchRelative().AtParent().AtName("hostname"),
-													path.MatchRelative().AtParent().AtName("ip"),
-													path.MatchRelative().AtParent().AtName("asn"),
-												),
-											},
 										},
 									},
-									"asn": schema.Int64Attribute{
-										Optional: true,
-										Validators: []validator.Int64{
-											int64validator.AtLeast(1),
-											int64validator.ConflictsWith(
-												path.MatchRelative().AtParent().AtName("redirect"),
-												path.MatchRelative().AtParent().AtName("ip"),
-												path.MatchRelative().AtParent().AtName("hostname"),
-											),
-										},
-									},
-									"hostname": schema.ListNestedAttribute{
-										Optional: true,
-										Validators: []validator.List{
-											listvalidator.SizeBetween(1, 1),
-										},
-										NestedObject: schema.NestedAttributeObject{
+									"hostname": schema.ListNestedBlock{
+										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"url_hostname": schema.StringAttribute{
 													Description: "The FQDN to match on. Wildcard sub-domain matching is allowed. Eg. *.abc.com",
 													Required:    true,
 												},
 											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(
-													path.MatchRelative().AtParent().AtName("redirect"),
-													path.MatchRelative().AtParent().AtName("ip"),
-													path.MatchRelative().AtParent().AtName("asn"),
-												),
-											},
 										},
 									},
 								},
 							},
 						},
+					},
+					Attributes: map[string]schema.Attribute{
 						"comment": schema.StringAttribute{
 							Description: "An optional comment for the item.",
 							Optional:    true,
