@@ -142,20 +142,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 										float64validator.Between(0, 1),
 									},
 								},
-								"pool_weights": schema.SingleNestedAttribute{
+								"pool_weights": schema.MapAttribute{
 									Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
 									Computed:    true,
-									CustomType:  customfield.NewNestedObjectType[LoadBalancersRandomSteeringPoolWeightsDataSourceModel](ctx),
-									Attributes: map[string]schema.Attribute{
-										"key": schema.StringAttribute{
-											Description: "Pool ID",
-											Computed:    true,
-										},
-										"value": schema.Float64Attribute{
-											Description: "Weight",
-											Computed:    true,
-										},
-									},
+									CustomType:  customfield.NewMapType[types.Float64](ctx),
+									ElementType: types.Float64Type,
 								},
 							},
 						},
@@ -288,20 +279,11 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 															float64validator.Between(0, 1),
 														},
 													},
-													"pool_weights": schema.SingleNestedAttribute{
+													"pool_weights": schema.MapAttribute{
 														Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
 														Computed:    true,
-														CustomType:  customfield.NewNestedObjectType[LoadBalancersRulesOverridesRandomSteeringPoolWeightsDataSourceModel](ctx),
-														Attributes: map[string]schema.Attribute{
-															"key": schema.StringAttribute{
-																Description: "Pool ID",
-																Computed:    true,
-															},
-															"value": schema.Float64Attribute{
-																Description: "Weight",
-																Computed:    true,
-															},
-														},
+														CustomType:  customfield.NewMapType[types.Float64](ctx),
+														ElementType: types.Float64Type,
 													},
 												},
 											},
@@ -314,7 +296,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 											"session_affinity": schema.StringAttribute{
-												Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"` or \"\" (default). The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.",
+												Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"`. The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.",
 												Computed:    true,
 												Validators: []validator.String{
 													stringvalidator.OneOfCaseInsensitive(
@@ -322,7 +304,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 														"cookie",
 														"ip_cookie",
 														"header",
-														"",
 													),
 												},
 											},
@@ -422,7 +403,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						"session_affinity": schema.StringAttribute{
-							Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"` or \"\" (default). The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.",
+							Description: "Specifies the type of session affinity the load balancer should use unless specified as `\"none\"`. The supported types are:\n- `\"cookie\"`: On the first request to a proxied load balancer, a cookie is generated, encoding information of which origin the request will be forwarded to. Subsequent requests, by the same client to the same load balancer, will be sent to the origin server the cookie encodes, for the duration of the cookie and as long as the origin server remains healthy. If the cookie has expired or the origin server is unhealthy, then a new origin server is calculated and used.\n- `\"ip_cookie\"`: Behaves the same as `\"cookie\"` except the initial origin selection is stable and based on the client's ip address.\n- `\"header\"`: On the first request to a proxied load balancer, a session key based on the configured HTTP headers (see `session_affinity_attributes.headers`) is generated, encoding the request headers used for storing in the load balancer session state which origin the request will be forwarded to. Subsequent requests to the load balancer with the same headers will be sent to the same origin server, for the duration of the session and as long as the origin server remains healthy. If the session has been idle for the duration of `session_affinity_ttl` seconds or the origin server is unhealthy, then a new origin server is calculated and used. See `headers` in `session_affinity_attributes` for additional required configuration.",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -430,7 +411,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									"cookie",
 									"ip_cookie",
 									"header",
-									"",
 								),
 							},
 						},

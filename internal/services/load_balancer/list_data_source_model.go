@@ -65,13 +65,8 @@ type LoadBalancersLocationStrategyDataSourceModel struct {
 }
 
 type LoadBalancersRandomSteeringDataSourceModel struct {
-	DefaultWeight types.Float64                                                                   `tfsdk:"default_weight" json:"default_weight,computed"`
-	PoolWeights   customfield.NestedObject[LoadBalancersRandomSteeringPoolWeightsDataSourceModel] `tfsdk:"pool_weights" json:"pool_weights,computed"`
-}
-
-type LoadBalancersRandomSteeringPoolWeightsDataSourceModel struct {
-	Key   types.String  `tfsdk:"key" json:"key,computed"`
-	Value types.Float64 `tfsdk:"value" json:"value,computed"`
+	DefaultWeight types.Float64                  `tfsdk:"default_weight" json:"default_weight,computed"`
+	PoolWeights   customfield.Map[types.Float64] `tfsdk:"pool_weights" json:"pool_weights,computed"`
 }
 
 type LoadBalancersRulesDataSourceModel struct {
@@ -117,13 +112,8 @@ type LoadBalancersRulesOverridesLocationStrategyDataSourceModel struct {
 }
 
 type LoadBalancersRulesOverridesRandomSteeringDataSourceModel struct {
-	DefaultWeight types.Float64                                                                                 `tfsdk:"default_weight" json:"default_weight,computed"`
-	PoolWeights   customfield.NestedObject[LoadBalancersRulesOverridesRandomSteeringPoolWeightsDataSourceModel] `tfsdk:"pool_weights" json:"pool_weights,computed"`
-}
-
-type LoadBalancersRulesOverridesRandomSteeringPoolWeightsDataSourceModel struct {
-	Key   types.String  `tfsdk:"key" json:"key,computed"`
-	Value types.Float64 `tfsdk:"value" json:"value,computed"`
+	DefaultWeight types.Float64                  `tfsdk:"default_weight" json:"default_weight,computed"`
+	PoolWeights   customfield.Map[types.Float64] `tfsdk:"pool_weights" json:"pool_weights,computed"`
 }
 
 type LoadBalancersRulesOverridesSessionAffinityAttributesDataSourceModel struct {
