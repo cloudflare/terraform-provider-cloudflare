@@ -63,6 +63,14 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	if data.Proxied.ValueBool() && data.TTL.ValueFloat64() != 1 {
+		resp.Diagnostics.AddError(
+			"ttl must be set to 1 when `proxied` is true",
+			"When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.",
+		)
+		return
+	}
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
