@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
@@ -111,9 +110,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -322,9 +322,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -533,9 +534,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -748,9 +750,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
