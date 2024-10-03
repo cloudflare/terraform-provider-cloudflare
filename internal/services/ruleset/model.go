@@ -35,17 +35,19 @@ func (m RulesetModel) MarshalJSONForUpdate(state RulesetModel) (data []byte, err
 }
 
 type RulesetRulesModel struct {
-	LastUpdated      timetypes.RFC3339                  `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Version          types.String                       `tfsdk:"version" json:"version,computed"`
-	ID               types.String                       `tfsdk:"id" json:"id,optional"`
-	Action           types.String                       `tfsdk:"action" json:"action,optional"`
-	ActionParameters *RulesetRulesActionParametersModel `tfsdk:"action_parameters" json:"action_parameters,optional"`
-	Categories       customfield.List[types.String]     `tfsdk:"categories" json:"categories,computed"`
-	Description      types.String                       `tfsdk:"description" json:"description,computed_optional"`
-	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Expression       types.String                       `tfsdk:"expression" json:"expression,optional"`
-	Logging          *RulesetRulesLoggingModel          `tfsdk:"logging" json:"logging,optional"`
-	Ref              types.String                       `tfsdk:"ref" json:"ref,optional"`
+	LastUpdated            timetypes.RFC3339                        `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version                types.String                             `tfsdk:"version" json:"version,computed"`
+	ID                     types.String                             `tfsdk:"id" json:"id,optional"`
+	Action                 types.String                             `tfsdk:"action" json:"action,optional"`
+	ActionParameters       *RulesetRulesActionParametersModel       `tfsdk:"action_parameters" json:"action_parameters,optional"`
+	Categories             customfield.List[types.String]           `tfsdk:"categories" json:"categories,computed"`
+	Description            types.String                             `tfsdk:"description" json:"description,computed_optional"`
+	Enabled                types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
+	ExposedCredentialCheck *RulesetRulesExposedCredentialCheckModel `tfsdk:"exposed_credential_check" json:"exposed_credential_check,optional"`
+	Expression             types.String                             `tfsdk:"expression" json:"expression,optional"`
+	Logging                *RulesetRulesLoggingModel                `tfsdk:"logging" json:"logging,optional"`
+	Ratelimit              *RulesetRulesRatelimitModel              `tfsdk:"ratelimit" json:"ratelimit,optional"`
+	Ref                    types.String                             `tfsdk:"ref" json:"ref,optional"`
 }
 
 type RulesetRulesActionParametersModel struct {
@@ -287,6 +289,22 @@ type RulesetRulesActionParametersResponseFieldsModel struct {
 	Name types.String `tfsdk:"name" json:"name,required"`
 }
 
+type RulesetRulesExposedCredentialCheckModel struct {
+	PasswordExpression types.String `tfsdk:"password_expression" json:"password_expression,required"`
+	UsernameExpression types.String `tfsdk:"username_expression" json:"username_expression,required"`
+}
+
 type RulesetRulesLoggingModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
+}
+
+type RulesetRulesRatelimitModel struct {
+	Characteristics         *[]types.String `tfsdk:"characteristics" json:"characteristics,required"`
+	Period                  types.Int64     `tfsdk:"period" json:"period,required"`
+	CountingExpression      types.String    `tfsdk:"counting_expression" json:"counting_expression,optional"`
+	MitigationTimeout       types.Int64     `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
+	RequestsPerPeriod       types.Int64     `tfsdk:"requests_per_period" json:"requests_per_period,optional"`
+	RequestsToOrigin        types.Bool      `tfsdk:"requests_to_origin" json:"requests_to_origin,optional"`
+	ScorePerPeriod          types.Int64     `tfsdk:"score_per_period" json:"score_per_period,optional"`
+	ScoreResponseHeaderName types.Int64     `tfsdk:"score_response_header_name" json:"score_response_header_name,optional"`
 }
