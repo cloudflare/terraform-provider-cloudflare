@@ -335,6 +335,10 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
 			return value.(basetypes.ListValue).Elements()
 		})
+	} else if t == reflect.TypeOf(basetypes.TupleValue{}) {
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.TupleValue).Elements()
+		})
 	} else if t == reflect.TypeOf(basetypes.SetValue{}) {
 		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
 			return value.(basetypes.SetValue).Elements()
