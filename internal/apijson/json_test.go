@@ -589,21 +589,30 @@ var encode_only_tests = map[string]struct {
 	"json_struct_nil3": {`{"nil":null}`, JsonModel{Nil: jsontypes.NewNormalizedValue("null")}},
 
 	"tfsdk_dynamic_number": {"5", types.DynamicValue(types.NumberValue(big.NewFloat(5)))},
-}
 
-func merge[T interface{}](test_array ...map[string]T) map[string]T {
-	out := make(map[string]T)
-	for _, tests := range test_array {
-		for name, t := range tests {
-			// panic if there are duplicates because otherwise we'd silently
-			// skip some tests
-			if _, existing := out[name]; existing {
-				panic(fmt.Sprintf("duplicate test name: %s", name))
-			}
-			out[name] = t
-		}
-	}
-	return out
+	"tfsdk_dynamic_tuple": {
+		`[5,"hi"]`,
+		types.DynamicValue(types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		)),
+	},
+
+	"tfsdk_tuple": {
+		`[5,"hi"]`,
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		),
+	},
+
+	"tfsdk_nested_tuple": {
+		`[10,["hey","there"]]`,
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.ListType{ElemType: basetypes.StringType{}}},
+			[]attr.Value{basetypes.NewInt64Value(10), types.ListValueMust(basetypes.StringType{}, []attr.Value{basetypes.NewStringValue("hey"), basetypes.NewStringValue("there")})},
+		),
+	},
 }
 
 func TestDecode(t *testing.T) {
@@ -647,17 +656,6 @@ func TestEncode(t *testing.T) {
 			}
 		})
 	}
-}
-
-func formatJson(jsonString string, out *string) error {
-	var prettyJSON bytes.Buffer
-	err := json.Indent(&prettyJSON, []byte(jsonString), "", "    ")
-	if err != nil {
-		return err
-	}
-
-	*out = prettyJSON.String()
-	return nil
 }
 
 var updateTests = map[string]struct {
@@ -844,10 +842,88 @@ var decode_from_value_tests = map[string]struct {
 		types.DynamicValue(types.Int64Value(14)),
 	},
 
+	"tfsdk_dynamic_tuple": {
+		`[5,"hi"]`,
+		types.DynamicValue(types.TupleNull(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+		)),
+		types.DynamicValue(types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		)),
+	},
+
 	"tfsdk_map_value": {
 		`{"foo":1,"bar":4}`,
 		types.MapNull(types.Int64Type),
 		types.MapValueMust(types.Int64Type, map[string]attr.Value{"foo": types.Int64Value(1), "bar": types.Int64Value(4)}),
+	},
+
+	"tfsdk_tuple": {
+		`[5,"hi"]`,
+		types.TupleNull(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+		),
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		),
+	},
+
+	"tfsdk_tuple_existing": {
+		`[10,"hello there"]`,
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(5), basetypes.NewStringValue("hi")},
+		),
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Value(10), basetypes.NewStringValue("hello there")},
+		),
+	},
+
+	"tfsdk_tuple_missing_values": {
+		`[]`,
+		types.TupleNull(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+		),
+		types.TupleValueMust(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+			[]attr.Value{basetypes.NewInt64Null(), basetypes.NewStringNull()},
+		),
+	},
+
+	"tfsdk_tuple_single_object": {
+		`[{"non":"array"}]`,
+		types.TupleNull(
+			[]attr.Type{basetypes.ObjectType{AttrTypes: map[string]attr.Type{"non": basetypes.StringType{}}}, basetypes.StringType{}},
+		),
+		types.TupleValueMust(
+			[]attr.Type{basetypes.ObjectType{AttrTypes: map[string]attr.Type{"non": basetypes.StringType{}}}, basetypes.StringType{}},
+			[]attr.Value{
+				basetypes.NewObjectValueMust(
+					map[string]attr.Type{"non": basetypes.StringType{}},
+					map[string]attr.Value{"non": basetypes.NewStringValue("array")},
+				),
+				basetypes.NewStringNull(),
+			},
+		),
+	},
+
+	"tfsdk_tuple_non_array_num_error": {
+		`5`,
+		types.TupleNull(
+			[]attr.Type{basetypes.Int64Type{}, basetypes.StringType{}},
+		),
+		fmt.Errorf("apijson: cannot deserialize unexpected type Number to types.TupleValue"),
+	},
+
+	"tfsdk_tuple_non_array_object_error": {
+		`{"non":"array"}`,
+		types.TupleNull(
+			[]attr.Type{basetypes.ObjectType{AttrTypes: map[string]attr.Type{"non": basetypes.StringType{}}}, basetypes.StringType{}},
+		),
+		fmt.Errorf("apijson: cannot deserialize unexpected type JSON to types.TupleValue"),
 	},
 
 	"tfsdk_map_value_existing_data": {
@@ -931,12 +1007,24 @@ func TestDecodeFromValue(t *testing.T) {
 			starting := reflect.New(v.Type())
 			starting.Elem().Set(v)
 
-			if err := Unmarshal([]byte(test.buf), starting.Interface()); err != nil {
-				t.Fatalf("deserialization of %v failed with error %v", test.buf, err)
-			}
-			startingIFace := starting.Elem().Interface()
-			if !reflect.DeepEqual(startingIFace, test.expected) {
-				t.Fatalf("expected '%s' to deserialize to \n%s\nbut got\n%s", test.buf, spew.Sdump(test.expected), spew.Sdump(startingIFace))
+			expectedErr, errorIsExpected := test.expected.(error)
+
+			err := Unmarshal([]byte(test.buf), starting.Interface())
+			if errorIsExpected {
+				if err == nil {
+					t.Fatalf(`expected error "%s" but did not error`, expectedErr.Error())
+				}
+				if err.Error() != expectedErr.Error() {
+					t.Fatalf(`expected error "%s" but got "%s"`, expectedErr.Error(), err.Error())
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("deserialization of %v failed with error %v", test.buf, err)
+				}
+				startingIFace := starting.Elem().Interface()
+				if !reflect.DeepEqual(startingIFace, test.expected) {
+					t.Fatalf("expected '%s' to deserialize to \n%s\nbut got\n%s", test.buf, spew.Sdump(test.expected), spew.Sdump(startingIFace))
+				}
 			}
 		})
 	}
@@ -1141,4 +1229,30 @@ func TestDecodeComputedOnly(t *testing.T) {
 			}
 		})
 	}
+}
+
+func merge[T interface{}](test_array ...map[string]T) map[string]T {
+	out := make(map[string]T)
+	for _, tests := range test_array {
+		for name, t := range tests {
+			// panic if there are duplicates because otherwise we'd silently
+			// skip some tests
+			if _, existing := out[name]; existing {
+				panic(fmt.Sprintf("duplicate test name: %s", name))
+			}
+			out[name] = t
+		}
+	}
+	return out
+}
+
+func formatJson(jsonString string, out *string) error {
+	var prettyJSON bytes.Buffer
+	err := json.Indent(&prettyJSON, []byte(jsonString), "", "    ")
+	if err != nil {
+		return err
+	}
+
+	*out = prettyJSON.String()
+	return nil
 }
