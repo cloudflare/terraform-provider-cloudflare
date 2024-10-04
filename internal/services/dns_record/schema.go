@@ -321,6 +321,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"settings": schema.SingleNestedAttribute{
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectType[DNSRecordSettingsModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"flatten_cname": schema.BoolAttribute{
+						Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+					},
+				},
+			},
 			"comment": schema.StringAttribute{
 				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
 				Computed:    true,
@@ -370,18 +383,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
-			},
-			"settings": schema.SingleNestedAttribute{
-				Description: "Settings for the DNS record.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[DNSRecordSettingsModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"flatten_cname": schema.BoolAttribute{
-						Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
-						Computed:    true,
-						Default:     booldefault.StaticBool(false),
-					},
-				},
 			},
 			"meta": schema.StringAttribute{
 				Description: "Extra Cloudflare-specific information about the record.",

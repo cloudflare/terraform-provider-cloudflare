@@ -135,21 +135,17 @@ type DNSRecordsTagDataSourceModel struct {
 }
 
 type DNSRecordsResultDataSourceModel struct {
-	ID                types.String                                                `tfsdk:"id" json:"id,computed"`
-	Comment           types.String                                                `tfsdk:"comment" json:"comment,computed"`
-	CreatedOn         timetypes.RFC3339                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Meta              jsontypes.Normalized                                        `tfsdk:"meta" json:"meta,computed"`
-	ModifiedOn        timetypes.RFC3339                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Name              types.String                                                `tfsdk:"name" json:"name,computed"`
-	Proxiable         types.Bool                                                  `tfsdk:"proxiable" json:"proxiable,computed"`
-	Proxied           types.Bool                                                  `tfsdk:"proxied" json:"proxied,computed"`
-	Settings          customfield.NestedObject[DNSRecordsSettingsDataSourceModel] `tfsdk:"settings" json:"settings,computed"`
-	Tags              customfield.List[types.String]                              `tfsdk:"tags" json:"tags,computed"`
-	TTL               types.Float64                                               `tfsdk:"ttl" json:"ttl,computed"`
-	CommentModifiedOn timetypes.RFC3339                                           `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
-	TagsModifiedOn    timetypes.RFC3339                                           `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
-}
-
-type DNSRecordsSettingsDataSourceModel struct {
-	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed"`
+	ID                types.String                   `tfsdk:"id" json:"id,computed"`
+	Comment           types.String                   `tfsdk:"comment" json:"comment,computed"`
+	CreatedOn         timetypes.RFC3339              `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Meta              jsontypes.Normalized           `tfsdk:"meta" json:"meta,computed"`
+	ModifiedOn        timetypes.RFC3339              `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Name              types.String                   `tfsdk:"name" json:"name,computed"`
+	Proxiable         types.Bool                     `tfsdk:"proxiable" json:"proxiable,computed"`
+	Proxied           types.Bool                     `tfsdk:"proxied" json:"proxied,computed"`
+	Settings          jsontypes.Normalized           `tfsdk:"settings" json:"settings,computed"`
+	Tags              customfield.List[types.String] `tfsdk:"tags" json:"tags,computed"`
+	TTL               types.Float64                  `tfsdk:"ttl" json:"ttl,computed"`
+	CommentModifiedOn timetypes.RFC3339              `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
+	TagsModifiedOn    timetypes.RFC3339              `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
 }
