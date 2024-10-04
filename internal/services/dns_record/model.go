@@ -21,6 +21,7 @@ type DNSRecordModel struct {
 	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
 	Type              types.String                                     `tfsdk:"type" json:"type,optional"`
 	Data              customfield.NestedObject[DNSRecordDataModel]     `tfsdk:"data" json:"data,computed_optional"`
+	Settings          customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`
 	Comment           types.String                                     `tfsdk:"comment" json:"comment,computed"`
 	CommentModifiedOn timetypes.RFC3339                                `tfsdk:"comment_modified_on" json:"comment_modified_on,computed" format:"date-time"`
 	CreatedOn         timetypes.RFC3339                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
@@ -31,7 +32,6 @@ type DNSRecordModel struct {
 	TagsModifiedOn    timetypes.RFC3339                                `tfsdk:"tags_modified_on" json:"tags_modified_on,computed" format:"date-time"`
 	TTL               types.Float64                                    `tfsdk:"ttl" json:"ttl,computed"`
 	Tags              customfield.List[types.String]                   `tfsdk:"tags" json:"tags,computed"`
-	Settings          customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed"`
 	Meta              jsontypes.Normalized                             `tfsdk:"meta" json:"meta,computed"`
 }
 
@@ -83,5 +83,5 @@ type DNSRecordDataModel struct {
 }
 
 type DNSRecordSettingsModel struct {
-	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed"`
+	FlattenCNAME types.Bool `tfsdk:"flatten_cname" json:"flatten_cname,computed_optional"`
 }
