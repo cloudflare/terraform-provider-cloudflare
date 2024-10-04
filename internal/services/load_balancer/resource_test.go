@@ -9,9 +9,9 @@ import (
 	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
-	cfv2 "github.com/cloudflare/cloudflare-go/v3"
+	cfv2 "github.com/cloudflare/cloudflare-go/v2"
 
-	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
+	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
