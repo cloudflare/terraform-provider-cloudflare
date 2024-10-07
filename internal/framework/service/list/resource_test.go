@@ -172,16 +172,22 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(nameIP, "item.#", "2"),
-					resource.TestCheckResourceAttr(nameIP, "item.0.value.0.ip", "192.0.2.0"),
-					resource.TestCheckResourceAttr(nameIP, "item.0.comment", "one"),
-					resource.TestCheckResourceAttr(nameIP, "item.1.value.0.ip", "192.0.2.1"),
-					resource.TestCheckResourceAttr(nameIP, "item.1.comment", "two"),
+
 					resource.TestCheckResourceAttr(nameIP, "item.0.value.0.redirect.#", "0"),
 					resource.TestCheckResourceAttr(nameIP, "item.0.value.0.hostanme.#", "0"),
 					resource.TestCheckNoResourceAttr(nameIP, "item.0.value.0.asn"),
 					resource.TestCheckResourceAttr(nameIP, "item.1.value.0.redirect.#", "0"),
 					resource.TestCheckResourceAttr(nameIP, "item.1.value.0.hostname.#", "0"),
 					resource.TestCheckNoResourceAttr(nameIP, "item.1.value.0.asn"),
+
+					resource.TestCheckTypeSetElemNestedAttrs(nameIP, "item.*", map[string]string{
+						"value.0.ip": "192.0.2.0",
+						"comment":    "one",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameIP, "item.*", map[string]string{
+						"value.0.ip": "192.0.2.1",
+						"comment":    "two",
+					}),
 				),
 			},
 			{
@@ -205,21 +211,27 @@ func TestAccCloudflareList_Update(t *testing.T) {
 					},
 					resource.TestCheckResourceAttr(nameRedirect, "kind", "redirect"),
 					resource.TestCheckResourceAttr(nameRedirect, "item.#", "2"),
+
 					resource.TestCheckResourceAttr(nameRedirect, "item.0.value.0.hostname.#", "0"),
 					resource.TestCheckNoResourceAttr(nameRedirect, "item.0.value.0.asn"),
 					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.hostname.#", "0"),
 					resource.TestCheckNoResourceAttr(nameRedirect, "item.1.value.0.asn"),
 					resource.TestCheckNoResourceAttr(nameRedirect, "item.0.value.0.ip"),
 					resource.TestCheckNoResourceAttr(nameRedirect, "item.1.value.0.ip"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.0.value.0.redirect.0.source_url", "cloudflare.com/blog"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.0.value.0.redirect.0.target_url", "https://blog.cloudflare.com"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.redirect.0.source_url", "cloudflare.com/foo"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.redirect.0.target_url", "https://foo.cloudflare.com"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.redirect.0.include_subdomains", "enabled"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.redirect.0.subpath_matching", "enabled"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.redirect.0.status_code", "301"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.redirect.0.preserve_query_string", "enabled"),
-					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.redirect.0.preserve_path_suffix", "disabled"),
+
+					resource.TestCheckTypeSetElemNestedAttrs(nameRedirect, "item.*", map[string]string{
+						"value.0.redirect.0.source_url": "cloudflare.com/blog",
+						"value.0.redirect.0.target_url": "https://blog.cloudflare.com",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameRedirect, "item.*", map[string]string{
+						"value.0.redirect.0.source_url":            "cloudflare.com/foo",
+						"value.0.redirect.0.target_url":            "https://foo.cloudflare.com",
+						"value.0.redirect.0.include_subdomains":    "enabled",
+						"value.0.redirect.0.subpath_matching":      "enabled",
+						"value.0.redirect.0.status_code":           "301",
+						"value.0.redirect.0.preserve_query_string": "enabled",
+						"value.0.redirect.0.preserve_path_suffix":  "disabled",
+					}),
 				),
 			},
 			{
@@ -261,14 +273,19 @@ func TestAccCloudflareList_Update(t *testing.T) {
 					},
 					resource.TestCheckResourceAttr(nameASN, "kind", "asn"),
 					resource.TestCheckResourceAttr(nameASN, "item.#", "2"),
+
 					resource.TestCheckResourceAttr(nameASN, "item.0.value.0.redirect.#", "0"),
 					resource.TestCheckResourceAttr(nameASN, "item.0.value.0.hostname.#", "0"),
 					resource.TestCheckNoResourceAttr(nameASN, "item.0.value.0.ip"),
 					resource.TestCheckResourceAttr(nameASN, "item.1.value.0.redirect.#", "0"),
 					resource.TestCheckResourceAttr(nameASN, "item.1.value.0.hostname.#", "0"),
 					resource.TestCheckNoResourceAttr(nameASN, "item.1.value.0.ip"),
-					resource.TestCheckResourceAttr(nameASN, "item.0.value.0.asn", "345"),
-					resource.TestCheckResourceAttr(nameASN, "item.1.value.0.asn", "567"),
+					resource.TestCheckTypeSetElemNestedAttrs(nameASN, "item.*", map[string]string{
+						"value.0.asn": "345",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameASN, "item.*", map[string]string{
+						"value.0.asn": "567",
+					}),
 				),
 			},
 			{
@@ -291,8 +308,14 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(nameHostname, "item.#", "2"),
-					resource.TestCheckResourceAttr(nameHostname, "item.0.value.0.hostname.0.url_hostname", "example.com"),
-					resource.TestCheckResourceAttr(nameHostname, "item.1.value.0.hostname.0.url_hostname", "test.example.com"),
+					resource.TestCheckTypeSetElemNestedAttrs(nameHostname, "item.*", map[string]string{
+						"comment":                         "hostname one",
+						"value.0.hostname.0.url_hostname": "*.google.com",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameHostname, "item.*", map[string]string{
+						"comment":                         "hostname two",
+						"value.0.hostname.0.url_hostname": "manutd.com",
+					}),
 				),
 			},
 		},
