@@ -23,6 +23,9 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			consts.AccountIDSchemaKey: schema.StringAttribute{
 				Description: consts.AccountIDSchemaDescription,

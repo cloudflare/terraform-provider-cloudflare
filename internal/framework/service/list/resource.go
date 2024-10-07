@@ -61,7 +61,7 @@ func (r *ListResource) Create(ctx context.Context, req resource.CreateRequest, r
 
 	plan.ID = types.StringValue(list.ID)
 
-	if plan.Items != nil {
+	if len(plan.Items) > 0 {
 		items := buildListItemsCreateRequest(plan.Items)
 		_, err = r.client.V1.CreateListItems(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListCreateItemsParams{
 			ID:    list.ID,
@@ -130,17 +130,15 @@ func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	if plan.Items != nil {
-		items := buildListItemsCreateRequest(plan.Items)
-		_, err = r.client.V1.ReplaceListItems(ctx, cloudflare.AccountIdentifier(plan.AccountID.ValueString()), cloudflare.ListReplaceItemsParams{
-			ID:    plan.ID.ValueString(),
-			Items: items,
-		})
+	items := buildListItemsCreateRequest(plan.Items)
+	_, err = r.client.V1.ReplaceListItems(ctx, cloudflare.AccountIdentifier(plan.AccountID.ValueString()), cloudflare.ListReplaceItemsParams{
+		ID:    plan.ID.ValueString(),
+		Items: items,
+	})
 
-		if err != nil {
-			resp.Diagnostics.AddError("Error updating List Items", err.Error())
-			return
-		}
+	if err != nil {
+		resp.Diagnostics.AddError("Error updating List Items", err.Error())
+		return
 	}
 
 	diags = resp.State.Set(ctx, plan)
@@ -181,23 +179,26 @@ func buildListItemModels(items []cloudflare.ListItem) []ListItemModel {
 
 	for _, item := range items {
 		model := ListItemModel{
-			Comment: types.StringValue(item.Comment),
+			Value:   make([]ItemValueModel, 1),
+			Comment: flatteners.String(item.Comment),
 		}
+
+		value := &model.Value[0]
 		if item.ASN != nil {
-			model.ASN = types.Int64Value(int64(*item.ASN))
+			value.ASN = types.Int64Value(int64(*item.ASN))
 		}
 		if item.IP != nil {
-			model.IP = types.StringValue(cloudflare.String(item.IP))
+			value.IP = types.StringValue(cloudflare.String(item.IP))
 		}
 		if item.Hostname != nil {
-			model.Hostname = []*ListItemHostnameModel{
+			value.Hostname = []ListItemHostnameModel{
 				{
 					URLHostname: types.StringValue(item.Hostname.UrlHostname),
 				},
 			}
 		}
 		if item.Redirect != nil {
-			model.Redirect = []*ListItemRedirectModel{
+			value.Redirect = []ListItemRedirectModel{
 				{
 					SourceURL:           types.StringValue(item.Redirect.SourceUrl),
 					TargetURL:           types.StringValue(item.Redirect.TargetUrl),
@@ -223,24 +224,25 @@ func buildListItemsCreateRequest(items []ListItemModel) []cloudflare.ListItemCre
 		payload := cloudflare.ListItemCreateRequest{
 			Comment: item.Comment.ValueString(),
 		}
+		value := item.Value[0]
 
-		if !item.IP.IsNull() {
-			payload.IP = cloudflare.StringPtr(item.IP.ValueString())
+		if !value.IP.IsNull() {
+			payload.IP = cloudflare.StringPtr(value.IP.ValueString())
 		}
 
-		if !item.ASN.IsNull() {
-			asn := uint32(item.ASN.ValueInt64())
+		if !value.ASN.IsNull() {
+			asn := uint32(value.ASN.ValueInt64())
 			payload.ASN = &asn
 		}
 
-		if len(item.Hostname) > 0 && !item.Hostname[0].URLHostname.IsNull() {
+		if len(value.Hostname) > 0 && !value.Hostname[0].URLHostname.IsNull() {
 			payload.Hostname = &cloudflare.Hostname{
-				UrlHostname: item.Hostname[0].URLHostname.ValueString(),
+				UrlHostname: value.Hostname[0].URLHostname.ValueString(),
 			}
 		}
 
-		if len(item.Redirect) > 0 {
-			redirect := item.Redirect[0]
+		if len(value.Redirect) > 0 {
+			redirect := value.Redirect[0]
 			var statusCode *int = nil
 			if !redirect.StatusCode.IsNull() {
 				statusCode = cloudflare.IntPtr(int(redirect.StatusCode.ValueInt64()))

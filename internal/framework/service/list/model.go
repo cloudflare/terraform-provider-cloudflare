@@ -17,10 +17,10 @@ type ListItemModel struct {
 }
 
 type ItemValueModel struct {
-	IP       types.String             `tfsdk:"ip"`
-	ASN      types.Int64              `tfsdk:"asn"`
-	Hostname []*ListItemHostnameModel `tfsdk:"hostname"`
-	Redirect []*ListItemRedirectModel `tfsdk:"redirect"`
+	IP       types.String            `tfsdk:"ip"`
+	ASN      types.Int64             `tfsdk:"asn"`
+	Hostname []ListItemHostnameModel `tfsdk:"hostname"`
+	Redirect []ListItemRedirectModel `tfsdk:"redirect"`
 }
 
 type ListItemHostnameModel struct {
