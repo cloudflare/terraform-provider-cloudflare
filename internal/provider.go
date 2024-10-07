@@ -130,6 +130,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_kv_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_script_subdomain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/workers_secret"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zero_trust_access_custom_page"
@@ -329,6 +330,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		waiting_room_setting.NewResource,
 		web3_hostname.NewResource,
 		workers_script.NewResource,
+		workers_script_subdomain.NewResource,
 		workers_cron_trigger.NewResource,
 		workers_deployment.NewResource,
 		workers_custom_domain.NewResource,
@@ -531,6 +533,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		web3_hostname.NewWeb3HostnamesDataSource,
 		workers_script.NewWorkersScriptDataSource,
 		workers_script.NewWorkersScriptsDataSource,
+		workers_script_subdomain.NewWorkersScriptSubdomainDataSource,
 		workers_cron_trigger.NewWorkersCronTriggerDataSource,
 		workers_deployment.NewWorkersDeploymentDataSource,
 		workers_custom_domain.NewWorkersCustomDomainDataSource,
