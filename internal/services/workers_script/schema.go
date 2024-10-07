@@ -221,6 +221,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
+					"observability": schema.SingleNestedAttribute{
+						Description: "Observability settings for the Worker",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Whether observability is enabled for the Worker",
+								Required:    true,
+							},
+							"head_sampling_rate": schema.Float64Attribute{
+								Description: "The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%). Default is 1.",
+								Optional:    true,
+							},
+						},
+					},
 					"placement": schema.SingleNestedAttribute{
 						Computed:   true,
 						Optional:   true,
