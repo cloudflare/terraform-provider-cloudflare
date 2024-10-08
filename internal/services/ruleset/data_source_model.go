@@ -61,17 +61,19 @@ func (m *RulesetDataSourceModel) toListParams(_ context.Context) (params ruleset
 }
 
 type RulesetRulesDataSourceModel struct {
-	LastUpdated      timetypes.RFC3339                                                     `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Version          types.String                                                          `tfsdk:"version" json:"version,computed"`
-	ID               types.String                                                          `tfsdk:"id" json:"id,computed"`
-	Action           types.String                                                          `tfsdk:"action" json:"action,computed"`
-	ActionParameters customfield.NestedObject[RulesetRulesActionParametersDataSourceModel] `tfsdk:"action_parameters" json:"action_parameters,computed"`
-	Categories       customfield.List[types.String]                                        `tfsdk:"categories" json:"categories,computed"`
-	Description      types.String                                                          `tfsdk:"description" json:"description,computed"`
-	Enabled          types.Bool                                                            `tfsdk:"enabled" json:"enabled,computed"`
-	Expression       types.String                                                          `tfsdk:"expression" json:"expression,computed"`
-	Logging          customfield.NestedObject[RulesetRulesLoggingDataSourceModel]          `tfsdk:"logging" json:"logging,computed"`
-	Ref              types.String                                                          `tfsdk:"ref" json:"ref,computed"`
+	LastUpdated            timetypes.RFC3339                                                           `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version                types.String                                                                `tfsdk:"version" json:"version,computed"`
+	ID                     types.String                                                                `tfsdk:"id" json:"id,computed"`
+	Action                 types.String                                                                `tfsdk:"action" json:"action,computed"`
+	ActionParameters       customfield.NestedObject[RulesetRulesActionParametersDataSourceModel]       `tfsdk:"action_parameters" json:"action_parameters,computed"`
+	Categories             customfield.List[types.String]                                              `tfsdk:"categories" json:"categories,computed"`
+	Description            types.String                                                                `tfsdk:"description" json:"description,computed"`
+	Enabled                types.Bool                                                                  `tfsdk:"enabled" json:"enabled,computed"`
+	ExposedCredentialCheck customfield.NestedObject[RulesetRulesExposedCredentialCheckDataSourceModel] `tfsdk:"exposed_credential_check" json:"exposed_credential_check,computed"`
+	Expression             types.String                                                                `tfsdk:"expression" json:"expression,computed"`
+	Logging                customfield.NestedObject[RulesetRulesLoggingDataSourceModel]                `tfsdk:"logging" json:"logging,computed"`
+	Ratelimit              customfield.NestedObject[RulesetRulesRatelimitDataSourceModel]              `tfsdk:"ratelimit" json:"ratelimit,computed"`
+	Ref                    types.String                                                                `tfsdk:"ref" json:"ref,computed"`
 }
 
 type RulesetRulesActionParametersDataSourceModel struct {
@@ -313,8 +315,24 @@ type RulesetRulesActionParametersResponseFieldsDataSourceModel struct {
 	Name types.String `tfsdk:"name" json:"name,computed"`
 }
 
+type RulesetRulesExposedCredentialCheckDataSourceModel struct {
+	PasswordExpression types.String `tfsdk:"password_expression" json:"password_expression,computed"`
+	UsernameExpression types.String `tfsdk:"username_expression" json:"username_expression,computed"`
+}
+
 type RulesetRulesLoggingDataSourceModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type RulesetRulesRatelimitDataSourceModel struct {
+	Characteristics         customfield.List[types.String] `tfsdk:"characteristics" json:"characteristics,computed"`
+	Period                  types.Int64                    `tfsdk:"period" json:"period,computed"`
+	CountingExpression      types.String                   `tfsdk:"counting_expression" json:"counting_expression,computed"`
+	MitigationTimeout       types.Int64                    `tfsdk:"mitigation_timeout" json:"mitigation_timeout,computed"`
+	RequestsPerPeriod       types.Int64                    `tfsdk:"requests_per_period" json:"requests_per_period,computed"`
+	RequestsToOrigin        types.Bool                     `tfsdk:"requests_to_origin" json:"requests_to_origin,computed"`
+	ScorePerPeriod          types.Int64                    `tfsdk:"score_per_period" json:"score_per_period,computed"`
+	ScoreResponseHeaderName types.Int64                    `tfsdk:"score_response_header_name" json:"score_response_header_name,computed"`
 }
 
 type RulesetFindOneByDataSourceModel struct {

@@ -111,9 +111,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -322,9 +323,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -533,9 +535,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -748,9 +751,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.StringAttribute{
+									"certificate": schema.SingleNestedAttribute{
 										Computed:   true,
-										CustomType: jsontypes.NormalizedType{},
+										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireCertificateDataSourceModel](ctx),
+										Attributes: map[string]schema.Attribute{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,

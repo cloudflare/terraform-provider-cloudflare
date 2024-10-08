@@ -110,9 +110,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.StringAttribute{
+						"certificate": schema.SingleNestedAttribute{
 							Computed:   true,
-							CustomType: jsontypes.NormalizedType{},
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupExcludeCertificateDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -321,9 +322,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.StringAttribute{
+						"certificate": schema.SingleNestedAttribute{
 							Computed:   true,
-							CustomType: jsontypes.NormalizedType{},
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIncludeCertificateDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -532,9 +534,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.StringAttribute{
+						"certificate": schema.SingleNestedAttribute{
 							Computed:   true,
-							CustomType: jsontypes.NormalizedType{},
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupIsDefaultCertificateDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -743,9 +746,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.StringAttribute{
+						"certificate": schema.SingleNestedAttribute{
 							Computed:   true,
-							CustomType: jsontypes.NormalizedType{},
+							CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupRequireCertificateDataSourceModel](ctx),
+							Attributes: map[string]schema.Attribute{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,

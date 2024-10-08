@@ -341,6 +341,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							),
 						},
 					},
+					"operational_state": schema.StringAttribute{
+						Description: "Agent operational state.",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"na",
+								"partially_disabled",
+								"auto_fully_disabled",
+								"fully_disabled",
+								"auto_partially_disabled",
+								"disabled_error",
+								"db_corruption",
+							),
+						},
+					},
 					"score": schema.Float64Attribute{
 						Description: "A value between 0-100 assigned to devices set by the 3rd party posture provider.",
 						Computed:    true,
