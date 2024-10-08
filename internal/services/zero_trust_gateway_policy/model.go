@@ -60,6 +60,7 @@ type ZeroTrustGatewayPolicyRuleSettingsModel struct {
 	OverrideHost                    types.String                                                                          `tfsdk:"override_host" json:"override_host,optional"`
 	OverrideIPs                     *[]types.String                                                                       `tfsdk:"override_ips" json:"override_ips,optional"`
 	PayloadLog                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel]           `tfsdk:"payload_log" json:"payload_log,computed_optional"`
+	Quarantine                      customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsQuarantineModel]           `tfsdk:"quarantine" json:"quarantine,computed_optional"`
 	ResolveDNSThroughCloudflare     types.Bool                                                                            `tfsdk:"resolve_dns_through_cloudflare" json:"resolve_dns_through_cloudflare,optional"`
 	UntrustedCERT                   customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel]        `tfsdk:"untrusted_cert" json:"untrusted_cert,computed_optional"`
 }
@@ -119,6 +120,10 @@ type ZeroTrustGatewayPolicyRuleSettingsNotificationSettingsModel struct {
 
 type ZeroTrustGatewayPolicyRuleSettingsPayloadLogModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,optional"`
+}
+
+type ZeroTrustGatewayPolicyRuleSettingsQuarantineModel struct {
+	FileTypes *[]types.String `tfsdk:"file_types" json:"file_types,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsUntrustedCERTModel struct {

@@ -49,6 +49,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						"egress",
 						"audit_ssh",
 						"resolve",
+						"quarantine",
 					),
 				},
 			},
@@ -335,6 +336,38 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"enabled": schema.BoolAttribute{
 								Description: "Set to true to enable DLP payload logging for this rule.",
 								Computed:    true,
+							},
+						},
+					},
+					"quarantine": schema.SingleNestedAttribute{
+						Description: "Settings that apply to quarantine rules",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsQuarantineDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"file_types": schema.ListAttribute{
+								Description: "Types of files to sandbox.",
+								Computed:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive(
+											"exe",
+											"pdf",
+											"doc",
+											"docm",
+											"docx",
+											"rtf",
+											"ppt",
+											"pptx",
+											"xls",
+											"xlsm",
+											"xlsx",
+											"zip",
+											"rar",
+										),
+									),
+								},
+								CustomType:  customfield.NewListType[types.String](ctx),
+								ElementType: types.StringType,
 							},
 						},
 					},
