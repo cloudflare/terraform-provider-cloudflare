@@ -35,17 +35,19 @@ func (m RulesetModel) MarshalJSONForUpdate(state RulesetModel) (data []byte, err
 }
 
 type RulesetRulesModel struct {
-	LastUpdated      timetypes.RFC3339                                           `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Version          types.String                                                `tfsdk:"version" json:"version,computed"`
-	ID               types.String                                                `tfsdk:"id" json:"id,computed"`
-	Action           types.String                                                `tfsdk:"action" json:"action,computed_optional"`
-	ActionParameters customfield.NestedObject[RulesetRulesActionParametersModel] `tfsdk:"action_parameters" json:"action_parameters,computed_optional"`
-	Categories       customfield.List[types.String]                              `tfsdk:"categories" json:"categories,computed"`
-	Description      types.String                                                `tfsdk:"description" json:"description,computed_optional"`
-	Enabled          types.Bool                                                  `tfsdk:"enabled" json:"enabled,computed_optional"`
-	Expression       types.String                                                `tfsdk:"expression" json:"expression,computed_optional"`
-	Logging          customfield.NestedObject[RulesetRulesLoggingModel]          `tfsdk:"logging" json:"logging,computed_optional"`
-	Ref              types.String                                                `tfsdk:"ref" json:"ref,computed_optional"`
+	LastUpdated            timetypes.RFC3339                        `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version                types.String                             `tfsdk:"version" json:"version,computed"`
+	ID                     types.String                             `tfsdk:"id" json:"id,optional"`
+	Action                 types.String                             `tfsdk:"action" json:"action,optional"`
+	ActionParameters       *RulesetRulesActionParametersModel       `tfsdk:"action_parameters" json:"action_parameters,optional"`
+	Categories             customfield.List[types.String]           `tfsdk:"categories" json:"categories,computed"`
+	Description            types.String                             `tfsdk:"description" json:"description,computed_optional"`
+	Enabled                types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
+	ExposedCredentialCheck *RulesetRulesExposedCredentialCheckModel `tfsdk:"exposed_credential_check" json:"exposed_credential_check,optional"`
+	Expression             types.String                             `tfsdk:"expression" json:"expression,optional"`
+	Logging                *RulesetRulesLoggingModel                `tfsdk:"logging" json:"logging,optional"`
+	Ratelimit              *RulesetRulesRatelimitModel              `tfsdk:"ratelimit" json:"ratelimit,optional"`
+	Ref                    types.String                             `tfsdk:"ref" json:"ref,optional"`
 }
 
 type RulesetRulesActionParametersModel struct {
@@ -157,9 +159,9 @@ type RulesetRulesActionParametersFromValueTargetURLModel struct {
 }
 
 type RulesetRulesActionParametersHeadersModel struct {
-	Operation  types.String `tfsdk:"operation" json:"operation,computed_optional"`
-	Value      types.String `tfsdk:"value" json:"value,computed_optional"`
-	Expression types.String `tfsdk:"expression" json:"expression,computed_optional"`
+	Operation  types.String `tfsdk:"operation" json:"operation,required"`
+	Value      types.String `tfsdk:"value" json:"value,optional"`
+	Expression types.String `tfsdk:"expression" json:"expression,optional"`
 }
 
 type RulesetRulesActionParametersURIModel struct {
@@ -229,8 +231,8 @@ type RulesetRulesActionParametersCacheKeyCustomKeyHostModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringModel struct {
-	Exclude customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel] `tfsdk:"exclude" json:"exclude,optional"`
-	Include customfield.NestedObject[RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel] `tfsdk:"include" json:"include,optional"`
+	Exclude *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel `tfsdk:"exclude" json:"exclude,optional"`
+	Include *RulesetRulesActionParametersCacheKeyCustomKeyQueryStringIncludeModel `tfsdk:"include" json:"include,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyQueryStringExcludeModel struct {
@@ -255,20 +257,20 @@ type RulesetRulesActionParametersCacheReserveModel struct {
 }
 
 type RulesetRulesActionParametersEdgeTTLModel struct {
-	Default       types.Int64                                               `tfsdk:"default" json:"default,optional"`
+	Default       types.Int64                                               `tfsdk:"default" json:"default,required"`
 	Mode          types.String                                              `tfsdk:"mode" json:"mode,required"`
-	StatusCodeTTL *[]*RulesetRulesActionParametersEdgeTTLStatusCodeTTLModel `tfsdk:"status_code_ttl" json:"status_code_ttl,optional"`
+	StatusCodeTTL *[]*RulesetRulesActionParametersEdgeTTLStatusCodeTTLModel `tfsdk:"status_code_ttl" json:"status_code_ttl,required"`
 }
 
 type RulesetRulesActionParametersEdgeTTLStatusCodeTTLModel struct {
-	Value           types.Int64                                                                                    `tfsdk:"value" json:"value,required"`
-	StatusCodeRange customfield.NestedObject[RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel] `tfsdk:"status_code_range" json:"status_code_range,computed_optional"`
-	StatusCode      types.Int64                                                                                    `tfsdk:"status_code" json:"status_code,computed_optional"`
+	Value           types.Int64                                                           `tfsdk:"value" json:"value,required"`
+	StatusCodeRange *RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel `tfsdk:"status_code_range" json:"status_code_range,optional"`
+	StatusCodeValue types.Int64                                                           `tfsdk:"status_code_value" json:"status_code_value,optional"`
 }
 
 type RulesetRulesActionParametersEdgeTTLStatusCodeTTLStatusCodeRangeModel struct {
-	From types.Int64 `tfsdk:"from" json:"from,optional"`
-	To   types.Int64 `tfsdk:"to" json:"to,optional"`
+	From types.Int64 `tfsdk:"from" json:"from,required"`
+	To   types.Int64 `tfsdk:"to" json:"to,required"`
 }
 
 type RulesetRulesActionParametersServeStaleModel struct {
@@ -287,6 +289,22 @@ type RulesetRulesActionParametersResponseFieldsModel struct {
 	Name types.String `tfsdk:"name" json:"name,required"`
 }
 
+type RulesetRulesExposedCredentialCheckModel struct {
+	PasswordExpression types.String `tfsdk:"password_expression" json:"password_expression,required"`
+	UsernameExpression types.String `tfsdk:"username_expression" json:"username_expression,required"`
+}
+
 type RulesetRulesLoggingModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,required"`
+}
+
+type RulesetRulesRatelimitModel struct {
+	Characteristics         *[]types.String `tfsdk:"characteristics" json:"characteristics,required"`
+	Period                  types.Int64     `tfsdk:"period" json:"period,required"`
+	CountingExpression      types.String    `tfsdk:"counting_expression" json:"counting_expression,optional"`
+	MitigationTimeout       types.Int64     `tfsdk:"mitigation_timeout" json:"mitigation_timeout,optional"`
+	RequestsPerPeriod       types.Int64     `tfsdk:"requests_per_period" json:"requests_per_period,optional"`
+	RequestsToOrigin        types.Bool      `tfsdk:"requests_to_origin" json:"requests_to_origin,optional"`
+	ScorePerPeriod          types.Int64     `tfsdk:"score_per_period" json:"score_per_period,optional"`
+	ScoreResponseHeaderName types.Int64     `tfsdk:"score_response_header_name" json:"score_response_header_name,optional"`
 }
