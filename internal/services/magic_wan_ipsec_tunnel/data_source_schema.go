@@ -62,6 +62,56 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						Description: "An optional description forthe IPsec tunnel.",
 						Computed:    true,
 					},
+					"health_check": schema.SingleNestedAttribute{
+						Computed:   true,
+						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelHealthCheckDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"direction": schema.StringAttribute{
+								Description: "The direction of the flow of the healthcheck. Either unidirectional, where the probe comes to you via the tunnel and the result comes back to Cloudflare via the open Internet, or bidirectional where both the probe and result come and go via the tunnel.",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("unidirectional", "bidirectional"),
+								},
+							},
+							"enabled": schema.BoolAttribute{
+								Description: "Determines whether to run healthchecks for a tunnel.",
+								Computed:    true,
+							},
+							"rate": schema.StringAttribute{
+								Description: "How frequent the health check is run. The default value is `mid`.",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"low",
+										"mid",
+										"high",
+									),
+								},
+							},
+							"target": schema.SingleNestedAttribute{
+								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`. This field is ignored for bidirectional healthchecks as the interface_address (not assigned to the Cloudflare side of the tunnel) is used as the target. Must be in object form if the x-magic-new-hc-target header is set to true and string form if x-magic-new-hc-target is absent or set to false.",
+								Computed:    true,
+								CustomType:  customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelHealthCheckTargetDataSourceModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"effective": schema.StringAttribute{
+										Description: "The effective health check target. If 'saved' is empty, then this field will be populated with the calculated default value on GET requests. Ignored in POST, PUT, and PATCH requests.",
+										Computed:    true,
+									},
+									"saved": schema.StringAttribute{
+										Description: "The saved health check target. Setting the value to the empty string indicates that the calculated default value will be used.",
+										Computed:    true,
+									},
+								},
+							},
+							"type": schema.StringAttribute{
+								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("reply", "request"),
+								},
+							},
+						},
+					},
 					"modified_on": schema.StringAttribute{
 						Description: "The date and time the tunnel was last modified.",
 						Computed:    true,
@@ -82,38 +132,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"replay_protection": schema.BoolAttribute{
 						Description: "If `true`, then IPsec replay protection will be supported in the Cloudflare-to-customer direction.",
 						Computed:    true,
-					},
-					"tunnel_health_check": schema.SingleNestedAttribute{
-						Computed:   true,
-						CustomType: customfield.NewNestedObjectType[MagicWANIPSECTunnelIPSECTunnelTunnelHealthCheckDataSourceModel](ctx),
-						Attributes: map[string]schema.Attribute{
-							"enabled": schema.BoolAttribute{
-								Description: "Determines whether to run healthchecks for a tunnel.",
-								Computed:    true,
-							},
-							"rate": schema.StringAttribute{
-								Description: "How frequent the health check is run. The default value is `mid`.",
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive(
-										"low",
-										"mid",
-										"high",
-									),
-								},
-							},
-							"target": schema.StringAttribute{
-								Description: "The destination address in a request type health check. After the healthcheck is decapsulated at the customer end of the tunnel, the ICMP echo will be forwarded to this address. This field defaults to `customer_gre_endpoint address`.",
-								Computed:    true,
-							},
-							"type": schema.StringAttribute{
-								Description: "The type of healthcheck to run, reply or request. The default value is `reply`.",
-								Computed:    true,
-								Validators: []validator.String{
-									stringvalidator.OneOfCaseInsensitive("reply", "request"),
-								},
-							},
-						},
 					},
 				},
 			},
