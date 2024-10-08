@@ -84,13 +84,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
+			"settings": schema.SingleNestedAttribute{
+				Description: "Settings for the DNS record.",
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[DNSRecordSettingsDataSourceModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"flatten_cname": schema.BoolAttribute{
+						Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
+						Computed:    true,
+					},
+				},
+			},
 			"meta": schema.StringAttribute{
 				Description: "Extra Cloudflare-specific information about the record.",
-				Computed:    true,
-				CustomType:  jsontypes.NormalizedType{},
-			},
-			"settings": schema.StringAttribute{
-				Description: "Settings for the DNS record.",
 				Computed:    true,
 				CustomType:  jsontypes.NormalizedType{},
 			},
