@@ -39,10 +39,10 @@ func LogRequest(ctx context.Context, req *http.Request) error {
 	for name, values := range req.Header {
 		for _, value := range values {
 
-      if slices.Contains(sensitiveHeaderNames, strings.ToLower(name)) {
+			if slices.Contains(sensitiveHeaderNames, strings.ToLower(name)) {
 				value = "[redacted]"
 			}
-      
+
 			lines = append(lines, fmt.Sprintf("> %s: %s", strings.ToLower(name), value))
 		}
 	}

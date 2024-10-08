@@ -84,8 +84,8 @@ type ZeroTrustAccessApplicationLandingPageDesignModel struct {
 }
 
 type ZeroTrustAccessApplicationPoliciesModel struct {
-	ID         types.String `tfsdk:"id" json:"id,optional"`
-	Precedence types.Int64  `tfsdk:"precedence" json:"precedence,optional"`
+	ID                           types.String                                                                        `tfsdk:"id" json:"id,optional"`
+	Precedence                   types.Int64                                                                         `tfsdk:"precedence" json:"precedence,optional"`
 	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessApplicationPoliciesApprovalGroupsModel] `tfsdk:"approval_groups" json:"approval_groups,computed_optional"`
 	ApprovalRequired             types.Bool                                                                          `tfsdk:"approval_required" json:"approval_required,computed_optional"`
 	ConnectionRules              customfield.NestedObject[ZeroTrustAccessApplicationPoliciesConnectionRulesModel]    `tfsdk:"connection_rules" json:"connection_rules,computed_optional"`
