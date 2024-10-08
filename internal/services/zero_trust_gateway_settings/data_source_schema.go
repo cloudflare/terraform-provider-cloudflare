@@ -7,8 +7,10 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustGatewaySettingsDataSource)(nil)
@@ -213,6 +215,24 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							"enabled": schema.BoolAttribute{
 								Description: "Enable detecting protocol on initial bytes of client traffic.",
 								Computed:    true,
+							},
+						},
+					},
+					"sandbox": schema.SingleNestedAttribute{
+						Description: "Sandbox settings.",
+						Computed:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsSandboxDataSourceModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Enable sandbox.",
+								Computed:    true,
+							},
+							"fallback_action": schema.StringAttribute{
+								Description: "Action to take when the file cannot be scanned.",
+								Computed:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("allow", "block"),
+								},
 							},
 						},
 					},

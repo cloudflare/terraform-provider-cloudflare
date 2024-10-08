@@ -7,10 +7,12 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ZeroTrustGatewaySettingsResource)(nil)
@@ -225,6 +227,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"enabled": schema.BoolAttribute{
 								Description: "Enable detecting protocol on initial bytes of client traffic.",
 								Optional:    true,
+							},
+						},
+					},
+					"sandbox": schema.SingleNestedAttribute{
+						Description: "Sandbox settings.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewaySettingsSettingsSandboxModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Description: "Enable sandbox.",
+								Optional:    true,
+							},
+							"fallback_action": schema.StringAttribute{
+								Description: "Action to take when the file cannot be scanned.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive("allow", "block"),
+								},
 							},
 						},
 					},
