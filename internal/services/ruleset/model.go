@@ -306,5 +306,5 @@ type RulesetRulesRatelimitModel struct {
 	RequestsPerPeriod       types.Int64     `tfsdk:"requests_per_period" json:"requests_per_period,optional"`
 	RequestsToOrigin        types.Bool      `tfsdk:"requests_to_origin" json:"requests_to_origin,optional"`
 	ScorePerPeriod          types.Int64     `tfsdk:"score_per_period" json:"score_per_period,optional"`
-	ScoreResponseHeaderName types.Int64     `tfsdk:"score_response_header_name" json:"score_response_header_name,optional"`
+	ScoreResponseHeaderName types.String    `tfsdk:"score_response_header_name" json:"score_response_header_name,optional"`
 }

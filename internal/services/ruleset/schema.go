@@ -1015,7 +1015,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "The score threshold per period for which the action will be executed the first time.",
 									Optional:    true,
 								},
-								"score_response_header_name": schema.Int64Attribute{
+								"score_response_header_name": schema.StringAttribute{
 									Description: "The response header name provided by the origin which should contain the score to increment ratelimit counter on.",
 									Optional:    true,
 								},
