@@ -35,19 +35,19 @@ func (m RulesetModel) MarshalJSONForUpdate(state RulesetModel) (data []byte, err
 }
 
 type RulesetRulesModel struct {
-	LastUpdated      timetypes.RFC3339                  `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
-	Version          types.String                       `tfsdk:"version" json:"version,computed"`
-	ID               types.String                       `tfsdk:"id" json:"id,computed"`
-	Action           types.String                       `tfsdk:"action" json:"action,computed_optional"`
-	ActionParameters *RulesetRulesActionParametersModel `tfsdk:"action_parameters" json:"action_parameters,optional"`
-	Categories       customfield.List[types.String]     `tfsdk:"categories" json:"categories,computed"`
-	Description      types.String                       `tfsdk:"description" json:"description,computed_optional"`
-	Enabled          types.Bool                         `tfsdk:"enabled" json:"enabled,computed_optional"`
-  ExposedCredentialCheck *RulesetRulesExposedCredentialCheckModel `tfsdk:"exposed_credential_check" json:"exposed_credential_check,optional"`
-	Expression       types.String                       `tfsdk:"expression" json:"expression,computed_optional"`
-	Logging          *RulesetRulesLoggingModel          `tfsdk:"logging" json:"logging,optional"`
-  Ratelimit              *RulesetRulesRatelimitModel              `tfsdk:"ratelimit" json:"ratelimit,optional"`
-	Ref              types.String                       `tfsdk:"ref" json:"ref,computed_optional"`
+	LastUpdated            timetypes.RFC3339                        `tfsdk:"last_updated" json:"last_updated,computed" format:"date-time"`
+	Version                types.String                             `tfsdk:"version" json:"version,computed"`
+	ID                     types.String                             `tfsdk:"id" json:"id,computed"`
+	Action                 types.String                             `tfsdk:"action" json:"action,computed_optional"`
+	ActionParameters       *RulesetRulesActionParametersModel       `tfsdk:"action_parameters" json:"action_parameters,optional"`
+	Categories             customfield.List[types.String]           `tfsdk:"categories" json:"categories,computed"`
+	Description            types.String                             `tfsdk:"description" json:"description,computed_optional"`
+	Enabled                types.Bool                               `tfsdk:"enabled" json:"enabled,computed_optional"`
+	ExposedCredentialCheck *RulesetRulesExposedCredentialCheckModel `tfsdk:"exposed_credential_check" json:"exposed_credential_check,optional"`
+	Expression             types.String                             `tfsdk:"expression" json:"expression,computed_optional"`
+	Logging                *RulesetRulesLoggingModel                `tfsdk:"logging" json:"logging,optional"`
+	Ratelimit              *RulesetRulesRatelimitModel              `tfsdk:"ratelimit" json:"ratelimit,optional"`
+	Ref                    types.String                             `tfsdk:"ref" json:"ref,computed_optional"`
 }
 
 type RulesetRulesActionParametersModel struct {
