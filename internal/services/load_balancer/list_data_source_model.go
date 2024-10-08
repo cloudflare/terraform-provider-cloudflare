@@ -92,19 +92,7 @@ type LoadBalancersRulesOverridesDataSourceModel struct {
 	DefaultPools              customfield.List[types.String]                                                                `tfsdk:"default_pools" json:"default_pools,computed"`
 	FallbackPool              types.String                                                                                  `tfsdk:"fallback_pool" json:"fallback_pool,computed"`
 	LocationStrategy          customfield.NestedObject[LoadBalancersRulesOverridesLocationStrategyDataSourceModel]          `tfsdk:"location_strategy" json:"location_strategy,computed"`
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	POPPools                  customfield.Map[customfield.List[types.String]]                                               `tfsdk:"pop_pools" json:"pop_pools,computed"`
-=======
-	PopPools                  customfield.Map[customfield.List[types.String]]                                               `tfsdk:"pop_pools" json:"pop_pools,optional"`
->>>>>>> c47923fde (DELETE ME: Fix incorrect optional fields)
-=======
-	PopPools                  customfield.Map[customfield.List[types.String]]                                               `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
->>>>>>> ba9bc8219 (DELETE ME: Fix incorrect computed_optional pop_pools)
-=======
-	PopPools                  customfield.Map[customfield.List[types.String]]                                               `tfsdk:"pop_pools" json:"pop_pools,optional"`
->>>>>>> 0d95e4f2e (DELETE ME: Fix incorrect optional fields)
+	POPPools                  customfield.Map[customfield.List[types.String]]                                               `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RandomSteering            customfield.NestedObject[LoadBalancersRulesOverridesRandomSteeringDataSourceModel]            `tfsdk:"random_steering" json:"random_steering,computed"`
 	RegionPools               customfield.Map[customfield.List[types.String]]                                               `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	SessionAffinity           types.String                                                                                  `tfsdk:"session_affinity" json:"session_affinity,computed"`
