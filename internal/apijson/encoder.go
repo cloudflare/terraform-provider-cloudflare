@@ -254,33 +254,21 @@ func (e *encoder) newArrayTypeEncoder(t reflect.Type) encoderFunc {
 	}
 }
 
-type terraformUnwrappingFunc func(val attr.Value) (any, diag.Diagnostics)
+type terraformUnwrappingFunc func(val attr.Value) any
 
 func (e *encoder) terraformUnwrappedEncoder(underlyingType reflect.Type, unwrap terraformUnwrappingFunc) encoderFunc {
 	enc := e.typeEncoder(underlyingType)
 	return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
-		unwrappedPlan, diags := unwrap(plan)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
-		}
-		unwrappedState, diags := unwrap(state)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
-		}
+		unwrappedPlan := unwrap(plan)
+		unwrappedState := unwrap(state)
 		return enc(reflect.ValueOf(unwrappedPlan), reflect.ValueOf(unwrappedState))
 	})
 }
 
 func (e *encoder) terraformUnwrappedDynamicEncoder(unwrap terraformUnwrappingFunc) encoderFunc {
 	return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
-		unwrappedPlan, diags := unwrap(plan)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
-		}
-		unwrappedState, diags := unwrap(state)
-		if diags.HasError() {
-			return nil, errorFromDiagnostics(diags)
-		}
+		unwrappedPlan := unwrap(plan)
+		unwrappedState := unwrap(state)
 		enc := e.typeEncoder(reflect.TypeOf(unwrappedPlan))
 		return enc(reflect.ValueOf(unwrappedPlan), reflect.ValueOf(unwrappedState))
 	})
@@ -319,48 +307,49 @@ func handleNullAndUndefined(innerFunc func(attr.Value, attr.Value) ([]byte, erro
 func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 
 	if t == reflect.TypeOf(basetypes.BoolValue{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(true), func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.BoolValue).ValueBool(), diag.Diagnostics{}
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(true), func(value attr.Value) any {
+			return value.(basetypes.BoolValue).ValueBool()
 		})
 	} else if t == reflect.TypeOf(basetypes.Int64Value{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(int64(0)), func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.Int64Value).ValueInt64(), diag.Diagnostics{}
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(int64(0)), func(value attr.Value) any {
+			return value.(basetypes.Int64Value).ValueInt64()
 		})
 	} else if t == reflect.TypeOf(basetypes.Float64Value{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(float64(0)), func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.Float64Value).ValueFloat64(), diag.Diagnostics{}
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(float64(0)), func(value attr.Value) any {
+			return value.(basetypes.Float64Value).ValueFloat64()
 		})
 	} else if t == reflect.TypeOf(basetypes.NumberValue{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(big.NewFloat(0)), func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.NumberValue).ValueBigFloat(), diag.Diagnostics{}
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(big.NewFloat(0)), func(value attr.Value) any {
+			return value.(basetypes.NumberValue).ValueBigFloat()
 		})
 	} else if t == reflect.TypeOf(basetypes.StringValue{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(""), func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.StringValue).ValueString(), diag.Diagnostics{}
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(""), func(value attr.Value) any {
+			return value.(basetypes.StringValue).ValueString()
 		})
 	} else if t == reflect.TypeOf(timetypes.RFC3339{}) {
-		return e.terraformUnwrappedEncoder(reflect.TypeOf(time.Time{}), func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(timetypes.RFC3339).ValueRFC3339Time()
+		return e.terraformUnwrappedEncoder(reflect.TypeOf(time.Time{}), func(value attr.Value) any {
+			timeValue, _ := value.(timetypes.RFC3339).ValueRFC3339Time()
+			return timeValue
 		})
 	} else if t == reflect.TypeOf(basetypes.ListValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.ListValue).Elements(), diag.Diagnostics{}
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.ListValue).Elements()
 		})
 	} else if t == reflect.TypeOf(basetypes.TupleValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.TupleValue).Elements(), diag.Diagnostics{}
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.TupleValue).Elements()
 		})
 	} else if t == reflect.TypeOf(basetypes.SetValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.SetValue).Elements(), diag.Diagnostics{}
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.SetValue).Elements()
 		})
 	} else if t == reflect.TypeOf(basetypes.MapValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.MapValue).Elements(), diag.Diagnostics{}
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.MapValue).Elements()
 		})
 	} else if t == reflect.TypeOf(basetypes.ObjectValue{}) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(basetypes.ObjectValue).Attributes(), diag.Diagnostics{}
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			return value.(basetypes.ObjectValue).Attributes()
 		})
 	} else if t == reflect.TypeOf(basetypes.DynamicValue{}) {
 		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
@@ -386,24 +375,34 @@ func (e encoder) newTerraformTypeEncoder(t reflect.Type) encoderFunc {
 		}
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectLike)(nil)).Elem()) {
 		structType := reflect.PointerTo(t.Field(0).Type)
-		return e.terraformUnwrappedEncoder(structType, func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.NestedObjectLike).ValueAny(context.TODO())
+		return e.terraformUnwrappedEncoder(structType, func(value attr.Value) any {
+			converted := value.(customfield.NestedObjectLike)
+			structValue, _ := converted.ValueAny(context.TODO())
+			return structValue
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectListLike)(nil)).Elem()) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.NestedObjectListLike).AsStructSlice(context.TODO())
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.NestedObjectListLike)
+			structSlice, _ := converted.AsStructSlice(context.TODO())
+			return structSlice
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.ListLike)(nil)).Elem()) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.ListLike).ValueAttr(context.TODO())
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.ListLike)
+			listValue, _ := converted.ValueAttr(context.TODO())
+			return listValue
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.NestedObjectMapLike)(nil)).Elem()) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.NestedObjectMapLike).AsStructMap(context.TODO())
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.NestedObjectMapLike)
+			structMap, _ := converted.AsStructMap(context.TODO())
+			return structMap
 		})
 	} else if t.Implements(reflect.TypeOf((*customfield.MapLike)(nil)).Elem()) {
-		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) (any, diag.Diagnostics) {
-			return value.(customfield.MapLike).ValueAttr(context.TODO())
+		return e.terraformUnwrappedDynamicEncoder(func(value attr.Value) any {
+			converted := value.(customfield.MapLike)
+			mapValue, _ := converted.ValueAttr(context.TODO())
+			return mapValue
 		})
 	} else if t == reflect.TypeOf(jsontypes.Normalized{}) {
 		return handleNullAndUndefined(func(plan attr.Value, state attr.Value) ([]byte, error) {
