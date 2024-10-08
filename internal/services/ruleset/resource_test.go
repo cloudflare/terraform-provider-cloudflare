@@ -708,19 +708,17 @@ func TestAccCloudflareRuleset_RateLimit(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "block"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.status_code", "418"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.content_type", "text/plain"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.content", "test content"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.status_code", "418"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.content_type", "text/plain"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.content", "test content"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http rate limit"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.#", "1"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.characteristics.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.period", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_per_period", "100"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_to_origin", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.characteristics.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.requests_per_period", "100"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.mitigation_timeout", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.requests_to_origin", "true"),
 				),
 			},
 			// {
@@ -760,20 +758,18 @@ func TestAccCloudflareRuleset_RateLimitScorePerPeriod(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "block"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.status_code", "418"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.content_type", "text/plain"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.content", "test content"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.status_code", "418"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.content_type", "text/plain"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.content", "test content"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http rate limit"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.#", "1"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.characteristics.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.period", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.score_per_period", "400"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.score_response_header_name", "my-score"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_to_origin", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.characteristics.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.score_per_period", "400"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.score_response_header_name", "my-score"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.mitigation_timeout", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.requests_to_origin", "true"),
 				),
 			},
 		},
@@ -807,19 +803,17 @@ func TestAccCloudflareRuleset_RateLimitMitigationTimeoutOfZero(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resourceName, "rules.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "block"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.status_code", "418"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.content_type", "text/plain"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.0.content", "test content"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.status_code", "418"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.content_type", "text/plain"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action_parameters.response.content", "test content"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.expression", "(http.request.uri.path matches \"^/api/\")"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.description", "example http rate limit"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.#", "1"),
 
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.characteristics.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.period", "60"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_per_period", "1000"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.mitigation_timeout", "0"),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.0.requests_to_origin", "false"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.characteristics.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.requests_per_period", "1000"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.mitigation_timeout", "0"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.ratelimit.requests_to_origin", "false"),
 				),
 			},
 		},
@@ -1525,7 +1519,6 @@ func TestAccCloudflareRuleset_AccountLevelCustomWAFRule(t *testing.T) {
 }
 
 func TestAccCloudflareRuleset_ExposedCredentialCheck(t *testing.T) {
-	acctest.TestAccSkipForDefaultZone(t, "Pending API documentation for username_expression and password_expression")
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the WAF
 	// service does not yet support the API tokens and it results in
 	// misleading state error messages.
