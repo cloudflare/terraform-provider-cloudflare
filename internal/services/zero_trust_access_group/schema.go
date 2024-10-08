@@ -69,10 +69,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"everyone": schema.SingleNestedAttribute{
+						"everyone": schema.StringAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
-							Attributes:  map[string]schema.Attribute{},
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Optional: true,
@@ -183,10 +183,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"any_valid_service_token": schema.SingleNestedAttribute{
+						"any_valid_service_token": schema.StringAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
-							Attributes:  map[string]schema.Attribute{},
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Optional: true,
@@ -275,10 +275,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"everyone": schema.SingleNestedAttribute{
+						"everyone": schema.StringAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
-							Attributes:  map[string]schema.Attribute{},
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -407,10 +407,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"any_valid_service_token": schema.SingleNestedAttribute{
+						"any_valid_service_token": schema.StringAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
-							Attributes:  map[string]schema.Attribute{},
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -503,10 +503,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"everyone": schema.SingleNestedAttribute{
+						"everyone": schema.StringAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
-							Attributes:  map[string]schema.Attribute{},
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -635,10 +635,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"any_valid_service_token": schema.SingleNestedAttribute{
+						"any_valid_service_token": schema.StringAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
-							Attributes:  map[string]schema.Attribute{},
+							CustomType:  jsontypes.NormalizedType{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed:   true,

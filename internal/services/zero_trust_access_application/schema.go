@@ -1429,33 +1429,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"target_criteria": schema.ListNestedAttribute{
-				Computed:   true,
-				Optional:   true,
-				CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationTargetCriteriaModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"port": schema.Int64Attribute{
-							Description: "The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.",
-							Required:    true,
-						},
-						"protocol": schema.StringAttribute{
-							Description: "The communication protocol your application secures.",
-							Required:    true,
-							Validators: []validator.String{
-								stringvalidator.OneOfCaseInsensitive("ssh"),
-							},
-						},
-						"target_attributes": schema.MapAttribute{
-							Description: "Contains a map of target attribute keys to target attribute values.",
-							Required:    true,
-							ElementType: types.ListType{
-								ElemType: types.StringType,
-							},
-						},
-					},
-				},
-			},
 		},
 	}
 }
