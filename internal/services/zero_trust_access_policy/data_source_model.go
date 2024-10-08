@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -90,7 +89,7 @@ type ZeroTrustAccessPolicyExcludeDataSourceModel struct {
 	Everyone             customfield.NestedObject[ZeroTrustAccessPolicyExcludeEveryoneDataSourceModel]             `tfsdk:"everyone" json:"everyone,computed"`
 	IP                   customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	IPList               customfield.NestedObject[ZeroTrustAccessPolicyExcludeIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
-	Certificate          jsontypes.Normalized                                                                      `tfsdk:"certificate" json:"certificate,computed"`
+	Certificate          customfield.NestedObject[ZeroTrustAccessPolicyExcludeCertificateDataSourceModel]          `tfsdk:"certificate" json:"certificate,computed"`
 	Group                customfield.NestedObject[ZeroTrustAccessPolicyExcludeGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyExcludeAzureADDataSourceModel]              `tfsdk:"azure_ad" json:"azureAD,computed"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyExcludeGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
@@ -126,6 +125,9 @@ type ZeroTrustAccessPolicyExcludeIPDataSourceModel struct {
 
 type ZeroTrustAccessPolicyExcludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type ZeroTrustAccessPolicyExcludeCertificateDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyExcludeGroupDataSourceModel struct {
@@ -189,7 +191,7 @@ type ZeroTrustAccessPolicyIncludeDataSourceModel struct {
 	Everyone             customfield.NestedObject[ZeroTrustAccessPolicyIncludeEveryoneDataSourceModel]             `tfsdk:"everyone" json:"everyone,computed"`
 	IP                   customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	IPList               customfield.NestedObject[ZeroTrustAccessPolicyIncludeIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
-	Certificate          jsontypes.Normalized                                                                      `tfsdk:"certificate" json:"certificate,computed"`
+	Certificate          customfield.NestedObject[ZeroTrustAccessPolicyIncludeCertificateDataSourceModel]          `tfsdk:"certificate" json:"certificate,computed"`
 	Group                customfield.NestedObject[ZeroTrustAccessPolicyIncludeGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyIncludeAzureADDataSourceModel]              `tfsdk:"azure_ad" json:"azureAD,computed"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyIncludeGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
@@ -225,6 +227,9 @@ type ZeroTrustAccessPolicyIncludeIPDataSourceModel struct {
 
 type ZeroTrustAccessPolicyIncludeIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type ZeroTrustAccessPolicyIncludeCertificateDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyIncludeGroupDataSourceModel struct {
@@ -288,7 +293,7 @@ type ZeroTrustAccessPolicyRequireDataSourceModel struct {
 	Everyone             customfield.NestedObject[ZeroTrustAccessPolicyRequireEveryoneDataSourceModel]             `tfsdk:"everyone" json:"everyone,computed"`
 	IP                   customfield.NestedObject[ZeroTrustAccessPolicyRequireIPDataSourceModel]                   `tfsdk:"ip" json:"ip,computed"`
 	IPList               customfield.NestedObject[ZeroTrustAccessPolicyRequireIPListDataSourceModel]               `tfsdk:"ip_list" json:"ip_list,computed"`
-	Certificate          jsontypes.Normalized                                                                      `tfsdk:"certificate" json:"certificate,computed"`
+	Certificate          customfield.NestedObject[ZeroTrustAccessPolicyRequireCertificateDataSourceModel]          `tfsdk:"certificate" json:"certificate,computed"`
 	Group                customfield.NestedObject[ZeroTrustAccessPolicyRequireGroupDataSourceModel]                `tfsdk:"group" json:"group,computed"`
 	AzureAD              customfield.NestedObject[ZeroTrustAccessPolicyRequireAzureADDataSourceModel]              `tfsdk:"azure_ad" json:"azureAD,computed"`
 	GitHubOrganization   customfield.NestedObject[ZeroTrustAccessPolicyRequireGitHubOrganizationDataSourceModel]   `tfsdk:"github_organization" json:"github-organization,computed"`
@@ -324,6 +329,9 @@ type ZeroTrustAccessPolicyRequireIPDataSourceModel struct {
 
 type ZeroTrustAccessPolicyRequireIPListDataSourceModel struct {
 	ID types.String `tfsdk:"id" json:"id,computed"`
+}
+
+type ZeroTrustAccessPolicyRequireCertificateDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyRequireGroupDataSourceModel struct {
