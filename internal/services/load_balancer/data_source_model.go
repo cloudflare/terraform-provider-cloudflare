@@ -103,6 +103,7 @@ type LoadBalancerRulesOverridesDataSourceModel struct {
 	LocationStrategy          customfield.NestedObject[LoadBalancerRulesOverridesLocationStrategyDataSourceModel]          `tfsdk:"location_strategy" json:"location_strategy,computed"`
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	POPPools                  customfield.Map[customfield.List[types.String]]                                              `tfsdk:"pop_pools" json:"pop_pools,computed"`
 =======
 	PopPools                  customfield.Map[customfield.List[types.String]]                                              `tfsdk:"pop_pools" json:"pop_pools,optional"`
@@ -110,6 +111,9 @@ type LoadBalancerRulesOverridesDataSourceModel struct {
 =======
 	PopPools                  customfield.Map[customfield.List[types.String]]                                              `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 >>>>>>> ba9bc8219 (DELETE ME: Fix incorrect computed_optional pop_pools)
+=======
+	PopPools                  customfield.Map[customfield.List[types.String]]                                              `tfsdk:"pop_pools" json:"pop_pools,optional"`
+>>>>>>> 0d95e4f2e (DELETE ME: Fix incorrect optional fields)
 	RandomSteering            customfield.NestedObject[LoadBalancerRulesOverridesRandomSteeringDataSourceModel]            `tfsdk:"random_steering" json:"random_steering,computed"`
 	RegionPools               customfield.Map[customfield.List[types.String]]                                              `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	SessionAffinity           types.String                                                                                 `tfsdk:"session_affinity" json:"session_affinity,computed"`
