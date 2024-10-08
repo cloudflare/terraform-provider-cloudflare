@@ -1,0 +1,7 @@
+```release-note:note
+`cloudflare_list` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state.
+```
+
+```release-note:internal
+resource/cloudflare_list: migrate from SDKv2 to `terraform-plugin-framework`
+```
