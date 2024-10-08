@@ -1,0 +1,79 @@
+package zero_trust_gateway_settings_test
+
+import (
+	"fmt"
+	"os"
+	"testing"
+
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+)
+
+func TestAccCloudflareTeamsAccounts_ConfigurationBasic(t *testing.T) {
+	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
+	// service does not yet support the API tokens and it results in
+	// misleading state error messages.
+	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
+		t.Setenv("CLOUDFLARE_API_TOKEN", "")
+	}
+
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_gateway_settings.%s", rnd)
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareTeamsAccountBasic(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
+					resource.TestCheckResourceAttr(name, "custom_certificate.0.enabled", "false"),
+					resource.TestCheckResourceAttr(name, "tls_decrypt_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "protocol_detection_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "activity_log_enabled", "true"),
+					resource.TestCheckResourceAttr(name, "fips.0.tls", "true"),
+					resource.TestCheckResourceAttr(name, "block_page.0.name", rnd),
+					resource.TestCheckResourceAttr(name, "block_page.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "block_page.0.footer_text", "hello"),
+					resource.TestCheckResourceAttr(name, "block_page.0.header_text", "hello"),
+					resource.TestCheckResourceAttr(name, "block_page.0.mailto_subject", "hello"),
+					resource.TestCheckResourceAttr(name, "block_page.0.mailto_address", "test@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "block_page.0.background_color", "#000000"),
+					resource.TestCheckResourceAttr(name, "block_page.0.logo_path", "https://example.com"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.enabled_download_phase", "true"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.enabled_upload_phase", "false"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.fail_closed", "true"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.notification_settings.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.notification_settings.0.message", "msg"),
+					resource.TestCheckResourceAttr(name, "antivirus.0.notification_settings.0.support_url", "https://hello.com/"),
+
+					resource.TestCheckResourceAttr(name, "body_scanning.0.inspection_mode", "deep"),
+					resource.TestCheckResourceAttr(name, "logging.0.redact_pii", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.dns.0.log_all", "false"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.dns.0.log_blocks", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.http.0.log_all", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.http.0.log_blocks", "true"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_all", "false"),
+					resource.TestCheckResourceAttr(name, "logging.0.settings_by_rule_type.0.l4.0.log_blocks", "true"),
+					resource.TestCheckResourceAttr(name, "proxy.0.tcp", "true"),
+					resource.TestCheckResourceAttr(name, "proxy.0.udp", "false"),
+					resource.TestCheckResourceAttr(name, "proxy.0.root_ca", "true"),
+					resource.TestCheckResourceAttr(name, "proxy.0.virtual_ip", "true"),
+					resource.TestCheckResourceAttr(name, "payload_log.0.public_key", "EmpOvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="),
+					resource.TestCheckResourceAttr(name, "ssh_session_log.0.public_key", "testvSXw8BfbrGCi0fhGiD/3yXk2SiV1Nzg2lru3oj0="),
+					resource.TestCheckResourceAttr(name, "non_identity_browser_isolation_enabled", "false"),
+				),
+			},
+		},
+	})
+}
+
+func testAccCloudflareTeamsAccountBasic(rnd, accountID string) string {
+	return acctest.LoadTestCase("teamsaccountbasic.tf", rnd, accountID)
+}
