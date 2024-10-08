@@ -51,6 +51,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"egress",
 						"audit_ssh",
 						"resolve",
+						"quarantine",
 					),
 				},
 			},
@@ -328,6 +329,38 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							"enabled": schema.BoolAttribute{
 								Description: "Set to true to enable DLP payload logging for this rule.",
 								Optional:    true,
+							},
+						},
+					},
+					"quarantine": schema.SingleNestedAttribute{
+						Description: "Settings that apply to quarantine rules",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyRuleSettingsQuarantineModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"file_types": schema.ListAttribute{
+								Description: "Types of files to sandbox.",
+								Optional:    true,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre(
+										stringvalidator.OneOfCaseInsensitive(
+											"exe",
+											"pdf",
+											"doc",
+											"docm",
+											"docx",
+											"rtf",
+											"ppt",
+											"pptx",
+											"xls",
+											"xlsm",
+											"xlsx",
+											"zip",
+											"rar",
+										),
+									),
+								},
+								ElementType: types.StringType,
 							},
 						},
 					},

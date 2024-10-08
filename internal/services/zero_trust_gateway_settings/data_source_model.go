@@ -43,6 +43,7 @@ type ZeroTrustGatewaySettingsSettingsDataSourceModel struct {
 	ExtendedEmailMatching customfield.NestedObject[ZeroTrustGatewaySettingsSettingsExtendedEmailMatchingDataSourceModel] `tfsdk:"extended_email_matching" json:"extended_email_matching,computed"`
 	Fips                  customfield.NestedObject[ZeroTrustGatewaySettingsSettingsFipsDataSourceModel]                  `tfsdk:"fips" json:"fips,computed"`
 	ProtocolDetection     customfield.NestedObject[ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel]     `tfsdk:"protocol_detection" json:"protocol_detection,computed"`
+	Sandbox               customfield.NestedObject[ZeroTrustGatewaySettingsSettingsSandboxDataSourceModel]               `tfsdk:"sandbox" json:"sandbox,computed"`
 	TLSDecrypt            customfield.NestedObject[ZeroTrustGatewaySettingsSettingsTLSDecryptDataSourceModel]            `tfsdk:"tls_decrypt" json:"tls_decrypt,computed"`
 }
 
@@ -105,6 +106,11 @@ type ZeroTrustGatewaySettingsSettingsFipsDataSourceModel struct {
 
 type ZeroTrustGatewaySettingsSettingsProtocolDetectionDataSourceModel struct {
 	Enabled types.Bool `tfsdk:"enabled" json:"enabled,computed"`
+}
+
+type ZeroTrustGatewaySettingsSettingsSandboxDataSourceModel struct {
+	Enabled        types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
+	FallbackAction types.String `tfsdk:"fallback_action" json:"fallback_action,computed"`
 }
 
 type ZeroTrustGatewaySettingsSettingsTLSDecryptDataSourceModel struct {
