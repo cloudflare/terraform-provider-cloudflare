@@ -120,7 +120,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						"pop_pools": schema.MapAttribute{
 							Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
-							Computed:    true,
+							Optional:    true,
 							CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 							ElementType: types.ListType{
 								ElemType: types.StringType,
@@ -261,7 +261,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											"pop_pools": schema.MapAttribute{
 												Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
-												Computed:    true,
+												Optional:    true,
 												CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 												ElementType: types.ListType{
 													ElemType: types.StringType,
