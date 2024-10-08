@@ -46,7 +46,7 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Optional:    true,
 			},
 			"kind": schema.StringAttribute{
-				Description: fmt.Sprintf("The type of items the list will contain. %s", utils.RenderMustProviderOnlyOneOfDocumentationValuesStringSlice([]string{"ip", "redirect", "hostname", "asn"})),
+				Description: fmt.Sprintf("The type of items the list will contain. %s.", utils.RenderMustProviderOnlyOneOfDocumentationValuesStringSlice([]string{"ip", "redirect", "hostname", "asn"})),
 				Required:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -99,14 +99,14 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Required:    true,
 												},
 												"include_subdomains": schema.StringAttribute{
-													Description: fmt.Sprintf("Whether the redirect also matches subdomains of the source url. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+													Description: fmt.Sprintf("Whether the redirect also matches subdomains of the source url. %s.", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 													Optional:    true,
 													Validators: []validator.String{
 														stringvalidator.OneOf("disabled", "enabled"),
 													},
 												},
 												"subpath_matching": schema.StringAttribute{
-													Description: fmt.Sprintf("Whether the redirect also matches subpaths of the source url. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+													Description: fmt.Sprintf("Whether the redirect also matches subpaths of the source url. %s.", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 													Optional:    true,
 													Validators: []validator.String{
 														stringvalidator.OneOf("disabled", "enabled"),
@@ -117,14 +117,14 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Optional:    true,
 												},
 												"preserve_query_string": schema.StringAttribute{
-													Description: fmt.Sprintf("Whether the redirect target url should keep the query string of the request's url. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+													Description: fmt.Sprintf("Whether the redirect target url should keep the query string of the request's url. %s.", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 													Optional:    true,
 													Validators: []validator.String{
 														stringvalidator.OneOf("disabled", "enabled"),
 													},
 												},
 												"preserve_path_suffix": schema.StringAttribute{
-													Description: fmt.Sprintf("Whether to preserve the path suffix when doing subpath matching. %s", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
+													Description: fmt.Sprintf("Whether to preserve the path suffix when doing subpath matching. %s.", utils.RenderAvailableDocumentationValuesStringSlice([]string{"disabled", "enabled"})),
 													Optional:    true,
 													Validators: []validator.String{
 														stringvalidator.OneOf("disabled", "enabled"),
@@ -137,7 +137,7 @@ func (r *ListResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 										NestedObject: schema.NestedBlockObject{
 											Attributes: map[string]schema.Attribute{
 												"url_hostname": schema.StringAttribute{
-													Description: "The FQDN to match on. Wildcard sub-domain matching is allowed. Eg. *.abc.com",
+													Description: "The FQDN to match on. Wildcard sub-domain matching is allowed. Eg. *.abc.com.",
 													Required:    true,
 												},
 											},
