@@ -46,9 +46,14 @@ type MagicWANGRETunnelGRETunnelDataSourceModel struct {
 }
 
 type MagicWANGRETunnelGRETunnelHealthCheckDataSourceModel struct {
-	Direction types.String `tfsdk:"direction" json:"direction,computed"`
-	Enabled   types.Bool   `tfsdk:"enabled" json:"enabled,computed"`
-	Rate      types.String `tfsdk:"rate" json:"rate,computed"`
-	Target    types.String `tfsdk:"target" json:"target,computed"`
-	Type      types.String `tfsdk:"type" json:"type,computed"`
+	Direction types.String                                                                         `tfsdk:"direction" json:"direction,computed"`
+	Enabled   types.Bool                                                                           `tfsdk:"enabled" json:"enabled,computed"`
+	Rate      types.String                                                                         `tfsdk:"rate" json:"rate,computed"`
+	Target    customfield.NestedObject[MagicWANGRETunnelGRETunnelHealthCheckTargetDataSourceModel] `tfsdk:"target" json:"target,computed"`
+	Type      types.String                                                                         `tfsdk:"type" json:"type,computed"`
+}
+
+type MagicWANGRETunnelGRETunnelHealthCheckTargetDataSourceModel struct {
+	Effective types.String `tfsdk:"effective" json:"effective,computed"`
+	Saved     types.String `tfsdk:"saved" json:"saved,computed"`
 }
