@@ -5,7 +5,6 @@ package pages_project
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -54,7 +53,7 @@ type PagesProjectDeploymentConfigsModel struct {
 type PagesProjectDeploymentConfigsPreviewModel struct {
 	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAIBindingsModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed_optional"`
 	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed_optional"`
-	Browsers                map[string]jsontypes.Normalized                                                               `tfsdk:"browsers" json:"browsers,optional"`
+	Browsers                map[string]PagesProjectDeploymentConfigsPreviewBrowsersModel                                  `tfsdk:"browsers" json:"browsers,optional"`
 	CompatibilityDate       types.String                                                                                  `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	CompatibilityFlags      *[]types.String                                                                               `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
 	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewD1DatabasesModel]             `tfsdk:"d1_databases" json:"d1_databases,computed_optional"`
@@ -76,6 +75,9 @@ type PagesProjectDeploymentConfigsPreviewAIBindingsModel struct {
 
 type PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsModel struct {
 	Dataset types.String `tfsdk:"dataset" json:"dataset,optional"`
+}
+
+type PagesProjectDeploymentConfigsPreviewBrowsersModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewD1DatabasesModel struct {
@@ -129,7 +131,7 @@ type PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel struct {
 type PagesProjectDeploymentConfigsProductionModel struct {
 	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAIBindingsModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed_optional"`
 	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed_optional"`
-	Browsers                map[string]jsontypes.Normalized                                                                  `tfsdk:"browsers" json:"browsers,optional"`
+	Browsers                map[string]PagesProjectDeploymentConfigsProductionBrowsersModel                                  `tfsdk:"browsers" json:"browsers,optional"`
 	CompatibilityDate       types.String                                                                                     `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	CompatibilityFlags      *[]types.String                                                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
 	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionD1DatabasesModel]             `tfsdk:"d1_databases" json:"d1_databases,computed_optional"`
@@ -151,6 +153,9 @@ type PagesProjectDeploymentConfigsProductionAIBindingsModel struct {
 
 type PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsModel struct {
 	Dataset types.String `tfsdk:"dataset" json:"dataset,optional"`
+}
+
+type PagesProjectDeploymentConfigsProductionBrowsersModel struct {
 }
 
 type PagesProjectDeploymentConfigsProductionD1DatabasesModel struct {
