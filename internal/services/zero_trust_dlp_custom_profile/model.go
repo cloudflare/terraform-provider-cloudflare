@@ -13,16 +13,17 @@ type ZeroTrustDLPCustomProfileResultEnvelope struct {
 }
 
 type ZeroTrustDLPCustomProfileModel struct {
-	AccountID         types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
-	ProfileID         types.String                                                              `tfsdk:"profile_id" path:"profile_id,optional"`
-	Profiles          *[]*ZeroTrustDLPCustomProfileProfilesModel                                `tfsdk:"profiles" json:"profiles,required"`
-	AllowedMatchCount types.Int64                                                               `tfsdk:"allowed_match_count" json:"allowed_match_count,optional"`
-	Description       types.String                                                              `tfsdk:"description" json:"description,optional"`
-	Name              types.String                                                              `tfsdk:"name" json:"name,optional"`
-	OCREnabled        types.Bool                                                                `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
-	ContextAwareness  customfield.NestedObject[ZeroTrustDLPCustomProfileContextAwarenessModel]  `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
-	Entries           customfield.NestedObjectList[ZeroTrustDLPCustomProfileEntriesModel]       `tfsdk:"entries" json:"entries,computed_optional"`
-	SharedEntries     customfield.NestedObjectList[ZeroTrustDLPCustomProfileSharedEntriesModel] `tfsdk:"shared_entries" json:"shared_entries,computed_optional"`
+	AccountID           types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
+	ProfileID           types.String                                                              `tfsdk:"profile_id" path:"profile_id,optional"`
+	Profiles            *[]*ZeroTrustDLPCustomProfileProfilesModel                                `tfsdk:"profiles" json:"profiles,required"`
+	AllowedMatchCount   types.Int64                                                               `tfsdk:"allowed_match_count" json:"allowed_match_count,optional"`
+	ConfidenceThreshold types.String                                                              `tfsdk:"confidence_threshold" json:"confidence_threshold,optional"`
+	Description         types.String                                                              `tfsdk:"description" json:"description,optional"`
+	Name                types.String                                                              `tfsdk:"name" json:"name,optional"`
+	OCREnabled          types.Bool                                                                `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
+	ContextAwareness    customfield.NestedObject[ZeroTrustDLPCustomProfileContextAwarenessModel]  `tfsdk:"context_awareness" json:"context_awareness,computed_optional"`
+	Entries             customfield.NestedObjectList[ZeroTrustDLPCustomProfileEntriesModel]       `tfsdk:"entries" json:"entries,computed_optional"`
+	SharedEntries       customfield.NestedObjectList[ZeroTrustDLPCustomProfileSharedEntriesModel] `tfsdk:"shared_entries" json:"shared_entries,computed_optional"`
 }
 
 func (m ZeroTrustDLPCustomProfileModel) MarshalJSON() (data []byte, err error) {
@@ -34,13 +35,14 @@ func (m ZeroTrustDLPCustomProfileModel) MarshalJSONForUpdate(state ZeroTrustDLPC
 }
 
 type ZeroTrustDLPCustomProfileProfilesModel struct {
-	Entries           *[]*ZeroTrustDLPCustomProfileProfilesEntriesModel       `tfsdk:"entries" json:"entries,required"`
-	Name              types.String                                            `tfsdk:"name" json:"name,required"`
-	AllowedMatchCount types.Int64                                             `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`
-	ContextAwareness  *ZeroTrustDLPCustomProfileProfilesContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional"`
-	Description       types.String                                            `tfsdk:"description" json:"description,optional"`
-	OCREnabled        types.Bool                                              `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
-	SharedEntries     *[]*ZeroTrustDLPCustomProfileProfilesSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries,optional"`
+	Entries             *[]*ZeroTrustDLPCustomProfileProfilesEntriesModel       `tfsdk:"entries" json:"entries,required"`
+	Name                types.String                                            `tfsdk:"name" json:"name,required"`
+	AllowedMatchCount   types.Int64                                             `tfsdk:"allowed_match_count" json:"allowed_match_count,computed_optional"`
+	ConfidenceThreshold types.String                                            `tfsdk:"confidence_threshold" json:"confidence_threshold,optional"`
+	ContextAwareness    *ZeroTrustDLPCustomProfileProfilesContextAwarenessModel `tfsdk:"context_awareness" json:"context_awareness,optional"`
+	Description         types.String                                            `tfsdk:"description" json:"description,optional"`
+	OCREnabled          types.Bool                                              `tfsdk:"ocr_enabled" json:"ocr_enabled,optional"`
+	SharedEntries       *[]*ZeroTrustDLPCustomProfileProfilesSharedEntriesModel `tfsdk:"shared_entries" json:"shared_entries,optional"`
 }
 
 type ZeroTrustDLPCustomProfileProfilesEntriesModel struct {
