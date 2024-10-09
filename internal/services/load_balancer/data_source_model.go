@@ -38,7 +38,7 @@ type LoadBalancerDataSourceModel struct {
 	CountryPools              customfield.Map[customfield.List[types.String]]                                `tfsdk:"country_pools" json:"country_pools,computed"`
 	DefaultPools              customfield.List[types.String]                                                 `tfsdk:"default_pools" json:"default_pools,computed"`
 	Networks                  customfield.List[types.String]                                                 `tfsdk:"networks" json:"networks,computed"`
-	POPPools                  customfield.Map[customfield.List[types.String]]                                `tfsdk:"pop_pools" json:"pop_pools,optional"`
+	POPPools                  customfield.Map[customfield.List[types.String]]                                `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RegionPools               customfield.Map[customfield.List[types.String]]                                `tfsdk:"region_pools" json:"region_pools,computed"`
 	AdaptiveRouting           customfield.NestedObject[LoadBalancerAdaptiveRoutingDataSourceModel]           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed"`
 	LocationStrategy          customfield.NestedObject[LoadBalancerLocationStrategyDataSourceModel]          `tfsdk:"location_strategy" json:"location_strategy,computed"`
@@ -102,10 +102,14 @@ type LoadBalancerRulesOverridesDataSourceModel struct {
 	FallbackPool              types.String                                                                                 `tfsdk:"fallback_pool" json:"fallback_pool,computed"`
 	LocationStrategy          customfield.NestedObject[LoadBalancerRulesOverridesLocationStrategyDataSourceModel]          `tfsdk:"location_strategy" json:"location_strategy,computed"`
 <<<<<<< HEAD
+<<<<<<< HEAD
 	POPPools                  customfield.Map[customfield.List[types.String]]                                              `tfsdk:"pop_pools" json:"pop_pools,computed"`
 =======
 	PopPools                  customfield.Map[customfield.List[types.String]]                                              `tfsdk:"pop_pools" json:"pop_pools,optional"`
 >>>>>>> c47923fde (DELETE ME: Fix incorrect optional fields)
+=======
+	PopPools                  customfield.Map[customfield.List[types.String]]                                              `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
+>>>>>>> ba9bc8219 (DELETE ME: Fix incorrect computed_optional pop_pools)
 	RandomSteering            customfield.NestedObject[LoadBalancerRulesOverridesRandomSteeringDataSourceModel]            `tfsdk:"random_steering" json:"random_steering,computed"`
 	RegionPools               customfield.Map[customfield.List[types.String]]                                              `tfsdk:"region_pools" json:"region_pools,computed"`
 	SessionAffinity           types.String                                                                                 `tfsdk:"session_affinity" json:"session_affinity,computed"`
