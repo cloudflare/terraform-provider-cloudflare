@@ -85,7 +85,7 @@ type LoadBalancerRulesOverridesModel struct {
 	LocationStrategy          customfield.NestedObject[LoadBalancerRulesOverridesLocationStrategyModel]          `tfsdk:"location_strategy" json:"location_strategy,computed_optional"`
 	POPPools                  customfield.Map[customfield.List[types.String]]                                    `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RandomSteering            customfield.NestedObject[LoadBalancerRulesOverridesRandomSteeringModel]            `tfsdk:"random_steering" json:"random_steering,computed_optional"`
-	RegionPools               customfield.Map[customfield.List[types.String]]                                    `tfsdk:"region_pools" json:"region_pools,optional_optional"`
+	RegionPools               customfield.Map[customfield.List[types.String]]                                    `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	SessionAffinity           types.String                                                                       `tfsdk:"session_affinity" json:"session_affinity,computed_optional"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerRulesOverridesSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
 	SessionAffinityTTL        types.Float64                                                                      `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed_optional"`
