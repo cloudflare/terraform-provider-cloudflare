@@ -67,7 +67,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"directory_id": schema.Int64Attribute{
 				Computed: true,
 			},
-			"directory_node_id": schema.StringAttribute{
+			"directory_node_id": schema.Int64Attribute{
+				Computed: true,
+			},
+			"external_directory_node_id": schema.StringAttribute{
 				Computed: true,
 			},
 			"last_modified": schema.StringAttribute{

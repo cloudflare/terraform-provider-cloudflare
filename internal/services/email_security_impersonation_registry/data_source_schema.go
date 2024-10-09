@@ -36,10 +36,13 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"directory_id": schema.Int64Attribute{
 				Computed: true,
 			},
-			"directory_node_id": schema.StringAttribute{
+			"directory_node_id": schema.Int64Attribute{
 				Computed: true,
 			},
 			"email": schema.StringAttribute{
+				Computed: true,
+			},
+			"external_directory_node_id": schema.StringAttribute{
 				Computed: true,
 			},
 			"id": schema.Int64Attribute{
