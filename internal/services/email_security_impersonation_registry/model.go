@@ -14,18 +14,19 @@ type EmailSecurityImpersonationRegistryResultEnvelope struct {
 }
 
 type EmailSecurityImpersonationRegistryModel struct {
-	ID              types.Int64                                                               `tfsdk:"id" json:"id,computed"`
-	AccountID       types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
-	Body            customfield.NestedObjectList[EmailSecurityImpersonationRegistryBodyModel] `tfsdk:"body" json:"body,computed_optional"`
-	Email           types.String                                                              `tfsdk:"email" json:"email,optional"`
-	IsEmailRegex    types.Bool                                                                `tfsdk:"is_email_regex" json:"is_email_regex,optional"`
-	Name            types.String                                                              `tfsdk:"name" json:"name,optional"`
-	Comments        types.String                                                              `tfsdk:"comments" json:"comments,computed"`
-	CreatedAt       timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	DirectoryID     types.Int64                                                               `tfsdk:"directory_id" json:"directory_id,computed"`
-	DirectoryNodeID types.String                                                              `tfsdk:"directory_node_id" json:"directory_node_id,computed"`
-	LastModified    timetypes.RFC3339                                                         `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
-	Provenance      types.String                                                              `tfsdk:"provenance" json:"provenance,computed"`
+	ID                      types.Int64                                                               `tfsdk:"id" json:"id,computed"`
+	AccountID               types.String                                                              `tfsdk:"account_id" path:"account_id,required"`
+	Body                    customfield.NestedObjectList[EmailSecurityImpersonationRegistryBodyModel] `tfsdk:"body" json:"body,computed_optional"`
+	Email                   types.String                                                              `tfsdk:"email" json:"email,optional"`
+	IsEmailRegex            types.Bool                                                                `tfsdk:"is_email_regex" json:"is_email_regex,optional"`
+	Name                    types.String                                                              `tfsdk:"name" json:"name,optional"`
+	Comments                types.String                                                              `tfsdk:"comments" json:"comments,computed"`
+	CreatedAt               timetypes.RFC3339                                                         `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	DirectoryID             types.Int64                                                               `tfsdk:"directory_id" json:"directory_id,computed"`
+	DirectoryNodeID         types.Int64                                                               `tfsdk:"directory_node_id" json:"directory_node_id,computed"`
+	ExternalDirectoryNodeID types.String                                                              `tfsdk:"external_directory_node_id" json:"external_directory_node_id,computed"`
+	LastModified            timetypes.RFC3339                                                         `tfsdk:"last_modified" json:"last_modified,computed" format:"date-time"`
+	Provenance              types.String                                                              `tfsdk:"provenance" json:"provenance,computed"`
 }
 
 func (m EmailSecurityImpersonationRegistryModel) MarshalJSON() (data []byte, err error) {
