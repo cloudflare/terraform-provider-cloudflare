@@ -46,7 +46,7 @@ type LoadBalancersResultDataSourceModel struct {
 	POPPools                  customfield.Map[customfield.List[types.String]]                                 `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	Proxied                   types.Bool                                                                      `tfsdk:"proxied" json:"proxied,computed"`
 	RandomSteering            customfield.NestedObject[LoadBalancersRandomSteeringDataSourceModel]            `tfsdk:"random_steering" json:"random_steering,computed"`
-	RegionPools               customfield.Map[customfield.List[types.String]]                                 `tfsdk:"region_pools" json:"region_pools,computed"`
+	RegionPools               customfield.Map[customfield.List[types.String]]                                 `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	Rules                     customfield.NestedObjectList[LoadBalancersRulesDataSourceModel]                 `tfsdk:"rules" json:"rules,computed"`
 	SessionAffinity           types.String                                                                    `tfsdk:"session_affinity" json:"session_affinity,computed"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancersSessionAffinityAttributesDataSourceModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed"`
@@ -102,7 +102,7 @@ type LoadBalancersRulesOverridesDataSourceModel struct {
 	PopPools                  customfield.Map[customfield.List[types.String]]                                               `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 >>>>>>> ba9bc8219 (DELETE ME: Fix incorrect computed_optional pop_pools)
 	RandomSteering            customfield.NestedObject[LoadBalancersRulesOverridesRandomSteeringDataSourceModel]            `tfsdk:"random_steering" json:"random_steering,computed"`
-	RegionPools               customfield.Map[customfield.List[types.String]]                                               `tfsdk:"region_pools" json:"region_pools,computed"`
+	RegionPools               customfield.Map[customfield.List[types.String]]                                               `tfsdk:"region_pools" json:"region_pools,computed_optional"`
 	SessionAffinity           types.String                                                                                  `tfsdk:"session_affinity" json:"session_affinity,computed"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancersRulesOverridesSessionAffinityAttributesDataSourceModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed"`
 	SessionAffinityTTL        types.Float64                                                                                 `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed"`

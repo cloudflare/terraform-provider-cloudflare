@@ -154,6 +154,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"region_pools": schema.MapAttribute{
 							Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 							Computed:    true,
+							Optional:    true,
 							CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 							ElementType: types.ListType{
 								ElemType: types.StringType,
@@ -292,6 +293,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"region_pools": schema.MapAttribute{
 												Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 												Computed:    true,
+												Optional:    true,
 												CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 												ElementType: types.ListType{
 													ElemType: types.StringType,
