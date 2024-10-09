@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -112,10 +111,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"browsers": schema.MapAttribute{
+							"browsers": schema.MapNestedAttribute{
 								Description: "Browser bindings used for Pages Functions.",
 								Optional:    true,
-								ElementType: jsontypes.NormalizedType{},
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{},
+								},
 							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",
@@ -329,10 +330,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-							"browsers": schema.MapAttribute{
+							"browsers": schema.MapNestedAttribute{
 								Description: "Browser bindings used for Pages Functions.",
 								Optional:    true,
-								ElementType: jsontypes.NormalizedType{},
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{},
+								},
 							},
 							"compatibility_date": schema.StringAttribute{
 								Description: "Compatibility date used for Pages Functions.",

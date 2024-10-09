@@ -8,7 +8,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/pages"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -151,7 +150,7 @@ type PagesProjectDeploymentConfigsDataSourceModel struct {
 type PagesProjectDeploymentConfigsPreviewDataSourceModel struct {
 	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed"`
 	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed"`
-	Browsers                customfield.Map[jsontypes.Normalized]                                                                   `tfsdk:"browsers" json:"browsers,computed"`
+	Browsers                customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel]                `tfsdk:"browsers" json:"browsers,computed"`
 	CompatibilityDate       types.String                                                                                            `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
 	CompatibilityFlags      customfield.List[types.String]                                                                          `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
 	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel]             `tfsdk:"d1_databases" json:"d1_databases,computed"`
@@ -173,6 +172,9 @@ type PagesProjectDeploymentConfigsPreviewAIBindingsDataSourceModel struct {
 
 type PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsDataSourceModel struct {
 	Dataset types.String `tfsdk:"dataset" json:"dataset,computed"`
+}
+
+type PagesProjectDeploymentConfigsPreviewBrowsersDataSourceModel struct {
 }
 
 type PagesProjectDeploymentConfigsPreviewD1DatabasesDataSourceModel struct {
@@ -226,7 +228,7 @@ type PagesProjectDeploymentConfigsPreviewVectorizeBindingsDataSourceModel struct
 type PagesProjectDeploymentConfigsProductionDataSourceModel struct {
 	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed"`
 	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed"`
-	Browsers                customfield.Map[jsontypes.Normalized]                                                                      `tfsdk:"browsers" json:"browsers,computed"`
+	Browsers                customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel]                `tfsdk:"browsers" json:"browsers,computed"`
 	CompatibilityDate       types.String                                                                                               `tfsdk:"compatibility_date" json:"compatibility_date,computed"`
 	CompatibilityFlags      customfield.List[types.String]                                                                             `tfsdk:"compatibility_flags" json:"compatibility_flags,computed"`
 	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel]             `tfsdk:"d1_databases" json:"d1_databases,computed"`
@@ -248,6 +250,9 @@ type PagesProjectDeploymentConfigsProductionAIBindingsDataSourceModel struct {
 
 type PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsDataSourceModel struct {
 	Dataset types.String `tfsdk:"dataset" json:"dataset,computed"`
+}
+
+type PagesProjectDeploymentConfigsProductionBrowsersDataSourceModel struct {
 }
 
 type PagesProjectDeploymentConfigsProductionD1DatabasesDataSourceModel struct {
