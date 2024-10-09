@@ -45,6 +45,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"allowed_match_count": schema.Int64Attribute{
 				Optional: true,
 			},
+			"confidence_threshold": schema.StringAttribute{
+				Optional: true,
+			},
 			"ocr_enabled": schema.BoolAttribute{
 				Optional: true,
 			},
