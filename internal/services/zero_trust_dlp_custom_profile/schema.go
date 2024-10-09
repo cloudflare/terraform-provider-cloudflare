@@ -78,6 +78,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							},
 							Default: int64default.StaticInt64(0),
 						},
+						"confidence_threshold": schema.StringAttribute{
+							Optional: true,
+						},
 						"context_awareness": schema.SingleNestedAttribute{
 							Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
 							Optional:    true,
@@ -135,6 +138,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"allowed_match_count": schema.Int64Attribute{
+				Optional: true,
+			},
+			"confidence_threshold": schema.StringAttribute{
 				Optional: true,
 			},
 			"description": schema.StringAttribute{
