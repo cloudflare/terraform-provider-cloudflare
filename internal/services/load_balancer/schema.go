@@ -84,7 +84,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"region_pools": schema.MapAttribute{
 				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
+				Computed:    true,
 				Optional:    true,
+				Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
@@ -344,6 +346,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"region_pools": schema.MapAttribute{
 									Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
+									Computed:    true,
 									Optional:    true,
 									ElementType: types.ListType{
 										ElemType: types.StringType,
