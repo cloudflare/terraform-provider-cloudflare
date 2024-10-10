@@ -21,11 +21,11 @@ type DNSRecordsResultListDataSourceEnvelope struct {
 
 type DNSRecordsDataSourceModel struct {
 	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
-	Content   types.String                                                  `tfsdk:"content" query:"content,optional"`
-	Name      types.String                                                  `tfsdk:"name" query:"name,optional"`
 	Search    types.String                                                  `tfsdk:"search" query:"search,optional"`
 	Type      types.String                                                  `tfsdk:"type" query:"type,optional"`
 	Comment   *DNSRecordsCommentDataSourceModel                             `tfsdk:"comment" query:"comment,optional"`
+	Content   *DNSRecordsContentDataSourceModel                             `tfsdk:"content" query:"content,optional"`
+	Name      *DNSRecordsNameDataSourceModel                                `tfsdk:"name" query:"name,optional"`
 	Tag       *DNSRecordsTagDataSourceModel                                 `tfsdk:"tag" query:"tag,optional"`
 	Direction types.String                                                  `tfsdk:"direction" query:"direction,computed_optional"`
 	Match     types.String                                                  `tfsdk:"match" query:"match,computed_optional"`
@@ -63,8 +63,21 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 		}
 		params.Comment = cloudflare.F(paramsComment)
 	}
-	if !m.Content.IsNull() {
-		params.Content = cloudflare.F(m.Content.ValueString())
+	if m.Content != nil {
+		paramsContent := dns.RecordListParamsContent{}
+		if !m.Content.Contains.IsNull() {
+			paramsContent.Contains = cloudflare.F(m.Content.Contains.ValueString())
+		}
+		if !m.Content.Endswith.IsNull() {
+			paramsContent.Endswith = cloudflare.F(m.Content.Endswith.ValueString())
+		}
+		if !m.Content.Exact.IsNull() {
+			paramsContent.Exact = cloudflare.F(m.Content.Exact.ValueString())
+		}
+		if !m.Content.Startswith.IsNull() {
+			paramsContent.Startswith = cloudflare.F(m.Content.Startswith.ValueString())
+		}
+		params.Content = cloudflare.F(paramsContent)
 	}
 	if !m.Direction.IsNull() {
 		params.Direction = cloudflare.F(shared.SortDirection(m.Direction.ValueString()))
@@ -72,8 +85,21 @@ func (m *DNSRecordsDataSourceModel) toListParams(_ context.Context) (params dns.
 	if !m.Match.IsNull() {
 		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Match.ValueString()))
 	}
-	if !m.Name.IsNull() {
-		params.Name = cloudflare.F(m.Name.ValueString())
+	if m.Name != nil {
+		paramsName := dns.RecordListParamsName{}
+		if !m.Name.Contains.IsNull() {
+			paramsName.Contains = cloudflare.F(m.Name.Contains.ValueString())
+		}
+		if !m.Name.Endswith.IsNull() {
+			paramsName.Endswith = cloudflare.F(m.Name.Endswith.ValueString())
+		}
+		if !m.Name.Exact.IsNull() {
+			paramsName.Exact = cloudflare.F(m.Name.Exact.ValueString())
+		}
+		if !m.Name.Startswith.IsNull() {
+			paramsName.Startswith = cloudflare.F(m.Name.Startswith.ValueString())
+		}
+		params.Name = cloudflare.F(paramsName)
 	}
 	if !m.Order.IsNull() {
 		params.Order = cloudflare.F(dns.RecordListParamsOrder(m.Order.ValueString()))
@@ -122,6 +148,20 @@ type DNSRecordsCommentDataSourceModel struct {
 	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
 	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
 	Present    types.String `tfsdk:"present" json:"present,optional"`
+	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
+}
+
+type DNSRecordsContentDataSourceModel struct {
+	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
+	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
+	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
+	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
+}
+
+type DNSRecordsNameDataSourceModel struct {
+	Contains   types.String `tfsdk:"contains" json:"contains,optional"`
+	Endswith   types.String `tfsdk:"endswith" json:"endswith,optional"`
+	Exact      types.String `tfsdk:"exact" json:"exact,optional"`
 	Startswith types.String `tfsdk:"startswith" json:"startswith,optional"`
 }
 
