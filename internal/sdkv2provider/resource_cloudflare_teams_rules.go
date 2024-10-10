@@ -46,7 +46,6 @@ func resourceCloudflareZeroTrustGatewayPolicy() *schema.Resource {
 const rulePrecedenceFactor int64 = 1000
 
 func resourceCloudflareTeamsRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-
 	client := meta.(*cloudflare.API)
 	accountID := d.Get(consts.AccountIDSchemaKey).(string)
 
