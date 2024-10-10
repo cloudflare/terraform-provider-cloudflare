@@ -38,7 +38,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"item_id": schema.StringAttribute{
 				Description:   "The unique ID of the item in the List.",
-				Optional:      true,
+				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"asn": schema.Int64Attribute{
