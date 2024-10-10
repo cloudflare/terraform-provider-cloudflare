@@ -16,7 +16,7 @@ type ListItemModel struct {
 	ListID            types.String                                    `tfsdk:"list_id" path:"list_id,required"`
 	AccountID         types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
 	AccountIdentifier types.String                                    `tfsdk:"account_identifier" path:"account_identifier,optional"`
-	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id,optional"`
+	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id,computed"`
 	ASN               types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
 	Comment           types.String                                    `tfsdk:"comment" json:"comment,optional"`
 	IP                types.String                                    `tfsdk:"ip" json:"ip,optional"`
@@ -27,6 +27,19 @@ type ListItemModel struct {
 
 func (m ListItemModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
+}
+
+// MarshalSingleToCollectionJSON takes a single `ListItemModel` and wraps
+// it as a collection in order to satisfy the API requirements.
+//
+// The endpoint is designed for bulk creation however, in the provider,
+// we only manage a single resource at a time.
+func (m ListItemModel) MarshalSingleToCollectionJSON(existingJSON []byte) (data []byte) {
+	var output []byte
+	output = append(output, []byte("[")...)
+	output = append(output, existingJSON...)
+	output = append(output, []byte("]")...)
+	return output
 }
 
 func (m ListItemModel) MarshalJSONForUpdate(state ListItemModel) (data []byte, err error) {
