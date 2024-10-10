@@ -26,14 +26,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Identifier",
 				Required:    true,
 			},
-			"content": schema.StringAttribute{
-				Description: "DNS record content.",
-				Optional:    true,
-			},
-			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Optional:    true,
-			},
 			"search": schema.StringAttribute{
 				Description: "Allows searching in multiple properties of a DNS record simultaneously. This parameter is intended for human users, not automation. Its exact behavior is intentionally left unspecified and is subject to change in the future. This parameter works independently of the `match` setting. For automated searches, please use the other available parameters.\n",
 				Optional:    true,
@@ -92,6 +84,48 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 					},
 					"startswith": schema.StringAttribute{
 						Description: "Prefix of the DNS record comment. Comment filters are case-insensitive.\n",
+						Optional:    true,
+					},
+				},
+			},
+			"content": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"contains": schema.StringAttribute{
+						Description: "Substring of the DNS record content. Content filters are case-insensitive.\n",
+						Optional:    true,
+					},
+					"endswith": schema.StringAttribute{
+						Description: "Suffix of the DNS record content. Content filters are case-insensitive.\n",
+						Optional:    true,
+					},
+					"exact": schema.StringAttribute{
+						Description: "Exact value of the DNS record content. Content filters are case-insensitive.\n",
+						Optional:    true,
+					},
+					"startswith": schema.StringAttribute{
+						Description: "Prefix of the DNS record content. Content filters are case-insensitive.\n",
+						Optional:    true,
+					},
+				},
+			},
+			"name": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"contains": schema.StringAttribute{
+						Description: "Substring of the DNS record name. Name filters are case-insensitive.\n",
+						Optional:    true,
+					},
+					"endswith": schema.StringAttribute{
+						Description: "Suffix of the DNS record name. Name filters are case-insensitive.\n",
+						Optional:    true,
+					},
+					"exact": schema.StringAttribute{
+						Description: "Exact value of the DNS record name. Name filters are case-insensitive.\n",
+						Optional:    true,
+					},
+					"startswith": schema.StringAttribute{
+						Description: "Prefix of the DNS record name. Name filters are case-insensitive.\n",
 						Optional:    true,
 					},
 				},
