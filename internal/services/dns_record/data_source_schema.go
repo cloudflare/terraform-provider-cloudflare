@@ -130,9 +130,26 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 					},
-					"content": schema.StringAttribute{
-						Description: "DNS record content.",
-						Optional:    true,
+					"content": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"contains": schema.StringAttribute{
+								Description: "Substring of the DNS record content. Content filters are case-insensitive.\n",
+								Optional:    true,
+							},
+							"endswith": schema.StringAttribute{
+								Description: "Suffix of the DNS record content. Content filters are case-insensitive.\n",
+								Optional:    true,
+							},
+							"exact": schema.StringAttribute{
+								Description: "Exact value of the DNS record content. Content filters are case-insensitive.\n",
+								Optional:    true,
+							},
+							"startswith": schema.StringAttribute{
+								Description: "Prefix of the DNS record content. Content filters are case-insensitive.\n",
+								Optional:    true,
+							},
+						},
 					},
 					"direction": schema.StringAttribute{
 						Description: "Direction to order DNS records in.",
@@ -150,9 +167,26 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							stringvalidator.OneOfCaseInsensitive("any", "all"),
 						},
 					},
-					"name": schema.StringAttribute{
-						Description: "DNS record name (or @ for the zone apex) in Punycode.",
-						Optional:    true,
+					"name": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"contains": schema.StringAttribute{
+								Description: "Substring of the DNS record name. Name filters are case-insensitive.\n",
+								Optional:    true,
+							},
+							"endswith": schema.StringAttribute{
+								Description: "Suffix of the DNS record name. Name filters are case-insensitive.\n",
+								Optional:    true,
+							},
+							"exact": schema.StringAttribute{
+								Description: "Exact value of the DNS record name. Name filters are case-insensitive.\n",
+								Optional:    true,
+							},
+							"startswith": schema.StringAttribute{
+								Description: "Prefix of the DNS record name. Name filters are case-insensitive.\n",
+								Optional:    true,
+							},
+						},
 					},
 					"order": schema.StringAttribute{
 						Description: "Field to order DNS records by.",
