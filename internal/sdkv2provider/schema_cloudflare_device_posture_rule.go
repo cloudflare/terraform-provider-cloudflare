@@ -217,6 +217,12 @@ func resourceCloudflareDevicePostureRuleSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "The number of active threats from SentinelOne.",
 					},
+					"operational_state": {
+						Type:         schema.TypeString,
+						Optional:     true,
+						ValidateFunc: validation.StringInSlice([]string{"na", "partially_disabled", "auto_fully_disabled", "fully_disabled", "auto_partially_disabled", "disabled_error", "db_corruption"}, true),
+						Description:  fmt.Sprintf("The current operational state of a SentinelOne Agent. %s", renderAvailableDocumentationValuesStringSlice([]string{"na", "partially_disabled", "auto_fully_disabled", "fully_disabled", "auto_partially_disabled", "disabled_error", "db_corruption"})),
+					},
 					"network_status": {
 						Type:         schema.TypeString,
 						Optional:     true,
