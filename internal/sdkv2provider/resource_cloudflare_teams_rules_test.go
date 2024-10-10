@@ -117,7 +117,6 @@ func TestAccCloudflareTeamsRule_NoSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "filters.0", "dns"),
 					resource.TestCheckResourceAttr(name, "traffic", "any(dns.domains[*] == \"example.com\")"),
 					resource.TestCheckResourceAttr(name, "rule_settings.#", "1"),
-					resource.TestCheckResourceAttr(name, "rule_settings.#", "1"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_enabled", "true"),
 					resource.TestCheckResourceAttr(name, "rule_settings.0.block_page_reason", "cuz"),
 				),
