@@ -50,7 +50,7 @@ func resourceCloudflareCertificatePackSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.StringInSlice([]string{"digicert", "lets_encrypt", "google"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"digicert", "lets_encrypt", "google", ssl_com"}, false),
 			Default:      nil,
 			Description:  fmt.Sprintf("Which certificate authority to issue the certificate pack. %s", renderAvailableDocumentationValuesStringSlice([]string{"digicert", "lets_encrypt", "google"})),
 		},
