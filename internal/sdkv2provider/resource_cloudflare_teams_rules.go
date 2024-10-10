@@ -213,7 +213,6 @@ func resourceCloudflareTeamsRuleImport(ctx context.Context, d *schema.ResourceDa
 }
 
 func flattenTeamsRuleSettings(settings *cloudflare.TeamsRuleSettings) []interface{} {
-
 	result := map[string]interface{}{
 		"block_page_enabled":                 settings.BlockPageEnabled,
 		"block_page_reason":                  settings.BlockReason,
