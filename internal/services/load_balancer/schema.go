@@ -55,6 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"session_affinity_ttl": schema.Float64Attribute{
 				Description: "Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are:\n- `\"cookie\"` / `\"ip_cookie\"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800].\n- `\"header\"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"ttl": schema.Float64Attribute{
@@ -64,7 +65,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"country_pools": schema.MapAttribute{
 				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
+				Computed:    true,
 				Optional:    true,
+				Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
@@ -270,7 +273,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"country_pools": schema.MapAttribute{
 									Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
+									Computed:    true,
 									Optional:    true,
+									Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
 									ElementType: types.ListType{
 										ElemType: types.StringType,
 									},
@@ -375,6 +380,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"drain_duration": schema.Float64Attribute{
 											Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+											Computed:    true,
 											Optional:    true,
 										},
 										"headers": schema.ListAttribute{
@@ -432,6 +438,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"session_affinity_ttl": schema.Float64Attribute{
 									Description: "Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are:\n- `\"cookie\"` / `\"ip_cookie\"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800].\n- `\"header\"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"steering_policy": schema.StringAttribute{
@@ -485,6 +492,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"drain_duration": schema.Float64Attribute{
 						Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"headers": schema.ListAttribute{
