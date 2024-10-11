@@ -80,8 +80,8 @@ Optional:
 - `last_seen` (String) The duration of time that the host was last seen from Crowdstrike. Must be in the format `1h` or `30m`. Valid units are `d`, `h` and `m`.
 - `locations` (Block List) List of operating system locations to check for a client certificate.. (see [below for nested schema](#nestedblock--input--locations))
 - `network_status` (String) The network status from SentinelOne. Available values: `connected`, `disconnected`, `disconnecting`, `connecting`.
+- `operational_state` (String) The current operational state of a SentinelOne Agent. Available values: `na`, `partially_disabled`, `auto_fully_disabled`, `fully_disabled`, `auto_partially_disabled`, `disabled_error`, `db_corruption`.
 - `operator` (String) The version comparison operator. Available values: `>`, `>=`, `<`, `<=`, `==`.
-- `operational_state` (String) The current operational state of a SentinelOne Agent.
 - `os` (String) OS signal score from Crowdstrike. Value must be between 1 and 100.
 - `os_distro_name` (String) The operating system excluding version information.
 - `os_distro_revision` (String) The operating system version excluding OS name information or release name.
