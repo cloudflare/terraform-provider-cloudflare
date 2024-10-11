@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -63,44 +62,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"source": schema.StringAttribute{
 				Description: "Source of the schema",
 				Computed:    true,
-			},
-			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
-				Computed:    true,
-			},
-			"errors": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[APIShieldSchemaErrorsModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
-			},
-			"messages": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[APIShieldSchemaMessagesModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
 			},
 			"schema": schema.SingleNestedAttribute{
 				Computed:   true,

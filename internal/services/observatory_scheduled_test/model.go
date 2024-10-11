@@ -18,7 +18,6 @@ type ObservatoryScheduledTestModel struct {
 	URL       types.String                                                    `tfsdk:"url" path:"url,required"`
 	ZoneID    types.String                                                    `tfsdk:"zone_id" path:"zone_id,required"`
 	Frequency types.String                                                    `tfsdk:"frequency" json:"frequency,computed"`
-	ItemCount types.Float64                                                   `tfsdk:"item_count" json:"count,computed"`
 	Region    types.String                                                    `tfsdk:"region" json:"region,computed"`
 	Schedule  customfield.NestedObject[ObservatoryScheduledTestScheduleModel] `tfsdk:"schedule" json:"schedule,computed"`
 	Test      customfield.NestedObject[ObservatoryScheduledTestTestModel]     `tfsdk:"test" json:"test,computed"`

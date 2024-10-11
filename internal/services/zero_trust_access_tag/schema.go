@@ -32,6 +32,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"body": schema.StringAttribute{
+				Description:   "The name of the tag",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"app_count": schema.Int64Attribute{
 				Description: "The number of applications that have this tag",
 				Computed:    true,

@@ -24,9 +24,7 @@ type MagicWANGRETunnelModel struct {
 	Mtu                   types.Int64                                                       `tfsdk:"mtu" json:"mtu,computed_optional"`
 	TTL                   types.Int64                                                       `tfsdk:"ttl" json:"ttl,computed_optional"`
 	HealthCheck           customfield.NestedObject[MagicWANGRETunnelHealthCheckModel]       `tfsdk:"health_check" json:"health_check,computed_optional"`
-	Deleted               types.Bool                                                        `tfsdk:"deleted" json:"deleted,computed"`
 	Modified              types.Bool                                                        `tfsdk:"modified" json:"modified,computed"`
-	DeletedGRETunnel      customfield.NestedObject[MagicWANGRETunnelDeletedGRETunnelModel]  `tfsdk:"deleted_gre_tunnel" json:"deleted_gre_tunnel,computed"`
 	GRETunnel             customfield.NestedObject[MagicWANGRETunnelGRETunnelModel]         `tfsdk:"gre_tunnel" json:"gre_tunnel,computed"`
 	GRETunnels            customfield.NestedObjectList[MagicWANGRETunnelGRETunnelsModel]    `tfsdk:"gre_tunnels" json:"gre_tunnels,computed"`
 	ModifiedGRETunnel     customfield.NestedObject[MagicWANGRETunnelModifiedGRETunnelModel] `tfsdk:"modified_gre_tunnel" json:"modified_gre_tunnel,computed"`
@@ -51,33 +49,6 @@ type MagicWANGRETunnelHealthCheckModel struct {
 type MagicWANGRETunnelHealthCheckTargetModel struct {
 	Effective types.String `tfsdk:"effective" json:"effective,computed"`
 	Saved     types.String `tfsdk:"saved" json:"saved,optional"`
-}
-
-type MagicWANGRETunnelDeletedGRETunnelModel struct {
-	CloudflareGREEndpoint types.String                                                                `tfsdk:"cloudflare_gre_endpoint" json:"cloudflare_gre_endpoint,computed"`
-	CustomerGREEndpoint   types.String                                                                `tfsdk:"customer_gre_endpoint" json:"customer_gre_endpoint,computed"`
-	InterfaceAddress      types.String                                                                `tfsdk:"interface_address" json:"interface_address,computed"`
-	Name                  types.String                                                                `tfsdk:"name" json:"name,computed"`
-	ID                    types.String                                                                `tfsdk:"id" json:"id,computed"`
-	CreatedOn             timetypes.RFC3339                                                           `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description           types.String                                                                `tfsdk:"description" json:"description,computed"`
-	HealthCheck           customfield.NestedObject[MagicWANGRETunnelDeletedGRETunnelHealthCheckModel] `tfsdk:"health_check" json:"health_check,computed"`
-	ModifiedOn            timetypes.RFC3339                                                           `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Mtu                   types.Int64                                                                 `tfsdk:"mtu" json:"mtu,computed"`
-	TTL                   types.Int64                                                                 `tfsdk:"ttl" json:"ttl,computed"`
-}
-
-type MagicWANGRETunnelDeletedGRETunnelHealthCheckModel struct {
-	Direction types.String                                                                      `tfsdk:"direction" json:"direction,computed"`
-	Enabled   types.Bool                                                                        `tfsdk:"enabled" json:"enabled,computed"`
-	Rate      types.String                                                                      `tfsdk:"rate" json:"rate,computed"`
-	Target    customfield.NestedObject[MagicWANGRETunnelDeletedGRETunnelHealthCheckTargetModel] `tfsdk:"target" json:"target,computed"`
-	Type      types.String                                                                      `tfsdk:"type" json:"type,computed"`
-}
-
-type MagicWANGRETunnelDeletedGRETunnelHealthCheckTargetModel struct {
-	Effective types.String `tfsdk:"effective" json:"effective,computed"`
-	Saved     types.String `tfsdk:"saved" json:"saved,computed"`
 }
 
 type MagicWANGRETunnelGRETunnelModel struct {

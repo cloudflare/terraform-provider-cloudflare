@@ -5,7 +5,6 @@ package origin_ca_certificate
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -77,11 +76,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"expires_on": schema.StringAttribute{
 				Description: "When the certificate will expire.",
 				Computed:    true,
-			},
-			"revoked_at": schema.StringAttribute{
-				Description: "When the certificate was revoked.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
 			},
 		},
 	}

@@ -67,7 +67,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
+	env := ListItemResultEnvelope{data.Body}
 	_, err = r.client.Rules.Lists.Items.New(
 		ctx,
 		data.ListID.ValueString(),
@@ -88,7 +88,7 @@ func (r *ListItemResource) Create(ctx context.Context, req resource.CreateReques
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -116,7 +116,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
+	env := ListItemResultEnvelope{data.Body}
 	_, err = r.client.Rules.Lists.Items.Update(
 		ctx,
 		data.ListID.ValueString(),
@@ -137,7 +137,7 @@ func (r *ListItemResource) Update(ctx context.Context, req resource.UpdateReques
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -152,7 +152,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	res := new(http.Response)
-	env := ListItemResultEnvelope{*data}
+	env := ListItemResultEnvelope{data.Body}
 	_, err := r.client.Rules.Lists.Items.Get(
 		ctx,
 		data.AccountIdentifier.ValueString(),
@@ -171,7 +171,7 @@ func (r *ListItemResource) Read(ctx context.Context, req resource.ReadRequest, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

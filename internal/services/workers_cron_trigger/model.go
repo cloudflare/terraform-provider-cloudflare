@@ -9,23 +9,29 @@ import (
 )
 
 type WorkersCronTriggerResultEnvelope struct {
-	Result WorkersCronTriggerModel `json:"result"`
+	Result *[]*WorkersCronTriggerBodyModel `json:"result"`
 }
 
 type WorkersCronTriggerModel struct {
 	ID         types.String                                                   `tfsdk:"id" json:"-,computed"`
 	ScriptName types.String                                                   `tfsdk:"script_name" path:"script_name,required"`
 	AccountID  types.String                                                   `tfsdk:"account_id" path:"account_id,required"`
-	Cron       types.String                                                   `tfsdk:"cron" json:"cron,optional"`
+	Body       *[]*WorkersCronTriggerBodyModel                                `tfsdk:"body" json:"body,required"`
 	Schedules  customfield.NestedObjectList[WorkersCronTriggerSchedulesModel] `tfsdk:"schedules" json:"schedules,computed"`
 }
 
 func (m WorkersCronTriggerModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m.Body)
 }
 
 func (m WorkersCronTriggerModel) MarshalJSONForUpdate(state WorkersCronTriggerModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m.Body, state.Body)
+}
+
+type WorkersCronTriggerBodyModel struct {
+	CreatedOn  types.String `tfsdk:"created_on" json:"created_on,computed"`
+	Cron       types.String `tfsdk:"cron" json:"cron,optional"`
+	ModifiedOn types.String `tfsdk:"modified_on" json:"modified_on,computed"`
 }
 
 type WorkersCronTriggerSchedulesModel struct {

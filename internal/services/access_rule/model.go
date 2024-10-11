@@ -18,7 +18,6 @@ type AccessRuleModel struct {
 	Mode          types.String                  `tfsdk:"mode" json:"mode,required"`
 	Configuration *AccessRuleConfigurationModel `tfsdk:"configuration" json:"configuration,required"`
 	Notes         types.String                  `tfsdk:"notes" json:"notes,optional"`
-	ID            types.String                  `tfsdk:"id" json:"id,computed"`
 }
 
 func (m AccessRuleModel) MarshalJSON() (data []byte, err error) {
