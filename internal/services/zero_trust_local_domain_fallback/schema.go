@@ -31,18 +31,25 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"suffix": schema.StringAttribute{
-				Description: "The domain suffix to match when resolving locally.",
-				Required:    true,
-			},
-			"description": schema.StringAttribute{
-				Description: "A description of the fallback domain, displayed in the client UI.",
-				Optional:    true,
-			},
-			"dns_server": schema.ListAttribute{
-				Description: "A list of IP addresses to handle domain resolution.",
-				Optional:    true,
-				ElementType: types.StringType,
+			"body": schema.ListNestedAttribute{
+				Required: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"suffix": schema.StringAttribute{
+							Description: "The domain suffix to match when resolving locally.",
+							Required:    true,
+						},
+						"description": schema.StringAttribute{
+							Description: "A description of the fallback domain, displayed in the client UI.",
+							Optional:    true,
+						},
+						"dns_server": schema.ListAttribute{
+							Description: "A list of IP addresses to handle domain resolution.",
+							Optional:    true,
+							ElementType: types.StringType,
+						},
+					},
+				},
 			},
 		},
 	}

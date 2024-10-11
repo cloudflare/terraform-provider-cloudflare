@@ -5,9 +5,7 @@ package cloudforce_one_request
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -94,10 +92,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
-				Computed:    true,
-			},
 			"tokens": schema.Int64Attribute{
 				Description: "Tokens for the request",
 				Computed:    true,
@@ -105,40 +99,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"updated": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"errors": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[CloudforceOneRequestErrorsModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
-			},
-			"messages": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[CloudforceOneRequestMessagesModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
 			},
 		},
 	}

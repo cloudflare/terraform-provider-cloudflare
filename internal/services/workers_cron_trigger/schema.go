@@ -32,8 +32,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"cron": schema.StringAttribute{
-				Optional: true,
+			"body": schema.ListNestedAttribute{
+				Required: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"created_on": schema.StringAttribute{
+							Computed: true,
+						},
+						"cron": schema.StringAttribute{
+							Optional: true,
+						},
+						"modified_on": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
 			},
 			"schedules": schema.ListNestedAttribute{
 				Computed:   true,

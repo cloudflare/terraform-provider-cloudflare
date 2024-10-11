@@ -5,14 +5,11 @@ package regional_hostname
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
 var _ resource.ResourceWithConfigValidators = (*RegionalHostnameResource)(nil)
@@ -43,44 +40,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "When the regional hostname was created",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"success": schema.BoolAttribute{
-				Description: "Whether the API call was successful",
-				Computed:    true,
-			},
-			"errors": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[RegionalHostnameErrorsModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
-			},
-			"messages": schema.ListNestedAttribute{
-				Computed:   true,
-				CustomType: customfield.NewNestedObjectListType[RegionalHostnameMessagesModel](ctx),
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"code": schema.Int64Attribute{
-							Computed: true,
-							Validators: []validator.Int64{
-								int64validator.AtLeast(1000),
-							},
-						},
-						"message": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
 			},
 		},
 	}

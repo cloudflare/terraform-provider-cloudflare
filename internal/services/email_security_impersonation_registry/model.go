@@ -10,7 +10,7 @@ import (
 )
 
 type EmailSecurityImpersonationRegistryResultEnvelope struct {
-	Result EmailSecurityImpersonationRegistryModel `json:"result"`
+	Result customfield.NestedObjectList[EmailSecurityImpersonationRegistryBodyModel] `json:"result"`
 }
 
 type EmailSecurityImpersonationRegistryModel struct {
@@ -30,11 +30,11 @@ type EmailSecurityImpersonationRegistryModel struct {
 }
 
 func (m EmailSecurityImpersonationRegistryModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m.Body)
 }
 
 func (m EmailSecurityImpersonationRegistryModel) MarshalJSONForUpdate(state EmailSecurityImpersonationRegistryModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m.Body, state.Body)
 }
 
 type EmailSecurityImpersonationRegistryBodyModel struct {

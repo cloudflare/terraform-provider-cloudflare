@@ -17,7 +17,6 @@ type AccountSubscriptionModel struct {
 	SubscriptionIdentifier types.String                                               `tfsdk:"subscription_identifier" path:"subscription_identifier,optional"`
 	Frequency              types.String                                               `tfsdk:"frequency" json:"frequency,optional"`
 	RatePlan               customfield.NestedObject[AccountSubscriptionRatePlanModel] `tfsdk:"rate_plan" json:"rate_plan,computed_optional"`
-	SubscriptionID         types.String                                               `tfsdk:"subscription_id" json:"subscription_id,computed"`
 }
 
 func (m AccountSubscriptionModel) MarshalJSON() (data []byte, err error) {

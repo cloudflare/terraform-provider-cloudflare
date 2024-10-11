@@ -42,10 +42,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					stringvalidator.OneOfCaseInsensitive("DAILY", "WEEKLY"),
 				},
 			},
-			"item_count": schema.Float64Attribute{
-				Description: "Number of items affected.",
-				Computed:    true,
-			},
 			"region": schema.StringAttribute{
 				Description: "A test region.",
 				Computed:    true,

@@ -69,7 +69,7 @@ func (r *ZeroTrustAccessTagResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustAccessTagResultEnvelope{*data}
+	env := ZeroTrustAccessTagResultEnvelope{data.Body}
 	_, err = r.client.ZeroTrust.Access.Tags.New(
 		ctx,
 		zero_trust.AccessTagNewParams{
@@ -89,7 +89,7 @@ func (r *ZeroTrustAccessTagResource) Create(ctx context.Context, req resource.Cr
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -118,7 +118,7 @@ func (r *ZeroTrustAccessTagResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustAccessTagResultEnvelope{*data}
+	env := ZeroTrustAccessTagResultEnvelope{data.Body}
 	_, err = r.client.ZeroTrust.Access.Tags.Update(
 		ctx,
 		data.Name.ValueString(),
@@ -139,7 +139,7 @@ func (r *ZeroTrustAccessTagResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -155,7 +155,7 @@ func (r *ZeroTrustAccessTagResource) Read(ctx context.Context, req resource.Read
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustAccessTagResultEnvelope{*data}
+	env := ZeroTrustAccessTagResultEnvelope{data.Body}
 	_, err := r.client.ZeroTrust.Access.Tags.Get(
 		ctx,
 		data.Name.ValueString(),
@@ -175,7 +175,7 @@ func (r *ZeroTrustAccessTagResource) Read(ctx context.Context, req resource.Read
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -224,7 +224,7 @@ func (r *ZeroTrustAccessTagResource) ImportState(ctx context.Context, req resour
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustAccessTagResultEnvelope{*data}
+	env := ZeroTrustAccessTagResultEnvelope{data.Body}
 	_, err := r.client.ZeroTrust.Access.Tags.Get(
 		ctx,
 		path_tag_name,
@@ -244,7 +244,7 @@ func (r *ZeroTrustAccessTagResource) ImportState(ctx context.Context, req resour
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 	data.ID = data.Name
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

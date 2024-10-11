@@ -50,8 +50,24 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "An informative summary of the list.",
 				Optional:    true,
 			},
+			"created_on": schema.StringAttribute{
+				Description: "The RFC 3339 timestamp of when the list was created.",
+				Computed:    true,
+			},
 			"id": schema.StringAttribute{
-				Description: "The unique ID of the item in the List.",
+				Description: "The unique ID of the list.",
+				Computed:    true,
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "The RFC 3339 timestamp of when the list was last modified.",
+				Computed:    true,
+			},
+			"num_items": schema.Float64Attribute{
+				Description: "The number of items in the list.",
+				Computed:    true,
+			},
+			"num_referencing_filters": schema.Float64Attribute{
+				Description: "The number of [filters](/operations/filters-list-filters) referencing the list.",
 				Computed:    true,
 			},
 		},

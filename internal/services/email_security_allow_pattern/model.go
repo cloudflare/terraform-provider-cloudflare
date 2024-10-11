@@ -10,7 +10,7 @@ import (
 )
 
 type EmailSecurityAllowPatternResultEnvelope struct {
-	Result EmailSecurityAllowPatternModel `json:"result"`
+	Result customfield.NestedObjectList[EmailSecurityAllowPatternBodyModel] `json:"result"`
 }
 
 type EmailSecurityAllowPatternModel struct {
@@ -30,11 +30,11 @@ type EmailSecurityAllowPatternModel struct {
 }
 
 func (m EmailSecurityAllowPatternModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m.Body)
 }
 
 func (m EmailSecurityAllowPatternModel) MarshalJSONForUpdate(state EmailSecurityAllowPatternModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m.Body, state.Body)
 }
 
 type EmailSecurityAllowPatternBodyModel struct {

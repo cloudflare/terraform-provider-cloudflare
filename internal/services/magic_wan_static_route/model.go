@@ -22,9 +22,7 @@ type MagicWANStaticRouteModel struct {
 	Priority      types.Int64                                                     `tfsdk:"priority" json:"priority,optional"`
 	Weight        types.Int64                                                     `tfsdk:"weight" json:"weight,optional"`
 	Scope         customfield.NestedObject[MagicWANStaticRouteScopeModel]         `tfsdk:"scope" json:"scope,computed_optional"`
-	Deleted       types.Bool                                                      `tfsdk:"deleted" json:"deleted,computed"`
 	Modified      types.Bool                                                      `tfsdk:"modified" json:"modified,computed"`
-	DeletedRoute  customfield.NestedObject[MagicWANStaticRouteDeletedRouteModel]  `tfsdk:"deleted_route" json:"deleted_route,computed"`
 	ModifiedRoute customfield.NestedObject[MagicWANStaticRouteModifiedRouteModel] `tfsdk:"modified_route" json:"modified_route,computed"`
 	Route         customfield.NestedObject[MagicWANStaticRouteRouteModel]         `tfsdk:"route" json:"route,computed"`
 	Routes        customfield.NestedObjectList[MagicWANStaticRouteRoutesModel]    `tfsdk:"routes" json:"routes,computed"`
@@ -41,23 +39,6 @@ func (m MagicWANStaticRouteModel) MarshalJSONForUpdate(state MagicWANStaticRoute
 type MagicWANStaticRouteScopeModel struct {
 	ColoNames   *[]types.String `tfsdk:"colo_names" json:"colo_names,optional"`
 	ColoRegions *[]types.String `tfsdk:"colo_regions" json:"colo_regions,optional"`
-}
-
-type MagicWANStaticRouteDeletedRouteModel struct {
-	Nexthop     types.String                                                        `tfsdk:"nexthop" json:"nexthop,computed"`
-	Prefix      types.String                                                        `tfsdk:"prefix" json:"prefix,computed"`
-	Priority    types.Int64                                                         `tfsdk:"priority" json:"priority,computed"`
-	ID          types.String                                                        `tfsdk:"id" json:"id,computed"`
-	CreatedOn   timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description types.String                                                        `tfsdk:"description" json:"description,computed"`
-	ModifiedOn  timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Scope       customfield.NestedObject[MagicWANStaticRouteDeletedRouteScopeModel] `tfsdk:"scope" json:"scope,computed"`
-	Weight      types.Int64                                                         `tfsdk:"weight" json:"weight,computed"`
-}
-
-type MagicWANStaticRouteDeletedRouteScopeModel struct {
-	ColoNames   customfield.List[types.String] `tfsdk:"colo_names" json:"colo_names,computed"`
-	ColoRegions customfield.List[types.String] `tfsdk:"colo_regions" json:"colo_regions,computed"`
 }
 
 type MagicWANStaticRouteModifiedRouteModel struct {

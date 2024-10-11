@@ -10,7 +10,7 @@ import (
 )
 
 type EmailSecurityTrustedDomainsResultEnvelope struct {
-	Result EmailSecurityTrustedDomainsModel `json:"result"`
+	Result customfield.NestedObjectList[EmailSecurityTrustedDomainsBodyModel] `json:"result"`
 }
 
 type EmailSecurityTrustedDomainsModel struct {
@@ -27,11 +27,11 @@ type EmailSecurityTrustedDomainsModel struct {
 }
 
 func (m EmailSecurityTrustedDomainsModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m.Body)
 }
 
 func (m EmailSecurityTrustedDomainsModel) MarshalJSONForUpdate(state EmailSecurityTrustedDomainsModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m.Body, state.Body)
 }
 
 type EmailSecurityTrustedDomainsBodyModel struct {

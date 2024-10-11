@@ -10,7 +10,7 @@ import (
 )
 
 type EmailSecurityBlockSenderResultEnvelope struct {
-	Result EmailSecurityBlockSenderModel `json:"result"`
+	Result customfield.NestedObjectList[EmailSecurityBlockSenderBodyModel] `json:"result"`
 }
 
 type EmailSecurityBlockSenderModel struct {
@@ -26,11 +26,11 @@ type EmailSecurityBlockSenderModel struct {
 }
 
 func (m EmailSecurityBlockSenderModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m.Body)
 }
 
 func (m EmailSecurityBlockSenderModel) MarshalJSONForUpdate(state EmailSecurityBlockSenderModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m.Body, state.Body)
 }
 
 type EmailSecurityBlockSenderBodyModel struct {

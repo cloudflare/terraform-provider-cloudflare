@@ -25,10 +25,6 @@ type AddressMapModel struct {
 	CanModifyIPs types.Bool                                               `tfsdk:"can_modify_ips" json:"can_modify_ips,computed"`
 	CreatedAt    timetypes.RFC3339                                        `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	ModifiedAt   timetypes.RFC3339                                        `tfsdk:"modified_at" json:"modified_at,computed" format:"date-time"`
-	Success      types.Bool                                               `tfsdk:"success" json:"success,computed"`
-	Errors       customfield.NestedObjectList[AddressMapErrorsModel]      `tfsdk:"errors" json:"errors,computed"`
-	Messages     customfield.NestedObjectList[AddressMapMessagesModel]    `tfsdk:"messages" json:"messages,computed"`
-	ResultInfo   customfield.NestedObject[AddressMapResultInfoModel]      `tfsdk:"result_info" json:"result_info,computed"`
 }
 
 func (m AddressMapModel) MarshalJSON() (data []byte, err error) {
@@ -44,21 +40,4 @@ type AddressMapMembershipsModel struct {
 	CreatedAt  timetypes.RFC3339 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Identifier types.String      `tfsdk:"identifier" json:"identifier,optional"`
 	Kind       types.String      `tfsdk:"kind" json:"kind,optional"`
-}
-
-type AddressMapErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
-}
-
-type AddressMapMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
-}
-
-type AddressMapResultInfoModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count,computed"`
-	Page       types.Float64 `tfsdk:"page" json:"page,computed"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
 }
