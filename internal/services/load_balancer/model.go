@@ -19,7 +19,7 @@ type LoadBalancerModel struct {
 	Name                      types.String                                                         `tfsdk:"name" json:"name,required"`
 	DefaultPools              *[]types.String                                                      `tfsdk:"default_pools" json:"default_pools,required"`
 	Description               types.String                                                         `tfsdk:"description" json:"description,optional"`
-	SessionAffinityTTL        types.Float64                                                        `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,optional"`
+	SessionAffinityTTL        types.Float64                                                        `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed_optional"`
 	TTL                       types.Float64                                                        `tfsdk:"ttl" json:"ttl,computed_optional"`
 	CountryPools              map[string]*[]types.String                                           `tfsdk:"country_pools" json:"country_pools,optional"`
 	Networks                  *[]types.String                                                      `tfsdk:"networks" json:"networks,optional"`
@@ -88,7 +88,7 @@ type LoadBalancerRulesOverridesModel struct {
 	RegionPools               map[string]*[]types.String                                                         `tfsdk:"region_pools" json:"region_pools,optional_optional"`
 	SessionAffinity           types.String                                                                       `tfsdk:"session_affinity" json:"session_affinity,computed_optional"`
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerRulesOverridesSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
-	SessionAffinityTTL        types.Float64                                                                      `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,optional"`
+	SessionAffinityTTL        types.Float64                                                                      `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed_optional"`
 	SteeringPolicy            types.String                                                                       `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
 	TTL                       types.Float64                                                                      `tfsdk:"ttl" json:"ttl,computed_optional"`
 }

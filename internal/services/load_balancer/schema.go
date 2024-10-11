@@ -55,6 +55,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"session_affinity_ttl": schema.Float64Attribute{
 				Description: "Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are:\n- `\"cookie\"` / `\"ip_cookie\"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800].\n- `\"header\"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"ttl": schema.Float64Attribute{
@@ -432,6 +433,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 								"session_affinity_ttl": schema.Float64Attribute{
 									Description: "Time, in seconds, until a client's session expires after being created. Once the expiry time has been reached, subsequent requests may get sent to a different origin server. The accepted ranges per `session_affinity` policy are:\n- `\"cookie\"` / `\"ip_cookie\"`: The current default of 23 hours will be used unless explicitly set. The accepted range of values is between [1800, 604800].\n- `\"header\"`: The current default of 1800 seconds will be used unless explicitly set. The accepted range of values is between [30, 3600]. Note: With session affinity by header, sessions only expire after they haven't been used for the number of seconds specified.",
+									Computed:    true,
 									Optional:    true,
 								},
 								"steering_policy": schema.StringAttribute{
