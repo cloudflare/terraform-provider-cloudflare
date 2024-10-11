@@ -20,7 +20,7 @@ type LoadBalancerModel struct {
 	DefaultPools              *[]types.String                                                      `tfsdk:"default_pools" json:"default_pools,required"`
 	Description               types.String                                                         `tfsdk:"description" json:"description,optional"`
 	SessionAffinityTTL        types.Float64                                                        `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,optional"`
-	TTL                       types.Float64                                                        `tfsdk:"ttl" json:"ttl,optional"`
+	TTL                       types.Float64                                                        `tfsdk:"ttl" json:"ttl,computed_optional"`
 	CountryPools              map[string]*[]types.String                                           `tfsdk:"country_pools" json:"country_pools,optional"`
 	Networks                  *[]types.String                                                      `tfsdk:"networks" json:"networks,optional"`
 	PopPools                  map[string]*[]types.String                                           `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
@@ -90,7 +90,7 @@ type LoadBalancerRulesOverridesModel struct {
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerRulesOverridesSessionAffinityAttributesModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed_optional"`
 	SessionAffinityTTL        types.Float64                                                                      `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,optional"`
 	SteeringPolicy            types.String                                                                       `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
-	TTL                       types.Float64                                                                      `tfsdk:"ttl" json:"ttl,optional"`
+	TTL                       types.Float64                                                                      `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type LoadBalancerRulesOverridesAdaptiveRoutingModel struct {

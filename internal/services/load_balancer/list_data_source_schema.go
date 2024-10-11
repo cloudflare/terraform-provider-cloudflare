@@ -390,6 +390,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											"ttl": schema.Float64Attribute{
 												Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 												Computed:    true,
+												Optional:    true,
 											},
 										},
 									},
@@ -498,6 +499,7 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"ttl": schema.Float64Attribute{
 							Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 							Computed:    true,
+							Optional:    true,
 						},
 					},
 				},

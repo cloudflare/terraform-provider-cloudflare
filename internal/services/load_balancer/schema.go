@@ -60,6 +60,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"ttl": schema.Float64Attribute{
 				Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"country_pools": schema.MapAttribute{
 				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
@@ -454,6 +455,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"ttl": schema.Float64Attribute{
 									Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
 									Optional:    true,
+									Computed:    true,
 								},
 							},
 						},
