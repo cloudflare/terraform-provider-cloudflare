@@ -37,6 +37,7 @@ type ZeroTrustGatewayPolicyDataSourceModel struct {
 	Traffic       types.String                                                                `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                           `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	Filters       customfield.List[types.String]                                              `tfsdk:"filters" json:"filters,computed"`
+	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationDataSourceModel]   `tfsdk:"expiration" json:"expiration,computed"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsDataSourceModel] `tfsdk:"rule_settings" json:"rule_settings,computed"`
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPolicyScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
 	Filter        *ZeroTrustGatewayPolicyFindOneByDataSourceModel                             `tfsdk:"filter"`
@@ -56,6 +57,11 @@ func (m *ZeroTrustGatewayPolicyDataSourceModel) toListParams(_ context.Context) 
 	}
 
 	return
+}
+
+type ZeroTrustGatewayPolicyExpirationDataSourceModel struct {
+	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	Duration  types.Int64       `tfsdk:"duration" json:"duration,computed"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsDataSourceModel struct {

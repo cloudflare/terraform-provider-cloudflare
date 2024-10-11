@@ -39,6 +39,7 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	Description   types.String                                                                  `tfsdk:"description" json:"description,computed"`
 	DevicePosture types.String                                                                  `tfsdk:"device_posture" json:"device_posture,computed"`
 	Enabled       types.Bool                                                                    `tfsdk:"enabled" json:"enabled,computed"`
+	Expiration    customfield.NestedObject[ZeroTrustGatewayPoliciesExpirationDataSourceModel]   `tfsdk:"expiration" json:"expiration,computed"`
 	Filters       customfield.List[types.String]                                                `tfsdk:"filters" json:"filters,computed"`
 	Identity      types.String                                                                  `tfsdk:"identity" json:"identity,computed"`
 	Name          types.String                                                                  `tfsdk:"name" json:"name,computed"`
@@ -47,6 +48,11 @@ type ZeroTrustGatewayPoliciesResultDataSourceModel struct {
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPoliciesScheduleDataSourceModel]     `tfsdk:"schedule" json:"schedule,computed"`
 	Traffic       types.String                                                                  `tfsdk:"traffic" json:"traffic,computed"`
 	UpdatedAt     timetypes.RFC3339                                                             `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+}
+
+type ZeroTrustGatewayPoliciesExpirationDataSourceModel struct {
+	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,computed" format:"date-time"`
+	Duration  types.Int64       `tfsdk:"duration" json:"duration,computed"`
 }
 
 type ZeroTrustGatewayPoliciesRuleSettingsDataSourceModel struct {
