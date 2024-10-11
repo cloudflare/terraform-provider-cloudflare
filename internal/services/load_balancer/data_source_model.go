@@ -34,7 +34,7 @@ type LoadBalancerDataSourceModel struct {
 	SessionAffinity           types.String                                                                   `tfsdk:"session_affinity" json:"session_affinity,computed"`
 	SessionAffinityTTL        types.Float64                                                                  `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed"`
 	SteeringPolicy            types.String                                                                   `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
-	TTL                       types.Float64                                                                  `tfsdk:"ttl" json:"ttl,computed"`
+	TTL                       types.Float64                                                                  `tfsdk:"ttl" json:"ttl,computed_optional"`
 	CountryPools              customfield.Map[customfield.List[types.String]]                                `tfsdk:"country_pools" json:"country_pools,computed"`
 	DefaultPools              customfield.List[types.String]                                                 `tfsdk:"default_pools" json:"default_pools,computed"`
 	Networks                  customfield.List[types.String]                                                 `tfsdk:"networks" json:"networks,computed"`
@@ -116,7 +116,7 @@ type LoadBalancerRulesOverridesDataSourceModel struct {
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancerRulesOverridesSessionAffinityAttributesDataSourceModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed"`
 	SessionAffinityTTL        types.Float64                                                                                `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed"`
 	SteeringPolicy            types.String                                                                                 `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
-	TTL                       types.Float64                                                                                `tfsdk:"ttl" json:"ttl,computed"`
+	TTL                       types.Float64                                                                                `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type LoadBalancerRulesOverridesAdaptiveRoutingDataSourceModel struct {
