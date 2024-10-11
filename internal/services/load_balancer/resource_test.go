@@ -64,8 +64,6 @@ func testSweepCloudflareLoadBalancer(r string) error {
 }
 
 func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
-	// multiple instances of this config would conflict but we only use it once
-	t.Parallel()
 	testStartTime := time.Now().UTC()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -100,7 +98,6 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -137,7 +134,6 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_SessionAffinityIPCookie(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -175,7 +171,6 @@ func TestAccCloudflareLoadBalancer_SessionAffinityIPCookie(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -215,7 +210,6 @@ func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -247,7 +241,6 @@ func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_LocationStrategy(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -280,7 +273,6 @@ func TestAccCloudflareLoadBalancer_LocationStrategy(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -331,7 +323,6 @@ func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_GeoBalancedUpdate(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -378,7 +369,6 @@ func TestAccCloudflareLoadBalancer_GeoBalancedUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -410,7 +400,6 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -439,7 +428,6 @@ func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -472,7 +460,6 @@ func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T
 }
 
 func TestAccCloudflareLoadBalancer_LeastConnectionsBalanced(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -505,7 +492,6 @@ func TestAccCloudflareLoadBalancer_LeastConnectionsBalanced(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -551,7 +537,6 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -593,7 +578,6 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
-	t.Parallel()
 	var loadBalancer cloudflare.LoadBalancer
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
