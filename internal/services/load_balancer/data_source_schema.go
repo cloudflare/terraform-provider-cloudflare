@@ -350,6 +350,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 										"drain_duration": schema.Float64Attribute{
 											Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
 											Computed:    true,
+											Optional:    true,
 										},
 										"headers": schema.ListAttribute{
 											Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",
@@ -448,6 +449,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 					"drain_duration": schema.Float64Attribute{
 						Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
 						Computed:    true,
+						Optional:    true,
 					},
 					"headers": schema.ListAttribute{
 						Description: "Configures the names of HTTP headers to base session affinity on when header `session_affinity` is enabled. At least one HTTP header name must be provided. To specify the exact cookies to be used, include an item in the following format: `\"cookie:<cookie-name-1>,<cookie-name-2>\"` (example) where everything after the colon is a comma-separated list of cookie names. Providing only `\"cookie\"` will result in all cookies being used. The default max number of HTTP header names that can be provided depends on your plan: 5 for Enterprise, 1 for all other plans.",

@@ -117,7 +117,7 @@ type LoadBalancersRulesOverridesRandomSteeringDataSourceModel struct {
 }
 
 type LoadBalancersRulesOverridesSessionAffinityAttributesDataSourceModel struct {
-	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,computed"`
+	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
 	Headers              customfield.List[types.String] `tfsdk:"headers" json:"headers,computed"`
 	RequireAllHeaders    types.Bool                     `tfsdk:"require_all_headers" json:"require_all_headers,computed"`
 	Samesite             types.String                   `tfsdk:"samesite" json:"samesite,computed"`
@@ -126,7 +126,7 @@ type LoadBalancersRulesOverridesSessionAffinityAttributesDataSourceModel struct 
 }
 
 type LoadBalancersSessionAffinityAttributesDataSourceModel struct {
-	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,computed"`
+	DrainDuration        types.Float64                  `tfsdk:"drain_duration" json:"drain_duration,computed_optional"`
 	Headers              customfield.List[types.String] `tfsdk:"headers" json:"headers,computed"`
 	RequireAllHeaders    types.Bool                     `tfsdk:"require_all_headers" json:"require_all_headers,computed"`
 	Samesite             types.String                   `tfsdk:"samesite" json:"samesite,computed"`

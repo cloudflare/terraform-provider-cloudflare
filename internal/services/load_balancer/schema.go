@@ -376,6 +376,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"drain_duration": schema.Float64Attribute{
 											Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+											Computed:    true,
 											Optional:    true,
 										},
 										"headers": schema.ListAttribute{
@@ -487,6 +488,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Attributes: map[string]schema.Attribute{
 					"drain_duration": schema.Float64Attribute{
 						Description: "Configures the drain duration in seconds. This field is only used when session affinity is enabled on the load balancer.",
+						Computed:    true,
 						Optional:    true,
 					},
 					"headers": schema.ListAttribute{
