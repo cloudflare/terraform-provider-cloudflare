@@ -1,3 +1,3 @@
-```release-note:bug
+```release-note:enhancement
 resource/cloudflare_certificate_pack: Add SSL.com as valid certificate authority
 ```
