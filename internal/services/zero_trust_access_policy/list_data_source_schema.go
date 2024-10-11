@@ -160,10 +160,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.SingleNestedAttribute{
+									"certificate": schema.StringAttribute{
 										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesExcludeCertificateDataSourceModel](ctx),
-										Attributes: map[string]schema.Attribute{},
+										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -372,10 +371,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.SingleNestedAttribute{
+									"certificate": schema.StringAttribute{
 										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesIncludeCertificateDataSourceModel](ctx),
-										Attributes: map[string]schema.Attribute{},
+										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -600,10 +598,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.SingleNestedAttribute{
+									"certificate": schema.StringAttribute{
 										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessPoliciesRequireCertificateDataSourceModel](ctx),
-										Attributes: map[string]schema.Attribute{},
+										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,

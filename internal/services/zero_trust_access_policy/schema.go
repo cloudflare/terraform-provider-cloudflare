@@ -116,9 +116,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.SingleNestedAttribute{
+						"certificate": schema.StringAttribute{
 							Optional:   true,
-							Attributes: map[string]schema.Attribute{},
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -380,9 +380,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.SingleNestedAttribute{
+						"certificate": schema.StringAttribute{
 							Optional:   true,
-							Attributes: map[string]schema.Attribute{},
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -608,9 +608,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.SingleNestedAttribute{
+						"certificate": schema.StringAttribute{
 							Optional:   true,
-							Attributes: map[string]schema.Attribute{},
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,
