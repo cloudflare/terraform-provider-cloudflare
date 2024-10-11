@@ -51,16 +51,19 @@ func resourceCloudflareTeamsRuleSchema() map[string]*schema.Schema {
 		"traffic": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			Computed:    true,
 			Description: "The wirefilter expression to be used for traffic matching.",
 		},
 		"identity": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			Computed:    true,
 			Description: "The wirefilter expression to be used for identity matching.",
 		},
 		"device_posture": {
 			Type:        schema.TypeString,
 			Optional:    true,
+			Computed:    true,
 			Description: "The wirefilter expression to be used for device_posture check matching.",
 		},
 		"version": {
@@ -71,6 +74,7 @@ func resourceCloudflareTeamsRuleSchema() map[string]*schema.Schema {
 			Type:     schema.TypeList,
 			MaxItems: 1,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: teamsRuleSettings,
 			},
