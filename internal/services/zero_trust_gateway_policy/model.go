@@ -25,6 +25,7 @@ type ZeroTrustGatewayPolicyModel struct {
 	Precedence    types.Int64                                                       `tfsdk:"precedence" json:"precedence,optional"`
 	Traffic       types.String                                                      `tfsdk:"traffic" json:"traffic,optional"`
 	Filters       *[]types.String                                                   `tfsdk:"filters" json:"filters,optional"`
+	Expiration    customfield.NestedObject[ZeroTrustGatewayPolicyExpirationModel]   `tfsdk:"expiration" json:"expiration,computed_optional"`
 	RuleSettings  customfield.NestedObject[ZeroTrustGatewayPolicyRuleSettingsModel] `tfsdk:"rule_settings" json:"rule_settings,computed_optional"`
 	Schedule      customfield.NestedObject[ZeroTrustGatewayPolicyScheduleModel]     `tfsdk:"schedule" json:"schedule,computed_optional"`
 	CreatedAt     timetypes.RFC3339                                                 `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
@@ -38,6 +39,11 @@ func (m ZeroTrustGatewayPolicyModel) MarshalJSON() (data []byte, err error) {
 
 func (m ZeroTrustGatewayPolicyModel) MarshalJSONForUpdate(state ZeroTrustGatewayPolicyModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
+}
+
+type ZeroTrustGatewayPolicyExpirationModel struct {
+	ExpiresAt timetypes.RFC3339 `tfsdk:"expires_at" json:"expires_at,required" format:"date-time"`
+	Duration  types.Int64       `tfsdk:"duration" json:"duration,optional"`
 }
 
 type ZeroTrustGatewayPolicyRuleSettingsModel struct {

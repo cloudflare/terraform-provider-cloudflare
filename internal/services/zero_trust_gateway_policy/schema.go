@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -97,6 +98,26 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 				ElementType: types.StringType,
+			},
+			"expiration": schema.SingleNestedAttribute{
+				Description: "The expiration time stamp and default duration of a DNS policy. Takes\nprecedence over the policy's `schedule` configuration, if any.\n\nThis does not apply to HTTP or network policies.\n",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustGatewayPolicyExpirationModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"expires_at": schema.StringAttribute{
+						Description: "The time stamp at which the policy will expire and cease to be\napplied.\n\nMust adhere to RFC 3339 and include a UTC offset. Non-zero\noffsets are accepted but will be converted to the equivalent\nvalue with offset zero (UTC+00:00) and will be returned as time\nstamps with offset zero denoted by a trailing 'Z'.\n\nPolicies with an expiration do not consider the timezone of\nclients they are applied to, and expire \"globally\" at the point\ngiven by their `expires_at` value.\n",
+						Required:    true,
+						CustomType:  timetypes.RFC3339Type{},
+					},
+					"duration": schema.Int64Attribute{
+						Description: "The default duration a policy will be active in minutes. Must be set in order to use the `reset_expiration` endpoint on this rule.",
+						Optional:    true,
+						Validators: []validator.Int64{
+							int64validator.AtLeast(5),
+						},
+					},
+				},
 			},
 			"rule_settings": schema.SingleNestedAttribute{
 				Description: "Additional settings that modify the rule's action.",
