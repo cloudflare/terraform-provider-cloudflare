@@ -52,7 +52,7 @@ type LoadBalancersResultDataSourceModel struct {
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancersSessionAffinityAttributesDataSourceModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed"`
 	SessionAffinityTTL        types.Float64                                                                   `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed"`
 	SteeringPolicy            types.String                                                                    `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
-	TTL                       types.Float64                                                                   `tfsdk:"ttl" json:"ttl,computed"`
+	TTL                       types.Float64                                                                   `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type LoadBalancersAdaptiveRoutingDataSourceModel struct {
@@ -99,7 +99,7 @@ type LoadBalancersRulesOverridesDataSourceModel struct {
 	SessionAffinityAttributes customfield.NestedObject[LoadBalancersRulesOverridesSessionAffinityAttributesDataSourceModel] `tfsdk:"session_affinity_attributes" json:"session_affinity_attributes,computed"`
 	SessionAffinityTTL        types.Float64                                                                                 `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed"`
 	SteeringPolicy            types.String                                                                                  `tfsdk:"steering_policy" json:"steering_policy,computed_optional"`
-	TTL                       types.Float64                                                                                 `tfsdk:"ttl" json:"ttl,computed"`
+	TTL                       types.Float64                                                                                 `tfsdk:"ttl" json:"ttl,computed_optional"`
 }
 
 type LoadBalancersRulesOverridesAdaptiveRoutingDataSourceModel struct {
