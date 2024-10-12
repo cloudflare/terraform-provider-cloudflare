@@ -99,6 +99,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"country_pools": schema.MapAttribute{
 				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 				Computed:    true,
+				Optional:    true,
 				CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 				ElementType: types.ListType{
 					ElemType: types.StringType,
@@ -251,6 +252,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								"country_pools": schema.MapAttribute{
 									Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 									Computed:    true,
+									Optional:    true,
 									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 									ElementType: types.ListType{
 										ElemType: types.StringType,
