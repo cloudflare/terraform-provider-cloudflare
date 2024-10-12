@@ -33,7 +33,7 @@ func (m *LoadBalancersDataSourceModel) toListParams(_ context.Context) (params l
 type LoadBalancersResultDataSourceModel struct {
 	ID                        types.String                                                                    `tfsdk:"id" json:"id,computed"`
 	AdaptiveRouting           customfield.NestedObject[LoadBalancersAdaptiveRoutingDataSourceModel]           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed"`
-	CountryPools              customfield.Map[customfield.List[types.String]]                                 `tfsdk:"country_pools" json:"country_pools,computed"`
+	CountryPools              customfield.Map[customfield.List[types.String]]                                 `tfsdk:"country_pools" json:"country_pools,computed_optional"`
 	CreatedOn                 types.String                                                                    `tfsdk:"created_on" json:"created_on,computed"`
 	DefaultPools              customfield.List[types.String]                                                  `tfsdk:"default_pools" json:"default_pools,computed"`
 	Description               types.String                                                                    `tfsdk:"description" json:"description,computed"`
@@ -88,7 +88,7 @@ type LoadBalancersRulesFixedResponseDataSourceModel struct {
 
 type LoadBalancersRulesOverridesDataSourceModel struct {
 	AdaptiveRouting           customfield.NestedObject[LoadBalancersRulesOverridesAdaptiveRoutingDataSourceModel]           `tfsdk:"adaptive_routing" json:"adaptive_routing,computed"`
-	CountryPools              customfield.Map[customfield.List[types.String]]                                               `tfsdk:"country_pools" json:"country_pools,computed"`
+	CountryPools              customfield.Map[customfield.List[types.String]]                                               `tfsdk:"country_pools" json:"country_pools,computed_optional"`
 	DefaultPools              customfield.List[types.String]                                                                `tfsdk:"default_pools" json:"default_pools,computed"`
 	FallbackPool              types.String                                                                                  `tfsdk:"fallback_pool" json:"fallback_pool,computed"`
 	LocationStrategy          customfield.NestedObject[LoadBalancersRulesOverridesLocationStrategyDataSourceModel]          `tfsdk:"location_strategy" json:"location_strategy,computed"`
