@@ -17,29 +17,29 @@ type StreamResultEnvelope struct {
 type StreamModel struct {
 	AccountID             types.String                                   `tfsdk:"account_id" path:"account_id,required"`
 	Identifier            types.String                                   `tfsdk:"identifier" path:"identifier,optional"`
+	Creator               types.String                                   `tfsdk:"creator" json:"creator,optional"`
+	MaxDurationSeconds    types.Int64                                    `tfsdk:"max_duration_seconds" json:"maxDurationSeconds,optional"`
+	ScheduledDeletion     timetypes.RFC3339                              `tfsdk:"scheduled_deletion" json:"scheduledDeletion,optional" format:"date-time"`
+	UploadExpiry          timetypes.RFC3339                              `tfsdk:"upload_expiry" json:"uploadExpiry,optional" format:"date-time"`
+	AllowedOrigins        *[]types.String                                `tfsdk:"allowed_origins" json:"allowedOrigins,optional"`
+	Meta                  jsontypes.Normalized                           `tfsdk:"meta" json:"meta,optional"`
+	RequireSignedURLs     types.Bool                                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed_optional"`
+	ThumbnailTimestampPct types.Float64                                  `tfsdk:"thumbnail_timestamp_pct" json:"thumbnailTimestampPct,computed_optional"`
 	Created               timetypes.RFC3339                              `tfsdk:"created" json:"created,computed" format:"date-time"`
-	Creator               types.String                                   `tfsdk:"creator" json:"creator,computed"`
 	Duration              types.Float64                                  `tfsdk:"duration" json:"duration,computed"`
 	LiveInput             types.String                                   `tfsdk:"live_input" json:"liveInput,computed"`
-	MaxDurationSeconds    types.Int64                                    `tfsdk:"max_duration_seconds" json:"maxDurationSeconds,computed"`
 	Modified              timetypes.RFC3339                              `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Preview               types.String                                   `tfsdk:"preview" json:"preview,computed"`
 	ReadyToStream         types.Bool                                     `tfsdk:"ready_to_stream" json:"readyToStream,computed"`
 	ReadyToStreamAt       timetypes.RFC3339                              `tfsdk:"ready_to_stream_at" json:"readyToStreamAt,computed" format:"date-time"`
-	RequireSignedURLs     types.Bool                                     `tfsdk:"require_signed_urls" json:"requireSignedURLs,computed"`
-	ScheduledDeletion     timetypes.RFC3339                              `tfsdk:"scheduled_deletion" json:"scheduledDeletion,computed" format:"date-time"`
 	Size                  types.Float64                                  `tfsdk:"size" json:"size,computed"`
 	Thumbnail             types.String                                   `tfsdk:"thumbnail" json:"thumbnail,computed"`
-	ThumbnailTimestampPct types.Float64                                  `tfsdk:"thumbnail_timestamp_pct" json:"thumbnailTimestampPct,computed"`
 	UID                   types.String                                   `tfsdk:"uid" json:"uid,computed"`
 	Uploaded              timetypes.RFC3339                              `tfsdk:"uploaded" json:"uploaded,computed" format:"date-time"`
-	UploadExpiry          timetypes.RFC3339                              `tfsdk:"upload_expiry" json:"uploadExpiry,computed" format:"date-time"`
-	AllowedOrigins        customfield.List[types.String]                 `tfsdk:"allowed_origins" json:"allowedOrigins,computed"`
 	Input                 customfield.NestedObject[StreamInputModel]     `tfsdk:"input" json:"input,computed"`
 	Playback              customfield.NestedObject[StreamPlaybackModel]  `tfsdk:"playback" json:"playback,computed"`
 	Status                customfield.NestedObject[StreamStatusModel]    `tfsdk:"status" json:"status,computed"`
 	Watermark             customfield.NestedObject[StreamWatermarkModel] `tfsdk:"watermark" json:"watermark,computed"`
-	Meta                  jsontypes.Normalized                           `tfsdk:"meta" json:"meta,computed"`
 }
 
 func (m StreamModel) MarshalJSON() (data []byte, err error) {
