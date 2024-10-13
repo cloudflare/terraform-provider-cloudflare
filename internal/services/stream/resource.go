@@ -113,9 +113,11 @@ func (r *StreamResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 	res := new(http.Response)
-	err = r.client.Stream.New(
+	env := StreamResultEnvelope{*data}
+	_, err = r.client.Stream.Edit(
 		ctx,
-		stream.StreamNewParams{
+		data.Identifier.ValueString(),
+		stream.StreamEditParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -127,11 +129,12 @@ func (r *StreamResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &data)
+	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

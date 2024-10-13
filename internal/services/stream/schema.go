@@ -37,14 +37,56 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"creator": schema.StringAttribute{
+				Description: "A user-defined identifier for the media creator.",
+				Optional:    true,
+			},
+			"max_duration_seconds": schema.Int64Attribute{
+				Description: "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 21600),
+				},
+			},
+			"scheduled_deletion": schema.StringAttribute{
+				Description: "Indicates the date and time at which the video will be deleted. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion. If specified, must be at least 30 days from upload time.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"upload_expiry": schema.StringAttribute{
+				Description: "The date and time when the video upload URL is no longer valid for direct user uploads.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"allowed_origins": schema.ListAttribute{
+				Description: "Lists the origins allowed to display the video. Enter allowed origin domains in an array and use `*` for wildcard subdomains. Empty arrays allow the video to be viewed on any origin.",
+				Optional:    true,
+				ElementType: types.StringType,
+			},
+			"meta": schema.StringAttribute{
+				Description: "A user modifiable key-value store used to reference other systems of record for managing videos.",
+				Optional:    true,
+				CustomType:  jsontypes.NormalizedType{},
+			},
+			"require_signed_urls": schema.BoolAttribute{
+				Description: "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+			},
+			"thumbnail_timestamp_pct": schema.Float64Attribute{
+				Description: "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Float64{
+					float64validator.Between(0, 1),
+				},
+				Default: float64default.StaticFloat64(0),
+			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the media item was created.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"creator": schema.StringAttribute{
-				Description: "A user-defined identifier for the media creator.",
-				Computed:    true,
 			},
 			"duration": schema.Float64Attribute{
 				Description: "The duration of the video in seconds. A value of `-1` means the duration is unknown. The duration becomes available after the upload and before the video is ready.",
@@ -53,13 +95,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"live_input": schema.StringAttribute{
 				Description: "The live input ID used to upload a video with Stream Live.",
 				Computed:    true,
-			},
-			"max_duration_seconds": schema.Int64Attribute{
-				Description: "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
-				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.Between(1, 21600),
-				},
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the media item was last modified.",
@@ -79,16 +114,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
-			"require_signed_urls": schema.BoolAttribute{
-				Description: "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
-				Computed:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"scheduled_deletion": schema.StringAttribute{
-				Description: "Indicates the date and time at which the video will be deleted. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion. If specified, must be at least 30 days from upload time.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
 			"size": schema.Float64Attribute{
 				Description: "The size of the media item in bytes.",
 				Computed:    true,
@@ -96,14 +121,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"thumbnail": schema.StringAttribute{
 				Description: "The media item's thumbnail URI. This field is omitted until encoding is complete.",
 				Computed:    true,
-			},
-			"thumbnail_timestamp_pct": schema.Float64Attribute{
-				Description: "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
-				Computed:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(0, 1),
-				},
-				Default: float64default.StaticFloat64(0),
 			},
 			"uid": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a media item.",
@@ -113,17 +130,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The date and time the media item was uploaded.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"upload_expiry": schema.StringAttribute{
-				Description: "The date and time when the video upload URL is no longer valid for direct user uploads.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"allowed_origins": schema.ListAttribute{
-				Description: "Lists the origins allowed to display the video. Enter allowed origin domains in an array and use `*` for wildcard subdomains. Empty arrays allow the video to be viewed on any origin.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 			"input": schema.SingleNestedAttribute{
 				Computed:   true,
@@ -250,11 +256,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Computed:    true,
 					},
 				},
-			},
-			"meta": schema.StringAttribute{
-				Description: "A user modifiable key-value store used to reference other systems of record for managing videos.",
-				Computed:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 		},
 	}
