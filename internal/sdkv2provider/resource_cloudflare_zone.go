@@ -95,8 +95,11 @@ func resourceCloudflareZone() *schema.Resource {
 		Schema: resourceCloudflareZoneSchema(),
 		CustomizeDiff: customdiff.All(
 			customdiff.ComputedIf("verification_key", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
-				oldTypeVal, newTypeVal := d.GetChange("type")
-				return oldTypeVal == "partial" || newTypeVal == "partial"
+				if d.HasChange("type") {
+					oldTypeVal, newTypeVal := d.GetChange("type")
+					return oldTypeVal == "partial" || newTypeVal == "partial"
+				}
+				return false
 			}),
 		),
 		CreateContext: resourceCloudflareZoneCreate,
