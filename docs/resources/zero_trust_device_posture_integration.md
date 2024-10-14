@@ -36,7 +36,7 @@ resource "cloudflare_zero_trust_device_posture_integration" "example" {
 
 - `account_id` (String) The account identifier to target for the resource.
 - `name` (String) Name of the device posture integration.
-- `type` (String) The device posture integration type. Available values: `workspace_one`, `uptycs`, `crowdstrike_s2s`, `intune`, `kolide`, `sentinelone_s2s`, `tanium_s2s`.
+- `type` (String) The device posture integration type. Available values: `workspace_one`, `uptycs`, `crowdstrike_s2s`, `intune`, `kolide`, `sentinelone_s2s`, `tanium_s2s`, `custom_s2s`.
 
 ### Optional
 

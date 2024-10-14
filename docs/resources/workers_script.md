@@ -76,6 +76,7 @@ resource "cloudflare_workers_script" "my_script" {
 - `compatibility_flags` (Set of String) Compatibility flags used for Worker Scripts.
 - `d1_database_binding` (Block Set) (see [below for nested schema](#nestedblock--d1_database_binding))
 - `dispatch_namespace` (String) Name of the Workers for Platforms dispatch namespace.
+- `hyperdrive_config_binding` (Block Set) (see [below for nested schema](#nestedblock--hyperdrive_config_binding))
 - `kv_namespace_binding` (Block Set) (see [below for nested schema](#nestedblock--kv_namespace_binding))
 - `logpush` (Boolean) Enabling allows Worker events to be sent to a defined Logpush destination.
 - `module` (Boolean) Whether to upload Worker as a module.
@@ -108,6 +109,15 @@ Required:
 
 - `database_id` (String) Database ID of D1 database to use.
 - `name` (String) The global variable for the binding in your Worker code.
+
+
+<a id="nestedblock--hyperdrive_config_binding"></a>
+### Nested Schema for `hyperdrive_config_binding`
+
+Required:
+
+- `binding` (String) The global variable for the binding in your Worker code.
+- `id` (String) The ID of the Hyperdrive config to use.
 
 
 <a id="nestedblock--kv_namespace_binding"></a>

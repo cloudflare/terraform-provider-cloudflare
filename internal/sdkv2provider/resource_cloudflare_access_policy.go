@@ -64,6 +64,46 @@ func apiAccessPolicyApprovalGroupToSchema(approvalGroup cloudflare.AccessApprova
 	return data
 }
 
+func schemaAccessPolicyConnectionRulesToAPI(connectionRules map[string]interface{}) (*cloudflare.AccessInfrastructureConnectionRules, error) {
+	usernames := []string{}
+	if sshVal, ok := connectionRules["ssh"].([]interface{}); ok && len(sshVal) > 0 {
+		if sshMap, ok := sshVal[0].(map[string]interface{}); ok {
+			str_return := []string{}
+			if usernamesMap, ok := sshMap["usernames"].([]interface{}); ok {
+				for _, username := range usernamesMap {
+					str_return = append(str_return, username.(string))
+				}
+			}
+			usernames = str_return
+		}
+	}
+
+	return &cloudflare.AccessInfrastructureConnectionRules{
+		SSH: &cloudflare.AccessInfrastructureConnectionRulesSSH{
+			Usernames: usernames,
+		},
+	}, nil
+}
+
+func apiAccessPolicyConnectionRulesToSchema(connectionRules *cloudflare.AccessInfrastructureConnectionRules) []interface{} {
+	if connectionRules == nil {
+		return []interface{}{}
+	}
+
+	var connectionRulesSchema []interface{}
+	var usernameList []map[string]interface{}
+
+	usernameMap := map[string]interface{}{
+		"usernames": connectionRules.SSH.Usernames,
+	}
+	usernameList = append(usernameList, usernameMap)
+	connectionRulesSchema = append(connectionRulesSchema, map[string]interface{}{
+		"ssh": usernameList,
+	})
+
+	return connectionRulesSchema
+}
+
 func schemaAccessPolicyApprovalGroupToAPI(data map[string]interface{}) cloudflare.AccessApprovalGroup {
 	var approvalGroup cloudflare.AccessApprovalGroup
 
@@ -86,6 +126,10 @@ func apiCloudflareAccessPolicyToResource(ctx context.Context, d *schema.Resource
 
 	d.Set("name", accessPolicy.Name)
 	d.Set("decision", accessPolicy.Decision)
+
+	if err := d.Set("connection_rules", apiAccessPolicyConnectionRulesToSchema(accessPolicy.InfrastructureConnectionRules)); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set connection_rules attribute: %w", err))
+	}
 
 	if err := d.Set("require", TransformAccessGroupForSchema(ctx, accessPolicy.Require)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set require attribute: %w", err))
@@ -166,6 +210,15 @@ func resourceCloudflareAccessPolicyCreate(ctx context.Context, d *schema.Resourc
 		return diag.FromErr(fmt.Errorf("application_id is required for non-account level Access Policies"))
 	}
 
+	connectionRulesSchema, ok := d.Get("connection_rules").([]interface{})
+	if ok && len(connectionRulesSchema) > 0 {
+		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema[0].(map[string]interface{}))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		newAccessPolicy.InfrastructureConnectionRules = connectionRules
+	}
+
 	exclude := d.Get("exclude").([]interface{})
 	for _, value := range exclude {
 		if value != nil {
@@ -228,6 +281,15 @@ func resourceCloudflareAccessPolicyUpdate(ctx context.Context, d *schema.Resourc
 		Name:            d.Get("name").(string),
 		Decision:        d.Get("decision").(string),
 		SessionDuration: cloudflare.StringPtr(d.Get("session_duration").(string)),
+	}
+
+	connectionRulesSchema, ok := d.Get("connection_rules").([]interface{})
+	if ok && len(connectionRulesSchema) > 0 {
+		connectionRules, err := schemaAccessPolicyConnectionRulesToAPI(connectionRulesSchema[0].(map[string]interface{}))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		updateReq.InfrastructureConnectionRules = connectionRules
 	}
 
 	exclude := d.Get("exclude").([]interface{})

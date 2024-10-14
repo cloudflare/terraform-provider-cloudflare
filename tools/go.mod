@@ -1,6 +1,6 @@
 module github.com/cloudflare/terraform-provider-cloudflare/tools
 
-go 1.20
+go 1.22
 
 require (
 	github.com/bflad/tfproviderlint v0.28.1

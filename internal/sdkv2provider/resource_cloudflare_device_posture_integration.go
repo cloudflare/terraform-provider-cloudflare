@@ -22,6 +22,7 @@ const (
 	kolide      = "kolide"
 	sentinelone = "sentinelone_s2s"
 	tanium      = "tanium_s2s"
+	customs2s   = "custom_s2s"
 )
 
 func resourceCloudflareDevicePostureIntegration() *schema.Resource {
@@ -273,6 +274,18 @@ func setDevicePostureIntegrationConfig(integration *cloudflare.DevicePostureInte
 				return fmt.Errorf("access_client_secret has to be of type string")
 			}
 			integration.Config = config
+		case customs2s:
+			if config.ApiUrl, ok = d.Get("config.0.api_url").(string); !ok {
+				return fmt.Errorf("api_url has to be of type string")
+			}
+			if config.AccessClientID, ok = d.Get("config.0.access_client_id").(string); !ok {
+				return fmt.Errorf("access_client_id has to be of type string")
+			}
+			if config.AccessClientSecret, ok = d.Get("config.0.access_client_secret").(string); !ok {
+				return fmt.Errorf("access_client_secret has to be of type string")
+			}
+			integration.Config = config
+
 		default:
 			return fmt.Errorf("unsupported integration type:%s", integration.Type)
 		}

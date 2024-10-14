@@ -725,6 +725,24 @@ func (r *RulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 											listvalidator.SizeAtMost(1),
 										},
 									},
+									"cache_reserve": schema.ListNestedBlock{
+										MarkdownDescription: "List of cache reserve parameters to apply to the request.",
+										NestedObject: schema.NestedBlockObject{
+											Attributes: map[string]schema.Attribute{
+												"eligible": schema.BoolAttribute{
+													Required:            true,
+													MarkdownDescription: "Determines whether Cloudflare will write the eligible resource to cache reserve.",
+												},
+												"minimum_file_size": schema.Int64Attribute{
+													Optional:            true,
+													MarkdownDescription: "The minimum file size, in bytes, eligible for storage in cache reserve. If omitted and \"eligible\" is true, Cloudflare will use 0 bytes by default.",
+												},
+											},
+										},
+										Validators: []validator.List{
+											listvalidator.SizeAtMost(1),
+										},
+									},
 									"from_list": schema.ListNestedBlock{
 										MarkdownDescription: "Use a list to lookup information for the action.",
 										NestedObject: schema.NestedBlockObject{

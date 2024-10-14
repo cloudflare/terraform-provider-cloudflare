@@ -1,4 +1,4 @@
-package sdkv2provider
+package list_test
 
 import (
 	"context"
@@ -8,7 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go"
+	cfv1 "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
+
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -23,7 +26,7 @@ func init() {
 
 func testSweepCloudflareList(r string) error {
 	ctx := context.Background()
-	client, clientErr := sharedClient()
+	client, clientErr := acctest.SharedV1Client()
 	if clientErr != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to create Cloudflare client: %s", clientErr))
 	}
@@ -33,7 +36,7 @@ func testSweepCloudflareList(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	lists, err := client.ListLists(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListListsParams{})
+	lists, err := client.ListLists(ctx, cfv1.AccountIdentifier(accountID), cfv1.ListListsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Lists: %s", err))
 	}
@@ -46,31 +49,24 @@ func testSweepCloudflareList(r string) error {
 	for _, list := range lists {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare List ID: %s", list.ID))
 		//nolint:errcheck
-		client.DeleteList(ctx, cloudflare.AccountIdentifier(accountID), list.ID)
+		client.DeleteList(ctx, cfv1.AccountIdentifier(accountID), list.ID)
 	}
 
 	return nil
 }
 
 func TestAccCloudflareList_Exists(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var list cloudflare.List
+	var list cfv1.List
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
@@ -85,25 +81,18 @@ func TestAccCloudflareList_Exists(t *testing.T) {
 }
 
 func TestAccCloudflareList_UpdateDescription(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var list cloudflare.List
+	var list cfv1.List
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
@@ -134,16 +123,10 @@ func TestAccCloudflareList_UpdateDescription(t *testing.T) {
 }
 
 func TestAccCloudflareList_Update(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rndIP := generateRandomResourceName()
-	rndRedirect := generateRandomResourceName()
-	rndASN := generateRandomResourceName()
-	rndHostname := generateRandomResourceName()
+	rndIP := utils.GenerateRandomResourceName()
+	rndRedirect := utils.GenerateRandomResourceName()
+	rndASN := utils.GenerateRandomResourceName()
+	rndHostname := utils.GenerateRandomResourceName()
 
 	nameIP := fmt.Sprintf("cloudflare_list.%s", rndIP)
 	nameRedirect := fmt.Sprintf("cloudflare_list.%s", rndRedirect)
@@ -152,15 +135,14 @@ func TestAccCloudflareList_Update(t *testing.T) {
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var list cloudflare.List
+	var list cfv1.List
 	var initialID string
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rndIP, rndIP, rndIP, accountID, "ip"),
@@ -168,6 +150,12 @@ func TestAccCloudflareList_Update(t *testing.T) {
 					testAccCheckCloudflareListExists(nameIP, &list),
 					resource.TestCheckResourceAttr(
 						nameIP, "name", rndIP),
+					resource.TestCheckResourceAttr(
+						nameIP, "description", rndIP),
+					resource.TestCheckResourceAttr(
+						nameIP, "kind", "ip"),
+					resource.TestCheckResourceAttr(
+						nameIP, "account_id", accountID),
 				),
 			},
 			{
@@ -184,14 +172,28 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(nameIP, "item.#", "2"),
+
+					resource.TestCheckResourceAttr(nameIP, "item.0.value.0.redirect.#", "0"),
+					resource.TestCheckResourceAttr(nameIP, "item.0.value.0.hostanme.#", "0"),
+					resource.TestCheckNoResourceAttr(nameIP, "item.0.value.0.asn"),
+					resource.TestCheckResourceAttr(nameIP, "item.1.value.0.redirect.#", "0"),
+					resource.TestCheckResourceAttr(nameIP, "item.1.value.0.hostname.#", "0"),
+					resource.TestCheckNoResourceAttr(nameIP, "item.1.value.0.asn"),
+
+					resource.TestCheckTypeSetElemNestedAttrs(nameIP, "item.*", map[string]string{
+						"value.0.ip": "192.0.2.0",
+						"comment":    "one",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameIP, "item.*", map[string]string{
+						"value.0.ip": "192.0.2.1",
+						"comment":    "two",
+					}),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareList(rndRedirect, rndRedirect, rndRedirect, accountID, "redirect"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareListExists(nameRedirect, &list),
-					resource.TestCheckResourceAttr(
-						nameRedirect, "name", rndRedirect),
 				),
 			},
 			{
@@ -207,7 +209,29 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						}
 						return nil
 					},
+					resource.TestCheckResourceAttr(nameRedirect, "kind", "redirect"),
 					resource.TestCheckResourceAttr(nameRedirect, "item.#", "2"),
+
+					resource.TestCheckResourceAttr(nameRedirect, "item.0.value.0.hostname.#", "0"),
+					resource.TestCheckNoResourceAttr(nameRedirect, "item.0.value.0.asn"),
+					resource.TestCheckResourceAttr(nameRedirect, "item.1.value.0.hostname.#", "0"),
+					resource.TestCheckNoResourceAttr(nameRedirect, "item.1.value.0.asn"),
+					resource.TestCheckNoResourceAttr(nameRedirect, "item.0.value.0.ip"),
+					resource.TestCheckNoResourceAttr(nameRedirect, "item.1.value.0.ip"),
+
+					resource.TestCheckTypeSetElemNestedAttrs(nameRedirect, "item.*", map[string]string{
+						"value.0.redirect.0.source_url": "cloudflare.com/blog",
+						"value.0.redirect.0.target_url": "https://blog.cloudflare.com",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameRedirect, "item.*", map[string]string{
+						"value.0.redirect.0.source_url":            "cloudflare.com/foo",
+						"value.0.redirect.0.target_url":            "https://foo.cloudflare.com",
+						"value.0.redirect.0.include_subdomains":    "enabled",
+						"value.0.redirect.0.subpath_matching":      "enabled",
+						"value.0.redirect.0.status_code":           "301",
+						"value.0.redirect.0.preserve_query_string": "enabled",
+						"value.0.redirect.0.preserve_path_suffix":  "disabled",
+					}),
 				),
 			},
 			{
@@ -224,14 +248,14 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(nameRedirect, "item.#", "1"),
+					resource.TestCheckResourceAttr(nameRedirect, "item.0.value.0.redirect.0.source_url", "cloudflare.com/blog"),
+					resource.TestCheckResourceAttr(nameRedirect, "item.0.value.0.redirect.0.target_url", "https://theblog.cloudflare.com"),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareList(rndASN, rndASN, rndASN, accountID, "asn"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareListExists(nameASN, &list),
-					resource.TestCheckResourceAttr(
-						nameASN, "name", rndASN),
 				),
 			},
 			{
@@ -247,15 +271,27 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						}
 						return nil
 					},
+					resource.TestCheckResourceAttr(nameASN, "kind", "asn"),
 					resource.TestCheckResourceAttr(nameASN, "item.#", "2"),
+
+					resource.TestCheckResourceAttr(nameASN, "item.0.value.0.redirect.#", "0"),
+					resource.TestCheckResourceAttr(nameASN, "item.0.value.0.hostname.#", "0"),
+					resource.TestCheckNoResourceAttr(nameASN, "item.0.value.0.ip"),
+					resource.TestCheckResourceAttr(nameASN, "item.1.value.0.redirect.#", "0"),
+					resource.TestCheckResourceAttr(nameASN, "item.1.value.0.hostname.#", "0"),
+					resource.TestCheckNoResourceAttr(nameASN, "item.1.value.0.ip"),
+					resource.TestCheckTypeSetElemNestedAttrs(nameASN, "item.*", map[string]string{
+						"value.0.asn": "345",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameASN, "item.*", map[string]string{
+						"value.0.asn": "567",
+					}),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareList(rndHostname, rndHostname, rndHostname, accountID, "hostname"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareListExists(nameHostname, &list),
-					resource.TestCheckResourceAttr(
-						nameHostname, "name", rndHostname),
 				),
 			},
 			{
@@ -272,6 +308,14 @@ func TestAccCloudflareList_Update(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(nameHostname, "item.#", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(nameHostname, "item.*", map[string]string{
+						"comment":                         "hostname one",
+						"value.0.hostname.0.url_hostname": "*.google.com",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(nameHostname, "item.*", map[string]string{
+						"comment":                         "hostname two",
+						"value.0.hostname.0.url_hostname": "manutd.com",
+					}),
 				),
 			},
 		},
@@ -279,57 +323,44 @@ func TestAccCloudflareList_Update(t *testing.T) {
 }
 
 func TestAccCloudflareList_UpdateIgnoreIPOrdering(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareListIPListOrdered(rnd, rnd, rnd, accountID),
 			},
 			{
-				Config: testAccCheckCloudflareListIPListUnordered(rnd, rnd, rnd, accountID),
+				Config:             testAccCheckCloudflareListIPListUnordered(rnd, rnd, rnd, accountID),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
 			},
 		},
 	})
 }
 
 func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := generateRandomResourceName()
+	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_list.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var list cloudflare.List
+	var list cfv1.List
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
+			acctest.TestAccPreCheck(t)
 		},
-		ProviderFactories: providerFactories,
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckCloudflareList(rnd, rnd, rnd, accountID, "ip"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareListExists(name, &list),
-					resource.TestCheckResourceAttr(name, "item.#", "0"),
 				),
 			},
 			{
@@ -344,48 +375,6 @@ func TestAccCloudflareList_RemoveInlineConfig(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareListExists(name, &list),
 					resource.TestCheckResourceAttr(name, "item.#", "0"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareList_Import(t *testing.T) {
-	t.Skip("Pending investigation into item.0.value.0.asn being imported incorrectly")
-
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the IP List
-	// endpoint does not yet support the API tokens.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := generateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_list.%s", rnd)
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	var list cloudflare.List
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			testAccPreCheckAccount(t)
-		},
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareListBasicIP(rnd, rnd, rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareListExists(name, &list),
-					resource.TestCheckResourceAttr(name, "item.#", "1"),
-				),
-			},
-			{
-				ResourceName:        name,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(name, "item[0].value[0].ip"),
 				),
 			},
 		},
@@ -468,7 +457,7 @@ func testAccCheckCloudflareListIPListUnordered(ID, name, description, accountID 
   }`, ID, name, description, accountID)
 }
 
-func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.TestCheckFunc {
+func testAccCheckCloudflareListExists(n string, list *cfv1.List) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 		rs, ok := s.RootModule().Resources[n]
@@ -480,8 +469,8 @@ func testAccCheckCloudflareListExists(n string, list *cloudflare.List) resource.
 			return fmt.Errorf("No List ID is set")
 		}
 
-		client := testAccProvider.Meta().(*cloudflare.API)
-		foundList, err := client.GetList(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
+		client, _ := acctest.SharedV1Client()
+		foundList, err := client.GetList(context.Background(), cfv1.AccountIdentifier(accountID), rs.Primary.ID)
 		if err != nil {
 			return err
 		}

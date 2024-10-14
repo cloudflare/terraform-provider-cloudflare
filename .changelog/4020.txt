@@ -1,0 +1,3 @@
+```release-note:dependency
+provider: bump github.com/aws/aws-sdk-go-v2/config from 1.27.33 to 1.27.34 in the aws group
+```

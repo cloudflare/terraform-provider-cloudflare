@@ -158,6 +158,15 @@ func parseWorkerBindings(d *schema.ResourceData, bindings ScriptBindings) {
 			DatabaseID: data["database_id"].(string),
 		}
 	}
+
+	for _, rawData := range d.Get("hyperdrive_config_binding").(*schema.Set).List() {
+		data := rawData.(map[string]interface{})
+
+		bindings[data["binding"].(string)] = cloudflare.WorkerHyperdriveBinding{
+			Binding:  data["binding"].(string),
+			ConfigID: data["id"].(string),
+		}
+	}
 }
 
 func getPlacement(d *schema.ResourceData) cloudflare.Placement {
@@ -285,6 +294,7 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 	analyticsEngineBindings := &schema.Set{F: schema.HashResource(analyticsEngineBindingResource)}
 	queueBindings := &schema.Set{F: schema.HashResource(queueBindingResource)}
 	d1DatabaseBindings := &schema.Set{F: schema.HashResource(d1BindingResource)}
+	hyperdriveConfigBindings := &schema.Set{F: schema.HashResource(hyperdriveConfigBindingsResource)}
 
 	for name, binding := range bindings {
 		switch v := binding.(type) {
@@ -343,6 +353,11 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 				"name":        name,
 				"database_id": v.DatabaseID,
 			})
+		case cloudflare.WorkerHyperdriveBinding:
+			hyperdriveConfigBindings.Add(map[string]interface{}{
+				"binding": name,
+				"id":      v.ConfigID,
+			})
 		}
 	}
 
@@ -386,6 +401,10 @@ func resourceCloudflareWorkerScriptRead(ctx context.Context, d *schema.ResourceD
 
 	if err := d.Set("d1_database_binding", d1DatabaseBindings); err != nil {
 		return diag.FromErr(fmt.Errorf("cannot set d1 database bindings (%s): %w", d.Id(), err))
+	}
+
+	if err := d.Set("hyperdrive_config_binding", hyperdriveConfigBindings); err != nil {
+		return diag.FromErr(fmt.Errorf("cannot set hyperdrive config bindings (%s): %w", d.Id(), err))
 	}
 
 	d.SetId(scriptData.ID)

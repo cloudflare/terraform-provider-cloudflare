@@ -29,9 +29,9 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false
-  policies                  = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
 }
 
@@ -42,9 +42,9 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
   domain           = "staging.example.com"
   type             = "self_hosted"
   session_duration = "24h"
-  policies         = [
-      cloudflare_access_policy.example_1.id,
-      cloudflare_access_policy.example_2.id
+  policies = [
+    cloudflare_access_policy.example_1.id,
+    cloudflare_access_policy.example_2.id
   ]
   cors_headers {
     allowed_methods   = ["GET", "POST", "OPTIONS"]
@@ -90,7 +90,8 @@ resource "cloudflare_zero_trust_access_application" "staging_app" {
 - `skip_app_launcher_login_page` (Boolean) Option to skip the App Launcher landing page. Defaults to `false`.
 - `skip_interstitial` (Boolean) Option to skip the authorization interstitial when using the CLI. Defaults to `false`.
 - `tags` (Set of String) The itags associated with the application.
-- `type` (String) The application type. Available values: `app_launcher`, `bookmark`, `biso`, `dash_sso`, `saas`, `self_hosted`, `ssh`, `vnc`, `warp`. Defaults to `self_hosted`.
+- `target_criteria` (Block List) The payload for an infrastructure application which defines the port, protocol, and target attributes. Only applicable to Infrastructure Applications, in which case this field is required. (see [below for nested schema](#nestedblock--target_criteria))
+- `type` (String) The application type. Available values: `app_launcher`, `bookmark`, `biso`, `dash_sso`, `saas`, `self_hosted`, `ssh`, `vnc`, `warp`, `infrastructure`. Defaults to `self_hosted`.
 - `zone_id` (String) The zone identifier to target for the resource. Conflicts with `account_id`.
 
 ### Read-Only
@@ -293,6 +294,26 @@ Optional:
 - `create` (Boolean) Whether or not this mapping applies to create (POST) operations.
 - `delete` (Boolean) Whether or not this mapping applies to DELETE operations.
 - `update` (Boolean) Whether or not this mapping applies to update (PATCH/PUT) operations.
+
+
+
+
+<a id="nestedblock--target_criteria"></a>
+### Nested Schema for `target_criteria`
+
+Required:
+
+- `port` (Number) The port that the targets use for the chosen communication protocol. A port cannot be assigned to multiple protocols.
+- `protocol` (String) The communication protocol your application secures.
+- `target_attributes` (Block List, Min: 1) Contains a map of target attribute keys to target attribute values. (see [below for nested schema](#nestedblock--target_criteria--target_attributes))
+
+<a id="nestedblock--target_criteria--target_attributes"></a>
+### Nested Schema for `target_criteria.target_attributes`
+
+Required:
+
+- `name` (String) The key of the attribute.
+- `values` (List of String) The values of the attribute.
 
 ## Import
 

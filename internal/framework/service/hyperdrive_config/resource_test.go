@@ -9,6 +9,7 @@ import (
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -38,6 +39,11 @@ func init() {
 			}
 
 			for _, q := range resp {
+				// don't remove the one for static tests
+				if q.ID == "d08bc4a1c3c140aa95e4ceec535f832e" {
+					continue
+				}
+
 				err := client.DeleteHyperdriveConfig(ctx, cfv1.AccountIdentifier(accountID), q.ID)
 				if err != nil {
 					return err
@@ -108,7 +114,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -141,7 +147,7 @@ func TestAccCloudflareHyperdriveConfig_Basic(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -202,7 +208,7 @@ func TestAccCloudflareHyperdriveConfig_CachingSettings(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),
@@ -288,7 +294,7 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 						return nil
 					},
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.port"),
@@ -319,7 +325,7 @@ func TestAccCloudflareHyperdriveConfig_HyperdriveOverAccess(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckNoResourceAttr(resourceName, "origin.port"),
@@ -373,7 +379,7 @@ func TestAccCloudflareHyperdriveConfig_Minimum(t *testing.T) {
 				),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rnd),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(resourceName, "origin.database", databaseName),
 					resource.TestCheckResourceAttr(resourceName, "origin.host", databaseHostname),
 					resource.TestCheckResourceAttr(resourceName, "origin.port", databasePort),

@@ -92,7 +92,7 @@ func TestAccCloudflareDLPProfile_CustomWithAllowedMatchCount(t *testing.T) {
 			{
 				Config: testAccCloudflareDLPProfileConfigCustomWithAllowedMatchCount(accountID, rnd, "custom profile", 42),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", "custom profile"),
 					resource.TestCheckResourceAttr(name, "allowed_match_count", "42"),
@@ -120,7 +120,7 @@ func TestAccCloudflareDLPProfile_CustomWithOCREnabled(t *testing.T) {
 			{
 				Config: testAccCloudflareDLPProfileConfigCustomWithOCREnabled(accountID, rnd, "custom profile", true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "description", "custom profile"),
 					resource.TestCheckResourceAttr(name, "allowed_match_count", "0"),

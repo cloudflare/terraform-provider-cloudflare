@@ -86,6 +86,10 @@ func resourceCloudflareBotManagementRead(ctx context.Context, d *schema.Resource
 		d.Set("using_latest_model", bm.UsingLatestModel)
 	}
 
+	if bm.AIBotsProtection != nil {
+		d.Set("ai_bots_protection", bm.AIBotsProtection)
+	}
+
 	return nil
 }
 
@@ -151,5 +155,8 @@ func buildBotManagementParams(d *schema.ResourceData) cloudflare.UpdateBotManage
 		bm.AutoUpdateModel = cloudflare.BoolPtr(val.(bool))
 	}
 
+	if val, exists := d.GetOkExists("ai_bots_protection"); exists {
+		bm.AIBotsProtection = cloudflare.StringPtr(val.(string))
+	}
 	return bm
 }

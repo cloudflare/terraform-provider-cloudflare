@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_access_application: fix the name of the new resource to use when upgrading
+```

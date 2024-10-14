@@ -2,14 +2,12 @@
 page_title: "cloudflare_list Resource - Cloudflare"
 subcategory: ""
 description: |-
-  Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge
-  Rules Engine across all zones within the same account.
+  Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge Rules Engine across all zones within the same account.
 ---
 
 # cloudflare_list (Resource)
 
-Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge
-Rules Engine across all zones within the same account.
+Provides Lists (IPs, Redirects, Hostname, ASNs) to be used in Edge Rules Engine across all zones within the same account.
 
 ~> The `cloudflare_list` resource supports defining list items in line with the
   `item` attribute. The provider also has a `cloudflare_list_item` resource for
@@ -91,7 +89,7 @@ resource "cloudflare_list" "example" {
 
   item {
     value {
-     asn = 989
+      asn = 989
     }
     comment = "two"
   }
@@ -130,13 +128,13 @@ resource "cloudflare_list" "example" {
 ### Required
 
 - `account_id` (String) The account identifier to target for the resource.
-- `kind` (String) The type of items the list will contain. Available values: `ip`, `redirect`, `hostname`, `asn`. **Modifying this attribute will force creation of a new resource.**
-- `name` (String) The name of the list. **Modifying this attribute will force creation of a new resource.**
+- `kind` (String) The type of items the list will contain. Must provide only one of: `ip`, `redirect`, `hostname`, `asn`..
+- `name` (String) The name of the list.
 
 ### Optional
 
 - `description` (String) An optional description of the list.
-- `item` (Block Set) (see [below for nested schema](#nestedblock--item))
+- `item` (Block Set) The items in the list. (see [below for nested schema](#nestedblock--item))
 
 ### Read-Only
 
@@ -145,13 +143,10 @@ resource "cloudflare_list" "example" {
 <a id="nestedblock--item"></a>
 ### Nested Schema for `item`
 
-Required:
-
-- `value` (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--item--value))
-
 Optional:
 
 - `comment` (String) An optional comment for the item.
+- `value` (Block List) (see [below for nested schema](#nestedblock--item--value))
 
 <a id="nestedblock--item--value"></a>
 ### Nested Schema for `item.value`

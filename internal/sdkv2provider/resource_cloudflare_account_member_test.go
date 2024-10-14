@@ -65,7 +65,7 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 			{
 				Config: testCloudflareAccountMemberDirectAdd(rnd, "millie@cloudflare.com", accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "account_id", accountID),
+					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttr(name, "email_address", "millie@cloudflare.com"),
 					resource.TestCheckResourceAttr(name, "role_ids.#", "1"),
 					resource.TestCheckResourceAttr(name, "role_ids.0", "05784afa30c1afe1440e79d9351c7430"),

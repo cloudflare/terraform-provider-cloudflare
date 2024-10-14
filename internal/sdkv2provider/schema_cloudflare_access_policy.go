@@ -103,6 +103,34 @@ func resourceCloudflareAccessPolicySchema() map[string]*schema.Schema {
 			},
 			Description: "How often a user will be forced to re-authorise. Must be in the format `48h` or `2h45m`",
 		},
+		"connection_rules": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Description: "The rules that define how users may connect to the targets secured by your application. Only applicable to Infrastructure Applications, in which case this field is required.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"ssh": {
+						Type:        schema.TypeList,
+						Required:    true,
+						MaxItems:    1,
+						Description: "The SSH-specific rules that define how users may connect to the targets secured by your application.",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"usernames": {
+									Type:        schema.TypeList,
+									Required:    true,
+									Description: "Contains the Unix usernames that may be used when connecting over SSH.",
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 }
 

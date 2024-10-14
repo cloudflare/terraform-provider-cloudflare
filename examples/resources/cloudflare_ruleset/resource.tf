@@ -275,8 +275,8 @@ resource "cloudflare_ruleset" "cache_settings_example" {
             include        = ["habc", "hdef"]
             check_presence = ["habc_t", "hdef_t"]
             exclude_origin = true
-            contains       = {
-              "accept"          = ["image/web", "image/png"]
+            contains = {
+              "accept"          = ["image/webp", "image/png"]
               "accept-encoding" = ["br", "zstd"]
               "some-header"     = ["some-value", "some-other-value"]
             }
@@ -293,6 +293,10 @@ resource "cloudflare_ruleset" "cache_settings_example" {
             resolved = true
           }
         }
+      }
+      cache_reserve = {
+        eligible          = true
+        minimum_file_size = 100000
       }
       origin_error_page_passthru = false
     }

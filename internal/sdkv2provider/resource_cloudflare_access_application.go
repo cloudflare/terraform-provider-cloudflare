@@ -29,7 +29,7 @@ func resourceCloudflareAccessApplication() *schema.Resource {
 			Applications are used to restrict access to a whole application using an
 			authorisation gateway managed by Cloudflare.
 		`),
-		DeprecationMessage: "`cloudflare_access_application` is now deprecated and will be removed in the next major version. Use `zero_trust_access_application` instead.",
+		DeprecationMessage: "`cloudflare_access_application` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_access_application` instead.",
 	}
 }
 
@@ -101,6 +101,14 @@ func resourceCloudflareAccessApplicationCreate(ctx context.Context, d *schema.Re
 
 	if _, ok := d.GetOk("saas_app"); ok {
 		newAccessApplication.SaasApplication = convertSaasSchemaToStruct(d)
+	}
+
+	if _, ok := d.GetOk("target_criteria"); ok {
+		target_contexts, err := convertTargetContextsToStruct(d)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		newAccessApplication.TargetContexts = target_contexts
 	}
 
 	if value, ok := d.GetOk("tags"); ok {
@@ -244,6 +252,11 @@ func resourceCloudflareAccessApplicationRead(ctx context.Context, d *schema.Reso
 		return diag.FromErr(fmt.Errorf("error setting Access Application SaaS app configuration: %w", saasConfigErr))
 	}
 
+	targetContexts := convertTargetContextsToSchema(accessApplication.TargetContexts)
+	if targetContextsErr := d.Set("target_criteria", targetContexts); targetContextsErr != nil {
+		return diag.FromErr(fmt.Errorf("error setting Access Application Infrastructure app configuration: %w", targetContextsErr))
+	}
+
 	if _, ok := d.GetOk("self_hosted_domains"); ok {
 		d.Set("self_hosted_domains", accessApplication.SelfHostedDomains)
 	}
@@ -326,6 +339,14 @@ func resourceCloudflareAccessApplicationUpdate(ctx context.Context, d *schema.Re
 	if _, ok := d.GetOk("saas_app"); ok {
 		saasConfig := convertSaasSchemaToStruct(d)
 		updatedAccessApplication.SaasApplication = saasConfig
+	}
+
+	if _, ok := d.GetOk("target_criteria"); ok {
+		target_contexts, err := convertTargetContextsToStruct(d)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		updatedAccessApplication.TargetContexts = target_contexts
 	}
 
 	if value, ok := d.GetOk("tags"); ok {

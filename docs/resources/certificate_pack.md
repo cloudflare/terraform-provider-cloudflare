@@ -51,7 +51,7 @@ resource "cloudflare_certificate_pack" "example" {
 
 ### Required
 
-- `certificate_authority` (String) Which certificate authority to issue the certificate pack. Available values: `digicert`, `lets_encrypt`, `google`. **Modifying this attribute will force creation of a new resource.**
+- `certificate_authority` (String) Which certificate authority to issue the certificate pack. Available values: `digicert`, `lets_encrypt`, `google`, `ssl_com`. **Modifying this attribute will force creation of a new resource.**
 - `hosts` (Set of String) List of hostnames to provision the certificate pack for. The zone name must be included as a host. Note: If using Let's Encrypt, you cannot use individual subdomains and only a wildcard for subdomain is available. **Modifying this attribute will force creation of a new resource.**
 - `type` (String) Certificate pack configuration type. Available values: `advanced`. **Modifying this attribute will force creation of a new resource.**
 - `validation_method` (String) Which validation method to use in order to prove domain ownership. Available values: `txt`, `http`, `email`. **Modifying this attribute will force creation of a new resource.**

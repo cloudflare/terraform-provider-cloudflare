@@ -39,6 +39,7 @@ resource "cloudflare_bot_management" "example" {
 
 ### Optional
 
+- `ai_bots_protection` (String) Enable rule to block AI Scrapers and Crawlers.
 - `auto_update_model` (Boolean) Automatically update to the newest bot detection models created by Cloudflare as they are released. [Learn more.](https://developers.cloudflare.com/bots/reference/machine-learning-models#model-versions-and-release-notes).
 - `enable_js` (Boolean) Use lightweight, invisible JavaScript detections to improve Bot Management. [Learn more about JavaScript Detections](https://developers.cloudflare.com/bots/reference/javascript-detections/).
 - `fight_mode` (Boolean) Whether to enable Bot Fight Mode.

@@ -18,8 +18,11 @@ rules:
         - 'internal/sdkv2provider/resource_cloudflare_fallback_domain_test.go'
     patterns:
       - pattern-regex: '\d+\.\d+\.\d+\.\d+'
+      - pattern-not-regex: '-\d+\.\d+\.\d+\.\d+'
       - pattern-not: '127.0.0.1'
       - pattern-not: '0.0.0.0'
+      - pattern-not: '1.1.1.1'
+      - pattern-not: '1.0.0.1'
       - pattern-not-regex: '10\.\d+\.\d+.\d+'
       - pattern-not-regex: '192\.168\.\d+.\d+'
       - pattern-not-regex: '192\.0\.2\.\d+'    # 192.0.2.0/24 (TEST-NET-1, rfc5737)
@@ -156,6 +159,7 @@ rules:
     patterns:
       - pattern: '"account_id"'
     severity: WARNING
+    fix: "consts.AccountIDSchemaKey"
   - id: use-defined-zone-id-constant-instead-of-strings
     languages:
       - go
@@ -168,4 +172,5 @@ rules:
         - 'templates/'
     patterns:
       - pattern: '"zone_id"'
+    fix: "consts.ZoneIDSchemaKey"
     severity: WARNING

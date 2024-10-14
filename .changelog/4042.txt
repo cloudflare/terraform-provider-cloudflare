@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_hyperdrive_config: fix bug when calling passing Hyperdrive config ID to update method
+```

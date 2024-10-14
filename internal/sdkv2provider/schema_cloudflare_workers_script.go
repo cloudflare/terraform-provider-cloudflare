@@ -149,6 +149,21 @@ var d1BindingResource = &schema.Resource{
 	},
 }
 
+var hyperdriveConfigBindingsResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"binding": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The global variable for the binding in your Worker code.",
+		},
+		"id": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The ID of the Hyperdrive config to use.",
+		},
+	},
+}
+
 var placementResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"mode": {
@@ -263,6 +278,11 @@ func resourceCloudflareWorkerScriptSchema() map[string]*schema.Schema {
 			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     d1BindingResource,
+		},
+		"hyperdrive_config_binding": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     hyperdriveConfigBindingsResource,
 		},
 	}
 }

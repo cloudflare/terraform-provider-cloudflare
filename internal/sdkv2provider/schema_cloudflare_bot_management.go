@@ -3,6 +3,7 @@ package sdkv2provider
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceCloudflareBotManagementSchema() map[string]*schema.Schema {
@@ -62,6 +63,13 @@ func resourceCloudflareBotManagementSchema() map[string]*schema.Schema {
 			Type:        schema.TypeBool,
 			Computed:    true,
 			Description: "A read-only field that indicates whether the zone currently is running the latest ML model.",
+		},
+		"ai_bots_protection": {
+			Type:         schema.TypeString,
+			Computed:     true,
+			Optional:     true,
+			Description:  "Enable rule to block AI Scrapers and Crawlers.",
+			ValidateFunc: validation.StringInSlice([]string{"block", "disabled"}, false),
 		},
 	}
 }

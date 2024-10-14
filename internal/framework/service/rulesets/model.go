@@ -37,6 +37,7 @@ type ActionParametersModel struct {
 	BrowserTTL               []*ActionParameterBrowserTTLModel            `tfsdk:"browser_ttl"`
 	Cache                    types.Bool                                   `tfsdk:"cache"`
 	CacheKey                 []*ActionParameterCacheKeyModel              `tfsdk:"cache_key"`
+	CacheReserve             []*ActionParameterCacheReserveModel          `tfsdk:"cache_reserve"`
 	Content                  types.String                                 `tfsdk:"content"`
 	ContentType              types.String                                 `tfsdk:"content_type"`
 	CookieFields             types.Set                                    `tfsdk:"cookie_fields"`
@@ -180,6 +181,11 @@ type ActionParameterCacheKeyModel struct {
 	IgnoreQueryStringsOrder types.Bool                               `tfsdk:"ignore_query_strings_order"`
 	CacheDeceptionArmor     types.Bool                               `tfsdk:"cache_deception_armor"`
 	CustomKey               []*ActionParameterCacheKeyCustomKeyModel `tfsdk:"custom_key"`
+}
+
+type ActionParameterCacheReserveModel struct {
+	Eligible        types.Bool  `tfsdk:"eligible"`
+	MinimumFileSize types.Int64 `tfsdk:"minimum_file_size"`
 }
 
 type ActionParameterCacheKeyCustomKeyModel struct {
