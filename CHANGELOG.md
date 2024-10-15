@@ -1,5 +1,29 @@
 ## 4.44.0 (Unreleased)
 
+NOTES:
+
+* `cloudflare_list` has been migrated to the `terraform-plugin-framework` in doing so addresses issues with the internal representation of zero values. A downside to this is that to get the full benefits, you will need to remove the resource from your Terraform state (`terraform state rm ...`) and then import the resource back into your state. ([#4228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4228))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_certificate_pack: Add SSL.com as valid certificate authority ([#4267](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4267))
+* resource/cloudflare_device_posture_rule: Add support for SentinelOne posture check operational_state field ([#4200](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4200))
+
+BUG FIXES:
+
+* resource/cloudflare_device_posture_rule: fix bug where locations were not parsed correctly for client_certificate_v2 posture rules ([#4168](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4168))
+* resource/cloudflare_teams_rule: start persisting rule settings, wo rules may not stuck in plan cycle ([#4261](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4261))
+* resource/cloudflare_zone: When changing `type` to or from `partial` the `verification_key` attribute will properly show that it will receive a new value. ([#4019](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4019))
+
+INTERNAL:
+
+* resource/cloudflare_list: migrate from SDKv2 to `terraform-plugin-framework` ([#4228](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4228))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.106.0 to 0.107.0 ([#4251](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4251))
+* provider: bump golang.org/x/net from 0.29.0 to 0.30.0 ([#4213](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4213))
+
 ## 4.43.0 (September 30th, 2024)
 
 FEATURES:
