@@ -112,18 +112,12 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 			{
 				Config: testAccCheckCloudflareLoadBalancerConfigSessionAffinity(zoneID, zone, rnd),
 				Check: resource.ComposeTestCheckFunc(
-					func (state *terraform.State) error {
-						fmt.Println("=======================================================================================")
-						fmt.Printf("%+v\n", state)
-						fmt.Println("=======================================================================================")
-						return nil
-					},
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
 					// explicitly verify that our session_affinity has been set
 					resource.TestCheckResourceAttr(name, "session_affinity", "cookie"),
 					resource.TestCheckResourceAttr(name, "session_affinity_ttl", "1800"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.%", "4"),
+					resource.TestCheckResourceAttr(name, "session_affinity_attributes.%", "5"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.drain_duration", "60"),
