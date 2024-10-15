@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zone: When changing `type` to or from `partial` the `verification_key` attribute will properly show that it will receive a new value.
+```

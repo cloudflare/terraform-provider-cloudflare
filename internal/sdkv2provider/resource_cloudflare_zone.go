@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -91,7 +92,16 @@ var ratePlans = map[string]subscriptionData{
 
 func resourceCloudflareZone() *schema.Resource {
 	return &schema.Resource{
-		Schema:        resourceCloudflareZoneSchema(),
+		Schema: resourceCloudflareZoneSchema(),
+		CustomizeDiff: customdiff.All(
+			customdiff.ComputedIf("verification_key", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+				if d.HasChange("type") {
+					oldTypeVal, newTypeVal := d.GetChange("type")
+					return oldTypeVal == "partial" || newTypeVal == "partial"
+				}
+				return false
+			}),
+		),
 		CreateContext: resourceCloudflareZoneCreate,
 		ReadContext:   resourceCloudflareZoneRead,
 		UpdateContext: resourceCloudflareZoneUpdate,
