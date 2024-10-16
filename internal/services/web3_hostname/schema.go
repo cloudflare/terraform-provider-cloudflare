@@ -29,6 +29,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description:   "The hostname that will point to the target gateway via CNAME.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"target": schema.StringAttribute{
 				Description: "Target gateway of the hostname.",
 				Required:    true,
@@ -56,10 +61,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"modified_on": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
-			},
-			"name": schema.StringAttribute{
-				Description: "The hostname that will point to the target gateway via CNAME.",
-				Computed:    true,
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of the hostname's activation.",
