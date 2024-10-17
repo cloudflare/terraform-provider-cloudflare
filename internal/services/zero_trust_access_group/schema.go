@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -92,9 +93,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.SingleNestedAttribute{
+						"certificate": schema.StringAttribute{
 							Optional:   true,
-							Attributes: map[string]schema.Attribute{},
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Optional: true,
@@ -302,9 +303,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.SingleNestedAttribute{
+						"certificate": schema.StringAttribute{
 							Optional:   true,
-							Attributes: map[string]schema.Attribute{},
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -530,9 +531,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"certificate": schema.SingleNestedAttribute{
+						"certificate": schema.StringAttribute{
 							Optional:   true,
-							Attributes: map[string]schema.Attribute{},
+							CustomType: jsontypes.NormalizedType{},
 						},
 						"group": schema.SingleNestedAttribute{
 							Computed:   true,
