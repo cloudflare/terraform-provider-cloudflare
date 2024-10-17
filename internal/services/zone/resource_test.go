@@ -282,6 +282,7 @@ func TestAccCloudflareZone_SetType(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
