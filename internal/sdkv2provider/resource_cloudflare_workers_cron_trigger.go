@@ -29,6 +29,7 @@ func resourceCloudflareWorkerCronTrigger() *schema.Resource {
 			schedule. Worker Cron Triggers are ideal for running periodic jobs for
 			maintenance or calling third-party APIs to collect up-to-date data.
 		`, "`ScheduledEvent`")),
+		DeprecationMessage: "`cloudflare_worker_cron_trigger` is now deprecated and will be removed in the next major version. Use `cloudflare_workers_cron_trigger` instead.",
 	}
 }
 
@@ -48,7 +49,6 @@ func resourceCloudflareWorkersCronTrigger() *schema.Resource {
 			schedule. Worker Cron Triggers are ideal for running periodic jobs for
 			maintenance or calling third-party APIs to collect up-to-date data.
 		`, "`ScheduledEvent`")),
-		DeprecationMessage: "`cloudflare_worker_cron_trigger` is now deprecated and will be removed in the next major version. Use `cloudflare_workers_cron_trigger` instead.",
 	}
 }
 

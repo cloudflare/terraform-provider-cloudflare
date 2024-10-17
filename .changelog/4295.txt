@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_workers_cron_trigger: fix incorrectly reported deprecated resource
+```
