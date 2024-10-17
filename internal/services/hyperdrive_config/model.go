@@ -13,11 +13,11 @@ type HyperdriveConfigResultEnvelope struct {
 }
 
 type HyperdriveConfigModel struct {
-	ID        types.String                                           `tfsdk:"id" json:"-,computed"`
-	Name      types.String                                           `tfsdk:"name" json:"name,required"`
-	AccountID types.String                                           `tfsdk:"account_id" path:"account_id,required"`
-	Origin    *HyperdriveConfigOriginModel                           `tfsdk:"origin" json:"origin,required"`
-	Caching   customfield.NestedObject[HyperdriveConfigCachingModel] `tfsdk:"caching" json:"caching,computed_optional"`
+	AccountID    types.String                                           `tfsdk:"account_id" path:"account_id,required"`
+	HyperdriveID types.String                                           `tfsdk:"hyperdrive_id" path:"hyperdrive_id,optional"`
+	Name         types.String                                           `tfsdk:"name" json:"name,required"`
+	Origin       *HyperdriveConfigOriginModel                           `tfsdk:"origin" json:"origin,required"`
+	Caching      customfield.NestedObject[HyperdriveConfigCachingModel] `tfsdk:"caching" json:"caching,computed_optional"`
 }
 
 func (m HyperdriveConfigModel) MarshalJSON() (data []byte, err error) {
