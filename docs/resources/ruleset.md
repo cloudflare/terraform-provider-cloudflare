@@ -551,7 +551,7 @@ Optional:
 
 Required:
 
-- `name` (String) Name of the compression algorithm to use. Available values: `gzip`, `brotli`, `auto`, `default`, `none`
+- `name` (String) Name of the compression algorithm to use. Available values: `zstd`, `gzip`, `brotli`, `auto`, `default`, `none`
 
 
 <a id="nestedblock--rules--action_parameters--autominify"></a>
