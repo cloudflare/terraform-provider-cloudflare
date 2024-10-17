@@ -332,7 +332,7 @@ type RulesetRulesRatelimitDataSourceModel struct {
 	RequestsPerPeriod       types.Int64                    `tfsdk:"requests_per_period" json:"requests_per_period,computed"`
 	RequestsToOrigin        types.Bool                     `tfsdk:"requests_to_origin" json:"requests_to_origin,computed"`
 	ScorePerPeriod          types.Int64                    `tfsdk:"score_per_period" json:"score_per_period,computed"`
-	ScoreResponseHeaderName types.Int64                    `tfsdk:"score_response_header_name" json:"score_response_header_name,computed"`
+	ScoreResponseHeaderName types.String                   `tfsdk:"score_response_header_name" json:"score_response_header_name,computed"`
 }
 
 type RulesetFindOneByDataSourceModel struct {
