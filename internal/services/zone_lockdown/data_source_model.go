@@ -22,15 +22,24 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 }
 
 type ZoneLockdownDataSourceModel struct {
-	ZoneIdentifier types.String                                                        `tfsdk:"zone_identifier" path:"zone_identifier,optional"`
-	ID             types.String                                                        `tfsdk:"id" path:"id,computed_optional"`
+	LockDownsID    types.String                                                        `tfsdk:"lock_downs_id" path:"lock_downs_id,optional"`
+	ZoneID         types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
 	CreatedOn      timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
 	Description    types.String                                                        `tfsdk:"description" json:"description,computed"`
+	ID             types.String                                                        `tfsdk:"id" json:"id,computed"`
 	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
 	Paused         types.Bool                                                          `tfsdk:"paused" json:"paused,computed"`
 	URLs           customfield.List[types.String]                                      `tfsdk:"urls" json:"urls,computed"`
 	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
 	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
+}
+
+func (m *ZoneLockdownDataSourceModel) toReadParams(_ context.Context) (params firewall.LockdownGetParams, diags diag.Diagnostics) {
+	params = firewall.LockdownGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 func (m *ZoneLockdownDataSourceModel) toListParams(_ context.Context) (params firewall.LockdownListParams, diags diag.Diagnostics) {
@@ -39,7 +48,9 @@ func (m *ZoneLockdownDataSourceModel) toListParams(_ context.Context) (params fi
 	mFilterModifiedOn, errs := m.Filter.ModifiedOn.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = firewall.LockdownListParams{}
+	params = firewall.LockdownListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
 
 	if !m.Filter.CreatedOn.IsNull() {
 		params.CreatedOn = cloudflare.F(mFilterCreatedOn)
@@ -78,7 +89,7 @@ type ZoneLockdownConfigurationsDataSourceModel struct {
 }
 
 type ZoneLockdownFindOneByDataSourceModel struct {
-	ZoneIdentifier    types.String      `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	ZoneID            types.String      `tfsdk:"zone_id" path:"zone_id,required"`
 	CreatedOn         timetypes.RFC3339 `tfsdk:"created_on" query:"created_on,optional" format:"date-time"`
 	Description       types.String      `tfsdk:"description" query:"description,optional"`
 	DescriptionSearch types.String      `tfsdk:"description_search" query:"description_search,optional"`

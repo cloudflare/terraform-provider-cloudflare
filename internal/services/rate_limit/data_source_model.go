@@ -5,6 +5,7 @@ package rate_limit
 import (
 	"context"
 
+	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -20,20 +21,31 @@ type RateLimitResultListDataSourceEnvelope struct {
 }
 
 type RateLimitDataSourceModel struct {
-	ZoneIdentifier types.String                       `tfsdk:"zone_identifier" path:"zone_identifier,optional"`
-	ID             types.String                       `tfsdk:"id" path:"id,computed_optional"`
-	Description    types.String                       `tfsdk:"description" json:"description,optional"`
-	Disabled       types.Bool                         `tfsdk:"disabled" json:"disabled,optional"`
-	Period         types.Float64                      `tfsdk:"period" json:"period,optional"`
-	Threshold      types.Float64                      `tfsdk:"threshold" json:"threshold,optional"`
-	Action         *RateLimitActionDataSourceModel    `tfsdk:"action" json:"action,optional"`
-	Bypass         *[]*RateLimitBypassDataSourceModel `tfsdk:"bypass" json:"bypass,optional"`
-	Match          *RateLimitMatchDataSourceModel     `tfsdk:"match" json:"match,optional"`
-	Filter         *RateLimitFindOneByDataSourceModel `tfsdk:"filter"`
+	RateLimitID types.String                                                 `tfsdk:"rate_limit_id" path:"rate_limit_id,optional"`
+	ZoneID      types.String                                                 `tfsdk:"zone_id" path:"zone_id,optional"`
+	Description types.String                                                 `tfsdk:"description" json:"description,computed"`
+	Disabled    types.Bool                                                   `tfsdk:"disabled" json:"disabled,computed"`
+	ID          types.String                                                 `tfsdk:"id" json:"id,computed"`
+	Period      types.Float64                                                `tfsdk:"period" json:"period,computed"`
+	Threshold   types.Float64                                                `tfsdk:"threshold" json:"threshold,computed"`
+	Action      customfield.NestedObject[RateLimitActionDataSourceModel]     `tfsdk:"action" json:"action,computed"`
+	Bypass      customfield.NestedObjectList[RateLimitBypassDataSourceModel] `tfsdk:"bypass" json:"bypass,computed"`
+	Match       customfield.NestedObject[RateLimitMatchDataSourceModel]      `tfsdk:"match" json:"match,computed"`
+	Filter      *RateLimitFindOneByDataSourceModel                           `tfsdk:"filter"`
+}
+
+func (m *RateLimitDataSourceModel) toReadParams(_ context.Context) (params rate_limits.RateLimitGetParams, diags diag.Diagnostics) {
+	params = rate_limits.RateLimitGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 func (m *RateLimitDataSourceModel) toListParams(_ context.Context) (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitListParams{}
+	params = rate_limits.RateLimitListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
 
 	return
 }
@@ -77,5 +89,5 @@ type RateLimitMatchResponseDataSourceModel struct {
 }
 
 type RateLimitFindOneByDataSourceModel struct {
-	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	ZoneID types.String `tfsdk:"zone_id" path:"zone_id,required"`
 }

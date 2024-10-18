@@ -22,40 +22,44 @@ var _ datasource.DataSourceWithConfigValidators = (*RateLimitDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_identifier": schema.StringAttribute{
-				Description: "Identifier",
+			"rate_limit_id": schema.StringAttribute{
+				Description: "The unique identifier of the rate limit.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the rate limit.",
-				Computed:    true,
+			"zone_id": schema.StringAttribute{
+				Description: "Identifier",
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the rate limit. This value is sanitized and any tags will be removed.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"disabled": schema.BoolAttribute{
 				Description: "When true, indicates that the rate limit is currently disabled.",
-				Optional:    true,
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the rate limit.",
+				Computed:    true,
 			},
 			"period": schema.Float64Attribute{
 				Description: "The time in seconds (an integer value) to count matching traffic. If the count exceeds the configured threshold within this period, Cloudflare will perform the configured action.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(10, 86400),
 				},
 			},
 			"threshold": schema.Float64Attribute{
 				Description: "The threshold that will trigger the configured mitigation action. Configure this value along with the `period` property to establish a threshold per period.",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.AtLeast(1),
 				},
 			},
 			"action": schema.SingleNestedAttribute{
 				Description: "The action to perform when the threshold of matched traffic within the configured period is exceeded.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[RateLimitActionDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"mode": schema.StringAttribute{
 						Description: "The action to perform.",
@@ -96,7 +100,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"bypass": schema.ListNestedAttribute{
 				Description: "Criteria specifying when the current rate limit should be bypassed. You can specify that the rate limit should not apply to one or more URLs.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectListType[RateLimitBypassDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
@@ -114,7 +119,8 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"match": schema.SingleNestedAttribute{
 				Description: "Determines which traffic the rate limit counts towards the threshold.",
-				Optional:    true,
+				Computed:    true,
+				CustomType:  customfield.NewNestedObjectType[RateLimitMatchDataSourceModel](ctx),
 				Attributes: map[string]schema.Attribute{
 					"headers": schema.ListNestedAttribute{
 						Computed:   true,
@@ -189,7 +195,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"zone_identifier": schema.StringAttribute{
+					"zone_id": schema.StringAttribute{
 						Description: "Identifier",
 						Required:    true,
 					},
@@ -205,8 +211,8 @@ func (d *RateLimitDataSource) Schema(ctx context.Context, req datasource.SchemaR
 
 func (d *RateLimitDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("id"), path.MatchRoot("zone_identifier")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_identifier")),
+		datasourcevalidator.RequiredTogether(path.MatchRoot("rate_limit_id"), path.MatchRoot("zone_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rate_limit_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
 	}
 }
