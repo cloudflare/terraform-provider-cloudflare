@@ -122,10 +122,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Default: stringdefault.StaticString("disabled"),
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-			},
 		},
 	}
 }

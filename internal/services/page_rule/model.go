@@ -19,7 +19,6 @@ type PageRuleModel struct {
 	Targets    *[]*PageRuleTargetsModel `tfsdk:"targets" json:"targets,required"`
 	Priority   types.Int64              `tfsdk:"priority" json:"priority,computed_optional"`
 	Status     types.String             `tfsdk:"status" json:"status,computed_optional"`
-	ID         types.String             `tfsdk:"id" json:"id,computed"`
 }
 
 func (m PageRuleModel) MarshalJSON() (data []byte, err error) {

@@ -79,10 +79,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
-			"subscription_id": schema.StringAttribute{
-				Description: "Subscription identifier tag.",
-				Computed:    true,
-			},
 		},
 	}
 }

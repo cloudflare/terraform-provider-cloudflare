@@ -73,10 +73,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "An informative summary of the rule, typically used as a reminder or explanation.",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
-				Description: "Identifier",
-				Computed:    true,
-			},
 		},
 	}
 }

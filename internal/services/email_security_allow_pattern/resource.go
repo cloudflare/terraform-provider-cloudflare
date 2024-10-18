@@ -69,7 +69,7 @@ func (r *EmailSecurityAllowPatternResource) Create(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityAllowPatternResultEnvelope{*data}
+	env := EmailSecurityAllowPatternResultEnvelope{data.Body}
 	_, err = r.client.EmailSecurity.Settings.AllowPatterns.New(
 		ctx,
 		email_security.SettingAllowPatternNewParams{
@@ -89,7 +89,7 @@ func (r *EmailSecurityAllowPatternResource) Create(ctx context.Context, req reso
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -117,7 +117,7 @@ func (r *EmailSecurityAllowPatternResource) Update(ctx context.Context, req reso
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityAllowPatternResultEnvelope{*data}
+	env := EmailSecurityAllowPatternResultEnvelope{data.Body}
 	_, err = r.client.EmailSecurity.Settings.AllowPatterns.Edit(
 		ctx,
 		data.ID.ValueInt64(),
@@ -138,7 +138,7 @@ func (r *EmailSecurityAllowPatternResource) Update(ctx context.Context, req reso
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -153,7 +153,7 @@ func (r *EmailSecurityAllowPatternResource) Read(ctx context.Context, req resour
 	}
 
 	res := new(http.Response)
-	env := EmailSecurityAllowPatternResultEnvelope{*data}
+	env := EmailSecurityAllowPatternResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.AllowPatterns.Get(
 		ctx,
 		data.ID.ValueInt64(),
@@ -173,7 +173,7 @@ func (r *EmailSecurityAllowPatternResource) Read(ctx context.Context, req resour
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -220,7 +220,7 @@ func (r *EmailSecurityAllowPatternResource) ImportState(ctx context.Context, req
 	}
 
 	res := new(http.Response)
-	env := EmailSecurityAllowPatternResultEnvelope{*data}
+	env := EmailSecurityAllowPatternResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.AllowPatterns.Get(
 		ctx,
 		path_pattern_id,
@@ -240,7 +240,7 @@ func (r *EmailSecurityAllowPatternResource) ImportState(ctx context.Context, req
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -69,7 +69,7 @@ func (r *EmailSecurityTrustedDomainsResource) Create(ctx context.Context, req re
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
+	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
 	_, err = r.client.EmailSecurity.Settings.TrustedDomains.New(
 		ctx,
 		email_security.SettingTrustedDomainNewParams{
@@ -89,7 +89,7 @@ func (r *EmailSecurityTrustedDomainsResource) Create(ctx context.Context, req re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -117,7 +117,7 @@ func (r *EmailSecurityTrustedDomainsResource) Update(ctx context.Context, req re
 		return
 	}
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
+	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
 	_, err = r.client.EmailSecurity.Settings.TrustedDomains.Edit(
 		ctx,
 		data.ID.ValueInt64(),
@@ -138,7 +138,7 @@ func (r *EmailSecurityTrustedDomainsResource) Update(ctx context.Context, req re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -153,7 +153,7 @@ func (r *EmailSecurityTrustedDomainsResource) Read(ctx context.Context, req reso
 	}
 
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
+	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Get(
 		ctx,
 		data.ID.ValueInt64(),
@@ -173,7 +173,7 @@ func (r *EmailSecurityTrustedDomainsResource) Read(ctx context.Context, req reso
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -220,7 +220,7 @@ func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, r
 	}
 
 	res := new(http.Response)
-	env := EmailSecurityTrustedDomainsResultEnvelope{*data}
+	env := EmailSecurityTrustedDomainsResultEnvelope{data.Body}
 	_, err := r.client.EmailSecurity.Settings.TrustedDomains.Get(
 		ctx,
 		path_pattern_id,
@@ -240,7 +240,7 @@ func (r *EmailSecurityTrustedDomainsResource) ImportState(ctx context.Context, r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
+	data.Body = env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

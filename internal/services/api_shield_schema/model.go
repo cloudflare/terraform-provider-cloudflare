@@ -25,9 +25,6 @@ type APIShieldSchemaModel struct {
 	ValidationEnabled types.String                                                `tfsdk:"validation_enabled" json:"validation_enabled,optional"`
 	CreatedAt         timetypes.RFC3339                                           `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Source            types.String                                                `tfsdk:"source" json:"source,computed"`
-	Success           types.Bool                                                  `tfsdk:"success" json:"success,computed"`
-	Errors            customfield.NestedObjectList[APIShieldSchemaErrorsModel]    `tfsdk:"errors" json:"errors,computed"`
-	Messages          customfield.NestedObjectList[APIShieldSchemaMessagesModel]  `tfsdk:"messages" json:"messages,computed"`
 	Schema            customfield.NestedObject[APIShieldSchemaSchemaModel]        `tfsdk:"schema" json:"schema,computed"`
 	UploadDetails     customfield.NestedObject[APIShieldSchemaUploadDetailsModel] `tfsdk:"upload_details" json:"upload_details,computed"`
 }
@@ -45,16 +42,6 @@ func (r APIShieldSchemaModel) MarshalMultipart() (data []byte, contentType strin
 		return nil, "", err
 	}
 	return buf.Bytes(), writer.FormDataContentType(), nil
-}
-
-type APIShieldSchemaErrorsModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
-}
-
-type APIShieldSchemaMessagesModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
 }
 
 type APIShieldSchemaSchemaModel struct {

@@ -8,22 +8,26 @@ import (
 )
 
 type ZeroTrustLocalDomainFallbackResultEnvelope struct {
-	Result ZeroTrustLocalDomainFallbackModel `json:"result"`
+	Result *[]*ZeroTrustLocalDomainFallbackBodyModel `json:"result"`
 }
 
 type ZeroTrustLocalDomainFallbackModel struct {
-	ID          types.String    `tfsdk:"id" json:"-,computed"`
-	PolicyID    types.String    `tfsdk:"policy_id" path:"policy_id,required"`
-	AccountID   types.String    `tfsdk:"account_id" path:"account_id,required"`
-	Suffix      types.String    `tfsdk:"suffix" json:"suffix,required"`
-	Description types.String    `tfsdk:"description" json:"description,optional"`
-	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server,optional"`
+	ID        types.String                              `tfsdk:"id" json:"-,computed"`
+	PolicyID  types.String                              `tfsdk:"policy_id" path:"policy_id,required"`
+	AccountID types.String                              `tfsdk:"account_id" path:"account_id,required"`
+	Body      *[]*ZeroTrustLocalDomainFallbackBodyModel `tfsdk:"body" json:"body,required"`
 }
 
 func (m ZeroTrustLocalDomainFallbackModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m)
+	return apijson.MarshalRoot(m.Body)
 }
 
 func (m ZeroTrustLocalDomainFallbackModel) MarshalJSONForUpdate(state ZeroTrustLocalDomainFallbackModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(m.Body, state.Body)
+}
+
+type ZeroTrustLocalDomainFallbackBodyModel struct {
+	Suffix      types.String    `tfsdk:"suffix" json:"suffix,required"`
+	Description types.String    `tfsdk:"description" json:"description,optional"`
+	DNSServer   *[]types.String `tfsdk:"dns_server" json:"dns_server,optional"`
 }
