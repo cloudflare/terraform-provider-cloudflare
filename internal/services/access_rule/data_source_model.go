@@ -12,31 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type AccessRuleResultDataSourceEnvelope struct {
-	Result AccessRuleDataSourceModel `json:"result,computed"`
-}
-
 type AccessRuleResultListDataSourceEnvelope struct {
 	Result customfield.NestedObjectList[AccessRuleDataSourceModel] `json:"result,computed"`
 }
 
 type AccessRuleDataSourceModel struct {
-	AccountID types.String                        `tfsdk:"account_id" path:"account_id,optional"`
-	RuleID    types.String                        `tfsdk:"rule_id" path:"rule_id,optional"`
-	ZoneID    types.String                        `tfsdk:"zone_id" path:"zone_id,optional"`
-	Filter    *AccessRuleFindOneByDataSourceModel `tfsdk:"filter"`
-}
-
-func (m *AccessRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.AccessRuleGetParams, diags diag.Diagnostics) {
-	params = firewall.AccessRuleGetParams{}
-
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
-	}
-
-	return
+	Filter *AccessRuleFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
