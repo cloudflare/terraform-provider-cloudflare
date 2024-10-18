@@ -13,7 +13,6 @@ type AccessRuleResultEnvelope struct {
 
 type AccessRuleModel struct {
 	AccountID     types.String                  `tfsdk:"account_id" path:"account_id,optional"`
-	RuleID        types.String                  `tfsdk:"rule_id" path:"rule_id,optional"`
 	ZoneID        types.String                  `tfsdk:"zone_id" path:"zone_id,optional"`
 	Mode          types.String                  `tfsdk:"mode" json:"mode,required"`
 	Configuration *AccessRuleConfigurationModel `tfsdk:"configuration" json:"configuration,required"`
