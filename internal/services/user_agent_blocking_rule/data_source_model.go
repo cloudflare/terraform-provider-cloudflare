@@ -21,17 +21,28 @@ type UserAgentBlockingRuleResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRuleDataSourceModel struct {
-	ZoneIdentifier types.String                                       `tfsdk:"zone_identifier" path:"zone_identifier,optional"`
-	ID             types.String                                       `tfsdk:"id" path:"id,computed_optional"`
-	Description    types.String                                       `tfsdk:"description" json:"description,optional"`
-	Mode           types.String                                       `tfsdk:"mode" json:"mode,optional"`
-	Paused         types.Bool                                         `tfsdk:"paused" json:"paused,optional"`
-	Configuration  *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration,optional"`
-	Filter         *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
+	UARuleID      types.String                                       `tfsdk:"ua_rule_id" path:"ua_rule_id,optional"`
+	ZoneID        types.String                                       `tfsdk:"zone_id" path:"zone_id,optional"`
+	Description   types.String                                       `tfsdk:"description" json:"description,optional"`
+	ID            types.String                                       `tfsdk:"id" json:"id,optional"`
+	Mode          types.String                                       `tfsdk:"mode" json:"mode,optional"`
+	Paused        types.Bool                                         `tfsdk:"paused" json:"paused,optional"`
+	Configuration *UserAgentBlockingRuleConfigurationDataSourceModel `tfsdk:"configuration" json:"configuration,optional"`
+	Filter        *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
+}
+
+func (m *UserAgentBlockingRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.UARuleGetParams, diags diag.Diagnostics) {
+	params = firewall.UARuleGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 func (m *UserAgentBlockingRuleDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
-	params = firewall.UARuleListParams{}
+	params = firewall.UARuleListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
 
 	if !m.Filter.Description.IsNull() {
 		params.Description = cloudflare.F(m.Filter.Description.ValueString())
@@ -52,7 +63,7 @@ type UserAgentBlockingRuleConfigurationDataSourceModel struct {
 }
 
 type UserAgentBlockingRuleFindOneByDataSourceModel struct {
-	ZoneIdentifier    types.String `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	ZoneID            types.String `tfsdk:"zone_id" path:"zone_id,required"`
 	Description       types.String `tfsdk:"description" query:"description,optional"`
 	DescriptionSearch types.String `tfsdk:"description_search" query:"description_search,optional"`
 	UASearch          types.String `tfsdk:"ua_search" query:"ua_search,optional"`

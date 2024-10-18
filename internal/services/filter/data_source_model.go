@@ -21,17 +21,28 @@ type FilterResultListDataSourceEnvelope struct {
 }
 
 type FilterDataSourceModel struct {
-	ZoneIdentifier types.String                    `tfsdk:"zone_identifier" path:"zone_identifier,optional"`
-	ID             types.String                    `tfsdk:"id" path:"id,computed_optional"`
-	Description    types.String                    `tfsdk:"description" json:"description,computed"`
-	Expression     types.String                    `tfsdk:"expression" json:"expression,computed"`
-	Paused         types.Bool                      `tfsdk:"paused" json:"paused,computed"`
-	Ref            types.String                    `tfsdk:"ref" json:"ref,computed"`
-	Filter         *FilterFindOneByDataSourceModel `tfsdk:"filter"`
+	FilterID    types.String                    `tfsdk:"filter_id" path:"filter_id,optional"`
+	ZoneID      types.String                    `tfsdk:"zone_id" path:"zone_id,optional"`
+	Description types.String                    `tfsdk:"description" json:"description,computed"`
+	Expression  types.String                    `tfsdk:"expression" json:"expression,computed"`
+	ID          types.String                    `tfsdk:"id" json:"id,computed"`
+	Paused      types.Bool                      `tfsdk:"paused" json:"paused,computed"`
+	Ref         types.String                    `tfsdk:"ref" json:"ref,computed"`
+	Filter      *FilterFindOneByDataSourceModel `tfsdk:"filter"`
+}
+
+func (m *FilterDataSourceModel) toReadParams(_ context.Context) (params filters.FilterGetParams, diags diag.Diagnostics) {
+	params = filters.FilterGetParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
+
+	return
 }
 
 func (m *FilterDataSourceModel) toListParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
-	params = filters.FilterListParams{}
+	params = filters.FilterListParams{
+		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	}
 
 	if !m.Filter.ID.IsNull() {
 		params.ID = cloudflare.F(m.Filter.ID.ValueString())
@@ -53,10 +64,10 @@ func (m *FilterDataSourceModel) toListParams(_ context.Context) (params filters.
 }
 
 type FilterFindOneByDataSourceModel struct {
-	ZoneIdentifier types.String `tfsdk:"zone_identifier" path:"zone_identifier,required"`
-	ID             types.String `tfsdk:"id" query:"id,optional"`
-	Description    types.String `tfsdk:"description" query:"description,optional"`
-	Expression     types.String `tfsdk:"expression" query:"expression,optional"`
-	Paused         types.Bool   `tfsdk:"paused" query:"paused,optional"`
-	Ref            types.String `tfsdk:"ref" query:"ref,optional"`
+	ZoneID      types.String `tfsdk:"zone_id" path:"zone_id,required"`
+	ID          types.String `tfsdk:"id" query:"id,optional"`
+	Description types.String `tfsdk:"description" query:"description,optional"`
+	Expression  types.String `tfsdk:"expression" query:"expression,optional"`
+	Paused      types.Bool   `tfsdk:"paused" query:"paused,optional"`
+	Ref         types.String `tfsdk:"ref" query:"ref,optional"`
 }
