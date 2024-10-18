@@ -31,6 +31,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"expected_codes": schema.StringAttribute{
+				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
+				Required:    true,
+			},
 			"description": schema.StringAttribute{
 				Description: "Object description.",
 				Optional:    true,
@@ -67,12 +71,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				Optional:    true,
 				Default:     int64default.StaticInt64(0),
-			},
-			"expected_codes": schema.StringAttribute{
-				Description: "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString("200"),
 			},
 			"follow_redirects": schema.BoolAttribute{
 				Description: "Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.",
