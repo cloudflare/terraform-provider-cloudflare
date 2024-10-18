@@ -70,8 +70,9 @@ func (r *UserAgentBlockingRuleResource) Create(ctx context.Context, req resource
 	env := UserAgentBlockingRuleResultEnvelope{*data}
 	_, err = r.client.Firewall.UARules.New(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
-		firewall.UARuleNewParams{},
+		firewall.UARuleNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,9 +118,10 @@ func (r *UserAgentBlockingRuleResource) Update(ctx context.Context, req resource
 	env := UserAgentBlockingRuleResultEnvelope{*data}
 	_, err = r.client.Firewall.UARules.Update(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
-		data.ID.ValueString(),
-		firewall.UARuleUpdateParams{},
+		data.UARuleID.ValueString(),
+		firewall.UARuleUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -152,8 +154,10 @@ func (r *UserAgentBlockingRuleResource) Read(ctx context.Context, req resource.R
 	env := UserAgentBlockingRuleResultEnvelope{*data}
 	_, err := r.client.Firewall.UARules.Get(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
-		data.ID.ValueString(),
+		data.UARuleID.ValueString(),
+		firewall.UARuleGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -183,8 +187,10 @@ func (r *UserAgentBlockingRuleResource) Delete(ctx context.Context, req resource
 
 	_, err := r.client.Firewall.UARules.Delete(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
-		data.ID.ValueString(),
+		data.UARuleID.ValueString(),
+		firewall.UARuleDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

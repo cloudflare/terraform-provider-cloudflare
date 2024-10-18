@@ -67,7 +67,7 @@ func (d *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRe
 	env := FirewallRuleResultDataSourceEnvelope{*data}
 	_, err := d.client.Firewall.Rules.Get(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
+		data.RuleID.ValueString(),
 		params,
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),

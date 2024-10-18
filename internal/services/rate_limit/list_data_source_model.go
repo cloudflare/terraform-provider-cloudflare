@@ -5,6 +5,7 @@ package rate_limit
 import (
 	"context"
 
+	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -16,13 +17,15 @@ type RateLimitsResultListDataSourceEnvelope struct {
 }
 
 type RateLimitsDataSourceModel struct {
-	ZoneIdentifier types.String                                                  `tfsdk:"zone_identifier" path:"zone_identifier,required"`
-	MaxItems       types.Int64                                                   `tfsdk:"max_items"`
-	Result         customfield.NestedObjectList[RateLimitsResultDataSourceModel] `tfsdk:"result"`
+	ZoneID   types.String                                                  `tfsdk:"zone_id" path:"zone_id,required"`
+	MaxItems types.Int64                                                   `tfsdk:"max_items"`
+	Result   customfield.NestedObjectList[RateLimitsResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *RateLimitsDataSourceModel) toListParams(_ context.Context) (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitListParams{}
+	params = rate_limits.RateLimitListParams{
+		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	}
 
 	return
 }
