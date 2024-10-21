@@ -29,19 +29,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
-			"app_id": schema.StringAttribute{
-				Description:   "UUID",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"account_id": schema.StringAttribute{
-				Description:   "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"zone_id": schema.StringAttribute{
-				Description:   "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-				Optional:      true,
+				Description:   "Identifier",
+				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"decision": schema.StringAttribute{
@@ -253,10 +243,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 				},
-			},
-			"precedence": schema.Int64Attribute{
-				Description: "The order of execution for this policy. Must be unique for each policy within an app.",
-				Optional:    true,
 			},
 			"purpose_justification_prompt": schema.StringAttribute{
 				Description: "A custom message that will appear on the purpose justification screen.",
@@ -789,9 +775,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"app_count": schema.Int64Attribute{
+				Description: "Number of access applications currently using this policy.",
+				Computed:    true,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:   true,
 				CustomType: timetypes.RFC3339Type{},
+			},
+			"reusable": schema.BoolAttribute{
+				Computed: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed:   true,
