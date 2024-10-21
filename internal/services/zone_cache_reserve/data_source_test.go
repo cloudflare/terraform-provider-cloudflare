@@ -28,7 +28,7 @@ func TestAccDataCloudflareZoneCacheReserve_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					// testAccCheckCloudflareZoneCacheReserveValuesUpdated(zoneID, true),
 					resource.TestCheckResourceAttrSet(name, consts.ZoneIDSchemaKey),
-					resource.TestCheckResourceAttr(name, "enabled", "true"),
+					resource.TestCheckResourceAttr(name, "value", "off"),
 				),
 			},
 		},
