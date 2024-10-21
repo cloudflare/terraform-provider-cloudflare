@@ -151,6 +151,41 @@ func TestAccPreCheck_BYOIPPrefix(t *testing.T) {
 	}
 }
 
+// Test helper method checking all required Hyperdrive configurations are present.
+func TestAccPreCheck_Hyperdrive(t *testing.T) {
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_NAME must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_HOSTNAME must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_PORT must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_USER"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_USER must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_DATABASE_PASSWORD must be set for this acceptance test")
+	}
+}
+
+func TestAccPreCheck_HyperdriveWithAccess(t *testing.T) {
+	TestAccPreCheck_Hyperdrive(t)
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_ID"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_ID must be set for this acceptance test")
+	}
+
+	if v := os.Getenv("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_SECRET"); v == "" {
+		t.Fatal("CLOUDFLARE_HYPERDRIVE_ACCESS_CLIENT_SECRET must be set for this acceptance test")
+	}
+}
+
 // TestAccSkipForDefaultZone is used for skipping over tests that are not run by
 // default on usual acceptance test suite account.
 func TestAccSkipForDefaultZone(t *testing.T, reason string) {
