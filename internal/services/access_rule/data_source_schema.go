@@ -5,9 +5,7 @@ package access_rule
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -23,30 +21,18 @@ var _ datasource.DataSourceWithConfigValidators = (*AccessRuleDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
-				Optional:    true,
-			},
-			"rule_id": schema.StringAttribute{
-				Description: "Unique identifier for a rule",
-				Optional:    true,
-			},
-			"zone_id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
-				Optional:    true,
-			},
 			"created_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was created.",
-				Computed:    true,
+				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique identifier of the IP Access rule.",
-				Computed:    true,
+				Optional:    true,
 			},
 			"mode": schema.StringAttribute{
 				Description: "The action to apply to a matched request.",
-				Computed:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"block",
@@ -59,16 +45,16 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The timestamp of when the rule was last modified.",
-				Computed:    true,
+				Optional:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"notes": schema.StringAttribute{
 				Description: "An informative summary of the rule, typically used as a reminder or explanation.",
-				Computed:    true,
+				Optional:    true,
 			},
 			"allowed_modes": schema.ListAttribute{
 				Description: "The available actions that a rule can apply to a matched request.",
-				Computed:    true,
+				Optional:    true,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(
 						stringvalidator.OneOfCaseInsensitive(
@@ -80,13 +66,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 						),
 					),
 				},
-				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"configuration": schema.SingleNestedAttribute{
 				Description: "The rule configuration.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[AccessRuleConfigurationDataSourceModel](ctx),
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"target": schema.StringAttribute{
 						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.",
@@ -109,8 +93,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"scope": schema.SingleNestedAttribute{
 				Description: "All zones owned by the user will have the rule applied.",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[AccessRuleScopeDataSourceModel](ctx),
+				Optional:    true,
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
 						Description: "Identifier",
@@ -218,10 +201,5 @@ func (d *AccessRuleDataSource) Schema(ctx context.Context, req datasource.Schema
 }
 
 func (d *AccessRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("rule_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }

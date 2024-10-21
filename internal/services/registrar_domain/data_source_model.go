@@ -8,7 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/registrar"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,14 +22,21 @@ type RegistrarDomainResultListDataSourceEnvelope struct {
 }
 
 type RegistrarDomainDataSourceModel struct {
-	AccountID  types.String                               `tfsdk:"account_id" path:"account_id,optional"`
-	DomainName types.String                               `tfsdk:"domain_name" path:"domain_name,optional"`
-	Success    types.Bool                                 `tfsdk:"success" json:"success,optional"`
-	Errors     *[]*RegistrarDomainErrorsDataSourceModel   `tfsdk:"errors" json:"errors,optional"`
-	Messages   *[]*RegistrarDomainMessagesDataSourceModel `tfsdk:"messages" json:"messages,optional"`
-	ResultInfo *RegistrarDomainResultInfoDataSourceModel  `tfsdk:"result_info" json:"result_info,optional"`
-	Result     jsontypes.Normalized                       `tfsdk:"result" json:"result,optional"`
-	Filter     *RegistrarDomainFindOneByDataSourceModel   `tfsdk:"filter"`
+	AccountID         types.String                                     `tfsdk:"account_id" path:"account_id,optional"`
+	DomainName        types.String                                     `tfsdk:"domain_name" path:"domain_name,optional"`
+	Available         types.Bool                                       `tfsdk:"available" json:"available,optional"`
+	CanRegister       types.Bool                                       `tfsdk:"can_register" json:"can_register,optional"`
+	CreatedAt         timetypes.RFC3339                                `tfsdk:"created_at" json:"created_at,optional" format:"date-time"`
+	CurrentRegistrar  types.String                                     `tfsdk:"current_registrar" json:"current_registrar,optional"`
+	ExpiresAt         timetypes.RFC3339                                `tfsdk:"expires_at" json:"expires_at,optional" format:"date-time"`
+	ID                types.String                                     `tfsdk:"id" json:"id,optional"`
+	Locked            types.Bool                                       `tfsdk:"locked" json:"locked,optional"`
+	RegistryStatuses  types.String                                     `tfsdk:"registry_statuses" json:"registry_statuses,optional"`
+	SupportedTld      types.Bool                                       `tfsdk:"supported_tld" json:"supported_tld,optional"`
+	UpdatedAt         timetypes.RFC3339                                `tfsdk:"updated_at" json:"updated_at,optional" format:"date-time"`
+	RegistrantContact *RegistrarDomainRegistrantContactDataSourceModel `tfsdk:"registrant_contact" json:"registrant_contact,optional"`
+	TransferIn        *RegistrarDomainTransferInDataSourceModel        `tfsdk:"transfer_in" json:"transfer_in,optional"`
+	Filter            *RegistrarDomainFindOneByDataSourceModel         `tfsdk:"filter"`
 }
 
 func (m *RegistrarDomainDataSourceModel) toReadParams(_ context.Context) (params registrar.DomainGetParams, diags diag.Diagnostics) {
@@ -48,21 +55,29 @@ func (m *RegistrarDomainDataSourceModel) toListParams(_ context.Context) (params
 	return
 }
 
-type RegistrarDomainErrorsDataSourceModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
+type RegistrarDomainRegistrantContactDataSourceModel struct {
+	Address      types.String `tfsdk:"address" json:"address,computed"`
+	City         types.String `tfsdk:"city" json:"city,computed"`
+	Country      types.String `tfsdk:"country" json:"country,computed"`
+	FirstName    types.String `tfsdk:"first_name" json:"first_name,computed"`
+	LastName     types.String `tfsdk:"last_name" json:"last_name,computed"`
+	Organization types.String `tfsdk:"organization" json:"organization,computed"`
+	Phone        types.String `tfsdk:"phone" json:"phone,computed"`
+	State        types.String `tfsdk:"state" json:"state,computed"`
+	Zip          types.String `tfsdk:"zip" json:"zip,computed"`
+	ID           types.String `tfsdk:"id" json:"id,computed"`
+	Address2     types.String `tfsdk:"address2" json:"address2,computed"`
+	Email        types.String `tfsdk:"email" json:"email,computed"`
+	Fax          types.String `tfsdk:"fax" json:"fax,computed"`
 }
 
-type RegistrarDomainMessagesDataSourceModel struct {
-	Code    types.Int64  `tfsdk:"code" json:"code,computed"`
-	Message types.String `tfsdk:"message" json:"message,computed"`
-}
-
-type RegistrarDomainResultInfoDataSourceModel struct {
-	Count      types.Float64 `tfsdk:"count" json:"count,computed"`
-	Page       types.Float64 `tfsdk:"page" json:"page,computed"`
-	PerPage    types.Float64 `tfsdk:"per_page" json:"per_page,computed"`
-	TotalCount types.Float64 `tfsdk:"total_count" json:"total_count,computed"`
+type RegistrarDomainTransferInDataSourceModel struct {
+	AcceptFoa         types.String `tfsdk:"accept_foa" json:"accept_foa,computed"`
+	ApproveTransfer   types.String `tfsdk:"approve_transfer" json:"approve_transfer,computed"`
+	CanCancelTransfer types.Bool   `tfsdk:"can_cancel_transfer" json:"can_cancel_transfer,computed"`
+	DisablePrivacy    types.String `tfsdk:"disable_privacy" json:"disable_privacy,computed"`
+	EnterAuthCode     types.String `tfsdk:"enter_auth_code" json:"enter_auth_code,computed"`
+	UnlockDomain      types.String `tfsdk:"unlock_domain" json:"unlock_domain,computed"`
 }
 
 type RegistrarDomainFindOneByDataSourceModel struct {
