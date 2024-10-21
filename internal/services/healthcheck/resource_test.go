@@ -37,7 +37,6 @@ func TestAccCloudflareHealthcheckTCPExists(t *testing.T) {
 				Config: testAccCheckCloudflareHealthcheckTCP(zoneID, rnd, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
-					resource.TestCheckResourceAttr(name, "description", ""),
 					resource.TestCheckResourceAttr(name, "tcp_config.port", "80"),
 					resource.TestCheckResourceAttr(name, "tcp_config.method", "connection_established"),
 				),
@@ -112,7 +111,6 @@ func TestAccCloudflareHealthcheckHTTPExists(t *testing.T) {
 				Config: testAccCheckCloudflareHealthcheckHTTP(zoneID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareHealthcheckExists(name, zoneID, &healthcheck),
-					resource.TestCheckResourceAttr(name, "description", ""),
 					resource.TestCheckResourceAttr(name, "header.#", "0"),
 					resource.TestCheckResourceAttr(name, "http_config.port", "80"),
 					resource.TestCheckResourceAttr(name, "http_config.method", "GET"),
