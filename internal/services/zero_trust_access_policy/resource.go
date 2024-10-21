@@ -70,18 +70,11 @@ func (r *ZeroTrustAccessPolicyResource) Create(ctx context.Context, req resource
 	}
 	res := new(http.Response)
 	env := ZeroTrustAccessPolicyResultEnvelope{*data}
-	params := zero_trust.AccessApplicationPolicyNewParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err = r.client.ZeroTrust.Access.Applications.Policies.New(
+	_, err = r.client.ZeroTrust.Access.Policies.New(
 		ctx,
-		data.AppID.ValueString(),
-		params,
+		zero_trust.AccessPolicyNewParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -125,19 +118,12 @@ func (r *ZeroTrustAccessPolicyResource) Update(ctx context.Context, req resource
 	}
 	res := new(http.Response)
 	env := ZeroTrustAccessPolicyResultEnvelope{*data}
-	params := zero_trust.AccessApplicationPolicyUpdateParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err = r.client.ZeroTrust.Access.Applications.Policies.Update(
+	_, err = r.client.ZeroTrust.Access.Policies.Update(
 		ctx,
-		data.AppID.ValueString(),
 		data.ID.ValueString(),
-		params,
+		zero_trust.AccessPolicyUpdateParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -168,19 +154,12 @@ func (r *ZeroTrustAccessPolicyResource) Read(ctx context.Context, req resource.R
 
 	res := new(http.Response)
 	env := ZeroTrustAccessPolicyResultEnvelope{*data}
-	params := zero_trust.AccessApplicationPolicyGetParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err := r.client.ZeroTrust.Access.Applications.Policies.Get(
+	_, err := r.client.ZeroTrust.Access.Policies.Get(
 		ctx,
-		data.AppID.ValueString(),
 		data.ID.ValueString(),
-		params,
+		zero_trust.AccessPolicyGetParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -208,19 +187,12 @@ func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	params := zero_trust.AccessApplicationPolicyDeleteParams{}
-
-	if !data.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(data.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(data.ZoneID.ValueString())
-	}
-
-	_, err := r.client.ZeroTrust.Access.Applications.Policies.Delete(
+	_, err := r.client.ZeroTrust.Access.Policies.Delete(
 		ctx,
-		data.AppID.ValueString(),
 		data.ID.ValueString(),
-		params,
+		zero_trust.AccessPolicyDeleteParams{
+			AccountID: cloudflare.F(data.AccountID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -233,39 +205,28 @@ func (r *ZeroTrustAccessPolicyResource) Delete(ctx context.Context, req resource
 
 func (r *ZeroTrustAccessPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *ZeroTrustAccessPolicyModel
-	params := zero_trust.AccessApplicationPolicyGetParams{}
 
-	path_accounts_or_zones, path_account_id_or_zone_id := "", ""
-	path_app_id := ""
+	path_account_id := ""
 	path_policy_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<{accounts|zones}/{account_id|zone_id}>/<app_id>/<policy_id>",
-		&path_accounts_or_zones,
-		&path_account_id_or_zone_id,
-		&path_app_id,
+		"<account_id>/<policy_id>",
+		&path_account_id,
 		&path_policy_id,
 	)
 	resp.Diagnostics.Append(diags...)
-	switch path_accounts_or_zones {
-	case "accounts":
-		params.AccountID = cloudflare.F(path_account_id_or_zone_id)
-	case "zones":
-		params.ZoneID = cloudflare.F(path_account_id_or_zone_id)
-	default:
-		resp.Diagnostics.AddError("invalid discriminator segment - <{accounts|zones}/{account_id|zone_id}>", "expected discriminator to be one of {accounts|zones}")
-	}
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	res := new(http.Response)
 	env := ZeroTrustAccessPolicyResultEnvelope{*data}
-	_, err := r.client.ZeroTrust.Access.Applications.Policies.Get(
+	_, err := r.client.ZeroTrust.Access.Policies.Get(
 		ctx,
-		path_app_id,
 		path_policy_id,
-		params,
+		zero_trust.AccessPolicyGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
