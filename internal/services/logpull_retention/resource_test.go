@@ -30,7 +30,7 @@ func TestAccLogpullRetentionSetStatus(t *testing.T) {
 				Config: testLogpullRetentionSetConfig(rnd, zoneID, "false"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "enabled", "false"),
+					resource.TestCheckResourceAttr(name, "flag", "false"),
 				),
 			},
 		},
