@@ -1196,46 +1196,44 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The application client secret, only returned on POST request.",
 						Optional:    true,
 					},
-					"custom_claims": schema.ListNestedAttribute{
+					"custom_claims": schema.SingleNestedAttribute{
 						Computed:   true,
 						Optional:   true,
-						CustomType: customfield.NewNestedObjectListType[ZeroTrustAccessApplicationSaaSAppCustomClaimsModel](ctx),
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.StringAttribute{
-									Description: "The name of the claim.",
-									Optional:    true,
+						CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppCustomClaimsModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"name": schema.StringAttribute{
+								Description: "The name of the claim.",
+								Optional:    true,
+							},
+							"required": schema.BoolAttribute{
+								Description: "If the claim is required when building an OIDC token.",
+								Optional:    true,
+							},
+							"scope": schema.StringAttribute{
+								Description: "The scope of the claim.",
+								Optional:    true,
+								Validators: []validator.String{
+									stringvalidator.OneOfCaseInsensitive(
+										"groups",
+										"profile",
+										"email",
+										"openid",
+									),
 								},
-								"required": schema.BoolAttribute{
-									Description: "If the claim is required when building an OIDC token.",
-									Optional:    true,
-								},
-								"scope": schema.StringAttribute{
-									Description: "The scope of the claim.",
-									Optional:    true,
-									Validators: []validator.String{
-										stringvalidator.OneOfCaseInsensitive(
-											"groups",
-											"profile",
-											"email",
-											"openid",
-										),
+							},
+							"source": schema.SingleNestedAttribute{
+								Computed:   true,
+								Optional:   true,
+								CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"name": schema.StringAttribute{
+										Description: "The name of the IdP claim.",
+										Optional:    true,
 									},
-								},
-								"source": schema.SingleNestedAttribute{
-									Computed:   true,
-									Optional:   true,
-									CustomType: customfield.NewNestedObjectType[ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel](ctx),
-									Attributes: map[string]schema.Attribute{
-										"name": schema.StringAttribute{
-											Description: "The name of the IdP claim.",
-											Optional:    true,
-										},
-										"name_by_idp": schema.MapAttribute{
-											Description: "A mapping from IdP ID to claim name.",
-											Optional:    true,
-											ElementType: types.StringType,
-										},
+									"name_by_idp": schema.MapAttribute{
+										Description: "A mapping from IdP ID to claim name.",
+										Optional:    true,
+										ElementType: types.StringType,
 									},
 								},
 							},
