@@ -35,6 +35,7 @@ type HyperdriveConfigOriginModel struct {
 	User           types.String `tfsdk:"user" json:"user,required"`
 	AccessClientID types.String `tfsdk:"access_client_id" json:"access_client_id,optional"`
 	Port           types.Int64  `tfsdk:"port" json:"port,optional"`
+	Password       types.String `tfsdk:"password" json:"password,required"`
 }
 
 type HyperdriveConfigCachingModel struct {
