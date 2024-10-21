@@ -441,7 +441,7 @@ type ZeroTrustAccessApplicationSaaSAppModel struct {
 	AppLauncherURL                types.String                                                                             `tfsdk:"app_launcher_url" json:"app_launcher_url,optional"`
 	ClientID                      types.String                                                                             `tfsdk:"client_id" json:"client_id,optional"`
 	ClientSecret                  types.String                                                                             `tfsdk:"client_secret" json:"client_secret,optional"`
-	CustomClaims                  customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppCustomClaimsModel]             `tfsdk:"custom_claims" json:"custom_claims,computed_optional"`
+	CustomClaims                  customfield.NestedObjectList[ZeroTrustAccessApplicationSaaSAppCustomClaimsModel]         `tfsdk:"custom_claims" json:"custom_claims,computed_optional"`
 	GrantTypes                    *[]types.String                                                                          `tfsdk:"grant_types" json:"grant_types,optional"`
 	GroupFilterRegex              types.String                                                                             `tfsdk:"group_filter_regex" json:"group_filter_regex,optional"`
 	HybridAndImplicitOptions      customfield.NestedObject[ZeroTrustAccessApplicationSaaSAppHybridAndImplicitOptionsModel] `tfsdk:"hybrid_and_implicit_options" json:"hybrid_and_implicit_options,computed_optional"`
