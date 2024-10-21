@@ -67,11 +67,7 @@ func (d *ZeroTrustAccessPoliciesDataSource) Read(ctx context.Context, req dataso
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.ZeroTrust.Access.Applications.Policies.List(
-		ctx,
-		data.AppID.ValueString(),
-		params,
-	)
+	page, err := d.client.ZeroTrust.Access.Policies.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

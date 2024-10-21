@@ -23,9 +23,8 @@ type ZeroTrustAccessPolicyResultListDataSourceEnvelope struct {
 
 type ZeroTrustAccessPolicyDataSourceModel struct {
 	AccountID                    types.String                                                                     `tfsdk:"account_id" path:"account_id,optional"`
-	AppID                        types.String                                                                     `tfsdk:"app_id" path:"app_id,optional"`
 	PolicyID                     types.String                                                                     `tfsdk:"policy_id" path:"policy_id,optional"`
-	ZoneID                       types.String                                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
+	AppCount                     types.Int64                                                                      `tfsdk:"app_count" json:"app_count,computed"`
 	ApprovalRequired             types.Bool                                                                       `tfsdk:"approval_required" json:"approval_required,computed"`
 	CreatedAt                    timetypes.RFC3339                                                                `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
 	Decision                     types.String                                                                     `tfsdk:"decision" json:"decision,computed"`
@@ -34,6 +33,7 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 	Name                         types.String                                                                     `tfsdk:"name" json:"name,computed"`
 	PurposeJustificationPrompt   types.String                                                                     `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
 	PurposeJustificationRequired types.Bool                                                                       `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
+	Reusable                     types.Bool                                                                       `tfsdk:"reusable" json:"reusable,computed"`
 	SessionDuration              types.String                                                                     `tfsdk:"session_duration" json:"session_duration,computed"`
 	UpdatedAt                    timetypes.RFC3339                                                                `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPolicyApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
@@ -44,25 +44,17 @@ type ZeroTrustAccessPolicyDataSourceModel struct {
 	Filter                       *ZeroTrustAccessPolicyFindOneByDataSourceModel                                   `tfsdk:"filter"`
 }
 
-func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessApplicationPolicyGetParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessApplicationPolicyGetParams{}
-
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+func (m *ZeroTrustAccessPolicyDataSourceModel) toReadParams(_ context.Context) (params zero_trust.AccessPolicyGetParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessPolicyGetParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-func (m *ZeroTrustAccessPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessApplicationPolicyListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessApplicationPolicyListParams{}
-
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
+func (m *ZeroTrustAccessPolicyDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessPolicyListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessPolicyListParams{
+		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 
 	return
@@ -389,7 +381,5 @@ type ZeroTrustAccessPolicyRequireDevicePostureDataSourceModel struct {
 }
 
 type ZeroTrustAccessPolicyFindOneByDataSourceModel struct {
-	AppID     types.String `tfsdk:"app_id" path:"app_id,required"`
-	AccountID types.String `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String `tfsdk:"zone_id" path:"zone_id,optional"`
+	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`
 }

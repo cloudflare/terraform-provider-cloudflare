@@ -18,20 +18,14 @@ type ZeroTrustAccessPoliciesResultListDataSourceEnvelope struct {
 }
 
 type ZeroTrustAccessPoliciesDataSourceModel struct {
-	AppID     types.String                                                               `tfsdk:"app_id" path:"app_id,required"`
-	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,optional"`
-	ZoneID    types.String                                                               `tfsdk:"zone_id" path:"zone_id,optional"`
+	AccountID types.String                                                               `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                                `tfsdk:"max_items"`
 	Result    customfield.NestedObjectList[ZeroTrustAccessPoliciesResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *ZeroTrustAccessPoliciesDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessApplicationPolicyListParams, diags diag.Diagnostics) {
-	params = zero_trust.AccessApplicationPolicyListParams{}
-
-	if !m.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.ZoneID.ValueString())
+func (m *ZeroTrustAccessPoliciesDataSourceModel) toListParams(_ context.Context) (params zero_trust.AccessPolicyListParams, diags diag.Diagnostics) {
+	params = zero_trust.AccessPolicyListParams{
+		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
@@ -39,6 +33,7 @@ func (m *ZeroTrustAccessPoliciesDataSourceModel) toListParams(_ context.Context)
 
 type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 	ID                           types.String                                                                       `tfsdk:"id" json:"id,computed"`
+	AppCount                     types.Int64                                                                        `tfsdk:"app_count" json:"app_count,computed"`
 	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPoliciesApprovalGroupsDataSourceModel] `tfsdk:"approval_groups" json:"approval_groups,computed"`
 	ApprovalRequired             types.Bool                                                                         `tfsdk:"approval_required" json:"approval_required,computed"`
 	ConnectionRules              customfield.NestedObject[ZeroTrustAccessPoliciesConnectionRulesDataSourceModel]    `tfsdk:"connection_rules" json:"connection_rules,computed"`
@@ -51,6 +46,7 @@ type ZeroTrustAccessPoliciesResultDataSourceModel struct {
 	PurposeJustificationPrompt   types.String                                                                       `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,computed"`
 	PurposeJustificationRequired types.Bool                                                                         `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed"`
 	Require                      customfield.NestedObjectList[ZeroTrustAccessPoliciesRequireDataSourceModel]        `tfsdk:"require" json:"require,computed"`
+	Reusable                     types.Bool                                                                         `tfsdk:"reusable" json:"reusable,computed"`
 	SessionDuration              types.String                                                                       `tfsdk:"session_duration" json:"session_duration,computed"`
 	UpdatedAt                    timetypes.RFC3339                                                                  `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
