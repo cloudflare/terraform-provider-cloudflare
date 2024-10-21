@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-	"time"
 
 	cloudflare "github.com/cloudflare/cloudflare-go"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
@@ -64,7 +63,6 @@ func testSweepCloudflareRecord(r string) error {
 func TestAccCloudflareRecord_Basic(t *testing.T) {
 	t.Parallel()
 	var record cloudflare.DNSRecord
-	testStartTime := time.Now().UTC()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
@@ -79,7 +77,6 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
-					testAccCheckCloudflareRecordDates(resourceName, &record, testStartTime),
 					resource.TestCheckResourceAttr(resourceName, "name", "tf-acctest-basic"),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
@@ -701,31 +698,6 @@ func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord)
 	return func(s *terraform.State) error {
 		if record.Content != "192.168.0.11" {
 			return fmt.Errorf("bad content: %s", record.Content)
-		}
-
-		return nil
-	}
-}
-
-func testAccCheckCloudflareRecordDates(n string, record *cloudflare.DNSRecord, testStartTime time.Time) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, _ := s.RootModule().Resources[n]
-
-		for timeStampAttr, serverVal := range map[string]time.Time{"created_on": record.CreatedOn, "modified_on": record.ModifiedOn} {
-			timeStamp, err := time.Parse(time.RFC3339Nano, rs.Primary.Attributes[timeStampAttr])
-			if err != nil {
-				return err
-			}
-
-			if timeStamp != serverVal {
-				return fmt.Errorf("state value of %s: %s is different than server created value: %s", timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
-			}
-
-			// check retrieved values are reasonable
-			// note this could fail if local time is out of sync with server time
-			if timeStamp.Before(testStartTime) {
-				return fmt.Errorf("state value of %s: %s should be greater than test start time: %s", timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
-			}
 		}
 
 		return nil

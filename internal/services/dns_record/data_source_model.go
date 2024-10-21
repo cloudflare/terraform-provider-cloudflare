@@ -77,44 +77,44 @@ func (m *DNSRecordDataSourceModel) toListParams(_ context.Context) (params dns.R
 		}
 		params.Comment = cloudflare.F(paramsComment)
 	}
-	if m.Filter.Content != nil {
-		paramsContent := dns.RecordListParamsContent{}
-		if !m.Filter.Content.Contains.IsNull() {
-			paramsContent.Contains = cloudflare.F(m.Filter.Content.Contains.ValueString())
-		}
-		if !m.Filter.Content.Endswith.IsNull() {
-			paramsContent.Endswith = cloudflare.F(m.Filter.Content.Endswith.ValueString())
-		}
-		if !m.Filter.Content.Exact.IsNull() {
-			paramsContent.Exact = cloudflare.F(m.Filter.Content.Exact.ValueString())
-		}
-		if !m.Filter.Content.Startswith.IsNull() {
-			paramsContent.Startswith = cloudflare.F(m.Filter.Content.Startswith.ValueString())
-		}
-		params.Content = cloudflare.F(paramsContent)
-	}
+	// if m.Filter.Content != nil {
+	// 	paramsContent := dns.RecordListParamsContent{}
+	// 	if !m.Filter.Content.Contains.IsNull() {
+	// 		paramsContent.Contains = cloudflare.F(m.Filter.Content.Contains.ValueString())
+	// 	}
+	// 	if !m.Filter.Content.Endswith.IsNull() {
+	// 		paramsContent.Endswith = cloudflare.F(m.Filter.Content.Endswith.ValueString())
+	// 	}
+	// 	if !m.Filter.Content.Exact.IsNull() {
+	// 		paramsContent.Exact = cloudflare.F(m.Filter.Content.Exact.ValueString())
+	// 	}
+	// 	if !m.Filter.Content.Startswith.IsNull() {
+	// 		paramsContent.Startswith = cloudflare.F(m.Filter.Content.Startswith.ValueString())
+	// 	}
+	// 	params.Content = cloudflare.F(paramsContent)
+	// }
 	if !m.Filter.Direction.IsNull() {
 		params.Direction = cloudflare.F(shared.SortDirection(m.Filter.Direction.ValueString()))
 	}
 	if !m.Filter.Match.IsNull() {
 		params.Match = cloudflare.F(dns.RecordListParamsMatch(m.Filter.Match.ValueString()))
 	}
-	if m.Filter.Name != nil {
-		paramsName := dns.RecordListParamsName{}
-		if !m.Filter.Name.Contains.IsNull() {
-			paramsName.Contains = cloudflare.F(m.Filter.Name.Contains.ValueString())
-		}
-		if !m.Filter.Name.Endswith.IsNull() {
-			paramsName.Endswith = cloudflare.F(m.Filter.Name.Endswith.ValueString())
-		}
-		if !m.Filter.Name.Exact.IsNull() {
-			paramsName.Exact = cloudflare.F(m.Filter.Name.Exact.ValueString())
-		}
-		if !m.Filter.Name.Startswith.IsNull() {
-			paramsName.Startswith = cloudflare.F(m.Filter.Name.Startswith.ValueString())
-		}
-		params.Name = cloudflare.F(paramsName)
-	}
+	// if m.Filter.Name != nil {
+	// 	paramsName := dns.RecordListParamsName{}
+	// 	if !m.Filter.Name.Contains.IsNull() {
+	// 		paramsName.Contains = cloudflare.F(m.Filter.Name.Contains.ValueString())
+	// 	}
+	// 	if !m.Filter.Name.Endswith.IsNull() {
+	// 		paramsName.Endswith = cloudflare.F(m.Filter.Name.Endswith.ValueString())
+	// 	}
+	// 	if !m.Filter.Name.Exact.IsNull() {
+	// 		paramsName.Exact = cloudflare.F(m.Filter.Name.Exact.ValueString())
+	// 	}
+	// 	if !m.Filter.Name.Startswith.IsNull() {
+	// 		paramsName.Startswith = cloudflare.F(m.Filter.Name.Startswith.ValueString())
+	// 	}
+	// 	params.Name = cloudflare.F(paramsName)
+	// }
 	if !m.Filter.Order.IsNull() {
 		params.Order = cloudflare.F(dns.RecordListParamsOrder(m.Filter.Order.ValueString()))
 	}

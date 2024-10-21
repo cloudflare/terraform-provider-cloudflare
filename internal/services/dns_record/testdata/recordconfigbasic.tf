@@ -6,5 +6,5 @@ resource "cloudflare_dns_record" "%[3]s" {
 	type = "A"
 	ttl = 3600
 	tags = ["tag1", "tag2"]
-    comment = "this is a comment"
+  comment = "this is a comment"
 }
