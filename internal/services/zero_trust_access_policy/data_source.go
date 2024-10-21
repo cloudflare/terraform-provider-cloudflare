@@ -66,8 +66,9 @@ func (d *ZeroTrustAccessPolicyDataSource) Read(ctx context.Context, req datasour
 
 		res := new(http.Response)
 		env := ZeroTrustAccessPolicyResultDataSourceEnvelope{*data}
-		_, err := d.client.ZeroTrust.Access.Policies.Get(
+		_, err := d.client.ZeroTrust.Access.Applications.Policies.Get(
 			ctx,
+			data.AppID.ValueString(),
 			data.PolicyID.ValueString(),
 			params,
 			option.WithResponseBodyInto(&res),
@@ -92,7 +93,11 @@ func (d *ZeroTrustAccessPolicyDataSource) Read(ctx context.Context, req datasour
 		}
 
 		env := ZeroTrustAccessPolicyResultListDataSourceEnvelope{}
-		page, err := d.client.ZeroTrust.Access.Policies.List(ctx, params)
+		page, err := d.client.ZeroTrust.Access.Applications.Policies.List(
+			ctx,
+			data.Filter.AppID.ValueString(),
+			params,
+		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

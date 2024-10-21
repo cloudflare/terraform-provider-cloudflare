@@ -16,10 +16,13 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 
 type ZeroTrustAccessPolicyModel struct {
 	ID                           types.String                                                           `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
+	AppID                        types.String                                                           `tfsdk:"app_id" path:"app_id,required"`
+	AccountID                    types.String                                                           `tfsdk:"account_id" path:"account_id,optional"`
+	ZoneID                       types.String                                                           `tfsdk:"zone_id" path:"zone_id,optional"`
 	Decision                     types.String                                                           `tfsdk:"decision" json:"decision,required"`
 	Name                         types.String                                                           `tfsdk:"name" json:"name,required"`
 	Include                      *[]*ZeroTrustAccessPolicyIncludeModel                                  `tfsdk:"include" json:"include,required"`
+	Precedence                   types.Int64                                                            `tfsdk:"precedence" json:"precedence,optional"`
 	PurposeJustificationPrompt   types.String                                                           `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
 	ApprovalRequired             types.Bool                                                             `tfsdk:"approval_required" json:"approval_required,computed_optional"`
 	IsolationRequired            types.Bool                                                             `tfsdk:"isolation_required" json:"isolation_required,computed_optional"`
@@ -29,9 +32,7 @@ type ZeroTrustAccessPolicyModel struct {
 	ConnectionRules              customfield.NestedObject[ZeroTrustAccessPolicyConnectionRulesModel]    `tfsdk:"connection_rules" json:"connection_rules,computed_optional"`
 	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeModel]        `tfsdk:"exclude" json:"exclude,computed_optional"`
 	Require                      customfield.NestedObjectList[ZeroTrustAccessPolicyRequireModel]        `tfsdk:"require" json:"require,computed_optional"`
-	AppCount                     types.Int64                                                            `tfsdk:"app_count" json:"app_count,computed"`
 	CreatedAt                    timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Reusable                     types.Bool                                                             `tfsdk:"reusable" json:"reusable,computed"`
 	UpdatedAt                    timetypes.RFC3339                                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 

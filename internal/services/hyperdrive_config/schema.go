@@ -20,18 +20,18 @@ var _ resource.ResourceWithConfigValidators = (*HyperdriveConfigResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"name": schema.StringAttribute{
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"hyperdrive_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"name": schema.StringAttribute{
-				Required: true,
 			},
 			"origin": schema.SingleNestedAttribute{
 				Required: true,

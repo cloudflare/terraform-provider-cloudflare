@@ -52,8 +52,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_block_sender"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_impersonation_registry"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/email_security_trusted_domains"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/filter"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/firewall_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/healthcheck"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hostname_tls_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/hyperdrive_config"
@@ -94,7 +92,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/queue_consumer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/r2_bucket"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/rate_limit"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_hostname"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/regional_tiered_cache"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/registrar_domain"
@@ -105,7 +102,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_outgoing"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_peer"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/secondary_dns_tsig"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/snippet"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/spectrum_application"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/stream_audio_track"
@@ -119,7 +115,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/total_tls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/turnstile_widget"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/url_normalization_settings"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/user_agent_blocking_rule"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_event"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/waiting_room_rules"
@@ -172,7 +167,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_reserve"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_cache_variants"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_hold"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_lockdown"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_setting"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/zone_subscription"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -365,11 +359,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		email_routing_rule.NewResource,
 		email_routing_catch_all.NewResource,
 		email_routing_address.NewResource,
-		filter.NewResource,
-		zone_lockdown.NewResource,
-		firewall_rule.NewResource,
 		access_rule.NewResource,
-		user_agent_blocking_rule.NewResource,
 		healthcheck.NewResource,
 		keyless_certificate.NewResource,
 		logpush_job.NewResource,
@@ -378,7 +368,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		authenticated_origin_pulls_certificate.NewResource,
 		authenticated_origin_pulls.NewResource,
 		page_rule.NewResource,
-		rate_limit.NewResource,
 		secondary_dns_incoming.NewResource,
 		secondary_dns_outgoing.NewResource,
 		secondary_dns_acl.NewResource,
@@ -454,6 +443,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_infrastructure_target.NewResource,
 		zero_trust_access_application.NewResource,
 		zero_trust_access_short_lived_certificate.NewResource,
+		zero_trust_access_policy.NewResource,
 		zero_trust_access_mtls_certificate.NewResource,
 		zero_trust_access_mtls_hostname_settings.NewResource,
 		zero_trust_access_group.NewResource,
@@ -461,7 +451,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		zero_trust_access_key_configuration.NewResource,
 		zero_trust_access_custom_page.NewResource,
 		zero_trust_access_tag.NewResource,
-		zero_trust_access_policy.NewResource,
 		zero_trust_tunnel_cloudflared.NewResource,
 		zero_trust_tunnel_cloudflared_config.NewResource,
 		zero_trust_dlp_dataset.NewResource,
@@ -482,7 +471,6 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
-		snippet.NewResource,
 		call_app.NewResource,
 		call_app_turn_key.NewResource,
 		cloudforce_one_request.NewResource,
@@ -550,16 +538,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		email_routing_catch_all.NewEmailRoutingCatchAllDataSource,
 		email_routing_address.NewEmailRoutingAddressDataSource,
 		email_routing_address.NewEmailRoutingAddressesDataSource,
-		filter.NewFilterDataSource,
-		filter.NewFiltersDataSource,
-		zone_lockdown.NewZoneLockdownDataSource,
-		zone_lockdown.NewZoneLockdownsDataSource,
-		firewall_rule.NewFirewallRuleDataSource,
-		firewall_rule.NewFirewallRulesDataSource,
 		access_rule.NewAccessRuleDataSource,
 		access_rule.NewAccessRulesDataSource,
-		user_agent_blocking_rule.NewUserAgentBlockingRuleDataSource,
-		user_agent_blocking_rule.NewUserAgentBlockingRulesDataSource,
 		healthcheck.NewHealthcheckDataSource,
 		healthcheck.NewHealthchecksDataSource,
 		keyless_certificate.NewKeylessCertificateDataSource,
@@ -573,8 +553,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		authenticated_origin_pulls_certificate.NewAuthenticatedOriginPullsCertificatesDataSource,
 		authenticated_origin_pulls.NewAuthenticatedOriginPullsDataSource,
 		page_rule.NewPageRuleDataSource,
-		rate_limit.NewRateLimitDataSource,
-		rate_limit.NewRateLimitsDataSource,
 		secondary_dns_incoming.NewSecondaryDNSIncomingDataSource,
 		secondary_dns_outgoing.NewSecondaryDNSOutgoingDataSource,
 		secondary_dns_acl.NewSecondaryDNSACLDataSource,
@@ -697,6 +675,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_application.NewZeroTrustAccessApplicationsDataSource,
 		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificateDataSource,
 		zero_trust_access_short_lived_certificate.NewZeroTrustAccessShortLivedCertificatesDataSource,
+		zero_trust_access_policy.NewZeroTrustAccessPolicyDataSource,
+		zero_trust_access_policy.NewZeroTrustAccessPoliciesDataSource,
 		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificateDataSource,
 		zero_trust_access_mtls_certificate.NewZeroTrustAccessMTLSCertificatesDataSource,
 		zero_trust_access_mtls_hostname_settings.NewZeroTrustAccessMTLSHostnameSettingsDataSource,
@@ -709,8 +689,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		zero_trust_access_custom_page.NewZeroTrustAccessCustomPagesDataSource,
 		zero_trust_access_tag.NewZeroTrustAccessTagDataSource,
 		zero_trust_access_tag.NewZeroTrustAccessTagsDataSource,
-		zero_trust_access_policy.NewZeroTrustAccessPolicyDataSource,
-		zero_trust_access_policy.NewZeroTrustAccessPoliciesDataSource,
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredDataSource,
 		zero_trust_tunnel_cloudflared.NewZeroTrustTunnelCloudflaredsDataSource,
 		zero_trust_tunnel_cloudflared_config.NewZeroTrustTunnelCloudflaredConfigDataSource,
@@ -742,8 +720,6 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
-		snippet.NewSnippetDataSource,
-		snippet.NewSnippetsDataSource,
 		call_app.NewCallAppDataSource,
 		call_app.NewCallAppsDataSource,
 		call_app_turn_key.NewCallAppTURNKeyDataSource,
