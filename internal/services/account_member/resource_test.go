@@ -12,8 +12,6 @@ import (
 )
 
 func TestAccCloudflareAccountMember_Basic(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Account is using domain scoped roles and cannot be used for legacy permissions.")
-
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -34,9 +32,9 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 				Config: testCloudflareAccountMemberBasicConfig(rnd, fmt.Sprintf("%s@example.com", rnd), accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "email_address", fmt.Sprintf("%s@example.com", rnd)),
-					resource.TestCheckResourceAttr(name, "role_ids.#", "1"),
-					resource.TestCheckResourceAttr(name, "role_ids.0", "05784afa30c1afe1440e79d9351c7430"),
+					resource.TestCheckResourceAttr(name, "email", fmt.Sprintf("%s@example.com", rnd)),
+					resource.TestCheckResourceAttr(name, "roles.#", "1"),
+					resource.TestCheckResourceAttr(name, "roles.0", "05784afa30c1afe1440e79d9351c7430"),
 				),
 			},
 		},
@@ -44,8 +42,6 @@ func TestAccCloudflareAccountMember_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
-	acctest.TestAccSkipForDefaultAccount(t, "Account is using domain scoped roles and cannot be used for legacy permissions.")
-
 	// Temporarily unset CLOUDFLARE_API_TOKEN as the API token won't have
 	// permission to manage account members.
 	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
@@ -66,9 +62,9 @@ func TestAccCloudflareAccountMember_DirectAdd(t *testing.T) {
 				Config: testCloudflareAccountMemberDirectAdd(rnd, "millie@cloudflare.com", accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "email_address", "millie@cloudflare.com"),
-					resource.TestCheckResourceAttr(name, "role_ids.#", "1"),
-					resource.TestCheckResourceAttr(name, "role_ids.0", "05784afa30c1afe1440e79d9351c7430"),
+					resource.TestCheckResourceAttr(name, "email", "millie@cloudflare.com"),
+					resource.TestCheckResourceAttr(name, "roles.#", "1"),
+					resource.TestCheckResourceAttr(name, "roles.0", "05784afa30c1afe1440e79d9351c7430"),
 					resource.TestCheckResourceAttr(name, "status", "accepted"),
 				),
 			},
