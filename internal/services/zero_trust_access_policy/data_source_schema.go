@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -24,16 +25,20 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"account_id": schema.StringAttribute{
-				Description: "Identifier",
+				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+				Optional:    true,
+			},
+			"app_id": schema.StringAttribute{
+				Description: "UUID",
 				Optional:    true,
 			},
 			"policy_id": schema.StringAttribute{
-				Description: "The UUID of the policy",
+				Description: "UUID",
 				Optional:    true,
 			},
-			"app_count": schema.Int64Attribute{
-				Description: "Number of access applications currently using this policy.",
-				Computed:    true,
+			"zone_id": schema.StringAttribute{
+				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+				Optional:    true,
 			},
 			"approval_required": schema.BoolAttribute{
 				Description: "Requires the user to request access from an administrator at the start of each session.",
@@ -74,9 +79,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"purpose_justification_required": schema.BoolAttribute{
 				Description: "Require users to enter a justification when they log in to the application.",
 				Computed:    true,
-			},
-			"reusable": schema.BoolAttribute{
-				Computed: true,
 			},
 			"session_duration": schema.StringAttribute{
 				Description: "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
@@ -773,10 +775,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
+				Validators: []validator.Object{
+					objectvalidator.ExactlyOneOf(path.MatchRelative().AtName("account_id"), path.MatchRelative().AtName("zone_id")),
+				},
 				Attributes: map[string]schema.Attribute{
-					"account_id": schema.StringAttribute{
-						Description: "Identifier",
+					"app_id": schema.StringAttribute{
+						Description: "UUID",
 						Required:    true,
+					},
+					"account_id": schema.StringAttribute{
+						Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+						Optional:    true,
+					},
+					"zone_id": schema.StringAttribute{
+						Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+						Optional:    true,
 					},
 				},
 			},
@@ -790,8 +803,11 @@ func (d *ZeroTrustAccessPolicyDataSource) Schema(ctx context.Context, req dataso
 
 func (d *ZeroTrustAccessPolicyDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("policy_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.RequiredTogether(path.MatchRoot("app_id"), path.MatchRoot("policy_id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("app_id")),
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("policy_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
+		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
 	}
 }
