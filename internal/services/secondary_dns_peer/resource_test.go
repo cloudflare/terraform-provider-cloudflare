@@ -25,7 +25,7 @@ func init() {
 
 func testSweepCloudflareSecondaryDNSPeer(r string) error {
 	ctx := context.Background()
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	// Clean up the account level peers
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -56,7 +56,7 @@ func TestAccCloudflareSecondaryDNSPeer_Basic(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_secondary_dns_peer." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	// Make a new TSIG that we can connect our peer to
 	tsigObj := secondary_dns.TSIGParam{

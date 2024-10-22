@@ -83,7 +83,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.State) error {
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_zero_trust_access_mtls_hostname_settings" {

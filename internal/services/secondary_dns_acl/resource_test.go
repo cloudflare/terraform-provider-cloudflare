@@ -25,7 +25,7 @@ func init() {
 
 func testSweepCloudflareSecondaryDNSACL(r string) error {
 	ctx := context.Background()
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	// Clean up the account level acls
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

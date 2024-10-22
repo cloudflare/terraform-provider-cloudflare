@@ -728,7 +728,7 @@ func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.
 func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.LoadBalancer, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
-		_, err := acctest.SharedV2Client().LoadBalancers.Delete(
+		_, err := acctest.SharedClient().LoadBalancers.Delete(
 			context.Background(),
 			loadBalancer.ID,
 			load_balancers.LoadBalancerDeleteParams{
