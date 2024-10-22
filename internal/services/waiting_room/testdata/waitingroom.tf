@@ -1,19 +1,18 @@
+resource "cloudflare_dns_record" "%[1]s-shop-1" {
+    zone_id = "%[3]s"
+    name    = "shop1"
+    content = "192.168.0.10"
+    type    = "A"
+    ttl     = 3600
+}
 
-	resource "cloudflare_record" "%[1]s-shop-1" {
-		zone_id = "%[3]s"
-		name = "shop1"
-		value = "192.168.0.10"
-		type = "A"
-		ttl = 3600
-	}
-
-	resource "cloudflare_record" "%[1]s-shop-2" {
-		zone_id = "%[3]s"
-		name = "shop2"
-		value = "192.168.0.11"
-		type = "A"
-		ttl = 3600
-	}
+resource "cloudflare_dns_record" "%[1]s-shop-2" {
+    zone_id = "%[3]s"
+    name    = "shop2"
+    content = "192.168.0.11"
+    type    = "A"
+    ttl     = 3600
+}
 
 resource "cloudflare_waiting_room" "%[1]s" {
   name                      = "%[2]s"
@@ -32,16 +31,18 @@ resource "cloudflare_waiting_room" "%[1]s" {
   queue_all                 = false
   json_response_enabled     = true
   cookie_suffix             = "queue1"
-  additional_routes =[ {
-    host = "shop1.%[4]s"
-    path = "%[5]s"
-  },
+  queueing_status_code      = 200
+  additional_routes =[
+    {
+      host = "shop1.%[4]s"
+      path = "%[5]s"
+    },
     {
     host = "shop2.%[4]s"
-    }]
-
-
-  queueing_status_code      = 200
-
-  depends_on = [cloudflare_record.%[1]s-shop-1, cloudflare_record.%[1]s-shop-2]
+    }
+  ]
+  depends_on = [
+    cloudflare_dns_record.%[1]s-shop-1,
+    cloudflare_dns_record.%[1]s-shop-2
+  ]
 }
