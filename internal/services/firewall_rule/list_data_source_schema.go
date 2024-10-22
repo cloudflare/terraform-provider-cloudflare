@@ -21,7 +21,7 @@ var _ datasource.DataSourceWithConfigValidators = (*FirewallRulesDataSource)(nil
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
+			"zone_identifier": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},

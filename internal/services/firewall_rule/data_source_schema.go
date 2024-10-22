@@ -20,17 +20,16 @@ var _ datasource.DataSourceWithConfigValidators = (*FirewallRuleDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"rule_id": schema.StringAttribute{
+			"path_id": schema.StringAttribute{
 				Description: "The unique identifier of the firewall rule.",
 				Optional:    true,
 			},
-			"zone_id": schema.StringAttribute{
+			"zone_identifier": schema.StringAttribute{
 				Description: "Identifier",
 				Optional:    true,
 			},
-			"id": schema.StringAttribute{
+			"query_id": schema.StringAttribute{
 				Description: "The unique identifier of the firewall rule.",
-				Computed:    true,
 				Optional:    true,
 			},
 			"action": schema.StringAttribute{
@@ -50,6 +49,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the firewall rule.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the firewall rule.",
 				Computed:    true,
 			},
 			"paused": schema.BoolAttribute{

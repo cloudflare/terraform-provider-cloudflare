@@ -67,7 +67,11 @@ func (d *FiltersDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Filters.List(ctx, params)
+	page, err := d.client.Filters.List(
+		ctx,
+		data.ZoneIdentifier.ValueString(),
+		params,
+	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

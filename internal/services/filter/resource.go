@@ -70,9 +70,8 @@ func (r *FilterResource) Create(ctx context.Context, req resource.CreateRequest,
 	env := FilterResultEnvelope{*data}
 	_, err = r.client.Filters.New(
 		ctx,
-		filters.FilterNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		data.ZoneIdentifier.ValueString(),
+		filters.FilterNewParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -118,10 +117,9 @@ func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest,
 	env := FilterResultEnvelope{*data}
 	_, err = r.client.Filters.Update(
 		ctx,
-		data.FilterID.ValueString(),
-		filters.FilterUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		data.ZoneIdentifier.ValueString(),
+		data.ID.ValueString(),
+		filters.FilterUpdateParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -154,10 +152,8 @@ func (r *FilterResource) Read(ctx context.Context, req resource.ReadRequest, res
 	env := FilterResultEnvelope{*data}
 	_, err := r.client.Filters.Get(
 		ctx,
-		data.FilterID.ValueString(),
-		filters.FilterGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		data.ZoneIdentifier.ValueString(),
+		data.ID.ValueString(),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -187,10 +183,8 @@ func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest,
 
 	_, err := r.client.Filters.Delete(
 		ctx,
-		data.FilterID.ValueString(),
-		filters.FilterDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
+		data.ZoneIdentifier.ValueString(),
+		data.ID.ValueString(),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {

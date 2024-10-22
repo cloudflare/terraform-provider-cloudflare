@@ -16,12 +16,13 @@ var _ datasource.DataSourceWithConfigValidators = (*FilterDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"filter_id": schema.StringAttribute{
-				Description: "The unique identifier of the filter.",
+			"zone_identifier": schema.StringAttribute{
+				Description: "Identifier",
 				Optional:    true,
 			},
-			"zone_id": schema.StringAttribute{
-				Description: "Identifier",
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the filter.",
+				Computed:    true,
 				Optional:    true,
 			},
 			"description": schema.StringAttribute{
@@ -30,10 +31,6 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"expression": schema.StringAttribute{
 				Description: "The filter expression. For more information, refer to [Expressions](https://developers.cloudflare.com/ruleset-engine/rules-language/expressions/).",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the filter.",
 				Computed:    true,
 			},
 			"paused": schema.BoolAttribute{
@@ -47,7 +44,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"zone_id": schema.StringAttribute{
+					"zone_identifier": schema.StringAttribute{
 						Description: "Identifier",
 						Required:    true,
 					},
@@ -83,8 +80,8 @@ func (d *FilterDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 
 func (d *FilterDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
-		datasourcevalidator.RequiredTogether(path.MatchRoot("filter_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("filter_id")),
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
+		datasourcevalidator.RequiredTogether(path.MatchRoot("id"), path.MatchRoot("zone_identifier")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("id")),
+		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("zone_identifier")),
 	}
 }

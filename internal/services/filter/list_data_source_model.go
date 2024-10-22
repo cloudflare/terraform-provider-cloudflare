@@ -17,20 +17,18 @@ type FiltersResultListDataSourceEnvelope struct {
 }
 
 type FiltersDataSourceModel struct {
-	ZoneID      types.String                                               `tfsdk:"zone_id" path:"zone_id,required"`
-	Description types.String                                               `tfsdk:"description" query:"description,optional"`
-	Expression  types.String                                               `tfsdk:"expression" query:"expression,optional"`
-	ID          types.String                                               `tfsdk:"id" query:"id,optional"`
-	Paused      types.Bool                                                 `tfsdk:"paused" query:"paused,optional"`
-	Ref         types.String                                               `tfsdk:"ref" query:"ref,optional"`
-	MaxItems    types.Int64                                                `tfsdk:"max_items"`
-	Result      customfield.NestedObjectList[FiltersResultDataSourceModel] `tfsdk:"result"`
+	ZoneIdentifier types.String                                               `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	Description    types.String                                               `tfsdk:"description" query:"description,optional"`
+	Expression     types.String                                               `tfsdk:"expression" query:"expression,optional"`
+	ID             types.String                                               `tfsdk:"id" query:"id,optional"`
+	Paused         types.Bool                                                 `tfsdk:"paused" query:"paused,optional"`
+	Ref            types.String                                               `tfsdk:"ref" query:"ref,optional"`
+	MaxItems       types.Int64                                                `tfsdk:"max_items"`
+	Result         customfield.NestedObjectList[FiltersResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *FiltersDataSourceModel) toListParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
-	params = filters.FilterListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = filters.FilterListParams{}
 
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())

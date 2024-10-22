@@ -14,7 +14,7 @@ type ZoneLockdownResultEnvelope struct {
 
 type ZoneLockdownModel struct {
 	ID             types.String                     `tfsdk:"id" json:"id,computed"`
-	ZoneID         types.String                     `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneIdentifier types.String                     `tfsdk:"zone_identifier" path:"zone_identifier,required"`
 	URLs           *[]types.String                  `tfsdk:"urls" json:"urls,required"`
 	Configurations *ZoneLockdownConfigurationsModel `tfsdk:"configurations" json:"configurations,required"`
 	CreatedOn      timetypes.RFC3339                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
