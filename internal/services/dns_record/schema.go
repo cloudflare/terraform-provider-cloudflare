@@ -7,8 +7,6 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -18,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -27,14 +24,14 @@ var _ resource.ResourceWithConfigValidators = (*DNSRecordResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "Identifier",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"dns_record_id": schema.StringAttribute{
+				Description:   "Identifier",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"content": schema.StringAttribute{
@@ -333,61 +330,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Default:     booldefault.StaticBool(false),
 					},
 				},
-			},
-			"comment": schema.StringAttribute{
-				Description: "Comments or notes about the DNS record. This field has no effect on DNS responses.",
-				Computed:    true,
-			},
-			"comment_modified_on": schema.StringAttribute{
-				Description: "When the record comment was last modified. Omitted if there is no comment.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"created_on": schema.StringAttribute{
-				Description: "When the record was created.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"modified_on": schema.StringAttribute{
-				Description: "When the record was last modified.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"name": schema.StringAttribute{
-				Description: "DNS record name (or @ for the zone apex) in Punycode.",
-				Computed:    true,
-			},
-			"proxiable": schema.BoolAttribute{
-				Description: "Whether the record can be proxied by Cloudflare or not.",
-				Computed:    true,
-			},
-			"proxied": schema.BoolAttribute{
-				Description: "Whether the record is receiving the performance and security benefits of Cloudflare.",
-				Computed:    true,
-				Default:     booldefault.StaticBool(false),
-			},
-			"tags_modified_on": schema.StringAttribute{
-				Description: "When the record tags were last modified. Omitted if there are no tags.",
-				Computed:    true,
-				CustomType:  timetypes.RFC3339Type{},
-			},
-			"ttl": schema.Float64Attribute{
-				Description: "Time To Live (TTL) of the DNS record in seconds. Setting to 1 means 'automatic'. Value must be between 60 and 86400, with the minimum reduced to 30 for Enterprise zones.",
-				Computed:    true,
-				Validators: []validator.Float64{
-					float64validator.Between(30, 86400),
-				},
-			},
-			"tags": schema.ListAttribute{
-				Description: "Custom tags for the DNS record. This field has no effect on DNS responses.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
-			},
-			"meta": schema.StringAttribute{
-				Description: "Extra Cloudflare-specific information about the record.",
-				Computed:    true,
-				CustomType:  jsontypes.NormalizedType{},
 			},
 		},
 	}

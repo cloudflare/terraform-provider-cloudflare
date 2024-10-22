@@ -558,6 +558,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		ruleset.NewRulesetsDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
 		spectrum_application.NewSpectrumApplicationDataSource,
+		spectrum_application.NewSpectrumApplicationsDataSource,
 		regional_hostname.NewRegionalHostnameDataSource,
 		regional_hostname.NewRegionalHostnamesDataSource,
 		address_map.NewAddressMapDataSource,
