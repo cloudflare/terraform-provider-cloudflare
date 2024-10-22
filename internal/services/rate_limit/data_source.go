@@ -58,12 +58,18 @@ func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams(ctx)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := RateLimitResultDataSourceEnvelope{*data}
 		_, err := d.client.RateLimits.Get(
 			ctx,
-			data.ZoneIdentifier.ValueString(),
-			data.ID.ValueString(),
+			data.RateLimitID.ValueString(),
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -86,11 +92,7 @@ func (d *RateLimitDataSource) Read(ctx context.Context, req datasource.ReadReque
 		}
 
 		env := RateLimitResultListDataSourceEnvelope{}
-		page, err := d.client.RateLimits.List(
-			ctx,
-			data.Filter.ZoneIdentifier.ValueString(),
-			params,
-		)
+		page, err := d.client.RateLimits.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

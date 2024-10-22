@@ -21,7 +21,7 @@ var _ datasource.DataSourceWithConfigValidators = (*RateLimitsDataSource)(nil)
 func ListDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_identifier": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
 				Description: "Identifier",
 				Required:    true,
 			},

@@ -58,12 +58,18 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams(ctx)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := ZoneLockdownResultDataSourceEnvelope{*data}
 		_, err := d.client.Firewall.Lockdowns.Get(
 			ctx,
-			data.ZoneIdentifier.ValueString(),
-			data.ID.ValueString(),
+			data.LockDownsID.ValueString(),
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -86,11 +92,7 @@ func (d *ZoneLockdownDataSource) Read(ctx context.Context, req datasource.ReadRe
 		}
 
 		env := ZoneLockdownResultListDataSourceEnvelope{}
-		page, err := d.client.Firewall.Lockdowns.List(
-			ctx,
-			data.Filter.ZoneIdentifier.ValueString(),
-			params,
-		)
+		page, err := d.client.Firewall.Lockdowns.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
