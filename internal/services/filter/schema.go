@@ -16,12 +16,12 @@ var _ resource.ResourceWithConfigValidators = (*FilterResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_id": schema.StringAttribute{
+			"zone_identifier": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"filter_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description:   "The unique identifier of the filter.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
@@ -33,10 +33,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the filter.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique identifier of the filter.",
 				Computed:    true,
 			},
 			"paused": schema.BoolAttribute{

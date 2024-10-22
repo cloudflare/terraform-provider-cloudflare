@@ -17,7 +17,7 @@ type UserAgentBlockingRulesResultListDataSourceEnvelope struct {
 }
 
 type UserAgentBlockingRulesDataSourceModel struct {
-	ZoneID            types.String                                                              `tfsdk:"zone_id" path:"zone_id,required"`
+	ZoneIdentifier    types.String                                                              `tfsdk:"zone_identifier" path:"zone_identifier,required"`
 	Description       types.String                                                              `tfsdk:"description" query:"description,optional"`
 	DescriptionSearch types.String                                                              `tfsdk:"description_search" query:"description_search,optional"`
 	UASearch          types.String                                                              `tfsdk:"ua_search" query:"ua_search,optional"`
@@ -26,9 +26,7 @@ type UserAgentBlockingRulesDataSourceModel struct {
 }
 
 func (m *UserAgentBlockingRulesDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
-	params = firewall.UARuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = firewall.UARuleListParams{}
 
 	if !m.Description.IsNull() {
 		params.Description = cloudflare.F(m.Description.ValueString())

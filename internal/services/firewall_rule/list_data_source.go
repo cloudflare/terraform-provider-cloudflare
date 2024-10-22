@@ -67,7 +67,11 @@ func (d *FirewallRulesDataSource) Read(ctx context.Context, req datasource.ReadR
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Firewall.Rules.List(ctx, params)
+	page, err := d.client.Firewall.Rules.List(
+		ctx,
+		data.ZoneIdentifier.ValueString(),
+		params,
+	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

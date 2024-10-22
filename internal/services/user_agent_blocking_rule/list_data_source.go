@@ -67,7 +67,11 @@ func (d *UserAgentBlockingRulesDataSource) Read(ctx context.Context, req datasou
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Firewall.UARules.List(ctx, params)
+	page, err := d.client.Firewall.UARules.List(
+		ctx,
+		data.ZoneIdentifier.ValueString(),
+		params,
+	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return

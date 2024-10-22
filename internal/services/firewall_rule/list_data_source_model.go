@@ -17,19 +17,17 @@ type FirewallRulesResultListDataSourceEnvelope struct {
 }
 
 type FirewallRulesDataSourceModel struct {
-	ZoneID      types.String                                                     `tfsdk:"zone_id" path:"zone_id,required"`
-	Action      types.String                                                     `tfsdk:"action" query:"action,optional"`
-	Description types.String                                                     `tfsdk:"description" query:"description,optional"`
-	ID          types.String                                                     `tfsdk:"id" query:"id,optional"`
-	Paused      types.Bool                                                       `tfsdk:"paused" query:"paused,optional"`
-	MaxItems    types.Int64                                                      `tfsdk:"max_items"`
-	Result      customfield.NestedObjectList[FirewallRulesResultDataSourceModel] `tfsdk:"result"`
+	ZoneIdentifier types.String                                                     `tfsdk:"zone_identifier" path:"zone_identifier,required"`
+	Action         types.String                                                     `tfsdk:"action" query:"action,optional"`
+	Description    types.String                                                     `tfsdk:"description" query:"description,optional"`
+	ID             types.String                                                     `tfsdk:"id" query:"id,optional"`
+	Paused         types.Bool                                                       `tfsdk:"paused" query:"paused,optional"`
+	MaxItems       types.Int64                                                      `tfsdk:"max_items"`
+	Result         customfield.NestedObjectList[FirewallRulesResultDataSourceModel] `tfsdk:"result"`
 }
 
 func (m *FirewallRulesDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
-	params = firewall.RuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	params = firewall.RuleListParams{}
 
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())
