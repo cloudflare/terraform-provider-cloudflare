@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/secondary_dns"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/secondary_dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -25,7 +25,7 @@ func init() {
 
 func testSweepCloudflareSecondaryDNSACL(r string) error {
 	ctx := context.Background()
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	// Clean up the account level acls
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")

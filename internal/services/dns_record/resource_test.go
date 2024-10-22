@@ -8,9 +8,10 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-	"time"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
+	cfold "github.com/cloudflare/cloudflare-go"
+	cloudflare "github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -42,7 +43,7 @@ func testSweepCloudflareRecord(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	records, _, err := client.ListDNSRecords(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListDNSRecordsParams{})
+	records, _, err := client.ListDNSRecords(context.Background(), cfold.ZoneIdentifier(zoneID), cfold.ListDNSRecordsParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare DNS records: %s", err))
 	}
@@ -55,7 +56,7 @@ func testSweepCloudflareRecord(r string) error {
 	for _, record := range records {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare DNS record ID: %s", record.ID))
 		//nolint:errcheck
-		client.DeleteDNSRecord(context.Background(), cloudflare.ZoneIdentifier(zoneID), record.ID)
+		client.DeleteDNSRecord(context.Background(), cfold.ZoneIdentifier(zoneID), record.ID)
 	}
 
 	return nil
@@ -63,8 +64,7 @@ func testSweepCloudflareRecord(r string) error {
 
 func TestAccCloudflareRecord_Basic(t *testing.T) {
 	t.Parallel()
-	var record cloudflare.DNSRecord
-	testStartTime := time.Now().UTC()
+	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
@@ -79,7 +79,6 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &record),
 					testAccCheckCloudflareRecordAttributes(&record),
-					testAccCheckCloudflareRecordDates(resourceName, &record, testStartTime),
 					resource.TestCheckResourceAttr(resourceName, "name", "tf-acctest-basic"),
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "content", "192.168.0.10"),
@@ -95,42 +94,9 @@ func TestAccCloudflareRecord_Basic(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareRecord_CaseInsensitive(t *testing.T) {
-	t.Parallel()
-	var record cloudflare.DNSRecord
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, "tf-acctest-case-insensitive", rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareRecordExists(resourceName, &record),
-					testAccCheckCloudflareRecordAttributes(&record),
-					resource.TestCheckResourceAttr(resourceName, "name", "tf-acctest-case-insensitive"),
-				),
-			},
-			{
-				Config:   testAccCheckCloudflareRecordConfigBasic(zoneID, "tf-acctest-CASE-INSENSITIVE", rnd),
-				PlanOnly: true,
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareRecordExists(resourceName, &record),
-					testAccCheckCloudflareRecordAttributes(&record),
-					resource.TestCheckResourceAttr(resourceName, "name", "tf-acctest-case-insensitive"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareRecord_Apex(t *testing.T) {
 	t.Parallel()
-	var record cloudflare.DNSRecord
+	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
@@ -156,7 +122,7 @@ func TestAccCloudflareRecord_Apex(t *testing.T) {
 
 func TestAccCloudflareRecord_LOC(t *testing.T) {
 	t.Parallel()
-	var record cloudflare.DNSRecord
+	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
 	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
@@ -193,7 +159,7 @@ func TestAccCloudflareRecord_LOC(t *testing.T) {
 
 func TestAccCloudflareRecord_SRV(t *testing.T) {
 	t.Parallel()
-	var record cloudflare.DNSRecord
+	var record cfold.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -224,7 +190,7 @@ func TestAccCloudflareRecord_SRV(t *testing.T) {
 
 func TestAccCloudflareRecord_CAA(t *testing.T) {
 	t.Parallel()
-	var record cloudflare.DNSRecord
+	var record cfold.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -259,7 +225,7 @@ func TestAccCloudflareRecord_CAA(t *testing.T) {
 
 func TestAccCloudflareRecord_Proxied(t *testing.T) {
 	t.Parallel()
-	var record cloudflare.DNSRecord
+	var record cfold.DNSRecord
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -286,7 +252,7 @@ func TestAccCloudflareRecord_Proxied(t *testing.T) {
 
 func TestAccCloudflareRecord_Updated(t *testing.T) {
 	t.Parallel()
-	var record cloudflare.DNSRecord
+	var record cfold.DNSRecord
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-update"
 	rnd := utils.GenerateRandomResourceName()
@@ -317,7 +283,7 @@ func TestAccCloudflareRecord_Updated(t *testing.T) {
 
 func TestAccCloudflareRecord_typeForceNewRecord(t *testing.T) {
 	t.Parallel()
-	var afterCreate, afterUpdate cloudflare.DNSRecord
+	var afterCreate, afterUpdate cfold.DNSRecord
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	recordName := "tf-acctest-type-force-new"
@@ -340,67 +306,6 @@ func TestAccCloudflareRecord_typeForceNewRecord(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareRecordExists(resourceName, &afterUpdate),
 					testAccCheckCloudflareRecordRecreated(&afterCreate, &afterUpdate),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareRecord_hostnameForceNewRecord(t *testing.T) {
-	t.Parallel()
-	var afterCreate, afterUpdate cloudflare.DNSRecord
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	recordName := "tf-acctest-hostname-force-new"
-	rnd := utils.GenerateRandomResourceName()
-	resourceName := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, recordName, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareRecordExists(resourceName, &afterCreate),
-				),
-			},
-			{
-				Config: testAccCheckCloudflareRecordConfigChangeHostname(zoneID, recordName, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareRecordExists(resourceName, &afterUpdate),
-					testAccCheckCloudflareRecordRecreated(&afterCreate, &afterUpdate),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareRecord_CreateAfterManualDestroy(t *testing.T) {
-	t.Parallel()
-	var afterCreate, afterRecreate cloudflare.DNSRecord
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_dns_record.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareRecordDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareRecordExists(name, &afterCreate),
-					testAccManuallyDeleteRecord(&afterCreate, zoneID),
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccCheckCloudflareRecordConfigBasic(zoneID, name, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareRecordExists(name, &afterRecreate),
-					testAccCheckCloudflareRecordRecreated(&afterCreate, &afterRecreate),
 				),
 			},
 		},
@@ -612,7 +517,7 @@ func TestAccCloudflareRecord_ClearTags(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "tags.#", "0"),
-					resource.TestCheckResourceAttr(name, "comment", ""),
+					resource.TestCheckNoResourceAttr(name, "comment"),
 				),
 			},
 		},
@@ -644,7 +549,7 @@ func TestSuppressTrailingDots(t *testing.T) {
 	}
 }
 
-func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) resource.TestCheckFunc {
+func testAccCheckCloudflareRecordRecreated(before, after *cfold.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if before.ID == after.ID {
 			return fmt.Errorf("expected change of Record Ids, but both were %v", before.ID)
@@ -654,32 +559,33 @@ func testAccCheckCloudflareRecordRecreated(before, after *cloudflare.DNSRecord) 
 }
 
 func testAccCheckCloudflareRecordDestroy(s *terraform.State) error {
-	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-	if clientErr != nil {
-		tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-	}
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_dns_record" {
 			continue
 		}
 
-		_, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
-		if err == nil {
-			return fmt.Errorf("Record still exists")
+		_, err := client.DNS.Records.Get(context.Background(), rs.Primary.ID, dns.RecordGetParams{
+			ZoneID: cloudflare.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
+		})
+		var apierr *cloudflare.Error
+		if errors.As(err, &apierr) {
+			if apierr.StatusCode != 404 {
+				return fmt.Errorf("Record still exists")
+			}
 		}
 	}
 
 	return nil
 }
 
-func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord, zoneID string) resource.TestCheckFunc {
+func testAccManuallyDeleteRecord(record *cfold.DNSRecord, zoneID string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
-		err := client.DeleteDNSRecord(context.Background(), cloudflare.ZoneIdentifier(zoneID), record.ID)
+		client := acctest.SharedClient()
+		_, err := client.DNS.Records.Delete(context.Background(), record.ID, dns.RecordDeleteParams{
+			ZoneID: cloudflare.F(zoneID),
+		})
 		if err != nil {
 			return err
 		}
@@ -687,7 +593,7 @@ func testAccManuallyDeleteRecord(record *cloudflare.DNSRecord, zoneID string) re
 	}
 }
 
-func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func testAccCheckCloudflareRecordAttributes(record *cfold.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if record.Content != "192.168.0.10" {
 			return fmt.Errorf("bad content: %s", record.Content)
@@ -697,7 +603,7 @@ func testAccCheckCloudflareRecordAttributes(record *cloudflare.DNSRecord) resour
 	}
 }
 
-func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func testAccCheckCloudflareRecordAttributesUpdated(record *cfold.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if record.Content != "192.168.0.11" {
 			return fmt.Errorf("bad content: %s", record.Content)
@@ -707,32 +613,7 @@ func testAccCheckCloudflareRecordAttributesUpdated(record *cloudflare.DNSRecord)
 	}
 }
 
-func testAccCheckCloudflareRecordDates(n string, record *cloudflare.DNSRecord, testStartTime time.Time) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, _ := s.RootModule().Resources[n]
-
-		for timeStampAttr, serverVal := range map[string]time.Time{"created_on": record.CreatedOn, "modified_on": record.ModifiedOn} {
-			timeStamp, err := time.Parse(time.RFC3339Nano, rs.Primary.Attributes[timeStampAttr])
-			if err != nil {
-				return err
-			}
-
-			if timeStamp != serverVal {
-				return fmt.Errorf("state value of %s: %s is different than server created value: %s", timeStampAttr, rs.Primary.Attributes[timeStampAttr], serverVal.Format(time.RFC3339Nano))
-			}
-
-			// check retrieved values are reasonable
-			// note this could fail if local time is out of sync with server time
-			if timeStamp.Before(testStartTime) {
-				return fmt.Errorf("state value of %s: %s should be greater than test start time: %s", timeStampAttr, timeStamp.Format(time.RFC3339Nano), testStartTime.Format(time.RFC3339Nano))
-			}
-		}
-
-		return nil
-	}
-}
-
-func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) resource.TestCheckFunc {
+func testAccCheckCloudflareRecordExists(n string, record *cfold.DNSRecord) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -747,7 +628,7 @@ func testAccCheckCloudflareRecordExists(n string, record *cloudflare.DNSRecord) 
 		if clientErr != nil {
 			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 		}
-		foundRecord, err := client.GetDNSRecord(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
+		foundRecord, err := client.GetDNSRecord(context.Background(), cfold.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}

@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	cfv2 "github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/option"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -214,10 +214,10 @@ func SharedV1Client() (*cfv1.API, error) {
 	return client, nil
 }
 
-// SharedV2Client returns a common Cloudflare V2 client setup needed for the
+// SharedClient returns a common Cloudflare V2 client setup needed for the
 // sweeper functions.
-func SharedV2Client() *cfv2.Client {
-	return cfv2.NewClient(
+func SharedClient() *cloudflare.Client {
+	return cloudflare.NewClient(
 		option.WithAPIKey(os.Getenv("CLOUDFLARE_API_KEY")),
 		option.WithAPIEmail(os.Getenv("CLOUDFLARE_EMAIL")),
 	)

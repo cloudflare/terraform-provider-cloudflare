@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/dns"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -20,7 +20,7 @@ func init() {
 			accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 			ctx := context.Background()
 
-			client := acctest.SharedV2Client()
+			client := acctest.SharedClient()
 
 			clusters, err := client.DNS.Firewall.List(ctx, dns.FirewallListParams{
 				AccountID: cloudflare.F(accountID),

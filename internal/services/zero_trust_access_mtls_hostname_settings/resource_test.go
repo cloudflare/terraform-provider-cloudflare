@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
-	cfv2 "github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/zero_trust"
+	cfv2 "github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -83,7 +83,7 @@ func TestAccCloudflareAccessMutualTLSHostnameSettings_Simple(t *testing.T) {
 }
 
 func testAccCheckCloudflareAccessMutualTLSHostnameSettingsDestroy(s *terraform.State) error {
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "cloudflare_zero_trust_access_mtls_hostname_settings" {

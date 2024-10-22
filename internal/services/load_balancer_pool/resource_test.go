@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
-	cfv2 "github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	cfold "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -39,7 +39,7 @@ func testSweepCloudflareLoadBalancerPool(r string) error {
 		return errors.New("CLOUDFLARE_ACCOUNT_ID must be set")
 	}
 
-	pools, err := client.ListLoadBalancerPools(ctx, cloudflare.AccountIdentifier(accountID), cloudflare.ListLoadBalancerPoolParams{})
+	pools, err := client.ListLoadBalancerPools(ctx, cfold.AccountIdentifier(accountID), cfold.ListLoadBalancerPoolParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancer Pools: %s", err))
 	}
@@ -52,7 +52,7 @@ func testSweepCloudflareLoadBalancerPool(r string) error {
 	for _, pool := range pools {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer Pool ID: %s", pool.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancerPool(ctx, cloudflare.AccountIdentifier(accountID), pool.ID)
+		client.DeleteLoadBalancerPool(ctx, cfold.AccountIdentifier(accountID), pool.ID)
 	}
 
 	return nil
@@ -62,7 +62,7 @@ func TestAccCloudflareLoadBalancerPool_Basic(t *testing.T) {
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
 	testStartTime := time.Now().UTC()
-	var loadBalancerPool cloudflare.LoadBalancerPool
+	var loadBalancerPool cfold.LoadBalancerPool
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -92,7 +92,7 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastOutstandingRequests(t 
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
 	testStartTime := time.Now().UTC()
-	var loadBalancerPool cloudflare.LoadBalancerPool
+	var loadBalancerPool cfold.LoadBalancerPool
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -124,7 +124,7 @@ func TestAccCloudflareLoadBalancerPool_OriginSteeringLeastConnections(t *testing
 	// multiple instances of this config would conflict but we only use it once
 	t.Parallel()
 	testStartTime := time.Now().UTC()
-	var loadBalancerPool cloudflare.LoadBalancerPool
+	var loadBalancerPool cfold.LoadBalancerPool
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -162,8 +162,8 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 	t.Parallel()
 	testStartTime := time.Now().UTC()
 
-	var tunnelVirtualNetwork cloudflare.TunnelVirtualNetwork
-	var loadBalancerPool cloudflare.LoadBalancerPool
+	var tunnelVirtualNetwork cfold.TunnelVirtualNetwork
+	var loadBalancerPool cfold.LoadBalancerPool
 
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	vnetResID := utils.GenerateRandomResourceName()
@@ -200,7 +200,7 @@ func TestAccCloudflareLoadBalancerPool_VirtualNetworkID(t *testing.T) {
 
 func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 	t.Parallel()
-	var loadBalancerPool cloudflare.LoadBalancerPool
+	var loadBalancerPool cfold.LoadBalancerPool
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
 	headerValue := os.Getenv("CLOUDFLARE_DOMAIN")
@@ -240,7 +240,7 @@ func TestAccCloudflareLoadBalancerPool_FullySpecified(t *testing.T) {
 
 func TestAccCloudflareLoadBalancerPool_CreateAfterManualDestroy(t *testing.T) {
 	t.Parallel()
-	var loadBalancerPool cloudflare.LoadBalancerPool
+	var loadBalancerPool cfold.LoadBalancerPool
 	var initialId string
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_load_balancer_pool." + rnd
@@ -288,7 +288,7 @@ func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.GetLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
+		_, err := client.GetLoadBalancerPool(context.Background(), cfold.AccountIdentifier(accountID), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("Load balancer pool still exists")
 		}
@@ -297,7 +297,7 @@ func testAccCheckCloudflareLoadBalancerPoolDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cloudflare.LoadBalancerPool) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cfold.LoadBalancerPool) resource.TestCheckFunc {
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
@@ -313,7 +313,7 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 		if clientErr != nil {
 			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 		}
-		foundLoadBalancerPool, err := client.GetLoadBalancerPool(context.Background(), cloudflare.AccountIdentifier(accountID), rs.Primary.ID)
+		foundLoadBalancerPool, err := client.GetLoadBalancerPool(context.Background(), cfold.AccountIdentifier(accountID), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -326,8 +326,8 @@ func testAccCheckCloudflareLoadBalancerPoolExists(n string, loadBalancerPool *cl
 func testAccCheckCloudflareLoadBalancerPoolVirtualNetworkMatch(vnetName, poolName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// fetch virtual network and pool and make sure they both reference the same virtual network ID
-		var tunnelVirtualNetwork cloudflare.TunnelVirtualNetwork
-		var loadBalancerPool cloudflare.LoadBalancerPool
+		var tunnelVirtualNetwork cfold.TunnelVirtualNetwork
+		var loadBalancerPool cfold.LoadBalancerPool
 
 		if err := testAccCheckCloudflareTunnelVirtualNetworkExists(vnetName, &tunnelVirtualNetwork)(s); err != nil {
 			return err
@@ -360,7 +360,7 @@ func testAccCheckCloudflareLoadBalancerPoolVirtualNetworkMatch(vnetName, poolNam
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *cloudflare.LoadBalancerPool, testStartTime time.Time) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *cfold.LoadBalancerPool, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[n]
 
@@ -385,12 +385,12 @@ func testAccCheckCloudflareLoadBalancerPoolDates(n string, loadBalancerPool *clo
 	}
 }
 
-func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cloudflare.LoadBalancerPool, initialId *string) resource.TestCheckFunc {
+func testAccManuallyDeleteLoadBalancerPool(name string, loadBalancerPool *cfold.LoadBalancerPool, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		client := acctest.SharedV2Client() // TODO(terraform): replace with SharedV2Clent
+		client := acctest.SharedClient()
 		*initialId = loadBalancerPool.ID
 		_, err := client.LoadBalancers.Pools.Delete(context.Background(), loadBalancerPool.ID, load_balancers.PoolDeleteParams{
-			AccountID: cfv2.F(os.Getenv("CLOUDFLARE_ACCOUNT_ID")),
+			AccountID: cloudflare.F(os.Getenv("CLOUDFLARE_ACCOUNT_ID")),
 		})
 		if err != nil {
 			return err
@@ -421,7 +421,7 @@ func testAccCheckCloudflareLoadBalancerPoolConfigFullySpecified(id, headerValue,
 	// TODO add field to config after creating monitor resource
 }
 
-func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwork *cloudflare.TunnelVirtualNetwork) resource.TestCheckFunc {
+func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwork *cfold.TunnelVirtualNetwork) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -436,8 +436,8 @@ func testAccCheckCloudflareTunnelVirtualNetworkExists(name string, virtualNetwor
 		if clientErr != nil {
 			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 		}
-		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.TunnelVirtualNetworksListParams{
-			IsDeleted: cloudflare.BoolPtr(false),
+		foundTunnelVirtualNetworks, err := client.ListTunnelVirtualNetworks(context.Background(), cfold.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cfold.TunnelVirtualNetworksListParams{
+			IsDeleted: cfold.BoolPtr(false),
 			ID:        rs.Primary.ID,
 		})
 

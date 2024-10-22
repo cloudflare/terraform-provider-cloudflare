@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cloudflare-go/v2"
-	"github.com/cloudflare/cloudflare-go/v2/secondary_dns"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/secondary_dns"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -25,7 +25,7 @@ func init() {
 
 func testSweepCloudflareSecondaryDNSIncoming(r string) error {
 	ctx := context.Background()
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	// Clean up the connections between peers and zones
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -58,7 +58,7 @@ func TestAccCloudflareSecondaryDNSIncoming_Basic(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	// Make a new peer that we can connect our zone to
 	peerObj := secondary_dns.PeerParam{
@@ -99,7 +99,7 @@ func TestAccCloudflareSecondaryDNSIncoming_Update(t *testing.T) {
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	client := acctest.SharedV2Client()
+	client := acctest.SharedClient()
 
 	// Make a new peer that we can connect our zone to
 	peerObj := secondary_dns.PeerParam{
