@@ -18,7 +18,7 @@ type DNSRecordModel struct {
 	ID                types.String                                     `tfsdk:"id" json:"id,computed"`
 	ZoneID            types.String                                     `tfsdk:"zone_id" path:"zone_id,required"`
 	Content           types.String                                     `tfsdk:"content" json:"content,computed_optional"`
-	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,computed_optional"`
+	Priority          types.Float64                                    `tfsdk:"priority" json:"priority,optional"`
 	Type              types.String                                     `tfsdk:"type" json:"type,required"`
 	Data              customfield.NestedObject[DNSRecordDataModel]     `tfsdk:"data" json:"data,computed_optional"`
 	Settings          customfield.NestedObject[DNSRecordSettingsModel] `tfsdk:"settings" json:"settings,computed_optional"`

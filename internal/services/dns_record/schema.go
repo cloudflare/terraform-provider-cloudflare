@@ -12,11 +12,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -52,7 +54,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"priority": schema.Float64Attribute{
 				Description: "Required for MX, SRV and URI records; unused by other record types. Records with lower priorities are preferred.",
 				Optional:    true,
-				Computed:    true,
 				Validators: []validator.Float64{
 					float64validator.Between(0, 65535),
 				},
@@ -345,7 +346,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "If enabled, causes the CNAME record to be resolved externally and the resulting address records (e.g., A and AAAA) to be returned instead of the CNAME record itself. This setting has no effect on proxied records, which are always flattened.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
+						// TODO(fix): invalid default for types that don't support
+						// settings and flattening.
+						//
+						// Default:     booldefault.StaticBool(false),
 					},
 				},
 			},
@@ -404,6 +408,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
+				Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 			},
 			"meta": schema.StringAttribute{
 				Description: "Extra Cloudflare-specific information about the record.",
