@@ -72,8 +72,9 @@ func (r *ZoneLockdownResource) Create(ctx context.Context, req resource.CreateRe
 	env := ZoneLockdownResultEnvelope{*data}
 	_, err = r.client.Firewall.Lockdowns.New(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
-		firewall.LockdownNewParams{},
+		firewall.LockdownNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -119,9 +120,10 @@ func (r *ZoneLockdownResource) Update(ctx context.Context, req resource.UpdateRe
 	env := ZoneLockdownResultEnvelope{*data}
 	_, err = r.client.Firewall.Lockdowns.Update(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
-		firewall.LockdownUpdateParams{},
+		firewall.LockdownUpdateParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -154,8 +156,10 @@ func (r *ZoneLockdownResource) Read(ctx context.Context, req resource.ReadReques
 	env := ZoneLockdownResultEnvelope{*data}
 	_, err := r.client.Firewall.Lockdowns.Get(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
+		firewall.LockdownGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -185,8 +189,10 @@ func (r *ZoneLockdownResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	_, err := r.client.Firewall.Lockdowns.Delete(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
+		firewall.LockdownDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
@@ -200,13 +206,13 @@ func (r *ZoneLockdownResource) Delete(ctx context.Context, req resource.DeleteRe
 func (r *ZoneLockdownResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	var data *ZoneLockdownModel
 
-	path_zone_identifier := ""
-	path_id := ""
+	path_zone_id := ""
+	path_lock_downs_id := ""
 	diags := importpath.ParseImportID(
 		req.ID,
-		"<zone_identifier>/<id>",
-		&path_zone_identifier,
-		&path_id,
+		"<zone_id>/<lock_downs_id>",
+		&path_zone_id,
+		&path_lock_downs_id,
 	)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -217,8 +223,10 @@ func (r *ZoneLockdownResource) ImportState(ctx context.Context, req resource.Imp
 	env := ZoneLockdownResultEnvelope{*data}
 	_, err := r.client.Firewall.Lockdowns.Get(
 		ctx,
-		path_zone_identifier,
-		path_id,
+		path_lock_downs_id,
+		firewall.LockdownGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

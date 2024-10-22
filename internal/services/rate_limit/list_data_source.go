@@ -67,11 +67,7 @@ func (d *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.RateLimits.List(
-		ctx,
-		data.ZoneIdentifier.ValueString(),
-		params,
-	)
+	page, err := d.client.RateLimits.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
