@@ -17,18 +17,13 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDEXTestResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description:   "The name of the DEX test. Must be unique.",
-				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"name": schema.StringAttribute{
-				Description:   "The name of the DEX test. Must be unique.",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
-			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"dex_test_id": schema.StringAttribute{
+				Description:   "API UUID.",
+				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{
@@ -37,6 +32,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"interval": schema.StringAttribute{
 				Description: "How often the test will run.",
+				Required:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The name of the DEX test. Must be unique.",
 				Required:    true,
 			},
 			"data": schema.SingleNestedAttribute{

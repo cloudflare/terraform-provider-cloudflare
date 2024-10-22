@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*RateLimitResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*RateLimitResource)(nil)
+var _ resource.ResourceWithImportState = (*RateLimitResource)(nil)
 
 func NewResource() resource.Resource {
 	return &RateLimitResource{}
@@ -70,8 +72,9 @@ func (r *RateLimitResource) Create(ctx context.Context, req resource.CreateReque
 	env := RateLimitResultEnvelope{*data}
 	_, err = r.client.RateLimits.New(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
-		rate_limits.RateLimitNewParams{},
+		rate_limits.RateLimitNewParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -117,9 +120,10 @@ func (r *RateLimitResource) Update(ctx context.Context, req resource.UpdateReque
 	env := RateLimitResultEnvelope{*data}
 	_, err = r.client.RateLimits.Edit(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
-		rate_limits.RateLimitEditParams{},
+		rate_limits.RateLimitEditParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -152,8 +156,10 @@ func (r *RateLimitResource) Read(ctx context.Context, req resource.ReadRequest, 
 	env := RateLimitResultEnvelope{*data}
 	_, err := r.client.RateLimits.Get(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
+		rate_limits.RateLimitGetParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
@@ -183,14 +189,58 @@ func (r *RateLimitResource) Delete(ctx context.Context, req resource.DeleteReque
 
 	_, err := r.client.RateLimits.Delete(
 		ctx,
-		data.ZoneIdentifier.ValueString(),
 		data.ID.ValueString(),
+		rate_limits.RateLimitDeleteParams{
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *RateLimitResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *RateLimitModel
+
+	path_zone_id := ""
+	path_rate_limit_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<rate_limit_id>",
+		&path_zone_id,
+		&path_rate_limit_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := RateLimitResultEnvelope{*data}
+	_, err := r.client.RateLimits.Get(
+		ctx,
+		path_rate_limit_id,
+		rate_limits.RateLimitGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

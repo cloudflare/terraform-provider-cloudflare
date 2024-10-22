@@ -18,12 +18,12 @@ var _ resource.ResourceWithConfigValidators = (*UserAgentBlockingRuleResource)(n
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_identifier": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"id": schema.StringAttribute{
+			"ua_rule_id": schema.StringAttribute{
 				Description:   "The unique identifier of the User Agent Blocking rule.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},

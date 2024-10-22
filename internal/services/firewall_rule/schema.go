@@ -22,17 +22,12 @@ var _ resource.ResourceWithConfigValidators = (*FirewallRuleResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"zone_identifier": schema.StringAttribute{
+			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"id": schema.StringAttribute{
-				Description:   "The unique identifier of the firewall rule.",
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"path_id": schema.StringAttribute{
+			"rule_id": schema.StringAttribute{
 				Description:   "The unique identifier of the firewall rule.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
@@ -104,6 +99,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the firewall rule.",
+				Computed:    true,
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the firewall rule.",
 				Computed:    true,
 			},
 			"paused": schema.BoolAttribute{

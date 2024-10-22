@@ -58,12 +58,18 @@ func (d *UserAgentBlockingRuleDataSource) Read(ctx context.Context, req datasour
 	}
 
 	if data.Filter == nil {
+		params, diags := data.toReadParams(ctx)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
 		res := new(http.Response)
 		env := UserAgentBlockingRuleResultDataSourceEnvelope{*data}
 		_, err := d.client.Firewall.UARules.Get(
 			ctx,
-			data.ZoneIdentifier.ValueString(),
-			data.ID.ValueString(),
+			data.UARuleID.ValueString(),
+			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -86,11 +92,7 @@ func (d *UserAgentBlockingRuleDataSource) Read(ctx context.Context, req datasour
 		}
 
 		env := UserAgentBlockingRuleResultListDataSourceEnvelope{}
-		page, err := d.client.Firewall.UARules.List(
-			ctx,
-			data.Filter.ZoneIdentifier.ValueString(),
-			params,
-		)
+		page, err := d.client.Firewall.UARules.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
