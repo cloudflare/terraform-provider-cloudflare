@@ -58,18 +58,12 @@ func (d *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 
 	if data.Filter == nil {
-		params, diags := data.toReadParams(ctx)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
 		res := new(http.Response)
 		env := FilterResultDataSourceEnvelope{*data}
 		_, err := d.client.Filters.Get(
 			ctx,
-			data.FilterID.ValueString(),
-			params,
+			data.ZoneIdentifier.ValueString(),
+			data.ID.ValueString(),
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
 		)
@@ -92,7 +86,11 @@ func (d *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		}
 
 		env := FilterResultListDataSourceEnvelope{}
-		page, err := d.client.Filters.List(ctx, params)
+		page, err := d.client.Filters.List(
+			ctx,
+			data.Filter.ZoneIdentifier.ValueString(),
+			params,
+		)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
