@@ -5,13 +5,15 @@ package access_rule
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*AccessRuleDataSource)(nil)
@@ -19,17 +21,96 @@ var _ datasource.DataSourceWithConfigValidators = (*AccessRuleDataSource)(nil)
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"account_id": schema.StringAttribute{
-				Description: "The Account ID to use for this endpoint. Mutually exclusive with the Zone ID.",
+			"created_on": schema.StringAttribute{
+				Description: "The timestamp of when the rule was created.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"id": schema.StringAttribute{
+				Description: "The unique identifier of the IP Access rule.",
 				Optional:    true,
 			},
-			"identifier": schema.StringAttribute{
-				Description: "The unique identifier of the resource.",
+			"mode": schema.StringAttribute{
+				Description: "The action to apply to a matched request.",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"block",
+						"challenge",
+						"whitelist",
+						"js_challenge",
+						"managed_challenge",
+					),
+				},
+			},
+			"modified_on": schema.StringAttribute{
+				Description: "The timestamp of when the rule was last modified.",
+				Optional:    true,
+				CustomType:  timetypes.RFC3339Type{},
+			},
+			"notes": schema.StringAttribute{
+				Description: "An informative summary of the rule, typically used as a reminder or explanation.",
 				Optional:    true,
 			},
-			"zone_id": schema.StringAttribute{
-				Description: "The Zone ID to use for this endpoint. Mutually exclusive with the Account ID.",
+			"allowed_modes": schema.ListAttribute{
+				Description: "The available actions that a rule can apply to a matched request.",
 				Optional:    true,
+				Validators: []validator.List{
+					listvalidator.ValueStringsAre(
+						stringvalidator.OneOfCaseInsensitive(
+							"block",
+							"challenge",
+							"whitelist",
+							"js_challenge",
+							"managed_challenge",
+						),
+					),
+				},
+				ElementType: types.StringType,
+			},
+			"configuration": schema.SingleNestedAttribute{
+				Description: "The rule configuration.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"target": schema.StringAttribute{
+						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the rule.",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive(
+								"ip",
+								"ip6",
+								"ip_range",
+								"asn",
+								"country",
+							),
+						},
+					},
+					"value": schema.StringAttribute{
+						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+						Computed:    true,
+					},
+				},
+			},
+			"scope": schema.SingleNestedAttribute{
+				Description: "All zones owned by the user will have the rule applied.",
+				Optional:    true,
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Description: "Identifier",
+						Computed:    true,
+					},
+					"email": schema.StringAttribute{
+						Description: "The contact email address of the user.",
+						Computed:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "The scope of the rule.",
+						Computed:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOfCaseInsensitive("user", "organization"),
+						},
+					},
+				},
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
@@ -120,10 +201,5 @@ func (d *AccessRuleDataSource) Schema(ctx context.Context, req datasource.Schema
 }
 
 func (d *AccessRuleDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
-	return []datasource.ConfigValidator{
-		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("identifier")),
-		datasourcevalidator.Conflicting(path.MatchRoot("account_id"), path.MatchRoot("zone_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("account_id")),
-		datasourcevalidator.Conflicting(path.MatchRoot("filter"), path.MatchRoot("zone_id")),
-	}
+	return []datasource.ConfigValidator{}
 }
