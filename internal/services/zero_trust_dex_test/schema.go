@@ -17,13 +17,17 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDEXTestResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique identifier for the test.",
+				Computed:    true,
+			},
+			"test_id": schema.StringAttribute{
+				Description:   "The unique identifier for the test.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"dex_test_id": schema.StringAttribute{
-				Description:   "API UUID.",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"enabled": schema.BoolAttribute{
