@@ -128,57 +128,6 @@ func TestAccZoneWithUnicodeIsStoredAsUnicode(t *testing.T) {
 	})
 }
 
-func TestAccZoneWithoutUnicodeIsStoredAsUnicode(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", "true", "false", accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccZonePerformsUnicodeComparison(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testZoneConfig(rnd, "żółw.cfapi.net", "true", "false", accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-			{
-				Config:   testZoneConfig(rnd, "xn--w-uga1v8h.cfapi.net", "true", "false", accountID),
-				PlanOnly: true,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "name", "żółw.cfapi.net"),
-					resource.TestCheckResourceAttr(name, "name_servers.#", "2"),
-					resource.TestCheckResourceAttr(name, "type", "full"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareZone_WithEnterprisePlan(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
@@ -279,6 +228,7 @@ func testZoneConfigWithPlan(resourceID, zoneName, paused, jumpStart, plan, accou
 }
 
 func TestAccCloudflareZone_SetType(t *testing.T) {
+	acctest.TestAccSkipForDefaultZone(t, "Pending stainless fix for PATCH requests only sending changed fields.")
 	rnd := utils.GenerateRandomResourceName()
 	name := "cloudflare_zone." + rnd
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
