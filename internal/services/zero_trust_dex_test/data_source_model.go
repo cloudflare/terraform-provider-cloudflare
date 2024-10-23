@@ -28,6 +28,7 @@ type ZeroTrustDEXTestDataSourceModel struct {
 	Interval       types.String                                                                `tfsdk:"interval" json:"interval,computed"`
 	Name           types.String                                                                `tfsdk:"name" json:"name,computed"`
 	Targeted       types.Bool                                                                  `tfsdk:"targeted" json:"targeted,computed"`
+	TestID         types.String                                                                `tfsdk:"test_id" json:"test_id,computed"`
 	Data           customfield.NestedObject[ZeroTrustDEXTestDataDataSourceModel]               `tfsdk:"data" json:"data,computed"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed"`
 	Filter         *ZeroTrustDEXTestFindOneByDataSourceModel                                   `tfsdk:"filter"`
