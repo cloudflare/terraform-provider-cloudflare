@@ -92,6 +92,10 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 						"targeted": schema.BoolAttribute{
 							Computed: true,
 						},
+						"test_id": schema.StringAttribute{
+							Description: "The unique identifier for the test.",
+							Computed:    true,
+						},
 					},
 				},
 			},

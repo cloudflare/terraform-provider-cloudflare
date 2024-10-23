@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustDEXTestResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustDEXTestResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustDEXTestResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDEXTestResource{}
@@ -88,6 +90,7 @@ func (r *ZeroTrustDEXTestResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 	data = &env.Result
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -118,7 +121,7 @@ func (r *ZeroTrustDEXTestResource) Update(ctx context.Context, req resource.Upda
 	env := ZeroTrustDEXTestResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.Devices.DEXTests.Update(
 		ctx,
-		data.DEXTestID.ValueString(),
+		data.TestID.ValueString(),
 		zero_trust.DeviceDEXTestUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -137,6 +140,7 @@ func (r *ZeroTrustDEXTestResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 	data = &env.Result
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -154,7 +158,7 @@ func (r *ZeroTrustDEXTestResource) Read(ctx context.Context, req resource.ReadRe
 	env := ZeroTrustDEXTestResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
 		ctx,
-		data.DEXTestID.ValueString(),
+		data.TestID.ValueString(),
 		zero_trust.DeviceDEXTestGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -172,6 +176,7 @@ func (r *ZeroTrustDEXTestResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 	data = &env.Result
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -187,7 +192,7 @@ func (r *ZeroTrustDEXTestResource) Delete(ctx context.Context, req resource.Dele
 
 	_, err := r.client.ZeroTrust.Devices.DEXTests.Delete(
 		ctx,
-		data.DEXTestID.ValueString(),
+		data.TestID.ValueString(),
 		zero_trust.DeviceDEXTestDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -197,6 +202,50 @@ func (r *ZeroTrustDEXTestResource) Delete(ctx context.Context, req resource.Dele
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+	data.ID = data.TestID
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustDEXTestResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDEXTestModel
+
+	path_account_id := ""
+	path_dex_test_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<dex_test_id>",
+		&path_account_id,
+		&path_dex_test_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDEXTestResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.Devices.DEXTests.Get(
+		ctx,
+		path_dex_test_id,
+		zero_trust.DeviceDEXTestGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+	data.ID = data.TestID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -38,6 +38,7 @@ type ZeroTrustDEXTestsResultDataSourceModel struct {
 	Description    types.String                                                                 `tfsdk:"description" json:"description,computed"`
 	TargetPolicies customfield.NestedObjectList[ZeroTrustDEXTestsTargetPoliciesDataSourceModel] `tfsdk:"target_policies" json:"target_policies,computed"`
 	Targeted       types.Bool                                                                   `tfsdk:"targeted" json:"targeted,computed"`
+	TestID         types.String                                                                 `tfsdk:"test_id" json:"test_id,computed"`
 }
 
 type ZeroTrustDEXTestsDataDataSourceModel struct {
