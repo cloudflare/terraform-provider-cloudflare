@@ -1,4 +1,3 @@
-
 resource "cloudflare_waiting_room" "%[1]s" {
   name                      = "%[8]s"
   zone_id                   = "%[3]s"
