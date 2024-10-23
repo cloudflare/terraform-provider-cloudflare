@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/dns"
@@ -15,14 +14,12 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*DNSRecordResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*DNSRecordResource)(nil)
-var _ resource.ResourceWithImportState = (*DNSRecordResource)(nil)
 
 func NewResource() resource.Resource {
 	return &DNSRecordResource{}
@@ -260,8 +257,4 @@ func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyP
 	if req.Plan.Raw.IsNull() {
 		return
 	}
-
-	var name string
-	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("name"), &name)...)
-	resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("name"), strings.ToLower(name))...)
 }
