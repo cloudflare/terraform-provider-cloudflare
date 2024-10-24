@@ -62,6 +62,9 @@ func (v EdgeTTLValidator) ValidateObject(ctx context.Context, req validator.Obje
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	if parameter.Default.IsUnknown() {
+		return
+	}
 
 	if parameter.Mode.ValueString() == "override_origin" {
 		if parameter.Default.ValueInt64() <= 0 {
@@ -103,6 +106,9 @@ func (v BrowserTTLValidator) ValidateObject(ctx context.Context, req validator.O
 	diag := req.ConfigValue.As(ctx, &parameter, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})
 	resp.Diagnostics.Append(diag...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+	if parameter.Default.IsUnknown() {
 		return
 	}
 
