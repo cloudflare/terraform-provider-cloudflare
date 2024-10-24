@@ -282,13 +282,13 @@ func getSearchTerm(d *ListItemModel) string {
 		return strconv.Itoa(int(d.ASN.ValueInt64()))
 	}
 
-	if !d.Hostname.IsUnknown() {
+	if !d.Hostname.IsNull() {
 		if h, _ := d.Hostname.Value(context.TODO()); h.URLHostname.ValueString() != "" {
 			return h.URLHostname.ValueString()
 		}
 	}
 
-	if !d.Redirect.IsUnknown() {
+	if !d.Redirect.IsNull() {
 		if r, _ := d.Redirect.Value(context.TODO()); r.SourceURL.ValueString() != "" {
 			return r.SourceURL.ValueString()
 		}
