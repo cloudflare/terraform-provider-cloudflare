@@ -80,6 +80,43 @@ func TestAccCloudflareQueue_Basic(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareQueue_Consumer(t *testing.T) {
+	t.Parallel()
+	var queue cloudflare.Queue
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	rnd := generateRandomResourceName()
+	resourceName := "cloudflare_queue." + rnd
+	workerScriptName := "cloudflare_workers_script." + rnd
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { 
+			testAccPreCheck(t)
+		},
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCloudflareQueueDestroy,
+		Steps: []resource.TestStep{
+			
+			{
+
+				Config: testAccCheckCloudflareQueueWConsumer(rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckCloudflareQueueExists(rnd, &queue),
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountID),
+					resource.TestCheckResourceAttr(workerScriptName, "name", rnd),
+				),
+			},
+			
+			{
+				ImportState:         true,
+				ImportStateVerify:   true,
+				ResourceName:        resourceName,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			},
+		},
+	})
+}
+
 func testAccCloudflareQueueDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cloudflare.API)
 
@@ -112,10 +149,35 @@ resource "cloudflare_queue" "%[1]s" {
 }`, rnd, accountID, name)
 }
 
+func testAccCheckCloudflareQueueWConsumer(rnd, accountID string) string {
+	queueModuleContent := `export default { queue(batch, env) { return new Response('Hello world'); }, };`
+	return fmt.Sprintf(`
+	resource "cloudflare_workers_script" "%[1]s" {
+		  account_id = "%[2]s"
+		  name = "%[1]s"
+		  content = "%[3]s"
+		  module = true
+	}
+
+	resource "cloudflare_queue" "%[1]s" {
+		account_id = "%[2]s"
+		name = "%[1]s"
+		consumers {
+			script_name = "%[1]s"
+			settings {
+				batch_size = 5
+			}
+		}
+		depends_on = [cloudflare_workers_script.%[1]s]
+	}`, rnd, accountID, queueModuleContent)
+
+}
+
+
 func testAccCheckCloudflareQueueExists(name string, queue *cloudflare.Queue) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		client := testAccProvider.Meta().(*cloudflare.API)
-
+		
 		rs, ok := s.RootModule().Resources["cloudflare_queue."+name]
 		if !ok {
 			return fmt.Errorf("not found: %s", name)
@@ -137,3 +199,4 @@ func testAccCheckCloudflareQueueExists(name string, queue *cloudflare.Queue) res
 		return fmt.Errorf("queue not found")
 	}
 }
+
