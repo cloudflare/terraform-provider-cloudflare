@@ -18,14 +18,14 @@ var _ resource.ResourceWithConfigValidators = (*ListResource)(nil)
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "The unique ID of the list.",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Description:   "Identifier",
 				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"list_id": schema.StringAttribute{
-				Description:   "The unique ID of the list.",
-				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"kind": schema.StringAttribute{
@@ -52,10 +52,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the list was created.",
-				Computed:    true,
-			},
-			"id": schema.StringAttribute{
-				Description: "The unique ID of the list.",
 				Computed:    true,
 			},
 			"modified_on": schema.StringAttribute{

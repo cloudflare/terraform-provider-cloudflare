@@ -28,19 +28,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the list was created.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"description": schema.StringAttribute{
 				Description: "An informative summary of the list.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "The unique ID of the list.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"kind": schema.StringAttribute{
 				Description: "The type of the list. Each type supports specific list items (IP addresses, ASNs, hostnames or redirects).",
-				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"ip",
@@ -52,19 +52,19 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"modified_on": schema.StringAttribute{
 				Description: "The RFC 3339 timestamp of when the list was last modified.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "An informative name for the list. Use this name in filter and rule expressions.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"num_items": schema.Float64Attribute{
 				Description: "The number of items in the list.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"num_referencing_filters": schema.Float64Attribute{
 				Description: "The number of [filters](/operations/filters-list-filters) referencing the list.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
