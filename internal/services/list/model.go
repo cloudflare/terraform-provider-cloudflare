@@ -12,13 +12,12 @@ type ListResultEnvelope struct {
 }
 
 type ListModel struct {
+	ID                    types.String  `tfsdk:"id" json:"id,computed"`
 	AccountID             types.String  `tfsdk:"account_id" path:"account_id,required"`
-	ListID                types.String  `tfsdk:"list_id" path:"list_id,optional"`
 	Kind                  types.String  `tfsdk:"kind" json:"kind,required"`
 	Name                  types.String  `tfsdk:"name" json:"name,required"`
 	Description           types.String  `tfsdk:"description" json:"description,optional"`
 	CreatedOn             types.String  `tfsdk:"created_on" json:"created_on,computed"`
-	ID                    types.String  `tfsdk:"id" json:"id,computed"`
 	ModifiedOn            types.String  `tfsdk:"modified_on" json:"modified_on,computed"`
 	NumItems              types.Float64 `tfsdk:"num_items" json:"num_items,computed"`
 	NumReferencingFilters types.Float64 `tfsdk:"num_referencing_filters" json:"num_referencing_filters,computed"`
