@@ -1,4 +1,4 @@
-package infrastructure_access_target
+package zero_trust_infrastructure_access_target
 
 import (
 	"context"
@@ -16,22 +16,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &InfrastructureAccessTargetResource{}
+var _ resource.Resource = &ZeroTrustInfrastructureAccessTargetResource{}
 
 func NewResource() resource.Resource {
-	return &InfrastructureAccessTargetResource{}
+	return &ZeroTrustInfrastructureAccessTargetResource{}
 }
 
-// InfrastructureAccessTargetResource defines the resource implementation.
-type InfrastructureAccessTargetResource struct {
+// ZeroTrustInfrastructureAccessTargetResource defines the resource implementation.
+type ZeroTrustInfrastructureAccessTargetResource struct {
 	client *muxclient.Client
 }
 
-func (r *InfrastructureAccessTargetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_infrastructure_access_target"
+func (r *ZeroTrustInfrastructureAccessTargetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_zero_trust_infrastructure_access_target"
 }
 
-func (r *InfrastructureAccessTargetResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *ZeroTrustInfrastructureAccessTargetResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (r *InfrastructureAccessTargetResource) Configure(ctx context.Context, req 
 	r.client = client
 }
 
-func (r *InfrastructureAccessTargetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *InfrastructureAccessTargetModel
+func (r *ZeroTrustInfrastructureAccessTargetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *ZeroTrustInfrastructureAccessTargetModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
@@ -84,8 +84,8 @@ func (r *InfrastructureAccessTargetResource) Create(ctx context.Context, req res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *InfrastructureAccessTargetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *InfrastructureAccessTargetModel
+func (r *ZeroTrustInfrastructureAccessTargetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ZeroTrustInfrastructureAccessTargetModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
@@ -108,8 +108,8 @@ func (r *InfrastructureAccessTargetResource) Read(ctx context.Context, req resou
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *InfrastructureAccessTargetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *InfrastructureAccessTargetModel
+func (r *ZeroTrustInfrastructureAccessTargetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *ZeroTrustInfrastructureAccessTargetModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
@@ -145,8 +145,8 @@ func (r *InfrastructureAccessTargetResource) Update(ctx context.Context, req res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *InfrastructureAccessTargetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *InfrastructureAccessTargetModel
+func (r *ZeroTrustInfrastructureAccessTargetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *ZeroTrustInfrastructureAccessTargetModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
@@ -170,7 +170,7 @@ func buildCreateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.Obj
 	if ipInfoModel.IsNull() || ipInfoModel.IsUnknown() {
 		return cloudflare.InfrastructureAccessTargetIPInfo{}, fmt.Errorf("failed: ip info model is empty")
 	}
-	var ipInfo *InfrastructureAccessTargetIPInfoModel
+	var ipInfo *ZeroTrustInfrastructureAccessTargetIPInfoModel
 	resp.Diagnostics.Append(ipInfoModel.As(ctx, &ipInfo, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 
 	if (ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && (ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
@@ -178,17 +178,17 @@ func buildCreateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.Obj
 	}
 
 	if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && !(ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
-		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv4Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv6Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		return buildIPInfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv6Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	} else if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) {
-		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv4Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		return buildIPV4InfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString()), nil
 	} else {
-		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv6Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		return buildIPV6InfoFromAttributes(ipv6Details.IPAddr.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	}
@@ -198,7 +198,7 @@ func buildUpdateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.Obj
 	if ipInfoModel.IsNull() || ipInfoModel.IsUnknown() {
 		return cloudflare.InfrastructureAccessTargetIPInfo{}, fmt.Errorf("failed: ip info model is empty")
 	}
-	var ipInfo *InfrastructureAccessTargetIPInfoModel
+	var ipInfo *ZeroTrustInfrastructureAccessTargetIPInfoModel
 	resp.Diagnostics.Append(ipInfoModel.As(ctx, &ipInfo, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 
 	if (ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && (ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
@@ -206,17 +206,17 @@ func buildUpdateIPInfoFromDetails(ctx context.Context, ipInfoModel basetypes.Obj
 	}
 
 	if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) && !(ipInfo.IPV6.IsNull() || ipInfo.IPV6.IsUnknown()) {
-		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv4Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
-		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv6Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		return buildIPInfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv6Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	} else if !(ipInfo.IPV4.IsNull() || ipInfo.IPV4.IsUnknown()) {
-		var ipv4Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv4Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV4.As(ctx, &ipv4Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		return buildIPV4InfoFromAttributes(ipv4Details.IPAddr.ValueString(), ipv4Details.VirtualNetworkId.ValueString()), nil
 	} else {
-		var ipv6Details *InfrastructureAccessTargetIPDetailsModel
+		var ipv6Details *ZeroTrustInfrastructureAccessTargetIPDetailsModel
 		resp.Diagnostics.Append(ipInfo.IPV6.As(ctx, &ipv6Details, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})...)
 		return buildIPV6InfoFromAttributes(ipv6Details.IPAddr.ValueString(), ipv6Details.VirtualNetworkId.ValueString()), nil
 	}
@@ -253,8 +253,8 @@ func buildIPV6InfoFromAttributes(ipAddr string, virtualNetworkId string) cloudfl
 	}
 }
 
-func buildTargetModelFromResponse(accountID tftypes.String, target cloudflare.InfrastructureAccessTarget) *InfrastructureAccessTargetModel {
-	built := InfrastructureAccessTargetModel{
+func buildTargetModelFromResponse(accountID tftypes.String, target cloudflare.InfrastructureAccessTarget) *ZeroTrustInfrastructureAccessTargetModel {
+	built := ZeroTrustInfrastructureAccessTargetModel{
 		AccountID:  accountID,
 		Hostname:   flatteners.String(target.Hostname),
 		ID:         flatteners.String(target.ID),

@@ -1,4 +1,4 @@
-package infrastructure_access_target
+package zero_trust_infrastructure_access_target
 
 import (
 	"context"
@@ -13,10 +13,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *ZeroTrustInfrastructureAccessTargetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: heredoc.Doc(`
-			The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/insights/risk-score/) resource allows you to configure Cloudflare Risk Behaviors for an account.
+			The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-infrastructure-access/#4-add-a-target) resource allows you to configure Cloudflare Risk Behaviors for an account.
 		`),
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
@@ -88,7 +88,7 @@ func (r *InfrastructureAccessTargetResource) Schema(ctx context.Context, req res
 	}
 }
 
-func (d *InfrastructureAccessTargetDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ZeroTrustInfrastructureAccessTargetDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = dschema.Schema{
 		MarkdownDescription: "Use this data source to retrieve all Infrastructure Access Targets.",
 		Attributes: map[string]dschema.Attribute{

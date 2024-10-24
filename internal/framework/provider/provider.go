@@ -26,7 +26,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_app_types"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/gateway_categories"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/hyperdrive_config"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/infrastructure_access_target"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/infrastructure_access_target_deprecated"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/list_item"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/origin_ca_certificate"
@@ -38,6 +38,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/workers_for_platforms_dispatch_namespace_deprecated"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_access_mtls_hostname_settings"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_infrastructure_access_target"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_behavior"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/framework/service/zero_trust_risk_score_integration"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/sdkv2provider"
@@ -384,7 +385,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		workers_for_platforms_dispatch_namespace_deprecated.NewResource,
 		workers_for_platforms_dispatch_namespace.NewResource,
 		zero_trust_risk_score_integration.NewResource,
-		infrastructure_access_target.NewResource,
+		infrastructure_access_target_deprecated.NewResource,
+		zero_trust_infrastructure_access_target.NewResource,
 	}
 }
 
@@ -397,7 +399,8 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		gateway_categories.NewDataSource,
 		gateway_app_types.NewDataSource,
 		dcv_delegation.NewDataSource,
-		infrastructure_access_target.NewDataSource,
+		infrastructure_access_target_deprecated.NewDataSource,
+		zero_trust_infrastructure_access_target.NewDataSource,
 	}
 }
 

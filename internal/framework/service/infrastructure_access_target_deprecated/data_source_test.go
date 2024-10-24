@@ -1,4 +1,4 @@
-package infrastructure_access_target_test
+package infrastructure_access_target_deprecated_test
 
 import (
 	"fmt"
