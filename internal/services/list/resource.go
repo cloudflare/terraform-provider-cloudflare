@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/rules"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ListResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ListResource)(nil)
+var _ resource.ResourceWithImportState = (*ListResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ListResource{}
@@ -118,7 +120,7 @@ func (r *ListResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	env := ListResultEnvelope{*data}
 	_, err = r.client.Rules.Lists.Update(
 		ctx,
-		data.ListID.ValueString(),
+		data.ID.ValueString(),
 		rules.ListUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -154,7 +156,7 @@ func (r *ListResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	env := ListResultEnvelope{*data}
 	_, err := r.client.Rules.Lists.Get(
 		ctx,
-		data.ListID.ValueString(),
+		data.ID.ValueString(),
 		rules.ListGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -187,7 +189,7 @@ func (r *ListResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 
 	_, err := r.client.Rules.Lists.Delete(
 		ctx,
-		data.ListID.ValueString(),
+		data.ID.ValueString(),
 		rules.ListDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -197,6 +199,48 @@ func (r *ListResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ListResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ListModel
+
+	path_account_id := ""
+	path_list_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<list_id>",
+		&path_account_id,
+		&path_list_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ListResultEnvelope{*data}
+	_, err := r.client.Rules.Lists.Get(
+		ctx,
+		path_list_id,
+		rules.ListGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

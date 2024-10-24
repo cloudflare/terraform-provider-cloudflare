@@ -23,14 +23,14 @@ type ListResultListDataSourceEnvelope struct {
 type ListDataSourceModel struct {
 	AccountID             types.String                  `tfsdk:"account_id" path:"account_id,optional"`
 	ListID                types.String                  `tfsdk:"list_id" path:"list_id,optional"`
-	CreatedOn             types.String                  `tfsdk:"created_on" json:"created_on,optional"`
-	Description           types.String                  `tfsdk:"description" json:"description,optional"`
-	ID                    types.String                  `tfsdk:"id" json:"id,optional"`
-	Kind                  types.String                  `tfsdk:"kind" json:"kind,optional"`
-	ModifiedOn            types.String                  `tfsdk:"modified_on" json:"modified_on,optional"`
-	Name                  types.String                  `tfsdk:"name" json:"name,optional"`
-	NumItems              types.Float64                 `tfsdk:"num_items" json:"num_items,optional"`
-	NumReferencingFilters types.Float64                 `tfsdk:"num_referencing_filters" json:"num_referencing_filters,optional"`
+	CreatedOn             types.String                  `tfsdk:"created_on" json:"created_on,computed"`
+	Description           types.String                  `tfsdk:"description" json:"description,computed"`
+	ID                    types.String                  `tfsdk:"id" json:"id,computed"`
+	Kind                  types.String                  `tfsdk:"kind" json:"kind,computed"`
+	ModifiedOn            types.String                  `tfsdk:"modified_on" json:"modified_on,computed"`
+	Name                  types.String                  `tfsdk:"name" json:"name,computed"`
+	NumItems              types.Float64                 `tfsdk:"num_items" json:"num_items,computed"`
+	NumReferencingFilters types.Float64                 `tfsdk:"num_referencing_filters" json:"num_referencing_filters,computed"`
 	Filter                *ListFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
