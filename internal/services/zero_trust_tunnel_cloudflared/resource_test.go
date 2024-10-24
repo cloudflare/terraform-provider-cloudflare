@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"regexp"
 	"testing"
 
 	"github.com/cloudflare/cloudflare-go"
@@ -38,8 +37,7 @@ func TestAccCloudflareTunnelCreate_Basic(t *testing.T) {
 				Config: testAccCheckCloudflareTunnelBasic(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
-					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.cfargotunnel\\.com")),
+					resource.TestCheckResourceAttr(name, "tunnel_secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
 				),
 			},
 		},
@@ -72,8 +70,7 @@ func TestAccCloudflareTunnelCreate_Managed(t *testing.T) {
 				Config: testAccCheckCloudflareTunnelManaged(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
-					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.cfargotunnel\\.com")),
+					resource.TestCheckResourceAttr(name, "tunnel_secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
 					resource.TestCheckResourceAttr(name, "config_src", "cloudflare"),
 				),
 			},
@@ -107,8 +104,7 @@ func TestAccCloudflareTunnelCreate_Unmanaged(t *testing.T) {
 				Config: testAccCheckCloudflareTunnelUnmanaged(accID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
-					resource.TestMatchResourceAttr(name, "cname", regexp.MustCompile(".*\\.cfargotunnel\\.com")),
+					resource.TestCheckResourceAttr(name, "tunnel_secret", "AQIDBAUGBwgBAgMEBQYHCAECAwQFBgcIAQIDBAUGBwg="),
 					resource.TestCheckResourceAttr(name, "config_src", "local"),
 				),
 			},

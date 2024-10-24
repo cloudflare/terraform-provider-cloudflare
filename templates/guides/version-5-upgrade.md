@@ -119,6 +119,45 @@ terraform_cloudflare_v5()
 ## cloudflare_address_map
 ## cloudflare_api_shield
 ## cloudflare_api_token
+
+- `policy` is now `policies`.
+
+  Before
+  ```hcl
+  resource "cloudflare_api_token" "example" {
+    name = "example"
+		policy = [{
+			effect = "allow"
+			permission_groups = [ "%[2]s" ]
+			resources = { "com.cloudflare.api.account.zone.*" = "*" }
+		}]
+		condition = {
+      request_ip = {
+				in     = ["192.0.2.1/32"]
+				not_in = ["198.51.100.1/32"]
+			}
+		}
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_api_token" "example" {
+    name = "example"
+		policies = [{
+			effect = "allow"
+			permission_groups = [ "%[2]s" ]
+			resources = { "com.cloudflare.api.account.zone.*" = "*" }
+		}]
+		condition = {
+      request_ip = {
+				in     = ["192.0.2.1/32"]
+				not_in = ["198.51.100.1/32"]
+			}
+		}
+  }
+  ```
+
 ## cloudflare_certificate_pack
 ## cloudflare_custom_hostname
 ## cloudflare_custom_ssl
@@ -282,6 +321,28 @@ terraform_cloudflare_v5()
     namespace_id = "9e5bd5c4acd7201064fe42d4e46cc48c"
     key_name= "my-simple-key"
     value = "foo"
+  }
+  ```
+
+## cloudflare_zero_trust_tunnel_cloudflared
+
+- `secret` is now `tunnel_secret`.
+- `cname` is no longer available.
+
+  Before
+  ```hcl
+  resource "zero_trust_tunnel_cloudflared" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    secret = "example-secret"
+    cname = "foo.example.com"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "zero_trust_tunnel_cloudflared" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    tunnel_secret = "example-secret"
   }
   ```
 
