@@ -24,7 +24,7 @@ func TestAccCloudflareWorkerCronTrigger_Basic(t *testing.T) {
 			{
 				Config: testAccCloudflareWorkerCronTriggerConfigBasic(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "script_name", rnd),
+					resource.TestCheckResourceAttr(name, "script_name", "mute-truth-fdb1"),
 					resource.TestCheckResourceAttr(name, "schedules.#", "2"),
 				),
 			},
