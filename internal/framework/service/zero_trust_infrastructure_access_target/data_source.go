@@ -1,4 +1,4 @@
-package infrastructure_access_target
+package zero_trust_infrastructure_access_target
 
 import (
 	"context"
@@ -10,21 +10,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSource = &InfrastructureAccessTargetDataSource{}
+var _ datasource.DataSource = &ZeroTrustInfrastructureAccessTargetDataSource{}
 
 func NewDataSource() datasource.DataSource {
-	return &InfrastructureAccessTargetDataSource{}
+	return &ZeroTrustInfrastructureAccessTargetDataSource{}
 }
 
-type InfrastructureAccessTargetDataSource struct {
+type ZeroTrustInfrastructureAccessTargetDataSource struct {
 	client *muxclient.Client
 }
 
-func (d *InfrastructureAccessTargetDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_infrastructure_access_targets"
+func (d *ZeroTrustInfrastructureAccessTargetDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_zero_trust_infrastructure_access_targets"
 }
 
-func (d *InfrastructureAccessTargetDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZeroTrustInfrastructureAccessTargetDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -41,8 +41,8 @@ func (d *InfrastructureAccessTargetDataSource) Configure(ctx context.Context, re
 	d.client = client
 }
 
-func (d *InfrastructureAccessTargetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *InfrastructureAccessTargetsModel
+func (d *ZeroTrustInfrastructureAccessTargetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *ZeroTrustInfrastructureAccessTargetsModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
@@ -73,9 +73,9 @@ func (d *InfrastructureAccessTargetDataSource) Read(ctx context.Context, req dat
 		resp.Diagnostics.AddError("failed to fetch Infrastructure Access Targets", "no Infrastructure Access Targets matching given query parameters")
 	}
 
-	var targets []InfrastructureAccessTargetModel
+	var targets []ZeroTrustInfrastructureAccessTargetModel
 	for _, target := range allTargets {
-		targets = append(targets, InfrastructureAccessTargetModel{
+		targets = append(targets, ZeroTrustInfrastructureAccessTargetModel{
 			AccountID:  types.StringValue(accountId),
 			Hostname:   types.StringValue(target.Hostname),
 			ID:         types.StringValue(target.ID),
