@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_ruleset: unexpected validation error when ttl default is set with variable 
+```
