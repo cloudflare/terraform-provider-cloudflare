@@ -8,44 +8,16 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
-
-type AccessRuleResultDataSourceEnvelope struct {
-	Result AccessRuleDataSourceModel `json:"result,computed"`
-}
 
 type AccessRuleResultListDataSourceEnvelope struct {
 	Result customfield.NestedObjectList[AccessRuleDataSourceModel] `json:"result,computed"`
 }
 
 type AccessRuleDataSourceModel struct {
-	AccountID     types.String                                                     `tfsdk:"account_id" path:"account_id,optional"`
-	RuleID        types.String                                                     `tfsdk:"rule_id" path:"rule_id,optional"`
-	ZoneID        types.String                                                     `tfsdk:"zone_id" path:"zone_id,optional"`
-	CreatedOn     timetypes.RFC3339                                                `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	ID            types.String                                                     `tfsdk:"id" json:"id,computed"`
-	Mode          types.String                                                     `tfsdk:"mode" json:"mode,computed"`
-	ModifiedOn    timetypes.RFC3339                                                `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Notes         types.String                                                     `tfsdk:"notes" json:"notes,computed"`
-	AllowedModes  customfield.List[types.String]                                   `tfsdk:"allowed_modes" json:"allowed_modes,computed"`
-	Configuration customfield.NestedObject[AccessRuleConfigurationDataSourceModel] `tfsdk:"configuration" json:"configuration,computed"`
-	Scope         customfield.NestedObject[AccessRuleScopeDataSourceModel]         `tfsdk:"scope" json:"scope,computed"`
-	Filter        *AccessRuleFindOneByDataSourceModel                              `tfsdk:"filter"`
-}
-
-func (m *AccessRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.AccessRuleGetParams, diags diag.Diagnostics) {
-	params = firewall.AccessRuleGetParams{}
-
-	if !m.Filter.AccountID.IsNull() {
-		params.AccountID = cloudflare.F(m.Filter.AccountID.ValueString())
-	} else {
-		params.ZoneID = cloudflare.F(m.Filter.ZoneID.ValueString())
-	}
-
-	return
+	Filter *AccessRuleFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
 func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params firewall.AccessRuleListParams, diags diag.Diagnostics) {
@@ -86,17 +58,6 @@ func (m *AccessRuleDataSourceModel) toListParams(_ context.Context) (params fire
 	return
 }
 
-type AccessRuleConfigurationDataSourceModel struct {
-	Target types.String `tfsdk:"target" json:"target,optional"`
-	Value  types.String `tfsdk:"value" json:"value,optional"`
-}
-
-type AccessRuleScopeDataSourceModel struct {
-	ID    types.String `tfsdk:"id" json:"id,computed"`
-	Email types.String `tfsdk:"email" json:"email,computed"`
-	Type  types.String `tfsdk:"type" json:"type,computed"`
-}
-
 type AccessRuleFindOneByDataSourceModel struct {
 	AccountID     types.String                            `tfsdk:"account_id" path:"account_id,optional"`
 	ZoneID        types.String                            `tfsdk:"zone_id" path:"zone_id,optional"`
@@ -106,4 +67,9 @@ type AccessRuleFindOneByDataSourceModel struct {
 	Mode          types.String                            `tfsdk:"mode" query:"mode,optional"`
 	Notes         types.String                            `tfsdk:"notes" query:"notes,optional"`
 	Order         types.String                            `tfsdk:"order" query:"order,optional"`
+}
+
+type AccessRuleConfigurationDataSourceModel struct {
+	Target types.String `tfsdk:"target" json:"target,optional"`
+	Value  types.String `tfsdk:"value" json:"value,optional"`
 }
