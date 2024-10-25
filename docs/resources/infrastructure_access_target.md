@@ -2,12 +2,12 @@
 page_title: "cloudflare_infrastructure_access_target Resource - Cloudflare"
 subcategory: ""
 description: |-
-  The Infrastructure Access Target https://developers.cloudflare.com/cloudflare-one/insights/risk-score/ resource allows you to configure Cloudflare Risk Behaviors for an account.
+  The Infrastructure Access Target https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-infrastructure-access/#4-add-a-target resource allows you to configure Cloudflare Risk Behaviors for an account.
 ---
 
 # cloudflare_infrastructure_access_target (Resource)
 
-The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/insights/risk-score/) resource allows you to configure Cloudflare Risk Behaviors for an account.
+The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-infrastructure-access/#4-add-a-target) resource allows you to configure Cloudflare Risk Behaviors for an account.
 
 ## Example Usage
 
