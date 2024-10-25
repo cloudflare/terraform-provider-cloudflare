@@ -171,6 +171,7 @@ func TestAccCloudflareAccessApplication_WithSCIMConfigHttpBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.create", "true"),
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.update", "true"),
 					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.operations.0.delete", "true"),
+					resource.TestCheckResourceAttr(name, "scim_config.0.mappings.0.strictness", "passthrough"),
 				),
 			},
 		},
@@ -1795,6 +1796,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 			update = true
 			delete = true
 		}
+		strictness = "passthrough"
 	}
   }
 }
@@ -1886,6 +1888,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 			update = true
 			delete = true
 		}
+		strictness = "strict"
 	}
   }
 }

@@ -655,7 +655,7 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 					"idp_uid": {
 						Type:        schema.TypeString,
 						Required:    true,
-						Description: "The UID of the IdP to use as the source for SCIM resources to provision to this application.",
+						Description: "The UIDs of the IdP to use as the source for SCIM resources to provision to this application.",
 					},
 					"deactivate_on_delete": {
 						Type:        schema.TypeBool,
@@ -798,6 +798,11 @@ func resourceCloudflareAccessApplicationSchema() map[string]*schema.Schema {
 											},
 										},
 									},
+								},
+								"strictness": {
+									Type:        schema.TypeString,
+									Optional:    true,
+									Description: "How strictly to adhere to outbound resource schemas when provisioning to this mapping. \"strict\" will remove unknown values when provisioning, while \"passthrough\" will pass unknown values to the target.",
 								},
 							},
 						},
@@ -1106,6 +1111,10 @@ func convertScimConfigMappingsSchemaToStruct(mappingData map[string]interface{})
 
 	if transformJsonata, ok := mappingData["transform_jsonata"]; ok {
 		mapping.TransformJsonata = transformJsonata.(string)
+	}
+
+	if strictness, ok := mappingData["strictness"]; ok {
+		mapping.Strictness = strictness.(string)
 	}
 
 	if operations, ok := mappingData["operations"]; ok {
@@ -1420,6 +1429,7 @@ func convertScimConfigMappingsStructsToSchema(mappingsData []*cloudflare.AccessA
 			"enabled":           mapping.Enabled,
 			"filter":            mapping.Filter,
 			"transform_jsonata": mapping.TransformJsonata,
+			"strictness":        mapping.Strictness,
 		}
 
 		if mapping.Operations != nil {
