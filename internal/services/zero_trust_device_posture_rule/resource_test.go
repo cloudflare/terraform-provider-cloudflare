@@ -18,39 +18,6 @@ var (
 	accountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 )
 
-func TestAccCloudflareDevicePostureRule_SerialNumber(t *testing.T) {
-	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
-	// service does not yet support the API tokens and it results in
-	// misleading state error messages.
-	if os.Getenv("CLOUDFLARE_API_TOKEN") != "" {
-		t.Setenv("CLOUDFLARE_API_TOKEN", "")
-	}
-
-	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_zero_trust_device_posture_rule.%s", rnd)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-		},
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareDevicePostureRuleDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
-					resource.TestCheckResourceAttr(name, "type", "serial_number"),
-					resource.TestCheckResourceAttr(name, "description", "My description"),
-					resource.TestCheckResourceAttr(name, "match.0.platform", "windows"),
-					resource.TestCheckResourceAttr(name, "input.0.id", "asdf-123"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 	// Temporarily unset CLOUDFLARE_API_TOKEN if it is set as the Access
 	// service does not yet support the API tokens and it results in
@@ -77,8 +44,8 @@ func TestAccCloudflareDevicePostureRule_OsVersion(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "os_version"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
-					resource.TestCheckResourceAttr(name, "input.0.version", "10.0.1"),
-					resource.TestCheckResourceAttr(name, "input.0.operator", "=="),
+					resource.TestCheckResourceAttr(name, "input.version", "10.0.1"),
+					resource.TestCheckResourceAttr(name, "input.operator", "=="),
 				),
 			},
 		},
@@ -111,9 +78,9 @@ func TestAccCloudflareDevicePostureRule_OsVersionExtra(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "os_version"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
-					resource.TestCheckResourceAttr(name, "input.0.version", "10.0.1"),
-					resource.TestCheckResourceAttr(name, "input.0.operator", "=="),
-					resource.TestCheckResourceAttr(name, "input.0.os_version_extra", "(a)"),
+					resource.TestCheckResourceAttr(name, "input.version", "10.0.1"),
+					resource.TestCheckResourceAttr(name, "input.operator", "=="),
+					resource.TestCheckResourceAttr(name, "input.os_version_extra", "(a)"),
 				),
 			},
 		},
@@ -146,9 +113,9 @@ func TestAccCloudflareDevicePostureRule_LinuxOsDistro(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "os_version"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "linux"),
-					resource.TestCheckResourceAttr(name, "input.0.version", "1.0.0"),
-					resource.TestCheckResourceAttr(name, "input.0.os_distro_name", "ubuntu"),
-					resource.TestCheckResourceAttr(name, "input.0.os_distro_revision", "1.0.0"),
+					resource.TestCheckResourceAttr(name, "input.version", "1.0.0"),
+					resource.TestCheckResourceAttr(name, "input.os_distro_name", "ubuntu"),
+					resource.TestCheckResourceAttr(name, "input.os_distro_revision", "1.0.0"),
 				),
 			},
 		},
@@ -181,7 +148,7 @@ func TestAccCloudflareDevicePostureRule_DomainJoined(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "type", "domain_joined"),
 					resource.TestCheckResourceAttr(name, "description", "My description"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "windows"),
-					resource.TestCheckResourceAttr(name, "input.0.domain", "example.com"),
+					resource.TestCheckResourceAttr(name, "input.domain", "example.com"),
 				),
 			},
 		},
@@ -216,7 +183,7 @@ func TestAccCloudflareDevicePostureRule_Firewall(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "schedule", "24h"),
 					resource.TestCheckResourceAttr(name, "expiration", "24h"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "windows"),
-					resource.TestCheckResourceAttr(name, "input.0.enabled", "true"),
+					resource.TestCheckResourceAttr(name, "input.enabled", "true"),
 				),
 			},
 		},
@@ -251,7 +218,7 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_RequireAll(t *testing.T) 
 					resource.TestCheckResourceAttr(name, "schedule", "24h"),
 					resource.TestCheckResourceAttr(name, "expiration", "24h"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
-					resource.TestCheckResourceAttr(name, "input.0.require_all", "true"),
+					resource.TestCheckResourceAttr(name, "input.require_all", "true"),
 				),
 			},
 		},
@@ -286,17 +253,13 @@ func TestAccCloudflareDevicePostureRule_DiskEncryption_CheckDisks(t *testing.T) 
 					resource.TestCheckResourceAttr(name, "schedule", "24h"),
 					resource.TestCheckResourceAttr(name, "expiration", "24h"),
 					resource.TestCheckResourceAttr(name, "match.0.platform", "mac"),
-					resource.TestCheckResourceAttr(name, "input.0.require_all", "false"),
-					resource.TestCheckResourceAttr(name, "input.0.check_disks.0", "C"),
-					resource.TestCheckResourceAttr(name, "input.0.check_disks.1", "D"),
+					resource.TestCheckResourceAttr(name, "input.require_all", "false"),
+					resource.TestCheckResourceAttr(name, "input.check_disks.0", "C"),
+					resource.TestCheckResourceAttr(name, "input.check_disks.1", "D"),
 				),
 			},
 		},
 	})
-}
-
-func testAccCloudflareDevicePostureRuleConfigSerialNumber(rnd, accountID string) string {
-	return acctest.LoadTestCase("devicepostureruleconfigserialnumber.tf", rnd, accountID)
 }
 
 func testAccCloudflareDevicePostureRuleConfigOsVersion(rnd, accountID string) string {
