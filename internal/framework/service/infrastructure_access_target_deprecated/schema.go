@@ -17,7 +17,7 @@ func (r *InfrastructureAccessTargetDeprecatedResource) Schema(ctx context.Contex
 	resp.Schema = schema.Schema{
 		DeprecationMessage: "`cloudflare_infrastructure_access_target` is now deprecated and will be removed in the next major version. Use `cloudflare_zero_trust_infrastructure_access_target` instead.",
 		MarkdownDescription: heredoc.Doc(`
-			The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-infrastructure-access/#4-add-a-target) resource allows you to configure Cloudflare Risk Behaviors for an account.
+			The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-infrastructure-access/#4-add-a-target) resource allows you to configure Infrastructure Access Targets for an account.
 		`),
 		Attributes: map[string]schema.Attribute{
 			consts.AccountIDSchemaKey: schema.StringAttribute{
