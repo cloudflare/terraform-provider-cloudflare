@@ -61,6 +61,30 @@ func TestEdgeTTLValidation(t *testing.T) {
 				}
 			})
 
+			t.Run("passes when ttl is unknown", func(t *testing.T) {
+				t.Parallel()
+
+				mode := "override_origin"
+				_, statusCodeAttr, listType := constructStatusTTLObject()
+				resp := &validator.ObjectResponse{}
+				req := validator.ObjectRequest{
+					Path: path.Root("edge_ttl"),
+					ConfigValue: types.ObjectValueMust(
+						map[string]attr.Type{"mode": types.StringType, "status_code_ttl": listType, "default": types.Int64Type},
+						map[string]attr.Value{"mode": types.StringValue(mode), "status_code_ttl": statusCodeAttr, "default": types.Int64Unknown()},
+					),
+				}
+				edgeValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: nil,
+				}
+
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+
 			t.Run("passes valid ttl values", func(t *testing.T) {
 				t.Parallel()
 
@@ -157,6 +181,29 @@ func TestBrowserTTLValidation(t *testing.T) {
 						diag.NewAttributeErrorDiagnostic(path.Root("browser_ttl"), "invalid configuration", "using mode 'override_origin' requires setting a default for ttl"),
 					},
 				}
+				if diff := cmp.Diff(resp, expected); diff != "" {
+					t.Errorf("unexpected difference: %s", diff)
+				}
+			})
+
+			t.Run("passes when ttl is unknown", func(t *testing.T) {
+				t.Parallel()
+
+				mode := "override_origin"
+				resp := &validator.ObjectResponse{}
+				req := validator.ObjectRequest{
+					Path: path.Root("brower_ttl"),
+					ConfigValue: types.ObjectValueMust(
+						map[string]attr.Type{"mode": types.StringType, "default": types.Int64Type},
+						map[string]attr.Value{"mode": types.StringValue(mode), "default": types.Int64Unknown()},
+					),
+				}
+				browserValidator.ValidateObject(ctx, req, resp)
+
+				expected := &validator.ObjectResponse{
+					Diagnostics: nil,
+				}
+
 				if diff := cmp.Diff(resp, expected); diff != "" {
 					t.Errorf("unexpected difference: %s", diff)
 				}
