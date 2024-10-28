@@ -80,7 +80,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_gre_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_ipsec_tunnel"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/magic_wan_static_route"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_headers"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/managed_transforms"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/mtls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/notification_policy_webhooks"
@@ -401,7 +401,7 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		api_shield_operation_schema_validation_settings.NewResource,
 		api_shield_schema_validation_settings.NewResource,
 		api_shield_schema.NewResource,
-		managed_headers.NewResource,
+		managed_transforms.NewResource,
 		page_shield_policy.NewResource,
 		ruleset.NewResource,
 		url_normalization_settings.NewResource,
@@ -608,7 +608,7 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		api_shield_schema_validation_settings.NewAPIShieldSchemaValidationSettingsDataSource,
 		api_shield_schema.NewAPIShieldSchemaDataSource,
 		api_shield_schema.NewAPIShieldSchemasDataSource,
-		managed_headers.NewManagedHeadersDataSource,
+		managed_transforms.NewManagedTransformsDataSource,
 		page_shield_policy.NewPageShieldPolicyDataSource,
 		page_shield_policy.NewPageShieldPoliciesDataSource,
 		ruleset.NewRulesetDataSource,
