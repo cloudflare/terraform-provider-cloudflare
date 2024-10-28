@@ -14,7 +14,6 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func init() {
@@ -60,8 +59,6 @@ func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
 	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
-	var TunnelRoute cloudflare.TunnelRoute
-
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
@@ -72,7 +69,6 @@ func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
 			{
 				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "10.0.0.20/32"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareTunnelRouteExists(name, &TunnelRoute),
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					resource.TestCheckResourceAttrSet(name, "tunnel_id"),
 					resource.TestCheckResourceAttr(name, "network", "10.0.0.20/32"),
@@ -83,43 +79,10 @@ func TestAccCloudflareTunnelRoute_Exists(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareTunnelRouteExists(name string, route *cloudflare.TunnelRoute) resource.TestCheckFunc {
-
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("Not found: %s", name)
-		}
-
-		if rs.Primary.ID == "" {
-			return errors.New("No Tunnel route is set")
-		}
-
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
-		foundTunnelRoute, err := client.ListTunnelRoutes(context.Background(), cloudflare.AccountIdentifier(rs.Primary.Attributes[consts.AccountIDSchemaKey]), cloudflare.TunnelRoutesListParams{
-			IsDeleted:     cloudflare.BoolPtr(false),
-			NetworkSubset: rs.Primary.ID,
-		})
-
-		if err != nil {
-			return err
-		}
-
-		*route = foundTunnelRoute[0]
-
-		return nil
-	}
-}
-
 func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_tunnel_cloudflared_route.%s", rnd)
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	var TunnelRoute cloudflare.TunnelRoute
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -131,14 +94,12 @@ func TestAccCloudflareTunnelRoute_UpdateComment(t *testing.T) {
 			{
 				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd, accountID, "10.0.0.10/32"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareTunnelRouteExists(name, &TunnelRoute),
 					resource.TestCheckResourceAttr(name, "comment", rnd),
 				),
 			},
 			{
 				Config: testAccCloudflareTunnelRouteSimple(rnd, rnd+"-updated", accountID, "10.0.0.10/32"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareTunnelRouteExists(name, &TunnelRoute),
 					resource.TestCheckResourceAttr(name, "comment", rnd+"-updated"),
 				),
 			},
