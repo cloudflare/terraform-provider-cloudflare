@@ -82,10 +82,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"everyone": schema.StringAttribute{
+						"everyone": schema.SingleNestedAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							Attributes:  map[string]schema.Attribute{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Optional: true,
@@ -196,10 +196,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"any_valid_service_token": schema.StringAttribute{
+						"any_valid_service_token": schema.SingleNestedAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							Attributes:  map[string]schema.Attribute{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Optional: true,
@@ -298,6 +298,27 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"connection_rules": schema.SingleNestedAttribute{
+				Description: "The rules that define how users may connect to the targets secured by your application.",
+				Computed:    true,
+				Optional:    true,
+				CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesModel](ctx),
+				Attributes: map[string]schema.Attribute{
+					"ssh": schema.SingleNestedAttribute{
+						Description: "The SSH-specific rules that define how users may connect to the targets secured by your application.",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPolicyConnectionRulesSSHModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"usernames": schema.ListAttribute{
+								Description: "Contains the Unix usernames that may be used when connecting over SSH.",
+								Required:    true,
+								ElementType: types.StringType,
+							},
+						},
+					},
+				},
+			},
 			"exclude": schema.ListNestedAttribute{
 				Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 				Computed:    true,
@@ -338,10 +359,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"everyone": schema.StringAttribute{
+						"everyone": schema.SingleNestedAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							Attributes:  map[string]schema.Attribute{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -470,10 +491,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"any_valid_service_token": schema.StringAttribute{
+						"any_valid_service_token": schema.SingleNestedAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							Attributes:  map[string]schema.Attribute{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -566,10 +587,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"everyone": schema.StringAttribute{
+						"everyone": schema.SingleNestedAttribute{
 							Description: "An empty object which matches on all users.",
 							Optional:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							Attributes:  map[string]schema.Attribute{},
 						},
 						"ip": schema.SingleNestedAttribute{
 							Computed:   true,
@@ -698,10 +719,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"any_valid_service_token": schema.StringAttribute{
+						"any_valid_service_token": schema.SingleNestedAttribute{
 							Description: "An empty object which matches on all service tokens.",
 							Optional:    true,
-							CustomType:  jsontypes.NormalizedType{},
+							Attributes:  map[string]schema.Attribute{},
 						},
 						"external_evaluation": schema.SingleNestedAttribute{
 							Computed:   true,
