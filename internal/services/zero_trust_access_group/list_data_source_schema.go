@@ -111,10 +111,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.SingleNestedAttribute{
+									"certificate": schema.StringAttribute{
 										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsExcludeCertificateDataSourceModel](ctx),
-										Attributes: map[string]schema.Attribute{},
+										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -323,10 +322,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.SingleNestedAttribute{
+									"certificate": schema.StringAttribute{
 										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIncludeCertificateDataSourceModel](ctx),
-										Attributes: map[string]schema.Attribute{},
+										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -535,10 +533,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.SingleNestedAttribute{
+									"certificate": schema.StringAttribute{
 										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsIsDefaultCertificateDataSourceModel](ctx),
-										Attributes: map[string]schema.Attribute{},
+										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
@@ -751,10 +748,9 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									"certificate": schema.SingleNestedAttribute{
+									"certificate": schema.StringAttribute{
 										Computed:   true,
-										CustomType: customfield.NewNestedObjectType[ZeroTrustAccessGroupsRequireCertificateDataSourceModel](ctx),
-										Attributes: map[string]schema.Attribute{},
+										CustomType: jsontypes.NormalizedType{},
 									},
 									"group": schema.SingleNestedAttribute{
 										Computed:   true,
