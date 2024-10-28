@@ -73,7 +73,7 @@ func (d *ImagesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	for page != nil && len(page.Items) > 0 {
+	for page != nil && len(page.Result.Items) > 0 {
 		bytes := []byte(page.JSON.RawJSON())
 		err = apijson.UnmarshalComputed(bytes, &env)
 		if err != nil {
