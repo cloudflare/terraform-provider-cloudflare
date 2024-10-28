@@ -32,7 +32,7 @@ func TestAccCloudflareAPIShieldSchemaValidationSettings_Create(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceID, "validation_default_mitigation_action", "log"),
 					// default
-					resource.TestCheckResourceAttr(resourceID, "validation_override_mitigation_action", ""),
+					resource.TestCheckNoResourceAttr(resourceID, "validation_override_mitigation_action"),
 				),
 			},
 			{
