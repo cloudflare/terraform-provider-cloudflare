@@ -1,18 +1,18 @@
 ---
-page_title: "cloudflare_infrastructure_access_target Resource - Cloudflare"
+page_title: "cloudflare_zero_trust_infrastructure_access_target Resource - Cloudflare"
 subcategory: ""
 description: |-
   The Infrastructure Access Target https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-infrastructure-access/#4-add-a-target resource allows you to configure Infrastructure Access Targets for an account.
 ---
 
-# cloudflare_infrastructure_access_target (Resource)
+# cloudflare_zero_trust_infrastructure_access_target (Resource)
 
 The [Infrastructure Access Target](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/use-cases/ssh/ssh-infrastructure-access/#4-add-a-target) resource allows you to configure Infrastructure Access Targets for an account.
 
 ## Example Usage
 
 ```terraform
-resource "cloudflare_infrastructure_access_target" "example" {
+resource "cloudflare_zero_trust_infrastructure_access_target" "example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   hostname   = "example-target"
   ip = {
@@ -27,7 +27,7 @@ resource "cloudflare_infrastructure_access_target" "example" {
   }
 }
 
-resource "cloudflare_infrastructure_access_target" "ipv4_only_example" {
+resource "cloudflare_zero_trust_infrastructure_access_target" "ipv4_only_example" {
   account_id = "f037e56e89293a057740de681ac9abbe"
   hostname   = "example-ipv4-only"
   ip = {
@@ -83,5 +83,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import cloudflare_infrastructure_access_target.example <account_id>
+$ terraform import cloudflare_zero_trust_infrastructure_access_target.example <account_id>
 ```

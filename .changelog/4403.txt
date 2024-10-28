@@ -1,0 +1,15 @@
+```release-note:new-resource
+cloudflare_zero_trust_infrastructure_access_target
+```
+
+```release-note:new-datasource
+cloudflare_zero_trust_infrastructure_access_targets
+```
+
+```release-note:note
+resource/cloudflare_infrastructure_access_target: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_target` and will be removed in the next major version.
+```
+
+```release-note:note
+datasource/cloudflare_infrastructure_access_targets: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_targets` and will be removed in the next major version.
+```
