@@ -1420,6 +1420,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 								},
+								"strictness": schema.StringAttribute{
+									Description: "The level of adherence to outbound resource schemas when provisioning to this mapping. ‘Strict’ removes unknown values, while ‘passthrough’ passes unknown values to the target.",
+									Optional:    true,
+									Validators: []validator.String{
+										stringvalidator.OneOfCaseInsensitive("strict", "passthrough"),
+									},
+								},
 								"transform_jsonata": schema.StringAttribute{
 									Description: "A [JSONata](https://jsonata.org/) expression that transforms the resource before provisioning it in the application.",
 									Optional:    true,

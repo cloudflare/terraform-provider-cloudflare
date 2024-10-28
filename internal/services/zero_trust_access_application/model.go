@@ -511,6 +511,7 @@ type ZeroTrustAccessApplicationSCIMConfigMappingsModel struct {
 	Enabled          types.Bool                                                                            `tfsdk:"enabled" json:"enabled,optional"`
 	Filter           types.String                                                                          `tfsdk:"filter" json:"filter,optional"`
 	Operations       customfield.NestedObject[ZeroTrustAccessApplicationSCIMConfigMappingsOperationsModel] `tfsdk:"operations" json:"operations,computed_optional"`
+	Strictness       types.String                                                                          `tfsdk:"strictness" json:"strictness,optional"`
 	TransformJsonata types.String                                                                          `tfsdk:"transform_jsonata" json:"transform_jsonata,optional"`
 }
 
