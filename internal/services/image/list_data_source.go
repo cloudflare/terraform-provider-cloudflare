@@ -70,23 +70,23 @@ func (d *ImagesDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	// 	return
 	// }
 
-	for page != nil && len(page.Result.Items) > 0 {
-		bytes := []byte(page.JSON.RawJSON())
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
-			return
-		}
-		acc = append(acc, env.Items.Elements()...)
-		if len(acc) >= maxItems {
-			break
-		}
-		page, err = page.GetNextPage()
-		if err != nil {
-			resp.Diagnostics.AddError("failed to fetch next page", err.Error())
-			return
-		}
-	}
+	// for page != nil && len(page.Result.Items) > 0 {
+	// 	bytes := []byte(page.JSON.RawJSON())
+	// 	err = apijson.UnmarshalComputed(bytes, &env)
+	// 	if err != nil {
+	// 		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+	// 		return
+	// 	}
+	// 	acc = append(acc, env.Items.Elements()...)
+	// 	if len(acc) >= maxItems {
+	// 		break
+	// 	}
+	// 	page, err = page.GetNextPage()
+	// 	if err != nil {
+	// 		resp.Diagnostics.AddError("failed to fetch next page", err.Error())
+	// 		return
+	// 	}
+	// }
 
 	// acc = acc[:min(len(acc), maxItems)]
 	// result, diags := customfield.NewObjectListFromAttributes[ImagesResultDataSourceModel](ctx, acc)
