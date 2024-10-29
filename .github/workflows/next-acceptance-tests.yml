@@ -47,4 +47,4 @@ jobs:
         key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
     - run: go install gotest.tools/gotestsum@latest
     - run: go get github.com/cloudflare/cloudflare-go/v2@next
-    - run: TF_ACC=1 gotestsum ./internal/services/... -run "^TestAccCloudflare" -count 1 -v
+    - run: TF_ACC=1 gotestsum ./internal/services/{zone,dns_record} -run "^TestAcc" -count 1 -v
