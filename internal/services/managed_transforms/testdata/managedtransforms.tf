@@ -1,5 +1,5 @@
 
-  resource "cloudflare_managed_headers" "%[1]s" {
+  resource "cloudflare_managed_transforms" "%[1]s" {
 	zone_id  = "%[2]s"
 	managed_request_headers =[ {
 		id = "add_true_client_ip_headers"

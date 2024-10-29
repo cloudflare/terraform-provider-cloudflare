@@ -72,7 +72,7 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	resourceName := "cloudflare_managed_headers." + rnd
+	resourceName := "cloudflare_managed_transforms." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
