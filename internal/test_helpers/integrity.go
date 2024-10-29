@@ -344,8 +344,10 @@ func walkCollection(path []string, collection attr.TypeWithElementType, kind ref
 	case basetypes.ListType:
 	case basetypes.SetType:
 		idx, exp = "<>", "Set<T>"
+		bstype = reflect.TypeOf((*basetypes.SetValuable)(nil))
 	case basetypes.MapType:
 		idx, exp, reflectype = "{}", "Map{T}", reflect.Map
+		bstype = reflect.TypeOf((*basetypes.MapValuable)(nil))
 	default:
 		log.Printf("walkCollection: Unexpected attribute type at %q: %T", pathName(path), t)
 		return
