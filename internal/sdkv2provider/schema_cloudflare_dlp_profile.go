@@ -2,6 +2,7 @@ package sdkv2provider
 
 import (
 	"fmt"
+	"maps"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -62,8 +63,9 @@ func resourceCloudflareDLPEntrySchema() map[string]*schema.Schema {
 // to provide a stable hash for profile entries and prevent spurious differences
 // between the state/infra.
 func hashResourceCloudflareDLPEntry(i interface{}) int {
-	v := i.(map[string]interface{})
-	return schema.HashString(v["name"])
+	v := maps.Clone(i.(map[string]interface{}))
+	delete(v, "id")
+	return schema.HashResource(&schema.Resource{Schema: resourceCloudflareDLPEntrySchema()})(v)
 }
 
 func resourceCloudflareDLPContextAwarenessSchema() map[string]*schema.Schema {
