@@ -8,10 +8,9 @@ import (
 	"testing"
 	"time"
 
-	cloudflare "github.com/cloudflare/cloudflare-go"
-	cfv2 "github.com/cloudflare/cloudflare-go/v2"
-
-	"github.com/cloudflare/cloudflare-go/v2/load_balancers"
+	cfold "github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v3"
+	"github.com/cloudflare/cloudflare-go/v3/load_balancers"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
@@ -44,7 +43,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 		return errors.New("CLOUDFLARE_ZONE_ID must be set")
 	}
 
-	lbs, err := client.ListLoadBalancers(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListLoadBalancerParams{})
+	lbs, err := client.ListLoadBalancers(ctx, cfold.ZoneIdentifier(zoneID), cfold.ListLoadBalancerParams{})
 	if err != nil {
 		tflog.Error(ctx, fmt.Sprintf("Failed to fetch Cloudflare Load Balancers: %s", err))
 	}
@@ -57,7 +56,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 	for _, lb := range lbs {
 		tflog.Info(ctx, fmt.Sprintf("Deleting Cloudflare Load Balancer ID: %s", lb.ID))
 		//nolint:errcheck
-		client.DeleteLoadBalancer(ctx, cloudflare.ZoneIdentifier(zoneID), lb.ID)
+		client.DeleteLoadBalancer(ctx, cfold.ZoneIdentifier(zoneID), lb.ID)
 	}
 
 	return nil
@@ -65,7 +64,7 @@ func testSweepCloudflareLoadBalancer(r string) error {
 
 func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 	testStartTime := time.Now().UTC()
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -98,7 +97,7 @@ func TestAccCloudflareLoadBalancer_Basic(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -134,7 +133,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_SessionAffinityIPCookie(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -171,7 +170,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinityIPCookie(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -210,7 +209,7 @@ func TestAccCloudflareLoadBalancer_SessionAffinityHeader(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -241,7 +240,7 @@ func TestAccCloudflareLoadBalancer_AdaptiveRouting(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_LocationStrategy(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -273,7 +272,7 @@ func TestAccCloudflareLoadBalancer_LocationStrategy(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -323,7 +322,7 @@ func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_GeoBalancedUpdate(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -369,7 +368,7 @@ func TestAccCloudflareLoadBalancer_GeoBalancedUpdate(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -400,7 +399,7 @@ func TestAccCloudflareLoadBalancer_GeoBalanced(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -428,7 +427,7 @@ func TestAccCloudflareLoadBalancer_ProximityBalanced(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -460,7 +459,7 @@ func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T
 }
 
 func TestAccCloudflareLoadBalancer_LeastConnectionsBalanced(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -492,7 +491,7 @@ func TestAccCloudflareLoadBalancer_LeastConnectionsBalanced(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
@@ -537,7 +536,7 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -578,7 +577,7 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 }
 
 func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
-	var loadBalancer cloudflare.LoadBalancer
+	var loadBalancer cfold.LoadBalancer
 	var initialId string
 	zone := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
@@ -626,7 +625,7 @@ func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
+		_, err := client.GetLoadBalancer(context.Background(), cfold.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("load balancer still exists: %s", rs.Primary.ID)
 		}
@@ -635,7 +634,7 @@ func testAccCheckCloudflareLoadBalancerDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare.LoadBalancer) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cfold.LoadBalancer) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -650,7 +649,7 @@ func testAccCheckCloudflareLoadBalancerExists(n string, loadBalancer *cloudflare
 		if clientErr != nil {
 			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
 		}
-		foundLoadBalancer, err := client.GetLoadBalancer(context.Background(), cloudflare.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
+		foundLoadBalancer, err := client.GetLoadBalancer(context.Background(), cfold.ZoneIdentifier(rs.Primary.Attributes[consts.ZoneIDSchemaKey]), rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -684,7 +683,7 @@ func testAccCheckCloudflareLoadBalancerIDIsValid(n, expectedZoneID string) resou
 	}
 }
 
-func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.LoadBalancer, testStartTime time.Time) resource.TestCheckFunc {
+func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cfold.LoadBalancer, testStartTime time.Time) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[n]
 
@@ -709,14 +708,14 @@ func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cloudflare.
 	}
 }
 
-func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cloudflare.LoadBalancer, initialId *string) resource.TestCheckFunc {
+func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cfold.LoadBalancer, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
 		_, err := acctest.SharedClient().LoadBalancers.Delete(
 			context.Background(),
 			loadBalancer.ID,
 			load_balancers.LoadBalancerDeleteParams{
-				ZoneID: cfv2.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
+				ZoneID: cloudflare.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
 			},
 		)
 		if err != nil {
