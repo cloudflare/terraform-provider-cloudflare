@@ -27,8 +27,8 @@ type R2CustomDomainDataSourceModel struct {
 	Status     *R2CustomDomainStatusDataSourceModel `tfsdk:"status" json:"status,optional"`
 }
 
-func (m *R2CustomDomainDataSourceModel) toReadParams(_ context.Context) (params r2.DomainCustomGetParams, diags diag.Diagnostics) {
-	params = r2.DomainCustomGetParams{
+func (m *R2CustomDomainDataSourceModel) toReadParams(_ context.Context) (params r2.BucketDomainCustomGetParams, diags diag.Diagnostics) {
+	params = r2.BucketDomainCustomGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

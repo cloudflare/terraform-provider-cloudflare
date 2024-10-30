@@ -65,7 +65,7 @@ func (d *R2CustomDomainDataSource) Read(ctx context.Context, req datasource.Read
 
 	res := new(http.Response)
 	env := R2CustomDomainResultDataSourceEnvelope{*data}
-	_, err := d.client.R2.Domains.Custom.Get(
+	_, err := d.client.R2.Buckets.Domains.Custom.Get(
 		ctx,
 		data.BucketName.ValueString(),
 		data.DomainName.ValueString(),
