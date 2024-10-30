@@ -1,5 +1,28 @@
 ## 4.45.0 (Unreleased)
 
+NOTES:
+
+* datasource/cloudflare_infrastructure_access_targets: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_targets` and will be removed in the next major version. ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
+* resource/cloudflare_infrastructure_access_target: deprecated in favour of `cloudflare_zero_trust_infrastructure_access_target` and will be removed in the next major version. ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
+
+FEATURES:
+
+* **New Resource:** `cloudflare_zero_trust_infrastructure_access_target` ([#4403](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4403))
+
+ENHANCEMENTS:
+
+* resource/cloudflare_ruleset: add support for `zstd` compression in the `compress_response` action ([#4300](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4300))
+
+BUG FIXES:
+
+* resource/cloudflare_workers_cron_trigger: fix incorrectly reported deprecated resource ([#4295](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4295))
+* resource/cloudflare_zero_trust_dlp_profile: Include more fields in `entry` set hash function ([#4464](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4464))
+
+DEPENDENCIES:
+
+* provider: bump github.com/cloudflare/cloudflare-go from 0.107.0 to 0.108.0 ([#4394](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4394))
+* provider: bump github.com/hashicorp/terraform-plugin-framework-validators from 0.13.0 to 0.14.0 ([#4313](https://github.com/cloudflare/terraform-provider-cloudflare/issues/4313))
+
 ## 4.44.0 (October 16th, 2024)
 
 NOTES:
