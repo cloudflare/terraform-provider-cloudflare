@@ -17,7 +17,7 @@ type CloudforceOneRequestPriorityModel struct {
 	AccountIdentifier types.String      `tfsdk:"account_identifier" path:"account_identifier,required"`
 	Priority          types.Int64       `tfsdk:"priority" json:"priority,required"`
 	Requirement       types.String      `tfsdk:"requirement" json:"requirement,required"`
-	Tlp               types.String      `tfsdk:"tlp" json:"tlp,required"`
+	TLP               types.String      `tfsdk:"tlp" json:"tlp,required"`
 	Labels            *[]types.String   `tfsdk:"labels" json:"labels,required"`
 	Completed         timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`
 	Content           types.String      `tfsdk:"content" json:"content,computed"`
