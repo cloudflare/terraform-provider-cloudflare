@@ -68,10 +68,10 @@ func (r *R2CustomDomainResource) Create(ctx context.Context, req resource.Create
 	}
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
-	_, err = r.client.R2.Domains.Custom.New(
+	_, err = r.client.R2.Buckets.Domains.Custom.New(
 		ctx,
 		data.BucketName.ValueString(),
-		r2.DomainCustomNewParams{
+		r2.BucketDomainCustomNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -117,11 +117,11 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
 	}
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
-	_, err = r.client.R2.Domains.Custom.Update(
+	_, err = r.client.R2.Buckets.Domains.Custom.Update(
 		ctx,
 		data.BucketName.ValueString(),
 		data.DomainName.ValueString(),
-		r2.DomainCustomUpdateParams{
+		r2.BucketDomainCustomUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -154,11 +154,11 @@ func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequ
 
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
-	_, err := r.client.R2.Domains.Custom.Get(
+	_, err := r.client.R2.Buckets.Domains.Custom.Get(
 		ctx,
 		data.BucketName.ValueString(),
 		data.DomainName.ValueString(),
-		r2.DomainCustomGetParams{
+		r2.BucketDomainCustomGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -188,11 +188,11 @@ func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	_, err := r.client.R2.Domains.Custom.Delete(
+	_, err := r.client.R2.Buckets.Domains.Custom.Delete(
 		ctx,
 		data.BucketName.ValueString(),
 		data.DomainName.ValueString(),
-		r2.DomainCustomDeleteParams{
+		r2.BucketDomainCustomDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
