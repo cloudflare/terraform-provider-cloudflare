@@ -68,10 +68,10 @@ func (r *R2ManagedDomainResource) Create(ctx context.Context, req resource.Creat
 	}
 	res := new(http.Response)
 	env := R2ManagedDomainResultEnvelope{*data}
-	_, err = r.client.R2.Domains.Managed.Update(
+	_, err = r.client.R2.Buckets.Domains.Managed.Update(
 		ctx,
 		data.BucketName.ValueString(),
-		r2.DomainManagedUpdateParams{
+		r2.BucketDomainManagedUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -117,10 +117,10 @@ func (r *R2ManagedDomainResource) Update(ctx context.Context, req resource.Updat
 	}
 	res := new(http.Response)
 	env := R2ManagedDomainResultEnvelope{*data}
-	_, err = r.client.R2.Domains.Managed.Update(
+	_, err = r.client.R2.Buckets.Domains.Managed.Update(
 		ctx,
 		data.BucketName.ValueString(),
-		r2.DomainManagedUpdateParams{
+		r2.BucketDomainManagedUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
