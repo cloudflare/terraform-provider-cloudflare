@@ -14,7 +14,7 @@ resource "cloudflare_load_balancer_monitor" "%[3]s" {
   description = "this is a very weird load balancer"
   probe_zone = "%[1]s"
   header = {
-    header = "Host"
-    values = ["%[1]s"]
+    Header = ["Host"]
+    Values = ["%[1]s"]
   }
 }

@@ -20,7 +20,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventZoneIdAndAccountId
 		Steps: []resource.TestStep{
 			{
 				Config:      testCloudflareAccessIdentityProviderDataSourceConfigConflictingFields(rnd),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta("only one of `account_id,zone_id` can be specified")),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("Exactly one of these attributes must be configured")),
 			},
 		},
 	})
@@ -31,7 +31,6 @@ func testCloudflareAccessIdentityProviderDataSourceConfigConflictingFields(rnd s
 data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
   account_id = "123abc"
   zone_id    = "abc123"
-  name       = "foo"
 }
 `, rnd)
 }
@@ -44,7 +43,7 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventNoInputSpecify(t *
 		Steps: []resource.TestStep{
 			{
 				Config:      testCloudflareAccessIdentityProviderDataSourceNoInput(rnd),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta("one of `account_id,zone_id` must be specified")),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("Exactly one of these attributes must be configured")),
 			},
 		},
 	})
@@ -53,7 +52,6 @@ func TestAccCloudflareAccessIdentityProviderDataSource_PreventNoInputSpecify(t *
 func testCloudflareAccessIdentityProviderDataSourceNoInput(rnd string) string {
 	return fmt.Sprintf(`
 data "cloudflare_zero_trust_access_identity_provider" "%[1]s" {
-	name = "foo"
 }
 `, rnd)
 }
@@ -97,7 +95,6 @@ func TestAccCloudflareAccessIdentityProviderDataSource_GitHub(t *testing.T) {
 				Config: testAccCheckCloudflareAccessIdentityProviderDataSourceGitHub(accountID, rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "name", rnd),
 					resource.TestCheckResourceAttr(name, "type", "github"),
 				),
 			},

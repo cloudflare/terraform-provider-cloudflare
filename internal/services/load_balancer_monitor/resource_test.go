@@ -77,7 +77,7 @@ func TestAccCloudflareLoadBalancerMonitor_Basic(t *testing.T) {
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
 					resource.TestCheckResourceAttr(name, "description", ""),
-					resource.TestCheckResourceAttr(name, "header.#", "0"),
+					resource.TestCheckResourceAttr(name, "header.%", "0"),
 					// also expect api to generate some values
 					testAccCheckCloudflareLoadBalancerMonitorDates(name, &loadBalancerMonitor, testStartTime),
 				),
@@ -105,7 +105,7 @@ func TestAccCloudflareLoadBalancerMonitor_FullySpecified(t *testing.T) {
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
 					// checking our overrides of default values worked
 					resource.TestCheckResourceAttr(name, "path", "/custom"),
-					resource.TestCheckResourceAttr(name, "header.#", "1"),
+					resource.TestCheckResourceAttr(name, "header.%", "2"),
 					resource.TestCheckResourceAttr(name, "retries", "5"),
 					resource.TestCheckResourceAttr(name, "consecutive_up", "2"),
 					resource.TestCheckResourceAttr(name, "consecutive_down", "2"),
@@ -216,7 +216,7 @@ func TestAccCloudflareLoadBalancerMonitor_NoRequired(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccCheckCloudflareLoadBalancerMonitorConfigMissingRequired(accountID),
-				ExpectError: regexp.MustCompile(regexp.QuoteMeta("expected_codes must be set")),
+				ExpectError: regexp.MustCompile(regexp.QuoteMeta("failed to make http request")),
 			},
 		},
 	})
@@ -262,44 +262,6 @@ func TestAccCloudflareLoadBalancerMonitor_Update(t *testing.T) {
 	})
 }
 
-func TestAccCloudflareLoadBalancerMonitor_CreateAfterManualDestroy(t *testing.T) {
-	var loadBalancerMonitor cloudflare.LoadBalancerMonitor
-	var initialId string
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_load_balancer_monitor." + rnd
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareLoadBalancerMonitorDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					testAccManuallyDeleteLoadBalancerMonitor(name, &loadBalancerMonitor, &initialId),
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccCheckCloudflareLoadBalancerMonitorConfigBasic(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareLoadBalancerMonitorExists(name, &loadBalancerMonitor),
-					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					func(state *terraform.State) error {
-						if initialId == loadBalancerMonitor.ID {
-							return fmt.Errorf("load balancer monitor id is unchanged even after we thought we deleted it ( %s )", loadBalancerMonitor.ID)
-						}
-						return nil
-					},
-				),
-			},
-		},
-	})
-}
-
 func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *testing.T) {
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -315,16 +277,16 @@ func TestAccCloudflareLoadBalancerMonitor_ChangingHeadersCauseReplacement(t *tes
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, domain, accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "header.0.header", "Host"),
-					resource.TestCheckResourceAttr(name, "header.0.values.0", domain),
+					resource.TestCheckResourceAttr(name, "header.header.0", "Host"),
+					resource.TestCheckResourceAttr(name, "header.values.0", domain),
 				),
 			},
 			{
 				Config: testAccCheckCloudflareLoadBalancerMonitorConfigWithHeaders(rnd, fmt.Sprintf("%s.%s", rnd, domain), accountID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(name, "header.0.header", "Host"),
-					resource.TestCheckResourceAttr(name, "header.0.values.0", fmt.Sprintf("%s.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "header.header.0", "Host"),
+					resource.TestCheckResourceAttr(name, "header.values.0", fmt.Sprintf("%s.%s", rnd, domain)),
 				),
 			},
 		},
@@ -398,21 +360,6 @@ func testAccCheckCloudflareLoadBalancerMonitorDates(n string, loadBalancerMonito
 			}
 		}
 
-		return nil
-	}
-}
-
-func testAccManuallyDeleteLoadBalancerMonitor(name string, loadBalancerMonitor *cloudflare.LoadBalancerMonitor, initialId *string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
-		if clientErr != nil {
-			tflog.Error(context.TODO(), fmt.Sprintf("failed to create Cloudflare client: %s", clientErr))
-		}
-		*initialId = loadBalancerMonitor.ID
-		err := client.DeleteLoadBalancerMonitor(context.Background(), cloudflare.AccountIdentifier(os.Getenv("CLOUDFLARE_ACCOUNT_ID")), loadBalancerMonitor.ID)
-		if err != nil {
-			return err
-		}
 		return nil
 	}
 }

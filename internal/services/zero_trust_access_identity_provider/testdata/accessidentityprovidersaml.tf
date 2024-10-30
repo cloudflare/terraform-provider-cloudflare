@@ -8,6 +8,6 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[2]s" {
     sso_target_url = "https://sso.myexample.jumpcloud.com/saml2/cloudflareaccess"
     attributes = [ "email", "username" ]
     sign_request = false
-    idp_public_cert = "MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEG\nA1UEC…..GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"
+    idp_public_certs = ["MIIDpDCCAoygAwIBAgIGAV2ka+55MA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEG\nA1UEC…..GF/Q2/MHadws97cZg\nuTnQyuOqPuHbnN83d/2l1NSYKCbHt24o"]
 }
 }
