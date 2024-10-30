@@ -34,7 +34,7 @@ type CloudforceOneRequestsResultDataSourceModel struct {
 	Priority      types.String      `tfsdk:"priority" json:"priority,computed"`
 	Request       types.String      `tfsdk:"request" json:"request,computed"`
 	Summary       types.String      `tfsdk:"summary" json:"summary,computed"`
-	Tlp           types.String      `tfsdk:"tlp" json:"tlp,computed"`
+	TLP           types.String      `tfsdk:"tlp" json:"tlp,computed"`
 	Updated       timetypes.RFC3339 `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 	Completed     timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`
 	MessageTokens types.Int64       `tfsdk:"message_tokens" json:"message_tokens,computed"`

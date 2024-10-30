@@ -19,7 +19,7 @@ type CloudforceOneRequestModel struct {
 	Priority          types.String      `tfsdk:"priority" json:"priority,optional"`
 	RequestType       types.String      `tfsdk:"request_type" json:"request_type,optional"`
 	Summary           types.String      `tfsdk:"summary" json:"summary,optional"`
-	Tlp               types.String      `tfsdk:"tlp" json:"tlp,optional"`
+	TLP               types.String      `tfsdk:"tlp" json:"tlp,optional"`
 	Completed         timetypes.RFC3339 `tfsdk:"completed" json:"completed,computed" format:"date-time"`
 	Created           timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	MessageTokens     types.Int64       `tfsdk:"message_tokens" json:"message_tokens,computed"`
