@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	cfv1 "github.com/cloudflare/cloudflare-go"
@@ -13,6 +14,7 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 var (
@@ -248,4 +250,41 @@ func LoadTestCase(filename string, parameters ...interface{}) string {
 	}
 
 	return fmt.Sprintf(string(f), parameters...)
+}
+
+// DumpState returns the state representation of the resource for inspection
+// inside of a `resource.TestCase`.
+//
+// Example:
+//
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+//		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+//		Steps: []resource.TestStep{
+//			{
+//				Config: myConfig(),
+//				Check: resource.ComposeTestCheckFunc(
+//					acctest.DumpState,
+//					resource.TestCheckResourceAttr(resourceID, consts.ZoneIDSchemaKey, zoneID),
+//				),
+//			},
+//		},
+//	})
+//
+// Returns the resource, identifier and attributes all keyed to the value.
+//
+//	cloudflare_foo.bar.id = 4dd549e6d9b22cdac402b33af89d57ab
+//	cloudflare_foo.bar.other_thing = true
+//	cloudflare_foo.bar.zone_id = 0da42c8d2132a9ddaf714f9e7c920711
+//	cloudflare_foo.bar.% = 12
+func DumpState(s *terraform.State) error {
+	fmt.Println()
+	for name, rs := range s.RootModule().Resources {
+		for attr, key := range rs.Primary.Attributes {
+			fmt.Println(strings.Join([]string{name, attr}, "."), "=", key)
+		}
+	}
+	fmt.Println()
+
+	return nil
 }
