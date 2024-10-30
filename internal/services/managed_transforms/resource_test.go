@@ -1,4 +1,4 @@
-package managed_headers_test
+package managed_transforms_test
 
 import (
 	"context"
@@ -18,11 +18,11 @@ import (
 func init() {
 	resource.AddTestSweepers("cloudflare_managed_headers", &resource.Sweeper{
 		Name: "cloudflare_managed_headers",
-		F:    testSweepCloudflareManagedHeaders,
+		F:    testSweepCloudflareManagedTransforms,
 	})
 }
 
-func testSweepCloudflareManagedHeaders(r string) error {
+func testSweepCloudflareManagedTransforms(r string) error {
 	ctx := context.Background()
 	client, clientErr := acctest.SharedV1Client() // TODO(terraform): replace with SharedV2Clent
 	if clientErr != nil {
@@ -72,13 +72,13 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 
 	rnd := utils.GenerateRandomResourceName()
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	resourceName := "cloudflare_managed_headers." + rnd
+	resourceName := "cloudflare_managed_transforms." + rnd
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCheckCloudflareManagedHeaders(rnd, zoneID),
+				Config: testAccCheckCloudflareManagedTransforms(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "2"),
@@ -96,7 +96,7 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCheckCloudflareManagedHeadersRemovedHeader(rnd, zoneID),
+				Config: testAccCheckCloudflareManagedTransformsRemovedHeader(rnd, zoneID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, consts.ZoneIDSchemaKey, zoneID),
 					resource.TestCheckResourceAttr(resourceName, "managed_request_headers.#", "1"),
@@ -114,10 +114,10 @@ func TestAccCloudflareManagedHeaders(t *testing.T) {
 	})
 }
 
-func testAccCheckCloudflareManagedHeaders(rnd, zoneID string) string {
-	return acctest.LoadTestCase("managedheaders.tf", rnd, zoneID)
+func testAccCheckCloudflareManagedTransforms(rnd, zoneID string) string {
+	return acctest.LoadTestCase("managedtransforms.tf", rnd, zoneID)
 }
 
-func testAccCheckCloudflareManagedHeadersRemovedHeader(rnd, zoneID string) string {
-	return acctest.LoadTestCase("managedheadersremovedheader.tf", rnd, zoneID)
+func testAccCheckCloudflareManagedTransformsRemovedHeader(rnd, zoneID string) string {
+	return acctest.LoadTestCase("managedtransformsremovedheader.tf", rnd, zoneID)
 }
