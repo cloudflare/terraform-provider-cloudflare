@@ -299,7 +299,26 @@ terraform_cloudflare_v5()
 ## cloudflare_user_agent_blocking_rule
 ## cloudflare_waiting_room
 ## cloudflare_waiting_room_rules
-## cloudflare_worker_script
+## cloudflare_workers_script
+
+- `name` is now `script_name`.
+
+  Before
+  ```hcl
+  resource "cloudflare_workers_script" "example" {
+    account_id = "0da42c8d2132a9ddaf714f9e7c920711"
+    name = "my-script"
+  }
+  ```
+
+  After
+  ```hcl
+  resource "cloudflare_workers_script" "example" {
+    account_id  = "0da42c8d2132a9ddaf714f9e7c920711"
+    script_name = "my-script"
+  }
+  ```
+
 ## cloudflare_workers_kv
 
 - `key` is now `key_name`.
@@ -331,7 +350,7 @@ terraform_cloudflare_v5()
 
   Before
   ```hcl
-  resource "zero_trust_tunnel_cloudflared" "example" {
+  resource "cloudflare_zero_trust_tunnel_cloudflared" "example" {
     account_id = "0da42c8d2132a9ddaf714f9e7c920711"
     secret = "example-secret"
     cname = "foo.example.com"
@@ -340,7 +359,7 @@ terraform_cloudflare_v5()
 
   After
   ```hcl
-  resource "zero_trust_tunnel_cloudflared" "example" {
+  resource "cloudflare_zero_trust_tunnel_cloudflared" "example" {
     account_id = "0da42c8d2132a9ddaf714f9e7c920711"
     tunnel_secret = "example-secret"
   }

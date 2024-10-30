@@ -17,7 +17,7 @@ resource "cloudflare_workers_script" "%[1]s-service" {
 
 resource "cloudflare_workers_script" "%[1]s" {
   account_id = "%[4]s"
-  name    = "%[1]s"
+  script_name    = "%[1]s"
   content = "%[2]s"
 
   kv_namespace_binding =[ {

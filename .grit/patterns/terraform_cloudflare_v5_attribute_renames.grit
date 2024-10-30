@@ -52,9 +52,12 @@ pattern terraform_cloudflare_v5_attribute_renames() {
         }`
     },
 
-    // zero_trust_tunnel_cloudflared
-    `secret = $v` as $p => `tunnel_secret = $v` where { $p <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
-    `cname = $v` as $cname => . where { $cname <: within `resource "zero_trust_tunnel_cloudflared" $_ { $_ }` },
+    // cloudflare_workers_script
+    `name = $n` as $name => `script_name = $n` where { $name <: within `resource "cloudflare_workers_script" $_ { $_ }` },
+
+    // cloudflare_zero_trust_tunnel_cloudflared
+    `secret = $v` as $p => `tunnel_secret = $v` where { $p <: within `resource "cloudflare_zero_trust_tunnel_cloudflared" $_ { $_ }` },
+    `cname = $v` as $cname => . where { $cname <: within `resource "cloudflare_zero_trust_tunnel_cloudflared" $_ { $_ }` },
 
     // cloudflare_zone
     `account_id = $id` => `account = {
