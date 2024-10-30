@@ -32,7 +32,7 @@ type CloudforceOneRequestDataSourceModel struct {
 	Request           types.String                                  `tfsdk:"request" json:"request,computed"`
 	Status            types.String                                  `tfsdk:"status" json:"status,computed"`
 	Summary           types.String                                  `tfsdk:"summary" json:"summary,computed"`
-	Tlp               types.String                                  `tfsdk:"tlp" json:"tlp,computed"`
+	TLP               types.String                                  `tfsdk:"tlp" json:"tlp,computed"`
 	Tokens            types.Int64                                   `tfsdk:"tokens" json:"tokens,computed"`
 	Updated           timetypes.RFC3339                             `tfsdk:"updated" json:"updated,computed" format:"date-time"`
 	Priority          types.Dynamic                                 `tfsdk:"priority" json:"priority,computed"`

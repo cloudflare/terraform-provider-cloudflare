@@ -24,7 +24,7 @@ type CloudforceOneRequestPriorityDataSourceModel struct {
 	Request           types.String      `tfsdk:"request" json:"request,optional"`
 	Status            types.String      `tfsdk:"status" json:"status,optional"`
 	Summary           types.String      `tfsdk:"summary" json:"summary,optional"`
-	Tlp               types.String      `tfsdk:"tlp" json:"tlp,optional"`
+	TLP               types.String      `tfsdk:"tlp" json:"tlp,optional"`
 	Tokens            types.Int64       `tfsdk:"tokens" json:"tokens,optional"`
 	Updated           timetypes.RFC3339 `tfsdk:"updated" json:"updated,optional" format:"date-time"`
 }
