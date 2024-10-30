@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zero_trust_list: Consider `items_with_description` when updating a ZT list
+```
