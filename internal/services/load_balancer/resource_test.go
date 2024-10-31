@@ -306,10 +306,10 @@ func TestAccCloudflareLoadBalancer_RandomSteering(t *testing.T) {
 					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
 					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
 					// explicitly verify that random_steering has been set
-					resource.TestCheckResourceAttr(name, "random_steering.%", "2"),                     // random_steering appears once
-					resource.TestCheckResourceAttr(name, "random_steering.0.pool_weights.%", "1"),      // one pool configured
-					resource.TestCheckTypeSetElemAttr(name, "random_steering.0.pool_weights.*", "0.4"), // pool weight of 0.4
-					resource.TestCheckResourceAttr(name, "random_steering.default_weight", "0.8"),      // default weight of 0.8
+					resource.TestCheckResourceAttr(name, "random_steering.%", "2"),                   // random_steering appears once
+					resource.TestCheckResourceAttr(name, "random_steering.pool_weights.%", "1"),      // one pool configured
+					resource.TestCheckTypeSetElemAttr(name, "random_steering.pool_weights.*", "0.4"), // pool weight of 0.4
+					resource.TestCheckResourceAttr(name, "random_steering.default_weight", "0.8"),    // default weight of 0.8
 					// dont check that other specified values are set, this will be evident by lack
 					// of plan diff some values will get empty values
 					resource.TestCheckResourceAttr(name, "pop_pools.#", "0"),
