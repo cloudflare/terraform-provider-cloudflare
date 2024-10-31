@@ -1,4 +1,3 @@
-
 resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   name = "%[1]s"
   account_id = "%[2]s"
@@ -8,18 +7,18 @@ resource "cloudflare_zero_trust_gateway_policy" "%[1]s" {
   filters = ["dns"]
   traffic = "any(dns.domains[*] == \"example.com\")"
   rule_settings = {
-  block_page_enabled = true
-    block_page_reason = "cuz"
+    block_page_enabled = true
+    block_reason = "cuz"
     insecure_disable_dnssec_validation = false
-	egress = {
-    ipv4 = "203.0.113.1"
-		ipv6 = "2001:db8::/32"
+    egress = {
+      ipv4 = "203.0.113.1"
+      ipv6 = "2001:db8::/32"
+    }
+    untrusted_cert = {
+      action = "error"
+    }
+    payload_log = {
+      enabled = true
+    }
   }
-	untrusted_cert = {
-    action = "error"
-  }
-	payload_log = {
-    enabled = true
-  }
-}
 }
