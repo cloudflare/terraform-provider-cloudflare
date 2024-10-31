@@ -5,11 +5,13 @@ package certificate_pack
 import (
 	"context"
 
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -24,12 +26,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Description:   "Identifier",
 				Computed:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
-			"certificate_pack_id": schema.StringAttribute{
-				Description:   "Identifier",
-				Required:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown(), stringplanmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"zone_id": schema.StringAttribute{
 				Description:   "Identifier",
@@ -38,7 +35,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"certificate_authority": schema.StringAttribute{
 				Description: "Certificate Authority selected for the order.  For information on any certificate authority specific details or restrictions [see this page for more details.](https://developers.cloudflare.com/ssl/reference/certificate-authorities)",
-				Computed:    true,
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOfCaseInsensitive(
 						"google",
@@ -46,10 +43,51 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"ssl_com",
 					),
 				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"type": schema.StringAttribute{
+				Description: "Type of certificate pack.",
+				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive("advanced"),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"validation_method": schema.StringAttribute{
+				Description: "Validation Method selected for the order.",
+				Required:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOfCaseInsensitive(
+						"txt",
+						"http",
+						"email",
+					),
+				},
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"validity_days": schema.Int64Attribute{
+				Description: "Validity Days selected for the order.",
+				Required:    true,
+				Validators: []validator.Int64{
+					int64validator.OneOf(
+						14,
+						30,
+						90,
+						365,
+					),
+				},
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
+			},
+			"hosts": schema.ListAttribute{
+				Description:   "Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.",
+				Required:      true,
+				ElementType:   types.StringType,
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
 			"cloudflare_branding": schema.BoolAttribute{
-				Description: "Whether or not to add Cloudflare Branding for the order.  This will add sni.cloudflaressl.com as the Common Name if set true.",
-				Computed:    true,
+				Description:   "Whether or not to add Cloudflare Branding for the order.  This will add sni.cloudflaressl.com as the Common Name if set true.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.Bool{boolplanmodifier.RequiresReplace()},
 			},
 			"status": schema.StringAttribute{
 				Description: "Status of certificate pack.",
@@ -79,42 +117,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"holding_deployment",
 					),
 				},
-			},
-			"type": schema.StringAttribute{
-				Description: "Type of certificate pack.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive("advanced"),
-				},
-			},
-			"validation_method": schema.StringAttribute{
-				Description: "Validation Method selected for the order.",
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOfCaseInsensitive(
-						"txt",
-						"http",
-						"email",
-					),
-				},
-			},
-			"validity_days": schema.Int64Attribute{
-				Description: "Validity Days selected for the order.",
-				Computed:    true,
-				Validators: []validator.Int64{
-					int64validator.OneOf(
-						14,
-						30,
-						90,
-						365,
-					),
-				},
-			},
-			"hosts": schema.ListAttribute{
-				Description: "Comma separated list of valid host names for the certificate packs. Must contain the zone apex, may not contain more than 50 hosts, and may not be empty.",
-				Computed:    true,
-				CustomType:  customfield.NewListType[types.String](ctx),
-				ElementType: types.StringType,
 			},
 		},
 	}

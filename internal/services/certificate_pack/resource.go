@@ -70,10 +70,9 @@ func (r *CertificatePackResource) Create(ctx context.Context, req resource.Creat
 	}
 	res := new(http.Response)
 	env := CertificatePackResultEnvelope{*data}
-	_, err = r.client.SSL.CertificatePacks.Edit(
+	_, err = r.client.SSL.CertificatePacks.New(
 		ctx,
-		data.CertificatePackID.ValueString(),
-		ssl.CertificatePackEditParams{
+		ssl.CertificatePackNewParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -91,7 +90,6 @@ func (r *CertificatePackResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 	data = &env.Result
-	data.ID = data.CertificatePackID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -122,7 +120,7 @@ func (r *CertificatePackResource) Update(ctx context.Context, req resource.Updat
 	env := CertificatePackResultEnvelope{*data}
 	_, err = r.client.SSL.CertificatePacks.Edit(
 		ctx,
-		data.CertificatePackID.ValueString(),
+		data.ID.ValueString(),
 		ssl.CertificatePackEditParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -141,7 +139,6 @@ func (r *CertificatePackResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 	data = &env.Result
-	data.ID = data.CertificatePackID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -159,7 +156,7 @@ func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadReq
 	env := CertificatePackResultEnvelope{*data}
 	_, err := r.client.SSL.CertificatePacks.Get(
 		ctx,
-		data.CertificatePackID.ValueString(),
+		data.ID.ValueString(),
 		ssl.CertificatePackGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -177,7 +174,6 @@ func (r *CertificatePackResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	data = &env.Result
-	data.ID = data.CertificatePackID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -193,7 +189,7 @@ func (r *CertificatePackResource) Delete(ctx context.Context, req resource.Delet
 
 	_, err := r.client.SSL.CertificatePacks.Delete(
 		ctx,
-		data.CertificatePackID.ValueString(),
+		data.ID.ValueString(),
 		ssl.CertificatePackDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -203,7 +199,6 @@ func (r *CertificatePackResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	data.ID = data.CertificatePackID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -246,7 +241,6 @@ func (r *CertificatePackResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 	data = &env.Result
-	data.ID = data.CertificatePackID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
