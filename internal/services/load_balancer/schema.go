@@ -504,7 +504,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "When header `session_affinity` is enabled, this option can be used to specify how HTTP headers on load balancing requests will be used. The supported values are:\n- `\"true\"`: Load balancing requests must contain *all* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.\n- `\"false\"`: Load balancing requests must contain *at least one* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.",
 						Computed:    true,
 						Optional:    true,
-						Default:     booldefault.StaticBool(false),
+						// Default:     booldefault.StaticBool(false),
 					},
 					"samesite": schema.StringAttribute{
 						Description: "Configures the SameSite attribute on session affinity cookie. Value \"Auto\" will be translated to \"Lax\" or \"None\" depending if Always Use HTTPS is enabled. Note: when using value \"None\", the secure attribute can not be set to \"Never\".",
@@ -518,7 +518,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"Strict",
 							),
 						},
-						Default: stringdefault.StaticString("Auto"),
+						// Default: stringdefault.StaticString("Auto"),
 					},
 					"secure": schema.StringAttribute{
 						Description: "Configures the Secure attribute on session affinity cookie. Value \"Always\" indicates the Secure attribute will be set in the Set-Cookie header, \"Never\" indicates the Secure attribute will not be set, and \"Auto\" will set the Secure attribute depending if Always Use HTTPS is enabled.",
@@ -531,7 +531,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"Never",
 							),
 						},
-						Default: stringdefault.StaticString("Auto"),
+						// Default: stringdefault.StaticString("Auto"),
 					},
 					"zero_downtime_failover": schema.StringAttribute{
 						Description: "Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:\n- `\"none\"`: No failover takes place for sessions pinned to the origin (default).\n- `\"temporary\"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.\n- `\"sticky\"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.",
@@ -544,7 +544,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"sticky",
 							),
 						},
-						Default: stringdefault.StaticString("none"),
+						// Default: stringdefault.StaticString("none"),
 					},
 				},
 			},
