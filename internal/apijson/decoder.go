@@ -309,6 +309,8 @@ func (d *decoderBuilder) newBigFloatDecoder(_ reflect.Type) decoderFunc {
 }
 
 func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
+	updateBehavior := d.updateBehavior
+
 	keyType := t.Key()
 	itemType := t.Elem()
 	itemDecoder := d.typeDecoder(itemType)
@@ -316,7 +318,22 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 	return func(node gjson.Result, value reflect.Value, state *decoderState) (err error) {
 		mapValue := reflect.MakeMapWithSize(t, len(node.Map()))
 
-		node.ForEach(func(key, value gjson.Result) bool {
+		if updateBehavior == IfUnset && !value.IsNil() {
+			return nil
+		}
+
+		existingKeys := map[reflect.Value]bool{}
+
+		if updateBehavior == OnlyNested {
+			// populate existing values regardless of whether they are coming from the API
+			for _, key := range value.MapKeys() {
+				existingKeys[key] = true
+				item := value.MapIndex(key)
+				mapValue.SetMapIndex(key, item)
+			}
+		}
+
+		node.ForEach(func(key, jsonValue gjson.Result) bool {
 			// It's fine for us to just use `ValueOf` here because the key types will
 			// always be primitive types so we don't need to decode it using the standard pattern
 			keyValue := reflect.ValueOf(key.Value())
@@ -333,8 +350,17 @@ func (d *decoderBuilder) newMapDecoder(t reflect.Type) decoderFunc {
 				return false
 			}
 
+			if updateBehavior == OnlyNested && !existingKeys[keyValue] {
+				// skip keys that aren't already in the map
+				return true
+			}
+
+			existingValue := value.MapIndex(keyValue)
 			itemValue := reflect.New(itemType).Elem()
-			itemerr := itemDecoder(value, itemValue, state)
+			if existingValue.IsValid() {
+				itemValue.Set(existingValue)
+			}
+			itemerr := itemDecoder(jsonValue, itemValue, state)
 			if itemerr != nil {
 				if err == nil {
 					err = itemerr
