@@ -4,7 +4,6 @@ package certificate_pack
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -13,16 +12,15 @@ type CertificatePackResultEnvelope struct {
 }
 
 type CertificatePackModel struct {
-	ID                   types.String                   `tfsdk:"id" json:"-,computed"`
-	CertificatePackID    types.String                   `tfsdk:"certificate_pack_id" path:"certificate_pack_id,required"`
-	ZoneID               types.String                   `tfsdk:"zone_id" path:"zone_id,required"`
-	CertificateAuthority types.String                   `tfsdk:"certificate_authority" json:"certificate_authority,computed"`
-	CloudflareBranding   types.Bool                     `tfsdk:"cloudflare_branding" json:"cloudflare_branding,computed"`
-	Status               types.String                   `tfsdk:"status" json:"status,computed"`
-	Type                 types.String                   `tfsdk:"type" json:"type,computed"`
-	ValidationMethod     types.String                   `tfsdk:"validation_method" json:"validation_method,computed"`
-	ValidityDays         types.Int64                    `tfsdk:"validity_days" json:"validity_days,computed"`
-	Hosts                customfield.List[types.String] `tfsdk:"hosts" json:"hosts,computed"`
+	ID                   types.String    `tfsdk:"id" json:"id,computed"`
+	ZoneID               types.String    `tfsdk:"zone_id" path:"zone_id,required"`
+	CertificateAuthority types.String    `tfsdk:"certificate_authority" json:"certificate_authority,required"`
+	Type                 types.String    `tfsdk:"type" json:"type,required"`
+	ValidationMethod     types.String    `tfsdk:"validation_method" json:"validation_method,required"`
+	ValidityDays         types.Int64     `tfsdk:"validity_days" json:"validity_days,required"`
+	Hosts                *[]types.String `tfsdk:"hosts" json:"hosts,required"`
+	CloudflareBranding   types.Bool      `tfsdk:"cloudflare_branding" json:"cloudflare_branding,optional"`
+	Status               types.String    `tfsdk:"status" json:"status,computed"`
 }
 
 func (m CertificatePackModel) MarshalJSON() (data []byte, err error) {
