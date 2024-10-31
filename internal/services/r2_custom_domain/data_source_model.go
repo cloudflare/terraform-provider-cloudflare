@@ -5,7 +5,6 @@ package r2_custom_domain
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/r2"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,9 +27,9 @@ type R2CustomDomainDataSourceModel struct {
 }
 
 func (m *R2CustomDomainDataSourceModel) toReadParams(_ context.Context) (params r2.DomainCustomGetParams, diags diag.Diagnostics) {
-	params = r2.DomainCustomGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+	// params = r2.DomainCustomGetParams{
+	// 	AccountID: cloudflare.F(m.AccountID.ValueString()),
+	// }
 
 	return
 }
