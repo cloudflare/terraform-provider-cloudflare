@@ -1062,11 +1062,45 @@ var exampleNestedJson = `{
 	"map_cust":{"key":["val1","val2"]}
 }`
 
+type nestedMapExample struct {
+	SomeStruct customfield.NestedObject[nestedMapStruct] `tfsdk:"some_struct" json:"some_struct,computed_optional"`
+}
+
+type nestedMapStruct struct {
+	NestedMap map[string]types.Float64 `tfsdk:"nested_map" json:"nested_map,optional"`
+}
+
 var decode_computed_only_tests = map[string]struct {
 	buf      string
 	starting interface{}
 	expected interface{}
 }{
+	"nested_map_unchanged": {
+		`{"some_struct": {"nested_map":{"example_key":3.14}}}`,
+		nestedMapExample{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStruct{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+		nestedMapExample{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStruct{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+	},
+	"nested_optional_map_avoids_updates": {
+		`{"some_struct": {"nested_map":{"example_key":0.123,"new_key":456.7}}}`,
+		nestedMapExample{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStruct{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+		nestedMapExample{
+			SomeStruct: customfield.NewObjectMust(ctx, &nestedMapStruct{
+				NestedMap: map[string]types.Float64{"example_key": types.Float64Value(3.14)},
+			}),
+		},
+	},
 	"only_updates_computed_props": {
 		exampleNestedJson,
 		StructWithComputedFields{
@@ -1216,9 +1250,6 @@ func TestDecodeComputedOnly(t *testing.T) {
 			v := reflect.ValueOf(test.starting)
 			starting := reflect.New(v.Type())
 			starting.Elem().Set(v)
-
-			x := starting.Elem().Interface().(StructWithComputedFields)
-			fmt.Print(x)
 
 			if err := UnmarshalComputed([]byte(test.buf), starting.Interface()); err != nil {
 				t.Fatalf("deserialization of %v failed with error %v", test.buf, err)
