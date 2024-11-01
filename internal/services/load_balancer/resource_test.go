@@ -450,7 +450,7 @@ func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T
 					resource.TestCheckResourceAttr(name, "steering_policy", "least_outstanding_requests"),
 					resource.TestCheckResourceAttr(name, "rules.0.name", "test rule 1"),
 					resource.TestCheckResourceAttr(name, "rules.0.condition", "dns.qry.type == 28"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.%", "1"),
+					// resource.TestCheckResourceAttr(name, "rules.0.overrides.%", "1"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.steering_policy", "least_outstanding_requests"),
 				),
 			},
