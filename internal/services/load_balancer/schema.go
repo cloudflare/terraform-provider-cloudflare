@@ -276,6 +276,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Computed:    true,
 									Optional:    true,
 									Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
+									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 									ElementType: types.ListType{
 										ElemType: types.StringType,
 									},
@@ -324,6 +325,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 									Computed:    true,
 									Optional:    true,
+									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 									ElementType: types.ListType{
 										ElemType: types.StringType,
 									},
@@ -354,6 +356,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 									Computed:    true,
 									Optional:    true,
+									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
 									ElementType: types.ListType{
 										ElemType: types.StringType,
 									},
