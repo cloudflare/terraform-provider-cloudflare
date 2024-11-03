@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zero_trust_dlp_profile: Include more fields in `entry` set hash function
+```
