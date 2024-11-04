@@ -38,7 +38,7 @@ type PagesProjectDataSourceModel struct {
 	CanonicalDeployment *PagesProjectCanonicalDeploymentDataSourceModel                  `tfsdk:"canonical_deployment" json:"canonical_deployment,optional"`
 	DeploymentConfigs   *PagesProjectDeploymentConfigsDataSourceModel                    `tfsdk:"deployment_configs" json:"deployment_configs,optional"`
 	DeploymentTrigger   *PagesProjectDeploymentTriggerDataSourceModel                    `tfsdk:"deployment_trigger" json:"deployment_trigger,optional"`
-	EnvVars             map[string]PagesProjectEnvVarsDataSourceModel                    `tfsdk:"env_vars" json:"env_vars,optional"`
+	EnvVars             *map[string]PagesProjectEnvVarsDataSourceModel                   `tfsdk:"env_vars" json:"env_vars,optional"`
 	LatestDeployment    *PagesProjectLatestDeploymentDataSourceModel                     `tfsdk:"latest_deployment" json:"latest_deployment,optional"`
 	LatestStage         *PagesProjectLatestStageDataSourceModel                          `tfsdk:"latest_stage" json:"latest_stage,optional"`
 	Stages              *[]*PagesProjectStagesDataSourceModel                            `tfsdk:"stages" json:"stages,optional"`
