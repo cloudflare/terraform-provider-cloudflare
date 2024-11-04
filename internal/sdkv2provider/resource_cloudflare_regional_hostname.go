@@ -44,6 +44,9 @@ func resourceCloudflareRegionalHostnameCreate(ctx context.Context, d *schema.Res
 	d.SetId(r.Hostname)
 	d.Set("hostname", r.Hostname)
 	d.Set("region_key", r.RegionKey)
+	if r.Routing != "" {
+		d.Set("routing", r.Routing)
+	}
 	d.Set("created_on", r.CreatedOn.Format(time.RFC3339Nano))
 	return nil
 }
@@ -60,6 +63,9 @@ func resourceCloudflareRegionalHostnameRead(ctx context.Context, d *schema.Resou
 	d.SetId(r.Hostname)
 	d.Set("hostname", r.Hostname)
 	d.Set("region_key", r.RegionKey)
+	if r.Routing != "" {
+		d.Set("routing", r.Routing)
+	}
 	d.Set("created_on", r.CreatedOn.Format(time.RFC3339Nano))
 	return nil
 }
@@ -88,6 +94,9 @@ func resourceCloudflareRegionalHostnameUpdate(ctx context.Context, d *schema.Res
 	d.SetId(r.Hostname)
 	d.Set("hostname", r.Hostname)
 	d.Set("region_key", r.RegionKey)
+	if r.Routing != "" {
+		d.Set("routing", r.Routing)
+	}
 	d.Set("created_on", r.CreatedOn.Format(time.RFC3339Nano))
 	return nil
 }
