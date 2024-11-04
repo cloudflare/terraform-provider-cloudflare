@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type CallsSfuAppDataSource struct {
+type CallsSFUAppDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*CallsSfuAppDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*CallsSFUAppDataSource)(nil)
 
-func NewCallsSfuAppDataSource() datasource.DataSource {
-	return &CallsSfuAppDataSource{}
+func NewCallsSFUAppDataSource() datasource.DataSource {
+	return &CallsSFUAppDataSource{}
 }
 
-func (d *CallsSfuAppDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *CallsSFUAppDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_calls_sfu_app"
 }
 
-func (d *CallsSfuAppDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CallsSFUAppDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *CallsSfuAppDataSource) Configure(ctx context.Context, req datasource.Co
 	d.client = client
 }
 
-func (d *CallsSfuAppDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *CallsSfuAppDataSourceModel
+func (d *CallsSFUAppDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *CallsSFUAppDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -65,8 +65,8 @@ func (d *CallsSfuAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 		}
 
 		res := new(http.Response)
-		env := CallsSfuAppResultDataSourceEnvelope{*data}
-		_, err := d.client.Calls.Sfu.Get(
+		env := CallsSFUAppResultDataSourceEnvelope{*data}
+		_, err := d.client.Calls.SFU.Get(
 			ctx,
 			data.AppID.ValueString(),
 			params,
@@ -91,8 +91,8 @@ func (d *CallsSfuAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 			return
 		}
 
-		env := CallsSfuAppResultListDataSourceEnvelope{}
-		page, err := d.client.Calls.Sfu.List(ctx, params)
+		env := CallsSFUAppResultListDataSourceEnvelope{}
+		page, err := d.client.Calls.SFU.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return

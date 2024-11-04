@@ -8,11 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type CallsSfuAppResultEnvelope struct {
-	Result CallsSfuAppModel `json:"result"`
+type CallsSFUAppResultEnvelope struct {
+	Result CallsSFUAppModel `json:"result"`
 }
 
-type CallsSfuAppModel struct {
+type CallsSFUAppModel struct {
 	AccountID types.String      `tfsdk:"account_id" path:"account_id,required"`
 	AppID     types.String      `tfsdk:"app_id" path:"app_id,optional"`
 	Name      types.String      `tfsdk:"name" json:"name,computed_optional"`
@@ -22,10 +22,10 @@ type CallsSfuAppModel struct {
 	UID       types.String      `tfsdk:"uid" json:"uid,computed"`
 }
 
-func (m CallsSfuAppModel) MarshalJSON() (data []byte, err error) {
+func (m CallsSFUAppModel) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(m)
 }
 
-func (m CallsSfuAppModel) MarshalJSONForUpdate(state CallsSfuAppModel) (data []byte, err error) {
+func (m CallsSFUAppModel) MarshalJSONForUpdate(state CallsSFUAppModel) (data []byte, err error) {
 	return apijson.MarshalForUpdate(m, state)
 }
