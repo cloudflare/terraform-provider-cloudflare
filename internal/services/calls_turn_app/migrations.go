@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package call_app_turn_key
+package calls_turn_app
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = (*CallAppTURNKeyResource)(nil)
+var _ resource.ResourceWithUpgradeState = (*CallsTURNAppResource)(nil)
 
-func (r *CallAppTURNKeyResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+func (r *CallsTURNAppResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}
 }

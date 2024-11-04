@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package call_app
+package calls_turn_app
 
 import (
 	"context"
@@ -17,23 +17,23 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*CallAppResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*CallAppResource)(nil)
+var _ resource.ResourceWithConfigure = (*CallsTURNAppResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*CallsTURNAppResource)(nil)
 
 func NewResource() resource.Resource {
-	return &CallAppResource{}
+	return &CallsTURNAppResource{}
 }
 
-// CallAppResource defines the resource implementation.
-type CallAppResource struct {
+// CallsTURNAppResource defines the resource implementation.
+type CallsTURNAppResource struct {
 	client *cloudflare.Client
 }
 
-func (r *CallAppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_call_app"
+func (r *CallsTURNAppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_calls_turn_app"
 }
 
-func (r *CallAppResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *CallsTURNAppResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -52,8 +52,8 @@ func (r *CallAppResource) Configure(ctx context.Context, req resource.ConfigureR
 	r.client = client
 }
 
-func (r *CallAppResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *CallAppModel
+func (r *CallsTURNAppResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *CallsTURNAppModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -67,10 +67,9 @@ func (r *CallAppResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	res := new(http.Response)
-	env := CallAppResultEnvelope{*data}
-	_, err = r.client.Calls.New(
+	_, err = r.client.Calls.TURN.New(
 		ctx,
-		calls.CallNewParams{
+		calls.TURNNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -82,18 +81,17 @@ func (r *CallAppResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err = apijson.UnmarshalComputed(bytes, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallAppResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *CallAppModel
+func (r *CallsTURNAppResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *CallsTURNAppModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -101,7 +99,7 @@ func (r *CallAppResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	var state *CallAppModel
+	var state *CallsTURNAppModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -115,11 +113,11 @@ func (r *CallAppResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	res := new(http.Response)
-	env := CallAppResultEnvelope{*data}
-	_, err = r.client.Calls.Update(
+	env := CallsTURNAppResultEnvelope{*data}
+	_, err = r.client.Calls.TURN.Update(
 		ctx,
-		data.AppID.ValueString(),
-		calls.CallUpdateParams{
+		data.KeyID.ValueString(),
+		calls.TURNUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -141,8 +139,8 @@ func (r *CallAppResource) Update(ctx context.Context, req resource.UpdateRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallAppResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *CallAppModel
+func (r *CallsTURNAppResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *CallsTURNAppModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -151,11 +149,11 @@ func (r *CallAppResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	res := new(http.Response)
-	env := CallAppResultEnvelope{*data}
-	_, err := r.client.Calls.Get(
+	env := CallsTURNAppResultEnvelope{*data}
+	_, err := r.client.Calls.TURN.Get(
 		ctx,
-		data.AppID.ValueString(),
-		calls.CallGetParams{
+		data.KeyID.ValueString(),
+		calls.TURNGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -176,8 +174,8 @@ func (r *CallAppResource) Read(ctx context.Context, req resource.ReadRequest, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallAppResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *CallAppModel
+func (r *CallsTURNAppResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *CallsTURNAppModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -185,10 +183,10 @@ func (r *CallAppResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	_, err := r.client.Calls.Delete(
+	_, err := r.client.Calls.TURN.Delete(
 		ctx,
-		data.AppID.ValueString(),
-		calls.CallDeleteParams{
+		data.KeyID.ValueString(),
+		calls.TURNDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -201,6 +199,6 @@ func (r *CallAppResource) Delete(ctx context.Context, req resource.DeleteRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallAppResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *CallsTURNAppResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }

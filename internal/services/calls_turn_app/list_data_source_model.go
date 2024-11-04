@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package call_app_turn_key
+package calls_turn_app
 
 import (
 	"context"
@@ -13,25 +13,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type CallAppTURNKeysResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[CallAppTURNKeysResultDataSourceModel] `json:"result,computed"`
+type CallsTURNAppsResultListDataSourceEnvelope struct {
+	Result customfield.NestedObjectList[CallsTURNAppsResultDataSourceModel] `json:"result,computed"`
 }
 
-type CallAppTURNKeysDataSourceModel struct {
-	AccountID types.String                                                       `tfsdk:"account_id" path:"account_id,required"`
-	MaxItems  types.Int64                                                        `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[CallAppTURNKeysResultDataSourceModel] `tfsdk:"result"`
+type CallsTURNAppsDataSourceModel struct {
+	AccountID types.String                                                     `tfsdk:"account_id" path:"account_id,required"`
+	MaxItems  types.Int64                                                      `tfsdk:"max_items"`
+	Result    customfield.NestedObjectList[CallsTURNAppsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *CallAppTURNKeysDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
-	params = calls.TURNKeyListParams{
+func (m *CallsTURNAppsDataSourceModel) toListParams(_ context.Context) (params calls.TURNListParams, diags diag.Diagnostics) {
+	params = calls.TURNListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-type CallAppTURNKeysResultDataSourceModel struct {
+type CallsTURNAppsResultDataSourceModel struct {
 	Created  timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Name     types.String      `tfsdk:"name" json:"name,computed"`
