@@ -460,8 +460,8 @@ type ZeroTrustAccessApplicationSaaSAppCustomAttributesModel struct {
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomAttributesSourceModel struct {
-	Name      types.String            `tfsdk:"name" json:"name,optional"`
-	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,optional"`
+	Name      types.String             `tfsdk:"name" json:"name,optional"`
+	NameByIdP *map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomClaimsModel struct {
@@ -472,8 +472,8 @@ type ZeroTrustAccessApplicationSaaSAppCustomClaimsModel struct {
 }
 
 type ZeroTrustAccessApplicationSaaSAppCustomClaimsSourceModel struct {
-	Name      types.String            `tfsdk:"name" json:"name,optional"`
-	NameByIdP map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,optional"`
+	Name      types.String             `tfsdk:"name" json:"name,optional"`
+	NameByIdP *map[string]types.String `tfsdk:"name_by_idp" json:"name_by_idp,optional"`
 }
 
 type ZeroTrustAccessApplicationSaaSAppHybridAndImplicitOptionsModel struct {
@@ -522,7 +522,7 @@ type ZeroTrustAccessApplicationSCIMConfigMappingsOperationsModel struct {
 }
 
 type ZeroTrustAccessApplicationTargetCriteriaModel struct {
-	Port             types.Int64                `tfsdk:"port" json:"port,required"`
-	Protocol         types.String               `tfsdk:"protocol" json:"protocol,required"`
-	TargetAttributes map[string]*[]types.String `tfsdk:"target_attributes" json:"target_attributes,required"`
+	Port             types.Int64                 `tfsdk:"port" json:"port,required"`
+	Protocol         types.String                `tfsdk:"protocol" json:"protocol,required"`
+	TargetAttributes *map[string]*[]types.String `tfsdk:"target_attributes" json:"target_attributes,required"`
 }
