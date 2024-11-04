@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package call_app
+package calls_turn_app
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var _ resource.ResourceWithConfigValidators = (*CallAppResource)(nil)
+var _ resource.ResourceWithConfigValidators = (*CallsTURNAppResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -23,13 +23,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"app_id": schema.StringAttribute{
+			"key_id": schema.StringAttribute{
 				Description:   "A Cloudflare-generated unique identifier for a item.",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
-				Description: "A short description of Calls app, not shown to end users.",
+				Description: "A short description of a TURN key, not shown to end users.",
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString(""),
@@ -39,14 +39,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
+			"key": schema.StringAttribute{
+				Description: "Bearer token",
+				Computed:    true,
+			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the item was last modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"secret": schema.StringAttribute{
-				Description: "Bearer token",
-				Computed:    true,
 			},
 			"uid": schema.StringAttribute{
 				Description: "A Cloudflare-generated unique identifier for a item.",
@@ -56,10 +56,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (r *CallAppResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *CallsTURNAppResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = ResourceSchema(ctx)
 }
 
-func (r *CallAppResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
+func (r *CallsTURNAppResource) ConfigValidators(_ context.Context) []resource.ConfigValidator {
 	return []resource.ConfigValidator{}
 }

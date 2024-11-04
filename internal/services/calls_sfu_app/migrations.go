@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package call_app
+package calls_sfu_app
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = (*CallAppResource)(nil)
+var _ resource.ResourceWithUpgradeState = (*CallsSfuAppResource)(nil)
 
-func (r *CallAppResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+func (r *CallsSfuAppResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}
 }
