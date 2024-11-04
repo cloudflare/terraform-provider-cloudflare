@@ -25,8 +25,8 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/authenticated_origin_pulls_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/bot_management"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/byo_ip_prefix"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/call_app"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/call_app_turn_key"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_sfu_app"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/calls_turn_app"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/certificate_pack"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/cloudforce_one_request_asset"
@@ -427,8 +427,8 @@ func (p *CloudflareProvider) Resources(ctx context.Context) []func() resource.Re
 		bot_management.NewResource,
 		observatory_scheduled_test.NewResource,
 		hostname_tls_setting.NewResource,
-		call_app.NewResource,
-		call_app_turn_key.NewResource,
+		calls_sfu_app.NewResource,
+		calls_turn_app.NewResource,
 		cloudforce_one_request.NewResource,
 		cloudforce_one_request_message.NewResource,
 		cloudforce_one_request_priority.NewResource,
@@ -689,10 +689,10 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		observatory_scheduled_test.NewObservatoryScheduledTestDataSource,
 		dcv_delegation.NewDCVDelegationDataSource,
 		hostname_tls_setting.NewHostnameTLSSettingDataSource,
-		call_app.NewCallAppDataSource,
-		call_app.NewCallAppsDataSource,
-		call_app_turn_key.NewCallAppTURNKeyDataSource,
-		call_app_turn_key.NewCallAppTURNKeysDataSource,
+		calls_sfu_app.NewCallsSfuAppDataSource,
+		calls_sfu_app.NewCallsSfuAppsDataSource,
+		calls_turn_app.NewCallsTURNAppDataSource,
+		calls_turn_app.NewCallsTURNAppsDataSource,
 		cloudforce_one_request.NewCloudforceOneRequestDataSource,
 		cloudforce_one_request.NewCloudforceOneRequestsDataSource,
 		cloudforce_one_request_message.NewCloudforceOneRequestMessageDataSource,

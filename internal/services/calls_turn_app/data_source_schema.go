@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package call_app_turn_key
+package calls_turn_app
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*CallAppTURNKeyDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*CallsTURNAppDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -56,11 +56,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *CallAppTURNKeyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *CallsTURNAppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *CallAppTURNKeyDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *CallsTURNAppDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
 		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("key_id")),
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),

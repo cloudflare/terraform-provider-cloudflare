@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package call_app_turn_key
+package calls_sfu_app
 
 import (
 	"context"
@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type CallAppTURNKeyDataSource struct {
+type CallsSfuAppDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*CallAppTURNKeyDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*CallsSfuAppDataSource)(nil)
 
-func NewCallAppTURNKeyDataSource() datasource.DataSource {
-	return &CallAppTURNKeyDataSource{}
+func NewCallsSfuAppDataSource() datasource.DataSource {
+	return &CallsSfuAppDataSource{}
 }
 
-func (d *CallAppTURNKeyDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_call_app_turn_key"
+func (d *CallsSfuAppDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_calls_sfu_app"
 }
 
-func (d *CallAppTURNKeyDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CallsSfuAppDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -48,8 +48,8 @@ func (d *CallAppTURNKeyDataSource) Configure(ctx context.Context, req datasource
 	d.client = client
 }
 
-func (d *CallAppTURNKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *CallAppTURNKeyDataSourceModel
+func (d *CallsSfuAppDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *CallsSfuAppDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -65,10 +65,10 @@ func (d *CallAppTURNKeyDataSource) Read(ctx context.Context, req datasource.Read
 		}
 
 		res := new(http.Response)
-		env := CallAppTURNKeyResultDataSourceEnvelope{*data}
-		_, err := d.client.Calls.TURN.Keys.Get(
+		env := CallsSfuAppResultDataSourceEnvelope{*data}
+		_, err := d.client.Calls.Sfu.Get(
 			ctx,
-			data.KeyID.ValueString(),
+			data.AppID.ValueString(),
 			params,
 			option.WithResponseBodyInto(&res),
 			option.WithMiddleware(logging.Middleware(ctx)),
@@ -91,8 +91,8 @@ func (d *CallAppTURNKeyDataSource) Read(ctx context.Context, req datasource.Read
 			return
 		}
 
-		env := CallAppTURNKeyResultListDataSourceEnvelope{}
-		page, err := d.client.Calls.TURN.Keys.List(ctx, params)
+		env := CallsSfuAppResultListDataSourceEnvelope{}
+		page, err := d.client.Calls.Sfu.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
