@@ -7,13 +7,11 @@ import (
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ datasource.DataSourceWithConfigValidators = (*ZeroTrustAccessPoliciesDataSource)(nil)
@@ -42,66 +40,12 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The UUID of the policy",
 							Computed:    true,
 						},
-						"app_count": schema.Int64Attribute{
-							Description: "Number of access applications currently using this policy.",
-							Computed:    true,
-						},
-						"approval_groups": schema.ListNestedAttribute{
-							Description: "Administrators who can approve a temporary authentication request.",
-							Computed:    true,
-							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessPoliciesApprovalGroupsDataSourceModel](ctx),
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"approvals_needed": schema.Float64Attribute{
-										Description: "The number of approvals needed to obtain access.",
-										Computed:    true,
-										Validators: []validator.Float64{
-											float64validator.AtLeast(0),
-										},
-									},
-									"email_addresses": schema.ListAttribute{
-										Description: "A list of emails that can approve the access request.",
-										Computed:    true,
-										CustomType:  customfield.NewListType[types.String](ctx),
-										ElementType: types.StringType,
-									},
-									"email_list_uuid": schema.StringAttribute{
-										Description: "The UUID of an re-usable email list.",
-										Computed:    true,
-									},
-								},
-							},
-						},
-						"approval_required": schema.BoolAttribute{
-							Description: "Requires the user to request access from an administrator at the start of each session.",
-							Computed:    true,
-						},
-						"connection_rules": schema.SingleNestedAttribute{
-							Description: "The rules that define how users may connect to the targets secured by your application.",
-							Computed:    true,
-							CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPoliciesConnectionRulesDataSourceModel](ctx),
-							Attributes: map[string]schema.Attribute{
-								"ssh": schema.SingleNestedAttribute{
-									Description: "The SSH-specific rules that define how users may connect to the targets secured by your application.",
-									Computed:    true,
-									CustomType:  customfield.NewNestedObjectType[ZeroTrustAccessPoliciesConnectionRulesSSHDataSourceModel](ctx),
-									Attributes: map[string]schema.Attribute{
-										"usernames": schema.ListAttribute{
-											Description: "Contains the Unix usernames that may be used when connecting over SSH.",
-											Computed:    true,
-											CustomType:  customfield.NewListType[types.String](ctx),
-											ElementType: types.StringType,
-										},
-									},
-								},
-							},
-						},
 						"created_at": schema.StringAttribute{
 							Computed:   true,
 							CustomType: timetypes.RFC3339Type{},
 						},
 						"decision": schema.StringAttribute{
-							Description: "The action Access will take if a user matches this policy.",
+							Description: "The action Access will take if a user matches this policy. Infrastructure application policies can only use the Allow action.",
 							Computed:    true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
@@ -540,20 +484,8 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"isolation_required": schema.BoolAttribute{
-							Description: "Require this application to be served in an isolated browser for users matching this policy. 'Client Web Isolation' must be on for the account in order to use this feature.",
-							Computed:    true,
-						},
 						"name": schema.StringAttribute{
 							Description: "The name of the Access policy.",
-							Computed:    true,
-						},
-						"purpose_justification_prompt": schema.StringAttribute{
-							Description: "A custom message that will appear on the purpose justification screen.",
-							Computed:    true,
-						},
-						"purpose_justification_required": schema.BoolAttribute{
-							Description: "Require users to enter a justification when they log in to the application.",
 							Computed:    true,
 						},
 						"require": schema.ListNestedAttribute{
@@ -769,13 +701,6 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 							},
-						},
-						"reusable": schema.BoolAttribute{
-							Computed: true,
-						},
-						"session_duration": schema.StringAttribute{
-							Description: "The amount of time that tokens issued for the application will be valid. Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or µs), ms, s, m, h.",
-							Computed:    true,
 						},
 						"updated_at": schema.StringAttribute{
 							Computed:   true,
