@@ -27,22 +27,21 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the item was created.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
 			},
 			"modified": schema.StringAttribute{
 				Description: "The date and time the item was last modified.",
-				Optional:    true,
+				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"uid": schema.StringAttribute{
-				Description: "A Cloudflare-generated unique identifier for a item.",
-				Optional:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "A short description of Calls app, not shown to end users.",
 				Computed:    true,
-				Optional:    true,
+			},
+			"uid": schema.StringAttribute{
+				Description: "A Cloudflare-generated unique identifier for a item.",
+				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,

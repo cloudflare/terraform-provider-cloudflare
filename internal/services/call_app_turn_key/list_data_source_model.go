@@ -8,6 +8,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/calls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,4 +32,8 @@ func (m *CallAppTURNKeysDataSourceModel) toListParams(_ context.Context) (params
 }
 
 type CallAppTURNKeysResultDataSourceModel struct {
+	Created  timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Modified timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Name     types.String      `tfsdk:"name" json:"name,computed"`
+	UID      types.String      `tfsdk:"uid" json:"uid,computed"`
 }
