@@ -24,10 +24,10 @@ type CallAppResultListDataSourceEnvelope struct {
 type CallAppDataSourceModel struct {
 	AccountID types.String                     `tfsdk:"account_id" path:"account_id,optional"`
 	AppID     types.String                     `tfsdk:"app_id" path:"app_id,optional"`
-	Created   timetypes.RFC3339                `tfsdk:"created" json:"created,optional" format:"date-time"`
-	Modified  timetypes.RFC3339                `tfsdk:"modified" json:"modified,optional" format:"date-time"`
-	UID       types.String                     `tfsdk:"uid" json:"uid,optional"`
-	Name      types.String                     `tfsdk:"name" json:"name,computed_optional"`
+	Created   timetypes.RFC3339                `tfsdk:"created" json:"created,computed" format:"date-time"`
+	Modified  timetypes.RFC3339                `tfsdk:"modified" json:"modified,computed" format:"date-time"`
+	Name      types.String                     `tfsdk:"name" json:"name,computed"`
+	UID       types.String                     `tfsdk:"uid" json:"uid,computed"`
 	Filter    *CallAppFindOneByDataSourceModel `tfsdk:"filter"`
 }
 

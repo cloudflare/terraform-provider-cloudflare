@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -33,7 +34,26 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 				CustomType:  customfield.NewNestedObjectListType[CallAppsResultDataSourceModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{},
+					Attributes: map[string]schema.Attribute{
+						"created": schema.StringAttribute{
+							Description: "The date and time the item was created.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"modified": schema.StringAttribute{
+							Description: "The date and time the item was last modified.",
+							Computed:    true,
+							CustomType:  timetypes.RFC3339Type{},
+						},
+						"name": schema.StringAttribute{
+							Description: "A short description of Calls app, not shown to end users.",
+							Computed:    true,
+						},
+						"uid": schema.StringAttribute{
+							Description: "A Cloudflare-generated unique identifier for a item.",
+							Computed:    true,
+						},
+					},
 				},
 			},
 		},
