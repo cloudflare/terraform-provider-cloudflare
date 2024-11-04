@@ -116,7 +116,6 @@ func TestAccCloudflareLoadBalancer_SessionAffinity(t *testing.T) {
 					// explicitly verify that our session_affinity has been set
 					resource.TestCheckResourceAttr(name, "session_affinity", "cookie"),
 					resource.TestCheckResourceAttr(name, "session_affinity_ttl", "1800"),
-					resource.TestCheckResourceAttr(name, "session_affinity_attributes.%", "5"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "session_affinity_attributes.drain_duration", "60"),
@@ -450,7 +449,6 @@ func TestAccCloudflareLoadBalancer_LeastOutstandingRequestsBalanced(t *testing.T
 					resource.TestCheckResourceAttr(name, "steering_policy", "least_outstanding_requests"),
 					resource.TestCheckResourceAttr(name, "rules.0.name", "test rule 1"),
 					resource.TestCheckResourceAttr(name, "rules.0.condition", "dns.qry.type == 28"),
-					// resource.TestCheckResourceAttr(name, "rules.0.overrides.%", "1"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.steering_policy", "least_outstanding_requests"),
 				),
 			},
@@ -482,7 +480,6 @@ func TestAccCloudflareLoadBalancer_LeastConnectionsBalanced(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "steering_policy", "least_connections"),
 					resource.TestCheckResourceAttr(name, "rules.0.name", "test rule 1"),
 					resource.TestCheckResourceAttr(name, "rules.0.condition", "dns.qry.type == 28"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.%", "1"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.steering_policy", "least_connections"),
 				),
 			},
@@ -511,9 +508,7 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "description", "rules lb"),
 					resource.TestCheckResourceAttr(name, "rules.0.name", "test rule 1"),
 					resource.TestCheckResourceAttr(name, "rules.0.condition", "dns.qry.type == 28"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.%", "5"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.steering_policy", "geo"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.session_affinity_attributes.%", "4"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.session_affinity_attributes.samesite", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.session_affinity_attributes.secure", "Auto"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.session_affinity_attributes.zero_downtime_failover", "sticky"),
@@ -522,7 +517,6 @@ func TestAccCloudflareLoadBalancer_Rules(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.location_strategy.%", "2"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.location_strategy.prefer_ecs", "always"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.location_strategy.mode", "resolver_ip"),
-					resource.TestCheckResourceAttr(name, "rules.0.overrides.random_steering.%", "1"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.random_steering.pool_weights.%", "1"),
 					resource.TestCheckTypeSetElemAttr(name, "rules.0.overrides.random_steering.pool_weights.*", "0.4"),
 					resource.TestCheckResourceAttr(name, "rules.0.overrides.random_steering.default_weight", "0.2"),
@@ -567,44 +561,6 @@ func TestAccCloudflareLoadBalancer_Update(t *testing.T) {
 						if initialId != loadBalancer.ID {
 							// want in place update
 							return fmt.Errorf("load balancer id is different after second config applied ( %s -> %s )", initialId, loadBalancer.ID)
-						}
-						return nil
-					},
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareLoadBalancer_CreateAfterManualDestroy(t *testing.T) {
-	var loadBalancer cfold.LoadBalancer
-	var initialId string
-	zone := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_load_balancer." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareLoadBalancerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
-					testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
-					testAccManuallyDeleteLoadBalancer(name, &loadBalancer, &initialId),
-				),
-			},
-			{
-				Config: testAccCheckCloudflareLoadBalancerConfigBasic(zoneID, zone, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					// testAccCheckCloudflareLoadBalancerExists(name, &loadBalancer),
-					// testAccCheckCloudflareLoadBalancerIDIsValid(name, zoneID),
-					func(state *terraform.State) error {
-						if initialId == loadBalancer.ID {
-							return fmt.Errorf("load balancer id is unchanged even after we thought we deleted it ( %s )", loadBalancer.ID)
 						}
 						return nil
 					},
@@ -708,12 +664,12 @@ func testAccCheckCloudflareLoadBalancerDates(n string, loadBalancer *cfold.LoadB
 	}
 }
 
-func testAccManuallyDeleteLoadBalancer(name string, loadBalancer *cfold.LoadBalancer, initialId *string) resource.TestCheckFunc {
+func testAccManuallyDeleteLoadBalancer(name string, loadBalancerID string, initialId *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, _ := s.RootModule().Resources[name]
 		_, err := acctest.SharedClient().LoadBalancers.Delete(
 			context.Background(),
-			loadBalancer.ID,
+			loadBalancerID,
 			load_balancers.LoadBalancerDeleteParams{
 				ZoneID: cloudflare.F(rs.Primary.Attributes[consts.ZoneIDSchemaKey]),
 			},

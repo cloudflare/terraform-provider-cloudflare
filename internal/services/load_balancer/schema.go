@@ -9,13 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -67,7 +65,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 				Computed:    true,
 				Optional:    true,
-				Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
+				CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+				// Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})), // TODO: clean up schemas to remove this...or fix the service response
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
@@ -81,7 +80,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "(Enterprise only): A mapping of Cloudflare PoP identifiers to a list of pool IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs not explicitly defined will fall back to using the corresponding country_pool, then region_pool mapping if it exists else to default_pools.",
 				Computed:    true,
 				Optional:    true,
-				Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
+				CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+				// Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})), // TODO: clean up schemas to remove this...or fix the service response
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
@@ -90,7 +90,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "A mapping of region codes to a list of pool IDs (ordered by their failover priority) for the given region. Any regions not explicitly defined will fall back to using default_pools.",
 				Computed:    true,
 				Optional:    true,
-				Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
+				CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+				// Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})), // TODO: clean up schemas to remove this...or fix the service response
 				ElementType: types.ListType{
 					ElemType: types.StringType,
 				},
@@ -267,7 +268,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Description: "Extends zero-downtime failover of requests to healthy origins from alternate pools, when no healthy alternate exists in the same pool, according to the failover order defined by traffic and origin steering. When set false (the default) zero-downtime failover will only occur between origins within the same pool. See `session_affinity_attributes` for control over when sessions are broken or reassigned.",
 											Computed:    true,
 											Optional:    true,
-											Default:     booldefault.StaticBool(false),
+											// Default:     booldefault.StaticBool(false), // TODO: clean up schemas to remove this...or fix the service response
 										},
 									},
 								},
@@ -275,8 +276,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 									Description: "A mapping of country codes to a list of pool IDs (ordered by their failover priority) for the given country. Any country not explicitly defined will fall back to using the corresponding region_pool mapping if it exists else to default_pools.",
 									Computed:    true,
 									Optional:    true,
-									Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})),
-									CustomType:  customfield.NewMapType[customfield.List[types.String]](ctx),
+									// Default:     mapdefault.StaticValue(types.MapValueMust(types.ListType{ElemType: types.StringType}, map[string]attr.Value{})), // TODO: clean up schemas to remove this...or fix the service response
+									CustomType: customfield.NewMapType[customfield.List[types.String]](ctx),
 									ElementType: types.ListType{
 										ElemType: types.StringType,
 									},
@@ -303,7 +304,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Validators: []validator.String{
 												stringvalidator.OneOfCaseInsensitive("pop", "resolver_ip"),
 											},
-											Default: stringdefault.StaticString("pop"),
+											// Default: stringdefault.StaticString("pop"), // TODO: clean up schemas to remove this...or fix the service response
 										},
 										"prefer_ecs": schema.StringAttribute{
 											Description: "Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the authoritative location.\n- `\"always\"`: Always prefer ECS.\n- `\"never\"`: Never prefer ECS.\n- `\"proximity\"`: Prefer ECS only when `steering_policy=\"proximity\"`.\n- `\"geo\"`: Prefer ECS only when `steering_policy=\"geo\"`.",
@@ -317,7 +318,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 													"geo",
 												),
 											},
-											Default: stringdefault.StaticString("proximity"),
+											// Default: stringdefault.StaticString("proximity"), // TODO: clean up schemas to remove this...or fix the service response
 										},
 									},
 								},
@@ -343,7 +344,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											Validators: []validator.Float64{
 												float64validator.Between(0, 1),
 											},
-											Default: float64default.StaticFloat64(1),
+											// Default: float64default.StaticFloat64(1), // TODO: clean up schemas to remove this...or fix the service response
 										},
 										"pool_weights": schema.MapAttribute{
 											Description: "A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.",
@@ -373,7 +374,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"header",
 										),
 									},
-									Default: stringdefault.StaticString("none"),
+									// Default: stringdefault.StaticString("none"), // TODO: clean up schemas to remove this...or fix the service response
 								},
 								"session_affinity_attributes": schema.SingleNestedAttribute{
 									Description: "Configures attributes for session affinity.",
@@ -460,7 +461,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 											"",
 										),
 									},
-									Default: stringdefault.StaticString(""),
+									// Default: stringdefault.StaticString(""), // TODO: clean up schemas to remove this...or fix the service response
 								},
 								"ttl": schema.Float64Attribute{
 									Description: "Time to live (TTL) of the DNS entry for the IP address returned by this load balancer. This only applies to gray-clouded (unproxied) load balancers.",
@@ -507,7 +508,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "When header `session_affinity` is enabled, this option can be used to specify how HTTP headers on load balancing requests will be used. The supported values are:\n- `\"true\"`: Load balancing requests must contain *all* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.\n- `\"false\"`: Load balancing requests must contain *at least one* of the HTTP headers specified by the `headers` session affinity attribute, otherwise sessions aren't created.",
 						Computed:    true,
 						Optional:    true,
-						// Default:     booldefault.StaticBool(false),
+						// Default:     booldefault.StaticBool(false), // TODO: clean up schemas to remove this...or fix the service response
 					},
 					"samesite": schema.StringAttribute{
 						Description: "Configures the SameSite attribute on session affinity cookie. Value \"Auto\" will be translated to \"Lax\" or \"None\" depending if Always Use HTTPS is enabled. Note: when using value \"None\", the secure attribute can not be set to \"Never\".",
@@ -521,7 +522,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"Strict",
 							),
 						},
-						// Default: stringdefault.StaticString("Auto"),
+						// Default: stringdefault.StaticString("Auto"), // TODO: clean up schemas to remove this...or fix the service response
 					},
 					"secure": schema.StringAttribute{
 						Description: "Configures the Secure attribute on session affinity cookie. Value \"Always\" indicates the Secure attribute will be set in the Set-Cookie header, \"Never\" indicates the Secure attribute will not be set, and \"Auto\" will set the Secure attribute depending if Always Use HTTPS is enabled.",
@@ -534,7 +535,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"Never",
 							),
 						},
-						// Default: stringdefault.StaticString("Auto"),
+						// Default: stringdefault.StaticString("Auto"), // TODO: clean up schemas to remove this...or fix the service response
 					},
 					"zero_downtime_failover": schema.StringAttribute{
 						Description: "Configures the zero-downtime failover between origins within a pool when session affinity is enabled. This feature is currently incompatible with Argo, Tiered Cache, and Bandwidth Alliance. The supported values are:\n- `\"none\"`: No failover takes place for sessions pinned to the origin (default).\n- `\"temporary\"`: Traffic will be sent to another other healthy origin until the originally pinned origin is available; note that this can potentially result in heavy origin flapping.\n- `\"sticky\"`: The session affinity cookie is updated and subsequent requests are sent to the new origin. Note: Zero-downtime failover with sticky sessions is currently not supported for session affinity by header.",
@@ -547,7 +548,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								"sticky",
 							),
 						},
-						// Default: stringdefault.StaticString("none"),
+						// Default: stringdefault.StaticString("none"), // TODO: clean up schemas to remove this...or fix the service response
 					},
 				},
 			},

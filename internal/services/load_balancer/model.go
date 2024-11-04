@@ -21,7 +21,7 @@ type LoadBalancerModel struct {
 	Description               types.String                                                         `tfsdk:"description" json:"description,optional"`
 	SessionAffinityTTL        types.Float64                                                        `tfsdk:"session_affinity_ttl" json:"session_affinity_ttl,computed_optional"`
 	TTL                       types.Float64                                                        `tfsdk:"ttl" json:"ttl,computed_optional"`
-	CountryPools              map[string]*[]types.String                                           `tfsdk:"country_pools" json:"country_pools,computed_optional"`
+	CountryPools              customfield.Map[customfield.List[types.String]]                      `tfsdk:"country_pools" json:"country_pools,computed_optional"`
 	Networks                  *[]types.String                                                      `tfsdk:"networks" json:"networks,optional"`
 	POPPools                  map[string]*[]types.String                                           `tfsdk:"pop_pools" json:"pop_pools,computed_optional"`
 	RegionPools               map[string]*[]types.String                                           `tfsdk:"region_pools" json:"region_pools,computed_optional"`
