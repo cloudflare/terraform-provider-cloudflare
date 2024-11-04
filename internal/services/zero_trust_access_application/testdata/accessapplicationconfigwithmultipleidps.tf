@@ -1,8 +1,8 @@
-
 resource "cloudflare_zero_trust_access_identity_provider" "%[5]s" {
   account_id = "%[4]s"
   name = "%[5]s"
   type = "onetimepin"
+  config = {}
 }
 
 resource "cloudflare_zero_trust_access_identity_provider" "%[6]s" {
@@ -10,9 +10,9 @@ resource "cloudflare_zero_trust_access_identity_provider" "%[6]s" {
   name = "%[6]s"
   type = "github"
   config = {
-  client_id = "test"
+    client_id = "test"
     client_secret = "secret"
-}
+  }
 }
 
 resource "cloudflare_zero_trust_access_application" "%[1]s" {
