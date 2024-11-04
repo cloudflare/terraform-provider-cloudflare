@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-var _ resource.ResourceWithUpgradeState = (*CallsSfuAppResource)(nil)
+var _ resource.ResourceWithUpgradeState = (*CallsSFUAppResource)(nil)
 
-func (r *CallsSfuAppResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+func (r *CallsSFUAppResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
 	return map[int64]resource.StateUpgrader{}
 }

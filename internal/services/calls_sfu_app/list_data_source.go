@@ -13,21 +13,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
-type CallsSfuAppsDataSource struct {
+type CallsSFUAppsDataSource struct {
 	client *cloudflare.Client
 }
 
-var _ datasource.DataSourceWithConfigure = (*CallsSfuAppsDataSource)(nil)
+var _ datasource.DataSourceWithConfigure = (*CallsSFUAppsDataSource)(nil)
 
-func NewCallsSfuAppsDataSource() datasource.DataSource {
-	return &CallsSfuAppsDataSource{}
+func NewCallsSFUAppsDataSource() datasource.DataSource {
+	return &CallsSFUAppsDataSource{}
 }
 
-func (d *CallsSfuAppsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *CallsSFUAppsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_calls_sfu_apps"
 }
 
-func (d *CallsSfuAppsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *CallsSFUAppsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -46,8 +46,8 @@ func (d *CallsSfuAppsDataSource) Configure(ctx context.Context, req datasource.C
 	d.client = client
 }
 
-func (d *CallsSfuAppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *CallsSfuAppsDataSourceModel
+func (d *CallsSFUAppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *CallsSFUAppsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -61,13 +61,13 @@ func (d *CallsSfuAppsDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	env := CallsSfuAppsResultListDataSourceEnvelope{}
+	env := CallsSFUAppsResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Calls.Sfu.List(ctx, params)
+	page, err := d.client.Calls.SFU.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
@@ -92,7 +92,7 @@ func (d *CallsSfuAppsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[CallsSfuAppsResultDataSourceModel](ctx, acc)
+	result, diags := customfield.NewObjectListFromAttributes[CallsSFUAppsResultDataSourceModel](ctx, acc)
 	resp.Diagnostics.Append(diags...)
 	data.Result = result
 

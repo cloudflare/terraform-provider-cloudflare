@@ -10,9 +10,9 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/test_helpers"
 )
 
-func TestCallsSfuAppDataSourceModelSchemaParity(t *testing.T) {
+func TestCallsSFUAppDataSourceModelSchemaParity(t *testing.T) {
 	t.Parallel()
-	model := (*calls_sfu_app.CallsSfuAppDataSourceModel)(nil)
+	model := (*calls_sfu_app.CallsSFUAppDataSourceModel)(nil)
 	schema := calls_sfu_app.DataSourceSchema(context.TODO())
 	errs := test_helpers.ValidateDataSourceModelSchemaIntegrity(model, schema)
 	errs.Report(t)

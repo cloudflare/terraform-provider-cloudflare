@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
-var _ datasource.DataSourceWithConfigValidators = (*CallsSfuAppDataSource)(nil)
+var _ datasource.DataSourceWithConfigValidators = (*CallsSFUAppDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
@@ -56,11 +56,11 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 	}
 }
 
-func (d *CallsSfuAppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *CallsSFUAppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = DataSourceSchema(ctx)
 }
 
-func (d *CallsSfuAppDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
+func (d *CallsSFUAppDataSource) ConfigValidators(_ context.Context) []datasource.ConfigValidator {
 	return []datasource.ConfigValidator{
 		datasourcevalidator.RequiredTogether(path.MatchRoot("account_id"), path.MatchRoot("app_id")),
 		datasourcevalidator.ExactlyOneOf(path.MatchRoot("filter"), path.MatchRoot("account_id")),

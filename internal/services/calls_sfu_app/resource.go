@@ -17,23 +17,23 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.ResourceWithConfigure = (*CallsSfuAppResource)(nil)
-var _ resource.ResourceWithModifyPlan = (*CallsSfuAppResource)(nil)
+var _ resource.ResourceWithConfigure = (*CallsSFUAppResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*CallsSFUAppResource)(nil)
 
 func NewResource() resource.Resource {
-	return &CallsSfuAppResource{}
+	return &CallsSFUAppResource{}
 }
 
-// CallsSfuAppResource defines the resource implementation.
-type CallsSfuAppResource struct {
+// CallsSFUAppResource defines the resource implementation.
+type CallsSFUAppResource struct {
 	client *cloudflare.Client
 }
 
-func (r *CallsSfuAppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *CallsSFUAppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_calls_sfu_app"
 }
 
-func (r *CallsSfuAppResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *CallsSFUAppResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -52,8 +52,8 @@ func (r *CallsSfuAppResource) Configure(ctx context.Context, req resource.Config
 	r.client = client
 }
 
-func (r *CallsSfuAppResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *CallsSfuAppModel
+func (r *CallsSFUAppResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *CallsSFUAppModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -67,10 +67,10 @@ func (r *CallsSfuAppResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	res := new(http.Response)
-	env := CallsSfuAppResultEnvelope{*data}
-	_, err = r.client.Calls.Sfu.New(
+	env := CallsSFUAppResultEnvelope{*data}
+	_, err = r.client.Calls.SFU.New(
 		ctx,
-		calls.SfuNewParams{
+		calls.SFUNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -92,8 +92,8 @@ func (r *CallsSfuAppResource) Create(ctx context.Context, req resource.CreateReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallsSfuAppResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *CallsSfuAppModel
+func (r *CallsSFUAppResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *CallsSFUAppModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -101,7 +101,7 @@ func (r *CallsSfuAppResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	var state *CallsSfuAppModel
+	var state *CallsSFUAppModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -115,11 +115,11 @@ func (r *CallsSfuAppResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 	res := new(http.Response)
-	env := CallsSfuAppResultEnvelope{*data}
-	_, err = r.client.Calls.Sfu.Update(
+	env := CallsSFUAppResultEnvelope{*data}
+	_, err = r.client.Calls.SFU.Update(
 		ctx,
 		data.AppID.ValueString(),
-		calls.SfuUpdateParams{
+		calls.SFUUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -141,8 +141,8 @@ func (r *CallsSfuAppResource) Update(ctx context.Context, req resource.UpdateReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallsSfuAppResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *CallsSfuAppModel
+func (r *CallsSFUAppResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *CallsSFUAppModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -151,11 +151,11 @@ func (r *CallsSfuAppResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	res := new(http.Response)
-	env := CallsSfuAppResultEnvelope{*data}
-	_, err := r.client.Calls.Sfu.Get(
+	env := CallsSFUAppResultEnvelope{*data}
+	_, err := r.client.Calls.SFU.Get(
 		ctx,
 		data.AppID.ValueString(),
-		calls.SfuGetParams{
+		calls.SFUGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
@@ -176,8 +176,8 @@ func (r *CallsSfuAppResource) Read(ctx context.Context, req resource.ReadRequest
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallsSfuAppResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *CallsSfuAppModel
+func (r *CallsSFUAppResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *CallsSFUAppModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -185,10 +185,10 @@ func (r *CallsSfuAppResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	_, err := r.client.Calls.Sfu.Delete(
+	_, err := r.client.Calls.SFU.Delete(
 		ctx,
 		data.AppID.ValueString(),
-		calls.SfuDeleteParams{
+		calls.SFUDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -201,6 +201,6 @@ func (r *CallsSfuAppResource) Delete(ctx context.Context, req resource.DeleteReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *CallsSfuAppResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *CallsSFUAppResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
 
 }

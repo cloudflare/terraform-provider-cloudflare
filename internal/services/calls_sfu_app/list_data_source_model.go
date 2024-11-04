@@ -13,25 +13,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type CallsSfuAppsResultListDataSourceEnvelope struct {
-	Result customfield.NestedObjectList[CallsSfuAppsResultDataSourceModel] `json:"result,computed"`
+type CallsSFUAppsResultListDataSourceEnvelope struct {
+	Result customfield.NestedObjectList[CallsSFUAppsResultDataSourceModel] `json:"result,computed"`
 }
 
-type CallsSfuAppsDataSourceModel struct {
+type CallsSFUAppsDataSourceModel struct {
 	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
 	MaxItems  types.Int64                                                     `tfsdk:"max_items"`
-	Result    customfield.NestedObjectList[CallsSfuAppsResultDataSourceModel] `tfsdk:"result"`
+	Result    customfield.NestedObjectList[CallsSFUAppsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *CallsSfuAppsDataSourceModel) toListParams(_ context.Context) (params calls.SfuListParams, diags diag.Diagnostics) {
-	params = calls.SfuListParams{
+func (m *CallsSFUAppsDataSourceModel) toListParams(_ context.Context) (params calls.SFUListParams, diags diag.Diagnostics) {
+	params = calls.SFUListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-type CallsSfuAppsResultDataSourceModel struct {
+type CallsSFUAppsResultDataSourceModel struct {
 	Created  timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`
 	Modified timetypes.RFC3339 `tfsdk:"modified" json:"modified,computed" format:"date-time"`
 	Name     types.String      `tfsdk:"name" json:"name,computed"`
