@@ -63,7 +63,7 @@ type NotificationPolicyFiltersModel struct {
 	NewStatus                    *[]types.String `tfsdk:"new_status" json:"new_status,optional"`
 	PacketsPerSecond             *[]types.String `tfsdk:"packets_per_second" json:"packets_per_second,optional"`
 	PoolID                       *[]types.String `tfsdk:"pool_id" json:"pool_id,optional"`
-	PopName                      *[]types.String `tfsdk:"pop_name" json:"pop_name,optional"`
+	POPName                      *[]types.String `tfsdk:"pop_name" json:"pop_name,optional"`
 	Product                      *[]types.String `tfsdk:"product" json:"product,optional"`
 	ProjectID                    *[]types.String `tfsdk:"project_id" json:"project_id,optional"`
 	Protocol                     *[]types.String `tfsdk:"protocol" json:"protocol,optional"`
