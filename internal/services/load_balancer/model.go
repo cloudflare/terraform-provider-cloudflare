@@ -23,7 +23,7 @@ type LoadBalancerModel struct {
 	TTL                       types.Float64                                                        `tfsdk:"ttl" json:"ttl,optional"`
 	CountryPools              map[string]*[]types.String                                           `tfsdk:"country_pools" json:"country_pools,optional"`
 	Networks                  *[]types.String                                                      `tfsdk:"networks" json:"networks,optional"`
-	PopPools                  map[string]*[]types.String                                           `tfsdk:"pop_pools" json:"pop_pools,optional"`
+	POPPools                  map[string]*[]types.String                                           `tfsdk:"pop_pools" json:"pop_pools,optional"`
 	RegionPools               map[string]*[]types.String                                           `tfsdk:"region_pools" json:"region_pools,optional"`
 	Enabled                   types.Bool                                                           `tfsdk:"enabled" json:"enabled,computed_optional"`
 	Proxied                   types.Bool                                                           `tfsdk:"proxied" json:"proxied,computed_optional"`
@@ -83,7 +83,7 @@ type LoadBalancerRulesOverridesModel struct {
 	DefaultPools              *[]types.String                                                                    `tfsdk:"default_pools" json:"default_pools,optional"`
 	FallbackPool              types.String                                                                       `tfsdk:"fallback_pool" json:"fallback_pool,optional"`
 	LocationStrategy          customfield.NestedObject[LoadBalancerRulesOverridesLocationStrategyModel]          `tfsdk:"location_strategy" json:"location_strategy,computed_optional"`
-	PopPools                  map[string]*[]types.String                                                         `tfsdk:"pop_pools" json:"pop_pools,optional"`
+	POPPools                  map[string]*[]types.String                                                         `tfsdk:"pop_pools" json:"pop_pools,optional"`
 	RandomSteering            customfield.NestedObject[LoadBalancerRulesOverridesRandomSteeringModel]            `tfsdk:"random_steering" json:"random_steering,computed_optional"`
 	RegionPools               map[string]*[]types.String                                                         `tfsdk:"region_pools" json:"region_pools,optional"`
 	SessionAffinity           types.String                                                                       `tfsdk:"session_affinity" json:"session_affinity,computed_optional"`
