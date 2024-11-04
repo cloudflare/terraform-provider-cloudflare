@@ -83,14 +83,9 @@ func resourceCloudflareAccessIdentityProviderSchema() map[string]*schema.Schema 
 						Optional: true,
 					},
 					"client_secret": {
-						Type:     schema.TypeString,
-						Optional: true,
-						// client_secret is a write only operation from the Cloudflare API
-						// and once it's set, it is no longer accessible. To avoid storing
-						// it and messing up the state, hardcode in the concealed version.
-						StateFunc: func(val interface{}) string {
-							return CONCEALED_STRING
-						},
+						Type:      schema.TypeString,
+						Optional:  true,
+						Sensitive: true,
 					},
 					"claims": {
 						Type:     schema.TypeList,

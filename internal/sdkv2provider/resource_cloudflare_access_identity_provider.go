@@ -76,7 +76,7 @@ func resourceCloudflareAccessIdentityProviderRead(ctx context.Context, d *schema
 	d.Set("name", accessIdentityProvider.Name)
 	d.Set("type", accessIdentityProvider.Type)
 
-	config := convertAccessIDPConfigStructToSchema(accessIdentityProvider.Config)
+	config := convertAccessIDPConfigStructToSchema(d.Get("config.0.client_secret").(string), accessIdentityProvider.Config)
 	if configErr := d.Set("config", config); configErr != nil {
 		return diag.FromErr(fmt.Errorf("error setting Access Identity Provider configuration: %w", configErr))
 	}
@@ -285,7 +285,7 @@ func convertScimConfigSchemaToStruct(d *schema.ResourceData) cloudflare.AccessId
 	return ScimConfig
 }
 
-func convertAccessIDPConfigStructToSchema(options cloudflare.AccessIdentityProviderConfiguration) []interface{} {
+func convertAccessIDPConfigStructToSchema(clientSecret string, options cloudflare.AccessIdentityProviderConfiguration) []interface{} {
 	attributes := make([]string, 0)
 	for _, value := range options.Attributes {
 		attributes = append(attributes, value)
@@ -301,7 +301,7 @@ func convertAccessIDPConfigStructToSchema(options cloudflare.AccessIdentityProvi
 		"centrify_app_id":            options.CentrifyAppID,
 		"certs_url":                  options.CertsURL,
 		"client_id":                  options.ClientID,
-		"client_secret":              options.ClientSecret,
+		"client_secret":              clientSecret,
 		"claims":                     options.Claims,
 		"scopes":                     options.Scopes,
 		"directory_id":               options.DirectoryID,

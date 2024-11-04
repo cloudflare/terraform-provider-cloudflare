@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudflare_zero_trust_access_identity_provider: Fix `client_secret` attribute always causing update, even when not changed
+```
