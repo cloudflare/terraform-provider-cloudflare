@@ -14,24 +14,15 @@ type ZeroTrustAccessPolicyResultEnvelope struct {
 }
 
 type ZeroTrustAccessPolicyModel struct {
-	ID                           types.String                                                           `tfsdk:"id" json:"id,computed"`
-	AccountID                    types.String                                                           `tfsdk:"account_id" path:"account_id,required"`
-	Decision                     types.String                                                           `tfsdk:"decision" json:"decision,required"`
-	Name                         types.String                                                           `tfsdk:"name" json:"name,required"`
-	Include                      *[]*ZeroTrustAccessPolicyIncludeModel                                  `tfsdk:"include" json:"include,required"`
-	PurposeJustificationPrompt   types.String                                                           `tfsdk:"purpose_justification_prompt" json:"purpose_justification_prompt,optional"`
-	ApprovalRequired             types.Bool                                                             `tfsdk:"approval_required" json:"approval_required,computed_optional"`
-	IsolationRequired            types.Bool                                                             `tfsdk:"isolation_required" json:"isolation_required,computed_optional"`
-	PurposeJustificationRequired types.Bool                                                             `tfsdk:"purpose_justification_required" json:"purpose_justification_required,computed_optional"`
-	SessionDuration              types.String                                                           `tfsdk:"session_duration" json:"session_duration,computed_optional"`
-	ApprovalGroups               customfield.NestedObjectList[ZeroTrustAccessPolicyApprovalGroupsModel] `tfsdk:"approval_groups" json:"approval_groups,computed_optional"`
-	ConnectionRules              customfield.NestedObject[ZeroTrustAccessPolicyConnectionRulesModel]    `tfsdk:"connection_rules" json:"connection_rules,computed_optional"`
-	Exclude                      customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeModel]        `tfsdk:"exclude" json:"exclude,computed_optional"`
-	Require                      customfield.NestedObjectList[ZeroTrustAccessPolicyRequireModel]        `tfsdk:"require" json:"require,computed_optional"`
-	AppCount                     types.Int64                                                            `tfsdk:"app_count" json:"app_count,computed"`
-	CreatedAt                    timetypes.RFC3339                                                      `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
-	Reusable                     types.Bool                                                             `tfsdk:"reusable" json:"reusable,computed"`
-	UpdatedAt                    timetypes.RFC3339                                                      `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
+	ID        types.String                                                    `tfsdk:"id" json:"id,computed"`
+	AccountID types.String                                                    `tfsdk:"account_id" path:"account_id,required"`
+	Decision  types.String                                                    `tfsdk:"decision" json:"decision,required"`
+	Name      types.String                                                    `tfsdk:"name" json:"name,required"`
+	Include   *[]*ZeroTrustAccessPolicyIncludeModel                           `tfsdk:"include" json:"include,required"`
+	Exclude   customfield.NestedObjectList[ZeroTrustAccessPolicyExcludeModel] `tfsdk:"exclude" json:"exclude,computed_optional"`
+	Require   customfield.NestedObjectList[ZeroTrustAccessPolicyRequireModel] `tfsdk:"require" json:"require,computed_optional"`
+	CreatedAt timetypes.RFC3339                                               `tfsdk:"created_at" json:"created_at,computed" format:"date-time"`
+	UpdatedAt timetypes.RFC3339                                               `tfsdk:"updated_at" json:"updated_at,computed" format:"date-time"`
 }
 
 func (m ZeroTrustAccessPolicyModel) MarshalJSON() (data []byte, err error) {
@@ -142,20 +133,6 @@ type ZeroTrustAccessPolicyIncludeAuthMethodModel struct {
 
 type ZeroTrustAccessPolicyIncludeDevicePostureModel struct {
 	IntegrationUID types.String `tfsdk:"integration_uid" json:"integration_uid,required"`
-}
-
-type ZeroTrustAccessPolicyApprovalGroupsModel struct {
-	ApprovalsNeeded types.Float64   `tfsdk:"approvals_needed" json:"approvals_needed,required"`
-	EmailAddresses  *[]types.String `tfsdk:"email_addresses" json:"email_addresses,optional"`
-	EmailListUUID   types.String    `tfsdk:"email_list_uuid" json:"email_list_uuid,optional"`
-}
-
-type ZeroTrustAccessPolicyConnectionRulesModel struct {
-	SSH customfield.NestedObject[ZeroTrustAccessPolicyConnectionRulesSSHModel] `tfsdk:"ssh" json:"ssh,computed_optional"`
-}
-
-type ZeroTrustAccessPolicyConnectionRulesSSHModel struct {
-	Usernames *[]types.String `tfsdk:"usernames" json:"usernames,required"`
 }
 
 type ZeroTrustAccessPolicyExcludeModel struct {
