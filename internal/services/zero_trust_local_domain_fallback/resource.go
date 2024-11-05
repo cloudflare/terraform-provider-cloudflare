@@ -69,7 +69,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) Create(ctx context.Context, req r
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Body}
+	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Domains}
 	_, err = r.client.ZeroTrust.Devices.Policies.FallbackDomains.Update(
 		ctx,
 		data.PolicyID.ValueString(),
@@ -90,7 +90,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) Create(ctx context.Context, req r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Domains = env.Result
 	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -119,7 +119,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) Update(ctx context.Context, req r
 		return
 	}
 	res := new(http.Response)
-	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Body}
+	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Domains}
 	_, err = r.client.ZeroTrust.Devices.Policies.FallbackDomains.Update(
 		ctx,
 		data.PolicyID.ValueString(),
@@ -140,7 +140,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) Update(ctx context.Context, req r
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Domains = env.Result
 	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -156,7 +156,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) Read(ctx context.Context, req res
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Body}
+	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Domains}
 	_, err := r.client.ZeroTrust.Devices.Policies.FallbackDomains.Get(
 		ctx,
 		data.PolicyID.ValueString(),
@@ -176,7 +176,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) Read(ctx context.Context, req res
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Domains = env.Result
 	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -203,7 +203,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) ImportState(ctx context.Context, 
 	}
 
 	res := new(http.Response)
-	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Body}
+	env := ZeroTrustLocalDomainFallbackResultEnvelope{data.Domains}
 	_, err := r.client.ZeroTrust.Devices.Policies.FallbackDomains.Get(
 		ctx,
 		path_policy_id,
@@ -223,7 +223,7 @@ func (r *ZeroTrustLocalDomainFallbackResource) ImportState(ctx context.Context, 
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
-	data.Body = env.Result
+	data.Domains = env.Result
 	data.ID = data.PolicyID
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
