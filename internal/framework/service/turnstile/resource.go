@@ -126,7 +126,6 @@ func (r *TurnstileWidgetResource) Update(ctx context.Context, req resource.Updat
 		Domains:      widget.Domains,
 		Mode:         widget.Mode,
 		BotFightMode: widget.BotFightMode,
-		Region:       widget.Region,
 	})
 
 	if err != nil {
