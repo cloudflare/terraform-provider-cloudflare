@@ -56,8 +56,8 @@ type LoadBalancerLocationStrategyModel struct {
 }
 
 type LoadBalancerRandomSteeringModel struct {
-	DefaultWeight types.Float64            `tfsdk:"default_weight" json:"default_weight,computed_optional"`
-	PoolWeights   map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
+	DefaultWeight types.Float64             `tfsdk:"default_weight" json:"default_weight,computed_optional"`
+	PoolWeights   *map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
 }
 
 type LoadBalancerRulesModel struct {
@@ -103,8 +103,8 @@ type LoadBalancerRulesOverridesLocationStrategyModel struct {
 }
 
 type LoadBalancerRulesOverridesRandomSteeringModel struct {
-	DefaultWeight types.Float64            `tfsdk:"default_weight" json:"default_weight,computed_optional"`
-	PoolWeights   map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
+	DefaultWeight types.Float64             `tfsdk:"default_weight" json:"default_weight,computed_optional"`
+	PoolWeights   *map[string]types.Float64 `tfsdk:"pool_weights" json:"pool_weights,optional"`
 }
 
 type LoadBalancerRulesOverridesSessionAffinityAttributesModel struct {

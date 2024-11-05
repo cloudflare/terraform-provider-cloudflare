@@ -61,7 +61,7 @@ type WorkersScriptMetadataModel struct {
 	Tags               *[]types.String                                                       `tfsdk:"tags" json:"tags,optional"`
 	TailConsumers      customfield.NestedObjectList[WorkersScriptMetadataTailConsumersModel] `tfsdk:"tail_consumers" json:"tail_consumers,computed_optional"`
 	UsageModel         types.String                                                          `tfsdk:"usage_model" json:"usage_model,optional"`
-	VersionTags        map[string]types.String                                               `tfsdk:"version_tags" json:"version_tags,optional"`
+	VersionTags        *map[string]types.String                                              `tfsdk:"version_tags" json:"version_tags,optional"`
 }
 
 type WorkersScriptMetadataBindingsModel struct {

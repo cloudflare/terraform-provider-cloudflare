@@ -53,7 +53,7 @@ type PagesProjectDeploymentConfigsModel struct {
 type PagesProjectDeploymentConfigsPreviewModel struct {
 	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAIBindingsModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed_optional"`
 	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewAnalyticsEngineDatasetsModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed_optional"`
-	Browsers                map[string]PagesProjectDeploymentConfigsPreviewBrowsersModel                                  `tfsdk:"browsers" json:"browsers,optional"`
+	Browsers                *map[string]PagesProjectDeploymentConfigsPreviewBrowsersModel                                 `tfsdk:"browsers" json:"browsers,optional"`
 	CompatibilityDate       types.String                                                                                  `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	CompatibilityFlags      *[]types.String                                                                               `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
 	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsPreviewD1DatabasesModel]             `tfsdk:"d1_databases" json:"d1_databases,computed_optional"`
@@ -131,7 +131,7 @@ type PagesProjectDeploymentConfigsPreviewVectorizeBindingsModel struct {
 type PagesProjectDeploymentConfigsProductionModel struct {
 	AIBindings              customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAIBindingsModel]              `tfsdk:"ai_bindings" json:"ai_bindings,computed_optional"`
 	AnalyticsEngineDatasets customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionAnalyticsEngineDatasetsModel] `tfsdk:"analytics_engine_datasets" json:"analytics_engine_datasets,computed_optional"`
-	Browsers                map[string]PagesProjectDeploymentConfigsProductionBrowsersModel                                  `tfsdk:"browsers" json:"browsers,optional"`
+	Browsers                *map[string]PagesProjectDeploymentConfigsProductionBrowsersModel                                 `tfsdk:"browsers" json:"browsers,optional"`
 	CompatibilityDate       types.String                                                                                     `tfsdk:"compatibility_date" json:"compatibility_date,optional"`
 	CompatibilityFlags      *[]types.String                                                                                  `tfsdk:"compatibility_flags" json:"compatibility_flags,optional"`
 	D1Databases             customfield.NestedObjectMap[PagesProjectDeploymentConfigsProductionD1DatabasesModel]             `tfsdk:"d1_databases" json:"d1_databases,computed_optional"`

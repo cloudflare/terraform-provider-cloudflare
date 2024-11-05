@@ -220,10 +220,10 @@ type RulesetRulesActionParametersCacheKeyCustomKeyCookieModel struct {
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyHeaderModel struct {
-	CheckPresence *[]types.String            `tfsdk:"check_presence" json:"check_presence,optional"`
-	Contains      map[string]*[]types.String `tfsdk:"contains" json:"contains,optional"`
-	ExcludeOrigin types.Bool                 `tfsdk:"exclude_origin" json:"exclude_origin,optional"`
-	Include       *[]types.String            `tfsdk:"include" json:"include,optional"`
+	CheckPresence *[]types.String             `tfsdk:"check_presence" json:"check_presence,optional"`
+	Contains      *map[string]*[]types.String `tfsdk:"contains" json:"contains,optional"`
+	ExcludeOrigin types.Bool                  `tfsdk:"exclude_origin" json:"exclude_origin,optional"`
+	Include       *[]types.String             `tfsdk:"include" json:"include,optional"`
 }
 
 type RulesetRulesActionParametersCacheKeyCustomKeyHostModel struct {

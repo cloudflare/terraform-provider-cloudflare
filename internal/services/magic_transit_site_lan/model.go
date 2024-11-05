@@ -61,8 +61,8 @@ type MagicTransitSiteLANStaticAddressingDHCPRelayModel struct {
 }
 
 type MagicTransitSiteLANStaticAddressingDHCPServerModel struct {
-	DHCPPoolEnd   types.String            `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,optional"`
-	DHCPPoolStart types.String            `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,optional"`
-	DNSServer     types.String            `tfsdk:"dns_server" json:"dns_server,optional"`
-	Reservations  map[string]types.String `tfsdk:"reservations" json:"reservations,optional"`
+	DHCPPoolEnd   types.String             `tfsdk:"dhcp_pool_end" json:"dhcp_pool_end,optional"`
+	DHCPPoolStart types.String             `tfsdk:"dhcp_pool_start" json:"dhcp_pool_start,optional"`
+	DNSServer     types.String             `tfsdk:"dns_server" json:"dns_server,optional"`
+	Reservations  *map[string]types.String `tfsdk:"reservations" json:"reservations,optional"`
 }
