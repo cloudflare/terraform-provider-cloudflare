@@ -1,4 +1,3 @@
-
 resource "cloudflare_certificate_pack" "%[3]s" {
   zone_id = "%[1]s"
   type = "%[4]s"
