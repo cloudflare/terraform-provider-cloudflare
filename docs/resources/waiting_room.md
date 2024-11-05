@@ -52,7 +52,7 @@ resource "cloudflare_waiting_room" "example" {
 - `additional_routes` (Block List) A list of additional hostname and paths combination to be applied on the waiting room. (see [below for nested schema](#nestedblock--additional_routes))
 - `cookie_suffix` (String) A cookie suffix to be appended to the Cloudflare waiting room cookie name.
 - `custom_page_html` (String) This is a templated html file that will be rendered at the edge.
-- `default_template_language` (String) The language to use for the default waiting room page. Available values: `de-DE`, `es-ES`, `en-US`, `fr-FR`, `id-ID`, `it-IT`, `ja-JP`, `ko-KR`, `nl-NL`, `pl-PL`, `pt-BR`, `tr-TR`, `zh-CN`, `zh-TW`, `ru-RU`, `fa-IR`. Defaults to `en-US`.
+- `default_template_language` (String) The language to use for the default waiting room page. Available values: `de-DE`, `es-ES`, `en-US`, `fr-FR`, `id-ID`, `it-IT`, `ja-JP`, `ko-KR`, `nl-NL`, `pl-PL`, `pt-BR`, `tr-TR`, `zh-CN`, `zh-TW`, `ru-RU`, `fa-IR`, `bg-BG`, `hr-HR`, `cs-CZ`, `da-DK`, `fi-FI`, `lt-LT`, `ms-MY`, `nb-NO`, `ro-RO`, `el-GR`, `he-IL`, `hi-IN`, `hu-HU`, `sr-BA`, `sk-SK`, `sl-SI`, `sv-SE`, `tl-PH`, `th-TH`, `uk-UA`, `vi-VN`. Defaults to `en-US`.
 - `description` (String) A description to add more details about the waiting room.
 - `disable_session_renewal` (Boolean) Disables automatic renewal of session cookies.
 - `enabled_origin_commands` (List of String) The list of enabled origin commands for the waiting room. Available values: `revoke`.
