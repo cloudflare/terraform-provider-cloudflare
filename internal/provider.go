@@ -84,7 +84,10 @@ import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/observatory_scheduled_test"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/origin_ca_certificate"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_rule"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_connections"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_cookies"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_policy"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/page_shield_scripts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_domain"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/pages_project"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/services/permission_group"
@@ -558,6 +561,12 @@ func (p *CloudflareProvider) DataSources(ctx context.Context) []func() datasourc
 		managed_transforms.NewManagedTransformsDataSource,
 		page_shield_policy.NewPageShieldPolicyDataSource,
 		page_shield_policy.NewPageShieldPoliciesDataSource,
+		page_shield_connections.NewPageShieldConnectionsDataSource,
+		page_shield_connections.NewPageShieldConnectionsListDataSource,
+		page_shield_scripts.NewPageShieldScriptsDataSource,
+		page_shield_scripts.NewPageShieldScriptsListDataSource,
+		page_shield_cookies.NewPageShieldCookiesDataSource,
+		page_shield_cookies.NewPageShieldCookiesListDataSource,
 		ruleset.NewRulesetDataSource,
 		ruleset.NewRulesetsDataSource,
 		url_normalization_settings.NewURLNormalizationSettingsDataSource,
