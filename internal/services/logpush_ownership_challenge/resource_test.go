@@ -24,7 +24,7 @@ func TestAccCloudflareLogpushOwnershipChallenge(t *testing.T) {
 				Config: testCloudflareLogpushOwnershipChallengeConfig(rnd, zoneID, destinationConf),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "destination_conf", destinationConf),
-					resource.TestCheckResourceAttrSet(name, "ownership_challenge_filename"),
+					resource.TestCheckResourceAttrSet(name, "filename"),
 				),
 			},
 		},
