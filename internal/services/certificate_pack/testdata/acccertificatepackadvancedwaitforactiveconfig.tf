@@ -10,5 +10,4 @@ resource "cloudflare_certificate_pack" "%[3]s" {
   validity_days = 90
   certificate_authority = "lets_encrypt"
   cloudflare_branding = false
-  wait_for_active_status = true
 }
