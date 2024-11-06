@@ -5,6 +5,8 @@ package zero_trust_access_service_token
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"io"
 	"net/http"
 
@@ -102,6 +104,8 @@ func (r *ZeroTrustAccessServiceTokenResource) Create(ctx context.Context, req re
 
 func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustAccessServiceTokenModel
+	secret := types.StringNull()
+	diags := req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -151,12 +155,19 @@ func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req re
 		return
 	}
 	data = &env.Result
+	env.Result.ClientSecret = secret
+	data.ClientSecret = secret
+	resp.State.SetAttribute(ctx, path.Root("client_secret"), &secret)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data *ZeroTrustAccessServiceTokenModel
+
+	secret := types.StringNull()
+	diags := req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -191,6 +202,14 @@ func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req reso
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
+	if !secret.IsNull() && secret.String() != "" {
+		env.Result.ClientSecret = secret
+		data.ClientSecret = secret
+		resp.State.SetAttribute(ctx, path.Root("client_secret"), &secret)
+		resp.Diagnostics.Append(diags...)
+	}
+
 	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
