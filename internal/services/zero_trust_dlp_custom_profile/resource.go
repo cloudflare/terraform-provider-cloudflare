@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/cloudflare-go/v3/zero_trust"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -19,6 +20,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*ZeroTrustDLPCustomProfileResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ZeroTrustDLPCustomProfileResource)(nil)
+var _ resource.ResourceWithImportState = (*ZeroTrustDLPCustomProfileResource)(nil)
 
 func NewResource() resource.Resource {
 	return &ZeroTrustDLPCustomProfileResource{}
@@ -118,7 +120,7 @@ func (r *ZeroTrustDLPCustomProfileResource) Update(ctx context.Context, req reso
 	env := ZeroTrustDLPCustomProfileResultEnvelope{*data}
 	_, err = r.client.ZeroTrust.DLP.Profiles.Custom.Update(
 		ctx,
-		data.ProfileID.ValueString(),
+		data.ID.ValueString(),
 		zero_trust.DLPProfileCustomUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -154,7 +156,7 @@ func (r *ZeroTrustDLPCustomProfileResource) Read(ctx context.Context, req resour
 	env := ZeroTrustDLPCustomProfileResultEnvelope{*data}
 	_, err := r.client.ZeroTrust.DLP.Profiles.Custom.Get(
 		ctx,
-		data.ProfileID.ValueString(),
+		data.ID.ValueString(),
 		zero_trust.DLPProfileCustomGetParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -187,7 +189,7 @@ func (r *ZeroTrustDLPCustomProfileResource) Delete(ctx context.Context, req reso
 
 	_, err := r.client.ZeroTrust.DLP.Profiles.Custom.Delete(
 		ctx,
-		data.ProfileID.ValueString(),
+		data.ID.ValueString(),
 		zero_trust.DLPProfileCustomDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
@@ -197,6 +199,48 @@ func (r *ZeroTrustDLPCustomProfileResource) Delete(ctx context.Context, req reso
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ZeroTrustDLPCustomProfileResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *ZeroTrustDLPCustomProfileModel
+
+	path_account_id := ""
+	path_profile_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<account_id>/<profile_id>",
+		&path_account_id,
+		&path_profile_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ZeroTrustDLPCustomProfileResultEnvelope{*data}
+	_, err := r.client.ZeroTrust.DLP.Profiles.Custom.Get(
+		ctx,
+		path_profile_id,
+		zero_trust.DLPProfileCustomGetParams{
+			AccountID: cloudflare.F(path_account_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

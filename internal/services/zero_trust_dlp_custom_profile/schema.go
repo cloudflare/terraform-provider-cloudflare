@@ -23,16 +23,19 @@ var _ resource.ResourceWithConfigValidators = (*ZeroTrustDLPCustomProfileResourc
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description:   "The id of the profile (uuid)",
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			},
 			"account_id": schema.StringAttribute{
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"profile_id": schema.StringAttribute{
-				Optional:      true,
-				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
-			},
 			"profiles": schema.ListNestedAttribute{
-				Required: true,
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileProfilesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"entries": schema.ListNestedAttribute{
@@ -83,7 +86,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"context_awareness": schema.SingleNestedAttribute{
 							Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileProfilesContextAwarenessModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"enabled": schema.BoolAttribute{
 									Description: "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -110,7 +115,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 						"shared_entries": schema.ListNestedAttribute{
 							Description: "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
+							Computed:    true,
 							Optional:    true,
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileProfilesSharedEntriesModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"enabled": schema.BoolAttribute{
@@ -137,9 +144,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 			},
-			"allowed_match_count": schema.Int64Attribute{
-				Optional: true,
-			},
 			"confidence_threshold": schema.StringAttribute{
 				Optional: true,
 			},
@@ -152,6 +156,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"ocr_enabled": schema.BoolAttribute{
 				Optional: true,
+			},
+			"allowed_match_count": schema.Int64Attribute{
+				Description: "Related DLP policies will trigger when the match count exceeds the number set.",
+				Computed:    true,
+				Optional:    true,
+				Validators: []validator.Int64{
+					int64validator.Between(0, 1000),
+				},
+				Default: int64default.StaticInt64(0),
 			},
 			"context_awareness": schema.SingleNestedAttribute{
 				Description: "Scan the context of predefined entries to only return matches surrounded by keywords.",
@@ -176,23 +189,21 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"entries": schema.ListNestedAttribute{
-				Description: "Custom entries from this profile",
-				Computed:    true,
-				Optional:    true,
-				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileEntriesModel](ctx),
+				Computed:   true,
+				Optional:   true,
+				CustomType: customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileEntriesModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"enabled": schema.BoolAttribute{
 							Required: true,
 						},
-						"entry_id": schema.StringAttribute{
-							Optional: true,
-						},
 						"name": schema.StringAttribute{
 							Required: true,
 						},
 						"pattern": schema.SingleNestedAttribute{
-							Required: true,
+							Computed:   true,
+							Optional:   true,
+							CustomType: customfield.NewNestedObjectType[ZeroTrustDLPCustomProfileEntriesPatternModel](ctx),
 							Attributes: map[string]schema.Attribute{
 								"regex": schema.StringAttribute{
 									Required: true,
@@ -205,11 +216,15 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
+						"words": schema.ListAttribute{
+							Optional:    true,
+							ElementType: types.StringType,
+						},
 					},
 				},
 			},
 			"shared_entries": schema.ListNestedAttribute{
-				Description: "Other entries, e.g. predefined or integration.",
+				Description: "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
 				Computed:    true,
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectListType[ZeroTrustDLPCustomProfileSharedEntriesModel](ctx),
@@ -225,6 +240,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Required: true,
 							Validators: []validator.String{
 								stringvalidator.OneOfCaseInsensitive(
+									"custom",
 									"predefined",
 									"integration",
 									"exact_data",
