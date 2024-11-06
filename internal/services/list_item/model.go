@@ -4,43 +4,53 @@ package list_item
 
 import (
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ListItemResultEnvelope struct {
-	Result *[]*ListItemBodyModel `json:"result"`
+	Result ListItemModel `json:"result"`
 }
 
 type ListItemModel struct {
-	ListID            types.String          `tfsdk:"list_id" path:"list_id,required"`
-	AccountID         types.String          `tfsdk:"account_id" path:"account_id,optional"`
-	AccountIdentifier types.String          `tfsdk:"account_identifier" path:"account_identifier,optional"`
-	ItemID            types.String          `tfsdk:"item_id" path:"item_id,optional"`
-	Body              *[]*ListItemBodyModel `tfsdk:"body" json:"body,required"`
-	OperationID       types.String          `tfsdk:"operation_id" json:"operation_id,computed"`
+	ListID            types.String                                    `tfsdk:"list_id" path:"list_id,required"`
+	AccountID         types.String                                    `tfsdk:"account_id" path:"account_id,optional"`
+	AccountIdentifier types.String                                    `tfsdk:"account_identifier" path:"account_identifier,optional"`
+	ItemID            types.String                                    `tfsdk:"item_id" path:"item_id,computed"`
+	ASN               types.Int64                                     `tfsdk:"asn" json:"asn,optional"`
+	Comment           types.String                                    `tfsdk:"comment" json:"comment,optional"`
+	IP                types.String                                    `tfsdk:"ip" json:"ip,optional"`
+	Hostname          customfield.NestedObject[ListItemHostnameModel] `tfsdk:"hostname" json:"hostname,computed_optional"`
+	Redirect          customfield.NestedObject[ListItemRedirectModel] `tfsdk:"redirect" json:"redirect,computed_optional"`
+	OperationID       types.String                                    `tfsdk:"operation_id" json:"operation_id,computed"`
 }
 
 func (m ListItemModel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(m.Body)
+	return apijson.MarshalRoot(m)
+}
+
+// MarshalSingleToCollectionJSON takes a single `ListItemModel` and wraps
+// it as a collection in order to satisfy the API requirements.
+//
+// The endpoint is designed for bulk creation however, in the provider,
+// we only manage a single resource at a time.
+func (m ListItemModel) MarshalSingleToCollectionJSON(existingJSON []byte) (data []byte) {
+	var output []byte
+	output = append(output, []byte("[")...)
+	output = append(output, existingJSON...)
+	output = append(output, []byte("]")...)
+	return output
 }
 
 func (m ListItemModel) MarshalJSONForUpdate(state ListItemModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m.Body, state.Body)
+	return apijson.MarshalForUpdate(m, state)
 }
 
-type ListItemBodyModel struct {
-	ASN      types.Int64                `tfsdk:"asn" json:"asn,optional"`
-	Comment  types.String               `tfsdk:"comment" json:"comment,optional"`
-	Hostname *ListItemBodyHostnameModel `tfsdk:"hostname" json:"hostname,optional"`
-	IP       types.String               `tfsdk:"ip" json:"ip,optional"`
-	Redirect *ListItemBodyRedirectModel `tfsdk:"redirect" json:"redirect,optional"`
-}
-
-type ListItemBodyHostnameModel struct {
+type ListItemHostnameModel struct {
 	URLHostname types.String `tfsdk:"url_hostname" json:"url_hostname,required"`
 }
 
-type ListItemBodyRedirectModel struct {
+type ListItemRedirectModel struct {
 	SourceURL           types.String `tfsdk:"source_url" json:"source_url,required"`
 	TargetURL           types.String `tfsdk:"target_url" json:"target_url,required"`
 	IncludeSubdomains   types.Bool   `tfsdk:"include_subdomains" json:"include_subdomains,computed_optional"`

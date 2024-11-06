@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v3/dns"
 	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
@@ -58,6 +59,14 @@ func (r *DNSRecordResource) Create(ctx context.Context, req resource.CreateReque
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if data.Proxied.ValueBool() && data.TTL.ValueFloat64() != 1 {
+		resp.Diagnostics.AddError(
+			"ttl must be set to 1 when `proxied` is true",
+			"When a DNS record is marked as `proxied` the TTL must be 1 as Cloudflare will control the TTL internally.",
+		)
 		return
 	}
 
@@ -118,7 +127,7 @@ func (r *DNSRecordResource) Update(ctx context.Context, req resource.UpdateReque
 	env := DNSRecordResultEnvelope{*data}
 	_, err = r.client.DNS.Records.Update(
 		ctx,
-		data.DNSRecordID.ValueString(),
+		data.ID.ValueString(),
 		dns.RecordUpdateParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -154,7 +163,7 @@ func (r *DNSRecordResource) Read(ctx context.Context, req resource.ReadRequest, 
 	env := DNSRecordResultEnvelope{*data}
 	_, err := r.client.DNS.Records.Get(
 		ctx,
-		data.DNSRecordID.ValueString(),
+		data.ID.ValueString(),
 		dns.RecordGetParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -187,7 +196,7 @@ func (r *DNSRecordResource) Delete(ctx context.Context, req resource.DeleteReque
 
 	_, err := r.client.DNS.Records.Delete(
 		ctx,
-		data.DNSRecordID.ValueString(),
+		data.ID.ValueString(),
 		dns.RecordDeleteParams{
 			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
@@ -201,6 +210,51 @@ func (r *DNSRecordResource) Delete(ctx context.Context, req resource.DeleteReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *DNSRecordResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+func (r *DNSRecordResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data *DNSRecordModel
 
+	path_zone_id := ""
+	path_dns_record_id := ""
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<zone_id>/<dns_record_id>",
+		&path_zone_id,
+		&path_dns_record_id,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := DNSRecordResultEnvelope{*data}
+	_, err := r.client.DNS.Records.Get(
+		ctx,
+		path_dns_record_id,
+		dns.RecordGetParams{
+			ZoneID: cloudflare.F(path_zone_id),
+		},
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Result
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *DNSRecordResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	// If the entire plan is null, the resource is planned for destruction.
+	if req.Plan.Raw.IsNull() {
+		return
+	}
 }

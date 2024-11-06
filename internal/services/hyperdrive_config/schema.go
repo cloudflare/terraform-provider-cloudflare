@@ -69,6 +69,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The port (default: 5432 for Postgres) of your origin database.",
 						Optional:    true,
 					},
+					"password": schema.StringAttribute{
+						Description: "The password to use when connecting to the origin database.",
+						Required:    true,
+					},
 				},
 			},
 			"caching": schema.SingleNestedAttribute{
