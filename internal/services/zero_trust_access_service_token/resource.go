@@ -105,7 +105,7 @@ func (r *ZeroTrustAccessServiceTokenResource) Create(ctx context.Context, req re
 func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustAccessServiceTokenModel
 	secret := types.StringNull()
-	_ = req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
+	req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -165,7 +165,7 @@ func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req reso
 	var data *ZeroTrustAccessServiceTokenModel
 
 	secret := types.StringNull()
-	_ = req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
+	req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
