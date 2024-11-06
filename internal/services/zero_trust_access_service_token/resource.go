@@ -105,7 +105,7 @@ func (r *ZeroTrustAccessServiceTokenResource) Create(ctx context.Context, req re
 func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ZeroTrustAccessServiceTokenModel
 	secret := types.StringNull()
-	diags := req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
+	_ = req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -154,11 +154,9 @@ func (r *ZeroTrustAccessServiceTokenResource) Update(ctx context.Context, req re
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
 	}
+
 	data = &env.Result
-	env.Result.ClientSecret = secret
 	data.ClientSecret = secret
-	resp.State.SetAttribute(ctx, path.Root("client_secret"), &secret)
-	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -167,7 +165,7 @@ func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req reso
 	var data *ZeroTrustAccessServiceTokenModel
 
 	secret := types.StringNull()
-	diags := req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
+	_ = req.State.GetAttribute(ctx, path.Root("client_secret"), &secret)
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -203,14 +201,8 @@ func (r *ZeroTrustAccessServiceTokenResource) Read(ctx context.Context, req reso
 		return
 	}
 
-	if !secret.IsNull() && secret.String() != "" {
-		env.Result.ClientSecret = secret
-		data.ClientSecret = secret
-		resp.State.SetAttribute(ctx, path.Root("client_secret"), &secret)
-		resp.Diagnostics.Append(diags...)
-	}
-
 	data = &env.Result
+	data.ClientSecret = secret
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
