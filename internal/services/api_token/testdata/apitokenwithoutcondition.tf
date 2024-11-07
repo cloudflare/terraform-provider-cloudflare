@@ -4,7 +4,7 @@
 
 		policy = [{
 			effect = "allow"
-			permission_groups = [ "%[3]s" ]
+			permission_groups = [{ id = "%[3]s" }]
 			resources = { "com.cloudflare.api.account.zone.*" = "*" }
 		}]
 	}
