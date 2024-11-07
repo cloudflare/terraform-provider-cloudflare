@@ -36,6 +36,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"aud": schema.StringAttribute{
+				Description: "The Application Audience (AUD) tag. Identifies the application associated with the CA.",
+				Computed:    true,
+			},
+			"public_key": schema.StringAttribute{
+				Description: "The public key to add to your SSH server configuration.",
+				Computed:    true,
+			},
 		},
 	}
 }

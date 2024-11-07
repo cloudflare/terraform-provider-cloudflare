@@ -24,9 +24,9 @@ type ZeroTrustAccessShortLivedCertificateDataSourceModel struct {
 	AccountID types.String                                                  `tfsdk:"account_id" path:"account_id,optional"`
 	AppID     types.String                                                  `tfsdk:"app_id" path:"app_id,optional"`
 	ZoneID    types.String                                                  `tfsdk:"zone_id" path:"zone_id,optional"`
-	AUD       types.String                                                  `tfsdk:"aud" json:"aud,optional"`
-	ID        types.String                                                  `tfsdk:"id" json:"id,optional"`
-	PublicKey types.String                                                  `tfsdk:"public_key" json:"public_key,optional"`
+	AUD       types.String                                                  `tfsdk:"aud" json:"aud,computed"`
+	ID        types.String                                                  `tfsdk:"id" json:"id,computed"`
+	PublicKey types.String                                                  `tfsdk:"public_key" json:"public_key,computed"`
 	Filter    *ZeroTrustAccessShortLivedCertificateFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
