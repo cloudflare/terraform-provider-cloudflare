@@ -12,10 +12,10 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 	name_id_transform_jsonata = "$substringBefore(email, '@') & '+sandbox@' & $substringAfter(email, '@')"
 	saml_attribute_transform_jsonata = "$ ~>| groups | {'group_name': name} |"
 
-	custom_attribute =[ {
+	custom_attribute = [{
 		name = "email"
 		name_format = "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-		source =[ {
+		source = [{
 			name = "user_email"
 		}]
 	},
@@ -23,7 +23,7 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
     name = "rank"
 		required = true
 		friendly_name = "Rank"
-		source =[ {
+		source = [{
 			name = "rank"
 		}]
     }]

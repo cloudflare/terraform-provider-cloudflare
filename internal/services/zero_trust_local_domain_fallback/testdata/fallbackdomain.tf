@@ -19,7 +19,7 @@ resource "cloudflare_zero_trust_device_profiles" "%[1]s" {
 
 resource "cloudflare_zero_trust_local_domain_fallback" "%[1]s" {
   account_id = "%[2]s"
-  domains =[ {
+  domains = [{
     description = "%[3]s"
     suffix      = "%[4]s"
     dns_server  = ["%[5]s"]

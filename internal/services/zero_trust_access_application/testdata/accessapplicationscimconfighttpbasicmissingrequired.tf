@@ -32,12 +32,12 @@ resource "cloudflare_zero_trust_access_application" "%[1]s" {
 		scheme =  "httpbasic"
 		user = "test"
 }
-	mappings =[ {
+	mappings = [{
 		schema = "urn:ietf:params:scim:schemas:core:2.0:User"
 		enabled = true
 		filter = "title pr or userType eq \"Intern\""
 		transform_jsonata = "$merge([$, {'userName': $substringBefore($.userName, '@') & '+test@' & $substringAfter($.userName, '@')}])"
-		operations =[ {
+		operations = [{
 			create = true
 			update = true
 			delete = true

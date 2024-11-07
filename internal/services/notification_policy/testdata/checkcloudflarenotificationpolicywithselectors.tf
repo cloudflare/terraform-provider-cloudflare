@@ -5,7 +5,7 @@
     description = "test description"
     enabled     =  true
     alert_type  = "traffic_anomalies_alert"
-	email_integration =[ {
+	email_integration = [{
       name =  ""
       id   =  "test@example.com"
     }]

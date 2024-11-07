@@ -5,7 +5,7 @@
     description = "test description"
     enabled     =  true
     alert_type  = "billing_usage_alert"
-    email_integration =[ {
+    email_integration = [{
       name =  ""
       id   =  "test@example.com"
     }]

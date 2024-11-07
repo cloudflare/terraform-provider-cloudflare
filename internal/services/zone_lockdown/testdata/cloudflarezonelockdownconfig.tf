@@ -5,7 +5,7 @@
 					priority = "%[4]s"
 					description = "%[5]s"
 					urls = ["%[6]s"]
-					configurations =[ {
+					configurations = [{
 						target = "%[7]s"
 						value = "%[8]s"
 					}]
