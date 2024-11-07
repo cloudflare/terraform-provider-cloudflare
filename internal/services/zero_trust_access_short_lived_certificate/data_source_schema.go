@@ -32,15 +32,15 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"aud": schema.StringAttribute{
 				Description: "The Application Audience (AUD) tag. Identifies the application associated with the CA.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"id": schema.StringAttribute{
 				Description: "The ID of the CA.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"public_key": schema.StringAttribute{
 				Description: "The public key to add to your SSH server configuration.",
-				Optional:    true,
+				Computed:    true,
 			},
 			"filter": schema.SingleNestedAttribute{
 				Optional: true,
