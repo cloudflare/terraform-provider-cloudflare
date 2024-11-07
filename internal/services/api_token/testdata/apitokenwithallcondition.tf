@@ -11,9 +11,9 @@
 		}]
 
 		condition = {
-  request_ip = {
+      request_ip = {
 				in     = ["192.0.2.1/32"]
 				not_in = ["198.51.100.1/32"]
-			}]
-}
+			}
+		}
 	}
