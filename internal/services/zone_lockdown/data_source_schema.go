@@ -57,21 +57,23 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
-			"configurations": schema.SingleNestedAttribute{
+			"configurations": schema.ListNestedAttribute{
 				Description: "A list of IP addresses or CIDR ranges that will be allowed to access the URLs specified in the Zone Lockdown rule. You can include any number of `ip` or `ip_range` configurations.",
 				Computed:    true,
-				CustomType:  customfield.NewNestedObjectType[ZoneLockdownConfigurationsDataSourceModel](ctx),
-				Attributes: map[string]schema.Attribute{
-					"target": schema.StringAttribute{
-						Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.",
-						Computed:    true,
-						Validators: []validator.String{
-							stringvalidator.OneOfCaseInsensitive("ip", "ip_range"),
+				CustomType:  customfield.NewNestedObjectListType[ZoneLockdownConfigurationsDataSourceModel](ctx),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"target": schema.StringAttribute{
+							Description: "The configuration target. You must set the target to `ip` when specifying an IP address in the Zone Lockdown rule.",
+							Computed:    true,
+							Validators: []validator.String{
+								stringvalidator.OneOfCaseInsensitive("ip", "ip_range"),
+							},
 						},
-					},
-					"value": schema.StringAttribute{
-						Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
-						Computed:    true,
+						"value": schema.StringAttribute{
+							Description: "The IP address to match. This address will be compared to the IP address of incoming requests.",
+							Computed:    true,
+						},
 					},
 				},
 			},
