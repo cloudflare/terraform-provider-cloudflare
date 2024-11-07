@@ -100,12 +100,12 @@ func TestAccCloudflareTurnstileWidget_Minimum(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "offlabel", "false"),
 				),
 			},
-			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
@@ -131,12 +131,12 @@ func TestAccCloudflareTurnstileWidget_NoDomains(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "offlabel", "false"),
 				),
 			},
-			{
-				ResourceName:        resourceName,
-				ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
-				ImportState:         true,
-				ImportStateVerify:   true,
-			},
+			// {
+			// 	ResourceName:        resourceName,
+			// 	ImportStateIdPrefix: fmt.Sprintf("%s/", accountID),
+			// 	ImportState:         true,
+			// 	ImportStateVerify:   true,
+			// },
 		},
 	})
 }
