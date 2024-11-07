@@ -3,13 +3,13 @@
 		  name = "%[1]s"
 
 		  policies = [{
-			effect = "allow"
-			permission_groups = [{
-			  id = "%[2]s"
-			}]
-			resources = {
-			  "com.cloudflare.api.account.zone.*" = "*"
-			}
+  			effect = "allow"
+  			permission_groups = [{
+  			  id = "%[2]s"
+  			}]
+  			resources = {
+  			  "com.cloudflare.api.account.zone.*" = "*"
+  			}
 		  }]
 		  %[3]s
 		}
