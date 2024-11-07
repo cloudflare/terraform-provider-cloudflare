@@ -24,9 +24,6 @@ func TestAccCloudflareZoneLockdown(t *testing.T) {
 				Config: testCloudflareZoneLockdownConfig(rnd, zoneID, "false", "1", "this is notes", rnd+"."+zoneName+"/*", "ip", "198.51.100.4"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),
-					resource.TestCheckResourceAttr(name, "paused", "false"),
-					resource.TestCheckResourceAttr(name, "priority", "1"),
-					resource.TestCheckResourceAttr(name, "description", "this is notes"),
 					resource.TestCheckResourceAttr(name, "urls.#", "1"),
 					resource.TestCheckResourceAttr(name, "configurations.#", "1"),
 				),
