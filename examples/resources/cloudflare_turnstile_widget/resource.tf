@@ -4,5 +4,4 @@ resource "cloudflare_turnstile_widget" "example" {
   bot_fight_mode = false
   domains        = ["example.com"]
   mode           = "invisible"
-  region         = "world"
 }

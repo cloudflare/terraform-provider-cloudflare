@@ -58,17 +58,6 @@ func (r *TurnstileWidgetResource) Schema(ctx context.Context, req resource.Schem
 					stringvalidator.OneOf("non-interactive", "invisible", "managed"),
 				},
 			},
-			"region": schema.StringAttribute{
-				MarkdownDescription: "Region where this widget can be used.",
-				Computed:            true,
-				Optional:            true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("world"),
-				},
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
-			},
 			"bot_fight_mode": schema.BoolAttribute{
 				MarkdownDescription: "If bot_fight_mode is set to true, Cloudflare issues computationally expensive challenges in response to malicious bots (Enterprise only).",
 				Computed:            true,

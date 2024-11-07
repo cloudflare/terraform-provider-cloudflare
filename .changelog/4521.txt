@@ -1,3 +1,3 @@
 ```release-note:note
-resource/cloudflare_turnstile_widget: Remove region from docs
+resource/cloudflare_turnstile_widget: Remove region turnstile schema, example, and docs
 ```
