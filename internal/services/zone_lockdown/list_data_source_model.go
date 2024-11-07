@@ -74,13 +74,13 @@ func (m *ZoneLockdownsDataSourceModel) toListParams(_ context.Context) (params f
 }
 
 type ZoneLockdownsResultDataSourceModel struct {
-	ID             types.String                                                         `tfsdk:"id" json:"id,computed"`
-	Configurations customfield.NestedObject[ZoneLockdownsConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
-	CreatedOn      timetypes.RFC3339                                                    `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description    types.String                                                         `tfsdk:"description" json:"description,computed"`
-	ModifiedOn     timetypes.RFC3339                                                    `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Paused         types.Bool                                                           `tfsdk:"paused" json:"paused,computed"`
-	URLs           customfield.List[types.String]                                       `tfsdk:"urls" json:"urls,computed"`
+	ID             types.String                                                             `tfsdk:"id" json:"id,computed"`
+	Configurations customfield.NestedObjectList[ZoneLockdownsConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
+	CreatedOn      timetypes.RFC3339                                                        `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description    types.String                                                             `tfsdk:"description" json:"description,computed"`
+	ModifiedOn     timetypes.RFC3339                                                        `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Paused         types.Bool                                                               `tfsdk:"paused" json:"paused,computed"`
+	URLs           customfield.List[types.String]                                           `tfsdk:"urls" json:"urls,computed"`
 }
 
 type ZoneLockdownsConfigurationsDataSourceModel struct {

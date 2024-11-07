@@ -22,16 +22,16 @@ type ZoneLockdownResultListDataSourceEnvelope struct {
 }
 
 type ZoneLockdownDataSourceModel struct {
-	LockDownsID    types.String                                                        `tfsdk:"lock_downs_id" path:"lock_downs_id,optional"`
-	ZoneID         types.String                                                        `tfsdk:"zone_id" path:"zone_id,optional"`
-	CreatedOn      timetypes.RFC3339                                                   `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
-	Description    types.String                                                        `tfsdk:"description" json:"description,computed"`
-	ID             types.String                                                        `tfsdk:"id" json:"id,computed"`
-	ModifiedOn     timetypes.RFC3339                                                   `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
-	Paused         types.Bool                                                          `tfsdk:"paused" json:"paused,computed"`
-	URLs           customfield.List[types.String]                                      `tfsdk:"urls" json:"urls,computed"`
-	Configurations customfield.NestedObject[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
-	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
+	LockDownsID    types.String                                                            `tfsdk:"lock_downs_id" path:"lock_downs_id,optional"`
+	ZoneID         types.String                                                            `tfsdk:"zone_id" path:"zone_id,optional"`
+	CreatedOn      timetypes.RFC3339                                                       `tfsdk:"created_on" json:"created_on,computed" format:"date-time"`
+	Description    types.String                                                            `tfsdk:"description" json:"description,computed"`
+	ID             types.String                                                            `tfsdk:"id" json:"id,computed"`
+	ModifiedOn     timetypes.RFC3339                                                       `tfsdk:"modified_on" json:"modified_on,computed" format:"date-time"`
+	Paused         types.Bool                                                              `tfsdk:"paused" json:"paused,computed"`
+	URLs           customfield.List[types.String]                                          `tfsdk:"urls" json:"urls,computed"`
+	Configurations customfield.NestedObjectList[ZoneLockdownConfigurationsDataSourceModel] `tfsdk:"configurations" json:"configurations,computed"`
+	Filter         *ZoneLockdownFindOneByDataSourceModel                                   `tfsdk:"filter"`
 }
 
 func (m *ZoneLockdownDataSourceModel) toReadParams(_ context.Context) (params firewall.LockdownGetParams, diags diag.Diagnostics) {
