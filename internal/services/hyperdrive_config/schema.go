@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -25,9 +26,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"hyperdrive_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description:   "Identifier",
-				Optional:      true,
+				Computed:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
@@ -65,6 +66,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "The Client ID of the Access token to use when connecting to the origin database",
 						Optional:    true,
 					},
+					"access_client_secret": schema.StringAttribute{
+						Description: "The secret of the Access token to use when connecting to the origin database",
+						Optional:    true,
+					},
 					"port": schema.Int64Attribute{
 						Description: "The port (default: 5432 for Postgres) of your origin database.",
 						Optional:    true,
@@ -83,6 +88,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"disabled": schema.BoolAttribute{
 						Description: "When set to true, disables the caching of SQL responses. (Default: false)",
 						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
 					},
 					"max_age": schema.Int64Attribute{
 						Description: "When present, specifies max duration for which items should persist in the cache. (Default: 60)",
