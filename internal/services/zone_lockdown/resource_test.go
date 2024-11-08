@@ -59,7 +59,7 @@ func TestAccCloudflareZoneLockdown_Import(t *testing.T) {
 	zoneName := os.Getenv("CLOUDFLARE_DOMAIN")
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_zone_lockdown." + rnd
+	// name := "cloudflare_zone_lockdown." + rnd
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
