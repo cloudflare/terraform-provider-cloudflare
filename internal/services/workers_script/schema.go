@@ -51,6 +51,49 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataModel](ctx),
 				Attributes: map[string]schema.Attribute{
+					"assets": schema.SingleNestedAttribute{
+						Description: "Configuration for assets within a Worker",
+						Computed:    true,
+						Optional:    true,
+						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataAssetsModel](ctx),
+						Attributes: map[string]schema.Attribute{
+							"config": schema.SingleNestedAttribute{
+								Description: "Configuration for assets within a Worker.",
+								Computed:    true,
+								Optional:    true,
+								CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataAssetsConfigModel](ctx),
+								Attributes: map[string]schema.Attribute{
+									"html_handling": schema.StringAttribute{
+										Description: "Determines the redirects and rewrites of requests for HTML content.",
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"auto-trailing-slash",
+												"force-trailing-slash",
+												"drop-trailing-slash",
+												"none",
+											),
+										},
+									},
+									"not_found_handling": schema.StringAttribute{
+										Description: "Determines the response when a request does not match a static asset, and there is no Worker script.",
+										Optional:    true,
+										Validators: []validator.String{
+											stringvalidator.OneOfCaseInsensitive(
+												"none",
+												"404-page",
+												"single-page-application",
+											),
+										},
+									},
+								},
+							},
+							"jwt": schema.StringAttribute{
+								Description: "Token provided upon successful upload of all files from a registered manifest.",
+								Optional:    true,
+							},
+						},
+					},
 					"bindings": schema.ListNestedAttribute{
 						Description: "List of bindings available to the worker.",
 						Computed:    true,
@@ -81,6 +124,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						Description: "Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.",
 						Optional:    true,
 						ElementType: types.StringType,
+					},
+					"keep_assets": schema.BoolAttribute{
+						Description: "Retain assets which exist for a previously uploaded Worker version; used in lieu of providing a completion token.",
+						Optional:    true,
 					},
 					"keep_bindings": schema.ListAttribute{
 						Description: "List of binding types to keep from previous_upload.",
@@ -222,13 +269,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"observability": schema.SingleNestedAttribute{
-						Description: "Observability settings for the Worker",
+						Description: "Observability settings for the Worker.",
 						Computed:    true,
 						Optional:    true,
 						CustomType:  customfield.NewNestedObjectType[WorkersScriptMetadataObservabilityModel](ctx),
 						Attributes: map[string]schema.Attribute{
 							"enabled": schema.BoolAttribute{
-								Description: "Whether observability is enabled for the Worker",
+								Description: "Whether observability is enabled for the Worker.",
 								Required:    true,
 							},
 							"head_sampling_rate": schema.Float64Attribute{
@@ -252,7 +299,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"tags": schema.ListAttribute{
-						Description: "List of strings to use as tags for this Worker",
+						Description: "List of strings to use as tags for this Worker.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
@@ -286,7 +333,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"version_tags": schema.MapAttribute{
-						Description: "Key-value pairs to use as tags for this version of this Worker",
+						Description: "Key-value pairs to use as tags for this version of this Worker.",
 						Optional:    true,
 						ElementType: types.StringType,
 					},
@@ -299,6 +346,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"etag": schema.StringAttribute{
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
+				Computed:    true,
+			},
+			"has_assets": schema.BoolAttribute{
+				Description: "Whether a Worker contains assets.",
+				Computed:    true,
+			},
+			"has_modules": schema.BoolAttribute{
+				Description: "Whether a Worker contains modules.",
 				Computed:    true,
 			},
 			"logpush": schema.BoolAttribute{

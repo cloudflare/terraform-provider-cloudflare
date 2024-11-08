@@ -34,6 +34,14 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Hashed script content, can be used in a If-None-Match header when updating.",
 				Optional:    true,
 			},
+			"has_assets": schema.BoolAttribute{
+				Description: "Whether a Worker contains assets.",
+				Optional:    true,
+			},
+			"has_modules": schema.BoolAttribute{
+				Description: "Whether a Worker contains modules.",
+				Optional:    true,
+			},
 			"id": schema.StringAttribute{
 				Description: "The id of the script in the Workers system. Usually the script name.",
 				Optional:    true,

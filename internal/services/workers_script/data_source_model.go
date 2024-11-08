@@ -22,6 +22,8 @@ type WorkersScriptDataSourceModel struct {
 	ScriptName    types.String                                  `tfsdk:"script_name" path:"script_name,optional"`
 	CreatedOn     timetypes.RFC3339                             `tfsdk:"created_on" json:"created_on,optional" format:"date-time"`
 	Etag          types.String                                  `tfsdk:"etag" json:"etag,optional"`
+	HasAssets     types.Bool                                    `tfsdk:"has_assets" json:"has_assets,optional"`
+	HasModules    types.Bool                                    `tfsdk:"has_modules" json:"has_modules,optional"`
 	ID            types.String                                  `tfsdk:"id" json:"id,optional"`
 	Logpush       types.Bool                                    `tfsdk:"logpush" json:"logpush,optional"`
 	ModifiedOn    timetypes.RFC3339                             `tfsdk:"modified_on" json:"modified_on,optional" format:"date-time"`
