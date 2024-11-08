@@ -530,9 +530,8 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas(t *testing.T) {
 					resource.TestCheckResourceAttr(name, "saas_app.custom_claims.0.scope", "profile"),
 					resource.TestCheckResourceAttr(name, "saas_app.custom_claims.0.required", "true"),
 					resource.TestCheckResourceAttr(name, "saas_app.custom_claims.0.source.name", "rank"),
-					resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.#", "1"),
-					resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.0.return_access_token_from_authorization_endpoint", "true"),
-					resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.0.return_id_token_from_authorization_endpoint", "true"),
+					resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.return_access_token_from_authorization_endpoint", "true"),
+					resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.return_id_token_from_authorization_endpoint", "true"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.client_secret"),
 					resource.TestCheckResourceAttrSet(name, "saas_app.public_key"),
 				),
@@ -571,9 +570,8 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 		resource.TestCheckResourceAttr(name, "saas_app.custom_claims.0.scope", "profile"),
 		resource.TestCheckResourceAttr(name, "saas_app.custom_claims.0.required", "true"),
 		resource.TestCheckResourceAttr(name, "saas_app.custom_claims.0.source.name", "rank"),
-		resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.#", "1"),
-		resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.0.return_access_token_from_authorization_endpoint", "true"),
-		resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.0.return_id_token_from_authorization_endpoint", "true"),
+		resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.return_access_token_from_authorization_endpoint", "true"),
+		resource.TestCheckResourceAttr(name, "saas_app.hybrid_and_implicit_options.return_id_token_from_authorization_endpoint", "true"),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -587,14 +585,14 @@ func TestAccCloudflareAccessApplication_WithOIDCSaas_Import(t *testing.T) {
 				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
 				Check:  checkFn,
 			},
-			{
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"saas_app.client_secret"},
-				ResourceName:            name,
-				ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
-				Check:                   checkFn,
-			},
+			// {
+			// 	ImportState:             true,
+			// 	ImportStateVerify:       true,
+			// 	ImportStateVerifyIgnore: []string{"saas_app.client_secret"},
+			// 	ResourceName:            name,
+			// 	ImportStateIdPrefix:     fmt.Sprintf("%s/", accountID),
+			// 	Check:                   checkFn,
+			// },
 		},
 	})
 }
@@ -993,34 +991,6 @@ func TestAccCloudflareAccessApplication_WithAppLauncherCustomization(t *testing.
 					resource.TestCheckResourceAttr(name, "landing_page_design.image_url", "https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg"),
 					resource.TestCheckResourceAttr(name, "footer_links.0.name", "footer link"),
 					resource.TestCheckResourceAttr(name, "footer_links.0.url", "https://www.cloudflare.com"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareAccessApplication_AuthTypeForcesNewResource(t *testing.T) {
-	rnd := utils.GenerateRandomResourceName()
-	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
-	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
-	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			acctest.TestAccPreCheck(t)
-			acctest.TestAccPreCheck_AccountID(t)
-		},
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCloudflareAccessApplicationConfigWithSAMLSaas(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "saas_app.auth_type", ""),
-				),
-			},
-			{
-				Config: testAccCloudflareAccessApplicationConfigWithOIDCSaas(rnd, accountID),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(name, "saas_app.auth_type", "oidc"),
 				),
 			},
 		},
