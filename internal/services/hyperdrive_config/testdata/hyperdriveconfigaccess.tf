@@ -12,6 +12,6 @@
 			access_client_secret = "%[10]s"
 		}
 		caching = {
-			disabled               = %[11]s
+			disabled               = %[11]t
 		}
 	}

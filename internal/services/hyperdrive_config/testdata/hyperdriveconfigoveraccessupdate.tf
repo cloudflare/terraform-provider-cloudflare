@@ -1,5 +1,4 @@
   resource "cloudflare_hyperdrive_config" "%[1]s" {
-		id         = "%[2]s"
 		account_id = "%[3]s"
 		name       = "%[4]s"
 		origin     = {
@@ -12,6 +11,6 @@
 			access_client_secret = "%[11]s"
 		}
 		caching = {
-			disabled               = %[12]s
+			disabled               = %[12]t
 		}
 	}
