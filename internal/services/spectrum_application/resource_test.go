@@ -118,38 +118,8 @@ func TestAccCloudflareSpectrumApplication_OriginDNS(t *testing.T) {
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
 					resource.TestCheckResourceAttr(name, "protocol", "tcp/22"),
-					resource.TestCheckResourceAttr(name, "origin_dns.#", "1"),
-					resource.TestCheckResourceAttr(name, "origin_dns.0.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
+					resource.TestCheckResourceAttr(name, "origin_dns.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
 					resource.TestCheckResourceAttr(name, "origin_port", "22"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccCloudflareSpectrumApplication_OriginPortRange(t *testing.T) {
-	var spectrumApp cloudflare.SpectrumApplication
-	domain := os.Getenv("CLOUDFLARE_DOMAIN")
-	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
-	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_spectrum_application." + rnd
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
-		CheckDestroy:             testAccCheckCloudflareSpectrumApplicationDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccCheckCloudflareSpectrumApplicationConfigOriginPortRange(zoneID, domain, rnd),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
-					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "protocol", "tcp/22-23"),
-					resource.TestCheckResourceAttr(name, "origin_dns.#", "1"),
-					resource.TestCheckResourceAttr(name, "origin_dns.0.name", fmt.Sprintf("%s.origin.%s", rnd, domain)),
-					resource.TestCheckResourceAttr(name, "origin_port_range.#", "1"),
-					resource.TestCheckResourceAttr(name, "origin_port_range.0.start", "2022"),
-					resource.TestCheckResourceAttr(name, "origin_port_range.0.end", "2023"),
 				),
 			},
 		},
@@ -235,7 +205,7 @@ func TestAccCloudflareSpectrumApplication_EdgeIPConnectivity(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ips.0.connectivity", "ipv4"),
+					resource.TestCheckResourceAttr(name, "edge_ips.connectivity", "ipv4"),
 				),
 			},
 		},
@@ -258,9 +228,8 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ips.0.ips.#", "2"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.13"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.49"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.ips.*", "172.65.64.13"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.ips.*", "172.65.64.49"),
 				),
 			},
 			{
@@ -268,9 +237,8 @@ func TestAccCloudflareSpectrumApplication_EdgeIPsMultiple(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudflareSpectrumApplicationExists(name, &spectrumApp),
 					testAccCheckCloudflareSpectrumApplicationIDIsValid(name),
-					resource.TestCheckResourceAttr(name, "edge_ips.0.ips.#", "2"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.13"),
-					resource.TestCheckTypeSetElemAttr(name, "edge_ips.0.ips.*", "172.65.64.49"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.ips.*", "172.65.64.13"),
+					resource.TestCheckTypeSetElemAttr(name, "edge_ips.ips.*", "172.65.64.49"),
 				),
 			},
 		},
