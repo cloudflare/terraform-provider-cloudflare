@@ -11,6 +11,6 @@
 				user     = "%[9]s"
 			}
 			caching = {
-				disabled = %[10]s
+				disabled = %[10]t
 			}
 		}

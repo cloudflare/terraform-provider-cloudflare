@@ -10,8 +10,8 @@
 			user     = "%[9]s"
 		}
 		caching = {
-			disabled               = %[10]s
-			max_age                = %[11]s
-			stale_while_revalidate = %[12]s
+			disabled               = %[10]t
+			max_age                = %[11]d
+			stale_while_revalidate = %[12]d
 		}
 	}
