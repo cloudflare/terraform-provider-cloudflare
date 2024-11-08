@@ -10,6 +10,8 @@ Magic Firewall is a network-level firewall to protect networks that are onboarde
 creates a root ruleset on the account level and contains one or more rules. Rules can be crafted in Wireshark syntax and
 are evaluated in order, with the first rule having the highest priority.
 
+Resource may already contain rules if certain options such as IDS have been previously enabled.  `terraform import` may be required before adding rules.
+
 ## Example Usage
 
 ```hcl
