@@ -48,6 +48,14 @@ func ListDataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Hashed script content, can be used in a If-None-Match header when updating.",
 							Computed:    true,
 						},
+						"has_assets": schema.BoolAttribute{
+							Description: "Whether a Worker contains assets.",
+							Computed:    true,
+						},
+						"has_modules": schema.BoolAttribute{
+							Description: "Whether a Worker contains modules.",
+							Computed:    true,
+						},
 						"logpush": schema.BoolAttribute{
 							Description: "Whether Logpush is turned on for the Worker.",
 							Computed:    true,
