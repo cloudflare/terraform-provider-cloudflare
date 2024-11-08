@@ -256,8 +256,9 @@ var tests = map[string]struct {
 	"date_time_custom_missing_timezone_colon_coerce": {`"2007-03-01T13:03:05+0100"`, time2time(time.Date(2007, time.March, 1, 13, 3, 5, 0, time.FixedZone("", 60*60)))},
 	"date_time_custom_nano_missing_t_coerce":         {`"2007-03-01 13:03:05.123456789Z"`, time2time(time.Date(2007, time.March, 1, 13, 3, 5, 123456789, time.UTC))},
 
-	"map_string":    {`{"foo":"bar"}`, map[string]string{"foo": "bar"}},
-	"map_interface": {`{"a":1,"b":"str","c":false}`, map[string]interface{}{"a": float64(1), "b": "str", "c": false}},
+	"map_string":                       {`{"foo":"bar"}`, map[string]string{"foo": "bar"}},
+	"map_string_with_sjson_path_chars": {`{":a.b.c*:d*-1e.f":"bar"}`, map[string]string{":a.b.c*:d*-1e.f": "bar"}},
+	"map_interface":                    {`{"a":1,"b":"str","c":false}`, map[string]interface{}{"a": float64(1), "b": "str", "c": false}},
 
 	"primitive_struct": {
 		`{"a":false,"b":237628372683,"c":654,"d":9999.43,"e":43.76,"f":[1,2,3,4]}`,
@@ -613,6 +614,38 @@ var encode_only_tests = map[string]struct {
 			[]attr.Value{basetypes.NewInt64Value(10), types.ListValueMust(basetypes.StringType{}, []attr.Value{basetypes.NewStringValue("hey"), basetypes.NewStringValue("there")})},
 		),
 	},
+
+	"complex_nested_list_object": {
+		`{"a":[{"b":"foo","c":{"d":"pointer_inner"},"d":[{"d":"list_pointer_inner_1"},{"d":"list_pointer_inner_2"}],"e":["a","b"],"f":{"a_key":{"d":"a_value"}}}]}`,
+		ListWithNestedObj{
+			A: customfield.NewObjectListMust(ctx, []Embedded2{
+				{
+					B: types.StringValue("foo"),
+					C: P(Inner{D: types.StringValue("pointer_inner")}),
+					D: P([]*Inner{P(Inner{D: types.StringValue("list_pointer_inner_1")}), P(Inner{D: types.StringValue("list_pointer_inner_2")})}),
+					E: []string{"a", "b"},
+					F: P(map[string]Inner{
+						"a_key": {D: types.StringValue("a_value")},
+					}),
+				},
+			}),
+		},
+	},
+
+	"nested_map_pointer": {
+		`{"outer":[{"a":{"a.b.*":"*"}}]}`,
+		struct {
+			Outer *[]*structWithMap `json:"outer,required"`
+		}{
+			Outer: P([]*structWithMap{
+				P(structWithMap{A: P(map[string]types.String{"a.b.*": types.StringValue("*")})}),
+			}),
+		},
+	},
+}
+
+type structWithMap struct {
+	A *map[string]types.String `json:"a,required"`
 }
 
 func TestDecode(t *testing.T) {
